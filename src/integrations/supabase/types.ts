@@ -925,11 +925,48 @@ export type Database = {
           },
         ]
       }
+      whatsapp_otp: {
+        Row: {
+          attempts: number
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+          phone: string
+          user_id: string | null
+          verified: boolean
+        }
+        Insert: {
+          attempts?: number
+          code: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone: string
+          user_id?: string | null
+          verified?: boolean
+        }
+        Update: {
+          attempts?: number
+          code?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          phone?: string
+          user_id?: string | null
+          verified?: boolean
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_otp: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_channel_member_count: {
         Args: { channel_uuid: string }
         Returns: number
