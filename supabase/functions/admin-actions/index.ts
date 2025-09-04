@@ -25,9 +25,9 @@ function jsonResponse(data: any, status = 200) {
     status,
     headers: {
       "content-type": "application/json; charset=utf-8",
-      "access-control-allow-origin": "*",
-      "access-control-allow-headers": "authorization, content-type",
-      "access-control-allow-methods": "GET,POST,OPTIONS",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+      "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
     },
   });
 }
