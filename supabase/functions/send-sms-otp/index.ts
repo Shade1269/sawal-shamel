@@ -93,17 +93,26 @@ serve(async (req) => {
     const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
     const message = `Your verification code is: ${otpCode}. This code expires in 5 minutes.`;
 
+    const params = new URLSearchParams({
+      To: cleanPhone,
+      Body: message,
+    });
+
+    const isMessagingService = smsFrom.startsWith('MG');
+    if (isMessagingService) {
+      console.log('Using Twilio Messaging Service SID for SMS');
+      params.set('MessagingServiceSid', smsFrom);
+    } else {
+      params.set('From', smsFrom);
+    }
+
     const twilioResponse = await fetch(twilioUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${btoa(`${accountSid}:${authToken}`)}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: new URLSearchParams({
-        From: smsFrom,
-        To: cleanPhone,
-        Body: message,
-      }),
+      body: params,
     });
 
     if (!twilioResponse.ok) {
