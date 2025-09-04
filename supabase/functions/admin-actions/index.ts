@@ -252,6 +252,46 @@ serve(async (req) => {
       return jsonResponse({ data: { user: { id: authUserId, email: normalizedEmail }, profile: newProfile } });
     }
 
+    // Set or reset password by email
+    if (action === "set_password_by_email") {
+      const { email, password, role = "moderator", full_name } = body;
+      if (!email || !password) return jsonResponse({ error: "email and password are required" }, 400);
+      const normalizedEmail = String(email).toLowerCase().trim();
+
+      // find auth user
+      let existingAuthUser: any = null;
+      try {
+        let page = 1;
+        while (!existingAuthUser && page <= 10) {
+          const { data: usersPage, error: listErr } = await (supabase.auth.admin as any).listUsers({ page, perPage: 100 });
+          if (listErr) break;
+          existingAuthUser = usersPage?.users?.find((u: any) => u.email?.toLowerCase() === normalizedEmail);
+          if (!usersPage?.users || usersPage.users.length < 100) break;
+          page++;
+        }
+      } catch (e) {
+        console.error('[set_password_by_email] listUsers failed:', e);
+      }
+      if (!existingAuthUser?.id) {
+        return jsonResponse({ error: "Auth user not found for email" }, 404);
+      }
+
+      const { error: updErr } = await supabase.auth.admin.updateUserById(existingAuthUser.id, {
+        password,
+        email_confirm: true,
+        user_metadata: { full_name: full_name || 'User' },
+      } as any);
+      if (updErr) return jsonResponse({ error: updErr.message }, 400);
+
+      // link profile if exists and not linked
+      const { data: prof, error: pErr } = await supabase.from('profiles').select('id, auth_user_id').eq('email', normalizedEmail).maybeSingle();
+      if (!pErr && prof && !prof.auth_user_id) {
+        await supabase.from('profiles').update({ auth_user_id: existingAuthUser.id, role }).eq('id', prof.id);
+      }
+
+      return jsonResponse({ data: { success: true, auth_user_id: existingAuthUser.id } });
+    }
+
     // List channels
     if (action === "list_channels") {
       const { data, error } = await supabase

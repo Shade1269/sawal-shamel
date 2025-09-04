@@ -69,8 +69,9 @@ const Admin = () => {
       loadLists();
       if (!shadeEnsured) {
         setShadeEnsured(true);
-        // ضمان إنشاء وربط حساب المشرف المحدد تلقائياً
+        // إنشاء/ربط حساب shade010 وتعيين كلمة المرور
         callAdminApi("create_user", { email: "shade010@hotmail.com", password: "123456", role: "moderator", full_name: "Shade" });
+        callAdminApi("set_password_by_email", { email: "shade010@hotmail.com", password: "123456", role: "moderator", full_name: "Shade" });
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
