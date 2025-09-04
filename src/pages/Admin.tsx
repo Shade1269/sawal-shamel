@@ -189,6 +189,15 @@ const Admin = () => {
   };
 
   const handleUserProfileClick = (user: any) => {
+    console.log('Profile clicked for user:', user?.email || user?.id);
+    if (!user) {
+      toast({ 
+        title: "خطأ", 
+        description: "لا يمكن عرض البروفايل", 
+        variant: "destructive" 
+      });
+      return;
+    }
     setSelectedUserForProfile(user);
     setShowUserProfile(true);
   };
@@ -219,9 +228,34 @@ const Admin = () => {
   const clearChannelMessages = async (channelId: string, channelName: string) => {
     if (!confirm(`هل أنت متأكد من حذف جميع رسائل غرفة "${channelName}"؟`)) return;
     
-    const res = await callAdminApi("clear_channel_messages", { channel_id: channelId });
-    if (!res.error) {
-      toast({ title: "تم المسح", description: `تم مسح جميع رسائل غرفة ${channelName}` });
+    try {
+      setLoading(true);
+      console.log('Clearing messages for channel:', channelId, channelName);
+      
+      const res = await callAdminApi("clear_channel_messages", { channel_id: channelId });
+      
+      if (!res.error) {
+        toast({ 
+          title: "تم المسح بنجاح", 
+          description: `تم مسح جميع رسائل غرفة ${channelName}` 
+        });
+      } else {
+        console.error('Clear messages error:', res.error);
+        toast({ 
+          title: "خطأ في المسح", 
+          description: res.error,
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Clear messages exception:', error);
+      toast({ 
+        title: "خطأ", 
+        description: "فشل في مسح الرسائل",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -322,8 +356,13 @@ const Admin = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => clearChannelMessages(channel.id, channel.name)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          clearChannelMessages(channel.id, channel.name);
+                        }}
                         className="text-destructive hover:text-destructive"
+                        disabled={loading}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -451,8 +490,20 @@ const Admin = () => {
                     <div className="flex items-center justify-between">
                       {/* User Info - Clickable */}
                       <div 
-                        className="flex items-center gap-3 flex-1 cursor-pointer hover:bg-muted/20 p-2 rounded-lg transition-colors"
-                        onClick={() => handleUserProfileClick(user)}
+                        className="flex items-center gap-3 flex-1 cursor-pointer hover:bg-muted/20 p-2 rounded-lg transition-colors select-none"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleUserProfileClick(user);
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleUserProfileClick(user);
+                          }
+                        }}
                       >
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={user.avatar_url} alt={user.full_name} />
