@@ -469,7 +469,7 @@ const ChatInterface = () => {
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
+              <DropdownMenuContent align="start" className="z-[100] bg-popover/95 backdrop-blur supports-[backdrop-filter]:bg-popover/80 shadow-lg border border-border">
                 <DropdownMenuItem onClick={() => signOut()}>
                   <LogOut className="h-4 w-4 ml-2" />
                   تسجيل خروج

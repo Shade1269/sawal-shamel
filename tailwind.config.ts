@@ -70,6 +70,7 @@ export default {
 				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-hero': 'var(--gradient-hero)',
 				'gradient-chat': 'var(--gradient-chat)',
+				'gradient-landing': 'var(--gradient-landing)',
 			},
 			boxShadow: {
 				'soft': 'var(--shadow-soft)',

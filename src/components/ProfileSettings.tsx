@@ -86,7 +86,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
           <Settings className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto rtl" dir="rtl">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto rtl z-[100]" dir="rtl">
         <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <DialogTitle className="arabic-text flex items-center gap-2">
             <User className="h-5 w-5" />
@@ -170,7 +170,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
                   <SelectTrigger className="arabic-text">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="z-[110]">
                     <SelectItem value="online">متصل</SelectItem>
                     <SelectItem value="busy">مشغول</SelectItem>
                     <SelectItem value="away">غائب</SelectItem>

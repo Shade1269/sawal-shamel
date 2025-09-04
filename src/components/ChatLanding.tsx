@@ -12,7 +12,7 @@ const ChatLanding = () => {
   const { isDarkMode } = useDarkMode();
   
   return (
-    <div className="min-h-screen bg-gradient-chat rtl" dir="rtl">
+    <div className="min-h-screen bg-gradient-landing rtl" dir="rtl">
       {/* Header */}
       <header className="container mx-auto px-6 py-8">
         <nav className="flex items-center justify-between">
