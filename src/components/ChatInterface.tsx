@@ -211,7 +211,7 @@ const ChatInterface = () => {
   return (
     <div className="h-screen bg-chat-bg rtl flex" dir="rtl">
       {/* Sidebar - Rooms */}
-      <div className="w-80 bg-card border-l border-border flex flex-col">
+      <div className="hidden md:flex w-80 bg-card border-l border-border flex-col">
         {/* Header */}
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-4">
@@ -423,7 +423,7 @@ const ChatInterface = () => {
       </div>
 
       {/* Users Sidebar */}
-      <div className="w-64 bg-card border-r border-border flex flex-col">
+      <div className="hidden md:flex w-64 bg-card border-r border-border flex-col">
         <div className="p-4 border-b border-border">
           <h3 className="font-semibold arabic-text">الأعضاء المتصلون</h3>
         </div>
