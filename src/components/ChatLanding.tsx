@@ -1,12 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Users, Shield, Zap, Globe, Heart, User, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDarkMode } from "@/components/DarkModeProvider";
 
 const ChatLanding = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { isDarkMode } = useDarkMode();
   
   return (
     <div className="min-h-screen bg-gradient-chat rtl" dir="rtl">
@@ -22,6 +25,9 @@ const ChatLanding = () => {
           <div className="flex items-center gap-4">
             {user ? (
               <div className="flex items-center gap-3">
+                <Badge variant={isDarkMode ? "secondary" : "default"} className="arabic-text">
+                  {isDarkMode ? "الوضع الليلي" : "الوضع النهاري"}
+                </Badge>
                 <span className="text-sm arabic-text">مرحباً، {user.email}</span>
                 <Button variant="ghost" onClick={signOut} className="arabic-text">
                   <LogOut className="h-4 w-4 mr-1" />

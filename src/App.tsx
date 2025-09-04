@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { DarkModeProvider } from "@/components/DarkModeProvider";
 import AuthPage from "@/components/AuthPage";
 import Index from "./pages/Index";
 import Chat from "./pages/Chat";
@@ -63,15 +64,17 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <BrowserRouter>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
-              <AppContent />
-            </Suspense>
-          </TooltipProvider>
-        </BrowserRouter>
+        <DarkModeProvider>
+          <BrowserRouter>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
+                <AppContent />
+              </Suspense>
+            </TooltipProvider>
+          </BrowserRouter>
+        </DarkModeProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

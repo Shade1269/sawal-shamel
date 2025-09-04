@@ -22,7 +22,8 @@ import {
   Pause,
   ArrowRight,
   Settings,
-  Pin
+  Pin,
+  Search
 } from 'lucide-react';
 import { useRealTimeChat } from '@/hooks/useRealTimeChat';
 import { useAuth } from '@/contexts/AuthContext';
@@ -43,6 +44,11 @@ import EnhancedEmojiPicker, { parseEmojiText } from './EnhancedEmojiPicker';
 import EnhancedMessageActions from './EnhancedMessageActions';
 import MessageStatus from './MessageStatus';
 import ThreadReply from './ThreadReply';
+import ProfileSettings from './ProfileSettings';
+import ChannelMembership from './ChannelMembership';
+import NotificationSound from './NotificationSound';
+import MessageSearch from './MessageSearch';
+import PinnedMessages from './PinnedMessages';
 import { supabase } from '@/integrations/supabase/client';
 
 const ChatInterface = () => {
@@ -52,8 +58,11 @@ const ChatInterface = () => {
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
   const [showRoomsList, setShowRoomsList] = useState(true);
   const [showModerationPanel, setShowModerationPanel] = useState(false);
+  const [showPinnedMessages, setShowPinnedMessages] = useState(false);
   const [replyingTo, setReplyingTo] = useState<{id: string, content: string} | null>(null);
+  const [newMessageAlert, setNewMessageAlert] = useState(false);
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage } = useRealTimeChat(activeRoom);
@@ -64,6 +73,29 @@ const ChatInterface = () => {
       setCurrentProfile(hookProfile);
     }
   }, [hookProfile]);
+
+  // Auto-scroll to bottom and handle new message notifications
+  useEffect(() => {
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      
+      // Check for new messages and play sound
+      const latestMessage = messages[messages.length - 1];
+      const isOwnMessage = currentProfile && latestMessage.sender_id === currentProfile.id;
+      
+      if (!isOwnMessage && latestMessage.created_at) {
+        const messageTime = new Date(latestMessage.created_at).getTime();
+        const now = Date.now();
+        
+        // If message is less than 5 seconds old, it's likely new
+        if (now - messageTime < 5000) {
+          setNewMessageAlert(true);
+          // Reset alert after 3 seconds
+          setTimeout(() => setNewMessageAlert(false), 3000);
+        }
+      }
+    }
+  }, [messages, currentProfile]);
 
   // Set default active room to first available channel
   useEffect(() => {
@@ -456,10 +488,12 @@ const ChatInterface = () => {
               </Avatar>
               <span className="font-medium arabic-text">{currentProfile.full_name || 'مستخدم'}</span>
               <div className="w-2 h-2 bg-status-online rounded-full mr-auto"></div>
-              <UserProfile 
-                profile={currentProfile} 
-                onProfileUpdate={handleProfileUpdate}
-              />
+              {currentProfile && (
+                <ProfileSettings
+                  profile={currentProfile}
+                  onProfileUpdate={handleProfileUpdate}
+                />
+              )}
             </div>
           )}
         </div>
@@ -528,19 +562,30 @@ const ChatInterface = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="arabic-text">
-                <Users className="h-3 w-3 ml-1" />
-                متصل
-              </Badge>
+              <MessageSearch 
+                messages={messages}
+                channels={channels}
+                className="h-8 w-8"
+              />
               {(currentProfile?.role === 'admin' || currentProfile?.role === 'moderator') && (
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => setShowModerationPanel(true)}
-                  className="h-8 w-8"
-                >
-                  <Shield className="h-4 w-4" />
-                </Button>
+                <>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => setShowPinnedMessages(true)}
+                    className="h-8 w-8"
+                  >
+                    <Pin className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => setShowModerationPanel(true)}
+                    className="h-8 w-8"
+                  >
+                    <Shield className="h-4 w-4" />
+                  </Button>
+                </>
               )}
             </div>
           </div>
@@ -639,6 +684,12 @@ const ChatInterface = () => {
           )}
         </ScrollArea>
 
+        {/* Notification Sound */}
+        <NotificationSound 
+          enabled={true} 
+          onNewMessage={newMessageAlert} 
+        />
+
         {/* Message Input */}
         <div className="bg-card border-t border-border p-4">
           {/* Reply Preview */}
@@ -708,28 +759,11 @@ const ChatInterface = () => {
 
       {/* Users Sidebar */}
       <div className="hidden lg:flex w-64 bg-card border-r border-border flex-col">
-        <div className="p-4 border-b border-border">
-          <h3 className="font-semibold arabic-text">الأعضاء المتصلون</h3>
-        </div>
-        
-        <ScrollArea className="flex-1">
-          <div className="p-2 space-y-1">
-            {currentProfile && (
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-accent/30 transition-colors">
-                <Avatar className="w-8 h-8">
-                  <AvatarImage src={currentProfile.avatar_url} alt="Profile" />
-                  <AvatarFallback className="text-sm">
-                    {(currentProfile.full_name || 'أ')[0]}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate arabic-text">{currentProfile.full_name || 'أنت'}</div>
-                  <div className="w-2 h-2 rounded-full bg-status-online"></div>
-                </div>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
+        <ChannelMembership 
+          channelId={activeRoom}
+          currentProfile={currentProfile}
+          className="h-full"
+        />
       </div>
 
       {/* Moderation Panel Dialog */}
@@ -743,6 +777,24 @@ const ChatInterface = () => {
             currentProfile={currentProfile}
             activeChannelId={activeRoom}
             onClose={() => setShowModerationPanel(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Pinned Messages Dialog */}
+      <Dialog open={showPinnedMessages} onOpenChange={setShowPinnedMessages}>
+        <DialogContent className="sm:max-w-lg rtl" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="arabic-text flex items-center gap-2">
+              <Pin className="h-5 w-5" />
+              الرسائل المثبتة
+            </DialogTitle>
+          </DialogHeader>
+          
+          <PinnedMessages
+            messages={messages}
+            onUnpin={handleUnpinMessage}
+            className="max-h-96"
           />
         </DialogContent>
       </Dialog>
