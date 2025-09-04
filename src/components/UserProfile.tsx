@@ -8,7 +8,7 @@ import { User, Camera, Save } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import FileUpload from './FileUpload';
+import AvatarUpload from './AvatarUpload';
 
 interface UserProfileProps {
   profile: any;
@@ -97,9 +97,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onProfileUpdate }) =
               </Avatar>
               
               <div className="absolute -bottom-2 -right-2">
-                <FileUpload
-                  onFileUpload={handleAvatarUpload}
-                  accept="image/*"
+                <AvatarUpload
+                  onAvatarUpload={handleAvatarUpload}
                   maxSize={2}
                   className="relative"
                 />
