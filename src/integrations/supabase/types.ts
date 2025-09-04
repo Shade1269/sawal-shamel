@@ -895,7 +895,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_user_role: {
+        Args: {
+          new_role: Database["public"]["Enums"]["user_role"]
+          target_email: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       order_status:
