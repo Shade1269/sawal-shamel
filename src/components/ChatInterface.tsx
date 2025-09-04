@@ -23,7 +23,11 @@ import {
   ArrowRight,
   Settings,
   Pin,
-  Search
+  Search,
+  Bell,
+  BellOff,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { useRealTimeChat } from '@/hooks/useRealTimeChat';
 import { useAuth } from '@/contexts/AuthContext';
@@ -50,6 +54,7 @@ import NotificationSound from './NotificationSound';
 import MessageSearch from './MessageSearch';
 import PinnedMessages from './PinnedMessages';
 import { supabase } from '@/integrations/supabase/client';
+import { useDarkMode } from '@/components/DarkModeProvider';
 
 const ChatInterface = () => {
   const [message, setMessage] = useState('');
@@ -67,20 +72,99 @@ const ChatInterface = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage } = useRealTimeChat(activeRoom);
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
+
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [mentionAlert, setMentionAlert] = useState(false);
+  const [memberCounts, setMemberCounts] = useState<Record<string, number>>({});
+  const [members, setMembers] = useState<any[]>([]);
+  const [mentionQuery, setMentionQuery] = useState('');
+  const [showMentionList, setShowMentionList] = useState(false);
+
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setMessage(value);
+    const cursor = e.target.selectionStart ?? value.length;
+    const textBeforeCursor = value.slice(0, cursor);
+    const match = textBeforeCursor.match(/@([\p{L}\p{N}_\u0600-\u06FF ]*)$/u);
+    if (match) {
+      setMentionQuery(match[1] || '');
+      setShowMentionList(true);
+    } else {
+      setShowMentionList(false);
+      setMentionQuery('');
+    }
+  };
+
+  const insertMention = (name: string) => {
+    setMessage(prev => {
+      const cursor = messageInputRef.current?.selectionStart ?? prev.length;
+      const textBefore = prev.slice(0, cursor);
+      const match = textBefore.match(/@([\p{L}\p{N}_\u0600-\u06FF ]*)$/u);
+      if (match) {
+        const start = cursor - match[0].length;
+        const newText = prev.slice(0, start) + '@' + name + ' ' + prev.slice(cursor);
+        return newText;
+      }
+      return prev + '@' + name + ' ';
+    });
+    setShowMentionList(false);
+    setMentionQuery('');
+    setTimeout(() => messageInputRef.current?.focus(), 0);
+  };
 
   // Update current profile when hook profile changes
   useEffect(() => {
     if (hookProfile) {
       setCurrentProfile(hookProfile);
     }
-  }, [hookProfile]);
+   }, [hookProfile]);
+
+  // Initialize sound setting
+  useEffect(() => {
+    const stored = localStorage.getItem('soundEnabled');
+    setSoundEnabled(stored === 'true');
+  }, []);
+
+  // Load member counts for channels
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('channel_members')
+          .select('channel_id');
+        if (!error && data) {
+          const map: Record<string, number> = {};
+          data.forEach((row: any) => {
+            if (row.channel_id) map[row.channel_id] = (map[row.channel_id] || 0) + 1;
+          });
+          setMemberCounts(map);
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+    if (channels.length) fetchCounts();
+  }, [channels]);
+
+  // Load members for current channel (for @mentions)
+  useEffect(() => {
+    const loadMembers = async () => {
+      if (!activeRoom) return;
+      const { data, error } = await supabase
+        .from('channel_members')
+        .select('id, user:profiles!channel_members_user_id_fkey(id, full_name, avatar_url)')
+        .eq('channel_id', activeRoom);
+      if (!error) setMembers(data || []);
+    };
+    loadMembers();
+  }, [activeRoom]);
 
   // Auto-scroll to bottom and handle new message notifications
   useEffect(() => {
     if (messages.length > 0) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
       
-      // Check for new messages and play sound
       const latestMessage = messages[messages.length - 1];
       const isOwnMessage = currentProfile && latestMessage.sender_id === currentProfile.id;
       
@@ -88,11 +172,15 @@ const ChatInterface = () => {
         const messageTime = new Date(latestMessage.created_at).getTime();
         const now = Date.now();
         
-        // If message is less than 5 seconds old, it's likely new
         if (now - messageTime < 5000) {
           setNewMessageAlert(true);
-          // Reset alert after 3 seconds
-          setTimeout(() => setNewMessageAlert(false), 3000);
+          setTimeout(() => setNewMessageAlert(false), 2000);
+        }
+        // Mention alert
+        const fullName = currentProfile?.full_name;
+        if (fullName && typeof latestMessage.content === 'string' && latestMessage.content.includes('@' + fullName)) {
+          setMentionAlert(true);
+          setTimeout(() => setMentionAlert(false), 2000);
         }
       }
     }
@@ -121,6 +209,8 @@ const ChatInterface = () => {
       await sendMsg(finalContent);
       setMessage('');
       setReplyingTo(null);
+      setShowMentionList(false);
+      setMentionQuery('');
       
       // Focus back on input
       if (messageInputRef.current) {
@@ -315,6 +405,17 @@ const ChatInterface = () => {
     }
   };
 
+  const highlightMentions = (text: string) => {
+    const parts = text.split(/(@[\p{L}\p{N}_\u0600-\u06FF ]{1,50})/u);
+    return parts.map((part, i) =>
+      part.startsWith('@') ? (
+        <span key={i} className="bg-primary/10 text-primary font-semibold px-1 rounded">{part}</span>
+      ) : (
+        <span key={i}>{part}</span>
+      )
+    );
+  };
+
   const renderMessageContent = (msg: any) => {
     const content = msg.content;
     
@@ -414,7 +515,7 @@ const ChatInterface = () => {
     return (
       <div className="space-y-2">
         {msg.reply_to && <ThreadReply replyToMessage={msg.reply_to} />}
-        <p className="arabic-text leading-relaxed">{content}</p>
+        <p className="arabic-text leading-relaxed">{highlightMentions(content)}</p>
       </div>
     );
   };
@@ -481,7 +582,15 @@ const ChatInterface = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="z-[100] bg-popover/95 backdrop-blur supports-[backdrop-filter]:bg-popover/80 shadow-lg border border-border">
-                <DropdownMenuItem onClick={() => signOut()}>
+                <DropdownMenuItem onClick={async () => {
+                  try {
+                    await signOut();
+                    toast({ title: 'تم تسجيل الخروج' });
+                    window.location.href = '/';
+                  } catch (e) {
+                    toast({ title: 'خطأ في تسجيل الخروج', description: 'حاول مرة أخرى', variant: 'destructive' });
+                  }
+                }}>
                   <LogOut className="h-4 w-4 ml-2" />
                   تسجيل خروج
                 </DropdownMenuItem>
@@ -546,6 +655,10 @@ const ChatInterface = () => {
                         {room.description || 'غرفة دردشة'}
                       </div>
                     </div>
+                    <Badge variant="outline" className="ml-2 flex items-center gap-1">
+                      <Users className="h-3 w-3" />
+                      {memberCounts[room.id] ?? 0}
+                    </Badge>
                   </div>
                 </button>
               ))}
@@ -573,6 +686,31 @@ const ChatInterface = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => {
+                  const v = !soundEnabled;
+                  setSoundEnabled(v);
+                  localStorage.setItem('soundEnabled', String(v));
+                  if (v) { setNewMessageAlert(true); setTimeout(() => setNewMessageAlert(false), 200); }
+                }}
+                className="h-8 w-8"
+                aria-label="تبديل الصوت"
+              >
+                {soundEnabled ? <Bell className="h-4 w-4" /> : <BellOff className="h-4 w-4" />}
+              </Button>
+
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={toggleDarkMode}
+                className="h-8 w-8"
+                aria-label="تبديل الوضع"
+              >
+                {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
+
               <MessageSearch 
                 messages={messages}
                 channels={channels}
@@ -697,12 +835,13 @@ const ChatInterface = () => {
 
         {/* Notification Sound */}
         <NotificationSound 
-          enabled={true} 
+          enabled={soundEnabled} 
           onNewMessage={newMessageAlert} 
+          onMention={mentionAlert}
         />
 
         {/* Message Input */}
-        <div className="bg-card border-t border-border p-4">
+        <div className="bg-card border-t border-border p-4 relative">
           {/* Reply Preview */}
           {replyingTo && (
             <div className="mb-3 p-2 bg-accent/20 rounded-lg border-r-2 border-primary">
@@ -723,6 +862,25 @@ const ChatInterface = () => {
             </div>
           )}
           
+          {showMentionList && mentionQuery && members.length > 0 && (
+            <div className="absolute bottom-24 right-6 z-[140] w-64 bg-popover border border-border rounded-lg shadow-soft">
+              <div className="max-h-60 overflow-auto py-1">
+                {members
+                  .filter(m => (m.user?.full_name || '').includes(mentionQuery))
+                  .slice(0, 6)
+                  .map((m) => (
+                    <button
+                      key={m.user?.id}
+                      onClick={() => insertMention(m.user?.full_name || '')}
+                      className="w-full text-right px-3 py-2 hover:bg-muted arabic-text"
+                    >
+                      {m.user?.full_name}
+                    </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="flex items-end gap-3">
             <div className="flex gap-1">
               <FileUpload
@@ -741,7 +899,7 @@ const ChatInterface = () => {
               <Textarea
                 ref={messageInputRef}
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={handleMessageChange}
                 placeholder={replyingTo ? "اكتب ردك هنا..." : "اكتب رسالتك هنا..."}
                 className="flex-1 arabic-text min-h-12 md:min-h-14 max-h-40 resize-none overflow-y-auto"
                 onKeyDown={handleKeyDown}
