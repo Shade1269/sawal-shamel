@@ -9,7 +9,7 @@ import { LogIn, UserPlus, MessageCircle } from 'lucide-react';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resendVerification } = useAuth();
 
   const [signInForm, setSignInForm] = useState({
     email: '',
@@ -174,6 +174,23 @@ const AuthPage = () => {
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? 'جاري الإنشاء...' : 'إنشاء حساب'}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="w-full"
+                    onClick={async () => {
+                      if (!signUpForm.email) {
+                        console.log('Resend clicked without email');
+                        return;
+                      }
+                      setIsLoading(true);
+                      const result = await resendVerification(signUpForm.email);
+                      console.log('Resend verification result:', result);
+                      setIsLoading(false);
+                    }}
+                  >
+                    لم يصلك البريد؟ أعد إرسال رابط التحقق
                   </Button>
                 </form>
               </CardContent>

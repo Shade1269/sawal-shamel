@@ -10,6 +10,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  resendVerification: (email: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -116,13 +117,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const resendVerification = async (email: string) => {
+    const redirectUrl = `${window.location.origin}/`;
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: redirectUrl
+      }
+    });
+
+    if (error) {
+      toast({
+        title: "تعذّر إرسال البريد",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "تم الإرسال",
+        description: "أعدنا إرسال رابط التحقق إلى بريدك"
+      });
+    }
+
+    return { error };
+  };
+
   const value = {
     user,
     session,
     loading,
     signUp,
     signIn,
-    signOut
+    signOut,
+    resendVerification
   };
 
   return (
