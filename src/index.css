@@ -2,14 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap');
 
 /* Arabic RTL Chat App Design System - All colors MUST be HSL */
 
 @layer base {
   :root {
     --background: 225 25% 98%;
-    --foreground: 220 15% 15%;
+    --foreground: 220 25% 10%;
     
     /* Chat themed colors */
     --primary: 250 90% 65%;
@@ -29,10 +29,10 @@
     --destructive-foreground: 0 0% 100%;
     
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
+    --card-foreground: 220 25% 10%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
+    --popover-foreground: 220 25% 10%;
     
     --border: 225 15% 88%;
     --input: 225 15% 92%;
@@ -109,8 +109,11 @@
   }
 
   body {
-    @apply bg-background text-foreground font-cairo;
+    @apply bg-background text-foreground font-cairo font-medium;
     font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   
   /* RTL Support */
@@ -123,6 +126,10 @@
   .arabic-text {
     font-family: 'Cairo', Arial, sans-serif;
     line-height: 1.8;
+    font-weight: 500;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   /* Smooth animations */
