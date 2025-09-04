@@ -21,6 +21,7 @@ import {
   Play,
   Pause,
   ArrowRight,
+  ArrowDown,
   Settings,
   Pin,
   Search,
@@ -80,6 +81,12 @@ const ChatInterface = () => {
   const [members, setMembers] = useState<any[]>([]);
   const [mentionQuery, setMentionQuery] = useState('');
   const [showMentionList, setShowMentionList] = useState(false);
+
+  // Scroll and new message handling
+  const [isAtBottom, setIsAtBottom] = useState(true);
+  const [hasNewMessages, setHasNewMessages] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -163,11 +170,28 @@ const ChatInterface = () => {
   // Auto-scroll to bottom and handle new message notifications
   useEffect(() => {
     if (messages.length > 0) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      
       const latestMessage = messages[messages.length - 1];
       const isOwnMessage = currentProfile && latestMessage.sender_id === currentProfile.id;
       
+      if (isOwnMessage || isAtBottom) {
+        // Auto-scroll to bottom for own messages or when user is at bottom
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      } else {
+        // User is not at bottom and received a new message
+        if (!isOwnMessage && latestMessage.created_at) {
+          const messageTime = new Date(latestMessage.created_at).getTime();
+          const now = Date.now();
+          
+          if (now - messageTime < 5000) {
+            setHasNewMessages(true);
+            setUnreadCount(prev => prev + 1);
+          }
+        }
+      }
+      
+      // Handle alerts
       if (!isOwnMessage && latestMessage.created_at) {
         const messageTime = new Date(latestMessage.created_at).getTime();
         const now = Date.now();
@@ -176,6 +200,7 @@ const ChatInterface = () => {
           setNewMessageAlert(true);
           setTimeout(() => setNewMessageAlert(false), 2000);
         }
+        
         // Mention alert
         const fullName = currentProfile?.full_name;
         if (fullName && typeof latestMessage.content === 'string' && latestMessage.content.includes('@' + fullName)) {
@@ -184,7 +209,35 @@ const ChatInterface = () => {
         }
       }
     }
-  }, [messages, currentProfile]);
+  }, [messages, currentProfile, isAtBottom]);
+
+  // Handle scroll events to detect if user is at bottom
+  const handleScroll = (event: any) => {
+    const { scrollTop, scrollHeight, clientHeight } = event.target;
+    const isAtBottomNow = scrollHeight - scrollTop - clientHeight < 50;
+    
+    setIsAtBottom(isAtBottomNow);
+    
+    if (isAtBottomNow && hasNewMessages) {
+      setHasNewMessages(false);
+      setUnreadCount(0);
+    }
+  };
+
+  // Function to scroll to bottom
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    setHasNewMessages(false);
+    setUnreadCount(0);
+    setIsAtBottom(true);
+  };
+
+  // Reset new message state when changing rooms
+  useEffect(() => {
+    setHasNewMessages(false);
+    setUnreadCount(0);
+    setIsAtBottom(true);
+  }, [activeRoom]);
 
   // Set default active room to first available channel
   useEffect(() => {
@@ -792,7 +845,11 @@ const ChatInterface = () => {
         </div>
 
         {/* Messages Area */}
-        <ScrollArea className="flex-1 p-4 chat-scrollbar">
+        <ScrollArea 
+          className="flex-1 p-4 chat-scrollbar" 
+          ref={scrollAreaRef}
+          onScroll={handleScroll}
+        >
           {loading ? (
             <div className="text-center p-4 text-muted-foreground">
               جاري تحميل الرسائل...
@@ -880,6 +937,23 @@ const ChatInterface = () => {
                   </div>
                 );
               })}
+              <div ref={messagesEndRef} />
+            </div>
+          )}
+
+          {/* New Messages Notification */}
+          {hasNewMessages && !isAtBottom && (
+            <div className="fixed bottom-32 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in">
+              <Button
+                onClick={scrollToBottom}
+                variant="secondary"
+                className="bg-primary/90 text-white hover:bg-primary shadow-lg rounded-full px-4 py-2 flex items-center gap-2 hover-scale"
+              >
+                <span className="arabic-text text-sm">
+                  {unreadCount > 0 ? `${unreadCount} رسالة جديدة` : 'رسالة جديدة'}
+                </span>
+                <ArrowDown className="h-4 w-4 animate-bounce" />
+              </Button>
             </div>
           )}
         </ScrollArea>
