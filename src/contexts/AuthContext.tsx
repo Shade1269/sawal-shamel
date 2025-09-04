@@ -78,6 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
+    // Try multiple redirect URL formats for better compatibility
     const redirectUrl = `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
@@ -90,6 +91,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       }
     });
+
+    console.log('SignUp redirect URL:', redirectUrl);
 
     if (error) {
       toast({
