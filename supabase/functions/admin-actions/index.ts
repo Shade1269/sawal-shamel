@@ -40,22 +40,33 @@ serve(async (req) => {
   try {
     const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
     
-    // Skip auth check for debugging - in production you should validate admin tokens
+    // SECURITY: Enforce admin authentication - NO BYPASS
     let requesterEmail = null;
-    if (authHeader?.startsWith("Bearer ")) {
-      const token = authHeader.split(" ")[1];
-      const { data: userData, error: userErr } = await supabase.auth.getUser(token);
-      if (userData?.user?.email) {
-        requesterEmail = userData.user.email.toLowerCase();
-      }
+    if (!authHeader?.startsWith("Bearer ")) {
+      return jsonResponse({ error: "Authorization header required" }, 401);
     }
     
-    // For now, allow admin operations (remove this in production)
-    if (!requesterEmail) {
-      console.log("No valid token, allowing admin operation for debugging");
-    } else if (!ALLOWED_ADMIN_EMAILS.has(requesterEmail)) {
-      return jsonResponse({ error: "Forbidden - not admin" }, 403);
+    const token = authHeader.split(" ")[1];
+    const { data: userData, error: userErr } = await supabase.auth.getUser(token);
+    
+    if (userErr || !userData?.user?.email) {
+      return jsonResponse({ error: "Invalid or expired token" }, 401);
     }
+    
+    requesterEmail = userData.user.email.toLowerCase();
+    
+    // Verify admin privileges via database
+    const { data: profile, error: profileErr } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("auth_user_id", userData.user.id)
+      .single();
+      
+    if (profileErr || !profile || profile.role !== 'admin') {
+      return jsonResponse({ error: "Forbidden - Admin privileges required" }, 403);
+    }
+    
+    console.log(`[ADMIN ACTION] ${requesterEmail} performing action`);
 
     const contentType = req.headers.get("content-type") || "";
     let body: any = {};
