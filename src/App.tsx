@@ -15,7 +15,7 @@ const AdminPageLazy = lazy(() => import("./pages/Admin"));
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -30,7 +30,10 @@ const AppContent = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Index />} />
+      <Route 
+        path="/" 
+        element={user ? <Chat /> : <AuthPage />} 
+      />
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
       <Route path="/admin" element={<ProtectedRoute><AdminPageLazy /></ProtectedRoute>} />
