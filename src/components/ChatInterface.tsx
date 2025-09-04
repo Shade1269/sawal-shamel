@@ -54,6 +54,8 @@ import ChannelMembership from './ChannelMembership';
 import NotificationSound from './NotificationSound';
 import MessageSearch from './MessageSearch';
 import PinnedMessages from './PinnedMessages';
+import NotificationManager from './NotificationManager';
+import { useNotifications } from '@/hooks/useNotifications';
 import { supabase } from '@/integrations/supabase/client';
 import { useDarkMode } from '@/components/DarkModeProvider';
 
@@ -74,6 +76,7 @@ const ChatInterface = () => {
   const { toast } = useToast();
   const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage } = useRealTimeChat(activeRoom);
   const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const notifications = useNotifications(user?.id);
 
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [mentionAlert, setMentionAlert] = useState(false);
@@ -199,6 +202,13 @@ const ChatInterface = () => {
         if (now - messageTime < 5000) {
           setNewMessageAlert(true);
           setTimeout(() => setNewMessageAlert(false), 2000);
+          
+          // Show notification for new messages
+          notifications.showInAppNotification(
+            `رسالة جديدة من ${latestMessage.sender?.full_name || 'مستخدم'}`,
+            latestMessage.content.substring(0, 50) + (latestMessage.content.length > 50 ? '...' : ''),
+            { channel: activeRoom }
+          );
         }
         
         // Mention alert
@@ -206,6 +216,13 @@ const ChatInterface = () => {
         if (fullName && typeof latestMessage.content === 'string' && latestMessage.content.includes('@' + fullName)) {
           setMentionAlert(true);
           setTimeout(() => setMentionAlert(false), 2000);
+          
+          // Special notification for mentions
+          notifications.showInAppNotification(
+            `تم ذكرك في رسالة`,
+            `${latestMessage.sender?.full_name || 'مستخدم'}: ${latestMessage.content.substring(0, 50)}`,
+            { channel: activeRoom }
+          );
         }
       }
     }
@@ -1052,6 +1069,7 @@ const ChatInterface = () => {
 
       {/* Users Sidebar */}
       <div className="hidden lg:flex w-64 bg-card border-r border-border flex-col">
+        <NotificationManager className="p-4 border-b border-border" />
         <ChannelMembership 
           channelId={activeRoom}
           currentProfile={currentProfile}

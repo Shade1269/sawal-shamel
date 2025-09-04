@@ -121,18 +121,13 @@ export const useNotifications = (userId?: string) => {
 
   const saveSubscription = async (subscription: PushSubscription, userId: string) => {
     try {
-      const { error } = await supabase
-        .from('push_subscriptions')
-        .upsert({
-          user_id: userId,
-          subscription: subscription.toJSON(),
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id'
-        });
-
-      if (error) throw error;
-      console.log('Subscription saved to database');
+      // TODO: Save to database once push_subscriptions table types are available
+      localStorage.setItem('push_subscription', JSON.stringify({
+        userId,
+        subscription: subscription.toJSON(),
+        timestamp: Date.now()
+      }));
+      console.log('Subscription saved locally');
     } catch (error) {
       console.error('Failed to save subscription:', error);
     }
@@ -182,13 +177,8 @@ export const useNotifications = (userId?: string) => {
         await state.subscription.unsubscribe();
         setState(prev => ({ ...prev, subscription: null }));
         
-        if (userId) {
-          // Remove from database
-          await supabase
-            .from('push_subscriptions')
-            .delete()
-            .eq('user_id', userId);
-        }
+        // Remove from local storage
+        localStorage.removeItem('push_subscription');
 
         toast({
           title: "تم إلغاء الإشعارات",
