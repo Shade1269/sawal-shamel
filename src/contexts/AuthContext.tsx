@@ -13,6 +13,8 @@ interface AuthContextType {
   signInWithPhone: (phone: string) => Promise<{ error: any }>;
   verifyOTP: (phone: string, token: string) => Promise<{ error: any }>;
   resendVerification: (email: string) => Promise<{ error: any }>;
+  sendWhatsAppOTP: (phone: string) => Promise<{ error: any }>;
+  verifyWhatsAppOTP: (phone: string, code: string, fullName?: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -263,6 +265,57 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error };
   };
 
+  const sendWhatsAppOTP = async (phone: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-whatsapp-otp', {
+        body: { phone }
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "تم إرسال رمز التحقق",
+        description: "تحقق من رسائل الواتساب وأدخل الرمز"
+      });
+      
+      return { error: null };
+    } catch (error) {
+      console.error('Error sending WhatsApp OTP:', error);
+      toast({
+        title: "خطأ في إرسال رمز التحقق",
+        description: error.message || "فشل في إرسال رمز التحقق",
+        variant: "destructive"
+      });
+      return { error };
+    }
+  };
+
+  const verifyWhatsAppOTP = async (phone: string, code: string, fullName?: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('verify-whatsapp-otp', {
+        body: { phone, code, fullName }
+      });
+      
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      
+      toast({
+        title: "تم التحقق بنجاح",
+        description: "مرحباً بك في دردشتي!"
+      });
+      
+      return { error: null };
+    } catch (error) {
+      console.error('Error verifying WhatsApp OTP:', error);
+      toast({
+        title: "خطأ في التحقق من الرمز",
+        description: error.message || "فشل في التحقق من الرمز",
+        variant: "destructive"
+      });
+      return { error };
+    }
+  };
+
   const value = {
     user,
     session,
@@ -272,7 +325,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signOut,
     signInWithPhone,
     verifyOTP,
-    resendVerification
+    resendVerification,
+    sendWhatsAppOTP,
+    verifyWhatsAppOTP,
   };
 
   return (

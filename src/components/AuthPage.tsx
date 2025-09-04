@@ -11,14 +11,16 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { Phone, Mail } from 'lucide-react';
+import { Phone, Mail, MessageSquare } from 'lucide-react';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [otpStep, setOtpStep] = useState(false); // للتحكم في عرض شاشة إدخال الرمز
   const [otpValue, setOtpValue] = useState('');
   const [phoneForVerification, setPhoneForVerification] = useState(''); // لحفظ رقم الجوال للتحقق
-  const { signIn, signUp, resendVerification, signInWithPhone, verifyOTP } = useAuth();
+  const [otpType, setOtpType] = useState<'sms' | 'whatsapp'>('sms'); // نوع OTP
+  const [isWhatsAppSignUp, setIsWhatsAppSignUp] = useState(false); // لتحديد إذا كان تسجيل جديد
+  const { signIn, signUp, resendVerification, signInWithPhone, verifyOTP, sendWhatsAppOTP, verifyWhatsAppOTP } = useAuth();
   const navigate = useNavigate();
 
   const [signInForm, setSignInForm] = useState({
@@ -27,7 +29,7 @@ const AuthPage = () => {
     phone: '',
     countryCode: '+966',
     rememberMe: false,
-    loginMethod: 'email' // 'email' or 'phone'
+    loginMethod: 'email' // 'email', 'phone', or 'whatsapp'
   });
 
   const [signUpForm, setSignUpForm] = useState({
@@ -36,7 +38,7 @@ const AuthPage = () => {
     fullName: '',
     phone: '',
     countryCode: '+966', // السعودية افتراضي
-    verifyMethod: 'email' // 'email' or 'phone'
+    verifyMethod: 'email' // 'email', 'phone', or 'whatsapp'
   });
 
   // قائمة الدول العربية مع أرقامها
@@ -86,13 +88,14 @@ const AuthPage = () => {
     
     const isEmailMethod = signInForm.loginMethod === 'email';
     const isPhoneMethod = signInForm.loginMethod === 'phone';
+    const isWhatsAppMethod = signInForm.loginMethod === 'whatsapp';
     
     if (isEmailMethod && (!signInForm.email || !signInForm.password)) {
       console.log('Missing email or password');
       return;
     }
     
-    if (isPhoneMethod && !signInForm.phone) {
+    if ((isPhoneMethod || isWhatsAppMethod) && !signInForm.phone) {
       console.log('Missing phone number');
       return;
     }
@@ -101,13 +104,26 @@ const AuthPage = () => {
     
     let result;
     if (isPhoneMethod) {
-      // تسجيل دخول بالجوال (OTP)
+      // تسجيل دخول بالجوال (SMS OTP)
       const local = signInForm.phone.startsWith('0') ? signInForm.phone.slice(1) : signInForm.phone;
       const fullPhoneNumber = `${signInForm.countryCode}${local}`;
       result = await signInWithPhone(fullPhoneNumber);
       if (!result.error) {
         setPhoneForVerification(fullPhoneNumber);
-        setOtpStep(true); // عرض شاشة إدخال الرمز
+        setOtpType('sms');
+        setIsWhatsAppSignUp(false);
+        setOtpStep(true);
+      }
+    } else if (isWhatsAppMethod) {
+      // تسجيل دخول بالواتساب (WhatsApp OTP)
+      const local = signInForm.phone.startsWith('0') ? signInForm.phone.slice(1) : signInForm.phone;
+      const fullPhoneNumber = `${signInForm.countryCode}${local}`;
+      result = await sendWhatsAppOTP(fullPhoneNumber);
+      if (!result.error) {
+        setPhoneForVerification(fullPhoneNumber);
+        setOtpType('whatsapp');
+        setIsWhatsAppSignUp(false);
+        setOtpStep(true);
       }
     } else {
       // تسجيل دخول بالإيميل والباسورد
@@ -135,6 +151,7 @@ const AuthPage = () => {
     // التحقق من المطلوبات حسب نوع التحقق
     const isEmailMethod = signUpForm.verifyMethod === 'email';
     const isPhoneMethod = signUpForm.verifyMethod === 'phone';
+    const isWhatsAppMethod = signUpForm.verifyMethod === 'whatsapp';
     
     if (!signUpForm.password || !signUpForm.fullName) {
       console.log('Missing required fields');
@@ -146,30 +163,47 @@ const AuthPage = () => {
       return;
     }
     
-    if (isPhoneMethod && !signUpForm.phone) {
-      console.log('Missing phone for phone verification');
+    if ((isPhoneMethod || isWhatsAppMethod) && !signUpForm.phone) {
+      console.log('Missing phone for phone/whatsapp verification');
       return;
     }
     
     setIsLoading(true);
-    // تجميع رقم الجوال الكامل مع رمز الدولة
-    const local = isPhoneMethod ? (signUpForm.phone.startsWith('0') ? signUpForm.phone.slice(1) : signUpForm.phone) : '';
-    const fullPhoneNumber = isPhoneMethod ? `${signUpForm.countryCode}${local}` : '';
     
-    const result = await signUp(
-      signUpForm.email, 
-      signUpForm.password, 
-      signUpForm.fullName,
-      signUpForm.verifyMethod,
-      fullPhoneNumber
-    );
-    
-    // إذا كان التسجيل بالجوال وتم بنجاح، عرض شاشة إدخال الرمز
-    if (!result.error && isPhoneMethod) {
-      setPhoneForVerification(fullPhoneNumber);
-      setOtpStep(true);
+    if (isWhatsAppMethod) {
+      // تسجيل بالواتساب
+      const local = signUpForm.phone.startsWith('0') ? signUpForm.phone.slice(1) : signUpForm.phone;
+      const fullPhoneNumber = `${signUpForm.countryCode}${local}`;
+      const result = await sendWhatsAppOTP(fullPhoneNumber);
+      
+      if (!result.error) {
+        setPhoneForVerification(fullPhoneNumber);
+        setOtpType('whatsapp');
+        setIsWhatsAppSignUp(true);
+        setOtpStep(true);
+      }
+    } else {
+      // التسجيل العادي (إيميل أو جوال)
+      const local = isPhoneMethod ? (signUpForm.phone.startsWith('0') ? signUpForm.phone.slice(1) : signUpForm.phone) : '';
+      const fullPhoneNumber = isPhoneMethod ? `${signUpForm.countryCode}${local}` : '';
+      
+      const result = await signUp(
+        signUpForm.email, 
+        signUpForm.password, 
+        signUpForm.fullName,
+        signUpForm.verifyMethod,
+        fullPhoneNumber
+      );
+      
+      // إذا كان التسجيل بالجوال وتم بنجاح، عرض شاشة إدخال الرمز
+      if (!result.error && isPhoneMethod) {
+        setPhoneForVerification(fullPhoneNumber);
+        setOtpType('sms');
+        setIsWhatsAppSignUp(true);
+        setOtpStep(true);
+      }
     }
-    console.log('SignUp result:', result);
+    
     setIsLoading(false);
   };
 
@@ -181,7 +215,19 @@ const AuthPage = () => {
     }
     
     setIsLoading(true);
-    const result = await verifyOTP(phoneForVerification, otpValue);
+    
+    let result;
+    if (otpType === 'whatsapp') {
+      // التحقق من رمز الواتساب
+      result = await verifyWhatsAppOTP(
+        phoneForVerification, 
+        otpValue, 
+        isWhatsAppSignUp ? signUpForm.fullName : undefined
+      );
+    } else {
+      // التحقق من رمز SMS
+      result = await verifyOTP(phoneForVerification, otpValue);
+    }
     
     if (!result.error) {
       // نجح التحقق، توجيه للدردشة
@@ -208,7 +254,7 @@ const AuthPage = () => {
             <CardHeader className="text-center">
               <CardTitle className="text-right">أدخل رمز التحقق</CardTitle>
               <CardDescription className="text-right">
-                تم إرسال رمز مكون من 6 أرقام إلى {phoneForVerification}
+                تم إرسال رمز مكون من 6 أرقام {otpType === 'whatsapp' ? 'عبر الواتساب' : 'عبر SMS'} إلى {phoneForVerification}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -252,19 +298,23 @@ const AuthPage = () => {
                   العودة للخلف
                 </Button>
                 
-                <Button
-                  type="button"
-                  variant="link"
-                  className="w-full text-sm"
-                  onClick={async () => {
-                    setIsLoading(true);
-                    await signInWithPhone(phoneForVerification);
-                    setIsLoading(false);
-                  }}
-                  disabled={isLoading}
-                >
-                  إعادة إرسال الرمز
-                </Button>
+                 <Button
+                   type="button"
+                   variant="link"
+                   className="w-full text-sm"
+                   onClick={async () => {
+                     setIsLoading(true);
+                     if (otpType === 'whatsapp') {
+                       await sendWhatsAppOTP(phoneForVerification);
+                     } else {
+                       await signInWithPhone(phoneForVerification);
+                     }
+                     setIsLoading(false);
+                   }}
+                   disabled={isLoading}
+                 >
+                   إعادة إرسال الرمز
+                 </Button>
               </div>
             </CardContent>
           </Card>
@@ -294,26 +344,33 @@ const AuthPage = () => {
                   <form onSubmit={handleSignIn} className="space-y-4">
                     <div className="space-y-3 text-right">
                       <Label>طريقة تسجيل الدخول</Label>
-                      <RadioGroup 
-                        value={signInForm.loginMethod} 
-                        onValueChange={(value) => setSignInForm(prev => ({...prev, loginMethod: value}))}
-                        className="flex gap-6 justify-center"
-                      >
-                        <div className="flex items-center space-x-2 space-x-reverse">
-                          <RadioGroupItem value="email" id="login-email-method" />
-                          <Label htmlFor="login-email-method" className="flex items-center gap-2 cursor-pointer">
-                            <Mail className="h-4 w-4" />
-                            البريد الإلكتروني
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2 space-x-reverse">
-                          <RadioGroupItem value="phone" id="login-phone-method" />
-                          <Label htmlFor="login-phone-method" className="flex items-center gap-2 cursor-pointer">
-                            <Phone className="h-4 w-4" />
-                            رقم الجوال
-                          </Label>
-                        </div>
-                      </RadioGroup>
+                       <RadioGroup 
+                         value={signInForm.loginMethod} 
+                         onValueChange={(value) => setSignInForm(prev => ({...prev, loginMethod: value}))}
+                         className="flex gap-4 justify-center"
+                       >
+                         <div className="flex items-center space-x-2 space-x-reverse">
+                           <RadioGroupItem value="email" id="login-email-method" />
+                           <Label htmlFor="login-email-method" className="flex items-center gap-2 cursor-pointer">
+                             <Mail className="h-4 w-4" />
+                             البريد الإلكتروني
+                           </Label>
+                         </div>
+                         <div className="flex items-center space-x-2 space-x-reverse">
+                           <RadioGroupItem value="phone" id="login-phone-method" />
+                           <Label htmlFor="login-phone-method" className="flex items-center gap-2 cursor-pointer">
+                             <Phone className="h-4 w-4" />
+                             رقم الجوال
+                           </Label>
+                         </div>
+                         <div className="flex items-center space-x-2 space-x-reverse">
+                           <RadioGroupItem value="whatsapp" id="login-whatsapp-method" />
+                           <Label htmlFor="login-whatsapp-method" className="flex items-center gap-2 cursor-pointer">
+                             <MessageSquare className="h-4 w-4" />
+                             واتساب
+                           </Label>
+                         </div>
+                       </RadioGroup>
                     </div>
                     
                     {signInForm.loginMethod === 'email' && (
@@ -364,55 +421,57 @@ const AuthPage = () => {
                       </>
                     )}
                     
-                    {signInForm.loginMethod === 'phone' && (
-                      <div className="space-y-2 text-right">
-                        <Label htmlFor="signin-phone">رقم الجوال</Label>
-                        <div className="flex gap-2">
-                          <Select 
-                            value={signInForm.countryCode} 
-                            onValueChange={(value) => setSignInForm(prev => ({...prev, countryCode: value}))}
-                          >
-                            <SelectTrigger className="w-[140px]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className="bg-background border border-border shadow-lg z-50">
-                              {arabCountries.map((country) => (
-                                <SelectItem 
-                                  key={country.code} 
-                                  value={country.code}
-                                  className="text-right cursor-pointer hover:bg-accent"
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <span>{country.flag}</span>
-                                    <span>{country.code}</span>
-                                    <span className="text-sm text-muted-foreground">{country.name}</span>
-                                  </div>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <Input
-                            id="signin-phone"
-                            type="tel"
-                            value={signInForm.phone}
-                              onChange={(e) => {
-                                setSignInForm(prev => ({...prev, phone: e.target.value}));
-                              }}
-                            placeholder="xxxxxxxxx"
-                            required
-                            className="text-right flex-1"
-                          />
-                        </div>
-                        <div className="text-xs text-muted-foreground text-right">
-                          سيتم إرسال رمز التحقق عبر SMS
-                        </div>
-                      </div>
-                    )}
+                     {(signInForm.loginMethod === 'phone' || signInForm.loginMethod === 'whatsapp') && (
+                       <div className="space-y-2 text-right">
+                         <Label htmlFor="signin-phone">رقم الجوال</Label>
+                         <div className="flex gap-2">
+                           <Select 
+                             value={signInForm.countryCode} 
+                             onValueChange={(value) => setSignInForm(prev => ({...prev, countryCode: value}))}
+                           >
+                             <SelectTrigger className="w-[140px]">
+                               <SelectValue />
+                             </SelectTrigger>
+                             <SelectContent className="bg-background border border-border shadow-lg z-50">
+                               {arabCountries.map((country) => (
+                                 <SelectItem 
+                                   key={country.code} 
+                                   value={country.code}
+                                   className="text-right cursor-pointer hover:bg-accent"
+                                 >
+                                   <div className="flex items-center gap-2">
+                                     <span>{country.flag}</span>
+                                     <span>{country.code}</span>
+                                     <span className="text-sm text-muted-foreground">{country.name}</span>
+                                   </div>
+                                 </SelectItem>
+                               ))}
+                             </SelectContent>
+                           </Select>
+                           <Input
+                             id="signin-phone"
+                             type="tel"
+                             value={signInForm.phone}
+                               onChange={(e) => {
+                                 setSignInForm(prev => ({...prev, phone: e.target.value}));
+                               }}
+                             placeholder="xxxxxxxxx"
+                             required
+                             className="text-right flex-1"
+                           />
+                         </div>
+                         <div className="text-xs text-muted-foreground text-right">
+                           {signInForm.loginMethod === 'whatsapp' 
+                             ? 'سيتم إرسال رمز التحقق عبر الواتساب' 
+                             : 'سيتم إرسال رمز التحقق عبر SMS'}
+                         </div>
+                       </div>
+                     )}
                          
-                     <Button type="submit" className="w-full" disabled={isLoading}>
-                      {isLoading ? 'جاري المعالجة...' : 
-                       signInForm.loginMethod === 'phone' ? 'إرسال رمز التحقق' : 'تسجيل دخول'}
-                    </Button>
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                       {isLoading ? 'جاري المعالجة...' : 
+                        (signInForm.loginMethod === 'phone' || signInForm.loginMethod === 'whatsapp') ? 'إرسال رمز التحقق' : 'تسجيل دخول'}
+                     </Button>
                   </form>
                 </CardContent>
               </TabsContent>
@@ -441,26 +500,33 @@ const AuthPage = () => {
                      
                      <div className="space-y-3 text-right">
                        <Label>طريقة التحقق</Label>
-                       <RadioGroup 
-                         value={signUpForm.verifyMethod} 
-                         onValueChange={(value) => setSignUpForm(prev => ({...prev, verifyMethod: value}))}
-                         className="flex gap-6 justify-center"
-                       >
-                         <div className="flex items-center space-x-2 space-x-reverse">
-                           <RadioGroupItem value="email" id="verify-email" />
-                           <Label htmlFor="verify-email" className="flex items-center gap-2 cursor-pointer">
-                             <Mail className="h-4 w-4" />
-                             البريد الإلكتروني
-                           </Label>
-                         </div>
-                         <div className="flex items-center space-x-2 space-x-reverse">
-                           <RadioGroupItem value="phone" id="verify-phone" />
-                           <Label htmlFor="verify-phone" className="flex items-center gap-2 cursor-pointer">
-                             <Phone className="h-4 w-4" />
-                             رقم الجوال
-                           </Label>
-                         </div>
-                       </RadioGroup>
+                        <RadioGroup 
+                          value={signUpForm.verifyMethod} 
+                          onValueChange={(value) => setSignUpForm(prev => ({...prev, verifyMethod: value}))}
+                          className="flex gap-4 justify-center"
+                        >
+                          <div className="flex items-center space-x-2 space-x-reverse">
+                            <RadioGroupItem value="email" id="verify-email" />
+                            <Label htmlFor="verify-email" className="flex items-center gap-2 cursor-pointer">
+                              <Mail className="h-4 w-4" />
+                              البريد الإلكتروني
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 space-x-reverse">
+                            <RadioGroupItem value="phone" id="verify-phone" />
+                            <Label htmlFor="verify-phone" className="flex items-center gap-2 cursor-pointer">
+                              <Phone className="h-4 w-4" />
+                              رقم الجوال
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 space-x-reverse">
+                            <RadioGroupItem value="whatsapp" id="verify-whatsapp" />
+                            <Label htmlFor="verify-whatsapp" className="flex items-center gap-2 cursor-pointer">
+                              <MessageSquare className="h-4 w-4" />
+                              واتساب
+                            </Label>
+                          </div>
+                        </RadioGroup>
                      </div>
                      {signUpForm.verifyMethod === 'email' && (
                        <div className="space-y-2 text-right">
@@ -477,50 +543,52 @@ const AuthPage = () => {
                        </div>
                      )}
                      
-                     {signUpForm.verifyMethod === 'phone' && (
-                       <div className="space-y-2 text-right">
-                         <Label htmlFor="signup-phone">رقم الجوال</Label>
-                         <div className="flex gap-2">
-                           <Select 
-                             value={signUpForm.countryCode} 
-                             onValueChange={(value) => setSignUpForm(prev => ({...prev, countryCode: value}))}
-                           >
-                             <SelectTrigger className="w-[140px]">
-                               <SelectValue />
-                             </SelectTrigger>
-                             <SelectContent className="bg-background border border-border shadow-lg z-50">
-                               {arabCountries.map((country) => (
-                                 <SelectItem 
-                                   key={country.code} 
-                                   value={country.code}
-                                   className="text-right cursor-pointer hover:bg-accent"
-                                 >
-                                   <div className="flex items-center gap-2">
-                                     <span>{country.flag}</span>
-                                     <span>{country.code}</span>
-                                     <span className="text-sm text-muted-foreground">{country.name}</span>
-                                   </div>
-                                 </SelectItem>
-                               ))}
-                             </SelectContent>
-                           </Select>
-                           <Input
-                             id="signup-phone"
-                             type="tel"
-                             value={signUpForm.phone}
-                              onChange={(e) => {
-                                setSignUpForm(prev => ({...prev, phone: e.target.value}));
-                              }}
-                             placeholder="xxxxxxxxx"
-                             required
-                             className="text-right flex-1"
-                           />
-                         </div>
-                         <div className="text-xs text-muted-foreground text-right">
-                           يمكنك إدخال الرقم مع أو بدون صفر في البداية
-                         </div>
-                       </div>
-                     )}
+                      {(signUpForm.verifyMethod === 'phone' || signUpForm.verifyMethod === 'whatsapp') && (
+                        <div className="space-y-2 text-right">
+                          <Label htmlFor="signup-phone">رقم الجوال</Label>
+                          <div className="flex gap-2">
+                            <Select 
+                              value={signUpForm.countryCode} 
+                              onValueChange={(value) => setSignUpForm(prev => ({...prev, countryCode: value}))}
+                            >
+                              <SelectTrigger className="w-[140px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="bg-background border border-border shadow-lg z-50">
+                                {arabCountries.map((country) => (
+                                  <SelectItem 
+                                    key={country.code} 
+                                    value={country.code}
+                                    className="text-right cursor-pointer hover:bg-accent"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <span>{country.flag}</span>
+                                      <span>{country.code}</span>
+                                      <span className="text-sm text-muted-foreground">{country.name}</span>
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Input
+                              id="signup-phone"
+                              type="tel"
+                              value={signUpForm.phone}
+                               onChange={(e) => {
+                                 setSignUpForm(prev => ({...prev, phone: e.target.value}));
+                               }}
+                              placeholder="xxxxxxxxx"
+                              required
+                              className="text-right flex-1"
+                            />
+                          </div>
+                          <div className="text-xs text-muted-foreground text-right">
+                            {signUpForm.verifyMethod === 'whatsapp' 
+                              ? 'سيتم إرسال رمز التحقق عبر الواتساب' 
+                              : 'يمكنك إدخال الرقم مع أو بدون صفر في البداية'}
+                          </div>
+                        </div>
+                      )}
                     <div className="space-y-2 text-right">
                       <Label htmlFor="signup-password">كلمة المرور</Label>
                       <Input

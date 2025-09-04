@@ -51,5 +51,11 @@ inspector_port = 54330
 [functions.admin-actions]
 verify_jwt = true
 
+[functions.send-whatsapp-otp]
+verify_jwt = false
+
+[functions.verify-whatsapp-otp]
+verify_jwt = false
+
 [analytics]
 enabled = false
