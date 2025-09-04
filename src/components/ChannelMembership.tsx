@@ -58,22 +58,56 @@ const ChannelMembership: React.FC<ChannelMembershipProps> = ({
 
   const loadMembers = async () => {
     try {
-      const { data, error } = await supabase
-        .from('channel_members')
-        .select(`
-          *,
-          user:profiles!channel_members_user_id_fkey(id, full_name, avatar_url)
-        `)
-        .eq('channel_id', channelId);
+      // Check if current user is admin or moderator to show all users
+      const isAdminOrModerator = currentProfile && ['admin', 'moderator'].includes(currentProfile.role);
+      
+      if (isAdminOrModerator) {
+        // Show all users for admins/moderators
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url, role, created_at, is_active')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error loading members:', error);
-        return;
+        if (error) {
+          console.error('Error loading all users:', error);
+          return;
+        }
+
+        // Transform data to match member structure
+        const allUsers = (data || []).map(user => ({
+          id: user.id,
+          user_id: user.id,
+          role: user.role || 'member',
+          joined_at: user.created_at,
+          user: {
+            id: user.id,
+            full_name: user.full_name,
+            avatar_url: user.avatar_url,
+            status: 'online' // Default status
+          }
+        }));
+
+        setMembers(allUsers);
+        setOnlineCount(Math.floor(allUsers.length * 0.8)); // Mock online count
+      } else {
+        // Original behavior for regular users - show channel members only
+        const { data, error } = await supabase
+          .from('channel_members')
+          .select(`
+            *,
+            user:profiles!channel_members_user_id_fkey(id, full_name, avatar_url)
+          `)
+          .eq('channel_id', channelId);
+
+        if (error) {
+          console.error('Error loading members:', error);
+          return;
+        }
+
+        setMembers(data || []);
+        setOnlineCount(Math.floor((data?.length || 0) * 0.7));
       }
-
-      setMembers(data || []);
-      // Mock online count (في تطبيق حقيقي، يمكن استخدام Presence API)
-      setOnlineCount(Math.floor((data?.length || 0) * 0.7));
     } catch (error) {
       console.error('Error loading members:', error);
     }
@@ -216,35 +250,40 @@ const ChannelMembership: React.FC<ChannelMembershipProps> = ({
             <div>
               <CardTitle className="text-sm arabic-text flex items-center gap-2">
                 <Users className="h-4 w-4" />
-                أعضاء القناة
+                {currentProfile && ['admin', 'moderator'].includes(currentProfile.role) ? 
+                  'جميع المستخدمين' : 'أعضاء القناة'}
               </CardTitle>
               <CardDescription className="arabic-text">
-                {members.length} عضو • {onlineCount} متصل الآن
+                {members.length} {currentProfile && ['admin', 'moderator'].includes(currentProfile.role) ? 
+                  'مستخدم' : 'عضو'} • {onlineCount} متصل الآن
               </CardDescription>
             </div>
             
-            {!isJoined ? (
-              <Button 
-                size="sm" 
-                onClick={handleJoinChannel} 
-                disabled={loading}
-                className="arabic-text"
-              >
-                <UserPlus className="h-3 w-3 ml-1" />
-                انضمام
-              </Button>
-            ) : (
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={handleLeaveChannel} 
-                disabled={loading}
-                className="arabic-text"
-              >
-                <UserMinus className="h-3 w-3 ml-1" />
-                خروج
-              </Button>
-            )}
+            {/* Hide join/leave buttons for admins/moderators viewing all users */}
+            {!currentProfile || !['admin', 'moderator'].includes(currentProfile.role) ? (
+              !isJoined ? (
+                <Button 
+                  size="sm" 
+                  onClick={handleJoinChannel} 
+                  disabled={loading}
+                  className="arabic-text"
+                >
+                  <UserPlus className="h-3 w-3 ml-1" />
+                  انضمام
+                </Button>
+              ) : (
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={handleLeaveChannel} 
+                  disabled={loading}
+                  className="arabic-text"
+                >
+                  <UserMinus className="h-3 w-3 ml-1" />
+                  خروج
+                </Button>
+              )
+            ) : null}
           </div>
         </CardHeader>
         
@@ -277,8 +316,16 @@ const ChannelMembership: React.FC<ChannelMembershipProps> = ({
                     </p>
                   </div>
 
-                  <Badge variant={member.role === 'admin' ? 'default' : member.role === 'moderator' ? 'secondary' : 'outline'} className="text-xs">
-                    {member.role === 'admin' ? 'مدير' : member.role === 'moderator' ? 'مشرف' : 'عضو'}
+                  <Badge variant={
+                    member.role === 'admin' ? 'default' : 
+                    member.role === 'moderator' ? 'secondary' : 
+                    member.role === 'merchant' ? 'outline' :
+                    'outline'
+                  } className="text-xs">
+                    {member.role === 'admin' ? 'مدير' : 
+                     member.role === 'moderator' ? 'مشرف' : 
+                     member.role === 'merchant' ? 'تاجر' :
+                     member.role === 'affiliate' ? 'مسوق' : 'عضو'}
                   </Badge>
                 </div>
               ))}
@@ -286,7 +333,10 @@ const ChannelMembership: React.FC<ChannelMembershipProps> = ({
               {members.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
                   <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p className="arabic-text">لا يوجد أعضاء في هذه القناة</p>
+                  <p className="arabic-text">
+                    {currentProfile && ['admin', 'moderator'].includes(currentProfile.role) ? 
+                      'لا يوجد مستخدمين' : 'لا يوجد أعضاء في هذه القناة'}
+                  </p>
                 </div>
               )}
             </div>
