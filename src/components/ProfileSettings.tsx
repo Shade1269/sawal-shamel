@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
@@ -156,19 +156,25 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto rtl z-[100]" dir="rtl">
-        <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <DialogTitle className="arabic-text flex items-center gap-2">
-            <User className="h-5 w-5" />
-            الملف الشخصي والإعدادات
-          </DialogTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setOpen(false)}
-            className="h-6 w-6"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+        <DialogHeader>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="arabic-text flex items-center gap-2">
+              <User className="h-5 w-5" />
+              الملف الشخصي والإعدادات
+            </DialogTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setOpen(false)}
+              className="h-8 w-8 rounded-full hover:bg-destructive/10 hover:text-destructive"
+              aria-label="إغلاق"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <DialogDescription className="sr-only">
+            إعدادات الملف الشخصي والحساب
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
