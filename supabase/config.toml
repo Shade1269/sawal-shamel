@@ -57,5 +57,8 @@ verify_jwt = false
 [functions.verify-whatsapp-otp]
 verify_jwt = false
 
+[functions.send-sms-otp]
+verify_jwt = false
+
 [analytics]
 enabled = false

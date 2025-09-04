@@ -13,7 +13,7 @@ interface AuthContextType {
   signInWithPhone: (phone: string) => Promise<{ error: any }>;
   verifyOTP: (phone: string, token: string) => Promise<{ error: any }>;
   resendVerification: (email: string) => Promise<{ error: any }>;
-  sendWhatsAppOTP: (phone: string) => Promise<{ error: any }>;
+  sendSMSOTP: (phone: string) => Promise<{ error: any }>;
   verifyWhatsAppOTP: (phone: string, code: string, fullName?: string) => Promise<{ error: any }>;
 }
 
@@ -265,9 +265,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error };
   };
 
-  const sendWhatsAppOTP = async (phone: string) => {
+  const sendSMSOTP = async (phone: string) => {
     try {
-      const { data, error } = await supabase.functions.invoke('send-whatsapp-otp', {
+      const { data, error } = await supabase.functions.invoke('send-sms-otp', {
         body: { phone }
       });
       
@@ -275,12 +275,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       toast({
         title: "تم إرسال رمز التحقق",
-        description: "تحقق من رسائل الواتساب وأدخل الرمز"
+        description: "تحقق من رسائل SMS وأدخل الرمز"
       });
       
       return { error: null };
     } catch (error) {
-      console.error('Error sending WhatsApp OTP:', error);
+      console.error('Error sending SMS OTP:', error);
       toast({
         title: "خطأ في إرسال رمز التحقق",
         description: error.message || "فشل في إرسال رمز التحقق",
@@ -326,7 +326,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signInWithPhone,
     verifyOTP,
     resendVerification,
-    sendWhatsAppOTP,
+    sendSMSOTP,
     verifyWhatsAppOTP,
   };
 

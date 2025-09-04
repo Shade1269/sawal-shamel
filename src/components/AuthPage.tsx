@@ -20,7 +20,7 @@ const AuthPage = () => {
   const [phoneForVerification, setPhoneForVerification] = useState(''); // لحفظ رقم الجوال للتحقق
   const [otpType, setOtpType] = useState<'sms' | 'whatsapp'>('sms'); // نوع OTP
   const [isWhatsAppSignUp, setIsWhatsAppSignUp] = useState(false); // لتحديد إذا كان تسجيل جديد
-  const { signIn, signUp, resendVerification, signInWithPhone, verifyOTP, sendWhatsAppOTP, verifyWhatsAppOTP } = useAuth();
+  const { signIn, signUp, resendVerification, signInWithPhone, verifyOTP, sendSMSOTP, verifyWhatsAppOTP } = useAuth();
   const navigate = useNavigate();
 
   const [signInForm, setSignInForm] = useState({
@@ -29,7 +29,7 @@ const AuthPage = () => {
     phone: '',
     countryCode: '+966',
     rememberMe: false,
-    loginMethod: 'email' // 'email', 'phone', or 'whatsapp'
+    loginMethod: 'email' // 'email', 'phone', or 'sms'
   });
 
   const [signUpForm, setSignUpForm] = useState({
@@ -38,7 +38,7 @@ const AuthPage = () => {
     fullName: '',
     phone: '',
     countryCode: '+966', // السعودية افتراضي
-    verifyMethod: 'email' // 'email', 'phone', or 'whatsapp'
+    verifyMethod: 'email' // 'email', 'phone', or 'sms'
   });
 
   // قائمة الدول العربية مع أرقامها
@@ -88,14 +88,14 @@ const AuthPage = () => {
     
     const isEmailMethod = signInForm.loginMethod === 'email';
     const isPhoneMethod = signInForm.loginMethod === 'phone';
-    const isWhatsAppMethod = signInForm.loginMethod === 'whatsapp';
+    const isSMSMethod = signInForm.loginMethod === 'sms';
     
     if (isEmailMethod && (!signInForm.email || !signInForm.password)) {
       console.log('Missing email or password');
       return;
     }
     
-    if ((isPhoneMethod || isWhatsAppMethod) && !signInForm.phone) {
+    if ((isPhoneMethod || isSMSMethod) && !signInForm.phone) {
       console.log('Missing phone number');
       return;
     }
@@ -114,14 +114,14 @@ const AuthPage = () => {
         setIsWhatsAppSignUp(false);
         setOtpStep(true);
       }
-    } else if (isWhatsAppMethod) {
-      // تسجيل دخول بالواتساب (WhatsApp OTP)
+    } else if (isSMSMethod) {
+      // تسجيل دخول بـ SMS OTP
       const local = signInForm.phone.startsWith('0') ? signInForm.phone.slice(1) : signInForm.phone;
       const fullPhoneNumber = `${signInForm.countryCode}${local}`;
-      result = await sendWhatsAppOTP(fullPhoneNumber);
+      result = await sendSMSOTP(fullPhoneNumber);
       if (!result.error) {
         setPhoneForVerification(fullPhoneNumber);
-        setOtpType('whatsapp');
+        setOtpType('sms');
         setIsWhatsAppSignUp(false);
         setOtpStep(true);
       }
@@ -151,7 +151,7 @@ const AuthPage = () => {
     // التحقق من المطلوبات حسب نوع التحقق
     const isEmailMethod = signUpForm.verifyMethod === 'email';
     const isPhoneMethod = signUpForm.verifyMethod === 'phone';
-    const isWhatsAppMethod = signUpForm.verifyMethod === 'whatsapp';
+    const isSMSMethod = signUpForm.verifyMethod === 'sms';
     
     if (!signUpForm.password || !signUpForm.fullName) {
       console.log('Missing required fields');
@@ -163,22 +163,22 @@ const AuthPage = () => {
       return;
     }
     
-    if ((isPhoneMethod || isWhatsAppMethod) && !signUpForm.phone) {
-      console.log('Missing phone for phone/whatsapp verification');
+    if ((isPhoneMethod || isSMSMethod) && !signUpForm.phone) {
+      console.log('Missing phone for phone/sms verification');
       return;
     }
     
     setIsLoading(true);
     
-    if (isWhatsAppMethod) {
-      // تسجيل بالواتساب
+    if (isSMSMethod) {
+      // تسجيل بـ SMS
       const local = signUpForm.phone.startsWith('0') ? signUpForm.phone.slice(1) : signUpForm.phone;
       const fullPhoneNumber = `${signUpForm.countryCode}${local}`;
-      const result = await sendWhatsAppOTP(fullPhoneNumber);
+      const result = await sendSMSOTP(fullPhoneNumber);
       
       if (!result.error) {
         setPhoneForVerification(fullPhoneNumber);
-        setOtpType('whatsapp');
+        setOtpType('sms');
         setIsWhatsAppSignUp(true);
         setOtpStep(true);
       }
@@ -217,15 +217,11 @@ const AuthPage = () => {
     setIsLoading(true);
     
     let result;
-    if (otpType === 'whatsapp') {
-      // التحقق من رمز الواتساب
-      result = await verifyWhatsAppOTP(
-        phoneForVerification, 
-        otpValue, 
-        isWhatsAppSignUp ? signUpForm.fullName : undefined
-      );
-    } else {
+    if (otpType === 'sms') {
       // التحقق من رمز SMS
+      result = await verifyOTP(phoneForVerification, otpValue);
+    } else {
+      // التحقق من رمز SMS (احتياطي)
       result = await verifyOTP(phoneForVerification, otpValue);
     }
     
@@ -254,7 +250,7 @@ const AuthPage = () => {
             <CardHeader className="text-center">
               <CardTitle className="text-right">أدخل رمز التحقق</CardTitle>
               <CardDescription className="text-right">
-                تم إرسال رمز مكون من 6 أرقام {otpType === 'whatsapp' ? 'عبر الواتساب' : 'عبر SMS'} إلى {phoneForVerification}
+                تم إرسال رمز مكون من 6 أرقام عبر SMS إلى {phoneForVerification}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -304,8 +300,8 @@ const AuthPage = () => {
                    className="w-full text-sm"
                    onClick={async () => {
                      setIsLoading(true);
-                     if (otpType === 'whatsapp') {
-                       await sendWhatsAppOTP(phoneForVerification);
+                     if (otpType === 'sms') {
+                       await sendSMSOTP(phoneForVerification);
                      } else {
                        await signInWithPhone(phoneForVerification);
                      }
@@ -363,13 +359,13 @@ const AuthPage = () => {
                              رقم الجوال
                            </Label>
                          </div>
-                         <div className="flex items-center space-x-2 space-x-reverse">
-                           <RadioGroupItem value="whatsapp" id="login-whatsapp-method" />
-                           <Label htmlFor="login-whatsapp-method" className="flex items-center gap-2 cursor-pointer">
-                             <MessageSquare className="h-4 w-4" />
-                             واتساب
-                           </Label>
-                         </div>
+                          <div className="flex items-center space-x-2 space-x-reverse">
+                            <RadioGroupItem value="sms" id="login-sms-method" />
+                            <Label htmlFor="login-sms-method" className="flex items-center gap-2 cursor-pointer">
+                              <MessageSquare className="h-4 w-4" />
+                              SMS
+                            </Label>
+                          </div>
                        </RadioGroup>
                     </div>
                     
@@ -421,7 +417,7 @@ const AuthPage = () => {
                       </>
                     )}
                     
-                     {(signInForm.loginMethod === 'phone' || signInForm.loginMethod === 'whatsapp') && (
+                     {(signInForm.loginMethod === 'phone' || signInForm.loginMethod === 'sms') && (
                        <div className="space-y-2 text-right">
                          <Label htmlFor="signin-phone">رقم الجوال</Label>
                          <div className="flex gap-2">
@@ -460,17 +456,17 @@ const AuthPage = () => {
                              className="text-right flex-1"
                            />
                          </div>
-                         <div className="text-xs text-muted-foreground text-right">
-                           {signInForm.loginMethod === 'whatsapp' 
-                             ? 'سيتم إرسال رمز التحقق عبر الواتساب' 
-                             : 'سيتم إرسال رمز التحقق عبر SMS'}
-                         </div>
+                          <div className="text-xs text-muted-foreground text-right">
+                            {signInForm.loginMethod === 'sms' 
+                              ? 'سيتم إرسال رمز التحقق عبر SMS' 
+                              : 'سيتم إرسال رمز التحقق عبر SMS'}
+                          </div>
                        </div>
                      )}
                          
                       <Button type="submit" className="w-full" disabled={isLoading}>
-                       {isLoading ? 'جاري المعالجة...' : 
-                        (signInForm.loginMethod === 'phone' || signInForm.loginMethod === 'whatsapp') ? 'إرسال رمز التحقق' : 'تسجيل دخول'}
+                        {isLoading ? 'جاري المعالجة...' : 
+                         (signInForm.loginMethod === 'phone' || signInForm.loginMethod === 'sms') ? 'إرسال رمز التحقق' : 'تسجيل دخول'}
                      </Button>
                   </form>
                 </CardContent>
@@ -519,13 +515,13 @@ const AuthPage = () => {
                               رقم الجوال
                             </Label>
                           </div>
-                          <div className="flex items-center space-x-2 space-x-reverse">
-                            <RadioGroupItem value="whatsapp" id="verify-whatsapp" />
-                            <Label htmlFor="verify-whatsapp" className="flex items-center gap-2 cursor-pointer">
-                              <MessageSquare className="h-4 w-4" />
-                              واتساب
-                            </Label>
-                          </div>
+                           <div className="flex items-center space-x-2 space-x-reverse">
+                             <RadioGroupItem value="sms" id="verify-sms" />
+                             <Label htmlFor="verify-sms" className="flex items-center gap-2 cursor-pointer">
+                               <MessageSquare className="h-4 w-4" />
+                               SMS
+                             </Label>
+                           </div>
                         </RadioGroup>
                      </div>
                      {signUpForm.verifyMethod === 'email' && (
@@ -543,7 +539,7 @@ const AuthPage = () => {
                        </div>
                      )}
                      
-                      {(signUpForm.verifyMethod === 'phone' || signUpForm.verifyMethod === 'whatsapp') && (
+                      {(signUpForm.verifyMethod === 'phone' || signUpForm.verifyMethod === 'sms') && (
                         <div className="space-y-2 text-right">
                           <Label htmlFor="signup-phone">رقم الجوال</Label>
                           <div className="flex gap-2">
@@ -582,11 +578,11 @@ const AuthPage = () => {
                               className="text-right flex-1"
                             />
                           </div>
-                          <div className="text-xs text-muted-foreground text-right">
-                            {signUpForm.verifyMethod === 'whatsapp' 
-                              ? 'سيتم إرسال رمز التحقق عبر الواتساب' 
-                              : 'يمكنك إدخال الرقم مع أو بدون صفر في البداية'}
-                          </div>
+                           <div className="text-xs text-muted-foreground text-right">
+                             {signUpForm.verifyMethod === 'sms' 
+                               ? 'سيتم إرسال رمز التحقق عبر SMS' 
+                               : 'يمكنك إدخال الرقم مع أو بدون صفر في البداية'}
+                           </div>
                         </div>
                       )}
                     <div className="space-y-2 text-right">
