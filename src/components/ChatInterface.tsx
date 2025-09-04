@@ -993,20 +993,25 @@ const ChatInterface = () => {
                 
                 if (!typingUser?.typing || typingUser.user_id === currentProfile?.id) return null;
                 
+                const displayName = typingUser.full_name || typingUser.email?.split('@')[0] || 'مستخدم';
+                
                 return (
-                  <div key={userId} className="flex gap-3 animate-pulse">
+                  <div key={userId} className="flex gap-3 message-appear">
                     <Avatar className="w-8 h-8 flex-shrink-0">
+                      <AvatarImage src={typingUser.avatar_url} alt="Profile" />
                       <AvatarFallback className="text-sm">
-                        {(typingUser.full_name || 'أ')[0]}
+                        {displayName[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="bg-muted rounded-2xl p-3 rounded-bl-sm">
-                      <div className="flex items-center gap-1">
-                        <span className="text-sm arabic-text">{typingUser.full_name || 'مستخدم'} يكتب</span>
-                        <div className="flex gap-1">
-                          <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                          <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                          <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    <div className="bg-muted/80 dark:bg-muted rounded-2xl p-3 rounded-bl-sm shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm arabic-text font-medium text-muted-foreground">
+                          {displayName} جاري الكتابة
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-primary rounded-full typing-dot"></div>
+                          <div className="w-2 h-2 bg-primary rounded-full typing-dot"></div>
+                          <div className="w-2 h-2 bg-primary rounded-full typing-dot"></div>
                         </div>
                       </div>
                     </div>
