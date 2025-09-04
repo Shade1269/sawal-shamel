@@ -14,6 +14,7 @@ export interface Message {
     id: string;
     full_name: string | null;
     email: string | null;
+    avatar_url: string | null;
   };
 }
 
@@ -126,7 +127,7 @@ export const useRealTimeChat = (channelId: string) => {
         .from('messages')
         .select(`
           *,
-          sender:profiles!messages_sender_id_fkey(id, full_name, email)
+          sender:profiles!messages_sender_id_fkey(id, full_name, email, avatar_url)
         `)
         .eq('channel_id', channelId)
         .order('created_at', { ascending: true })
@@ -164,7 +165,7 @@ export const useRealTimeChat = (channelId: string) => {
           // Get sender info for the new message
           const { data: senderData } = await supabase
             .from('profiles')
-            .select('id, full_name, email')
+            .select('id, full_name, email, avatar_url')
             .eq('id', payload.new.sender_id)
             .single();
 
@@ -179,7 +180,7 @@ export const useRealTimeChat = (channelId: string) => {
       .subscribe();
   };
 
-  const sendMessage = async (content: string, messageType: 'text' | 'image' | 'file' = 'text') => {
+  const sendMessage = async (content: string, messageType: 'text' | 'image' | 'file' | 'voice' = 'text') => {
     if (!currentProfile || !channelId || !content.trim()) {
       return;
     }

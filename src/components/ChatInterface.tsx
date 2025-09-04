@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Send, 
   Paperclip, 
@@ -17,7 +17,9 @@ import {
   Shield,
   MoreVertical,
   LogOut,
-  Trash2
+  Trash2,
+  Play,
+  Pause
 } from 'lucide-react';
 import { useRealTimeChat } from '@/hooks/useRealTimeChat';
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,12 +29,25 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import FileUpload from './FileUpload';
+import VoiceRecorder from './VoiceRecorder';
+import UserProfile from './UserProfile';
+import { supabase } from '@/integrations/supabase/client';
 
 const ChatInterface = () => {
   const [message, setMessage] = useState('');
   const [activeRoom, setActiveRoom] = useState('');
+  const [currentProfile, setCurrentProfile] = useState<any>(null);
+  const [playingAudio, setPlayingAudio] = useState<string | null>(null);
   const { user, signOut } = useAuth();
-  const { messages, channels, loading, currentProfile, sendMessage: sendMsg, deleteMessage } = useRealTimeChat(activeRoom);
+  const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage } = useRealTimeChat(activeRoom);
+
+  // Update current profile when hook profile changes
+  useEffect(() => {
+    if (hookProfile) {
+      setCurrentProfile(hookProfile);
+    }
+  }, [hookProfile]);
 
   // Set default active room to first available channel
   useEffect(() => {
@@ -58,6 +73,140 @@ const ChatInterface = () => {
   const canDeleteMessage = (messageId: string, senderId: string) => {
     // User can delete their own messages, or if they're an admin
     return currentProfile && (currentProfile.id === senderId || currentProfile.role === 'admin');
+  };
+
+  const handleFileUpload = async (url: string, type: 'image' | 'file') => {
+    if (activeRoom) {
+      const content = type === 'image' ? `[صورة] ${url}` : `[ملف] ${url}`;
+      await sendMsg(content, type);
+    }
+  };
+
+  const handleVoiceRecording = async (audioBlob: Blob) => {
+    if (!activeRoom) return;
+
+    try {
+      // Upload audio file to storage
+      const fileName = `voice_${Date.now()}.webm`;
+      const filePath = `voice/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('product-images')
+        .upload(filePath, audioBlob);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Get public URL
+      const { data } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(filePath);
+
+      // Send voice message
+      await sendMsg(`[رسالة صوتية] ${data.publicUrl}`, 'voice');
+    } catch (error) {
+      console.error('Error uploading voice message:', error);
+    }
+  };
+
+  const handleProfileUpdate = (updatedProfile: any) => {
+    setCurrentProfile(updatedProfile);
+  };
+
+  const playAudio = (url: string, messageId: string) => {
+    if (playingAudio === messageId) {
+      // Stop current audio
+      const audio = document.getElementById(`audio-${messageId}`) as HTMLAudioElement;
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+      setPlayingAudio(null);
+    } else {
+      // Stop any currently playing audio
+      if (playingAudio) {
+        const currentAudio = document.getElementById(`audio-${playingAudio}`) as HTMLAudioElement;
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+        }
+      }
+      
+      // Play new audio
+      const audio = document.getElementById(`audio-${messageId}`) as HTMLAudioElement;
+      if (audio) {
+        audio.play();
+        setPlayingAudio(messageId);
+        audio.onended = () => setPlayingAudio(null);
+      }
+    }
+  };
+
+  const renderMessageContent = (msg: any) => {
+    const content = msg.content;
+    
+    // Handle image messages
+    if (content.startsWith('[صورة]') || msg.message_type === 'image') {
+      const imageUrl = content.replace('[صورة] ', '');
+      return (
+        <div className="space-y-2">
+          <img 
+            src={imageUrl} 
+            alt="مشاركة صورة" 
+            className="rounded-lg max-w-full max-h-64 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+            onClick={() => window.open(imageUrl, '_blank')}
+          />
+        </div>
+      );
+    }
+    
+    // Handle voice messages
+    if (content.startsWith('[رسالة صوتية]') || msg.message_type === 'voice') {
+      const audioUrl = content.replace('[رسالة صوتية] ', '');
+      return (
+        <div className="flex items-center gap-2 bg-accent/20 rounded-lg p-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => playAudio(audioUrl, msg.id)}
+            className="h-8 w-8 p-0"
+          >
+            {playingAudio === msg.id ? (
+              <Pause className="h-4 w-4" />
+            ) : (
+              <Play className="h-4 w-4" />
+            )}
+          </Button>
+          <span className="text-sm arabic-text">رسالة صوتية</span>
+          <audio id={`audio-${msg.id}`} preload="metadata">
+            <source src={audioUrl} type="audio/webm" />
+          </audio>
+        </div>
+      );
+    }
+    
+    // Handle file messages
+    if (content.startsWith('[ملف]') || msg.message_type === 'file') {
+      const fileUrl = content.replace('[ملف] ', '');
+      const fileName = fileUrl.split('/').pop() || 'ملف';
+      return (
+        <div className="flex items-center gap-2 bg-accent/20 rounded-lg p-2">
+          <Paperclip className="h-4 w-4" />
+          <a 
+            href={fileUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-sm arabic-text hover:underline"
+          >
+            {fileName}
+          </a>
+        </div>
+      );
+    }
+    
+    // Default text message
+    return <p className="arabic-text leading-relaxed">{content}</p>;
   };
 
   return (
@@ -90,11 +239,18 @@ const ChatInterface = () => {
           
           {currentProfile && (
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">
-                {(currentProfile.full_name || 'أ').split(' ')[0]?.[0]}
-              </div>
+              <Avatar className="w-8 h-8">
+                <AvatarImage src={currentProfile.avatar_url} alt="Profile" />
+                <AvatarFallback className="text-sm">
+                  {(currentProfile.full_name || 'أ')[0]}
+                </AvatarFallback>
+              </Avatar>
               <span className="font-medium arabic-text">{currentProfile.full_name || 'مستخدم'}</span>
               <div className="w-2 h-2 bg-status-online rounded-full mr-auto"></div>
+              <UserProfile 
+                profile={currentProfile} 
+                onProfileUpdate={handleProfileUpdate}
+              />
             </div>
           )}
         </div>
@@ -182,9 +338,12 @@ const ChatInterface = () => {
                     key={msg.id} 
                     className={`flex gap-3 message-appear ${isOwn ? 'flex-row-reverse' : ''}`}
                   >
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                      {senderName[0]}
-                    </div>
+                    <Avatar className="w-8 h-8 flex-shrink-0">
+                      <AvatarImage src={msg.sender?.avatar_url} alt="Profile" />
+                      <AvatarFallback className="text-sm">
+                        {senderName[0]}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className={`max-w-xs lg:max-w-md ${isOwn ? 'text-left' : 'text-right'} group relative`}>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm font-medium arabic-text">{senderName}</span>
@@ -200,7 +359,7 @@ const ChatInterface = () => {
                           ? 'bg-chat-sent text-white rounded-br-sm' 
                           : 'bg-chat-received rounded-bl-sm'
                       }`}>
-                        <p className="arabic-text leading-relaxed">{msg.content}</p>
+                        {renderMessageContent(msg)}
                         
                         {canDeleteMessage(msg.id, msg.sender_id) && (
                           <button
@@ -223,12 +382,14 @@ const ChatInterface = () => {
         <div className="bg-card border-t border-border p-4">
           <div className="flex items-center gap-3">
             <div className="flex gap-1">
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <Image className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <Video className="h-4 w-4" />
-              </Button>
+              <FileUpload
+                onFileUpload={handleFileUpload}
+                accept="image/*"
+                maxSize={5}
+              />
+              <VoiceRecorder
+                onRecordingComplete={handleVoiceRecording}
+              />
               <Button variant="ghost" size="icon" className="h-9 w-9">
                 <Smile className="h-4 w-4" />
               </Button>
@@ -266,9 +427,12 @@ const ChatInterface = () => {
           <div className="p-2 space-y-1">
             {currentProfile && (
               <div className="flex items-center gap-3 p-3 rounded-lg bg-accent/30 transition-colors">
-                <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center text-white text-sm font-bold">
-                  {(currentProfile.full_name || 'أ')[0]}
-                </div>
+                <Avatar className="w-8 h-8">
+                  <AvatarImage src={currentProfile.avatar_url} alt="Profile" />
+                  <AvatarFallback className="text-sm">
+                    {(currentProfile.full_name || 'أ')[0]}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate arabic-text">{currentProfile.full_name || 'أنت'}</div>
                   <div className="w-2 h-2 rounded-full bg-status-online"></div>

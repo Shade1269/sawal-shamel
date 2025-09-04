@@ -42,10 +42,10 @@
     
     /* Chat specific colors */
     --chat-bg: 225 30% 96%;
-    --message-sent: 250 90% 65%;
-    --message-received: 0 0% 100%;
-    --online-status: 120 85% 50%;
-    --offline-status: 220 10% 70%;
+    --chat-sent: 250 90% 65%;
+    --chat-received: 0 0% 100%;
+    --status-online: 120 85% 50%;
+    --status-offline: 220 10% 70%;
     
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
@@ -92,10 +92,10 @@
     --ring: 250 90% 70%;
     
     --chat-bg: 220 25% 6%;
-    --message-sent: 250 90% 65%;
-    --message-received: 220 20% 12%;
-    --online-status: 120 85% 55%;
-    --offline-status: 220 10% 40%;
+    --chat-sent: 250 90% 65%;
+    --chat-received: 220 20% 12%;
+    --status-online: 120 85% 55%;
+    --status-offline: 220 10% 40%;
   }
 }
 
