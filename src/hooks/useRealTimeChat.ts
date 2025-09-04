@@ -45,9 +45,11 @@ export const useRealTimeChat = (channelId: string) => {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentProfile, setCurrentProfile] = useState<any>(null);
+  const [typingUsers, setTypingUsers] = useState<Record<string, any>>({});
   const { user, session } = useAuth();
   const { toast } = useToast();
   const channelRef = useRef<any>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Get or create user profile
   useEffect(() => {
@@ -210,6 +212,29 @@ export const useRealTimeChat = (channelId: string) => {
           });
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'messages',
+          filter: `channel_id=eq.${channelId}`
+        },
+        (payload) => {
+          const deletedId = (payload.old as any).id;
+          setMessages((prev) => prev.filter(m => m.id !== deletedId));
+        }
+      )
+      .on('presence', { event: 'sync' }, () => {
+        const newState = channelRef.current.presenceState();
+        setTypingUsers(newState);
+      })
+      .on('presence', { event: 'join' }, ({ key, newPresences }) => {
+        console.log('join', key, newPresences);
+      })
+      .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+        console.log('leave', key, leftPresences);
+      })
       .subscribe();
   };
 
@@ -343,6 +368,53 @@ export const useRealTimeChat = (channelId: string) => {
     }
   };
 
+  const startTyping = () => {
+    if (!currentProfile || !channelRef.current) return;
+    
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+    
+    // Track typing status
+    channelRef.current.track({
+      user_id: currentProfile.id,
+      full_name: currentProfile.full_name,
+      typing: true,
+      timestamp: Date.now()
+    });
+    
+    // Stop typing after 3 seconds of inactivity
+    typingTimeoutRef.current = setTimeout(() => {
+      stopTyping();
+    }, 3000);
+  };
+
+  const stopTyping = () => {
+    if (!currentProfile || !channelRef.current) return;
+    
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+    
+    channelRef.current.track({
+      user_id: currentProfile.id,
+      full_name: currentProfile.full_name,
+      typing: false,
+      timestamp: Date.now()
+    });
+  };
+
+  // Clear typing indicator when component unmounts
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return {
     messages,
     channels,
@@ -350,6 +422,10 @@ export const useRealTimeChat = (channelId: string) => {
     currentProfile,
     sendMessage,
     deleteMessage,
-    joinChannel
+    joinChannel,
+    setMessages,
+    typingUsers,
+    startTyping,
+    stopTyping
   };
 };

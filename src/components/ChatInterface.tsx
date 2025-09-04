@@ -74,7 +74,7 @@ const ChatInterface = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user, signOut, session } = useAuth();
   const { toast } = useToast();
-  const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage } = useRealTimeChat(activeRoom);
+  const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage, setMessages, typingUsers, startTyping, stopTyping } = useRealTimeChat(activeRoom);
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const notifications = useNotifications(user?.id);
 
@@ -94,6 +94,14 @@ const ChatInterface = () => {
   const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setMessage(value);
+    
+    // Start typing indicator
+    if (value.trim() && startTyping) {
+      startTyping();
+    } else if (!value.trim() && stopTyping) {
+      stopTyping();
+    }
+    
     const cursor = e.target.selectionStart ?? value.length;
     const textBeforeCursor = value.slice(0, cursor);
     const match = textBeforeCursor.match(/@([\p{L}\p{N}_\u0600-\u06FF ]*)$/u);
@@ -276,6 +284,11 @@ const ChatInterface = () => {
         finalContent = `[رد على: ${replyingTo.content.substring(0, 50)}...] ${finalContent}`;
       }
       
+      // Stop typing indicator when sending
+      if (stopTyping) {
+        stopTyping();
+      }
+      
       await sendMsg(finalContent);
       setMessage('');
       setReplyingTo(null);
@@ -425,6 +438,10 @@ const ChatInterface = () => {
           variant: "destructive"
         });
       } else {
+        // Clear messages from UI immediately
+        if (setMessages) {
+          setMessages([]);
+        }
         toast({
           title: "تم مسح الرسائل",
           description: "تم مسح جميع رسائل الغرفة بنجاح"
@@ -954,6 +971,36 @@ const ChatInterface = () => {
                   </div>
                 );
               })}
+              
+              {/* Typing Indicators */}
+              {Object.entries(typingUsers || {}).map(([userId, userStates]) => {
+                const typingUser = Array.isArray(userStates) 
+                  ? userStates.find((state: any) => state.typing) 
+                  : userStates;
+                
+                if (!typingUser?.typing || typingUser.user_id === currentProfile?.id) return null;
+                
+                return (
+                  <div key={userId} className="flex gap-3 animate-pulse">
+                    <Avatar className="w-8 h-8 flex-shrink-0">
+                      <AvatarFallback className="text-sm">
+                        {(typingUser.full_name || 'أ')[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="bg-muted rounded-2xl p-3 rounded-bl-sm">
+                      <div className="flex items-center gap-1">
+                        <span className="text-sm arabic-text">{typingUser.full_name || 'مستخدم'} يكتب</span>
+                        <div className="flex gap-1">
+                          <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                          <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                          <div className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              
               <div ref={messagesEndRef} />
             </div>
           )}
