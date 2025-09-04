@@ -63,19 +63,19 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <DarkModeProvider>
-          <BrowserRouter>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <AuthProvider>
+          <DarkModeProvider>
+            <BrowserRouter>
               <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
                 <AppContent />
               </Suspense>
-            </TooltipProvider>
-          </BrowserRouter>
-        </DarkModeProvider>
-      </AuthProvider>
+            </BrowserRouter>
+          </DarkModeProvider>
+        </AuthProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 };
