@@ -49,7 +49,7 @@ port = 54329
 inspector_port = 54330
 
 [functions.admin-actions]
-verify_jwt = false
+verify_jwt = true
 
 [analytics]
 enabled = false
