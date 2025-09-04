@@ -23,7 +23,6 @@ const Admin = () => {
   const [search, setSearch] = useState("");
   const [targetEmail, setTargetEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [shadeEnsured, setShadeEnsured] = useState(false);
 
   const callAdminApi = async (action: string, body: any = {}) => {
     if (!session?.access_token) {
@@ -31,7 +30,8 @@ const Admin = () => {
       return { error: "unauthorized" };
     }
     try {
-      console.log('Calling admin API:', action, body);
+      // Remove sensitive logging - only log action name
+      console.log('Calling admin API:', action);
       const { data, error } = await supabase.functions.invoke('admin-actions', {
         body: { action, ...body },
         headers: {
@@ -44,10 +44,11 @@ const Admin = () => {
         throw new Error(error.message || "خطأ في الخادم");
       }
       
-      console.log('Admin API response:', data);
+      // Remove sensitive response logging
+      console.log('Admin API completed:', action);
       return { data };
     } catch (e: any) {
-      console.error('API call failed:', e);
+      console.error('API call failed for action:', action);
       toast({ title: "فشل التنفيذ", description: e.message, variant: "destructive" });
       return { error: e.message };
     }
@@ -67,15 +68,10 @@ const Admin = () => {
   useEffect(() => {
     if (isAllowed) {
       loadLists();
-      if (!shadeEnsured) {
-        setShadeEnsured(true);
-        // إنشاء/ربط حساب shade010 وتعيين كلمة المرور
-        callAdminApi("create_user", { email: "shade010@hotmail.com", password: "123456", role: "moderator", full_name: "Shade" });
-        callAdminApi("set_password_by_email", { email: "shade010@hotmail.com", password: "123456", role: "moderator", full_name: "Shade" });
-      }
+      // Remove automatic user creation for security
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAllowed, shadeEnsured]);
+  }, [isAllowed]);
 
   if (!user) {
     return (
