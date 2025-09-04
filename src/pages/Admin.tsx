@@ -30,6 +30,7 @@ const Admin = () => {
       return { error: "unauthorized" };
     }
     try {
+      console.log('Calling admin API:', action, body);
       const { data, error } = await supabase.functions.invoke('admin-actions', {
         body: { action, ...body },
         headers: {
@@ -42,6 +43,7 @@ const Admin = () => {
         throw new Error(error.message || "خطأ في الخادم");
       }
       
+      console.log('Admin API response:', data);
       return { data };
     } catch (e: any) {
       console.error('API call failed:', e);
