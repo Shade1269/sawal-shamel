@@ -892,23 +892,13 @@ export type Database = {
       }
     }
     Views: {
-      channel_member_counts: {
-        Row: {
-          channel_id: string | null
-          member_count: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "channel_members_channel_id_fkey"
-            columns: ["channel_id"]
-            isOneToOne: false
-            referencedRelation: "channels"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
+      get_channel_member_count: {
+        Args: { channel_uuid: string }
+        Returns: number
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
