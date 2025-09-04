@@ -464,7 +464,7 @@ const ChatInterface = () => {
             <div className="space-y-4">
               {messages.map((msg) => {
                 const isOwn = currentProfile && msg.sender_id === currentProfile.id;
-                const senderName = msg.sender?.full_name || msg.sender?.email?.split('@')[0] || 'مستخدم';
+                const senderName = msg.sender?.full_name || 'مستخدم';
                 
                 return (
                   <div 

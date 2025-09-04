@@ -61,7 +61,7 @@ export const useRealTimeChat = (channelId: string) => {
           .insert({
             auth_user_id: user.id,
             email: user.email,
-            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'مستخدم'
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'مستخدم جديد'
           })
           .select()
           .single();
@@ -191,17 +191,12 @@ export const useRealTimeChat = (channelId: string) => {
     }
 
     try {
-      // First, join the channel if not already a member
-      await joinChannel(channelId);
-
       const payload: any = {
         content: content.trim(),
         sender_id: currentProfile.id,
         channel_id: channelId,
+        message_type: messageType
       };
-      if (messageType === 'text') {
-        payload.message_type = 'text';
-      }
 
       const { error } = await supabase
         .from('messages')
