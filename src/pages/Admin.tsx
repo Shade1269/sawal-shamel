@@ -127,7 +127,7 @@ const Admin = () => {
             <div className="flex gap-2">
               <Button onClick={async () => {
                 if (!targetEmail.trim()) return;
-                const res = await callAdminApi("assign_moderator", { email: targetEmail.trim() });
+                const res = await callAdminApi("assign_moderator", { email: targetEmail.trim().toLowerCase() });
                 if (!res.error) {
                   toast({ title: "تم التعيين", description: `${targetEmail} الآن مشرف` });
                   loadLists();
@@ -135,7 +135,7 @@ const Admin = () => {
               }}>تعيين مشرف</Button>
               <Button variant="outline" onClick={async () => {
                 if (!targetEmail.trim()) return;
-                const res = await callAdminApi("revoke_moderator", { email: targetEmail.trim() });
+                const res = await callAdminApi("revoke_moderator", { email: targetEmail.trim().toLowerCase() });
                 if (!res.error) {
                   toast({ title: "تم السحب", description: `تم سحب الإشراف من ${targetEmail}` });
                   loadLists();
@@ -150,7 +150,7 @@ const Admin = () => {
                   <Button onClick={async () => {
                     const pass = (document.getElementById("new-pass") as HTMLInputElement)?.value || "";
                     if (!targetEmail.trim() || !pass) return;
-                    const res = await callAdminApi("create_user", { email: targetEmail.trim(), password: pass, role: "moderator" });
+                    const res = await callAdminApi("create_user", { email: targetEmail.trim().toLowerCase(), password: pass, role: "moderator" });
                     if (!res.error) {
                       toast({ title: "تم الإنشاء", description: `أُنشئ ${targetEmail} كمشرف` });
                       (document.getElementById("new-pass") as HTMLInputElement).value = "";

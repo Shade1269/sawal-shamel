@@ -80,16 +80,17 @@ serve(async (req) => {
       return jsonResponse({ data });
     }
 
-    // Assign moderator by email
     if (action === "assign_moderator") {
       const { email } = body;
       if (!email) return jsonResponse({ error: "email is required" }, 400);
-      const { data: profile, error: findErr } = await supabase
+      const normalizedEmail = String(email).toLowerCase().trim();
+      const { data: profilesList, error: findErr } = await supabase
         .from("profiles")
         .select("id, email, role")
-        .eq("email", email)
-        .maybeSingle();
+        .eq("email", normalizedEmail)
+        .order("created_at", { ascending: false });
       if (findErr) return jsonResponse({ error: findErr.message }, 400);
+      const profile = profilesList?.[0];
       if (!profile) return jsonResponse({ error: "Profile not found" }, 404);
       const { data, error } = await supabase
         .from("profiles")
@@ -105,12 +106,14 @@ serve(async (req) => {
     if (action === "revoke_moderator") {
       const { email } = body;
       if (!email) return jsonResponse({ error: "email is required" }, 400);
-      const { data: profile, error: findErr } = await supabase
+      const normalizedEmail = String(email).toLowerCase().trim();
+      const { data: profilesList, error: findErr } = await supabase
         .from("profiles")
         .select("id, email, role")
-        .eq("email", email)
-        .maybeSingle();
+        .eq("email", normalizedEmail)
+        .order("created_at", { ascending: false });
       if (findErr) return jsonResponse({ error: findErr.message }, 400);
+      const profile = profilesList?.[0];
       if (!profile) return jsonResponse({ error: "Profile not found" }, 404);
       const { data, error } = await supabase
         .from("profiles")
@@ -122,45 +125,77 @@ serve(async (req) => {
       return jsonResponse({ data });
     }
 
-    // Create user with role (admin only) - Updated to handle existing profiles
+    // Create user with role (admin only) - Robust linking and duplicates handling
     if (action === "create_user") {
       const { email, password, role = "moderator", full_name } = body;
       if (!email || !password) return jsonResponse({ error: "email and password are required" }, 400);
 
-      // Check if profile already exists
-      const { data: existingProfile, error: findErr } = await supabase
+      const normalizedEmail = String(email).toLowerCase().trim();
+      console.log(`[create_user] Start for ${normalizedEmail}`);
+
+      // Fetch all profiles matching the email to gracefully handle duplicates
+      const { data: matchingProfiles, error: listErr } = await supabase
         .from("profiles")
-        .select("id, email, auth_user_id, role")
-        .eq("email", email)
-        .maybeSingle();
+        .select("id, email, auth_user_id, role, created_at, full_name")
+        .eq("email", normalizedEmail)
+        .order("created_at", { ascending: false });
 
-      if (findErr) return jsonResponse({ error: findErr.message }, 400);
+      if (listErr) {
+        console.error("[create_user] list profiles error:", listErr);
+        return jsonResponse({ error: listErr.message }, 400);
+      }
 
-      let authUserId: string;
-      
-      if (existingProfile && !existingProfile.auth_user_id) {
-        // Profile exists but no auth user - create auth user and link
-        console.log(`Creating auth user for existing profile: ${email}`);
+      // Choose the best candidate profile (prefer one without auth_user_id)
+      let existingProfile = matchingProfiles?.find((p: any) => !p.auth_user_id) || matchingProfiles?.[0] || null;
+
+      const createAuthUser = async () => {
         const { data: created, error: createErr } = await supabase.auth.admin.createUser({
-          email,
+          email: normalizedEmail,
           password,
           email_confirm: true,
           user_metadata: { full_name: full_name || "User" },
         });
         if (createErr) {
-          console.error("Auth creation error:", createErr);
-          return jsonResponse({ error: createErr.message }, 400);
+          // If user already exists in Auth, fetch their id and continue
+          const msg = String(createErr.message || "").toLowerCase();
+          if (msg.includes("already") || (createErr as any).status === 422) {
+            try {
+              // Try to find existing auth user by paging through users (small scale fallback)
+              let page = 1;
+              let found: any = null;
+              while (!found && page <= 10) {
+                const { data: usersPage, error: listErr } = await (supabase.auth.admin as any).listUsers({ page, perPage: 100 });
+                if (listErr) break;
+                found = usersPage?.users?.find((u: any) => u.email?.toLowerCase() === normalizedEmail);
+                if (!usersPage?.users || usersPage.users.length < 100) break;
+                page++;
+              }
+              if (found) {
+                console.log(`[create_user] Found existing auth user ${found.id} for ${normalizedEmail}`);
+                return { user: { id: found.id } } as { user: { id: string } };
+              }
+            } catch (e) {
+              console.error("[create_user] listUsers fallback failed:", e);
+            }
+          }
+          console.error("[create_user] Auth creation error:", createErr);
+          return { error: createErr };
         }
-        
-        authUserId = created.user!.id;
-        console.log(`Created auth user with ID: ${authUserId}`);
-        
-        // Update existing profile with auth_user_id
+        return { user: created.user } as { user: { id: string } };
+      };
+
+      // Case A: We have a profile without an auth link -> create auth user and link it
+      if (existingProfile && !existingProfile.auth_user_id) {
+        console.log(`[create_user] Linking auth to existing profile ${existingProfile.id}`);
+        const result = await createAuthUser();
+        if ((result as any).error) return jsonResponse({ error: (result as any).error.message }, 400);
+        const authUserId = (result as any).user.id as string;
+
         const { data: updated, error: updateErr } = await supabase
           .from("profiles")
           .update({
             auth_user_id: authUserId,
-            full_name: full_name || email,
+            full_name: full_name || normalizedEmail,
             role,
             updated_at: new Date().toISOString(),
           })
@@ -168,52 +203,53 @@ serve(async (req) => {
           .select("id, email, role, auth_user_id")
           .single();
         if (updateErr) {
-          console.error("Profile update error:", updateErr);
+          console.error("[create_user] Profile update error:", updateErr);
           return jsonResponse({ error: updateErr.message }, 400);
         }
-        
-        console.log(`Successfully linked profile to auth user`);
-        return jsonResponse({ 
-          data: { user: created.user, profile: updated },
-          message: "Successfully created auth account and linked to existing profile"
-        });
-      } else if (existingProfile && existingProfile.auth_user_id) {
-        return jsonResponse({ error: "User already exists with auth account" }, 400);
-      } else {
-        // No existing profile - create everything new
-        console.log(`Creating new user and profile: ${email}`);
-        const { data: created, error: createErr } = await supabase.auth.admin.createUser({
-          email,
-          password,
-          email_confirm: true,
-          user_metadata: { full_name: full_name || "User" },
-        });
-        if (createErr) {
-          console.error("New user auth creation error:", createErr);
-          return jsonResponse({ error: createErr.message }, 400);
-        }
 
-        authUserId = created.user!.id;
+        console.log(`[create_user] Linked profile ${existingProfile.id} to auth ${authUserId}`);
+        return jsonResponse({
+          data: { user: { id: authUserId, email: normalizedEmail }, profile: updated },
+          message: "Successfully created auth account and linked to existing profile",
+        });
+      }
 
-        // Create new profile
-        const { data: newProfile, error: upErr } = await supabase
+      // Case B: Profiles exist and already linked -> just ensure role is set as requested
+      if (existingProfile && existingProfile.auth_user_id) {
+        console.log(`[create_user] Profile already linked (${existingProfile.id}), ensuring role=${role}`);
+        const { data: ensured, error: ensureErr } = await supabase
           .from("profiles")
-          .insert({
-            auth_user_id: authUserId,
-            email,
-            full_name: full_name || email,
-            role,
-          })
+          .update({ role, updated_at: new Date().toISOString() })
+          .eq("id", existingProfile.id)
           .select("id, email, role, auth_user_id")
           .single();
-        if (upErr) {
-          console.error("New profile creation error:", upErr);
-          return jsonResponse({ error: upErr.message }, 400);
-        }
-
-        console.log(`Successfully created new user and profile`);
-        return jsonResponse({ data: { user: created.user, profile: newProfile } });
+        if (ensureErr) return jsonResponse({ error: ensureErr.message }, 400);
+        return jsonResponse({ data: { profile: ensured }, message: "User already existed; role ensured" });
       }
+
+      // Case C: No profile exists -> create auth user then create profile
+      console.log(`[create_user] No profile found, creating new user and profile`);
+      const result = await createAuthUser();
+      if ((result as any).error) return jsonResponse({ error: (result as any).error.message }, 400);
+      const authUserId = (result as any).user.id as string;
+
+      const { data: newProfile, error: upErr } = await supabase
+        .from("profiles")
+        .insert({
+          auth_user_id: authUserId,
+          email: normalizedEmail,
+          full_name: full_name || normalizedEmail,
+          role,
+        })
+        .select("id, email, role, auth_user_id")
+        .single();
+      if (upErr) {
+        console.error("[create_user] New profile creation error:", upErr);
+        return jsonResponse({ error: upErr.message }, 400);
+      }
+
+      console.log(`[create_user] Successfully created new user and profile`);
+      return jsonResponse({ data: { user: { id: authUserId, email: normalizedEmail }, profile: newProfile } });
     }
 
     // List channels
