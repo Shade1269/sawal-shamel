@@ -279,6 +279,24 @@ serve(async (req) => {
       return jsonResponse({ data });
     }
 
+    // Clear all messages in a channel (admin/moderator only)
+    if (action === "clear_channel_messages") {
+      const { channel_id } = body;
+      if (!channel_id) return jsonResponse({ error: "channel_id is required" }, 400);
+      
+      const { error } = await supabase
+        .from('messages')
+        .delete()
+        .eq('channel_id', channel_id);
+        
+      if (error) {
+        console.error('Clear messages error:', error);
+        return jsonResponse({ error: error.message }, 400);
+      }
+      
+      return jsonResponse({ data: { success: true, message: "Channel messages cleared" } });
+    }
+
     return jsonResponse({ error: "Invalid action" }, 400);
 
   } catch (error: any) {

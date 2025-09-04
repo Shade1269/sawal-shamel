@@ -69,7 +69,7 @@ const ChatInterface = () => {
   const [newMessageAlert, setNewMessageAlert] = useState(false);
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { user, signOut } = useAuth();
+  const { user, signOut, session } = useAuth();
   const { toast } = useToast();
   const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage } = useRealTimeChat(activeRoom);
   const { isDarkMode, toggleDarkMode } = useDarkMode();
@@ -325,6 +325,48 @@ const ChatInterface = () => {
       }
     } catch (error) {
       console.error('Error unpinning message:', error);
+    }
+  };
+
+  const handleClearChannelMessages = async () => {
+    if (!activeRoom || !currentProfile || (currentProfile.role !== 'admin' && currentProfile.role !== 'moderator')) {
+      return;
+    }
+
+    const confirmed = window.confirm('هل أنت متأكد من حذف جميع رسائل هذه الغرفة؟ هذا الإجراء لا يمكن التراجع عنه.');
+    if (!confirmed) return;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-actions', {
+        body: { 
+          action: 'clear_channel_messages',
+          channel_id: activeRoom
+        },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+      
+      if (error) {
+        console.error('Error clearing messages:', error);
+        toast({
+          title: "خطأ في مسح الرسائل",
+          description: "فشل في مسح رسائل الغرفة",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "تم مسح الرسائل",
+          description: "تم مسح جميع رسائل الغرفة بنجاح"
+        });
+      }
+    } catch (error) {
+      console.error('Error clearing messages:', error);
+      toast({
+        title: "خطأ في مسح الرسائل", 
+        description: "حدث خطأ أثناء مسح الرسائل",
+        variant: "destructive"
+      });
     }
   };
 
@@ -733,6 +775,15 @@ const ChatInterface = () => {
                     className="h-8 w-8"
                   >
                     <Shield className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => handleClearChannelMessages()}
+                    className="h-8 w-8 text-destructive hover:text-destructive"
+                    title="مسح جميع رسائل الغرفة"
+                  >
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </>
               )}
