@@ -178,40 +178,36 @@ export const useRealTimeChat = (channelId: string) => {
           table: 'messages',
           filter: `channel_id=eq.${channelId}`
         },
-        (payload) => {
+        async (payload) => {
           const newMessage: Message = {
             ...(payload.new as any),
           };
           
-          // Fetch sender info for the new message
+          // Skip if it's our own message (already handled by optimistic update)
+          if (newMessage.sender_id === currentProfile?.id) {
+            return;
+          }
+          
+          // Fetch sender info immediately for faster display
+          let senderData = null;
           if (newMessage.sender_id) {
-            supabase
+            const { data } = await supabase
               .from('profiles')
               .select('id, full_name, email, avatar_url')
               .eq('id', newMessage.sender_id)
-              .single()
-              .then(({ data: senderData }) => {
-                if (senderData) {
-                  newMessage.sender = senderData;
-                }
-                
-                setMessages((prev) => {
-                  // Prevent duplicates (especially after optimistic insert)
-                  if (prev.some(m => m.id === (newMessage as any).id)) return prev;
-                  // Remove matching optimistic temp message
-                  const filtered = prev.filter(m => !(m.id?.startsWith?.('temp-') && m.content === newMessage.content && m.sender_id === newMessage.sender_id));
-                  return [...filtered, newMessage];
-                });
-              });
-          } else {
-            setMessages((prev) => {
-              // Prevent duplicates (especially after optimistic insert)
-              if (prev.some(m => m.id === (newMessage as any).id)) return prev;
-              // Remove matching optimistic temp message
-              const filtered = prev.filter(m => !(m.id?.startsWith?.('temp-') && m.content === newMessage.content && m.sender_id === newMessage.sender_id));
-              return [...filtered, newMessage];
-            });
+              .single();
+            senderData = data;
           }
+          
+          if (senderData) {
+            newMessage.sender = senderData;
+          }
+          
+          setMessages((prev) => {
+            // Prevent duplicates
+            if (prev.some(m => m.id === newMessage.id)) return prev;
+            return [...prev, newMessage];
+          });
         }
       )
       .subscribe();
@@ -223,9 +219,9 @@ export const useRealTimeChat = (channelId: string) => {
     }
 
     const trimmed = content.trim();
-    const tempId = `temp-${Date.now()}`;
+    const tempId = `temp-${Date.now()}-${Math.random()}`;
 
-    // Optimistic UI update
+    // Optimistic UI update with sender info
     const tempMessage: Message = {
       id: tempId,
       content: trimmed,
@@ -233,11 +229,20 @@ export const useRealTimeChat = (channelId: string) => {
       channel_id: channelId,
       message_type: messageType,
       created_at: new Date().toISOString(),
+      sender: {
+        id: currentProfile.id,
+        full_name: currentProfile.full_name,
+        email: currentProfile.email,
+        avatar_url: currentProfile.avatar_url
+      }
     };
+    
+    // Immediately add to UI for instant feedback
     setMessages(prev => [...prev, tempMessage]);
 
     try {
-      const { data: inserted, error } = await supabase
+      // Send to database (no need to select back - real-time will handle others)
+      const { error } = await supabase
         .from('messages')
         .insert({
           content: trimmed,
@@ -245,12 +250,7 @@ export const useRealTimeChat = (channelId: string) => {
           channel_id: channelId,
           message_type: messageType,
           status: 'sent'
-        })
-        .select(`
-          *,
-          sender:profiles!messages_sender_id_fkey(id, full_name, email, avatar_url)
-        `)
-        .single();
+        });
 
       if (error) {
         // Rollback optimistic message
@@ -264,13 +264,15 @@ export const useRealTimeChat = (channelId: string) => {
         return;
       }
 
-      // Replace optimistic with actual inserted message
+      // Message sent successfully - replace temp ID with a more permanent one
+      // The actual DB message will come via real-time subscription if others are listening
       setMessages(prev => prev.map(m => {
         if (m.id === tempId) {
-          return { ...inserted } as Message;
+          return { ...m, id: `sent-${Date.now()}`, status: 'sent' };
         }
         return m;
       }));
+
     } catch (error) {
       // Rollback optimistic message
       setMessages(prev => prev.filter(m => m.id !== tempId));
