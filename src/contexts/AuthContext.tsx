@@ -30,23 +30,51 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log('AuthContext: Setting up auth listener...');
+    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('AuthContext: Auth state changed:', { event, hasSession: !!session, hasUser: !!session?.user });
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
       }
     );
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // Check for existing session with error handling
+    supabase.auth.getSession()
+      .then(({ data: { session }, error }) => {
+        console.log('AuthContext: Got session:', { hasSession: !!session, hasUser: !!session?.user, error });
+        
+        if (error) {
+          console.error('AuthContext: Error getting session:', error);
+          // Clear any problematic session data
+          setSession(null);
+          setUser(null);
+        } else {
+          setSession(session);
+          setUser(session?.user ?? null);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('AuthContext: Failed to get session:', err);
+        setSession(null);
+        setUser(null);
+        setLoading(false);
+      });
 
-    return () => subscription.unsubscribe();
+    // Failsafe timeout to prevent infinite loading
+    const failsafeTimeout = setTimeout(() => {
+      console.log('AuthContext: Failsafe timeout - setting loading to false');
+      setLoading(false);
+    }, 5000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(failsafeTimeout);
+    };
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
