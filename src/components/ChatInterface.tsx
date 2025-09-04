@@ -58,6 +58,7 @@ import NotificationManager from './NotificationManager';
 import UserProfileDialog from './UserProfileDialog';
 import UserProfileMenu from './UserProfileMenu';
 import NotificationPrompt from './NotificationPrompt';
+import SimpleUserProfile from './SimpleUserProfile';
 import { useNotifications } from '@/hooks/useNotifications';
 import { supabase } from '@/integrations/supabase/client';
 import { useDarkMode } from '@/components/DarkModeProvider';
@@ -905,7 +906,22 @@ const ChatInterface = () => {
                 
                 const handleAvatarClick = () => {
                   if (msg.sender && !isOwn) {
-                    setSelectedUserProfile(msg.sender);
+                    setSelectedUserProfile({
+                      ...msg.sender,
+                      created_at: new Date().toISOString(), // Default date
+                      role: 'user'
+                    });
+                    setShowUserProfile(true);
+                  }
+                };
+                
+                const handleNameClick = () => {
+                  if (msg.sender && !isOwn) {
+                    setSelectedUserProfile({
+                      ...msg.sender,
+                      created_at: new Date().toISOString(), // Default date  
+                      role: 'user'
+                    });
                     setShowUserProfile(true);
                   }
                 };
@@ -924,9 +940,14 @@ const ChatInterface = () => {
                         {senderName[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <div className={`max-w-xs lg:max-w-md ${isOwn ? 'text-left' : 'text-right'} group relative`}>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-medium arabic-text">{senderName}</span>
+                      <div className={`max-w-xs lg:max-w-md ${isOwn ? 'text-left' : 'text-right'} group relative`}>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span 
+                            className={`text-sm font-medium arabic-text ${!isOwn ? 'cursor-pointer hover:text-primary transition-colors' : ''}`}
+                            onClick={handleNameClick}
+                          >
+                            {senderName}
+                          </span>
                         <span className="text-xs text-muted-foreground">
                           {new Date(msg.created_at).toLocaleTimeString('ar-SA', { 
                             hour: '2-digit', 
@@ -1182,7 +1203,7 @@ const ChatInterface = () => {
       </Dialog>
 
       {/* User Profile Dialog */}
-      <UserProfileDialog
+      <SimpleUserProfile
         user={selectedUserProfile}
         isOpen={showUserProfile}
         onClose={() => {
@@ -1190,6 +1211,9 @@ const ChatInterface = () => {
           setSelectedUserProfile(null);
         }}
       />
+      
+      {/* Notification Prompt */}
+      <NotificationPrompt />
     </div>
   );
 };

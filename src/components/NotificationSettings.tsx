@@ -100,15 +100,16 @@ const NotificationSettings = () => {
         const newPrefs = { ...preferences, pushEnabled: true };
         savePreferences(newPrefs);
         
-        // Mark as configured so it won't ask again
+        // Mark as configured permanently 
         localStorage.setItem('notificationsConfigured', 'true');
+        localStorage.setItem('notificationPromptDismissed', 'true');
       }
     } else {
       const newPrefs = { ...preferences, pushEnabled: false };
       savePreferences(newPrefs);
       toast({
         title: "تم إيقاف التنبيهات",
-        description: "لن تصلك تنبيهات بعد الآن"
+        description: "يمكنك تشغيلها مرة أخرى من هنا"
       });
     }
     
@@ -158,17 +159,23 @@ const NotificationSettings = () => {
         </div>
 
         {preferences.pushEnabled && (
-          <div className="space-y-4 pl-8 border-r-2 border-primary/20">
+          <div className="space-y-4 pl-6 border-r-2 border-primary/30">
             
             {/* New Messages */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <MessageSquare className="h-4 w-4 text-primary" />
-                <Label>الرسائل الجديدة</Label>
+                <Label className="text-sm cursor-pointer">الرسائل الجديدة</Label>
               </div>
               <Switch
                 checked={preferences.newMessages}
-                onCheckedChange={(checked) => updatePreference('newMessages', checked)}
+                onCheckedChange={(checked) => {
+                  updatePreference('newMessages', checked);
+                  toast({
+                    title: checked ? "تم تفعيل تنبيهات الرسائل" : "تم إيقاف تنبيهات الرسائل",
+                    description: checked ? "ستصلك تنبيهات عند وصول رسائل جديدة" : "لن تصلك تنبيهات للرسائل الجديدة"
+                  });
+                }}
               />
             </div>
 
@@ -176,11 +183,17 @@ const NotificationSettings = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Users className="h-4 w-4 text-primary" />
-                <Label>الإشارات والردود</Label>
+                <Label className="text-sm cursor-pointer">الإشارات والردود</Label>
               </div>
               <Switch
                 checked={preferences.mentions}
-                onCheckedChange={(checked) => updatePreference('mentions', checked)}
+                onCheckedChange={(checked) => {
+                  updatePreference('mentions', checked);
+                  toast({
+                    title: checked ? "تم تفعيل تنبيهات الإشارات" : "تم إيقاف تنبيهات الإشارات",
+                    description: checked ? "ستصلك تنبيهات عند ذكر اسمك" : "لن تصلك تنبيهات للإشارات"
+                  });
+                }}
               />
             </div>
 
@@ -188,11 +201,17 @@ const NotificationSettings = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <MessageSquare className="h-4 w-4 text-primary" />
-                <Label>تحديثات القنوات</Label>
+                <Label className="text-sm cursor-pointer">تحديثات القنوات</Label>
               </div>
               <Switch
                 checked={preferences.channelUpdates}
-                onCheckedChange={(checked) => updatePreference('channelUpdates', checked)}
+                onCheckedChange={(checked) => {
+                  updatePreference('channelUpdates', checked);
+                  toast({
+                    title: checked ? "تم تفعيل تنبيهات القنوات" : "تم إيقاف تنبيهات القنوات",
+                    description: checked ? "ستصلك تنبيهات لتحديثات القنوات" : "لن تصلك تنبيهات لتحديثات القنوات"
+                  });
+                }}
               />
             </div>
 
@@ -200,11 +219,17 @@ const NotificationSettings = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Shield className="h-4 w-4 text-primary" />
-                <Label>إشعارات الإدارة</Label>
+                <Label className="text-sm cursor-pointer">إشعارات الإدارة</Label>
               </div>
               <Switch
                 checked={preferences.moderation}
-                onCheckedChange={(checked) => updatePreference('moderation', checked)}
+                onCheckedChange={(checked) => {
+                  updatePreference('moderation', checked);
+                  toast({
+                    title: checked ? "تم تفعيل إشعارات الإدارة" : "تم إيقاف إشعارات الإدارة",
+                    description: checked ? "ستصلك الإشعارات الإدارية" : "لن تصلك الإشعارات الإدارية"
+                  });
+                }}
               />
             </div>
           </div>
