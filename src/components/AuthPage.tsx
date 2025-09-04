@@ -10,11 +10,15 @@ import { useNavigate } from 'react-router-dom';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Phone, Mail } from 'lucide-react';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp, resendVerification, signInWithPhone } = useAuth();
+  const [otpStep, setOtpStep] = useState(false); // للتحكم في عرض شاشة إدخال الرمز
+  const [otpValue, setOtpValue] = useState('');
+  const [phoneForVerification, setPhoneForVerification] = useState(''); // لحفظ رقم الجوال للتحقق
+  const { signIn, signUp, resendVerification, signInWithPhone, verifyOTP } = useAuth();
   const navigate = useNavigate();
 
   const [signInForm, setSignInForm] = useState({
@@ -100,6 +104,10 @@ const AuthPage = () => {
       // تسجيل دخول بالجوال (OTP)
       const fullPhoneNumber = `${signInForm.countryCode}${signInForm.phone}`;
       result = await signInWithPhone(fullPhoneNumber);
+      if (!result.error) {
+        setPhoneForVerification(fullPhoneNumber);
+        setOtpStep(true); // عرض شاشة إدخال الرمز
+      }
     } else {
       // تسجيل دخول بالإيميل والباسورد
       result = await signIn(signInForm.email, signInForm.password, signInForm.rememberMe);
@@ -153,7 +161,31 @@ const AuthPage = () => {
       signUpForm.verifyMethod,
       fullPhoneNumber
     );
+    
+    // إذا كان التسجيل بالجوال وتم بنجاح، عرض شاشة إدخال الرمز
+    if (!result.error && isPhoneMethod) {
+      setPhoneForVerification(fullPhoneNumber);
+      setOtpStep(true);
+    }
     console.log('SignUp result:', result);
+    setIsLoading(false);
+  };
+
+  // دالة التحقق من رمز OTP
+  const handleVerifyOTP = async () => {
+    if (!otpValue || otpValue.length !== 6) {
+      console.log('Invalid OTP length');
+      return;
+    }
+    
+    setIsLoading(true);
+    const result = await verifyOTP(phoneForVerification, otpValue);
+    
+    if (!result.error) {
+      // نجح التحقق، توجيه للدردشة
+      navigate('/chat');
+    }
+    
     setIsLoading(false);
   };
 
@@ -168,300 +200,369 @@ const AuthPage = () => {
           <p className="text-muted-foreground">منصة الدردشة العربية الحديثة</p>
         </div>
 
-        <Card className="backdrop-blur-sm bg-card/80 border-border/50">
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="signin" className="gap-2">
-                <LogIn className="h-4 w-4" />
-                تسجيل دخول
-              </TabsTrigger>
-              <TabsTrigger value="signup" className="gap-2">
-                <UserPlus className="h-4 w-4" />
-                حساب جديد
-              </TabsTrigger>
-            </TabsList>
+        {/* شاشة إدخال رمز التحقق */}
+        {otpStep ? (
+          <Card className="backdrop-blur-sm bg-card/80 border-border/50">
+            <CardHeader className="text-center">
+              <CardTitle className="text-right">أدخل رمز التحقق</CardTitle>
+              <CardDescription className="text-right">
+                تم إرسال رمز مكون من 6 أرقام إلى {phoneForVerification}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex justify-center">
+                <InputOTP
+                  value={otpValue}
+                  onChange={setOtpValue}
+                  maxLength={6}
+                >
+                  <InputOTPGroup className="gap-2">
+                    {Array.from({ length: 6 }).map((_, index) => (
+                      <InputOTPSlot
+                        key={index}
+                        index={index}
+                        className="w-12 h-12 text-lg font-semibold border-2"
+                      />
+                    ))}
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+              
+              <div className="space-y-3">
+                <Button 
+                  onClick={handleVerifyOTP} 
+                  className="w-full" 
+                  disabled={isLoading || otpValue.length !== 6}
+                >
+                  {isLoading ? 'جاري التحقق...' : 'تأكيد الرمز'}
+                </Button>
+                
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    setOtpStep(false);
+                    setOtpValue('');
+                    setPhoneForVerification('');
+                  }}
+                >
+                  العودة للخلف
+                </Button>
+                
+                <Button
+                  type="button"
+                  variant="link"
+                  className="w-full text-sm"
+                  onClick={async () => {
+                    setIsLoading(true);
+                    await signInWithPhone(phoneForVerification);
+                    setIsLoading(false);
+                  }}
+                  disabled={isLoading}
+                >
+                  إعادة إرسال الرمز
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          /* شاشة تسجيل الدخول والتسجيل العادية */
+          <Card className="backdrop-blur-sm bg-card/80 border-border/50">
+            <Tabs defaultValue="signin" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="signin" className="gap-2">
+                  <LogIn className="h-4 w-4" />
+                  تسجيل دخول
+                </TabsTrigger>
+                <TabsTrigger value="signup" className="gap-2">
+                  <UserPlus className="h-4 w-4" />
+                  حساب جديد
+                </TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="signin" className="space-y-0">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-right">مرحباً بعودتك</CardTitle>
-                <CardDescription className="text-right">
-                  سجل دخولك للمتابعة إلى الدردشة
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSignIn} className="space-y-4">
-                  <div className="space-y-3 text-right">
-                    <Label>طريقة تسجيل الدخول</Label>
-                    <RadioGroup 
-                      value={signInForm.loginMethod} 
-                      onValueChange={(value) => setSignInForm(prev => ({...prev, loginMethod: value}))}
-                      className="flex gap-6 justify-center"
-                    >
-                      <div className="flex items-center space-x-2 space-x-reverse">
-                        <RadioGroupItem value="email" id="login-email-method" />
-                        <Label htmlFor="login-email-method" className="flex items-center gap-2 cursor-pointer">
-                          <Mail className="h-4 w-4" />
-                          البريد الإلكتروني
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2 space-x-reverse">
-                        <RadioGroupItem value="phone" id="login-phone-method" />
-                        <Label htmlFor="login-phone-method" className="flex items-center gap-2 cursor-pointer">
-                          <Phone className="h-4 w-4" />
-                          رقم الجوال
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                  
-                  {signInForm.loginMethod === 'email' && (
-                    <>
-                      <div className="space-y-2 text-right">
-                        <Label htmlFor="signin-email">البريد الإلكتروني</Label>
-                         <Input
-                           id="signin-email"
-                           type="email"
-                           value={signInForm.email}
-                           onChange={(e) => {
-                             console.log('Email input changed:', e.target.value);
-                             setSignInForm(prev => ({...prev, email: e.target.value}));
-                           }}
-                           placeholder="أدخل بريدك الإلكتروني"
-                           required
-                           className="text-right"
-                         />
-                      </div>
-                      <div className="space-y-2 text-right">
-                        <Label htmlFor="signin-password">كلمة المرور</Label>
-                        <Input
-                          id="signin-password"
-                          type="password"
-                          value={signInForm.password}
-                          onChange={(e) => setSignInForm(prev => ({...prev, password: e.target.value}))}
-                          placeholder="أدخل كلمة المرور"
-                          required
-                          className="text-right"
-                         />
-                       </div>
-                       
-                       <div className="flex items-center space-x-2 space-x-reverse">
-                         <Checkbox 
-                           id="remember-me"
-                           checked={signInForm.rememberMe}
-                           onCheckedChange={(checked) => 
-                             setSignInForm(prev => ({...prev, rememberMe: checked as boolean}))
-                           }
-                         />
-                         <Label 
-                           htmlFor="remember-me" 
-                           className="text-sm font-normal cursor-pointer"
-                         >
-                           تذكرني (البقاء متصلاً)
-                         </Label>
-                       </div>
-                    </>
-                  )}
-                  
-                  {signInForm.loginMethod === 'phone' && (
-                    <div className="space-y-2 text-right">
-                      <Label htmlFor="signin-phone">رقم الجوال</Label>
-                      <div className="flex gap-2">
-                        <Select 
-                          value={signInForm.countryCode} 
-                          onValueChange={(value) => setSignInForm(prev => ({...prev, countryCode: value}))}
-                        >
-                          <SelectTrigger className="w-[140px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-background border border-border shadow-lg z-50">
-                            {arabCountries.map((country) => (
-                              <SelectItem 
-                                key={country.code} 
-                                value={country.code}
-                                className="text-right cursor-pointer hover:bg-accent"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <span>{country.flag}</span>
-                                  <span>{country.code}</span>
-                                  <span className="text-sm text-muted-foreground">{country.name}</span>
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Input
-                          id="signin-phone"
-                          type="tel"
-                          value={signInForm.phone}
-                          onChange={(e) => {
-                            // إزالة الأصفار في البداية تلقائياً
-                            const value = e.target.value.replace(/^0+/, '');
-                            setSignInForm(prev => ({...prev, phone: value}));
-                          }}
-                          placeholder="xxxxxxxxx"
-                          required
-                          className="text-right flex-1"
-                        />
-                      </div>
-                      <div className="text-xs text-muted-foreground text-right">
-                        سيتم إرسال رمز التحقق عبر SMS
-                      </div>
+              <TabsContent value="signin" className="space-y-0">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-right">مرحباً بعودتك</CardTitle>
+                  <CardDescription className="text-right">
+                    سجل دخولك للمتابعة إلى الدردشة
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSignIn} className="space-y-4">
+                    <div className="space-y-3 text-right">
+                      <Label>طريقة تسجيل الدخول</Label>
+                      <RadioGroup 
+                        value={signInForm.loginMethod} 
+                        onValueChange={(value) => setSignInForm(prev => ({...prev, loginMethod: value}))}
+                        className="flex gap-6 justify-center"
+                      >
+                        <div className="flex items-center space-x-2 space-x-reverse">
+                          <RadioGroupItem value="email" id="login-email-method" />
+                          <Label htmlFor="login-email-method" className="flex items-center gap-2 cursor-pointer">
+                            <Mail className="h-4 w-4" />
+                            البريد الإلكتروني
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2 space-x-reverse">
+                          <RadioGroupItem value="phone" id="login-phone-method" />
+                          <Label htmlFor="login-phone-method" className="flex items-center gap-2 cursor-pointer">
+                            <Phone className="h-4 w-4" />
+                            رقم الجوال
+                          </Label>
+                        </div>
+                      </RadioGroup>
                     </div>
-                  )}
-                       
-                   <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'جاري المعالجة...' : 
-                     signInForm.loginMethod === 'phone' ? 'إرسال رمز التحقق' : 'تسجيل دخول'}
-                  </Button>
-                </form>
-              </CardContent>
-            </TabsContent>
+                    
+                    {signInForm.loginMethod === 'email' && (
+                      <>
+                        <div className="space-y-2 text-right">
+                          <Label htmlFor="signin-email">البريد الإلكتروني</Label>
+                           <Input
+                             id="signin-email"
+                             type="email"
+                             value={signInForm.email}
+                             onChange={(e) => {
+                               console.log('Email input changed:', e.target.value);
+                               setSignInForm(prev => ({...prev, email: e.target.value}));
+                             }}
+                             placeholder="أدخل بريدك الإلكتروني"
+                             required
+                             className="text-right"
+                           />
+                        </div>
+                        <div className="space-y-2 text-right">
+                          <Label htmlFor="signin-password">كلمة المرور</Label>
+                          <Input
+                            id="signin-password"
+                            type="password"
+                            value={signInForm.password}
+                            onChange={(e) => setSignInForm(prev => ({...prev, password: e.target.value}))}
+                            placeholder="أدخل كلمة المرور"
+                            required
+                            className="text-right"
+                           />
+                         </div>
+                         
+                         <div className="flex items-center space-x-2 space-x-reverse">
+                           <Checkbox 
+                             id="remember-me"
+                             checked={signInForm.rememberMe}
+                             onCheckedChange={(checked) => 
+                               setSignInForm(prev => ({...prev, rememberMe: checked as boolean}))
+                             }
+                           />
+                           <Label 
+                             htmlFor="remember-me" 
+                             className="text-sm font-normal cursor-pointer"
+                           >
+                             تذكرني (البقاء متصلاً)
+                           </Label>
+                         </div>
+                      </>
+                    )}
+                    
+                    {signInForm.loginMethod === 'phone' && (
+                      <div className="space-y-2 text-right">
+                        <Label htmlFor="signin-phone">رقم الجوال</Label>
+                        <div className="flex gap-2">
+                          <Select 
+                            value={signInForm.countryCode} 
+                            onValueChange={(value) => setSignInForm(prev => ({...prev, countryCode: value}))}
+                          >
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-background border border-border shadow-lg z-50">
+                              {arabCountries.map((country) => (
+                                <SelectItem 
+                                  key={country.code} 
+                                  value={country.code}
+                                  className="text-right cursor-pointer hover:bg-accent"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span>{country.flag}</span>
+                                    <span>{country.code}</span>
+                                    <span className="text-sm text-muted-foreground">{country.name}</span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Input
+                            id="signin-phone"
+                            type="tel"
+                            value={signInForm.phone}
+                            onChange={(e) => {
+                              // إزالة الأصفار في البداية تلقائياً
+                              const value = e.target.value.replace(/^0+/, '');
+                              setSignInForm(prev => ({...prev, phone: value}));
+                            }}
+                            placeholder="xxxxxxxxx"
+                            required
+                            className="text-right flex-1"
+                          />
+                        </div>
+                        <div className="text-xs text-muted-foreground text-right">
+                          سيتم إرسال رمز التحقق عبر SMS
+                        </div>
+                      </div>
+                    )}
+                         
+                     <Button type="submit" className="w-full" disabled={isLoading}>
+                      {isLoading ? 'جاري المعالجة...' : 
+                       signInForm.loginMethod === 'phone' ? 'إرسال رمز التحقق' : 'تسجيل دخول'}
+                    </Button>
+                  </form>
+                </CardContent>
+              </TabsContent>
 
-            <TabsContent value="signup" className="space-y-0">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-right">إنشاء حساب جديد</CardTitle>
-                <CardDescription className="text-right">
-                  أنشئ حسابك للانضمام إلى مجتمع الدردشة
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSignUp} className="space-y-4">
-                   <div className="space-y-2 text-right">
-                     <Label htmlFor="signup-name">الاسم الكامل</Label>
-                     <Input
-                       id="signup-name"
-                       type="text"
-                       value={signUpForm.fullName}
-                       onChange={(e) => setSignUpForm(prev => ({...prev, fullName: e.target.value}))}
-                       placeholder="أدخل اسمك الكامل"
-                       required
-                       className="text-right"
-                     />
-                   </div>
-                   
-                   <div className="space-y-3 text-right">
-                     <Label>طريقة التحقق</Label>
-                     <RadioGroup 
-                       value={signUpForm.verifyMethod} 
-                       onValueChange={(value) => setSignUpForm(prev => ({...prev, verifyMethod: value}))}
-                       className="flex gap-6 justify-center"
-                     >
-                       <div className="flex items-center space-x-2 space-x-reverse">
-                         <RadioGroupItem value="email" id="verify-email" />
-                         <Label htmlFor="verify-email" className="flex items-center gap-2 cursor-pointer">
-                           <Mail className="h-4 w-4" />
-                           البريد الإلكتروني
-                         </Label>
-                       </div>
-                       <div className="flex items-center space-x-2 space-x-reverse">
-                         <RadioGroupItem value="phone" id="verify-phone" />
-                         <Label htmlFor="verify-phone" className="flex items-center gap-2 cursor-pointer">
-                           <Phone className="h-4 w-4" />
-                           رقم الجوال
-                         </Label>
-                       </div>
-                     </RadioGroup>
-                   </div>
-                   {signUpForm.verifyMethod === 'email' && (
+              <TabsContent value="signup" className="space-y-0">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-right">إنشاء حساب جديد</CardTitle>
+                  <CardDescription className="text-right">
+                    أنشئ حسابك للانضمام إلى مجتمع الدردشة
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleSignUp} className="space-y-4">
                      <div className="space-y-2 text-right">
-                       <Label htmlFor="signup-email">البريد الإلكتروني</Label>
+                       <Label htmlFor="signup-name">الاسم الكامل</Label>
                        <Input
-                         id="signup-email"
-                         type="email"
-                         value={signUpForm.email}
-                         onChange={(e) => setSignUpForm(prev => ({...prev, email: e.target.value}))}
-                         placeholder="أدخل بريدك الإلكتروني"
+                         id="signup-name"
+                         type="text"
+                         value={signUpForm.fullName}
+                         onChange={(e) => setSignUpForm(prev => ({...prev, fullName: e.target.value}))}
+                         placeholder="أدخل اسمك الكامل"
                          required
                          className="text-right"
                        />
                      </div>
-                   )}
-                   
-                   {signUpForm.verifyMethod === 'phone' && (
-                     <div className="space-y-2 text-right">
-                       <Label htmlFor="signup-phone">رقم الجوال</Label>
-                       <div className="flex gap-2">
-                         <Select 
-                           value={signUpForm.countryCode} 
-                           onValueChange={(value) => setSignUpForm(prev => ({...prev, countryCode: value}))}
-                         >
-                           <SelectTrigger className="w-[140px]">
-                             <SelectValue />
-                           </SelectTrigger>
-                           <SelectContent className="bg-background border border-border shadow-lg z-50">
-                             {arabCountries.map((country) => (
-                               <SelectItem 
-                                 key={country.code} 
-                                 value={country.code}
-                                 className="text-right cursor-pointer hover:bg-accent"
-                               >
-                                 <div className="flex items-center gap-2">
-                                   <span>{country.flag}</span>
-                                   <span>{country.code}</span>
-                                   <span className="text-sm text-muted-foreground">{country.name}</span>
-                                 </div>
-                               </SelectItem>
-                             ))}
-                           </SelectContent>
-                         </Select>
+                     
+                     <div className="space-y-3 text-right">
+                       <Label>طريقة التحقق</Label>
+                       <RadioGroup 
+                         value={signUpForm.verifyMethod} 
+                         onValueChange={(value) => setSignUpForm(prev => ({...prev, verifyMethod: value}))}
+                         className="flex gap-6 justify-center"
+                       >
+                         <div className="flex items-center space-x-2 space-x-reverse">
+                           <RadioGroupItem value="email" id="verify-email" />
+                           <Label htmlFor="verify-email" className="flex items-center gap-2 cursor-pointer">
+                             <Mail className="h-4 w-4" />
+                             البريد الإلكتروني
+                           </Label>
+                         </div>
+                         <div className="flex items-center space-x-2 space-x-reverse">
+                           <RadioGroupItem value="phone" id="verify-phone" />
+                           <Label htmlFor="verify-phone" className="flex items-center gap-2 cursor-pointer">
+                             <Phone className="h-4 w-4" />
+                             رقم الجوال
+                           </Label>
+                         </div>
+                       </RadioGroup>
+                     </div>
+                     {signUpForm.verifyMethod === 'email' && (
+                       <div className="space-y-2 text-right">
+                         <Label htmlFor="signup-email">البريد الإلكتروني</Label>
                          <Input
-                           id="signup-phone"
-                           type="tel"
-                           value={signUpForm.phone}
-                           onChange={(e) => {
-                             // إزالة الأصفار في البداية تلقائياً
-                             const value = e.target.value.replace(/^0+/, '');
-                             setSignUpForm(prev => ({...prev, phone: value}));
-                           }}
-                           placeholder="xxxxxxxxx"
+                           id="signup-email"
+                           type="email"
+                           value={signUpForm.email}
+                           onChange={(e) => setSignUpForm(prev => ({...prev, email: e.target.value}))}
+                           placeholder="أدخل بريدك الإلكتروني"
                            required
-                           className="text-right flex-1"
+                           className="text-right"
                          />
                        </div>
-                       <div className="text-xs text-muted-foreground text-right">
-                         أدخل الرقم بدون الصفر في البداية
+                     )}
+                     
+                     {signUpForm.verifyMethod === 'phone' && (
+                       <div className="space-y-2 text-right">
+                         <Label htmlFor="signup-phone">رقم الجوال</Label>
+                         <div className="flex gap-2">
+                           <Select 
+                             value={signUpForm.countryCode} 
+                             onValueChange={(value) => setSignUpForm(prev => ({...prev, countryCode: value}))}
+                           >
+                             <SelectTrigger className="w-[140px]">
+                               <SelectValue />
+                             </SelectTrigger>
+                             <SelectContent className="bg-background border border-border shadow-lg z-50">
+                               {arabCountries.map((country) => (
+                                 <SelectItem 
+                                   key={country.code} 
+                                   value={country.code}
+                                   className="text-right cursor-pointer hover:bg-accent"
+                                 >
+                                   <div className="flex items-center gap-2">
+                                     <span>{country.flag}</span>
+                                     <span>{country.code}</span>
+                                     <span className="text-sm text-muted-foreground">{country.name}</span>
+                                   </div>
+                                 </SelectItem>
+                               ))}
+                             </SelectContent>
+                           </Select>
+                           <Input
+                             id="signup-phone"
+                             type="tel"
+                             value={signUpForm.phone}
+                             onChange={(e) => {
+                               // إزالة الأصفار في البداية تلقائياً
+                               const value = e.target.value.replace(/^0+/, '');
+                               setSignUpForm(prev => ({...prev, phone: value}));
+                             }}
+                             placeholder="xxxxxxxxx"
+                             required
+                             className="text-right flex-1"
+                           />
+                         </div>
+                         <div className="text-xs text-muted-foreground text-right">
+                           أدخل الرقم بدون الصفر في البداية
+                         </div>
                        </div>
-                     </div>
-                   )}
-                  <div className="space-y-2 text-right">
-                    <Label htmlFor="signup-password">كلمة المرور</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      value={signUpForm.password}
-                      onChange={(e) => setSignUpForm(prev => ({...prev, password: e.target.value}))}
-                      placeholder="أدخل كلمة مرور قوية"
-                      required
-                      className="text-right"
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'جاري الإنشاء...' : 'إنشاء حساب'}
-                  </Button>
-                   {signUpForm.verifyMethod === 'email' && (
-                     <Button
-                       type="button"
-                       variant="link"
-                       className="w-full"
-                       onClick={async () => {
-                         if (!signUpForm.email) {
-                           console.log('Resend clicked without email');
-                           return;
-                         }
-                         setIsLoading(true);
-                         const result = await resendVerification(signUpForm.email);
-                         console.log('Resend verification result:', result);
-                         setIsLoading(false);
-                       }}
-                     >
-                       لم يصلك البريد؟ أعد إرسال رابط التحقق
-                     </Button>
-                   )}
-                </form>
-              </CardContent>
-            </TabsContent>
-          </Tabs>
-        </Card>
+                     )}
+                    <div className="space-y-2 text-right">
+                      <Label htmlFor="signup-password">كلمة المرور</Label>
+                      <Input
+                        id="signup-password"
+                        type="password"
+                        value={signUpForm.password}
+                        onChange={(e) => setSignUpForm(prev => ({...prev, password: e.target.value}))}
+                        placeholder="أدخل كلمة مرور قوية"
+                        required
+                        className="text-right"
+                      />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={isLoading}>
+                      {isLoading ? 'جاري الإنشاء...' : 'إنشاء حساب'}
+                    </Button>
+                     {signUpForm.verifyMethod === 'email' && (
+                       <Button
+                         type="button"
+                         variant="link"
+                         className="w-full"
+                         onClick={async () => {
+                           if (!signUpForm.email) {
+                             console.log('Resend clicked without email');
+                             return;
+                           }
+                           setIsLoading(true);
+                           const result = await resendVerification(signUpForm.email);
+                           console.log('Resend verification result:', result);
+                           setIsLoading(false);
+                         }}
+                       >
+                         لم يصلك البريد؟ أعد إرسال رابط التحقق
+                       </Button>
+                     )}
+                  </form>
+                </CardContent>
+              </TabsContent>
+            </Tabs>
+          </Card>
+        )}
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ interface AuthContextType {
   signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   signInWithPhone: (phone: string) => Promise<{ error: any }>;
+  verifyOTP: (phone: string, token: string) => Promise<{ error: any }>;
   resendVerification: (email: string) => Promise<{ error: any }>;
 }
 
@@ -209,6 +210,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     return { error };
   };
+
+  const verifyOTP = async (phone: string, token: string) => {
+    console.log('VerifyOTP called with:', { phone, token });
+    
+    const { error } = await supabase.auth.verifyOtp({
+      phone: phone,
+      token: token,
+      type: 'sms'
+    });
+
+    if (error) {
+      console.error('VerifyOTP error:', error);
+      toast({
+        title: "خطأ في التحقق من الرمز",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "تم التحقق بنجاح",
+        description: "مرحباً بك في دردشتي!"
+      });
+    }
+
+    return { error };
+  };
+
   const resendVerification = async (email: string) => {
     const redirectUrl = `${window.location.origin}/`;
     const { error } = await supabase.auth.resend({
@@ -243,6 +271,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signIn,
     signOut,
     signInWithPhone,
+    verifyOTP,
     resendVerification
   };
 
