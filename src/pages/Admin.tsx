@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const ADMIN_EMAIL = "Shade199633@icloud.com";
 
@@ -28,18 +29,21 @@ const Admin = () => {
       return { error: "unauthorized" };
     }
     try {
-      const res = await fetch("/functions/v1/admin-actions", {
-        method: "POST",
+      const { data, error } = await supabase.functions.invoke('admin-actions', {
+        body: { action, ...body },
         headers: {
-          "Authorization": `Bearer ${session.access_token}`,
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ action, ...body }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "خطأ غير معروف");
+      
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw new Error(error.message || "خطأ في الخادم");
+      }
+      
       return { data };
     } catch (e: any) {
+      console.error('API call failed:', e);
       toast({ title: "فشل التنفيذ", description: e.message, variant: "destructive" });
       return { error: e.message };
     }
