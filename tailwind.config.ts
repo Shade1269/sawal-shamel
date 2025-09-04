@@ -58,12 +58,12 @@ export default {
 				},
 				chat: {
 					bg: 'hsl(var(--chat-bg))',
-					sent: 'hsl(var(--message-sent))',
-					received: 'hsl(var(--message-received))',
+					sent: 'hsl(var(--chat-sent))',
+					received: 'hsl(var(--chat-received))',
 				},
 				status: {
-					online: 'hsl(var(--online-status))',
-					offline: 'hsl(var(--offline-status))',
+					online: 'hsl(var(--status-online))',
+					offline: 'hsl(var(--status-offline))',
 				}
 			},
 			backgroundImage: {
