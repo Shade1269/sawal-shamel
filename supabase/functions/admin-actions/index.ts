@@ -198,3 +198,36 @@ serve(async (req) => {
     }
 
     // List channels
+    if (action === "list_channels") {
+      const { data, error } = await supabase
+        .from("channels")
+        .select("id, name, description, type, is_active, created_at")
+        .order("created_at", { ascending: false });
+      if (error) return jsonResponse({ error: error.message }, 400);
+      return jsonResponse({ data });
+    }
+
+    // List users
+    if (action === "list_users") {
+      const { query } = body;
+      let queryBuilder = supabase
+        .from("profiles")
+        .select("id, email, full_name, role, created_at, is_active")
+        .order("created_at", { ascending: false });
+
+      if (query && typeof query === "string") {
+        queryBuilder = queryBuilder.or(`full_name.ilike.%${query}%,email.ilike.%${query}%`);
+      }
+
+      const { data, error } = await queryBuilder;
+      if (error) return jsonResponse({ error: error.message }, 400);
+      return jsonResponse({ data });
+    }
+
+    return jsonResponse({ error: "Invalid action" }, 400);
+
+  } catch (error: any) {
+    console.error("Edge function error:", error);
+    return jsonResponse({ error: error.message || "Internal server error" }, 500);
+  }
+});
