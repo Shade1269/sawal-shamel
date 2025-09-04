@@ -8,6 +8,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { LogIn, UserPlus, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Phone, Mail } from 'lucide-react';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +25,9 @@ const AuthPage = () => {
   const [signUpForm, setSignUpForm] = useState({
     email: '',
     password: '',
-    fullName: ''
+    fullName: '',
+    phone: '',
+    verifyMethod: 'email' // 'email' or 'phone'
   });
 
   // Load saved credentials on component mount
@@ -75,17 +79,33 @@ const AuthPage = () => {
       password: '***' 
     });
     
-    if (!signUpForm.email || !signUpForm.password || !signUpForm.fullName) {
-      console.log('Missing signup fields:', { 
-        email: signUpForm.email, 
-        fullName: signUpForm.fullName, 
-        hasPassword: !!signUpForm.password 
-      });
+    // التحقق من المطلوبات حسب نوع التحقق
+    const isEmailMethod = signUpForm.verifyMethod === 'email';
+    const isPhoneMethod = signUpForm.verifyMethod === 'phone';
+    
+    if (!signUpForm.password || !signUpForm.fullName) {
+      console.log('Missing required fields');
+      return;
+    }
+    
+    if (isEmailMethod && !signUpForm.email) {
+      console.log('Missing email for email verification');
+      return;
+    }
+    
+    if (isPhoneMethod && !signUpForm.phone) {
+      console.log('Missing phone for phone verification');
       return;
     }
     
     setIsLoading(true);
-    const result = await signUp(signUpForm.email, signUpForm.password, signUpForm.fullName);
+    const result = await signUp(
+      signUpForm.email, 
+      signUpForm.password, 
+      signUpForm.fullName,
+      signUpForm.verifyMethod,
+      signUpForm.phone
+    );
     console.log('SignUp result:', result);
     setIsLoading(false);
   };
@@ -183,30 +203,71 @@ const AuthPage = () => {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="space-y-2 text-right">
-                    <Label htmlFor="signup-name">الاسم الكامل</Label>
-                    <Input
-                      id="signup-name"
-                      type="text"
-                      value={signUpForm.fullName}
-                      onChange={(e) => setSignUpForm(prev => ({...prev, fullName: e.target.value}))}
-                      placeholder="أدخل اسمك الكامل"
-                      required
-                      className="text-right"
-                    />
-                  </div>
-                  <div className="space-y-2 text-right">
-                    <Label htmlFor="signup-email">البريد الإلكتروني</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      value={signUpForm.email}
-                      onChange={(e) => setSignUpForm(prev => ({...prev, email: e.target.value}))}
-                      placeholder="أدخل بريدك الإلكتروني"
-                      required
-                      className="text-right"
-                    />
-                  </div>
+                   <div className="space-y-2 text-right">
+                     <Label htmlFor="signup-name">الاسم الكامل</Label>
+                     <Input
+                       id="signup-name"
+                       type="text"
+                       value={signUpForm.fullName}
+                       onChange={(e) => setSignUpForm(prev => ({...prev, fullName: e.target.value}))}
+                       placeholder="أدخل اسمك الكامل"
+                       required
+                       className="text-right"
+                     />
+                   </div>
+                   
+                   <div className="space-y-3 text-right">
+                     <Label>طريقة التحقق</Label>
+                     <RadioGroup 
+                       value={signUpForm.verifyMethod} 
+                       onValueChange={(value) => setSignUpForm(prev => ({...prev, verifyMethod: value}))}
+                       className="flex gap-6 justify-center"
+                     >
+                       <div className="flex items-center space-x-2 space-x-reverse">
+                         <RadioGroupItem value="email" id="verify-email" />
+                         <Label htmlFor="verify-email" className="flex items-center gap-2 cursor-pointer">
+                           <Mail className="h-4 w-4" />
+                           البريد الإلكتروني
+                         </Label>
+                       </div>
+                       <div className="flex items-center space-x-2 space-x-reverse">
+                         <RadioGroupItem value="phone" id="verify-phone" />
+                         <Label htmlFor="verify-phone" className="flex items-center gap-2 cursor-pointer">
+                           <Phone className="h-4 w-4" />
+                           رقم الجوال
+                         </Label>
+                       </div>
+                     </RadioGroup>
+                   </div>
+                   {signUpForm.verifyMethod === 'email' && (
+                     <div className="space-y-2 text-right">
+                       <Label htmlFor="signup-email">البريد الإلكتروني</Label>
+                       <Input
+                         id="signup-email"
+                         type="email"
+                         value={signUpForm.email}
+                         onChange={(e) => setSignUpForm(prev => ({...prev, email: e.target.value}))}
+                         placeholder="أدخل بريدك الإلكتروني"
+                         required
+                         className="text-right"
+                       />
+                     </div>
+                   )}
+                   
+                   {signUpForm.verifyMethod === 'phone' && (
+                     <div className="space-y-2 text-right">
+                       <Label htmlFor="signup-phone">رقم الجوال</Label>
+                       <Input
+                         id="signup-phone"
+                         type="tel"
+                         value={signUpForm.phone}
+                         onChange={(e) => setSignUpForm(prev => ({...prev, phone: e.target.value}))}
+                         placeholder="+966xxxxxxxxx"
+                         required
+                         className="text-right"
+                       />
+                     </div>
+                   )}
                   <div className="space-y-2 text-right">
                     <Label htmlFor="signup-password">كلمة المرور</Label>
                     <Input
@@ -222,23 +283,25 @@ const AuthPage = () => {
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? 'جاري الإنشاء...' : 'إنشاء حساب'}
                   </Button>
-                  <Button
-                    type="button"
-                    variant="link"
-                    className="w-full"
-                    onClick={async () => {
-                      if (!signUpForm.email) {
-                        console.log('Resend clicked without email');
-                        return;
-                      }
-                      setIsLoading(true);
-                      const result = await resendVerification(signUpForm.email);
-                      console.log('Resend verification result:', result);
-                      setIsLoading(false);
-                    }}
-                  >
-                    لم يصلك البريد؟ أعد إرسال رابط التحقق
-                  </Button>
+                   {signUpForm.verifyMethod === 'email' && (
+                     <Button
+                       type="button"
+                       variant="link"
+                       className="w-full"
+                       onClick={async () => {
+                         if (!signUpForm.email) {
+                           console.log('Resend clicked without email');
+                           return;
+                         }
+                         setIsLoading(true);
+                         const result = await resendVerification(signUpForm.email);
+                         console.log('Resend verification result:', result);
+                         setIsLoading(false);
+                       }}
+                     >
+                       لم يصلك البريد؟ أعد إرسال رابط التحقق
+                     </Button>
+                   )}
                 </form>
               </CardContent>
             </TabsContent>

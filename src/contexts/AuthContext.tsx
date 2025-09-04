@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string, verifyMethod?: string, phone?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resendVerification: (email: string) => Promise<{ error: any }>;
@@ -77,20 +77,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  const signUp = async (email: string, password: string, fullName: string) => {
-    // For development - skip email confirmation
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
+  const signUp = async (email: string, password: string, fullName: string, verifyMethod: string = 'email', phone?: string) => {
+    let signUpOptions: any = {
       options: {
         emailRedirectTo: `${window.location.origin}/`,
         data: {
           full_name: fullName
         }
       }
-    });
+    };
 
-    console.log('SignUp redirect URL:', `${window.location.origin}/`);
+    if (verifyMethod === 'phone' && phone) {
+      // التسجيل عن طريق الجوال
+      signUpOptions = {
+        phone: phone,
+        password: password,
+        options: {
+          data: {
+            full_name: fullName
+          }
+        }
+      };
+    } else {
+      // التسجيل عن طريق الإيميل
+      signUpOptions = {
+        email: email,
+        password: password,
+        ...signUpOptions
+      };
+    }
+
+    console.log('SignUp method:', verifyMethod, 'Options:', signUpOptions);
+
+    const { error } = await supabase.auth.signUp(signUpOptions);
 
     if (error) {
       toast({
@@ -99,9 +118,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         variant: "destructive"
       });
     } else {
+      const method = verifyMethod === 'phone' ? 'رقم الجوال' : 'البريد الإلكتروني';
       toast({
         title: "تم التسجيل بنجاح", 
-        description: "يمكنك الآن تسجيل الدخول مباشرة"
+        description: `تم إرسال رمز التحقق إلى ${method}`
       });
     }
 
