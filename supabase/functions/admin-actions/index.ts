@@ -125,32 +125,76 @@ serve(async (req) => {
       const { email, password, role = "moderator", full_name } = body;
       if (!email || !password) return jsonResponse({ error: "email and password are required" }, 400);
 
-      // Create auth user (confirmed)
-      const { data: created, error: createErr } = await supabase.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-        user_metadata: full_name ? { full_name } : undefined,
-      });
-      if (createErr) return jsonResponse({ error: createErr.message }, 400);
-
-      const authUserId = created.user?.id;
-
-      // Upsert profile with role
-      const { data: upserted, error: upErr } = await supabase
+      // Check if profile already exists
+      const { data: existingProfile, error: findErr } = await supabase
         .from("profiles")
-        .upsert({
-          auth_user_id: authUserId,
-          email,
-          full_name: full_name || email,
-          role,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: "auth_user_id" })
-        .select("id, email, role")
-        .single();
-      if (upErr) return jsonResponse({ error: upErr.message }, 400);
+        .select("id, email, auth_user_id")
+        .eq("email", email)
+        .maybeSingle();
 
-      return jsonResponse({ data: { user: created.user, profile: upserted } });
+      if (findErr) return jsonResponse({ error: findErr.message }, 400);
+
+      let authUserId: string;
+      
+      if (existingProfile && !existingProfile.auth_user_id) {
+        // Profile exists but no auth user - create auth user and link
+        const { data: created, error: createErr } = await supabase.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true,
+          user_metadata: full_name ? { full_name } : undefined,
+        });
+        if (createErr) return jsonResponse({ error: createErr.message }, 400);
+        
+        authUserId = created.user!.id;
+        
+        // Update existing profile with auth_user_id
+        const { data: updated, error: updateErr } = await supabase
+          .from("profiles")
+          .update({
+            auth_user_id: authUserId,
+            full_name: full_name || email,
+            role,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existingProfile.id)
+          .select("id, email, role")
+          .single();
+        if (updateErr) return jsonResponse({ error: updateErr.message }, 400);
+        
+        return jsonResponse({ 
+          data: { user: created.user, profile: updated },
+          message: "Existing profile linked to new auth user"
+        });
+      } else if (existingProfile && existingProfile.auth_user_id) {
+        return jsonResponse({ error: "User already exists with auth account" }, 400);
+      } else {
+        // No existing profile - create everything new
+        const { data: created, error: createErr } = await supabase.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true,
+          user_metadata: full_name ? { full_name } : undefined,
+        });
+        if (createErr) return jsonResponse({ error: createErr.message }, 400);
+
+        authUserId = created.user!.id;
+
+        // Create new profile
+        const { data: newProfile, error: upErr } = await supabase
+          .from("profiles")
+          .insert({
+            auth_user_id: authUserId,
+            email,
+            full_name: full_name || email,
+            role,
+          })
+          .select("id, email, role")
+          .single();
+        if (upErr) return jsonResponse({ error: upErr.message }, 400);
+
+        return jsonResponse({ data: { user: created.user, profile: newProfile } });
+      }
     }
 
     // List channels

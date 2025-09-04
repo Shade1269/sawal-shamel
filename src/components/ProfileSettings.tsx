@@ -28,8 +28,14 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
     whatsapp: profile?.whatsapp || '',
     status: 'online'
   });
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
+  const [changingPassword, setChangingPassword] = useState(false);
   const { toast } = useToast();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
 
@@ -41,14 +47,27 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
   const handleSaveProfile = async () => {
     setLoading(true);
     try {
+      // Check if user has auth_user_id
+      if (!profile?.auth_user_id) {
+        throw new Error('معرف المستخدم غير موجود');
+      }
+
       const { data, error } = await supabase
         .from('profiles')
-        .update(formData)
-        .eq('id', profile.id)
+        .update({
+          full_name: formData.full_name,
+          phone: formData.phone,
+          whatsapp: formData.whatsapp,
+          updated_at: new Date().toISOString()
+        })
+        .eq('auth_user_id', profile.auth_user_id)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Profile update error:', error);
+        throw error;
+      }
 
       onProfileUpdate(data);
       toast({
@@ -56,11 +75,11 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
         description: "تم تحديث معلومات الملف الشخصي بنجاح"
       });
       setOpen(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating profile:', error);
       toast({
         title: "خطأ في التحديث",
-        description: "فشل في تحديث الملف الشخصي",
+        description: error.message || "فشل في تحديث الملف الشخصي",
         variant: "destructive"
       });
     } finally {
@@ -78,6 +97,55 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
 
   const toggleDarkModeLocal = () => {
     toggleDarkMode();
+  };
+
+  const handlePasswordChange = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast({
+        title: "خطأ في كلمة المرور",
+        description: "كلمة المرور الجديدة وتأكيدها غير متطابقتين",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      toast({
+        title: "خطأ في كلمة المرور",
+        description: "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setChangingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: passwordData.newPassword
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "تم التحديث",
+        description: "تم تغيير كلمة المرور بنجاح"
+      });
+      
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+    } catch (error: any) {
+      console.error('Error changing password:', error);
+      toast({
+        title: "خطأ في تغيير كلمة المرور",
+        description: error.message || "فشل في تغيير كلمة المرور",
+        variant: "destructive"
+      });
+    } finally {
+      setChangingPassword(false);
+    }
   };
 
   return (
@@ -179,6 +247,50 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
                   </SelectContent>
                 </Select>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Password Change Section */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm arabic-text">تغيير كلمة المرور</CardTitle>
+              <CardDescription className="arabic-text">
+                قم بتحديث كلمة المرور الخاصة بك
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="newPassword" className="arabic-text">كلمة المرور الجديدة</Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  value={passwordData.newPassword}
+                  onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                  placeholder="أدخل كلمة المرور الجديدة"
+                  className="arabic-text"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="arabic-text">تأكيد كلمة المرور</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                  placeholder="أعد إدخال كلمة المرور الجديدة"
+                  className="arabic-text"
+                />
+              </div>
+
+              <Button 
+                onClick={handlePasswordChange} 
+                disabled={changingPassword || !passwordData.newPassword || !passwordData.confirmPassword}
+                className="w-full arabic-text"
+                variant="outline"
+              >
+                {changingPassword ? 'جاري التغيير...' : 'تغيير كلمة المرور'}
+              </Button>
             </CardContent>
           </Card>
 
