@@ -765,37 +765,49 @@ const ChatInterface = () => {
             </div>
           </div>
         </div>
-        {/* Rooms list (content) - hidden when collapsed) */}
-        {!collapsedRooms && (
-          <div className="flex-1 overflow-auto">
-            {/* Search and pinned */}
-            <div className="p-4 border-b border-border">
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" onClick={() => setShowPinnedMessages(true)}>
-                  <Pin className="h-4 w-4 ml-1" /> المثبتة
-                </Button>
-                <div className="ml-auto">
-                  <MessageSearch messages={messages} />
-                </div>
-              </div>
-            </div>
-
-            {/* Channels list */}
-            <div className="p-2 space-y-1">
-              {channels.map((room) => (
-                <Button
-                  key={room.id}
-                  variant={activeRoom === room.id ? 'secondary' : 'ghost'}
-                  className="w-full justify-start arabic-text"
-                  onClick={() => setActiveRoom(room.id)}
-                >
-                  <Hash className="h-4 w-4 ml-2" /> {room.name}
-                </Button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Users Sidebar */}
+      <div className="hidden lg:flex w-64 bg-card border-r border-border flex-col">
+        <ChannelMembership 
+          channelId={activeRoom}
+          currentProfile={currentProfile}
+          className="h-full"
+        />
+      </div>
+
+      {/* Moderation Panel Dialog */}
+      <Dialog open={showModerationPanel} onOpenChange={setShowModerationPanel}>
+        <DialogContent className="sm:max-w-md rtl z-[110]" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="arabic-text">لوحة الإشراف</DialogTitle>
+          </DialogHeader>
+          
+          <ModerationPanel
+            currentProfile={currentProfile}
+            activeChannelId={activeRoom}
+            onClose={() => setShowModerationPanel(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Pinned Messages Dialog */}
+      <Dialog open={showPinnedMessages} onOpenChange={setShowPinnedMessages}>
+        <DialogContent className="sm:max-w-lg rtl z-[120]" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="arabic-text flex items-center gap-2">
+              <Pin className="h-5 w-5" />
+              الرسائل المثبتة
+            </DialogTitle>
+          </DialogHeader>
+          
+          <PinnedMessages
+            messages={messages}
+            onUnpin={handleUnpinMessage}
+            className="max-h-96"
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
