@@ -30,7 +30,7 @@ const Admin = () => {
       return { error: "unauthorized" };
     }
     try {
-      // Remove sensitive logging - only log action name
+      // Removed sensitive body logging for security
       console.log('Calling admin API:', action);
       const { data, error } = await supabase.functions.invoke('admin-actions', {
         body: { action, ...body },
@@ -44,11 +44,10 @@ const Admin = () => {
         throw new Error(error.message || "خطأ في الخادم");
       }
       
-      // Remove sensitive response logging
-      console.log('Admin API completed:', action);
+      console.log('Admin API response received');
       return { data };
     } catch (e: any) {
-      console.error('API call failed for action:', action);
+      console.error('API call failed:', e.message);
       toast({ title: "فشل التنفيذ", description: e.message, variant: "destructive" });
       return { error: e.message };
     }
@@ -68,7 +67,6 @@ const Admin = () => {
   useEffect(() => {
     if (isAllowed) {
       loadLists();
-      // Remove automatic user creation for security
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAllowed]);
@@ -237,8 +235,8 @@ const Admin = () => {
               <div className="pt-4 border-t">
                 <h4 className="font-medium mb-2">إنشاء مستخدم (مشرف)</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                  <Input placeholder="shade010@hotmail.com" value={targetEmail} onChange={(e) => setTargetEmail(e.target.value)} />
-                  <Input placeholder="123456" type="password" id="new-pass" />
+                  <Input placeholder="البريد الإلكتروني" value={targetEmail} onChange={(e) => setTargetEmail(e.target.value)} />
+                  <Input placeholder="كلمة المرور" type="password" id="new-pass" />
                   <Button onClick={async () => {
                     const pass = (document.getElementById("new-pass") as HTMLInputElement)?.value || "";
                     if (!targetEmail.trim() || !pass) return;
