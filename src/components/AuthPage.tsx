@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogIn, UserPlus, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +16,8 @@ const AuthPage = () => {
 
   const [signInForm, setSignInForm] = useState({
     email: '',
-    password: ''
+    password: '',
+    rememberMe: false
   });
 
   const [signUpForm, setSignUpForm] = useState({
@@ -23,6 +25,26 @@ const AuthPage = () => {
     password: '',
     fullName: ''
   });
+
+  // Load saved credentials on component mount
+  useEffect(() => {
+    const savedCredentials = localStorage.getItem('rememberMe');
+    if (savedCredentials) {
+      try {
+        const { email, rememberMe } = JSON.parse(savedCredentials);
+        if (rememberMe) {
+          setSignInForm(prev => ({
+            ...prev,
+            email,
+            rememberMe: true
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading saved credentials:', error);
+        localStorage.removeItem('rememberMe');
+      }
+    }
+  }, []);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +56,7 @@ const AuthPage = () => {
     }
     
     setIsLoading(true);
-    const result = await signIn(signInForm.email, signInForm.password);
+    const result = await signIn(signInForm.email, signInForm.password, signInForm.rememberMe);
     console.log('SignIn result:', result);
     
     if (!result.error) {
@@ -126,9 +148,26 @@ const AuthPage = () => {
                       placeholder="أدخل كلمة المرور"
                       required
                       className="text-right"
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                     />
+                   </div>
+                   
+                   <div className="flex items-center space-x-2 space-x-reverse">
+                     <Checkbox 
+                       id="remember-me"
+                       checked={signInForm.rememberMe}
+                       onCheckedChange={(checked) => 
+                         setSignInForm(prev => ({...prev, rememberMe: checked as boolean}))
+                       }
+                     />
+                     <Label 
+                       htmlFor="remember-me" 
+                       className="text-sm font-normal cursor-pointer"
+                     >
+                       تذكرني (البقاء متصلاً)
+                     </Label>
+                   </div>
+                   
+                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? 'جاري التحقق...' : 'تسجيل دخول'}
                   </Button>
                 </form>

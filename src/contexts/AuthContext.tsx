@@ -8,7 +8,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resendVerification: (email: string) => Promise<{ error: any }>;
 }
@@ -108,8 +108,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error };
   };
 
-  const signIn = async (email: string, password: string) => {
-    console.log('AuthContext signIn called with:', { email, password: '***' });
+  const signIn = async (email: string, password: string, rememberMe: boolean = false) => {
+    console.log('AuthContext signIn called with:', { email, password: '***', rememberMe });
     
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -126,6 +126,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         variant: "destructive"
       });
     } else {
+      // Save user preference for "remember me"
+      if (rememberMe) {
+        console.log('AuthContext: Saving remember preference');
+        localStorage.setItem('rememberMe', JSON.stringify({ 
+          email, 
+          timestamp: Date.now(),
+          rememberMe: true 
+        }));
+      } else {
+        // Remove remember preference if unchecked
+        localStorage.removeItem('rememberMe');
+      }
+      
       toast({
         title: "تم تسجيل الدخول بنجاح",
         description: "مرحباً بك في دردشتي!"
@@ -136,6 +149,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signOut = async () => {
+    // Clear remember preference on sign out
+    localStorage.removeItem('rememberMe');
+    
     const { error } = await supabase.auth.signOut();
     if (error) {
       toast({
