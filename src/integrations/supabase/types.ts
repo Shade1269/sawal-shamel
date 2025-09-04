@@ -351,8 +351,13 @@ export type Database = {
           created_at: string
           edited_at: string | null
           id: string
+          is_pinned: boolean | null
           message_type: string
+          pinned_at: string | null
+          pinned_by: string | null
+          reply_to_message_id: string | null
           sender_id: string | null
+          status: string | null
         }
         Insert: {
           channel_id?: string | null
@@ -360,8 +365,13 @@ export type Database = {
           created_at?: string
           edited_at?: string | null
           id?: string
+          is_pinned?: boolean | null
           message_type?: string
+          pinned_at?: string | null
+          pinned_by?: string | null
+          reply_to_message_id?: string | null
           sender_id?: string | null
+          status?: string | null
         }
         Update: {
           channel_id?: string | null
@@ -369,8 +379,13 @@ export type Database = {
           created_at?: string
           edited_at?: string | null
           id?: string
+          is_pinned?: boolean | null
           message_type?: string
+          pinned_at?: string | null
+          pinned_by?: string | null
+          reply_to_message_id?: string | null
           sender_id?: string | null
+          status?: string | null
         }
         Relationships: [
           {
@@ -378,6 +393,20 @@ export type Database = {
             columns: ["channel_id"]
             isOneToOne: false
             referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_pinned_by_fkey"
+            columns: ["pinned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_reply_to_message_id_fkey"
+            columns: ["reply_to_message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
             referencedColumns: ["id"]
           },
           {

@@ -11,12 +11,24 @@ export interface Message {
   created_at: string;
   edited_at?: string;
   message_type: string;
+  status?: string;
+  reply_to_message_id?: string;
+  is_pinned?: boolean;
+  pinned_at?: string;
+  pinned_by?: string;
   sender?: {
     id: string;
     full_name: string | null;
     email: string | null;
     avatar_url: string | null;
   };
+  reply_to?: {
+    id: string;
+    content: string;
+    sender?: {
+      full_name?: string;
+    };
+  } | null;
 }
 
 export interface Channel {
@@ -132,7 +144,8 @@ export const useRealTimeChat = (channelId: string) => {
         .from('messages')
         .select(`
           *,
-          sender:profiles!messages_sender_id_fkey(id, full_name, email, avatar_url)
+          sender:profiles!messages_sender_id_fkey(id, full_name, email, avatar_url),
+          reply_to:messages!messages_reply_to_message_id_fkey(id, content, sender:profiles!messages_sender_id_fkey(full_name))
         `)
         .eq('channel_id', channelId)
         .order('created_at', { ascending: true })
@@ -143,7 +156,10 @@ export const useRealTimeChat = (channelId: string) => {
         return;
       }
 
-      setMessages(messagesData || []);
+      setMessages((messagesData || []).map((msg: any) => ({
+        ...msg,
+        reply_to: msg.reply_to && msg.reply_to.length > 0 ? msg.reply_to[0] : null
+      })) as Message[]);
     } catch (error) {
       console.error('Error loading messages:', error);
     } finally {
@@ -172,7 +188,7 @@ export const useRealTimeChat = (channelId: string) => {
           };
           setMessages((prev) => {
             // Prevent duplicates (especially after optimistic insert)
-            if (prev.some(m => (m as any).id === (newMessage as any).id)) return prev;
+            if (prev.some(m => m.id === (newMessage as any).id)) return prev;
             // Remove matching optimistic temp message
             const filtered = prev.filter(m => !(m.id?.startsWith?.('temp-') && m.content === newMessage.content && m.sender_id === newMessage.sender_id));
             return [...filtered, newMessage];
@@ -208,11 +224,13 @@ export const useRealTimeChat = (channelId: string) => {
           content: trimmed,
           sender_id: currentProfile.id,
           channel_id: channelId,
-          message_type: messageType
+          message_type: messageType,
+          status: 'sent'
         })
         .select(`
           *,
-          sender:profiles!messages_sender_id_fkey(id, full_name, email, avatar_url)
+          sender:profiles!messages_sender_id_fkey(id, full_name, email, avatar_url),
+          reply_to:messages!messages_reply_to_message_id_fkey(id, content, sender:profiles!messages_sender_id_fkey(full_name))
         `)
         .single();
 
@@ -229,7 +247,17 @@ export const useRealTimeChat = (channelId: string) => {
       }
 
       // Replace optimistic with actual inserted message
-      setMessages(prev => prev.map(m => m.id === tempId ? (inserted as any) : m));
+      setMessages(prev => prev.map(m => {
+        if (m.id === tempId) {
+          const processedMessage: any = { ...inserted };
+          // Transform reply_to array to single object
+          if (processedMessage.reply_to && Array.isArray(processedMessage.reply_to)) {
+            processedMessage.reply_to = processedMessage.reply_to.length > 0 ? processedMessage.reply_to[0] : null;
+          }
+          return processedMessage as Message;
+        }
+        return m;
+      }));
     } catch (error) {
       // Rollback optimistic message
       setMessages(prev => prev.filter(m => m.id !== tempId));

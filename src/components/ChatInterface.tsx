@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -21,7 +21,8 @@ import {
   Play,
   Pause,
   ArrowRight,
-  Settings
+  Settings,
+  Pin
 } from 'lucide-react';
 import { useRealTimeChat } from '@/hooks/useRealTimeChat';
 import { useAuth } from '@/contexts/AuthContext';
@@ -38,8 +39,10 @@ import VoiceRecorder from './VoiceRecorder';
 import UserProfile from './UserProfile';
 import UserActionsMenu from './UserActionsMenu';
 import ModerationPanel from './ModerationPanel';
-import EmojiPicker from './EmojiPicker';
-import MessageActions from './MessageActions';
+import EnhancedEmojiPicker, { parseEmojiText } from './EnhancedEmojiPicker';
+import EnhancedMessageActions from './EnhancedMessageActions';
+import MessageStatus from './MessageStatus';
+import ThreadReply from './ThreadReply';
 import { supabase } from '@/integrations/supabase/client';
 
 const ChatInterface = () => {
@@ -50,6 +53,7 @@ const ChatInterface = () => {
   const [showRoomsList, setShowRoomsList] = useState(true);
   const [showModerationPanel, setShowModerationPanel] = useState(false);
   const [replyingTo, setReplyingTo] = useState<{id: string, content: string} | null>(null);
+  const messageInputRef = useRef<HTMLTextAreaElement>(null);
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage } = useRealTimeChat(activeRoom);
@@ -74,7 +78,7 @@ const ChatInterface = () => {
 
   const sendMessage = async () => {
     if (message.trim() && activeRoom) {
-      let finalContent = message.trim();
+      let finalContent = parseEmojiText(message.trim());
       
       // إضافة الرد إذا كان موجود
       if (replyingTo) {
@@ -84,6 +88,11 @@ const ChatInterface = () => {
       await sendMsg(finalContent);
       setMessage('');
       setReplyingTo(null);
+      
+      // Focus back on input
+      if (messageInputRef.current) {
+        messageInputRef.current.focus();
+      }
     }
   };
 
@@ -95,7 +104,10 @@ const ChatInterface = () => {
   };
   const handleReply = (messageId: string, originalContent: string) => {
     setReplyingTo({ id: messageId, content: originalContent });
-    // Focus on textarea (will be implemented when we add the ref)
+    // Focus on textarea
+    if (messageInputRef.current) {
+      messageInputRef.current.focus();
+    }
   };
 
   const handleEditMessage = async (messageId: string, newContent: string) => {
@@ -123,6 +135,74 @@ const ChatInterface = () => {
 
   const handleEmojiSelect = (emoji: string) => {
     setMessage(prev => prev + emoji);
+    // Focus back on textarea
+    if (messageInputRef.current) {
+      messageInputRef.current.focus();
+    }
+  };
+
+  const handleEmojiSend = async (emoji: string) => {
+    if (activeRoom) {
+      await sendMsg(emoji);
+    }
+  };
+
+  const handlePinMessage = async (messageId: string) => {
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .update({
+          is_pinned: true,
+          pinned_at: new Date().toISOString(),
+          pinned_by: currentProfile?.id
+        })
+        .eq('id', messageId);
+
+      if (error) {
+        console.error('Error pinning message:', error);
+        toast({
+          title: "خطأ في التثبيت",
+          description: "فشل في تثبيت الرسالة",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "تم التثبيت",
+          description: "تم تثبيت الرسالة بنجاح"
+        });
+      }
+    } catch (error) {
+      console.error('Error pinning message:', error);
+    }
+  };
+
+  const handleUnpinMessage = async (messageId: string) => {
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .update({
+          is_pinned: false,
+          pinned_at: null,
+          pinned_by: null
+        })
+        .eq('id', messageId);
+
+      if (error) {
+        console.error('Error unpinning message:', error);
+        toast({
+          title: "خطأ في إلغاء التثبيت",
+          description: "فشل في إلغاء تثبيت الرسالة",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "تم إلغاء التثبيت",
+          description: "تم إلغاء تثبيت الرسالة بنجاح"
+        });
+      }
+    } catch (error) {
+      console.error('Error unpinning message:', error);
+    }
   };
 
   const canDeleteMessage = (messageId: string, senderId: string) => {
@@ -226,6 +306,7 @@ const ChatInterface = () => {
       const imageUrl = content.replace('[صورة] ', '');
       return (
         <div className="space-y-2">
+          {msg.reply_to && <ThreadReply replyToMessage={msg.reply_to} />}
           <img 
             src={imageUrl} 
             alt="مشاركة صورة" 
@@ -240,23 +321,26 @@ const ChatInterface = () => {
     if (content.startsWith('[رسالة صوتية]') || msg.message_type === 'voice') {
       const audioUrl = content.replace('[رسالة صوتية] ', '');
       return (
-        <div className="flex items-center gap-2 bg-accent/20 rounded-lg p-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => playAudio(audioUrl, msg.id)}
-            className="h-8 w-8 p-0"
-          >
-            {playingAudio === msg.id ? (
-              <Pause className="h-4 w-4" />
-            ) : (
-              <Play className="h-4 w-4" />
-            )}
-          </Button>
-          <span className="text-sm arabic-text">رسالة صوتية</span>
-          <audio id={`audio-${msg.id}`} preload="metadata">
-            <source src={audioUrl} type="audio/webm" />
-          </audio>
+        <div className="space-y-2">
+          {msg.reply_to && <ThreadReply replyToMessage={msg.reply_to} />}
+          <div className="flex items-center gap-2 bg-accent/20 rounded-lg p-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => playAudio(audioUrl, msg.id)}
+              className="h-8 w-8 p-0"
+            >
+              {playingAudio === msg.id ? (
+                <Pause className="h-4 w-4" />
+              ) : (
+                <Play className="h-4 w-4" />
+              )}
+            </Button>
+            <span className="text-sm arabic-text">رسالة صوتية</span>
+            <audio id={`audio-${msg.id}`} preload="metadata">
+              <source src={audioUrl} type="audio/webm" />
+            </audio>
+          </div>
         </div>
       );
     }
@@ -268,30 +352,38 @@ const ChatInterface = () => {
       const fileExt = fileName.split('.').pop()?.toLowerCase() || '';
       
       return (
-        <div className="flex items-center gap-3 bg-accent/20 rounded-lg p-3 max-w-sm">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-              <Paperclip className="h-5 w-5 text-primary" />
+        <div className="space-y-2">
+          {msg.reply_to && <ThreadReply replyToMessage={msg.reply_to} />}
+          <div className="flex items-center gap-3 bg-accent/20 rounded-lg p-3 max-w-sm">
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Paperclip className="h-5 w-5 text-primary" />
+              </div>
             </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium arabic-text truncate">{fileName}</p>
+              <p className="text-xs text-muted-foreground uppercase">{fileExt} ملف</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => window.open(fileUrl, '_blank')}
+              className="text-primary hover:text-primary/80"
+            >
+              تحميل
+            </Button>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium arabic-text truncate">{fileName}</p>
-            <p className="text-xs text-muted-foreground uppercase">{fileExt} ملف</p>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => window.open(fileUrl, '_blank')}
-            className="text-primary hover:text-primary/80"
-          >
-            تحميل
-          </Button>
         </div>
       );
     }
     
     // Default text message
-    return <p className="arabic-text leading-relaxed">{content}</p>;
+    return (
+      <div className="space-y-2">
+        {msg.reply_to && <ThreadReply replyToMessage={msg.reply_to} />}
+        <p className="arabic-text leading-relaxed">{content}</p>
+      </div>
+    );
   };
 
   return (
@@ -490,12 +582,14 @@ const ChatInterface = () => {
                           <span className="text-xs text-muted-foreground">(معدّلة)</span>
                         )}
                         <div className="mr-auto flex items-center gap-1">
-                          <MessageActions
+                          <EnhancedMessageActions
                             message={msg}
                             currentProfile={currentProfile}
                             onReply={handleReply}
                             onEdit={handleEditMessage}
                             onDelete={deleteMessage}
+                            onPin={handlePinMessage}
+                            onUnpin={handleUnpinMessage}
                             isOwnMessage={isOwn}
                           />
                           {!isOwn && msg.sender && (
@@ -510,13 +604,22 @@ const ChatInterface = () => {
                               isOwnMessage={isOwn}
                             />
                           )}
+                          {isOwn && (
+                            <MessageStatus status={msg.status} className="ml-1" />
+                          )}
                         </div>
                       </div>
-                      <div className={`p-3 rounded-2xl shadow-soft relative ${
+                      <div className={`p-3 rounded-2xl shadow-soft relative transition-all hover:shadow-md ${
                         isOwn 
-                          ? 'bg-chat-sent text-white rounded-br-sm' 
-                          : 'bg-chat-received rounded-bl-sm'
+                          ? 'bg-gradient-to-r from-primary to-primary/90 text-white rounded-br-sm ml-auto' 
+                          : 'bg-white dark:bg-card rounded-bl-sm border border-border/50'
                       }`}>
+                        {msg.is_pinned && (
+                          <div className="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full p-1">
+                            <Pin className="h-3 w-3" />
+                          </div>
+                        )}
+                        
                         {renderMessageContent(msg)}
                         
                         {canDeleteMessage(msg.id, msg.sender_id) && (
@@ -568,10 +671,14 @@ const ChatInterface = () => {
               <VoiceRecorder
                 onRecordingComplete={handleVoiceRecording}
               />
-              <EmojiPicker onEmojiSelect={handleEmojiSelect} />
+              <EnhancedEmojiPicker 
+                onEmojiSelect={handleEmojiSelect}
+                onSendEmoji={handleEmojiSend}
+              />
             </div>
             <div className="flex-1 flex gap-2">
               <Textarea
+                ref={messageInputRef}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={replyingTo ? "اكتب ردك هنا..." : "اكتب رسالتك هنا..."}
