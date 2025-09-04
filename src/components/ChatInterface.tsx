@@ -55,6 +55,7 @@ import NotificationSound from './NotificationSound';
 import MessageSearch from './MessageSearch';
 import PinnedMessages from './PinnedMessages';
 import NotificationManager from './NotificationManager';
+import UserProfileDialog from './UserProfileDialog';
 import { useNotifications } from '@/hooks/useNotifications';
 import { supabase } from '@/integrations/supabase/client';
 import { useDarkMode } from '@/components/DarkModeProvider';
@@ -69,6 +70,8 @@ const ChatInterface = () => {
   const [showModerationPanel, setShowModerationPanel] = useState(false);
   const [showPinnedMessages, setShowPinnedMessages] = useState(false);
   const [replyingTo, setReplyingTo] = useState<{id: string, content: string} | null>(null);
+  const [selectedUserProfile, setSelectedUserProfile] = useState<any>(null);
+  const [showUserProfile, setShowUserProfile] = useState(false);
   const [newMessageAlert, setNewMessageAlert] = useState(false);
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -892,17 +895,27 @@ const ChatInterface = () => {
             <div className="space-y-4">
               {messages.map((msg) => {
                 const isOwn = currentProfile && msg.sender_id === currentProfile.id;
-                const senderName = msg.sender?.full_name || 'مستخدم';
+                const senderName = msg.sender?.full_name || msg.sender?.email?.split('@')[0] || 'مستخدم';
+                
+                const handleAvatarClick = () => {
+                  if (msg.sender && !isOwn) {
+                    setSelectedUserProfile(msg.sender);
+                    setShowUserProfile(true);
+                  }
+                };
                 
                 return (
                   <div 
                     key={msg.id} 
                     className={`flex gap-3 message-appear group ${isOwn ? 'flex-row-reverse' : ''}`}
                   >
-                    <Avatar className="w-8 h-8 flex-shrink-0">
+                    <Avatar 
+                      className={`w-8 h-8 flex-shrink-0 ${!isOwn ? 'cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all' : ''}`}
+                      onClick={handleAvatarClick}
+                    >
                       <AvatarImage src={msg.sender?.avatar_url} alt="Profile" />
                       <AvatarFallback className="text-sm">
-                        {senderName[0]}
+                        {senderName[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div className={`max-w-xs lg:max-w-md ${isOwn ? 'text-left' : 'text-right'} group relative`}>
@@ -1156,6 +1169,16 @@ const ChatInterface = () => {
           />
         </DialogContent>
       </Dialog>
+
+      {/* User Profile Dialog */}
+      <UserProfileDialog
+        user={selectedUserProfile}
+        isOpen={showUserProfile}
+        onClose={() => {
+          setShowUserProfile(false);
+          setSelectedUserProfile(null);
+        }}
+      />
     </div>
   );
 };
