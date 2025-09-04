@@ -102,7 +102,8 @@ const AuthPage = () => {
     let result;
     if (isPhoneMethod) {
       // تسجيل دخول بالجوال (OTP)
-      const fullPhoneNumber = `${signInForm.countryCode}${signInForm.phone}`;
+      const local = signInForm.phone.startsWith('0') ? signInForm.phone.slice(1) : signInForm.phone;
+      const fullPhoneNumber = `${signInForm.countryCode}${local}`;
       result = await signInWithPhone(fullPhoneNumber);
       if (!result.error) {
         setPhoneForVerification(fullPhoneNumber);
@@ -152,7 +153,8 @@ const AuthPage = () => {
     
     setIsLoading(true);
     // تجميع رقم الجوال الكامل مع رمز الدولة
-    const fullPhoneNumber = isPhoneMethod ? `${signUpForm.countryCode}${signUpForm.phone}` : '';
+    const local = isPhoneMethod ? (signUpForm.phone.startsWith('0') ? signUpForm.phone.slice(1) : signUpForm.phone) : '';
+    const fullPhoneNumber = isPhoneMethod ? `${signUpForm.countryCode}${local}` : '';
     
     const result = await signUp(
       signUpForm.email, 
@@ -393,11 +395,9 @@ const AuthPage = () => {
                             id="signin-phone"
                             type="tel"
                             value={signInForm.phone}
-                            onChange={(e) => {
-                              // إزالة الأصفار في البداية تلقائياً
-                              const value = e.target.value.replace(/^0+/, '');
-                              setSignInForm(prev => ({...prev, phone: value}));
-                            }}
+                              onChange={(e) => {
+                                setSignInForm(prev => ({...prev, phone: e.target.value}));
+                              }}
                             placeholder="xxxxxxxxx"
                             required
                             className="text-right flex-1"
@@ -508,18 +508,16 @@ const AuthPage = () => {
                              id="signup-phone"
                              type="tel"
                              value={signUpForm.phone}
-                             onChange={(e) => {
-                               // إزالة الأصفار في البداية تلقائياً
-                               const value = e.target.value.replace(/^0+/, '');
-                               setSignUpForm(prev => ({...prev, phone: value}));
-                             }}
+                              onChange={(e) => {
+                                setSignUpForm(prev => ({...prev, phone: e.target.value}));
+                              }}
                              placeholder="xxxxxxxxx"
                              required
                              className="text-right flex-1"
                            />
                          </div>
                          <div className="text-xs text-muted-foreground text-right">
-                           أدخل الرقم بدون الصفر في البداية
+                           يمكنك إدخال الرقم مع أو بدون صفر في البداية
                          </div>
                        </div>
                      )}
