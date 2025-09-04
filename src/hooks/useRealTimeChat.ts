@@ -144,8 +144,7 @@ export const useRealTimeChat = (channelId: string) => {
         .from('messages')
         .select(`
           *,
-          sender:profiles!messages_sender_id_fkey(id, full_name, email, avatar_url),
-          reply_to:messages!messages_reply_to_message_id_fkey(id, content, sender:profiles!messages_sender_id_fkey(full_name))
+          sender:profiles!messages_sender_id_fkey(id, full_name, email, avatar_url)
         `)
         .eq('channel_id', channelId)
         .order('created_at', { ascending: true })
@@ -156,10 +155,7 @@ export const useRealTimeChat = (channelId: string) => {
         return;
       }
 
-      setMessages((messagesData || []).map((msg: any) => ({
-        ...msg,
-        reply_to: msg.reply_to && msg.reply_to.length > 0 ? msg.reply_to[0] : null
-      })) as Message[]);
+      setMessages((messagesData || []) as Message[]);
     } catch (error) {
       console.error('Error loading messages:', error);
     } finally {
@@ -186,13 +182,36 @@ export const useRealTimeChat = (channelId: string) => {
           const newMessage: Message = {
             ...(payload.new as any),
           };
-          setMessages((prev) => {
-            // Prevent duplicates (especially after optimistic insert)
-            if (prev.some(m => m.id === (newMessage as any).id)) return prev;
-            // Remove matching optimistic temp message
-            const filtered = prev.filter(m => !(m.id?.startsWith?.('temp-') && m.content === newMessage.content && m.sender_id === newMessage.sender_id));
-            return [...filtered, newMessage];
-          });
+          
+          // Fetch sender info for the new message
+          if (newMessage.sender_id) {
+            supabase
+              .from('profiles')
+              .select('id, full_name, email, avatar_url')
+              .eq('id', newMessage.sender_id)
+              .single()
+              .then(({ data: senderData }) => {
+                if (senderData) {
+                  newMessage.sender = senderData;
+                }
+                
+                setMessages((prev) => {
+                  // Prevent duplicates (especially after optimistic insert)
+                  if (prev.some(m => m.id === (newMessage as any).id)) return prev;
+                  // Remove matching optimistic temp message
+                  const filtered = prev.filter(m => !(m.id?.startsWith?.('temp-') && m.content === newMessage.content && m.sender_id === newMessage.sender_id));
+                  return [...filtered, newMessage];
+                });
+              });
+          } else {
+            setMessages((prev) => {
+              // Prevent duplicates (especially after optimistic insert)
+              if (prev.some(m => m.id === (newMessage as any).id)) return prev;
+              // Remove matching optimistic temp message
+              const filtered = prev.filter(m => !(m.id?.startsWith?.('temp-') && m.content === newMessage.content && m.sender_id === newMessage.sender_id));
+              return [...filtered, newMessage];
+            });
+          }
         }
       )
       .subscribe();
@@ -229,8 +248,7 @@ export const useRealTimeChat = (channelId: string) => {
         })
         .select(`
           *,
-          sender:profiles!messages_sender_id_fkey(id, full_name, email, avatar_url),
-          reply_to:messages!messages_reply_to_message_id_fkey(id, content, sender:profiles!messages_sender_id_fkey(full_name))
+          sender:profiles!messages_sender_id_fkey(id, full_name, email, avatar_url)
         `)
         .single();
 
@@ -249,12 +267,7 @@ export const useRealTimeChat = (channelId: string) => {
       // Replace optimistic with actual inserted message
       setMessages(prev => prev.map(m => {
         if (m.id === tempId) {
-          const processedMessage: any = { ...inserted };
-          // Transform reply_to array to single object
-          if (processedMessage.reply_to && Array.isArray(processedMessage.reply_to)) {
-            processedMessage.reply_to = processedMessage.reply_to.length > 0 ? processedMessage.reply_to[0] : null;
-          }
-          return processedMessage as Message;
+          return { ...inserted } as Message;
         }
         return m;
       }));
