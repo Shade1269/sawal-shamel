@@ -892,7 +892,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      channel_member_counts: {
+        Row: {
+          channel_id: string | null
+          member_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channel_members_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       get_current_user_role: {
