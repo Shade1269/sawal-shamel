@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -63,13 +63,12 @@ const ChatInterface = () => {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
   };
-
   const canDeleteMessage = (messageId: string, senderId: string) => {
     // User can delete their own messages, or if they're an admin
     return currentProfile && (currentProfile.id === senderId || currentProfile.role === 'admin');
@@ -395,13 +394,19 @@ const ChatInterface = () => {
               </Button>
             </div>
             <div className="flex-1 flex gap-2">
-              <Input
+              <Textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="اكتب رسالتك هنا..."
-                className="flex-1 arabic-text"
-                onKeyPress={handleKeyPress}
+                className="flex-1 arabic-text min-h-12 md:min-h-14 max-h-40 resize-none overflow-y-auto"
+                onKeyDown={handleKeyDown}
+                onInput={(e) => {
+                  const el = e.currentTarget;
+                  el.style.height = 'auto';
+                  el.style.height = Math.min(el.scrollHeight, 320) + 'px';
+                }}
                 disabled={!activeRoom}
+                rows={2}
               />
               <Button 
                 onClick={sendMessage}

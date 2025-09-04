@@ -104,11 +104,15 @@ export const useRealTimeChat = (channelId: string) => {
     }
   };
 
-  // Load messages for current channel
+  // Load messages for current channel (ensure membership first)
   useEffect(() => {
     if (channelId && currentProfile) {
-      loadMessages();
-      setupRealTimeSubscription();
+      const init = async () => {
+        await joinChannel(channelId);
+        await loadMessages();
+        setupRealTimeSubscription();
+      };
+      init();
     }
 
     return () => {
@@ -189,14 +193,18 @@ export const useRealTimeChat = (channelId: string) => {
       // First, join the channel if not already a member
       await joinChannel(channelId);
 
+      const payload: any = {
+        content: content.trim(),
+        sender_id: currentProfile.id,
+        channel_id: channelId,
+      };
+      if (messageType === 'text') {
+        payload.message_type = 'text';
+      }
+
       const { error } = await supabase
         .from('messages')
-        .insert({
-          content: content.trim(),
-          sender_id: currentProfile.id,
-          channel_id: channelId,
-          message_type: messageType
-        });
+        .insert(payload);
 
       if (error) {
         console.error('Error sending message:', error);
