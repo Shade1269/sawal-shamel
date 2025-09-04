@@ -9,6 +9,7 @@ import { LogIn, UserPlus, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Phone, Mail } from 'lucide-react';
 
 const AuthPage = () => {
@@ -27,8 +28,30 @@ const AuthPage = () => {
     password: '',
     fullName: '',
     phone: '',
+    countryCode: '+966', // السعودية افتراضي
     verifyMethod: 'email' // 'email' or 'phone'
   });
+
+  // قائمة الدول العربية مع أرقامها
+  const arabCountries = [
+    { code: '+966', name: 'السعودية', flag: '🇸🇦' },
+    { code: '+971', name: 'الإمارات', flag: '🇦🇪' },
+    { code: '+974', name: 'قطر', flag: '🇶🇦' },
+    { code: '+965', name: 'الكويت', flag: '🇰🇼' },
+    { code: '+973', name: 'البحرين', flag: '🇧🇭' },
+    { code: '+968', name: 'عُمان', flag: '🇴🇲' },
+    { code: '+962', name: 'الأردن', flag: '🇯🇴' },
+    { code: '+961', name: 'لبنان', flag: '🇱🇧' },
+    { code: '+963', name: 'سوريا', flag: '🇸🇾' },
+    { code: '+964', name: 'العراق', flag: '🇮🇶' },
+    { code: '+20', name: 'مصر', flag: '🇪🇬' },
+    { code: '+212', name: 'المغرب', flag: '🇲🇦' },
+    { code: '+213', name: 'الجزائر', flag: '🇩🇿' },
+    { code: '+216', name: 'تونس', flag: '🇹🇳' },
+    { code: '+218', name: 'ليبيا', flag: '🇱🇾' },
+    { code: '+249', name: 'السودان', flag: '🇸🇩' },
+    { code: '+967', name: 'اليمن', flag: '🇾🇪' }
+  ];
 
   // Load saved credentials on component mount
   useEffect(() => {
@@ -99,12 +122,15 @@ const AuthPage = () => {
     }
     
     setIsLoading(true);
+    // تجميع رقم الجوال الكامل مع رمز الدولة
+    const fullPhoneNumber = isPhoneMethod ? `${signUpForm.countryCode}${signUpForm.phone}` : '';
+    
     const result = await signUp(
       signUpForm.email, 
       signUpForm.password, 
       signUpForm.fullName,
       signUpForm.verifyMethod,
-      signUpForm.phone
+      fullPhoneNumber
     );
     console.log('SignUp result:', result);
     setIsLoading(false);
@@ -257,15 +283,47 @@ const AuthPage = () => {
                    {signUpForm.verifyMethod === 'phone' && (
                      <div className="space-y-2 text-right">
                        <Label htmlFor="signup-phone">رقم الجوال</Label>
-                       <Input
-                         id="signup-phone"
-                         type="tel"
-                         value={signUpForm.phone}
-                         onChange={(e) => setSignUpForm(prev => ({...prev, phone: e.target.value}))}
-                         placeholder="+966xxxxxxxxx"
-                         required
-                         className="text-right"
-                       />
+                       <div className="flex gap-2">
+                         <Select 
+                           value={signUpForm.countryCode} 
+                           onValueChange={(value) => setSignUpForm(prev => ({...prev, countryCode: value}))}
+                         >
+                           <SelectTrigger className="w-[140px]">
+                             <SelectValue />
+                           </SelectTrigger>
+                           <SelectContent className="bg-background border border-border shadow-lg z-50">
+                             {arabCountries.map((country) => (
+                               <SelectItem 
+                                 key={country.code} 
+                                 value={country.code}
+                                 className="text-right cursor-pointer hover:bg-accent"
+                               >
+                                 <div className="flex items-center gap-2">
+                                   <span>{country.flag}</span>
+                                   <span>{country.code}</span>
+                                   <span className="text-sm text-muted-foreground">{country.name}</span>
+                                 </div>
+                               </SelectItem>
+                             ))}
+                           </SelectContent>
+                         </Select>
+                         <Input
+                           id="signup-phone"
+                           type="tel"
+                           value={signUpForm.phone}
+                           onChange={(e) => {
+                             // إزالة الأصفار في البداية تلقائياً
+                             const value = e.target.value.replace(/^0+/, '');
+                             setSignUpForm(prev => ({...prev, phone: value}));
+                           }}
+                           placeholder="xxxxxxxxx"
+                           required
+                           className="text-right flex-1"
+                         />
+                       </div>
+                       <div className="text-xs text-muted-foreground text-right">
+                         أدخل الرقم بدون الصفر في البداية
+                       </div>
                      </div>
                    )}
                   <div className="space-y-2 text-right">
