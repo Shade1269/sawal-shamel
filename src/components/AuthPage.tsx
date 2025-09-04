@@ -6,10 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogIn, UserPlus, MessageCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn, signUp, resendVerification } = useAuth();
+  const navigate = useNavigate();
 
   const [signInForm, setSignInForm] = useState({
     email: '',
@@ -34,6 +36,12 @@ const AuthPage = () => {
     setIsLoading(true);
     const result = await signIn(signInForm.email, signInForm.password);
     console.log('SignIn result:', result);
+    
+    if (!result.error) {
+      // التوجيه مباشرة لصفحة الدردشة بعد نجاح تسجيل الدخول
+      navigate('/chat');
+    }
+    
     setIsLoading(false);
   };
 
