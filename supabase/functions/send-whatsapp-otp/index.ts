@@ -75,6 +75,7 @@ serve(async (req) => {
     // Send WhatsApp message via Twilio
     const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
     const authToken = Deno.env.get('TWILIO_AUTH_TOKEN');
+    const whatsappFrom = Deno.env.get('TWILIO_WHATSAPP_FROM') || 'whatsapp:+14155238886';
 
     if (!accountSid || !authToken) {
       console.error('Twilio credentials not configured');
@@ -94,7 +95,7 @@ serve(async (req) => {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        From: 'whatsapp:+14155238886', // Twilio WhatsApp sandbox number
+        From: whatsappFrom,
         To: `whatsapp:${phone}`,
         Body: message,
       }),
@@ -103,6 +104,8 @@ serve(async (req) => {
     if (!twilioResponse.ok) {
       const twilioError = await twilioResponse.text();
       console.error('Twilio error:', twilioError);
+      console.error('Response status:', twilioResponse.status);
+      console.error('Response headers:', Object.fromEntries(twilioResponse.headers.entries()));
       
       // Clean up the OTP from database since sending failed
       await supabase
@@ -112,17 +115,22 @@ serve(async (req) => {
         .eq('code', otpCode);
 
       return new Response(
-        JSON.stringify({ error: 'Failed to send WhatsApp message' }),
+        JSON.stringify({ error: 'Failed to send WhatsApp message', details: twilioError }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('WhatsApp OTP sent successfully to', phone);
+    const twilioData = await twilioResponse.json();
+    console.log('WhatsApp OTP sent successfully:', twilioData);
+    console.log('Message SID:', twilioData.sid);
+    console.log('Message Status:', twilioData.status);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'OTP sent to WhatsApp successfully' 
+        message: 'OTP sent to WhatsApp successfully',
+        twilioSid: twilioData.sid,
+        twilioStatus: twilioData.status
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
