@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -27,7 +27,7 @@ serve(async (req) => {
     }
 
     // Create Supabase client
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Generate 6-digit OTP code
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -44,7 +44,7 @@ serve(async (req) => {
       .eq('phone', phone)
       .eq('verified', false)
       .gt('expires_at', new Date().toISOString())
-      .single();
+      .maybeSingle();
 
     if (existingOtp) {
       return new Response(
