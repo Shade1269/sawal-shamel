@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Camera, Settings, User, Upload, Moon, Sun } from 'lucide-react';
+import { Camera, Settings, User, Upload, Moon, Sun, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useDarkMode } from './DarkModeProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -86,12 +86,20 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
           <Settings className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md rtl" dir="rtl">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto rtl" dir="rtl">
+        <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <DialogTitle className="arabic-text flex items-center gap-2">
             <User className="h-5 w-5" />
             الملف الشخصي والإعدادات
           </DialogTitle>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setOpen(false)}
+            className="h-6 w-6"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </DialogHeader>
 
         <div className="space-y-6 py-4">

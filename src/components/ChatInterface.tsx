@@ -724,7 +724,6 @@ const ChatInterface = () => {
               />
               <EnhancedEmojiPicker 
                 onEmojiSelect={handleEmojiSelect}
-                onSendEmoji={handleEmojiSend}
               />
             </div>
             <div className="flex-1 flex gap-2">
