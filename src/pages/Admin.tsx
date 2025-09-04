@@ -10,6 +10,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import UserProfileDialog from "@/components/UserProfileDialog";
+import UserSettingsMenu from "@/components/UserSettingsMenu";
 import { 
   Shield, 
   Ban, 
@@ -43,8 +46,11 @@ const Admin = () => {
   const [targetEmail, setTargetEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [showUserProfile, setShowUserProfile] = useState(false);
+  const [selectedUserForProfile, setSelectedUserForProfile] = useState<any>(null);
   const [moderationReason, setModerationReason] = useState("");
   const [moderationDuration, setModerationDuration] = useState("24h");
+  const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   const callAdminApi = async (action: string, body: any = {}) => {
@@ -78,9 +84,15 @@ const Admin = () => {
 
   const loadLists = async () => {
     setLoading(true);
-    const [uc, ch] = await Promise.all([
+    const [uc, ch, profile] = await Promise.all([
       callAdminApi("list_users", { query: search }),
       callAdminApi("list_channels"),
+      // Get current user profile for role checking
+      supabase
+        .from('profiles')
+        .select('*')
+        .eq('auth_user_id', user?.id)
+        .single()
     ]);
     if (!uc.error) setUsers(uc.data.data || []);
     if (!ch.error) {
@@ -101,6 +113,7 @@ const Admin = () => {
       }
       setChannelMembers(memberCounts);
     }
+    if (!profile.error) setCurrentUserProfile(profile.data);
     setLoading(false);
   };
 
@@ -172,6 +185,34 @@ const Admin = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUserProfileClick = (user: any) => {
+    setSelectedUserForProfile(user);
+    setShowUserProfile(true);
+  };
+
+  const handleRoleChange = async (user: any, newRole: string) => {
+    try {
+      const res = await callAdminApi(newRole === 'moderator' ? 'assign_moderator' : 'update_role', { 
+        email: user.email.toLowerCase(),
+        role: newRole
+      });
+      if (!res.error) {
+        toast({ 
+          title: "تم تغيير الدور", 
+          description: `تم تغيير دور ${user.full_name || user.email} إلى ${newRole === 'admin' ? 'مدير' : newRole === 'moderator' ? 'مشرف' : newRole === 'merchant' ? 'تاجر' : 'مسوق'}` 
+        });
+        loadLists();
+      }
+    } catch (error) {
+      console.error('Role change error:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في تغيير الدور",
+        variant: "destructive"
+      });
     }
   };
 
@@ -407,107 +448,57 @@ const Admin = () => {
               <div className="max-h-80 overflow-y-auto space-y-2">
                 {users.map((user) => (
                   <div key={user.id} className="bg-card border rounded-lg p-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-medium text-sm">
-                            {user.full_name || user.email}
-                          </span>
-                          <Badge 
-                            variant={
-                              user.role === 'admin' ? 'default' : 
-                              user.role === 'moderator' ? 'secondary' : 
-                              'outline'
-                            }
-                            className="text-xs"
-                          >
-                            {user.role === 'admin' ? 'مدير' : 
-                             user.role === 'moderator' ? 'مشرف' : 
-                             user.role === 'merchant' ? 'تاجر' :
-                             'مسوق'}
-                          </Badge>
+                    <div className="flex items-center justify-between">
+                      {/* User Info - Clickable */}
+                      <div 
+                        className="flex items-center gap-3 flex-1 cursor-pointer hover:bg-muted/20 p-2 rounded-lg transition-colors"
+                        onClick={() => handleUserProfileClick(user)}
+                      >
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={user.avatar_url} alt={user.full_name} />
+                          <AvatarFallback>
+                            {user.full_name ? user.full_name.charAt(0).toUpperCase() : <User className="h-4 w-4" />}
+                          </AvatarFallback>
+                        </Avatar>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-medium text-sm truncate">
+                              {user.full_name || user.email}
+                            </span>
+                            <Badge 
+                              variant={
+                                user.role === 'admin' ? 'default' : 
+                                user.role === 'moderator' ? 'secondary' : 
+                                'outline'
+                              }
+                              className="text-xs shrink-0"
+                            >
+                              {user.role === 'admin' ? 'مدير' : 
+                               user.role === 'moderator' ? 'مشرف' : 
+                               user.role === 'merchant' ? 'تاجر' :
+                               'مسوق'}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                            <div className={`h-2 w-2 rounded-full shrink-0 ${user.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
+                          </div>
+                          {user.points !== undefined && (
+                            <div className="text-xs text-primary font-medium">
+                              {user.points} نقطة
+                            </div>
+                          )}
                         </div>
-                        <p className="text-xs text-muted-foreground">{user.email}</p>
                       </div>
                       
-                      {user.role !== 'admin' && (
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => setSelectedUser(user)}
-                            >
-                              <Shield className="h-4 w-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>إجراءات الإشراف - {user.full_name || user.email}</DialogTitle>
-                            </DialogHeader>
-                            
-                            <div className="space-y-4">
-                              <div>
-                                <label className="text-sm font-medium mb-2 block">السبب</label>
-                                <Textarea
-                                  value={moderationReason}
-                                  onChange={(e) => setModerationReason(e.target.value)}
-                                  placeholder="اذكر سبب الإجراء"
-                                  rows={3}
-                                />
-                              </div>
-
-                              <div>
-                                <label className="text-sm font-medium mb-2 block">المدة</label>
-                                <Select value={moderationDuration} onValueChange={setModerationDuration}>
-                                  <SelectTrigger>
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="1h">ساعة واحدة</SelectItem>
-                                    <SelectItem value="24h">24 ساعة</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-
-                              <div className="grid grid-cols-1 gap-2">
-                                <Button
-                                  onClick={() => handleModerationAction('mute', user)}
-                                  variant="outline"
-                                  size="sm"
-                                  className="justify-start"
-                                  disabled={loading}
-                                >
-                                  <VolumeX className="h-4 w-4 mr-2" />
-                                  إسكات المستخدم
-                                </Button>
-
-                                <Button
-                                  onClick={() => handleModerationAction('tempban', user)}
-                                  variant="outline"
-                                  size="sm"
-                                  className="justify-start"
-                                  disabled={loading}
-                                >
-                                  <Clock className="h-4 w-4 mr-2" />
-                                  حظر مؤقت
-                                </Button>
-
-                                <Button
-                                  onClick={() => handleModerationAction('ban', user)}
-                                  variant="destructive"
-                                  size="sm"
-                                  className="justify-start"
-                                  disabled={loading}
-                                >
-                                  <Ban className="h-4 w-4 mr-2" />
-                                  حظر دائم
-                                </Button>
-                              </div>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
-                      )}
+                      {/* Settings Menu */}
+                      <UserSettingsMenu 
+                        user={user}
+                        currentUserRole={currentUserProfile?.role || 'affiliate'}
+                        onModerationAction={handleModerationAction}
+                        onRoleChange={handleRoleChange}
+                      />
                     </div>
                   </div>
                 ))}
@@ -517,6 +508,16 @@ const Admin = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* User Profile Dialog */}
+      <UserProfileDialog
+        user={selectedUserForProfile}
+        isOpen={showUserProfile}
+        onClose={() => {
+          setShowUserProfile(false);
+          setSelectedUserForProfile(null);
+        }}
+      />
     </main>
   );
 };
