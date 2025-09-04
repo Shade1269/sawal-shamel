@@ -78,21 +78,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    // Try multiple redirect URL formats for better compatibility
-    const redirectUrl = `${window.location.origin}/`;
-    
+    // For development - skip email confirmation
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: redirectUrl,
+        emailRedirectTo: `${window.location.origin}/`,
         data: {
           full_name: fullName
         }
       }
     });
 
-    console.log('SignUp redirect URL:', redirectUrl);
+    console.log('SignUp redirect URL:', `${window.location.origin}/`);
 
     if (error) {
       toast({
@@ -102,8 +100,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } else {
       toast({
-        title: "تم التسجيل بنجاح",
-        description: "يرجى التحقق من بريدك الإلكتروني لتأكيد الحساب"
+        title: "تم التسجيل بنجاح", 
+        description: "يمكنك الآن تسجيل الدخول مباشرة"
       });
     }
 
