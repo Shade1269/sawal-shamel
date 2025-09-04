@@ -157,7 +157,7 @@ export const useRealTimeChat = (channelId: string) => {
     }
 
     channelRef.current = supabase
-      .channel(`messages:channel_id=eq.${channelId}`)
+      .channel(`messages:channel:${channelId}`)
       .on(
         'postgres_changes',
         {
@@ -166,20 +166,12 @@ export const useRealTimeChat = (channelId: string) => {
           table: 'messages',
           filter: `channel_id=eq.${channelId}`
         },
-        async (payload) => {
-          // Get sender info for the new message
-          const { data: senderData } = await supabase
-            .from('profiles')
-            .select('id, full_name, email, avatar_url')
-            .eq('id', payload.new.sender_id)
-            .single();
-
+        (payload) => {
+          // Append the new message immediately without extra queries (avoid RLS issues)
           const newMessage: Message = {
-            ...payload.new as any,
-            sender: senderData
+            ...(payload.new as any),
           };
-
-          setMessages(prev => [...prev, newMessage]);
+          setMessages((prev) => [...prev, newMessage]);
         }
       )
       .subscribe();

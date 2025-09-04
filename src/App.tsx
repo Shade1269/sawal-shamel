@@ -8,6 +8,8 @@ import AuthPage from "@/components/AuthPage";
 import Index from "./pages/Index";
 import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
+import { lazy, Suspense } from "react";
+const AdminPageLazy = lazy(() => import("./pages/Admin"));
 
 const queryClient = new QueryClient();
 
@@ -30,6 +32,7 @@ const AppContent = () => {
       <Route path="/" element={<Index />} />
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+      <Route path="/admin" element={<ProtectedRoute><AdminPageLazy /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
@@ -64,7 +67,9 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            <AppContent />
+            <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
+              <AppContent />
+            </Suspense>
           </TooltipProvider>
         </BrowserRouter>
       </AuthProvider>
