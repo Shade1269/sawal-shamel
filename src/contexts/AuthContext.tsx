@@ -79,16 +79,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signIn = async (email: string, password: string) => {
+    console.log('AuthContext signIn called with:', { email, password: '***' });
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
 
+    console.log('Supabase signIn response:', { error });
+
     if (error) {
+      console.error('SignIn error details:', error);
       toast({
         title: "خطأ في تسجيل الدخول", 
         description: error.message,
         variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "تم تسجيل الدخول بنجاح",
+        description: "مرحباً بك في دردشتي!"
       });
     }
 

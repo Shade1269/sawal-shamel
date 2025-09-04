@@ -24,15 +24,39 @@ const AuthPage = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('handleSignIn called with:', { email: signInForm.email, password: '***' });
+    
+    if (!signInForm.email || !signInForm.password) {
+      console.log('Missing email or password:', { email: signInForm.email, hasPassword: !!signInForm.password });
+      return;
+    }
+    
     setIsLoading(true);
-    await signIn(signInForm.email, signInForm.password);
+    const result = await signIn(signInForm.email, signInForm.password);
+    console.log('SignIn result:', result);
     setIsLoading(false);
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('handleSignUp called with:', { 
+      email: signUpForm.email, 
+      fullName: signUpForm.fullName, 
+      password: '***' 
+    });
+    
+    if (!signUpForm.email || !signUpForm.password || !signUpForm.fullName) {
+      console.log('Missing signup fields:', { 
+        email: signUpForm.email, 
+        fullName: signUpForm.fullName, 
+        hasPassword: !!signUpForm.password 
+      });
+      return;
+    }
+    
     setIsLoading(true);
-    await signUp(signUpForm.email, signUpForm.password, signUpForm.fullName);
+    const result = await signUp(signUpForm.email, signUpForm.password, signUpForm.fullName);
+    console.log('SignUp result:', result);
     setIsLoading(false);
   };
 
@@ -71,15 +95,18 @@ const AuthPage = () => {
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div className="space-y-2 text-right">
                     <Label htmlFor="signin-email">البريد الإلكتروني</Label>
-                    <Input
-                      id="signin-email"
-                      type="email"
-                      value={signInForm.email}
-                      onChange={(e) => setSignInForm(prev => ({...prev, email: e.target.value}))}
-                      placeholder="أدخل بريدك الإلكتروني"
-                      required
-                      className="text-right"
-                    />
+                     <Input
+                       id="signin-email"
+                       type="email"
+                       value={signInForm.email}
+                       onChange={(e) => {
+                         console.log('Email input changed:', e.target.value);
+                         setSignInForm(prev => ({...prev, email: e.target.value}));
+                       }}
+                       placeholder="أدخل بريدك الإلكتروني"
+                       required
+                       className="text-right"
+                     />
                   </div>
                   <div className="space-y-2 text-right">
                     <Label htmlFor="signin-password">كلمة المرور</Label>
