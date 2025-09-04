@@ -56,6 +56,8 @@ import MessageSearch from './MessageSearch';
 import PinnedMessages from './PinnedMessages';
 import NotificationManager from './NotificationManager';
 import UserProfileDialog from './UserProfileDialog';
+import UserProfileMenu from './UserProfileMenu';
+import NotificationPrompt from './NotificationPrompt';
 import { useNotifications } from '@/hooks/useNotifications';
 import { supabase } from '@/integrations/supabase/client';
 import { useDarkMode } from '@/components/DarkModeProvider';
@@ -707,27 +709,30 @@ const ChatInterface = () => {
               </div>
               <h2 className="font-bold text-lg arabic-text">دردشة عربية</h2>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="z-[100] bg-popover/95 backdrop-blur supports-[backdrop-filter]:bg-popover/80 shadow-lg border border-border">
-                <DropdownMenuItem onClick={async () => {
-                  try {
-                    await signOut();
-                    toast({ title: 'تم تسجيل الخروج' });
-                    window.location.href = '/';
-                  } catch (e) {
-                    toast({ title: 'خطأ في تسجيل الخروج', description: 'حاول مرة أخرى', variant: 'destructive' });
-                  }
-                }}>
-                  <LogOut className="h-4 w-4 ml-2" />
-                  تسجيل خروج
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center gap-2">
+              <UserProfileMenu />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="z-[100] bg-popover/95 backdrop-blur supports-[backdrop-filter]:bg-popover/80 shadow-lg border border-border">
+                  <DropdownMenuItem onClick={async () => {
+                    try {
+                      await signOut();
+                      toast({ title: 'تم تسجيل الخروج' });
+                      window.location.href = '/';
+                    } catch (e) {
+                      toast({ title: 'خطأ في تسجيل الخروج', description: 'حاول مرة أخرى', variant: 'destructive' });
+                    }
+                  }}>
+                    <LogOut className="h-4 w-4 ml-2" />
+                    تسجيل خروج
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
           
           {currentProfile && (
@@ -818,6 +823,7 @@ const ChatInterface = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <UserProfileMenu />
               <Button 
                 variant="ghost" 
                 size="icon"

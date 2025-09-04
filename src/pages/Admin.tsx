@@ -239,11 +239,13 @@ const Admin = () => {
           title: "تم المسح بنجاح", 
           description: `تم مسح جميع رسائل غرفة ${channelName}` 
         });
+        // Reload the lists to refresh data
+        setTimeout(() => loadLists(), 500);
       } else {
         console.error('Clear messages error:', res.error);
         toast({ 
           title: "خطأ في المسح", 
-          description: res.error,
+          description: `فشل في مسح الرسائل: ${res.error}`,
           variant: "destructive"
         });
       }
@@ -359,7 +361,10 @@ const Admin = () => {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          clearChannelMessages(channel.id, channel.name);
+                          console.log(`Attempting to clear messages for channel: ${channel.name} (${channel.id})`);
+                          if (confirm(`هل أنت متأكد من حذف جميع رسائل غرفة "${channel.name}"؟\n\nتحذير: هذا الإجراء لا يمكن التراجع عنه!`)) {
+                            clearChannelMessages(channel.id, channel.name);
+                          }
                         }}
                         className="text-destructive hover:text-destructive"
                         disabled={loading}
@@ -568,6 +573,7 @@ const Admin = () => {
           setShowUserProfile(false);
           setSelectedUserForProfile(null);
         }}
+        showNotificationSettings={false}
       />
     </main>
   );
