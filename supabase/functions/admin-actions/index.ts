@@ -120,30 +120,37 @@ serve(async (req) => {
       return jsonResponse({ data });
     }
 
+    // Create user with role (admin only)
+    if (action === "create_user") {
+      const { email, password, role = "moderator", full_name } = body;
+      if (!email || !password) return jsonResponse({ error: "email and password are required" }, 400);
+
+      // Create auth user (confirmed)
+      const { data: created, error: createErr } = await supabase.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: full_name ? { full_name } : undefined,
+      });
+      if (createErr) return jsonResponse({ error: createErr.message }, 400);
+
+      const authUserId = created.user?.id;
+
+      // Upsert profile with role
+      const { data: upserted, error: upErr } = await supabase
+        .from("profiles")
+        .upsert({
+          auth_user_id: authUserId,
+          email,
+          full_name: full_name || email,
+          role,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: "auth_user_id" })
+        .select("id, email, role")
+        .single();
+      if (upErr) return jsonResponse({ error: upErr.message }, 400);
+
+      return jsonResponse({ data: { user: created.user, profile: upserted } });
+    }
+
     // List channels
-    if (action === "list_channels") {
-      const { data, error } = await supabase
-        .from("channels")
-        .select("id, name, description, type, is_active, created_at")
-        .order("created_at", { ascending: true });
-      if (error) return jsonResponse({ error: error.message }, 400);
-      return jsonResponse({ data });
-    }
-
-    // Find users
-    if (action === "list_users") {
-      const q = (body.query || new URL(req.url).searchParams.get("query") || "").toLowerCase();
-      let query = supabase.from("profiles").select("id, full_name, email, role").limit(50);
-      if (q) {
-        query = query.or(`email.ilike.%${q}%,full_name.ilike.%${q}%`);
-      }
-      const { data, error } = await query;
-      if (error) return jsonResponse({ error: error.message }, 400);
-      return jsonResponse({ data });
-    }
-
-    return jsonResponse({ error: "Unknown action" }, 400);
-  } catch (e: any) {
-    return jsonResponse({ error: e?.message || "Unexpected error" }, 500);
-  }
-});

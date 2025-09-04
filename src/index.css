@@ -40,10 +40,10 @@
     
     --radius: 0.75rem;
     
-    /* Chat specific colors */
-    --chat-bg: 225 30% 96%;
+    --chat-bg: 225 30% 96%; /* chat area */
     --chat-sent: 250 90% 65%;
     --chat-received: 0 0% 100%;
+    --landing-olive: 100 22% 20%; /* زيتوني غامق */
     --status-online: 120 85% 50%;
     --status-offline: 220 10% 70%;
     
@@ -97,6 +97,8 @@
     --chat-received: 220 20% 12%;
     --status-online: 120 85% 55%;
     --status-offline: 220 10% 40%;
+    
+    --landing-olive: 100 22% 16%;
   }
 }
 

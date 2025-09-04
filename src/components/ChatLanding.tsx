@@ -13,6 +13,13 @@ const ChatLanding = () => {
   
   return (
     <div className="min-h-screen bg-gradient-landing rtl" dir="rtl">
+      {/* Olive overlay for hero */}
+      <div className="absolute inset-0 -z-10">
+        <div className="w-full h-full" style={{
+          background: `radial-gradient(1200px 600px at 80% -200px, hsl(var(--landing-olive) / 0.2), transparent 60%),
+                       radial-gradient(800px 400px at 20% 0px, hsl(var(--landing-olive) / 0.15), transparent 60%)`
+        }} />
+      </div>
       {/* Header */}
       <header className="container mx-auto px-6 py-8">
         <nav className="flex items-center justify-between">
@@ -29,13 +36,8 @@ const ChatLanding = () => {
                   {isDarkMode ? "الوضع الليلي" : "الوضع النهاري"}
                 </Badge>
                 <span className="text-sm arabic-text">مرحباً، {user.email}</span>
-                <Button variant="ghost" onClick={signOut} className="arabic-text">
-                  <LogOut className="h-4 w-4 mr-1" />
-                  تسجيل خروج
-                </Button>
-                <Button variant="hero" onClick={() => navigate('/chat')} className="arabic-text shadow-soft">
-                  <MessageCircle className="h-4 w-4 mr-1" />
-                  الدردشة
+                <Button variant="ghost" onClick={() => navigate('/chat')} className="arabic-text">
+                  الدردشة الآن
                 </Button>
               </div>
             ) : (

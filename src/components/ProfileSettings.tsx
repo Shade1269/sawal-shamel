@@ -82,7 +82,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="shrink-0" aria-label="الإعدادات">
           <Settings className="h-4 w-4" />
         </Button>
       </DialogTrigger>

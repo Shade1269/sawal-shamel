@@ -57,6 +57,7 @@ const ChatInterface = () => {
   const [currentProfile, setCurrentProfile] = useState<any>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
   const [showRoomsList, setShowRoomsList] = useState(true);
+  const [collapsedRooms, setCollapsedRooms] = useState(false);
   const [showModerationPanel, setShowModerationPanel] = useState(false);
   const [showPinnedMessages, setShowPinnedMessages] = useState(false);
   const [replyingTo, setReplyingTo] = useState<{id: string, content: string} | null>(null);
@@ -422,12 +423,13 @@ const ChatInterface = () => {
     <div className="h-screen bg-chat-bg rtl flex" dir="rtl">
       {/* Mobile Back Button & Header */}
       {!showRoomsList && (
-        <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border p-4 flex items-center gap-3">
+        <div className="md:hidden fixed top-0 left-0 right-0 z-[130] bg-card border-b border-border p-4 flex items-center gap-3">
           <Button 
             variant="ghost" 
             size="icon"
             onClick={() => setShowRoomsList(true)}
             className="h-8 w-8"
+            aria-label="عودة للغرف"
           >
             <ArrowRight className="h-4 w-4" />
           </Button>
@@ -445,6 +447,7 @@ const ChatInterface = () => {
               size="icon"
               onClick={() => setShowModerationPanel(true)}
               className="h-8 w-8 mr-auto"
+              aria-label="لوحة الإشراف"
             >
               <Shield className="h-4 w-4" />
             </Button>
@@ -453,9 +456,17 @@ const ChatInterface = () => {
       )}
 
       {/* Sidebar - Rooms */}
-      <div className={`w-80 bg-card border-l border-border flex-col ${showRoomsList ? 'flex' : 'hidden'} md:flex`}>
+      <div className={`${collapsedRooms ? 'w-6' : 'w-80'} transition-all duration-300 bg-card border-l border-border flex-col ${showRoomsList ? 'flex' : 'hidden'} md:flex relative`}>
+        {/* Collapse Toggle */}
+        <button
+          aria-label={collapsedRooms ? 'Expand rooms' : 'Collapse rooms'}
+          className="absolute -left-3 top-20 z-[90] bg-card border border-border rounded-full w-6 h-6 flex items-center justify-center shadow-soft hover-scale"
+          onClick={() => setCollapsedRooms(v => !v)}
+        >
+          <span className="text-xs">{collapsedRooms ? '⟵' : '⟶'}</span>
+        </button>
         {/* Header */}
-        <div className="p-4 border-b border-border">
+        <div className={`p-4 border-b border-border ${collapsedRooms ? 'opacity-0 pointer-events-none h-0 p-0 border-0' : ''}`}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-hero rounded-lg flex items-center justify-center">
@@ -754,49 +765,37 @@ const ChatInterface = () => {
             </div>
           </div>
         </div>
+        {/* Rooms list (content) - hidden when collapsed) */}
+        {!collapsedRooms && (
+          <div className="flex-1 overflow-auto">
+            {/* Search and pinned */}
+            <div className="p-4 border-b border-border">
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm" onClick={() => setShowPinnedMessages(true)}>
+                  <Pin className="h-4 w-4 ml-1" /> المثبتة
+                </Button>
+                <div className="ml-auto">
+                  <MessageSearch messages={messages} />
+                </div>
+              </div>
+            </div>
+
+            {/* Channels list */}
+            <div className="p-2 space-y-1">
+              {channels.map((room) => (
+                <Button
+                  key={room.id}
+                  variant={activeRoom === room.id ? 'secondary' : 'ghost'}
+                  className="w-full justify-start arabic-text"
+                  onClick={() => setActiveRoom(room.id)}
+                >
+                  <Hash className="h-4 w-4 ml-2" /> {room.name}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Users Sidebar */}
-      <div className="hidden lg:flex w-64 bg-card border-r border-border flex-col">
-        <ChannelMembership 
-          channelId={activeRoom}
-          currentProfile={currentProfile}
-          className="h-full"
-        />
-      </div>
-
-      {/* Moderation Panel Dialog */}
-      <Dialog open={showModerationPanel} onOpenChange={setShowModerationPanel}>
-        <DialogContent className="sm:max-w-md rtl" dir="rtl">
-          <DialogHeader>
-            <DialogTitle className="arabic-text">لوحة الإشراف</DialogTitle>
-          </DialogHeader>
-          
-          <ModerationPanel
-            currentProfile={currentProfile}
-            activeChannelId={activeRoom}
-            onClose={() => setShowModerationPanel(false)}
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* Pinned Messages Dialog */}
-      <Dialog open={showPinnedMessages} onOpenChange={setShowPinnedMessages}>
-        <DialogContent className="sm:max-w-lg rtl" dir="rtl">
-          <DialogHeader>
-            <DialogTitle className="arabic-text flex items-center gap-2">
-              <Pin className="h-5 w-5" />
-              الرسائل المثبتة
-            </DialogTitle>
-          </DialogHeader>
-          
-          <PinnedMessages
-            messages={messages}
-            onUnpin={handleUnpinMessage}
-            className="max-h-96"
-          />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
