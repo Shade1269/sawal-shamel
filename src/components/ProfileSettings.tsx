@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -209,6 +210,41 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
                   </p>
                 </div>
                 <Switch checked={notifications} onCheckedChange={setNotifications} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* User Account Information */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm arabic-text">معلومات الحساب</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground arabic-text">البريد الإلكتروني:</span>
+                <span className="font-medium arabic-text">{profile?.email || 'غير محدد'}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground arabic-text">الصلاحية:</span>
+                <Badge variant={profile?.role === 'admin' ? 'default' : profile?.role === 'moderator' ? 'secondary' : 'outline'}>
+                  {profile?.role === 'admin' ? 'مدير عام' : profile?.role === 'moderator' ? 'مشرف' : 'عضو'}
+                </Badge>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground arabic-text">النقاط:</span>
+                <span className="font-medium arabic-text">{profile?.points || 0}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground arabic-text">تاريخ الانضمام:</span>
+                <span className="font-medium arabic-text">
+                  {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('ar-SA') : 'غير محدد'}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground arabic-text">حالة الحساب:</span>
+                <Badge variant={profile?.is_active ? 'default' : 'destructive'}>
+                  {profile?.is_active ? 'نشط' : 'غير نشط'}
+                </Badge>
               </div>
             </CardContent>
           </Card>

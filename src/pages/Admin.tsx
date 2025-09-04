@@ -138,23 +138,23 @@ const Admin = () => {
                 }
               }}>سحب الإشراف</Button>
             </div>
-            <div className="pt-4 border-t">
-              <h4 className="font-medium mb-2">إنشاء مستخدم (مشرف)</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                <Input placeholder="بريد جديد" value={targetEmail} onChange={(e) => setTargetEmail(e.target.value)} />
-                <Input placeholder="كلمة مرور" type="password" id="new-pass" />
-                <Button onClick={async () => {
-                  const pass = (document.getElementById("new-pass") as HTMLInputElement)?.value || "";
-                  if (!targetEmail.trim() || !pass) return;
-                  const res = await callAdminApi("create_user", { email: targetEmail.trim(), password: pass, role: "moderator" });
-                  if (!res.error) {
-                    toast({ title: "تم الإنشاء", description: `أُنشئ ${targetEmail} كمشرف` });
-                    (document.getElementById("new-pass") as HTMLInputElement).value = "";
-                    loadLists();
-                  }
-                }}>إنشاء</Button>
+              <div className="pt-4 border-t">
+                <h4 className="font-medium mb-2">إنشاء مستخدم (مشرف)</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  <Input placeholder="shade010@hotmail.com" value={targetEmail} onChange={(e) => setTargetEmail(e.target.value)} />
+                  <Input placeholder="123456" type="password" id="new-pass" />
+                  <Button onClick={async () => {
+                    const pass = (document.getElementById("new-pass") as HTMLInputElement)?.value || "";
+                    if (!targetEmail.trim() || !pass) return;
+                    const res = await callAdminApi("create_user", { email: targetEmail.trim(), password: pass, role: "moderator" });
+                    if (!res.error) {
+                      toast({ title: "تم الإنشاء", description: `أُنشئ ${targetEmail} كمشرف` });
+                      (document.getElementById("new-pass") as HTMLInputElement).value = "";
+                      loadLists();
+                    }
+                  }}>إنشاء</Button>
+                </div>
               </div>
-            </div>
           </CardContent>
         </Card>
       </section>
