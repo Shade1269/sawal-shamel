@@ -14,13 +14,16 @@ import { Phone, Mail } from 'lucide-react';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp, resendVerification } = useAuth();
+  const { signIn, signUp, resendVerification, signInWithPhone } = useAuth();
   const navigate = useNavigate();
 
   const [signInForm, setSignInForm] = useState({
     email: '',
     password: '',
-    rememberMe: false
+    phone: '',
+    countryCode: '+966',
+    rememberMe: false,
+    loginMethod: 'email' // 'email' or 'phone'
   });
 
   const [signUpForm, setSignUpForm] = useState({
@@ -75,19 +78,37 @@ const AuthPage = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('handleSignIn called with:', { email: signInForm.email, password: '***' });
+    console.log('handleSignIn called with method:', signInForm.loginMethod);
     
-    if (!signInForm.email || !signInForm.password) {
-      console.log('Missing email or password:', { email: signInForm.email, hasPassword: !!signInForm.password });
+    const isEmailMethod = signInForm.loginMethod === 'email';
+    const isPhoneMethod = signInForm.loginMethod === 'phone';
+    
+    if (isEmailMethod && (!signInForm.email || !signInForm.password)) {
+      console.log('Missing email or password');
+      return;
+    }
+    
+    if (isPhoneMethod && !signInForm.phone) {
+      console.log('Missing phone number');
       return;
     }
     
     setIsLoading(true);
-    const result = await signIn(signInForm.email, signInForm.password, signInForm.rememberMe);
+    
+    let result;
+    if (isPhoneMethod) {
+      // تسجيل دخول بالجوال (OTP)
+      const fullPhoneNumber = `${signInForm.countryCode}${signInForm.phone}`;
+      result = await signInWithPhone(fullPhoneNumber);
+    } else {
+      // تسجيل دخول بالإيميل والباسورد
+      result = await signIn(signInForm.email, signInForm.password, signInForm.rememberMe);
+    }
+    
     console.log('SignIn result:', result);
     
-    if (!result.error) {
-      // التوجيه مباشرة لصفحة الدردشة بعد نجاح تسجيل الدخول
+    if (!result.error && isEmailMethod) {
+      // التوجيه مباشرة لصفحة الدردشة بعد نجاح تسجيل الدخول بالإيميل
       navigate('/chat');
     }
     
@@ -169,52 +190,128 @@ const AuthPage = () => {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSignIn} className="space-y-4">
-                  <div className="space-y-2 text-right">
-                    <Label htmlFor="signin-email">البريد الإلكتروني</Label>
-                     <Input
-                       id="signin-email"
-                       type="email"
-                       value={signInForm.email}
-                       onChange={(e) => {
-                         console.log('Email input changed:', e.target.value);
-                         setSignInForm(prev => ({...prev, email: e.target.value}));
-                       }}
-                       placeholder="أدخل بريدك الإلكتروني"
-                       required
-                       className="text-right"
-                     />
+                  <div className="space-y-3 text-right">
+                    <Label>طريقة تسجيل الدخول</Label>
+                    <RadioGroup 
+                      value={signInForm.loginMethod} 
+                      onValueChange={(value) => setSignInForm(prev => ({...prev, loginMethod: value}))}
+                      className="flex gap-6 justify-center"
+                    >
+                      <div className="flex items-center space-x-2 space-x-reverse">
+                        <RadioGroupItem value="email" id="login-email-method" />
+                        <Label htmlFor="login-email-method" className="flex items-center gap-2 cursor-pointer">
+                          <Mail className="h-4 w-4" />
+                          البريد الإلكتروني
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2 space-x-reverse">
+                        <RadioGroupItem value="phone" id="login-phone-method" />
+                        <Label htmlFor="login-phone-method" className="flex items-center gap-2 cursor-pointer">
+                          <Phone className="h-4 w-4" />
+                          رقم الجوال
+                        </Label>
+                      </div>
+                    </RadioGroup>
                   </div>
-                  <div className="space-y-2 text-right">
-                    <Label htmlFor="signin-password">كلمة المرور</Label>
-                    <Input
-                      id="signin-password"
-                      type="password"
-                      value={signInForm.password}
-                      onChange={(e) => setSignInForm(prev => ({...prev, password: e.target.value}))}
-                      placeholder="أدخل كلمة المرور"
-                      required
-                      className="text-right"
-                     />
-                   </div>
-                   
-                   <div className="flex items-center space-x-2 space-x-reverse">
-                     <Checkbox 
-                       id="remember-me"
-                       checked={signInForm.rememberMe}
-                       onCheckedChange={(checked) => 
-                         setSignInForm(prev => ({...prev, rememberMe: checked as boolean}))
-                       }
-                     />
-                     <Label 
-                       htmlFor="remember-me" 
-                       className="text-sm font-normal cursor-pointer"
-                     >
-                       تذكرني (البقاء متصلاً)
-                     </Label>
-                   </div>
-                   
+                  
+                  {signInForm.loginMethod === 'email' && (
+                    <>
+                      <div className="space-y-2 text-right">
+                        <Label htmlFor="signin-email">البريد الإلكتروني</Label>
+                         <Input
+                           id="signin-email"
+                           type="email"
+                           value={signInForm.email}
+                           onChange={(e) => {
+                             console.log('Email input changed:', e.target.value);
+                             setSignInForm(prev => ({...prev, email: e.target.value}));
+                           }}
+                           placeholder="أدخل بريدك الإلكتروني"
+                           required
+                           className="text-right"
+                         />
+                      </div>
+                      <div className="space-y-2 text-right">
+                        <Label htmlFor="signin-password">كلمة المرور</Label>
+                        <Input
+                          id="signin-password"
+                          type="password"
+                          value={signInForm.password}
+                          onChange={(e) => setSignInForm(prev => ({...prev, password: e.target.value}))}
+                          placeholder="أدخل كلمة المرور"
+                          required
+                          className="text-right"
+                         />
+                       </div>
+                       
+                       <div className="flex items-center space-x-2 space-x-reverse">
+                         <Checkbox 
+                           id="remember-me"
+                           checked={signInForm.rememberMe}
+                           onCheckedChange={(checked) => 
+                             setSignInForm(prev => ({...prev, rememberMe: checked as boolean}))
+                           }
+                         />
+                         <Label 
+                           htmlFor="remember-me" 
+                           className="text-sm font-normal cursor-pointer"
+                         >
+                           تذكرني (البقاء متصلاً)
+                         </Label>
+                       </div>
+                    </>
+                  )}
+                  
+                  {signInForm.loginMethod === 'phone' && (
+                    <div className="space-y-2 text-right">
+                      <Label htmlFor="signin-phone">رقم الجوال</Label>
+                      <div className="flex gap-2">
+                        <Select 
+                          value={signInForm.countryCode} 
+                          onValueChange={(value) => setSignInForm(prev => ({...prev, countryCode: value}))}
+                        >
+                          <SelectTrigger className="w-[140px]">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-background border border-border shadow-lg z-50">
+                            {arabCountries.map((country) => (
+                              <SelectItem 
+                                key={country.code} 
+                                value={country.code}
+                                className="text-right cursor-pointer hover:bg-accent"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span>{country.flag}</span>
+                                  <span>{country.code}</span>
+                                  <span className="text-sm text-muted-foreground">{country.name}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Input
+                          id="signin-phone"
+                          type="tel"
+                          value={signInForm.phone}
+                          onChange={(e) => {
+                            // إزالة الأصفار في البداية تلقائياً
+                            const value = e.target.value.replace(/^0+/, '');
+                            setSignInForm(prev => ({...prev, phone: value}));
+                          }}
+                          placeholder="xxxxxxxxx"
+                          required
+                          className="text-right flex-1"
+                        />
+                      </div>
+                      <div className="text-xs text-muted-foreground text-right">
+                        سيتم إرسال رمز التحقق عبر SMS
+                      </div>
+                    </div>
+                  )}
+                       
                    <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'جاري التحقق...' : 'تسجيل دخول'}
+                    {isLoading ? 'جاري المعالجة...' : 
+                     signInForm.loginMethod === 'phone' ? 'إرسال رمز التحقق' : 'تسجيل دخول'}
                   </Button>
                 </form>
               </CardContent>

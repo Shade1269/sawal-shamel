@@ -10,6 +10,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string, verifyMethod?: string, phone?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  signInWithPhone: (phone: string) => Promise<{ error: any }>;
   resendVerification: (email: string) => Promise<{ error: any }>;
 }
 
@@ -182,6 +183,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const signInWithPhone = async (phone: string) => {
+    console.log('SignInWithPhone called with:', phone);
+    
+    const { error } = await supabase.auth.signInWithOtp({
+      phone: phone,
+      options: {
+        channel: 'sms'
+      }
+    });
+
+    if (error) {
+      console.error('SignInWithPhone error:', error);
+      toast({
+        title: "خطأ في إرسال رمز التحقق",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "تم إرسال رمز التحقق",
+        description: "تحقق من رسائلك القصيرة وأدخل الرمز"
+      });
+    }
+
+    return { error };
+  };
   const resendVerification = async (email: string) => {
     const redirectUrl = `${window.location.origin}/`;
     const { error } = await supabase.auth.resend({
@@ -215,6 +242,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signUp,
     signIn,
     signOut,
+    signInWithPhone,
     resendVerification
   };
 
