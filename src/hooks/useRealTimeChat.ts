@@ -9,6 +9,7 @@ export interface Message {
   sender_id: string;
   channel_id: string;
   created_at: string;
+  edited_at?: string;
   message_type: string;
   sender?: {
     id: string;

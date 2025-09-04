@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { useRealTimeChat } from '@/hooks/useRealTimeChat';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -37,6 +38,8 @@ import VoiceRecorder from './VoiceRecorder';
 import UserProfile from './UserProfile';
 import UserActionsMenu from './UserActionsMenu';
 import ModerationPanel from './ModerationPanel';
+import EmojiPicker from './EmojiPicker';
+import MessageActions from './MessageActions';
 import { supabase } from '@/integrations/supabase/client';
 
 const ChatInterface = () => {
@@ -46,7 +49,9 @@ const ChatInterface = () => {
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
   const [showRoomsList, setShowRoomsList] = useState(true);
   const [showModerationPanel, setShowModerationPanel] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<{id: string, content: string} | null>(null);
   const { user, signOut } = useAuth();
+  const { toast } = useToast();
   const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage } = useRealTimeChat(activeRoom);
 
   // Update current profile when hook profile changes
@@ -69,8 +74,16 @@ const ChatInterface = () => {
 
   const sendMessage = async () => {
     if (message.trim() && activeRoom) {
-      await sendMsg(message.trim());
+      let finalContent = message.trim();
+      
+      // إضافة الرد إذا كان موجود
+      if (replyingTo) {
+        finalContent = `[رد على: ${replyingTo.content.substring(0, 50)}...] ${finalContent}`;
+      }
+      
+      await sendMsg(finalContent);
       setMessage('');
+      setReplyingTo(null);
     }
   };
 
@@ -80,6 +93,38 @@ const ChatInterface = () => {
       sendMessage();
     }
   };
+  const handleReply = (messageId: string, originalContent: string) => {
+    setReplyingTo({ id: messageId, content: originalContent });
+    // Focus on textarea (will be implemented when we add the ref)
+  };
+
+  const handleEditMessage = async (messageId: string, newContent: string) => {
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .update({ 
+          content: newContent,
+          edited_at: new Date().toISOString()
+        })
+        .eq('id', messageId);
+
+      if (error) {
+        console.error('Error editing message:', error);
+        toast({
+          title: "خطأ في التعديل",
+          description: "فشل في تعديل الرسالة",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Error editing message:', error);
+    }
+  };
+
+  const handleEmojiSelect = (emoji: string) => {
+    setMessage(prev => prev + emoji);
+  };
+
   const canDeleteMessage = (messageId: string, senderId: string) => {
     // User can delete their own messages, or if they're an admin/moderator
     return currentProfile && (
@@ -160,6 +205,22 @@ const ChatInterface = () => {
   const renderMessageContent = (msg: any) => {
     const content = msg.content;
     
+    // Handle reply messages
+    if (content.includes('[رد على:')) {
+      const parts = content.split('] ');
+      const replyPart = parts[0] + ']';
+      const actualContent = parts.slice(1).join('] ');
+      
+      return (
+        <div className="space-y-2">
+          <div className="text-xs text-muted-foreground bg-accent/20 p-2 rounded border-r-2 border-primary">
+            {replyPart}
+          </div>
+          <p className="arabic-text leading-relaxed">{actualContent}</p>
+        </div>
+      );
+    }
+    
     // Handle image messages
     if (content.startsWith('[صورة]') || msg.message_type === 'image') {
       const imageUrl = content.replace('[صورة] ', '');
@@ -200,21 +261,31 @@ const ChatInterface = () => {
       );
     }
     
-    // Handle file messages
+    // Handle file messages - IMPROVED
     if (content.startsWith('[ملف]') || msg.message_type === 'file') {
       const fileUrl = content.replace('[ملف] ', '');
-      const fileName = fileUrl.split('/').pop() || 'ملف';
+      const fileName = fileUrl.split('/').pop()?.split('?')[0] || 'ملف غير معروف';
+      const fileExt = fileName.split('.').pop()?.toLowerCase() || '';
+      
       return (
-        <div className="flex items-center gap-2 bg-accent/20 rounded-lg p-2">
-          <Paperclip className="h-4 w-4" />
-          <a 
-            href={fileUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-sm arabic-text hover:underline"
+        <div className="flex items-center gap-3 bg-accent/20 rounded-lg p-3 max-w-sm">
+          <div className="flex-shrink-0">
+            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+              <Paperclip className="h-5 w-5 text-primary" />
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium arabic-text truncate">{fileName}</p>
+            <p className="text-xs text-muted-foreground uppercase">{fileExt} ملف</p>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => window.open(fileUrl, '_blank')}
+            className="text-primary hover:text-primary/80"
           >
-            {fileName}
-          </a>
+            تحميل
+          </Button>
         </div>
       );
     }
@@ -415,18 +486,31 @@ const ChatInterface = () => {
                             minute: '2-digit' 
                           })}
                         </span>
-                        {!isOwn && msg.sender && (
-                          <UserActionsMenu
-                            user={{
-                              id: msg.sender.id,
-                              full_name: msg.sender.full_name || 'مستخدم',
-                              email: msg.sender.email || ''
-                            }}
+                        {msg.edited_at && (
+                          <span className="text-xs text-muted-foreground">(معدّلة)</span>
+                        )}
+                        <div className="mr-auto flex items-center gap-1">
+                          <MessageActions
+                            message={msg}
                             currentProfile={currentProfile}
-                            activeChannelId={activeRoom}
+                            onReply={handleReply}
+                            onEdit={handleEditMessage}
+                            onDelete={deleteMessage}
                             isOwnMessage={isOwn}
                           />
-                        )}
+                          {!isOwn && msg.sender && (
+                            <UserActionsMenu
+                              user={{
+                                id: msg.sender.id,
+                                full_name: msg.sender.full_name || 'مستخدم',
+                                email: msg.sender.email || ''
+                              }}
+                              currentProfile={currentProfile}
+                              activeChannelId={activeRoom}
+                              isOwnMessage={isOwn}
+                            />
+                          )}
+                        </div>
                       </div>
                       <div className={`p-3 rounded-2xl shadow-soft relative ${
                         isOwn 
@@ -454,7 +538,27 @@ const ChatInterface = () => {
 
         {/* Message Input */}
         <div className="bg-card border-t border-border p-4">
-          <div className="flex items-center gap-3">
+          {/* Reply Preview */}
+          {replyingTo && (
+            <div className="mb-3 p-2 bg-accent/20 rounded-lg border-r-2 border-primary">
+              <div className="flex items-center justify-between">
+                <div className="text-sm arabic-text">
+                  <span className="text-muted-foreground">رد على: </span>
+                  <span>{replyingTo.content.substring(0, 50)}...</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setReplyingTo(null)}
+                  className="h-6 w-6 p-0"
+                >
+                  ×
+                </Button>
+              </div>
+            </div>
+          )}
+          
+          <div className="flex items-end gap-3">
             <div className="flex gap-1">
               <FileUpload
                 onFileUpload={handleFileUpload}
@@ -464,15 +568,13 @@ const ChatInterface = () => {
               <VoiceRecorder
                 onRecordingComplete={handleVoiceRecording}
               />
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <Smile className="h-4 w-4" />
-              </Button>
+              <EmojiPicker onEmojiSelect={handleEmojiSelect} />
             </div>
             <div className="flex-1 flex gap-2">
               <Textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="اكتب رسالتك هنا..."
+                placeholder={replyingTo ? "اكتب ردك هنا..." : "اكتب رسالتك هنا..."}
                 className="flex-1 arabic-text min-h-12 md:min-h-14 max-h-40 resize-none overflow-y-auto"
                 onKeyDown={handleKeyDown}
                 onInput={(e) => {
@@ -487,7 +589,7 @@ const ChatInterface = () => {
                 onClick={sendMessage}
                 variant="hero"
                 size="icon"
-                className="shadow-soft"
+                className="shadow-soft self-end"
                 disabled={!message.trim() || !activeRoom}
               >
                 <Send className="h-4 w-4" />

@@ -14,11 +14,43 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [permissionGranted, setPermissionGranted] = useState<boolean | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const { toast } = useToast();
+
+  const requestMicrophonePermission = async () => {
+    try {
+      toast({
+        title: "طلب صلاحية الميكروفون",
+        description: "يرجى السماح بالوصول للميكروفون لتسجيل الرسائل الصوتية"
+      });
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop()); // توقيف المجرى المؤقت
+      setPermissionGranted(true);
+      
+      toast({
+        title: "تم منح الصلاحية",
+        description: "يمكنك الآن تسجيل الرسائل الصوتية"
+      });
+      
+      // ابدأ التسجيل مباشرة
+      setTimeout(() => startRecording(), 500);
+      
+    } catch (error) {
+      console.error('Permission denied:', error);
+      setPermissionGranted(false);
+      
+      toast({
+        title: "تم رفض الصلاحية", 
+        description: "لا يمكن تسجيل الرسائل الصوتية بدون صلاحية الميكروفون. يرجى السماح بالوصول في إعدادات المتصفح.",
+        variant: "destructive"
+      });
+    }
+  };
 
   const startRecording = async () => {
     try {
@@ -117,8 +149,25 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
         type="button"
         variant={isRecording ? "destructive" : "ghost"}
         size="icon"
-        onClick={isRecording ? stopRecording : startRecording}
+        onClick={() => {
+          if (isRecording) {
+            stopRecording();
+          } else if (permissionGranted === false) {
+            requestMicrophonePermission();
+          } else if (permissionGranted === null) {
+            requestMicrophonePermission();
+          } else {
+            startRecording();
+          }
+        }}
         className="h-9 w-9"
+        title={
+          permissionGranted === false 
+            ? "انقر لطلب صلاحية الميكروفون" 
+            : isRecording 
+              ? "انقر لإيقاف التسجيل" 
+              : "انقر لبدء تسجيل رسالة صوتية"
+        }
       >
         {isRecording ? (
           <Square className="h-4 w-4" />

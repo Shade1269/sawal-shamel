@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MessageCircle, Users, Shield, Zap, Globe, Heart } from "lucide-react";
+import { MessageCircle, Users, Shield, Zap, Globe, Heart, User, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ChatLanding = () => {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   
   return (
     <div className="min-h-screen bg-gradient-chat rtl" dir="rtl">
@@ -18,8 +20,24 @@ const ChatLanding = () => {
             <h1 className="text-2xl font-bold text-foreground arabic-text">دردشة عربية</h1>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" className="arabic-text">تسجيل الدخول</Button>
-            <Button variant="hero" className="arabic-text shadow-soft">انضم الآن</Button>
+            {user ? (
+              <div className="flex items-center gap-3">
+                <span className="text-sm arabic-text">مرحباً، {user.email}</span>
+                <Button variant="ghost" onClick={signOut} className="arabic-text">
+                  <LogOut className="h-4 w-4 mr-1" />
+                  تسجيل خروج
+                </Button>
+                <Button variant="hero" onClick={() => navigate('/chat')} className="arabic-text shadow-soft">
+                  <MessageCircle className="h-4 w-4 mr-1" />
+                  الدردشة
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Button variant="ghost" onClick={() => navigate('/auth')} className="arabic-text">تسجيل الدخول</Button>
+                <Button variant="hero" onClick={() => navigate('/auth')} className="arabic-text shadow-soft">انضم الآن</Button>
+              </>
+            )}
           </div>
         </nav>
       </header>
@@ -42,10 +60,10 @@ const ChatLanding = () => {
               size="lg" 
               variant="hero" 
               className="text-lg px-8 py-4 arabic-text shadow-glow animate-bounce-in"
-              onClick={() => navigate('/chat')}
+              onClick={() => user ? navigate('/chat') : navigate('/auth')}
             >
               <MessageCircle className="ml-2 h-5 w-5" />
-              ابدأ الدردشة الآن
+              {user ? 'الدردشة' : 'ابدأ الدردشة الآن'}
             </Button>
             <Button size="lg" variant="outline" className="text-lg px-8 py-4 arabic-text animate-slide-up">
               <Users className="ml-2 h-5 w-5" />
@@ -142,10 +160,10 @@ const ChatLanding = () => {
             size="lg" 
             variant="hero" 
             className="text-xl px-12 py-5 arabic-text shadow-glow animate-bounce-in"
-            onClick={() => navigate('/chat')}
+            onClick={() => user ? navigate('/chat') : navigate('/auth')}
           >
             <MessageCircle className="ml-3 h-6 w-6" />
-            ابدأ الدردشة مجاناً
+            {user ? 'الدردشة' : 'ابدأ الدردشة مجاناً'}
           </Button>
         </div>
       </section>
