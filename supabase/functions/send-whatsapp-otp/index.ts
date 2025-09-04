@@ -19,9 +19,12 @@ serve(async (req) => {
   try {
     const { phone } = await req.json();
 
-    if (!phone) {
+    const rawPhone = String(phone || '').trim();
+    const cleanPhone = rawPhone.replace(/\s+/g, '');
+
+    if (!cleanPhone || !/^\+?\d+$/.test(cleanPhone)) {
       return new Response(
-        JSON.stringify({ error: 'Phone number is required' }),
+        JSON.stringify({ error: 'Invalid phone format. Use +<country><number>' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -32,7 +35,7 @@ serve(async (req) => {
     // Generate 6-digit OTP code
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    console.log(`Generated OTP ${otpCode} for phone ${phone}`);
+    console.log(`Generated OTP ${otpCode} for phone ${cleanPhone}`);
 
     // Clean up expired OTP codes first
     await supabase.rpc('cleanup_expired_otp');
@@ -41,7 +44,7 @@ serve(async (req) => {
     const { data: existingOtp } = await supabase
       .from('whatsapp_otp')
       .select('*')
-      .eq('phone', phone)
+      .eq('phone', cleanPhone)
       .eq('verified', false)
       .gt('expires_at', new Date().toISOString())
       .maybeSingle();
@@ -59,7 +62,7 @@ serve(async (req) => {
     const { error: dbError } = await supabase
       .from('whatsapp_otp')
       .insert({
-        phone,
+        phone: cleanPhone,
         code: otpCode,
         expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutes
       });
@@ -75,7 +78,9 @@ serve(async (req) => {
     // Send WhatsApp message via Twilio
     const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
     const authToken = Deno.env.get('TWILIO_AUTH_TOKEN');
-    const whatsappFrom = Deno.env.get('TWILIO_WHATSAPP_FROM') || 'whatsapp:+14155238886';
+    const rawFrom = (Deno.env.get('TWILIO_WHATSAPP_FROM') || 'whatsapp:+14155238886').trim().replace(/\s+/g, '');
+    const from = rawFrom.startsWith('whatsapp:') ? rawFrom : `whatsapp:${rawFrom.replace(/^whatsapp:/, '')}`;
+    const to = cleanPhone.startsWith('whatsapp:') ? cleanPhone : `whatsapp:${cleanPhone}`;
 
     if (!accountSid || !authToken) {
       console.error('Twilio credentials not configured');
@@ -84,6 +89,8 @@ serve(async (req) => {
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    console.log('Twilio From/To:', from, to);
 
     const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
     const message = `Your verification code is: ${otpCode}. This code expires in 5 minutes.`;
@@ -95,8 +102,8 @@ serve(async (req) => {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        From: whatsappFrom,
-        To: `whatsapp:${phone}`,
+        From: from,
+        To: to,
         Body: message,
       }),
     });
@@ -111,7 +118,7 @@ serve(async (req) => {
       await supabase
         .from('whatsapp_otp')
         .delete()
-        .eq('phone', phone)
+        .eq('phone', cleanPhone)
         .eq('code', otpCode);
 
       return new Response(
