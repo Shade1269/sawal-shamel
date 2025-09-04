@@ -19,7 +19,9 @@ import {
   LogOut,
   Trash2,
   Play,
-  Pause
+  Pause,
+  ArrowRight,
+  Settings
 } from 'lucide-react';
 import { useRealTimeChat } from '@/hooks/useRealTimeChat';
 import { useAuth } from '@/contexts/AuthContext';
@@ -29,9 +31,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import FileUpload from './FileUpload';
 import VoiceRecorder from './VoiceRecorder';
 import UserProfile from './UserProfile';
+import UserActionsMenu from './UserActionsMenu';
+import ModerationPanel from './ModerationPanel';
 import { supabase } from '@/integrations/supabase/client';
 
 const ChatInterface = () => {
@@ -39,6 +44,8 @@ const ChatInterface = () => {
   const [activeRoom, setActiveRoom] = useState('');
   const [currentProfile, setCurrentProfile] = useState<any>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
+  const [showRoomsList, setShowRoomsList] = useState(true);
+  const [showModerationPanel, setShowModerationPanel] = useState(false);
   const { user, signOut } = useAuth();
   const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage } = useRealTimeChat(activeRoom);
 
@@ -53,6 +60,10 @@ const ChatInterface = () => {
   useEffect(() => {
     if (channels.length > 0 && !activeRoom) {
       setActiveRoom(channels[0].id);
+      // On mobile, hide rooms list when entering a room
+      if (window.innerWidth < 768) {
+        setShowRoomsList(false);
+      }
     }
   }, [channels, activeRoom]);
 
@@ -70,8 +81,12 @@ const ChatInterface = () => {
     }
   };
   const canDeleteMessage = (messageId: string, senderId: string) => {
-    // User can delete their own messages, or if they're an admin
-    return currentProfile && (currentProfile.id === senderId || currentProfile.role === 'admin');
+    // User can delete their own messages, or if they're an admin/moderator
+    return currentProfile && (
+      currentProfile.id === senderId || 
+      currentProfile.role === 'admin' || 
+      currentProfile.role === 'moderator'
+    );
   };
 
   const handleFileUpload = async (url: string, type: 'image' | 'file') => {
@@ -210,8 +225,40 @@ const ChatInterface = () => {
 
   return (
     <div className="h-screen bg-chat-bg rtl flex" dir="rtl">
+      {/* Mobile Back Button & Header */}
+      {!showRoomsList && (
+        <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-card border-b border-border p-4 flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => setShowRoomsList(true)}
+            className="h-8 w-8"
+          >
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+              <Hash className="h-4 w-4 text-white" />
+            </div>
+            <h2 className="font-bold arabic-text">
+              {channels.find(r => r.id === activeRoom)?.name || 'غرفة الدردشة'}
+            </h2>
+          </div>
+          {(currentProfile?.role === 'admin' || currentProfile?.role === 'moderator') && (
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => setShowModerationPanel(true)}
+              className="h-8 w-8 mr-auto"
+            >
+              <Shield className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      )}
+
       {/* Sidebar - Rooms */}
-      <div className="hidden md:flex w-80 bg-card border-l border-border flex-col">
+      <div className={`w-80 bg-card border-l border-border flex-col ${showRoomsList ? 'flex' : 'hidden'} md:flex`}>
         {/* Header */}
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-4">
@@ -267,7 +314,13 @@ const ChatInterface = () => {
               {channels.map((room) => (
                 <button
                   key={room.id}
-                  onClick={() => setActiveRoom(room.id)}
+                  onClick={() => {
+                    setActiveRoom(room.id);
+                    // On mobile, hide rooms list when selecting a room
+                    if (window.innerWidth < 768) {
+                      setShowRoomsList(false);
+                    }
+                  }}
                   className={`w-full text-right p-3 rounded-lg transition-colors arabic-text ${
                     activeRoom === room.id 
                       ? 'bg-primary text-primary-foreground' 
@@ -294,9 +347,9 @@ const ChatInterface = () => {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Chat Header */}
-        <div className="bg-card border-b border-border p-4">
+      <div className={`flex-1 flex flex-col ${!showRoomsList ? 'pt-16 md:pt-0' : ''}`}>
+        {/* Chat Header - Desktop Only */}
+        <div className="hidden md:block bg-card border-b border-border p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
@@ -316,6 +369,16 @@ const ChatInterface = () => {
                 <Users className="h-3 w-3 ml-1" />
                 متصل
               </Badge>
+              {(currentProfile?.role === 'admin' || currentProfile?.role === 'moderator') && (
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => setShowModerationPanel(true)}
+                  className="h-8 w-8"
+                >
+                  <Shield className="h-4 w-4" />
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -335,7 +398,7 @@ const ChatInterface = () => {
                 return (
                   <div 
                     key={msg.id} 
-                    className={`flex gap-3 message-appear ${isOwn ? 'flex-row-reverse' : ''}`}
+                    className={`flex gap-3 message-appear group ${isOwn ? 'flex-row-reverse' : ''}`}
                   >
                     <Avatar className="w-8 h-8 flex-shrink-0">
                       <AvatarImage src={msg.sender?.avatar_url} alt="Profile" />
@@ -352,6 +415,18 @@ const ChatInterface = () => {
                             minute: '2-digit' 
                           })}
                         </span>
+                        {!isOwn && msg.sender && (
+                          <UserActionsMenu
+                            user={{
+                              id: msg.sender.id,
+                              full_name: msg.sender.full_name || 'مستخدم',
+                              email: msg.sender.email || ''
+                            }}
+                            currentProfile={currentProfile}
+                            activeChannelId={activeRoom}
+                            isOwnMessage={isOwn}
+                          />
+                        )}
                       </div>
                       <div className={`p-3 rounded-2xl shadow-soft relative ${
                         isOwn 
@@ -423,7 +498,7 @@ const ChatInterface = () => {
       </div>
 
       {/* Users Sidebar */}
-      <div className="hidden md:flex w-64 bg-card border-r border-border flex-col">
+      <div className="hidden lg:flex w-64 bg-card border-r border-border flex-col">
         <div className="p-4 border-b border-border">
           <h3 className="font-semibold arabic-text">الأعضاء المتصلون</h3>
         </div>
@@ -447,6 +522,21 @@ const ChatInterface = () => {
           </div>
         </ScrollArea>
       </div>
+
+      {/* Moderation Panel Dialog */}
+      <Dialog open={showModerationPanel} onOpenChange={setShowModerationPanel}>
+        <DialogContent className="sm:max-w-md rtl" dir="rtl">
+          <DialogHeader>
+            <DialogTitle className="arabic-text">لوحة الإشراف</DialogTitle>
+          </DialogHeader>
+          
+          <ModerationPanel
+            currentProfile={currentProfile}
+            activeChannelId={activeRoom}
+            onClose={() => setShowModerationPanel(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

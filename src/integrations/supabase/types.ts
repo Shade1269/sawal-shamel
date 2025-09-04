@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      channel_locks: {
+        Row: {
+          channel_id: string
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          locked_by: string
+          reason: string | null
+        }
+        Insert: {
+          channel_id: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          locked_by: string
+          reason?: string | null
+        }
+        Update: {
+          channel_id?: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          locked_by?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channel_locks_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "channel_locks_locked_by_fkey"
+            columns: ["locked_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       channel_members: {
         Row: {
           channel_id: string | null
@@ -62,6 +107,7 @@ export type Database = {
           description: string | null
           id: string
           is_active: boolean
+          is_locked: boolean | null
           name: string
           owner_id: string | null
           type: string
@@ -72,6 +118,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_active?: boolean
+          is_locked?: boolean | null
           name: string
           owner_id?: string | null
           type?: string
@@ -82,6 +129,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_active?: boolean
+          is_locked?: boolean | null
           name?: string
           owner_id?: string | null
           type?: string
@@ -697,6 +745,116 @@ export type Database = {
           {
             foreignKeyName: "shops_owner_id_fkey"
             columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_bans: {
+        Row: {
+          banned_by: string
+          channel_id: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          banned_by: string
+          channel_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          banned_by?: string
+          channel_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_bans_banned_by_fkey"
+            columns: ["banned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_bans_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_bans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_mutes: {
+        Row: {
+          channel_id: string
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          muted_by: string
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          channel_id: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          muted_by: string
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          channel_id?: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          muted_by?: string
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_mutes_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_mutes_muted_by_fkey"
+            columns: ["muted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_mutes_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
