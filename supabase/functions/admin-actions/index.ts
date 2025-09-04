@@ -17,7 +17,7 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
 });
 
 const ALLOWED_ADMIN_EMAILS = new Set([
-  "Zahrhalharbi2@gmail.com",
+  "Shade199633@icloud.com",
 ]);
 
 function jsonResponse(data: any, status = 200) {

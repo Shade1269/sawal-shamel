@@ -167,11 +167,16 @@ export const useRealTimeChat = (channelId: string) => {
           filter: `channel_id=eq.${channelId}`
         },
         (payload) => {
-          // Append the new message immediately without extra queries (avoid RLS issues)
           const newMessage: Message = {
             ...(payload.new as any),
           };
-          setMessages((prev) => [...prev, newMessage]);
+          setMessages((prev) => {
+            // Prevent duplicates (especially after optimistic insert)
+            if (prev.some(m => (m as any).id === (newMessage as any).id)) return prev;
+            // Remove matching optimistic temp message
+            const filtered = prev.filter(m => !(m.id?.startsWith?.('temp-') && m.content === newMessage.content && m.sender_id === newMessage.sender_id));
+            return [...filtered, newMessage];
+          });
         }
       )
       .subscribe();
@@ -182,27 +187,52 @@ export const useRealTimeChat = (channelId: string) => {
       return;
     }
 
-    try {
-      const payload: any = {
-        content: content.trim(),
-        sender_id: currentProfile.id,
-        channel_id: channelId,
-        message_type: messageType
-      };
+    const trimmed = content.trim();
+    const tempId = `temp-${Date.now()}`;
 
-      const { error } = await supabase
+    // Optimistic UI update
+    const tempMessage: Message = {
+      id: tempId,
+      content: trimmed,
+      sender_id: currentProfile.id,
+      channel_id: channelId,
+      message_type: messageType,
+      created_at: new Date().toISOString(),
+    };
+    setMessages(prev => [...prev, tempMessage]);
+
+    try {
+      const { data: inserted, error } = await supabase
         .from('messages')
-        .insert(payload);
+        .insert({
+          content: trimmed,
+          sender_id: currentProfile.id,
+          channel_id: channelId,
+          message_type: messageType
+        })
+        .select(`
+          *,
+          sender:profiles!messages_sender_id_fkey(id, full_name, email, avatar_url)
+        `)
+        .single();
 
       if (error) {
+        // Rollback optimistic message
+        setMessages(prev => prev.filter(m => m.id !== tempId));
         console.error('Error sending message:', error);
         toast({
           title: "خطأ في الإرسال",
           description: "لم يتم إرسال الرسالة، حاول مرة أخرى",
           variant: "destructive"
         });
+        return;
       }
+
+      // Replace optimistic with actual inserted message
+      setMessages(prev => prev.map(m => m.id === tempId ? (inserted as any) : m));
     } catch (error) {
+      // Rollback optimistic message
+      setMessages(prev => prev.filter(m => m.id !== tempId));
       console.error('Error sending message:', error);
       toast({
         title: "خطأ في الإرسال",

@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 
-const ADMIN_EMAIL = "Zahrhalharbi2@gmail.com";
+const ADMIN_EMAIL = "Shade199633@icloud.com";
 
 const Admin = () => {
   const { user, session } = useAuth();
