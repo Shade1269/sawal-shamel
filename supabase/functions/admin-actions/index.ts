@@ -365,3 +365,9 @@ serve(async (req) => {
     }
 
     return jsonResponse({ error: "Invalid action" }, 400);
+
+  } catch (error: any) {
+    console.error("Edge function error:", error);
+    return jsonResponse({ error: error.message || "Internal server error" }, 500);
+  }
+});
