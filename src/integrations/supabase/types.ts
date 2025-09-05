@@ -780,6 +780,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          logo_url: string | null
           owner_id: string
           slug: string
           theme: string
@@ -790,6 +791,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          logo_url?: string | null
           owner_id: string
           slug: string
           theme?: string
@@ -800,6 +802,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          logo_url?: string | null
           owner_id?: string
           slug?: string
           theme?: string

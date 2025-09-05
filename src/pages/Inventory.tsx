@@ -169,6 +169,9 @@ const Inventory = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
         fetchProducts();
       })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'shops' }, () => {
+        fetchUserShop(); // Refresh shop data when shops table changes
+      })
       .subscribe();
 
     return () => {
