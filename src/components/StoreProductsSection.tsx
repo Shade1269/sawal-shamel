@@ -19,6 +19,14 @@ interface Product {
   image_urls: string[] | null;
   category: string | null;
   stock: number;
+  variants?: ProductVariant[];
+}
+
+interface ProductVariant {
+  id: string;
+  variant_type: string;
+  variant_value: string;
+  stock: number;
 }
 
 interface ProductLibraryItem {
@@ -60,7 +68,8 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
             price_sar,
             image_urls,
             category,
-            stock
+            stock,
+            product_variants (*)
           )
         `)
         .eq('shop_id', userShop.id)
@@ -68,7 +77,14 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
 
       if (error) throw error;
 
-      setStoreProducts(data || []);
+      const productsWithVariants = (data || []).map(item => ({
+        ...item,
+        products: {
+          ...item.products,
+          variants: item.products.product_variants || []
+        }
+      }));
+      setStoreProducts(productsWithVariants);
     } catch (error) {
       console.error('Error fetching store products:', error);
       toast({
@@ -280,6 +296,37 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                       المتوفر: {item.products.stock}
                     </div>
                   </div>
+
+                  {/* Product Variants Display */}
+                  {item.products.variants && item.products.variants.length > 0 && (
+                    <div className="space-y-2 mb-3 border-t pt-3">
+                      {[...new Set(item.products.variants.map(v => v.variant_type))].map(variantType => {
+                        const variantOptions = item.products.variants!.filter(v => v.variant_type === variantType);
+                        
+                        return (
+                          <div key={variantType} className="space-y-1">
+                            <label className="text-xs font-medium text-muted-foreground">
+                              {variantType === 'size' ? 'المقاسات' : 
+                               variantType === 'color' ? 'الألوان' : 
+                               variantType === 'style' ? 'الأنماط' :
+                               variantType === 'material' ? 'المواد' : variantType}:
+                            </label>
+                            <div className="flex flex-wrap gap-1">
+                              {variantOptions.map(variant => (
+                                <Badge
+                                  key={variant.id}
+                                  variant={variant.stock > 0 ? "default" : "secondary"}
+                                  className="text-xs px-1 py-0"
+                                >
+                                  {variant.variant_value} ({variant.stock})
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                   
                   <div className="flex gap-1">
                     <Button

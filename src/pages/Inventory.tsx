@@ -28,7 +28,18 @@ interface Product {
 const Inventory = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [products, setProducts] = useState<Product[]>([]);
+interface ProductWithVariants extends Product {
+  variants?: ProductVariant[];
+}
+
+interface ProductVariant {
+  id: string;
+  variant_type: string;
+  variant_value: string;
+  stock: number;
+}
+
+  const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -124,71 +135,7 @@ const Inventory = () => {
     }
   };
 
-  // Add state for user's shop
-  const [userShop, setUserShop] = useState<any>(null);
-
-  const addToStore = async (productId: string) => {
-    try {
-      if (!userShop) {
-        toast({
-          title: "تنبيه",
-          description: "يجب إنشاء متجر أولاً من صفحة إدارة المتجر",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Check if product is already in store
-      const { data: existingItem } = await supabase
-        .from('product_library')
-        .select('id')
-        .eq('shop_id', userShop.id)
-        .eq('product_id', productId)
-        .single();
-
-      if (existingItem) {
-        toast({
-          title: "تنبيه",
-          description: "المنتج موجود بالفعل في متجرك",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Get max sort_index for this shop
-      const { data: maxSort } = await supabase
-        .from('product_library')
-        .select('sort_index')
-        .eq('shop_id', userShop.id)
-        .order('sort_index', { ascending: false })
-        .limit(1);
-
-      const nextSortIndex = maxSort && maxSort.length > 0 ? maxSort[0].sort_index + 1 : 0;
-
-      const { error } = await supabase
-        .from('product_library')
-        .insert({
-          shop_id: userShop.id,
-          product_id: productId,
-          sort_index: nextSortIndex
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "تم بنجاح",
-        description: "تم إضافة المنتج إلى متجرك"
-      });
-
-    } catch (error) {
-      console.error('Error adding product to store:', error);
-      toast({
-        title: "خطأ",
-        description: "فشل في إضافة المنتج إلى المتجر",
-        variant: "destructive"
-      });
-    }
-  };
+  // Add state for user's shop and shop management functionality was removed
 
   useEffect(() => {
     if (!user) {
@@ -196,36 +143,20 @@ const Inventory = () => {
       return;
     }
     fetchProducts();
-    fetchUserShop();
   }, [user, navigate]);
 
   const fetchUserShop = async () => {
-    try {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('auth_user_id', user?.id)
-        .single();
-
-      if (profile) {
-        const { data: shop } = await supabase
-          .from('shops')
-          .select('*')
-          .eq('owner_id', profile.id)
-          .single();
-        
-        setUserShop(shop);
-      }
-    } catch (error) {
-      console.error('Error fetching user shop:', error);
-    }
+    // This function is no longer needed as product addition was moved to Admin page only
   };
 
   const fetchProducts = async () => {
     try {
       const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select(`
+          *,
+          product_variants (*)
+        `)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
@@ -238,7 +169,11 @@ const Inventory = () => {
         return;
       }
 
-      setProducts(data || []);
+      const productsWithVariants = (data || []).map(product => ({
+        ...product,
+        variants: product.product_variants || []
+      }));
+      setProducts(productsWithVariants);
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {
@@ -252,9 +187,6 @@ const Inventory = () => {
       .channel('inventory-products')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
         fetchProducts();
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'shops' }, () => {
-        fetchUserShop(); // Refresh shop data when shops table changes
       })
       .subscribe();
 
@@ -801,16 +733,39 @@ const Inventory = () => {
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Add to Store Button */}
-                  <Button
-                    onClick={() => addToStore(product.id)}
-                    className="w-full gap-2"
-                    variant="outline"
-                  >
-                    <Plus className="h-4 w-4" />
-                    إضافة إلى متجري
-                  </Button>
+
+                  {/* Product Variants Display */}
+                  {product.variants && product.variants.length > 0 && (
+                    <div className="space-y-3 border-t pt-4">
+                      <h5 className="text-sm font-medium text-muted-foreground">المتوفر:</h5>
+                      {[...new Set(product.variants.map(v => v.variant_type))].map(variantType => {
+                        const variantOptions = product.variants!.filter(v => v.variant_type === variantType);
+                        
+                        return (
+                          <div key={variantType} className="space-y-2">
+                            <label className="text-sm font-medium">
+                              {variantType === 'size' ? 'المقاسات' : 
+                               variantType === 'color' ? 'الألوان' : 
+                               variantType === 'style' ? 'الأنماط' :
+                               variantType === 'material' ? 'المواد' : variantType}:
+                            </label>
+                            <div className="flex flex-wrap gap-1">
+                              {variantOptions.map(variant => (
+                                <Badge
+                                  key={variant.id}
+                                  variant={variant.stock > 0 ? "default" : "secondary"}
+                                  className="text-xs"
+                                >
+                                  {variant.variant_value}
+                                  <span className="mr-1">({variant.stock})</span>
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}

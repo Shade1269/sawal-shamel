@@ -302,19 +302,19 @@ const StoreFront = () => {
                         <p className="text-sm text-muted-foreground mb-3 line-clamp-2 leading-relaxed">{product.description}</p>
                       </div>
                       
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div className="text-right">
-                            <span className="text-2xl font-bold text-primary">{product.price_sar}</span>
-                            <span className="text-sm text-muted-foreground mr-1">ر.س</span>
-                          </div>
-                          {product.category && (
-                            <Badge variant="secondary" className="text-xs">{product.category}</Badge>
-                          )}
-                        </div>
+                           <div className="space-y-4">
+                         <div className="flex items-center justify-between">
+                           <div className="text-right">
+                             <span className="text-2xl font-bold text-primary">{product.price_sar}</span>
+                             <span className="text-sm text-muted-foreground mr-1">ر.س</span>
+                           </div>
+                           {product.category && (
+                             <Badge variant="secondary" className="text-xs">{product.category}</Badge>
+                           )}
+                         </div>
                         
                         <div className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-1 text-muted-foreground">
+                           <div className="flex items-center gap-1 text-muted-foreground">
                             <span>المتوفر: {product.stock}</span>
                           </div>
                           <div className="flex items-center gap-1">
@@ -425,29 +425,39 @@ const StoreFront = () => {
                     </p>
                   ) : (
                     <div className="space-y-4">
-                      {cart.map((item) => (
-                        <div key={item.product.id} className="flex items-center gap-3 pb-3 border-b">
-                          <div className="w-12 h-12 bg-muted rounded overflow-hidden">
-                            {item.product.image_urls?.[0] ? (
-                              <img
-                                src={item.product.image_urls[0]}
-                                alt={item.product.title}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center">
-                                <Store className="h-4 w-4 text-muted-foreground" />
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">{item.product.title}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {item.quantity} × {item.product.price_sar} ر.س
-                            </p>
-                          </div>
-                        </div>
-                      ))}
+                        {cart.map((item, index) => (
+                         <div key={`${item.product.id}-${index}`} className="flex items-center gap-3 pb-3 border-b">
+                           <div className="w-12 h-12 bg-muted rounded overflow-hidden">
+                             {item.product.image_urls?.[0] ? (
+                               <img
+                                 src={item.product.image_urls[0]}
+                                 alt={item.product.title}
+                                 className="w-full h-full object-cover"
+                               />
+                             ) : (
+                               <div className="w-full h-full flex items-center justify-center">
+                                 <Store className="h-4 w-4 text-muted-foreground" />
+                               </div>
+                             )}
+                           </div>
+                           <div className="flex-1 min-w-0">
+                             <p className="text-sm font-medium truncate">{item.product.title}</p>
+                             {item.selectedVariants && (
+                               <div className="flex flex-wrap gap-1 mt-1">
+                                 {Object.entries(item.selectedVariants).map(([type, value]) => (
+                                   <Badge key={type} variant="outline" className="text-xs px-1 py-0">
+                                     {type === 'size' ? 'المقاس' : 
+                                      type === 'color' ? 'اللون' : type}: {value}
+                                   </Badge>
+                                 ))}
+                               </div>
+                             )}
+                             <p className="text-xs text-muted-foreground mt-1">
+                               {item.quantity} × {item.product.price_sar} ر.س
+                             </p>
+                           </div>
+                         </div>
+                       ))}
                       
                       <div className="pt-4 border-t">
                         <div className="flex justify-between items-center mb-4">
