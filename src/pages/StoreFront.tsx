@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ShoppingCart, Star, Store, Phone, Mail } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { ProductImageCarousel } from "@/components/ProductImageCarousel";
 
 interface Product {
   id: string;
@@ -272,20 +273,19 @@ const StoreFront = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((product) => (
                   <Card key={product.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-card/50 backdrop-blur-sm">
-                    <div className="aspect-square bg-gradient-to-br from-muted/50 to-muted relative overflow-hidden">
+                    <div className="relative overflow-hidden">
                       {product.image_urls && product.image_urls.length > 0 ? (
-                        <img
-                          src={product.image_urls[0]}
-                          alt={product.title}
-                          className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                        <ProductImageCarousel 
+                          images={product.image_urls} 
+                          productTitle={product.title} 
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
+                        <div className="aspect-square bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center rounded-lg">
                           <Store className="h-16 w-16 text-primary/60" />
                         </div>
                       )}
                       {product.stock === 0 && (
-                        <div className="absolute inset-0 bg-black/70 flex items-center justify-center backdrop-blur-sm">
+                        <div className="absolute inset-0 bg-black/70 flex items-center justify-center backdrop-blur-sm rounded-lg">
                           <Badge variant="destructive" className="text-lg px-4 py-2">نفدت الكمية</Badge>
                         </div>
                       )}

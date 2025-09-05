@@ -76,6 +76,69 @@ const Admin = () => {
     { size: '', color: '', stock: 0 }
   ]);
 
+  const [productImages, setProductImages] = useState<File[]>([]);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
+
+  const handleImageUpload = (files: FileList | null) => {
+    if (!files) return;
+    
+    const newFiles = Array.from(files);
+    const totalImages = productImages.length + newFiles.length;
+    
+    if (totalImages > 10) {
+      toast({
+        title: "حد الصور",
+        description: "يمكن رفع حتى 10 صور فقط للمنتج الواحد",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Create preview URLs
+    const newPreviewUrls = newFiles.map(file => URL.createObjectURL(file));
+    
+    setProductImages(prev => [...prev, ...newFiles]);
+    setImagePreviewUrls(prev => [...prev, ...newPreviewUrls]);
+  };
+
+  const removeImage = (index: number) => {
+    // Revoke the object URL to free memory
+    URL.revokeObjectURL(imagePreviewUrls[index]);
+    
+    setProductImages(prev => prev.filter((_, i) => i !== index));
+    setImagePreviewUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadProductImages = async (productId: string): Promise<string[]> => {
+    if (productImages.length === 0) return [];
+
+    const uploadedUrls: string[] = [];
+
+    for (let i = 0; i < productImages.length; i++) {
+      const file = productImages[i];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${productId}_${i}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('product-images')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('Error uploading image:', uploadError);
+        continue;
+      }
+
+      const { data } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(filePath);
+
+      uploadedUrls.push(data.publicUrl);
+    }
+
+    return uploadedUrls;
+  };
+
   const addVariant = () => {
     setProductVariants([...productVariants, { size: '', color: '', stock: 0 }]);
   };
@@ -246,6 +309,21 @@ const Admin = () => {
         throw productError;
       }
 
+      // Upload images first
+      const imageUrls = await uploadProductImages(createdProduct.id);
+      
+      // Update product with image URLs if we have any
+      if (imageUrls.length > 0) {
+        const { error: updateError } = await supabase
+          .from('products')
+          .update({ image_urls: imageUrls })
+          .eq('id', createdProduct.id);
+
+        if (updateError) {
+          console.error('Error updating product with images:', updateError);
+        }
+      }
+
       // Add product variants if they exist and have values
       const validVariants = productVariants.filter(v => v.size.trim() && v.color.trim());
       if (validVariants.length > 0) {
@@ -278,9 +356,14 @@ const Admin = () => {
         }
       }
 
-      toast({ title: "تم الإضافة", description: "تم إضافة المنتج والمتغيرات بنجاح" });
+      toast({ title: "تم الإضافة", description: "تم إضافة المنتج والصور والمتغيرات بنجاح" });
+      
+      // Clean up
+      imagePreviewUrls.forEach(url => URL.revokeObjectURL(url));
       setNewProduct({ title: '', description: '', price_sar: '', category: '', stock: '', commission_rate: '' });
       setProductVariants([{ size: '', color: '', stock: 0 }]);
+      setProductImages([]);
+      setImagePreviewUrls([]);
       setShowAddProduct(false);
       loadProducts();
     } catch (error) {
@@ -690,6 +773,78 @@ const Admin = () => {
                             💡 <strong>نصيحة:</strong> كل صف يمثل تركيبة من مقاس ولون مع عددها المتوفر (مثال: أحمر + لارج = 5 قطع)
                           </div>
                         </div>
+
+                        {/* Product Images Section */}
+                        <div className="space-y-4 border-t pt-4">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-semibold text-sm">صور المنتج (حتى 10 صور)</h4>
+                            <Badge variant="outline">{productImages.length}/10</Badge>
+                          </div>
+                          
+                          <div className="space-y-4">
+                            {/* Upload Area */}
+                            <div 
+                              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors
+                                ${productImages.length >= 10 ? 'border-muted bg-muted/20 cursor-not-allowed' : 'border-primary/50 hover:border-primary hover:bg-primary/5 cursor-pointer'}
+                              `}
+                              onClick={() => {
+                                if (productImages.length < 10) {
+                                  document.getElementById('product-images-input')?.click();
+                                }
+                              }}
+                            >
+                              <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                              <p className="text-sm text-muted-foreground mb-2">
+                                {productImages.length >= 10 
+                                  ? 'تم الوصول للحد الأقصى من الصور' 
+                                  : 'اضغط لرفع الصور أو اسحب الصور هنا'
+                                }
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {productImages.length >= 10 ? '' : 'PNG, JPG, WebP حتى 5MB لكل صورة'}
+                              </p>
+                              <input
+                                id="product-images-input"
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                className="hidden"
+                                onChange={(e) => handleImageUpload(e.target.files)}
+                                disabled={productImages.length >= 10}
+                              />
+                            </div>
+                            
+                            {/* Image Previews */}
+                            {imagePreviewUrls.length > 0 && (
+                              <div className="grid grid-cols-5 gap-3">
+                                {imagePreviewUrls.map((url, index) => (
+                                  <div key={index} className="relative group">
+                                    <div className="aspect-square bg-muted rounded-lg overflow-hidden border-2 border-border">
+                                      <img
+                                        src={url}
+                                        alt={`Preview ${index + 1}`}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </div>
+                                    <Button
+                                      type="button"
+                                      size="sm"
+                                      variant="destructive"
+                                      className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                      onClick={() => removeImage(index)}
+                                    >
+                                      ×
+                                    </Button>
+                                    <div className="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-1 rounded">
+                                      {index + 1}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
                         <div className="grid grid-cols-2 gap-4">
                           <Select value={newProduct.category} onValueChange={(value) => setNewProduct({...newProduct, category: value})}>
                             <SelectTrigger>
