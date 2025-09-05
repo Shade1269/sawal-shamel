@@ -40,17 +40,17 @@ const StoreFront = () => {
   const [showCart, setShowCart] = useState(false);
 
   // Fetch shop data
-  const { data: shop, isLoading: shopLoading } = useQuery({
+  const { data: shop, isLoading: shopLoading, error: shopError } = useQuery({
     queryKey: ["shop", slug],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("shops")
         .select("*")
         .eq("slug", slug)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
-      return data as Shop;
+      return data as Shop | null;
     },
   });
 
@@ -107,13 +107,23 @@ const StoreFront = () => {
     );
   }
 
-  if (!shop) {
+  if (shopError || (!shopLoading && !shop)) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <Store className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-2xl font-bold mb-2">المتجر غير موجود</h1>
-          <p className="text-muted-foreground">لم يتم العثور على المتجر المطلوب</p>
+      <div className="min-h-screen bg-background flex items-center justify-center" dir="rtl">
+        <div className="text-center space-y-4">
+          <Store className="h-16 w-16 text-muted-foreground mx-auto" />
+          <div>
+            <h1 className="text-2xl font-bold mb-2">المتجر غير موجود</h1>
+            <p className="text-muted-foreground mb-4">
+              لم يتم العثور على متجر بالاسم "{slug}"
+            </p>
+            <Button 
+              onClick={() => window.location.href = '/'}
+              className="gap-2"
+            >
+              العودة للرئيسية
+            </Button>
+          </div>
         </div>
       </div>
     );
