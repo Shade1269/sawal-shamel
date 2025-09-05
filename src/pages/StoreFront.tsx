@@ -130,33 +130,44 @@ const StoreFront = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5" dir="rtl">
       {/* Header */}
-      <header className="bg-card border-b sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
+      <header className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-40">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Avatar className="h-12 w-12">
-                <AvatarImage src={shop.logo_url} alt={shop.display_name} />
-                <AvatarFallback>
-                  <Store className="h-6 w-6" />
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="h-16 w-16 border-2 border-primary/20">
+                  <AvatarImage src={shop.logo_url} alt={shop.display_name} />
+                  <AvatarFallback className="bg-primary/10 text-primary">
+                    <Store className="h-8 w-8" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute -bottom-1 -right-1 h-5 w-5 bg-green-500 border-2 border-background rounded-full flex items-center justify-center">
+                  <div className="h-2 w-2 bg-white rounded-full"></div>
+                </div>
+              </div>
               <div>
-                <h1 className="text-xl font-bold">{shop.display_name}</h1>
-                <p className="text-sm text-muted-foreground">{shop.bio}</p>
+                <h1 className="text-2xl font-bold text-foreground">{shop.display_name}</h1>
+                <p className="text-muted-foreground mt-1">{shop.bio || "مرحباً بكم في متجرنا"}</p>
+                <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                    <span>متاح الآن</span>
+                  </div>
+                </div>
               </div>
             </div>
             
             <Button
               variant="outline"
               onClick={() => setShowCart(!showCart)}
-              className="relative"
+              className="relative bg-background/50 backdrop-blur-sm hover:bg-background/80 border-primary/20"
             >
               <ShoppingCart className="h-4 w-4 ml-2" />
               السلة
               {cartItemsCount > 0 && (
-                <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs">
+                <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 p-0 text-xs font-bold">
                   {cartItemsCount}
                 </Badge>
               )}
@@ -169,7 +180,10 @@ const StoreFront = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Products */}
           <div className="lg:col-span-3">
-            <h2 className="text-2xl font-bold mb-6">المنتجات</h2>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-8 w-1 bg-primary rounded-full"></div>
+              <h2 className="text-2xl font-bold">منتجاتنا</h2>
+            </div>
             
             {productsLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -187,58 +201,99 @@ const StoreFront = () => {
             ) : products && products.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((product) => (
-                  <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="aspect-square bg-muted relative">
+                  <Card key={product.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-card/50 backdrop-blur-sm">
+                    <div className="aspect-square bg-gradient-to-br from-muted/50 to-muted relative overflow-hidden">
                       {product.image_urls && product.image_urls.length > 0 ? (
                         <img
                           src={product.image_urls[0]}
                           alt={product.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Store className="h-12 w-12 text-muted-foreground" />
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
+                          <Store className="h-16 w-16 text-primary/60" />
                         </div>
                       )}
                       {product.stock === 0 && (
-                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                          <Badge variant="destructive">نفذ المخزون</Badge>
+                        <div className="absolute inset-0 bg-black/70 flex items-center justify-center backdrop-blur-sm">
+                          <Badge variant="destructive" className="text-lg px-4 py-2">نفدت الكمية</Badge>
+                        </div>
+                      )}
+                      {product.stock > 0 && (
+                        <div className="absolute top-3 left-3">
+                          <Badge className="bg-green-500/90 text-white">متوفر</Badge>
                         </div>
                       )}
                     </div>
                     
-                    <CardContent className="p-4">
-                      <h3 className="font-semibold mb-2 line-clamp-2">{product.title}</h3>
-                      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                        {product.description}
-                      </p>
-                      
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-lg font-bold text-primary">
-                          {product.price_sar} ر.س
-                        </span>
-                        {product.category && (
-                          <Badge variant="secondary">{product.category}</Badge>
-                        )}
+                    <CardContent className="p-6">
+                      <div className="mb-4">
+                        <h3 className="font-bold text-lg mb-2 line-clamp-2 text-foreground">{product.title}</h3>
+                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2 leading-relaxed">{product.description}</p>
                       </div>
                       
-                      <Button
-                        onClick={() => addToCart(product)}
-                        disabled={product.stock === 0}
-                        className="w-full"
-                      >
-                        <ShoppingCart className="h-4 w-4 ml-2" />
-                        أضف للسلة
-                      </Button>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="text-right">
+                            <span className="text-2xl font-bold text-primary">{product.price_sar}</span>
+                            <span className="text-sm text-muted-foreground mr-1">ر.س</span>
+                          </div>
+                          {product.category && (
+                            <Badge variant="secondary" className="text-xs">{product.category}</Badge>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <span>المتوفر: {product.stock}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                            ))}
+                            <span className="text-muted-foreground mr-1">(4.9)</span>
+                          </div>
+                        </div>
+                        
+                        <Button
+                          onClick={() => addToCart(product)}
+                          disabled={product.stock === 0}
+                          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2.5"
+                        >
+                          <ShoppingCart className="h-4 w-4 ml-2" />
+                          أضف للسلة
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <Store className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">لا توجد منتجات</h3>
-                <p className="text-muted-foreground">لم يتم إضافة أي منتجات لهذا المتجر بعد</p>
+              <div className="text-center py-20">
+                <div className="max-w-md mx-auto">
+                  <div className="mb-8">
+                    <div className="relative">
+                      <div className="w-24 h-24 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <Store className="h-12 w-12 text-primary" />
+                      </div>
+                      <div className="absolute top-2 right-1/2 transform translate-x-1/2 w-3 h-3 bg-primary/30 rounded-full animate-ping"></div>
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4 text-foreground">متجر جديد قيد الإعداد</h3>
+                  <p className="text-muted-foreground mb-8 leading-relaxed">
+                    نحن نعمل على إضافة منتجات رائعة لهذا المتجر. تابعونا قريباً لرؤية آخر العروض والمنتجات المميزة.
+                  </p>
+                  <div className="flex items-center justify-center gap-2 text-sm text-primary/70">
+                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  </div>
+                  <div className="mt-8 p-6 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl border border-primary/10">
+                    <p className="text-sm text-muted-foreground">
+                      💡 هذا المتجر ينتمي إلى: <span className="font-semibold text-foreground">{shop.display_name}</span>
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
           </div>
