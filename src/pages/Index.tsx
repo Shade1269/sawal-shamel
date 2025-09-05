@@ -25,6 +25,11 @@ const Index = () => {
     navigate('/inventory');
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10">
       {/* Header with logout button */}
@@ -41,7 +46,7 @@ const Index = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={signOut}
+                onClick={handleSignOut}
                 className="gap-2"
               >
                 <LogOut className="h-4 w-4" />
