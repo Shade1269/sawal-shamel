@@ -1,7 +1,7 @@
-import ChatInterface from "@/components/ChatInterface";
+import RoomsList from "@/components/RoomsList";
 
 const Chat = () => {
-  return <ChatInterface />;
+  return <RoomsList />;
 };
 
 export default Chat;

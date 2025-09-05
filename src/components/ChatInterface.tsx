@@ -28,11 +28,13 @@ import {
   Bell,
   BellOff,
   Sun,
-  Moon
+  Moon,
+  ArrowLeft
 } from 'lucide-react';
 import { useRealTimeChat } from '@/hooks/useRealTimeChat';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -65,7 +67,6 @@ import { useDarkMode } from '@/components/DarkModeProvider';
 
 const ChatInterface = () => {
   const [message, setMessage] = useState('');
-  const [activeRoom, setActiveRoom] = useState('');
   const [currentProfile, setCurrentProfile] = useState<any>(null);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
   const [showRoomsList, setShowRoomsList] = useState(true);
@@ -80,6 +81,9 @@ const ChatInterface = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user, signOut, session } = useAuth();
   const { toast } = useToast();
+  const { channelId } = useParams<{ channelId: string }>();
+  const navigate = useNavigate();
+  const activeRoom = channelId || '';
   const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage, setMessages, typingUsers, startTyping, stopTyping } = useRealTimeChat(activeRoom);
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const notifications = useNotifications(user?.id);
@@ -273,13 +277,14 @@ const ChatInterface = () => {
   // Set default active room to first available channel
   useEffect(() => {
     if (channels.length > 0 && !activeRoom) {
-      setActiveRoom(channels[0].id);
+      // Navigate to first channel if no channel is selected
+      navigate(`/chat/${channels[0].id}`);
       // On mobile, hide rooms list when entering a room
       if (window.innerWidth < 768) {
         setShowRoomsList(false);
       }
     }
-  }, [channels, activeRoom]);
+  }, [channels, activeRoom, navigate]);
 
   const sendMessage = async () => {
     if (message.trim() && activeRoom) {
@@ -657,18 +662,18 @@ const ChatInterface = () => {
 
   return (
     <div className="h-screen bg-chat-bg rtl flex" dir="rtl">
-      {/* Mobile Back Button & Header */}
-      {!showRoomsList && (
-        <div className="md:hidden fixed top-0 left-0 right-0 z-[130] bg-card border-b border-border p-4 flex items-center gap-3">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => setShowRoomsList(true)}
-            className="h-8 w-8"
-            aria-label="عودة للغرف"
-          >
-            <ArrowRight className="h-4 w-4" />
-          </Button>
+        {/* Mobile Back Button & Header */}
+        {!showRoomsList && (
+          <div className="md:hidden fixed top-0 left-0 right-0 z-[130] bg-card border-b border-border p-4 flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => navigate('/chat')}
+              className="h-8 w-8"
+              aria-label="عودة للغرف"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
               <Hash className="h-4 w-4 text-white" />
@@ -770,7 +775,7 @@ const ChatInterface = () => {
                 <button
                   key={room.id}
                   onClick={() => {
-                    setActiveRoom(room.id);
+                    navigate(`/chat/${room.id}`);
                     // On mobile, hide rooms list when selecting a room
                     if (window.innerWidth < 768) {
                       setShowRoomsList(false);
