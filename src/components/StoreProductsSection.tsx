@@ -2,9 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Package, Trash2, Star } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Package, Trash2, Star, Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Product {
   id: string;
@@ -28,8 +33,18 @@ interface StoreProductsSectionProps {
 }
 
 const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop }) => {
+  const { user } = useAuth();
   const [storeProducts, setStoreProducts] = useState<ProductLibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    title: '',
+    description: '',
+    price_sar: '',
+    category: '',
+    stock: ''
+  });
 
   useEffect(() => {
     if (userShop) {
@@ -123,6 +138,100 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
     }
   };
 
+  const handleAddProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!user || !userShop) return;
+
+    setAdding(true);
+    try {
+      // Get user profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single();
+
+      if (!profile) {
+        throw new Error('لم يتم العثور على الملف الشخصي');
+      }
+
+      // Check if merchant exists, create if not
+      let { data: merchant } = await supabase
+        .from('merchants')
+        .select('id')
+        .eq('profile_id', profile.id)
+        .single();
+
+      if (!merchant) {
+        const { data: newMerchant, error: merchantError } = await supabase
+          .from('merchants')
+          .insert({
+            profile_id: profile.id,
+            business_name: userShop.display_name || 'متجري'
+          })
+          .select('id')
+          .single();
+
+        if (merchantError) throw merchantError;
+        merchant = newMerchant;
+      }
+
+      // Create the product
+      const { data: productData, error: productError } = await supabase
+        .from('products')
+        .insert({
+          title: newProduct.title,
+          description: newProduct.description || null,
+          price_sar: parseFloat(newProduct.price_sar),
+          category: newProduct.category || null,
+          stock: parseInt(newProduct.stock),
+          merchant_id: merchant.id
+        })
+        .select('id')
+        .single();
+
+      if (productError) throw productError;
+
+      // Add product to store (product_library)
+      const { error: libraryError } = await supabase
+        .from('product_library')
+        .insert({
+          shop_id: userShop.id,
+          product_id: productData.id,
+          is_featured: false,
+          sort_index: storeProducts.length
+        });
+
+      if (libraryError) throw libraryError;
+
+      toast({
+        title: "تم بنجاح",
+        description: "تم إضافة المنتج إلى متجرك بنجاح"
+      });
+
+      setNewProduct({
+        title: '',
+        description: '',
+        price_sar: '',
+        category: '',
+        stock: ''
+      });
+      setIsAddDialogOpen(false);
+      fetchStoreProducts();
+
+    } catch (error) {
+      console.error('Error adding product:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في إضافة المنتج",
+        variant: "destructive"
+      });
+    } finally {
+      setAdding(false);
+    }
+  };
+
   if (!userShop) {
     return (
       <Card>
@@ -164,13 +273,92 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl flex items-center gap-2">
-          <Package className="h-6 w-6" />
-          إدارة المنتجات
-        </CardTitle>
-        <CardDescription>
-          منتجات متجر {userShop.display_name} ({storeProducts.length} منتج)
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <Package className="h-6 w-6" />
+              إدارة المنتجات
+            </CardTitle>
+            <CardDescription>
+              منتجات متجر {userShop.display_name} ({storeProducts.length} منتج)
+            </CardDescription>
+          </div>
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                إضافة المنتج لمتجري
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>إضافة منتج جديد</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleAddProduct} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">اسم المنتج</Label>
+                  <Input
+                    id="title"
+                    value={newProduct.title}
+                    onChange={(e) => setNewProduct({...newProduct, title: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">وصف المنتج</Label>
+                  <Textarea
+                    id="description"
+                    value={newProduct.description}
+                    onChange={(e) => setNewProduct({...newProduct, description: e.target.value})}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="price_sar">السعر (ريال)</Label>
+                    <Input
+                      id="price_sar"
+                      type="number"
+                      step="0.01"
+                      value={newProduct.price_sar}
+                      onChange={(e) => setNewProduct({...newProduct, price_sar: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="stock">الكمية</Label>
+                    <Input
+                      id="stock"
+                      type="number"
+                      value={newProduct.stock}
+                      onChange={(e) => setNewProduct({...newProduct, stock: e.target.value})}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category">الفئة</Label>
+                  <Input
+                    id="category"
+                    value={newProduct.category}
+                    onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
+                  />
+                </div>
+                <div className="flex gap-2 pt-4">
+                  <Button type="submit" disabled={adding} className="flex-1">
+                    {adding ? "جاري الإضافة..." : "إضافة المنتج"}
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setIsAddDialogOpen(false)}
+                  >
+                    إلغاء
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </CardHeader>
       <CardContent>
         {storeProducts.length === 0 ? (
@@ -178,10 +366,18 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
             <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">لا توجد منتجات في المتجر</h3>
             <p className="text-muted-foreground mb-4">
-              اذهب إلى صفحة المخزون واضغط على زر (+) لإضافة منتجات إلى متجرك
+              ابدأ بإضافة منتجاتك الأولى باستخدام زر "إضافة المنتج لمتجري" أعلاه
             </p>
+            <Button 
+              onClick={() => setIsAddDialogOpen(true)}
+              className="mb-2"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              إضافة المنتج لمتجري
+            </Button>
+            <br />
             <Button onClick={() => window.location.href = '/inventory'} variant="outline">
-              تصفح المخزون
+              أو تصفح المخزون
             </Button>
           </div>
         ) : (
