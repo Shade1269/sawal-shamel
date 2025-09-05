@@ -7,6 +7,8 @@ import { Switch } from '@/components/ui/switch';
 import { ArrowRight, Store, Settings, Upload, Package, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import StoreProductsSection from '@/components/StoreProductsSection';
 
 const StoreManagement = () => {
   const navigate = useNavigate();
@@ -18,12 +20,45 @@ const StoreManagement = () => {
   const [storeLogo, setStoreLogo] = useState<File | null>(null);
   const [storeEnabled, setStoreEnabled] = useState(false);
   const [activeSection, setActiveSection] = useState('settings');
+  const [userShop, setUserShop] = useState<any>(null);
 
   // Redirect if not authenticated
   if (!user) {
     navigate('/auth');
     return null;
   }
+
+  // Fetch user's shop on component mount
+  React.useEffect(() => {
+    fetchUserShop();
+  }, [user]);
+
+  const fetchUserShop = async () => {
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user?.id)
+        .single();
+
+      if (profile) {
+        const { data: shop } = await supabase
+          .from('shops')
+          .select('*')
+          .eq('owner_id', profile.id)
+          .single();
+        
+        setUserShop(shop);
+        if (shop) {
+          setStoreName(shop.display_name || '');
+          setStoreSlug(shop.slug || '');
+          setStoreEnabled(true);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching user shop:', error);
+    }
+  };
 
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -198,26 +233,7 @@ const StoreManagement = () => {
               )}
 
               {activeSection === 'products' && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-2xl flex items-center gap-2">
-                      <Package className="h-6 w-6" />
-                      إدارة المنتجات
-                    </CardTitle>
-                    <CardDescription>
-                      إضافة وتعديل منتجات المتجر
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-12">
-                      <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">إدارة المنتجات</h3>
-                      <p className="text-muted-foreground mb-4">
-                        سيتم إضافة هذا القسم قريباً
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <StoreProductsSection userShop={userShop} />
               )}
 
               {activeSection === 'analytics' && (

@@ -40,13 +40,102 @@ const Inventory = () => {
     stock: ''
   });
 
+  // Add state for user's shop
+  const [userShop, setUserShop] = useState<any>(null);
+
+  const addToStore = async (productId: string) => {
+    try {
+      if (!userShop) {
+        toast({
+          title: "تنبيه",
+          description: "يجب إنشاء متجر أولاً من صفحة إدارة المتجر",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Check if product is already in store
+      const { data: existingItem } = await supabase
+        .from('product_library')
+        .select('id')
+        .eq('shop_id', userShop.id)
+        .eq('product_id', productId)
+        .single();
+
+      if (existingItem) {
+        toast({
+          title: "تنبيه",
+          description: "المنتج موجود بالفعل في متجرك",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Get max sort_index for this shop
+      const { data: maxSort } = await supabase
+        .from('product_library')
+        .select('sort_index')
+        .eq('shop_id', userShop.id)
+        .order('sort_index', { ascending: false })
+        .limit(1);
+
+      const nextSortIndex = maxSort && maxSort.length > 0 ? maxSort[0].sort_index + 1 : 0;
+
+      const { error } = await supabase
+        .from('product_library')
+        .insert({
+          shop_id: userShop.id,
+          product_id: productId,
+          sort_index: nextSortIndex
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "تم بنجاح",
+        description: "تم إضافة المنتج إلى متجرك"
+      });
+
+    } catch (error) {
+      console.error('Error adding product to store:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في إضافة المنتج إلى المتجر",
+        variant: "destructive"
+      });
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       navigate('/auth');
       return;
     }
     fetchProducts();
+    fetchUserShop();
   }, [user, navigate]);
+
+  const fetchUserShop = async () => {
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user?.id)
+        .single();
+
+      if (profile) {
+        const { data: shop } = await supabase
+          .from('shops')
+          .select('*')
+          .eq('owner_id', profile.id)
+          .single();
+        
+        setUserShop(shop);
+      }
+    } catch (error) {
+      console.error('Error fetching user shop:', error);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -346,7 +435,19 @@ const Inventory = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
-              <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow relative">
+                {/* Add to Store Button */}
+                <div className="absolute top-2 right-2 z-10">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 w-8 rounded-full p-0 bg-background/80 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground border-2"
+                    onClick={() => addToStore(product.id)}
+                    title="إضافة إلى متجري"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
                 <div className="aspect-square bg-muted flex items-center justify-center">
                   {product.image_urls && product.image_urls.length > 0 ? (
                     <img
