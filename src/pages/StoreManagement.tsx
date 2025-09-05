@@ -321,7 +321,7 @@ const StoreManagement = () => {
       });
 
       // Step 6: Generate store URL
-      const store_url = `https://${uniqueSlug}.anaqti-chat.com`;
+      const store_url = `https://${uniqueSlug}.atlantiss.tech`;
       setStoreUrl(store_url);
       setShowSuccessCard(true);
 
