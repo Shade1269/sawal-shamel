@@ -9,6 +9,7 @@ import { ShoppingCart, Star, Store, Phone, Mail } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ProductImageCarousel } from "@/components/ProductImageCarousel";
+import { Input } from "@/components/ui/input";
 
 interface Product {
   id: string;
@@ -50,6 +51,7 @@ const StoreFront = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [selectedVariants, setSelectedVariants] = useState<{ [productId: string]: { [variantType: string]: string } }>({});
+  const [productQuantities, setProductQuantities] = useState<{ [productId: string]: number }>({});
 
   // Debug logging
   console.log('StoreFrontبدء تشغيل  - slug:', slug);
@@ -116,6 +118,8 @@ const StoreFront = () => {
       }
     }
 
+    const quantity = productQuantities[product.id] || 1;
+    
     setCart(prev => {
       const productVariants = selectedVariants[product.id] || {};
       const existingItemIndex = prev.findIndex(item => 
@@ -125,20 +129,20 @@ const StoreFront = () => {
       
       if (existingItemIndex >= 0) {
         const newCart = [...prev];
-        newCart[existingItemIndex].quantity += 1;
+        newCart[existingItemIndex].quantity += quantity;
         return newCart;
       }
       
       return [...prev, { 
         product, 
-        quantity: 1, 
+        quantity, 
         selectedVariants: Object.keys(productVariants).length > 0 ? productVariants : undefined 
       }];
     });
     
     toast({
       title: "تمت الإضافة للسلة",
-      description: `تم إضافة ${product.title} إلى سلة التسوق`,
+      description: `تم إضافة ${quantity} من ${product.title} إلى سلة التسوق`,
     });
   };
 
@@ -364,6 +368,66 @@ const StoreFront = () => {
                             })}
                           </div>
                         )}
+                        
+                        {/* Quantity Selector */}
+                        <div className="space-y-3 border-t pt-4">
+                          <div className="flex items-center justify-between">
+                            <label className="text-sm font-medium">الكمية:</label>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  const currentQty = productQuantities[product.id] || 1;
+                                  if (currentQty > 1) {
+                                    setProductQuantities(prev => ({
+                                      ...prev,
+                                      [product.id]: currentQty - 1
+                                    }));
+                                  }
+                                }}
+                                disabled={product.stock === 0}
+                                className="h-8 w-8 p-0"
+                              >
+                                -
+                              </Button>
+                              <Input
+                                type="number"
+                                min="1"
+                                max={product.stock}
+                                value={productQuantities[product.id] || 1}
+                                onChange={(e) => {
+                                  const value = parseInt(e.target.value) || 1;
+                                  const maxValue = Math.min(value, product.stock);
+                                  setProductQuantities(prev => ({
+                                    ...prev,
+                                    [product.id]: Math.max(1, maxValue)
+                                  }));
+                                }}
+                                className="w-16 h-8 text-center"
+                              />
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  const currentQty = productQuantities[product.id] || 1;
+                                  if (currentQty < product.stock) {
+                                    setProductQuantities(prev => ({
+                                      ...prev,
+                                      [product.id]: currentQty + 1
+                                    }));
+                                  }
+                                }}
+                                disabled={product.stock === 0 || (productQuantities[product.id] || 1) >= product.stock}
+                                className="h-8 w-8 p-0"
+                              >
+                                +
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
                         
                         <Button
                           onClick={() => addToCart(product)}
