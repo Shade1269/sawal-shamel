@@ -88,13 +88,13 @@ const StoreManagement = () => {
     setSaving(true);
     try {
       // Get user profile
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('id')
         .eq('auth_user_id', user?.id)
         .single();
 
-      if (!profile) {
+      if (profileError || !profile) {
         throw new Error('لم يتم العثور على الملف الشخصي');
       }
 
@@ -120,30 +120,44 @@ const StoreManagement = () => {
 
       if (userShop) {
         // Update existing shop
+        const updateData: any = {
+          display_name: storeName,
+          slug: storeSlug,
+        };
+        
+        if (logoUrl) {
+          updateData.logo_url = logoUrl;
+        }
+
         const { error } = await supabase
           .from('shops')
-          .update({
-            display_name: storeName,
-            slug: storeSlug,
-            ...(logoUrl && { logo_url: logoUrl })
-          })
+          .update(updateData)
           .eq('id', userShop.id);
 
         if (error) throw error;
       } else {
-        // Create new shop
+        // Create new shop - ENSURE owner_id is set correctly
+        const shopData: any = {
+          owner_id: profile.id,  // This is crucial - must match the profile.id
+          display_name: storeName,
+          slug: storeSlug,
+        };
+        
+        if (logoUrl) {
+          shopData.logo_url = logoUrl;
+        }
+
         const { data: newShop, error } = await supabase
           .from('shops')
-          .insert({
-            owner_id: profile.id,
-            display_name: storeName,
-            slug: storeSlug,
-            ...(logoUrl && { logo_url: logoUrl })
-          })
+          .insert(shopData)
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Shop creation error:', error);
+          throw error;
+        }
+        
         setUserShop(newShop);
       }
 

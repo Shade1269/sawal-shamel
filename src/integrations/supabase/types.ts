@@ -970,6 +970,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      debug_user_profile: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          auth_user_id: string
+          current_auth_uid: string
+          profile_id: string
+        }[]
+      }
       get_channel_member_count: {
         Args: { channel_uuid: string }
         Returns: number
