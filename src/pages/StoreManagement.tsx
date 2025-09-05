@@ -69,17 +69,105 @@ const StoreManagement = () => {
     }
   };
 
+  // Reserved names that cannot be used as subdomains
+  const reservedNames = ['www', 'api', 'mail', 'admin', 'support', 'app', 'help', 'blog', 'shop', 'store'];
+
+  // Generate slug from Arabic or English text
+  const generateSlugFromText = (text: string): string => {
+    // Arabic to Latin transliteration map (basic)
+    const arabicToLatin: { [key: string]: string } = {
+      'أ': 'a', 'ا': 'a', 'ب': 'b', 'ت': 't', 'ث': 'th', 'ج': 'j', 'ح': 'h', 'خ': 'kh',
+      'د': 'd', 'ذ': 'th', 'ر': 'r', 'ز': 'z', 'س': 's', 'ش': 'sh', 'ص': 's', 'ض': 'd',
+      'ط': 't', 'ظ': 'th', 'ع': 'a', 'غ': 'gh', 'ف': 'f', 'ق': 'q', 'ك': 'k', 'ل': 'l',
+      'م': 'm', 'ن': 'n', 'ه': 'h', 'و': 'w', 'ي': 'y', 'ة': 'h', 'ى': 'a'
+    };
+
+    let slug = text.toLowerCase().trim();
+    
+    // Convert Arabic characters to Latin
+    slug = slug.split('').map(char => arabicToLatin[char] || char).join('');
+    
+    // Keep only letters, numbers, and spaces
+    slug = slug.replace(/[^a-z0-9\s]/g, '');
+    
+    // Replace spaces with hyphens and clean up
+    slug = slug.replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    
+    return slug;
+  };
+
+  // Check if slug is valid
+  const validateSlug = (slug: string): { isValid: boolean; error?: string } => {
+    if (slug.length < 3) {
+      return { isValid: false, error: 'الاسم قصير جداً (أقل من 3 أحرف)' };
+    }
+    if (slug.length > 30) {
+      return { isValid: false, error: 'الاسم طويل جداً (أكثر من 30 حرف)' };
+    }
+    if (reservedNames.includes(slug)) {
+      return { isValid: false, error: 'هذا الاسم محجوز ولا يمكن استخدامه' };
+    }
+    if (!/^[a-z0-9-]+$/.test(slug)) {
+      return { isValid: false, error: 'يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطات فقط' };
+    }
+    return { isValid: true };
+  };
+
+  // Check if slug is available in database
+  const checkSlugAvailability = async (slug: string): Promise<boolean> => {
+    try {
+      const { data, error } = await supabase
+        .from('shops')
+        .select('slug')
+        .eq('slug', slug)
+        .maybeSingle();
+      
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+      
+      return !data; // true if available (no existing record)
+    } catch (error) {
+      console.error('Error checking slug availability:', error);
+      return false;
+    }
+  };
+
+  // Generate unique slug with number suffix if needed
+  const generateUniqueSlug = async (baseSlug: string): Promise<string> => {
+    let finalSlug = baseSlug;
+    let counter = 1;
+    
+    while (!(await checkSlugAvailability(finalSlug))) {
+      counter++;
+      finalSlug = `${baseSlug}-${counter}`;
+      if (counter > 100) break; // Safety limit
+    }
+    
+    return finalSlug;
+  };
+
   const handleStoreSlugChange = (value: string) => {
-    // Convert to lowercase and replace spaces with hyphens for URL-friendly slug
-    const slug = value.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    const slug = value.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
     setStoreSlug(slug);
   };
 
+  // Auto-generate slug from store name
+  const handleStoreNameChange = (name: string) => {
+    setStoreName(name);
+    
+    // Auto-generate slug if user hasn't manually set one
+    if (!storeSlug || storeSlug === generateSlugFromText(storeName)) {
+      const newSlug = generateSlugFromText(name);
+      setStoreSlug(newSlug);
+    }
+  };
+
   const handleSaveStore = async () => {
-    if (!storeName.trim() || !storeSlug.trim()) {
+    if (!storeName.trim()) {
       toast({
         title: "خطأ",
-        description: "يجب إدخال اسم المتجر والاسم بالإنجليزية",
+        description: "يجب إدخال اسم المتجر",
         variant: "destructive"
       });
       return;
@@ -87,6 +175,34 @@ const StoreManagement = () => {
 
     setSaving(true);
     try {
+      // Generate slug from store name if not provided
+      let finalSlug = storeSlug.trim();
+      if (!finalSlug) {
+        finalSlug = generateSlugFromText(storeName);
+      }
+
+      // Validate the slug
+      const validation = validateSlug(finalSlug);
+      if (!validation.isValid) {
+        toast({
+          title: "خطأ في الاسم الإنجليزي",
+          description: validation.error,
+          variant: "destructive"
+        });
+        setSaving(false);
+        return;
+      }
+
+      // Check if we're updating existing shop and slug hasn't changed
+      const isUpdatingWithSameSlug = userShop && userShop.slug === finalSlug;
+      
+      if (!isUpdatingWithSameSlug) {
+        // Generate unique slug if needed
+        finalSlug = await generateUniqueSlug(finalSlug);
+        
+        // Update the displayed slug
+        setStoreSlug(finalSlug);
+      }
       // Get user profile
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
@@ -122,7 +238,7 @@ const StoreManagement = () => {
         // Update existing shop
         const updateData: any = {
           display_name: storeName,
-          slug: storeSlug,
+          slug: finalSlug,
         };
         
         if (logoUrl) {
@@ -140,7 +256,7 @@ const StoreManagement = () => {
         const shopData: any = {
           owner_id: profile.id,  // This is crucial - must match the profile.id
           display_name: storeName,
-          slug: storeSlug,
+          slug: finalSlug,
         };
         
         if (logoUrl) {
@@ -265,7 +381,7 @@ const StoreManagement = () => {
                           id="storeName"
                           placeholder="أدخل اسم متجرك"
                           value={storeName}
-                          onChange={(e) => setStoreName(e.target.value)}
+                          onChange={(e) => handleStoreNameChange(e.target.value)}
                         />
                       </div>
 
@@ -280,9 +396,22 @@ const StoreManagement = () => {
                           dir="ltr"
                         />
                         {storeSlug && (
-                          <p className="text-sm text-muted-foreground" dir="ltr">
-                            Domain: {storeSlug}.yoursite.com
-                          </p>
+                          <div className="space-y-1">
+                            <p className="text-sm text-muted-foreground" dir="ltr">
+                              Domain: {storeSlug}.yoursite.com
+                            </p>
+                            {(() => {
+                              const validation = validateSlug(storeSlug);
+                              if (!validation.isValid) {
+                                return (
+                                  <p className="text-sm text-destructive">
+                                    {validation.error}
+                                  </p>
+                                );
+                              }
+                              return null;
+                            })()}
+                          </div>
                         )}
                       </div>
                     </div>
