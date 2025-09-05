@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -72,11 +73,11 @@ const Admin = () => {
   });
 
   const [productVariants, setProductVariants] = useState([
-    { type: 'size', value: '', stock: 0 }
+    { size: '', color: '', stock: 0 }
   ]);
 
-  const addVariant = (type: string) => {
-    setProductVariants([...productVariants, { type, value: '', stock: 0 }]);
+  const addVariant = () => {
+    setProductVariants([...productVariants, { size: '', color: '', stock: 0 }]);
   };
 
   const updateVariant = (index: number, field: string, value: string | number) => {
@@ -189,6 +190,14 @@ const Admin = () => {
       return;
     }
 
+    // Validate variants if they exist
+    for (const variant of productVariants) {
+      if ((variant.size.trim() && !variant.color.trim()) || (!variant.size.trim() && variant.color.trim())) {
+        toast({ title: "مطلوب", description: "يجب ملء المقاس واللون معاً أو تركهما فارغين", variant: "destructive" });
+        return;
+      }
+    }
+
     try {
       // Ensure merchant profile exists
       let { data: merchant } = await supabase
@@ -238,14 +247,26 @@ const Admin = () => {
       }
 
       // Add product variants if they exist and have values
-      const validVariants = productVariants.filter(v => v.value.trim());
+      const validVariants = productVariants.filter(v => v.size.trim() && v.color.trim());
       if (validVariants.length > 0) {
-        const variantsData = validVariants.map(variant => ({
-          product_id: createdProduct.id,
-          variant_type: variant.type,
-          variant_value: variant.value.trim(),
-          stock: variant.stock || 0
-        }));
+        // Create separate entries for size and color variants
+        const variantsData = [];
+        for (const variant of validVariants) {
+          // Add size variant
+          variantsData.push({
+            product_id: createdProduct.id,
+            variant_type: 'size',
+            variant_value: variant.size.trim(),
+            stock: variant.stock || 0
+          });
+          // Add color variant with same stock
+          variantsData.push({
+            product_id: createdProduct.id,
+            variant_type: 'color',
+            variant_value: variant.color.trim(),
+            stock: variant.stock || 0
+          });
+        }
 
         const { error: variantsError } = await supabase
           .from('product_variants')
@@ -259,7 +280,7 @@ const Admin = () => {
 
       toast({ title: "تم الإضافة", description: "تم إضافة المنتج والمتغيرات بنجاح" });
       setNewProduct({ title: '', description: '', price_sar: '', category: '', stock: '', commission_rate: '' });
-      setProductVariants([{ type: 'size', value: '', stock: 0 }]);
+      setProductVariants([{ size: '', color: '', stock: 0 }]);
       setShowAddProduct(false);
       loadProducts();
     } catch (error) {
@@ -538,7 +559,7 @@ const Admin = () => {
                         إضافة منتج جديد
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
+                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                       <DialogHeader>
                         <DialogTitle>إضافة منتج جديد</DialogTitle>
                       </DialogHeader>
@@ -571,70 +592,102 @@ const Admin = () => {
                         {/* Product Variants Section */}
                         <div className="space-y-4 border-t pt-4">
                           <div className="flex items-center justify-between">
-                            <h4 className="font-semibold text-sm">تخصيص المنتج (مقاسات، ألوان، إلخ)</h4>
-                            <div className="flex gap-2">
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                onClick={() => addVariant('size')}
-                              >
-                                + مقاس
-                              </Button>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                onClick={() => addVariant('color')}
-                              >
-                                + لون
-                              </Button>
-                            </div>
+                            <h4 className="font-semibold text-sm">تخصيص المنتج (مقاسات وألوان)</h4>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              onClick={addVariant}
+                            >
+                              + إضافة تركيبة جديدة
+                            </Button>
                           </div>
                           
-                          <div className="space-y-3 max-h-48 overflow-y-auto">
+                          <div className="space-y-3 max-h-64 overflow-y-auto bg-muted/10 p-4 rounded-lg">
                             {productVariants.map((variant, index) => (
-                              <div key={index} className="flex items-center gap-2 p-3 bg-muted/20 rounded-lg">
-                                <Select 
-                                  value={variant.type} 
-                                  onValueChange={(value) => updateVariant(index, 'type', value)}
-                                >
-                                  <SelectTrigger className="w-24">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="size">مقاس</SelectItem>
-                                    <SelectItem value="color">لون</SelectItem>
-                                    <SelectItem value="style">نمط</SelectItem>
-                                    <SelectItem value="material">مادة</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <Input
-                                  placeholder={variant.type === 'size' ? 'M, L, XL' : variant.type === 'color' ? 'أحمر, أزرق' : 'القيمة'}
-                                  value={variant.value}
-                                  onChange={(e) => updateVariant(index, 'value', e.target.value)}
-                                  className="flex-1"
-                                />
-                                <Input
-                                  type="number"
-                                  placeholder="العدد"
-                                  value={variant.stock}
-                                  onChange={(e) => updateVariant(index, 'stock', parseInt(e.target.value) || 0)}
-                                  className="w-20"
-                                />
-                                {productVariants.length > 1 && (
-                                  <Button
-                                    type="button"
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => removeVariant(index)}
-                                    className="text-destructive hover:text-destructive"
+                              <div key={index} className="grid grid-cols-12 gap-3 items-center p-4 bg-background border rounded-lg shadow-sm">
+                                <div className="col-span-4">
+                                  <Label className="text-xs text-muted-foreground mb-1 block">المقاس</Label>
+                                  <Select 
+                                    value={variant.size} 
+                                    onValueChange={(value) => updateVariant(index, 'size', value)}
                                   >
-                                    ×
-                                  </Button>
+                                    <SelectTrigger className="h-9">
+                                      <SelectValue placeholder="اختر المقاس" />
+                                    </SelectTrigger>
+                                    <SelectContent className="z-50 bg-background border shadow-md">
+                                      <SelectItem value="XS">XS</SelectItem>
+                                      <SelectItem value="S">S</SelectItem>
+                                      <SelectItem value="M">M</SelectItem>
+                                      <SelectItem value="L">L</SelectItem>
+                                      <SelectItem value="XL">XL</SelectItem>
+                                      <SelectItem value="XXL">XXL</SelectItem>
+                                      <SelectItem value="XXXL">XXXL</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                
+                                <div className="col-span-4">
+                                  <Label className="text-xs text-muted-foreground mb-1 block">اللون</Label>
+                                  <Select 
+                                    value={variant.color} 
+                                    onValueChange={(value) => updateVariant(index, 'color', value)}
+                                  >
+                                    <SelectTrigger className="h-9">
+                                      <SelectValue placeholder="اختر اللون" />
+                                    </SelectTrigger>
+                                    <SelectContent className="z-50 bg-background border shadow-md">
+                                      <SelectItem value="أحمر">أحمر</SelectItem>
+                                      <SelectItem value="أزرق">أزرق</SelectItem>
+                                      <SelectItem value="أخضر">أخضر</SelectItem>
+                                      <SelectItem value="أصفر">أصفر</SelectItem>
+                                      <SelectItem value="أسود">أسود</SelectItem>
+                                      <SelectItem value="أبيض">أبيض</SelectItem>
+                                      <SelectItem value="رمادي">رمادي</SelectItem>
+                                      <SelectItem value="بني">بني</SelectItem>
+                                      <SelectItem value="بنفسجي">بنفسجي</SelectItem>
+                                      <SelectItem value="برتقالي">برتقالي</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                
+                                <div className="col-span-3">
+                                  <Label className="text-xs text-muted-foreground mb-1 block">العدد المتوفر</Label>
+                                  <Input
+                                    type="number"
+                                    placeholder="0"
+                                    value={variant.stock}
+                                    onChange={(e) => updateVariant(index, 'stock', parseInt(e.target.value) || 0)}
+                                    className="h-9"
+                                    min="0"
+                                  />
+                                </div>
+                                
+                                {productVariants.length > 1 && (
+                                  <div className="col-span-1 flex justify-center">
+                                    <Button
+                                      type="button"
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => removeVariant(index)}
+                                      className="text-destructive hover:text-destructive h-9 w-9 p-0"
+                                    >
+                                      ×
+                                    </Button>
+                                  </div>
                                 )}
                               </div>
                             ))}
+                            
+                            {productVariants.length === 0 && (
+                              <div className="text-center text-muted-foreground py-8">
+                                لا توجد تركيبات حالياً - اضغط "إضافة تركيبة جديدة" لإضافة مقاس ولون
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="text-xs text-muted-foreground bg-blue-50 p-3 rounded-md">
+                            💡 <strong>نصيحة:</strong> كل صف يمثل تركيبة من مقاس ولون مع عددها المتوفر (مثال: أحمر + لارج = 5 قطع)
                           </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
