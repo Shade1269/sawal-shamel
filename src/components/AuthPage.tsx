@@ -62,7 +62,7 @@ const AuthPage = () => {
     console.log('SignIn result:', result);
     
     if (!result.error) {
-      navigate('/chat');
+      navigate('/');
     }
     
     setIsLoading(false);
