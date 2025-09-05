@@ -763,18 +763,6 @@ const Inventory = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
               <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow relative">
-                {/* Add to Store Button */}
-                <div className="absolute top-2 right-2 z-10">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-8 w-8 rounded-full p-0 bg-background/80 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground border-2"
-                    onClick={() => addToStore(product.id)}
-                    title="إضافة إلى متجري"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
                 <div className="aspect-square bg-muted flex items-center justify-center">
                   {product.image_urls && product.image_urls.length > 0 ? (
                     <img
@@ -803,7 +791,7 @@ const Inventory = () => {
                   )}
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-4">
                     <div>
                       <div className="text-2xl font-bold text-primary">
                         {product.price_sar} ريال
@@ -813,6 +801,16 @@ const Inventory = () => {
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Add to Store Button */}
+                  <Button
+                    onClick={() => addToStore(product.id)}
+                    className="w-full gap-2"
+                    variant="outline"
+                  >
+                    <Plus className="h-4 w-4" />
+                    إضافة إلى متجري
+                  </Button>
                 </CardContent>
               </Card>
             ))}
