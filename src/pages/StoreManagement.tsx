@@ -320,9 +320,8 @@ const StoreManagement = () => {
         owner_id: profile.id
       });
 
-      // Step 6: Generate store URL
-      const isProduction = window.location.hostname === 'atlantiss.tech';
-      const baseUrl = isProduction ? 'https://atlantiss.tech' : window.location.origin;
+      // Step 6: Generate store URL (always use your production domain)
+      const baseUrl = 'https://atlantiss.tech';
       const store_url = `${baseUrl}/store/${uniqueSlug}`;
       setStoreUrl(store_url);
       setShowSuccessCard(true);
