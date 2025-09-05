@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ArrowRight, Store, Settings, Upload, Package, BarChart3, Loader2 } from 'lucide-react';
+import { ArrowRight, Store, Settings, Upload, Package, BarChart3, Loader2, Copy, ExternalLink, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,6 +23,8 @@ const StoreManagement = () => {
   const [activeSection, setActiveSection] = useState('settings');
   const [userShop, setUserShop] = useState<any>(null);
   const [saving, setSaving] = useState(false);
+  const [storeUrl, setStoreUrl] = useState('');
+  const [showSuccessCard, setShowSuccessCard] = useState(false);
 
   // Redirect if not authenticated
   if (!user) {
@@ -277,6 +279,11 @@ const StoreManagement = () => {
         setUserShop(newShop);
       }
 
+      // Generate store URL
+      const generatedStoreUrl = `https://${finalSlug}.anaqti-chat.com`;
+      setStoreUrl(generatedStoreUrl);
+      setShowSuccessCard(true);
+
       toast({
         title: "تم بنجاح",
         description: userShop ? "تم تحديث المتجر بنجاح" : "تم إنشاء المتجر بنجاح"
@@ -295,6 +302,28 @@ const StoreManagement = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  // Copy store URL to clipboard
+  const copyStoreUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(storeUrl);
+      toast({
+        title: "تم النسخ",
+        description: "تم نسخ رابط المتجر إلى الحافظة"
+      });
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "فشل في نسخ الرابط",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Open store in new tab
+  const openStoreInNewTab = () => {
+    window.open(storeUrl, '_blank');
   };
 
   const sections = [
@@ -361,6 +390,61 @@ const StoreManagement = () => {
 
             {/* Main Content */}
             <div className="lg:col-span-3">
+              {/* Success Card - Show store URL after successful creation/update */}
+              {showSuccessCard && storeUrl && (
+                <Card className="mb-6 border-green-200 bg-green-50/50">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2 text-green-700">
+                      <CheckCircle className="h-5 w-5" />
+                      تم إنشاء المتجر بنجاح
+                    </CardTitle>
+                    <CardDescription className="text-green-600">
+                      متجرك الإلكتروني جاهز الآن ويمكن الوصول إليه عبر الرابط التالي
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Store URL Display */}
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-green-700">رابط المتجر:</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          value={storeUrl}
+                          readOnly
+                          className="bg-white border-green-200 text-green-800 font-mono"
+                          dir="ltr"
+                        />
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={copyStoreUrl}
+                          className="border-green-200 hover:bg-green-100"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* Action Buttons */}
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={openStoreInNewTab}
+                        className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        فتح المتجر
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowSuccessCard(false)}
+                        className="border-green-200 text-green-700 hover:bg-green-100"
+                      >
+                        إغلاق
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               {activeSection === 'settings' && (
                 <Card>
                   <CardHeader>
