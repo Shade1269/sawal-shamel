@@ -606,6 +606,7 @@ export type Database = {
         Row: {
           id: string
           is_featured: boolean
+          is_visible: boolean
           product_id: string
           shop_id: string
           sort_index: number
@@ -613,6 +614,7 @@ export type Database = {
         Insert: {
           id?: string
           is_featured?: boolean
+          is_visible?: boolean
           product_id: string
           shop_id: string
           sort_index?: number
@@ -620,6 +622,7 @@ export type Database = {
         Update: {
           id?: string
           is_featured?: boolean
+          is_visible?: boolean
           product_id?: string
           shop_id?: string
           sort_index?: number

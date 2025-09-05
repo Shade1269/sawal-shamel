@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Package, Trash2, Star, Plus } from 'lucide-react';
+import { Package, Trash2, Star, Plus, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -24,6 +24,7 @@ interface Product {
 interface ProductLibraryItem {
   id: string;
   is_featured: boolean;
+  is_visible: boolean;
   sort_index: number;
   products: Product;
 }
@@ -50,6 +51,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
         .select(`
           id,
           is_featured,
+          is_visible,
           sort_index,
           products (
             id,
@@ -124,6 +126,31 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
       toast({
         title: "خطأ",
         description: "فشل في تحديث المنتج",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const toggleVisibility = async (productLibraryId: string, currentVisible: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('product_library')
+        .update({ is_visible: !currentVisible })
+        .eq('id', productLibraryId);
+
+      if (error) throw error;
+
+      toast({
+        title: "تم بنجاح",
+        description: currentVisible ? "تم إخفاء المنتج من المتجر" : "تم إظهار المنتج في المتجر"
+      });
+
+      fetchStoreProducts();
+    } catch (error) {
+      console.error('Error toggling visibility:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في تحديث حالة المنتج",
         variant: "destructive"
       });
     }
@@ -210,13 +237,21 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                     <Package className="h-12 w-12 text-muted-foreground" />
                   )}
                   
-                  {/* Featured Badge */}
-                  {item.is_featured && (
-                    <Badge className="absolute top-2 left-2 bg-yellow-500">
-                      <Star className="h-3 w-3 mr-1" />
-                      مميز
-                    </Badge>
-                  )}
+                  {/* Status Badges */}
+                  <div className="absolute top-2 left-2 flex flex-col gap-1">
+                    {item.is_featured && (
+                      <Badge className="bg-yellow-500">
+                        <Star className="h-3 w-3 mr-1" />
+                        مميز
+                      </Badge>
+                    )}
+                    {!item.is_visible && (
+                      <Badge variant="secondary" className="bg-gray-500">
+                        <EyeOff className="h-3 w-3 mr-1" />
+                        مخفي
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 
                 <CardContent className="p-4">
@@ -246,7 +281,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                     </div>
                   </div>
                   
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <Button
                       size="sm"
                       variant={item.is_featured ? "default" : "outline"}
@@ -254,7 +289,25 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                       className="flex-1"
                     >
                       <Star className="h-3 w-3 mr-1" />
-                      {item.is_featured ? "مميز" : "جعل مميز"}
+                      {item.is_featured ? "مميز" : "مميز"}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={item.is_visible ? "outline" : "secondary"}
+                      onClick={() => toggleVisibility(item.id, item.is_visible)}
+                      className="flex-1"
+                    >
+                      {item.is_visible ? (
+                        <>
+                          <Eye className="h-3 w-3 mr-1" />
+                          ظاهر
+                        </>
+                      ) : (
+                        <>
+                          <EyeOff className="h-3 w-3 mr-1" />
+                          مخفي
+                        </>
+                      )}
                     </Button>
                     <Button
                       size="sm"

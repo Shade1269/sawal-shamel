@@ -71,7 +71,8 @@ const StoreFront = () => {
           product_id,
           products (*)
         `)
-        .eq("shop_id", shop.id);
+        .eq("shop_id", shop.id)
+        .eq("is_visible", true);
 
       if (error) throw error;
       return data.map(item => item.products).filter(Boolean) as Product[];
