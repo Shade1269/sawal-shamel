@@ -4,10 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ArrowRight, Store, Settings, Upload, Package, BarChart3 } from 'lucide-react';
+import { ArrowRight, Store, Settings, Upload, Package, BarChart3, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 import StoreProductsSection from '@/components/StoreProductsSection';
 
 const StoreManagement = () => {
@@ -21,6 +22,7 @@ const StoreManagement = () => {
   const [storeEnabled, setStoreEnabled] = useState(false);
   const [activeSection, setActiveSection] = useState('settings');
   const [userShop, setUserShop] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
 
   // Redirect if not authenticated
   if (!user) {
@@ -71,6 +73,98 @@ const StoreManagement = () => {
     // Convert to lowercase and replace spaces with hyphens for URL-friendly slug
     const slug = value.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
     setStoreSlug(slug);
+  };
+
+  const handleSaveStore = async () => {
+    if (!storeName.trim() || !storeSlug.trim()) {
+      toast({
+        title: "خطأ",
+        description: "يجب إدخال اسم المتجر والاسم بالإنجليزية",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      // Get user profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user?.id)
+        .single();
+
+      if (!profile) {
+        throw new Error('لم يتم العثور على الملف الشخصي');
+      }
+
+      let logoUrl = null;
+      
+      // Upload logo if exists
+      if (storeLogo) {
+        const fileExt = storeLogo.name.split('.').pop();
+        const fileName = `${profile.id}-${Date.now()}.${fileExt}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(`shop-logos/${fileName}`, storeLogo);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(`shop-logos/${fileName}`);
+        
+        logoUrl = publicUrl;
+      }
+
+      if (userShop) {
+        // Update existing shop
+        const { error } = await supabase
+          .from('shops')
+          .update({
+            display_name: storeName,
+            slug: storeSlug,
+            ...(logoUrl && { logo_url: logoUrl })
+          })
+          .eq('id', userShop.id);
+
+        if (error) throw error;
+      } else {
+        // Create new shop
+        const { data: newShop, error } = await supabase
+          .from('shops')
+          .insert({
+            owner_id: profile.id,
+            display_name: storeName,
+            slug: storeSlug,
+            ...(logoUrl && { logo_url: logoUrl })
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+        setUserShop(newShop);
+      }
+
+      toast({
+        title: "تم بنجاح",
+        description: userShop ? "تم تحديث المتجر بنجاح" : "تم إنشاء المتجر بنجاح"
+      });
+
+      // Refresh shop data
+      await fetchUserShop();
+
+    } catch (error: any) {
+      console.error('Error saving store:', error);
+      toast({
+        title: "خطأ",
+        description: error.message || "فشل في حفظ المتجر",
+        variant: "destructive"
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const sections = [
@@ -225,8 +319,22 @@ const StoreManagement = () => {
                     </div>
 
                     {/* Save Button */}
-                    <Button className="w-full" size="lg">
-                      حفظ إعدادات المتجر
+                    <Button 
+                      className="w-full" 
+                      size="lg" 
+                      onClick={handleSaveStore}
+                      disabled={saving}
+                    >
+                      {saving ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          جاري الحفظ...
+                        </>
+                      ) : userShop ? (
+                        'تحديث إعدادات المتجر'
+                      ) : (
+                        'إنشاء المتجر'
+                      )}
                     </Button>
                   </CardContent>
                 </Card>
