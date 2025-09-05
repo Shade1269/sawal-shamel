@@ -7,14 +7,10 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string, verifyMethod?: string, phone?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
-  signInWithPhone: (phone: string) => Promise<{ error: any }>;
-  verifyOTP: (phone: string, token: string) => Promise<{ error: any }>;
   resendVerification: (email: string) => Promise<{ error: any }>;
-  sendSMSOTP: (phone: string) => Promise<{ error: any }>;
-  verifyWhatsAppOTP: (phone: string, code: string, fullName?: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -81,39 +77,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  const signUp = async (email: string, password: string, fullName: string, verifyMethod: string = 'email', phone?: string) => {
-    let signUpOptions: any = {
+  const signUp = async (email: string, password: string, fullName: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
       options: {
         emailRedirectTo: `${window.location.origin}/`,
         data: {
           full_name: fullName
         }
       }
-    };
-
-    if (verifyMethod === 'phone' && phone) {
-      // التسجيل عن طريق الجوال
-      signUpOptions = {
-        phone: phone,
-        password: password,
-        options: {
-          data: {
-            full_name: fullName
-          }
-        }
-      };
-    } else {
-      // التسجيل عن طريق الإيميل
-      signUpOptions = {
-        email: email,
-        password: password,
-        ...signUpOptions
-      };
-    }
-
-    console.log('SignUp method:', verifyMethod, 'Options:', signUpOptions);
-
-    const { error } = await supabase.auth.signUp(signUpOptions);
+    });
 
     if (error) {
       toast({
@@ -122,10 +96,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         variant: "destructive"
       });
     } else {
-      const method = verifyMethod === 'phone' ? 'رقم الجوال' : 'البريد الإلكتروني';
       toast({
         title: "تم التسجيل بنجاح", 
-        description: `تم إرسال رمز التحقق إلى ${method}`
+        description: "تم إرسال رمز التحقق إلى البريد الإلكتروني"
       });
     }
 
@@ -186,58 +159,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const signInWithPhone = async (phone: string) => {
-    console.log('SignInWithPhone called with:', phone);
-    
-    const { error } = await supabase.auth.signInWithOtp({
-      phone: phone,
-      options: {
-        channel: 'sms'
-      }
-    });
-
-    if (error) {
-      console.error('SignInWithPhone error:', error);
-      toast({
-        title: "خطأ في إرسال رمز التحقق",
-        description: error.message,
-        variant: "destructive"
-      });
-    } else {
-      toast({
-        title: "تم إرسال رمز التحقق",
-        description: "تحقق من رسائلك القصيرة وأدخل الرمز"
-      });
-    }
-
-    return { error };
-  };
-
-  const verifyOTP = async (phone: string, token: string) => {
-    console.log('VerifyOTP called with:', { phone, token });
-    
-    const { error } = await supabase.auth.verifyOtp({
-      phone: phone,
-      token: token,
-      type: 'sms'
-    });
-
-    if (error) {
-      console.error('VerifyOTP error:', error);
-      toast({
-        title: "خطأ في التحقق من الرمز",
-        description: error.message,
-        variant: "destructive"
-      });
-    } else {
-      toast({
-        title: "تم التحقق بنجاح",
-        description: "مرحباً بك في دردشتي!"
-      });
-    }
-
-    return { error };
-  };
 
   const resendVerification = async (email: string) => {
     const redirectUrl = `${window.location.origin}/`;
@@ -265,56 +186,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error };
   };
 
-  const sendSMSOTP = async (phone: string) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('send-sms-otp', {
-        body: { phone }
-      });
-      
-      if (error) throw error;
-      
-      toast({
-        title: "تم إرسال رمز التحقق",
-        description: "تحقق من رسائل SMS وأدخل الرمز"
-      });
-      
-      return { error: null };
-    } catch (error) {
-      console.error('Error sending SMS OTP:', error);
-      toast({
-        title: "خطأ في إرسال رمز التحقق",
-        description: error.message || "فشل في إرسال رمز التحقق",
-        variant: "destructive"
-      });
-      return { error };
-    }
-  };
-
-  const verifyWhatsAppOTP = async (phone: string, code: string, fullName?: string) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('verify-whatsapp-otp', {
-        body: { phone, code, fullName }
-      });
-      
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      
-      toast({
-        title: "تم التحقق بنجاح",
-        description: "مرحباً بك في دردشتي!"
-      });
-      
-      return { error: null };
-    } catch (error) {
-      console.error('Error verifying WhatsApp OTP:', error);
-      toast({
-        title: "خطأ في التحقق من الرمز",
-        description: error.message || "فشل في التحقق من الرمز",
-        variant: "destructive"
-      });
-      return { error };
-    }
-  };
 
   const value = {
     user,
@@ -323,11 +194,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signUp,
     signIn,
     signOut,
-    signInWithPhone,
-    verifyOTP,
     resendVerification,
-    sendSMSOTP,
-    verifyWhatsAppOTP,
   };
 
   return (
