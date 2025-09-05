@@ -107,13 +107,13 @@ const StoreManagement = () => {
         
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('avatars')
-          .upload(`shop-logos/${fileName}`, storeLogo);
+          .upload(`${user?.id}/${fileName}`, storeLogo);
 
         if (uploadError) throw uploadError;
 
         const { data: { publicUrl } } = supabase.storage
           .from('avatars')
-          .getPublicUrl(`shop-logos/${fileName}`);
+          .getPublicUrl(`${user?.id}/${fileName}`);
         
         logoUrl = publicUrl;
       }
