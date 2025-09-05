@@ -9,6 +9,7 @@ import AuthPage from "@/components/AuthPage";
 import Index from "./pages/Index";
 import Chat from "./pages/Chat";
 import ChatRoom from "./pages/ChatRoom";
+import Inventory from "./pages/Inventory";
 import NotFound from "./pages/NotFound";
 import { lazy, Suspense } from "react";
 const AdminPageLazy = lazy(() => import("./pages/Admin"));
@@ -35,6 +36,7 @@ const AppContent = () => {
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
       <Route path="/chat/:channelId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
+      <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
       <Route path="/admin" element={<ProtectedRoute><AdminPageLazy /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
