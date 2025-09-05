@@ -400,6 +400,49 @@ const StoreManagement = () => {
     }
   };
 
+  // Delete store function
+  const deleteStore = async () => {
+    if (!userShop?.id) return;
+    
+    try {
+      setSaving(true);
+      
+      const { error } = await supabase
+        .from('shops')
+        .delete()
+        .eq('id', userShop.id);
+        
+      if (error) throw error;
+      
+      // Clean up related data
+      await supabase
+        .from('product_library')
+        .delete()
+        .eq('shop_id', userShop.id);
+        
+      toast({
+        title: "تم حذف المتجر",
+        description: "تم حذف المتجر وجميع بياناته نهائياً"
+      });
+      
+      // Reset local state
+      setUserShop(null);
+      setStoreName('');
+      setStoreSlug('');
+      setStoreUrl('');
+      setShowSuccessCard(false);
+      
+    } catch (error: any) {
+      toast({
+        title: "خطأ في الحذف",
+        description: error.message || "فشل في حذف المتجر",
+        variant: "destructive"
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const sections = [
     { id: 'settings', title: 'إعدادات المتجر', icon: Settings },
     { id: 'products', title: 'إدارة المنتجات', icon: Package },
@@ -658,6 +701,33 @@ const StoreManagement = () => {
                         'إنشاء المتجر'
                       )}
                     </Button>
+
+                    {/* Delete Store Button - Only show if store exists */}
+                    {userShop && (
+                      <div className="pt-6 border-t">
+                        <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+                          <h4 className="font-medium text-destructive mb-2">منطقة الخطر</h4>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            حذف المتجر سيؤدي إلى إزالة جميع البيانات والمنتجات نهائياً ولا يمكن التراجع عن هذا الإجراء.
+                          </p>
+                          <Button 
+                            variant="destructive" 
+                            onClick={deleteStore}
+                            disabled={saving}
+                            className="w-full"
+                          >
+                            {saving ? (
+                              <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                جاري الحذف...
+                              </>
+                            ) : (
+                              'حذف المتجر نهائياً'
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )}
