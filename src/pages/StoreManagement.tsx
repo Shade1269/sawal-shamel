@@ -119,39 +119,36 @@ const StoreManagement = () => {
     return { isValid: true };
   };
 
-  // Step 4: Ensure unique subdomain
-  const ensureUniqueSubdomain = async (slug: string): Promise<string> => {
-    let finalSlug = slug;
+  // Step 4: Ensure unique subdomain (excluding current shop id when updating)
+  const ensureUniqueSubdomain = async (slug: string, excludeShopId?: string): Promise<string> => {
+    let base = slug;
     let counter = 1;
-    
+
     while (true) {
+      const candidate = counter === 1 ? base : `${base}-${counter}`;
       try {
         const { data, error } = await supabase
           .from('shops')
-          .select('slug')
-          .eq('slug', finalSlug)
+          .select('id, slug')
+          .eq('slug', candidate)
           .maybeSingle();
-        
-        if (error && error.code !== 'PGRST116') {
-          throw error;
-        }
-        
-        // If no existing record found, slug is available
-        if (!data) {
-          break;
-        }
-        
-        // Generate next variant
+
+        if (error && error.code !== 'PGRST116') throw error;
+
+        // Available if not found
+        if (!data) return candidate;
+
+        // Allow keeping the same slug for the current shop
+        if (excludeShopId && data.id === excludeShopId) return candidate;
+
+        // Otherwise, try next number
         counter++;
-        finalSlug = `${slug}-${counter}`;
-        if (counter > 100) break; // Safety limit
-      } catch (error) {
-        console.error('Error checking slug availability:', error);
-        break;
+        if (counter > 200) return `${base}-${Date.now()}`; // safety fallback
+      } catch (err) {
+        console.error('Error checking slug availability:', err);
+        return `${base}-${Date.now()}`; // fallback to unique value
       }
     }
-    
-    return finalSlug;
   };
 
   // Step 5: Upsert store data
@@ -283,7 +280,7 @@ const StoreManagement = () => {
       }
 
       // Step 4: slug = ensureUniqueSubdomain(slug)
-      const uniqueSlug = await ensureUniqueSubdomain(slug);
+      const uniqueSlug = await ensureUniqueSubdomain(slug, userShop?.id);
 
       // Get user profile for owner_id
       const { data: profile, error: profileError } = await supabase
