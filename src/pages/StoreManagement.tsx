@@ -60,7 +60,7 @@ const StoreManagement = () => {
           setStoreSlug(shop.slug || '');
           setStoreEnabled(true);
           setTheme(shop.theme || 'classic');
-          setStoreUrl(`${window.location.origin}/store/${shop.slug}`);
+          setStoreUrl(`https://atlantiss.tech/store/${shop.slug}`);
         }
       }
     } catch (error) {
@@ -321,8 +321,8 @@ const StoreManagement = () => {
         owner_id: profile.id
       });
 
-      // Step 6: Generate store URL (always use current domain)
-      const baseUrl = window.location.origin;
+      // Step 6: Generate store URL (always use atlantiss.tech domain)
+      const baseUrl = 'https://atlantiss.tech';
       const store_url = `${baseUrl}/store/${uniqueSlug}`;
       setStoreUrl(store_url);
       setShowSuccessCard(true);
