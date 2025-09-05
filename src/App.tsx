@@ -11,6 +11,7 @@ import Chat from "./pages/Chat";
 import ChatRoom from "./pages/ChatRoom";
 import Inventory from "./pages/Inventory";
 import StoreManagement from "./pages/StoreManagement";
+import StoreFront from "./pages/StoreFront";
 import NotFound from "./pages/NotFound";
 import { lazy, Suspense } from "react";
 const AdminPageLazy = lazy(() => import("./pages/Admin"));
@@ -39,6 +40,7 @@ const AppContent = () => {
       <Route path="/chat/:channelId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
       <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
       <Route path="/store-management" element={<ProtectedRoute><StoreManagement /></ProtectedRoute>} />
+      <Route path="/store/:slug" element={<StoreFront />} />
       <Route path="/admin" element={<ProtectedRoute><AdminPageLazy /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>

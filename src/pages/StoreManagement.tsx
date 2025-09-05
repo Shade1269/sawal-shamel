@@ -321,7 +321,7 @@ const StoreManagement = () => {
       });
 
       // Step 6: Generate store URL
-      const store_url = `https://${uniqueSlug}.atlantiss.tech`;
+      const store_url = `https://atlantiss.tech/store/${uniqueSlug}`;
       setStoreUrl(store_url);
       setShowSuccessCard(true);
 
