@@ -321,8 +321,9 @@ const StoreManagement = () => {
       });
 
       // Step 6: Generate store URL
-      const currentDomain = window.location.origin;
-      const store_url = `${currentDomain}/store/${uniqueSlug}`;
+      const isProduction = window.location.hostname === 'atlantiss.tech';
+      const baseUrl = isProduction ? 'https://atlantiss.tech' : window.location.origin;
+      const store_url = `${baseUrl}/store/${uniqueSlug}`;
       setStoreUrl(store_url);
       setShowSuccessCard(true);
 
