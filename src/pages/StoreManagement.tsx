@@ -74,8 +74,8 @@ const StoreManagement = () => {
   // Reserved names that cannot be used as subdomains
   const reservedNames = ['www', 'api', 'mail', 'admin', 'support', 'app', 'help', 'blog', 'shop', 'store'];
 
-  // Generate slug from Arabic or English text
-  const generateSlugFromText = (text: string): string => {
+  // Step 2: Generate subdomain from store name
+  const generateSubdomain = (storeName: string): string => {
     // Arabic to Latin transliteration map (basic)
     const arabicToLatin: { [key: string]: string } = {
       'أ': 'a', 'ا': 'a', 'ب': 'b', 'ت': 't', 'ث': 'th', 'ج': 'j', 'ح': 'h', 'خ': 'kh',
@@ -84,7 +84,7 @@ const StoreManagement = () => {
       'م': 'm', 'ن': 'n', 'ه': 'h', 'و': 'w', 'ي': 'y', 'ة': 'h', 'ى': 'a'
     };
 
-    let slug = text.toLowerCase().trim();
+    let slug = storeName.toLowerCase().trim();
     
     // Convert Arabic characters to Latin
     slug = slug.split('').map(char => arabicToLatin[char] || char).join('');
@@ -98,21 +98,112 @@ const StoreManagement = () => {
     return slug;
   };
 
-  // Check if slug is valid
+  // Step 3: Validate slug against regex and reserved names
   const validateSlug = (slug: string): { isValid: boolean; error?: string } => {
-    if (slug.length < 3) {
-      return { isValid: false, error: 'الاسم قصير جداً (أقل من 3 أحرف)' };
-    }
-    if (slug.length > 30) {
-      return { isValid: false, error: 'الاسم طويل جداً (أكثر من 30 حرف)' };
+    if (!/^[a-z0-9-]{3,30}$/.test(slug)) {
+      if (slug.length < 3) {
+        return { isValid: false, error: 'اسم الرابط قصير جداً (أقل من 3 أحرف)' };
+      }
+      if (slug.length > 30) {
+        return { isValid: false, error: 'اسم الرابط طويل جداً (أكثر من 30 حرف)' };
+      }
+      return { isValid: false, error: 'اسم الرابط يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطات فقط' };
     }
     if (reservedNames.includes(slug)) {
-      return { isValid: false, error: 'هذا الاسم محجوز ولا يمكن استخدامه' };
-    }
-    if (!/^[a-z0-9-]+$/.test(slug)) {
-      return { isValid: false, error: 'يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطات فقط' };
+      return { isValid: false, error: 'اسم الرابط محجوز ولا يمكن استخدامه، يرجى اختيار اسم آخر' };
     }
     return { isValid: true };
+  };
+
+  // Step 4: Ensure unique subdomain
+  const ensureUniqueSubdomain = async (slug: string): Promise<string> => {
+    let finalSlug = slug;
+    let counter = 1;
+    
+    while (true) {
+      try {
+        const { data, error } = await supabase
+          .from('shops')
+          .select('slug')
+          .eq('slug', finalSlug)
+          .maybeSingle();
+        
+        if (error && error.code !== 'PGRST116') {
+          throw error;
+        }
+        
+        // If no existing record found, slug is available
+        if (!data) {
+          break;
+        }
+        
+        // Generate next variant
+        counter++;
+        finalSlug = `${slug}-${counter}`;
+        if (counter > 100) break; // Safety limit
+      } catch (error) {
+        console.error('Error checking slug availability:', error);
+        break;
+      }
+    }
+    
+    return finalSlug;
+  };
+
+  // Step 5: Upsert store data
+  const upsertStore = async (storeData: {
+    subdomain: string;
+    store_name: string;
+    logo_url?: string | null;
+    is_active: boolean;
+    owner_id: string;
+  }) => {
+    if (userShop) {
+      // Update existing shop
+      const updateData: any = {
+        display_name: storeData.store_name,
+        slug: storeData.subdomain,
+      };
+      
+      if (storeData.logo_url) {
+        updateData.logo_url = storeData.logo_url;
+      }
+
+      const { data, error } = await supabase
+        .from('shops')
+        .update(updateData)
+        .eq('id', userShop.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } else {
+      // Create new shop
+      const shopData: any = {
+        owner_id: storeData.owner_id,
+        display_name: storeData.store_name,
+        slug: storeData.subdomain,
+      };
+      
+      if (storeData.logo_url) {
+        shopData.logo_url = storeData.logo_url;
+      }
+
+      const { data, error } = await supabase
+        .from('shops')
+        .insert(shopData)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    }
+  };
+
+  // Generate slug from Arabic or English text (for auto-completion)
+  const generateSlugFromText = (text: string): string => {
+    return generateSubdomain(text);
   };
 
   // Check if slug is available in database
@@ -137,16 +228,7 @@ const StoreManagement = () => {
 
   // Generate unique slug with number suffix if needed
   const generateUniqueSlug = async (baseSlug: string): Promise<string> => {
-    let finalSlug = baseSlug;
-    let counter = 1;
-    
-    while (!(await checkSlugAvailability(finalSlug))) {
-      counter++;
-      finalSlug = `${baseSlug}-${counter}`;
-      if (counter > 100) break; // Safety limit
-    }
-    
-    return finalSlug;
+    return ensureUniqueSubdomain(baseSlug);
   };
 
   const handleStoreSlugChange = (value: string) => {
@@ -166,6 +248,7 @@ const StoreManagement = () => {
   };
 
   const handleSaveStore = async () => {
+    // Step 1: Take store_name from field
     if (!storeName.trim()) {
       toast({
         title: "خطأ",
@@ -177,35 +260,28 @@ const StoreManagement = () => {
 
     setSaving(true);
     try {
-      // Generate slug from store name if not provided
-      let finalSlug = storeSlug.trim();
-      if (!finalSlug) {
-        finalSlug = generateSlugFromText(storeName);
+      // Step 2: Execute slug = generateSubdomain(store_name)
+      let slug = storeSlug.trim();
+      if (!slug) {
+        slug = generateSubdomain(storeName);
       }
 
-      // Validate the slug
-      const validation = validateSlug(finalSlug);
+      // Step 3: Validate slug against regex and reserved names
+      const validation = validateSlug(slug);
       if (!validation.isValid) {
         toast({
-          title: "خطأ في الاسم الإنجليزي",
-          description: validation.error,
+          title: "خطأ في اسم الرابط",
+          description: `${validation.error}. يرجى تعديل "اسم الرابط" أدناه.`,
           variant: "destructive"
         });
         setSaving(false);
         return;
       }
 
-      // Check if we're updating existing shop and slug hasn't changed
-      const isUpdatingWithSameSlug = userShop && userShop.slug === finalSlug;
-      
-      if (!isUpdatingWithSameSlug) {
-        // Generate unique slug if needed
-        finalSlug = await generateUniqueSlug(finalSlug);
-        
-        // Update the displayed slug
-        setStoreSlug(finalSlug);
-      }
-      // Get user profile
+      // Step 4: slug = ensureUniqueSubdomain(slug)
+      const uniqueSlug = await ensureUniqueSubdomain(slug);
+
+      // Get user profile for owner_id
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('id')
@@ -216,9 +292,8 @@ const StoreManagement = () => {
         throw new Error('لم يتم العثور على الملف الشخصي');
       }
 
+      // Handle logo upload
       let logoUrl = null;
-      
-      // Upload logo if exists
       if (storeLogo) {
         const fileExt = storeLogo.name.split('.').pop();
         const fileName = `${profile.id}-${Date.now()}.${fileExt}`;
@@ -236,58 +311,39 @@ const StoreManagement = () => {
         logoUrl = publicUrl;
       }
 
-      if (userShop) {
-        // Update existing shop
-        const updateData: any = {
-          display_name: storeName,
-          slug: finalSlug,
-        };
-        
-        if (logoUrl) {
-          updateData.logo_url = logoUrl;
-        }
+      // Step 5: store = upsertStore({subdomain: slug, store_name, logo_url, is_active: true})
+      const store = await upsertStore({
+        subdomain: uniqueSlug,
+        store_name: storeName,
+        logo_url: logoUrl,
+        is_active: true,
+        owner_id: profile.id
+      });
 
-        const { error } = await supabase
-          .from('shops')
-          .update(updateData)
-          .eq('id', userShop.id);
-
-        if (error) throw error;
-      } else {
-        // Create new shop - ENSURE owner_id is set correctly
-        const shopData: any = {
-          owner_id: profile.id,  // This is crucial - must match the profile.id
-          display_name: storeName,
-          slug: finalSlug,
-        };
-        
-        if (logoUrl) {
-          shopData.logo_url = logoUrl;
-        }
-
-        const { data: newShop, error } = await supabase
-          .from('shops')
-          .insert(shopData)
-          .select()
-          .single();
-
-        if (error) {
-          console.error('Shop creation error:', error);
-          throw error;
-        }
-        
-        setUserShop(newShop);
-      }
-
-      // Generate store URL
-      const generatedStoreUrl = `https://${finalSlug}.anaqti-chat.com`;
-      setStoreUrl(generatedStoreUrl);
+      // Step 6: Generate store URL
+      const store_url = `https://${uniqueSlug}.anaqti-chat.com`;
+      setStoreUrl(store_url);
       setShowSuccessCard(true);
 
+      // Step 7: Show success toast with copy button
       toast({
-        title: "تم بنجاح",
-        description: userShop ? "تم تحديث المتجر بنجاح" : "تم إنشاء المتجر بنجاح"
+        title: "تم إنشاء المتجر بنجاح",
+        description: "يمكنك الآن نسخ رابط المتجر ومشاركته",
+        action: (
+          <Button
+            size="sm"
+            onClick={() => copyStoreUrl()}
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            <Copy className="h-4 w-4 mr-1" />
+            نسخ الرابط
+          </Button>
+        ),
       });
+
+      // Update local state
+      setUserShop(store);
+      setStoreSlug(uniqueSlug);
 
       // Refresh shop data
       await fetchUserShop();
@@ -435,11 +491,31 @@ const StoreManagement = () => {
                       </Button>
                       <Button
                         variant="outline"
+                        onClick={copyStoreUrl}
+                        className="border-green-200 text-green-700 hover:bg-green-100 flex items-center gap-2"
+                      >
+                        <Copy className="h-4 w-4" />
+                        نسخ الرابط
+                      </Button>
+                      <Button
+                        variant="ghost"
                         onClick={() => setShowSuccessCard(false)}
-                        className="border-green-200 text-green-700 hover:bg-green-100"
+                        className="text-green-700 hover:bg-green-100"
                       >
                         إغلاق
                       </Button>
+                    </div>
+                    
+                    {/* Step 8: Clickable text link that opens in new tab */}
+                    <div className="pt-2 border-t border-green-200">
+                      <p className="text-sm text-green-600 mb-2">أو انقر على الرابط مباشرة:</p>
+                      <button
+                        onClick={openStoreInNewTab}
+                        className="text-green-700 hover:text-green-800 underline decoration-green-300 hover:decoration-green-500 transition-colors font-mono text-sm"
+                        dir="ltr"
+                      >
+                        {storeUrl}
+                      </button>
                     </div>
                   </CardContent>
                 </Card>
