@@ -129,10 +129,18 @@ const StoreFront = () => {
     );
   }
 
+  const currentTheme = (shop as any)?.theme || 'classic';
+  const pageBg = currentTheme === 'minimal' 
+    ? 'bg-background'
+    : 'bg-gradient-to-br from-background via-background to-secondary/5';
+  const headerBg = currentTheme === 'modern'
+    ? 'bg-gradient-to-r from-primary/20 to-secondary/20'
+    : 'bg-card/80';
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5" dir="rtl">
+    <div className={`min-h-screen ${pageBg}`} dir="rtl">
       {/* Header */}
-      <header className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-40">
+      <header className={`${headerBg} backdrop-blur-sm border-b sticky top-0 z-40`}>
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">

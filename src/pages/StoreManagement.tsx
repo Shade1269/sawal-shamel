@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import StoreProductsSection from '@/components/StoreProductsSection';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const StoreManagement = () => {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const StoreManagement = () => {
   const [saving, setSaving] = useState(false);
   const [storeUrl, setStoreUrl] = useState('');
   const [showSuccessCard, setShowSuccessCard] = useState(false);
+  const [theme, setTheme] = useState<string>('classic');
 
   // Redirect if not authenticated
   if (!user) {
@@ -57,6 +59,8 @@ const StoreManagement = () => {
           setStoreName(shop.display_name || '');
           setStoreSlug(shop.slug || '');
           setStoreEnabled(true);
+          setTheme(shop.theme || 'classic');
+          setStoreUrl(`https://atlantiss.tech/store/${shop.slug}`);
         }
       }
     } catch (error) {
@@ -383,9 +387,26 @@ const StoreManagement = () => {
     window.open(storeUrl, '_blank');
   };
 
+  // Update theme in DB and local state
+  const updateTheme = async (newTheme: string) => {
+    try {
+      setTheme(newTheme);
+      if (!userShop?.id) return;
+      const { error } = await supabase
+        .from('shops')
+        .update({ theme: newTheme })
+        .eq('id', userShop.id);
+      if (error) throw error;
+      toast({ title: 'تم التحديث', description: 'تم تحديث تصميم المتجر بنجاح' });
+    } catch (e: any) {
+      toast({ title: 'خطأ', description: e.message || 'تعذر تحديث التصميم', variant: 'destructive' });
+    }
+  };
+
   const sections = [
     { id: 'settings', title: 'إعدادات المتجر', icon: Settings },
     { id: 'products', title: 'إدارة المنتجات', icon: Package },
+    { id: 'store', title: 'المتجر', icon: Store },
     { id: 'analytics', title: 'الإحصائيات', icon: BarChart3 },
   ];
 
@@ -646,6 +667,74 @@ const StoreManagement = () => {
 
               {activeSection === 'products' && (
                 <StoreProductsSection userShop={userShop} />
+              )}
+
+              {activeSection === 'store' && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-2xl flex items-center gap-2">
+                      <Store className="h-6 w-6" />
+                      المتجر
+                    </CardTitle>
+                    <CardDescription>
+                      استعرض شكل المتجر كما سيظهر للعملاء، وخصص التصميم.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {!userShop || !storeSlug ? (
+                      <div className="text-center py-12">
+                        <Store className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold mb-2">قم بإنشاء المتجر أولاً</h3>
+                        <p className="text-muted-foreground mb-4">بعد حفظ الإعدادات سيظهر لك المعاينة هنا.</p>
+                        <Button onClick={() => setActiveSection('settings')}>الذهاب للإعدادات</Button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                          <div className="lg:col-span-1 space-y-4">
+                            <div className="space-y-2">
+                              <Label>رابط المتجر</Label>
+                              <div className="flex gap-2" dir="ltr">
+                                <Input value={storeUrl} readOnly className="font-mono" />
+                                <Button variant="outline" size="icon" onClick={copyStoreUrl}>
+                                  <Copy className="h-4 w-4" />
+                                </Button>
+                                <Button variant="secondary" size="icon" onClick={openStoreInNewTab}>
+                                  <ExternalLink className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label>تصميم المتجر</Label>
+                              <Select value={theme} onValueChange={updateTheme}>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="اختر التصميم" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="classic">كلاسيك</SelectItem>
+                                  <SelectItem value="modern">مودرن</SelectItem>
+                                  <SelectItem value="minimal">مينيمال</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <p className="text-xs text-muted-foreground">يتم حفظ التغييرات تلقائياً.</p>
+                            </div>
+                          </div>
+
+                          <div className="lg:col-span-2">
+                            <div className="rounded-lg border overflow-hidden animate-fade-in bg-background">
+                              <iframe
+                                src={`/store/${storeSlug}`}
+                                className="w-full h-[900px]"
+                                title="Store Preview"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
               )}
 
               {activeSection === 'analytics' && (
