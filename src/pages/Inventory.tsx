@@ -6,11 +6,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Package, Search, Filter, ArrowLeft } from 'lucide-react';
+import { Plus, Package, Search, Filter, ArrowLeft, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Product {
   id: string;
@@ -39,6 +40,26 @@ const Inventory = () => {
     category: '',
     stock: ''
   });
+
+  const [productVariants, setProductVariants] = useState([
+    { type: 'size', value: '', stock: 0 }
+  ]);
+
+  const addVariant = (type: string) => {
+    setProductVariants([...productVariants, { type, value: '', stock: 0 }]);
+  };
+
+  const updateVariant = (index: number, field: string, value: string | number) => {
+    const updated = [...productVariants];
+    updated[index] = { ...updated[index], [field]: value };
+    setProductVariants(updated);
+  };
+
+  const removeVariant = (index: number) => {
+    if (productVariants.length > 1) {
+      setProductVariants(productVariants.filter((_, i) => i !== index));
+    }
+  };
 
   // Add state for user's shop
   const [userShop, setUserShop] = useState<any>(null);
@@ -184,6 +205,18 @@ const Inventory = () => {
     
     if (!user) return;
 
+    // Validate variants if they exist
+    for (const variant of productVariants) {
+      if (!variant.value.trim()) {
+        toast({
+          title: "مطلوب",
+          description: "يجب ملء جميع قيم المتغيرات",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
     try {
       // First check if user has a merchant profile
       const { data: profile } = await supabase
@@ -231,7 +264,7 @@ const Inventory = () => {
         merchant = newMerchant;
       }
 
-      const { error } = await supabase
+      const { data: createdProduct, error: productError } = await supabase
         .from('products')
         .insert({
           title: newProduct.title,
@@ -240,9 +273,11 @@ const Inventory = () => {
           category: newProduct.category || null,
           stock: parseInt(newProduct.stock),
           merchant_id: merchant.id
-        });
+        })
+        .select()
+        .single();
 
-      if (error) {
+      if (productError) {
         toast({
           title: "خطأ",
           description: "فشل في إضافة المنتج",
@@ -251,9 +286,29 @@ const Inventory = () => {
         return;
       }
 
+      // Add product variants if they exist and have values
+      const validVariants = productVariants.filter(v => v.value.trim());
+      if (validVariants.length > 0) {
+        const variantsData = validVariants.map(variant => ({
+          product_id: createdProduct.id,
+          variant_type: variant.type,
+          variant_value: variant.value.trim(),
+          stock: variant.stock || 0
+        }));
+
+        const { error: variantsError } = await supabase
+          .from('product_variants')
+          .insert(variantsData);
+
+        if (variantsError) {
+          console.error('Error adding variants:', variantsError);
+          toast({ title: "تحذير", description: "تم إضافة المنتج لكن فشل في حفظ بعض المتغيرات", variant: "destructive" });
+        }
+      }
+
       toast({
         title: "تم بنجاح",
-        description: "تم إضافة المنتج بنجاح"
+        description: "تم إضافة المنتج والمتغيرات بنجاح"
       });
 
       setNewProduct({
@@ -263,6 +318,7 @@ const Inventory = () => {
         category: '',
         stock: ''
       });
+      setProductVariants([{ type: 'size', value: '', stock: 0 }]);
       setIsAddDialogOpen(false);
       fetchProducts();
 
@@ -375,6 +431,76 @@ const Inventory = () => {
                     value={newProduct.category}
                     onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
                   />
+                </div>
+
+                {/* Product Variants Section */}
+                <div className="space-y-4 border-t pt-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-semibold">تخصيص المنتج (مقاسات، ألوان، إلخ)</Label>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => addVariant('size')}
+                      >
+                        + مقاس
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => addVariant('color')}
+                      >
+                        + لون
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3 max-h-48 overflow-y-auto">
+                    {productVariants.map((variant, index) => (
+                      <div key={index} className="flex items-center gap-2 p-3 bg-muted/20 rounded-lg">
+                        <Select 
+                          value={variant.type} 
+                          onValueChange={(value) => updateVariant(index, 'type', value)}
+                        >
+                          <SelectTrigger className="w-24">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="size">مقاس</SelectItem>
+                            <SelectItem value="color">لون</SelectItem>
+                            <SelectItem value="style">نمط</SelectItem>
+                            <SelectItem value="material">مادة</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Input
+                          placeholder={variant.type === 'size' ? 'M, L, XL' : variant.type === 'color' ? 'أحمر, أزرق' : 'القيمة'}
+                          value={variant.value}
+                          onChange={(e) => updateVariant(index, 'value', e.target.value)}
+                          className="flex-1"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="العدد"
+                          value={variant.stock}
+                          onChange={(e) => updateVariant(index, 'stock', parseInt(e.target.value) || 0)}
+                          className="w-20"
+                        />
+                        {productVariants.length > 1 && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => removeVariant(index)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button type="submit" className="flex-1">

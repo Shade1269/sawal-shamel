@@ -17,6 +17,15 @@ interface Product {
   image_urls: string[];
   stock: number;
   category: string;
+  variants?: ProductVariant[];
+}
+
+interface ProductVariant {
+  id: string;
+  variant_type: string;
+  variant_value: string;
+  stock: number;
+  price_modifier: number;
 }
 
 interface Shop {
@@ -31,6 +40,7 @@ interface Shop {
 interface CartItem {
   product: Product;
   quantity: number;
+  selectedVariants?: { [key: string]: string }; // e.g., { size: "M", color: "Red" }
 }
 
 const StoreFront = () => {
@@ -38,6 +48,7 @@ const StoreFront = () => {
   const { toast } = useToast();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
+  const [selectedVariants, setSelectedVariants] = useState<{ [productId: string]: { [variantType: string]: string } }>({});
 
   // Debug logging
   console.log('StoreFrontبدء تشغيل  - slug:', slug);
@@ -69,34 +80,75 @@ const StoreFront = () => {
         .from("product_library")
         .select(`
           product_id,
-          products (*)
+          products (
+            *,
+            product_variants (*)
+          )
         `)
         .eq("shop_id", shop.id)
         .eq("is_visible", true);
 
       if (error) throw error;
-      return data.map(item => item.products).filter(Boolean) as Product[];
+      return data.map(item => ({
+        ...item.products,
+        variants: item.products.product_variants || []
+      })).filter(Boolean) as Product[];
     },
     enabled: !!shop?.id,
   });
 
   const addToCart = (product: Product) => {
-    setCart(prev => {
-      const existing = prev.find(item => item.product.id === product.id);
-      if (existing) {
-        return prev.map(item =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+    // Check if product has variants and if they are selected
+    if (product.variants && product.variants.length > 0) {
+      const productVariants = selectedVariants[product.id] || {};
+      const variantTypes = [...new Set(product.variants.map(v => v.variant_type))];
+      
+      // Check if all required variant types are selected
+      const missingVariants = variantTypes.filter(type => !productVariants[type]);
+      if (missingVariants.length > 0) {
+        toast({
+          title: "اختيار مطلوب",
+          description: `يجب اختيار: ${missingVariants.join(', ')}`,
+          variant: "destructive"
+        });
+        return;
       }
-      return [...prev, { product, quantity: 1 }];
+    }
+
+    setCart(prev => {
+      const productVariants = selectedVariants[product.id] || {};
+      const existingItemIndex = prev.findIndex(item => 
+        item.product.id === product.id && 
+        JSON.stringify(item.selectedVariants) === JSON.stringify(productVariants)
+      );
+      
+      if (existingItemIndex >= 0) {
+        const newCart = [...prev];
+        newCart[existingItemIndex].quantity += 1;
+        return newCart;
+      }
+      
+      return [...prev, { 
+        product, 
+        quantity: 1, 
+        selectedVariants: Object.keys(productVariants).length > 0 ? productVariants : undefined 
+      }];
     });
     
     toast({
       title: "تمت الإضافة للسلة",
       description: `تم إضافة ${product.title} إلى سلة التسوق`,
     });
+  };
+
+  const updateSelectedVariant = (productId: string, variantType: string, value: string) => {
+    setSelectedVariants(prev => ({
+      ...prev,
+      [productId]: {
+        ...prev[productId],
+        [variantType]: value
+      }
+    }));
   };
 
   const cartTotal = cart.reduce((sum, item) => sum + (item.product.price_sar * item.quantity), 0);
@@ -272,6 +324,46 @@ const StoreFront = () => {
                             <span className="text-muted-foreground mr-1">(4.9)</span>
                           </div>
                         </div>
+                        
+                        {/* Product Variants Selection */}
+                        {product.variants && product.variants.length > 0 && (
+                          <div className="space-y-3 border-t pt-4">
+                            {[...new Set(product.variants.map(v => v.variant_type))].map(variantType => {
+                              const variantOptions = product.variants!.filter(v => v.variant_type === variantType);
+                              const selectedValue = selectedVariants[product.id]?.[variantType];
+                              
+                              return (
+                                <div key={variantType} className="space-y-2">
+                                  <label className="text-sm font-medium">
+                                    {variantType === 'size' ? 'المقاس' : 
+                                     variantType === 'color' ? 'اللون' : 
+                                     variantType === 'style' ? 'النمط' :
+                                     variantType === 'material' ? 'المادة' : variantType}:
+                                  </label>
+                                  <div className="flex flex-wrap gap-2">
+                                    {variantOptions.map(variant => (
+                                      <Button
+                                        key={variant.id}
+                                        type="button"
+                                        size="sm"
+                                        variant={selectedValue === variant.variant_value ? "default" : "outline"}
+                                        onClick={() => updateSelectedVariant(product.id, variantType, variant.variant_value)}
+                                        disabled={variant.stock === 0}
+                                        className={`
+                                          ${variant.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}
+                                          ${selectedValue === variant.variant_value ? 'ring-2 ring-primary' : ''}
+                                        `}
+                                      >
+                                        {variant.variant_value}
+                                        {variant.stock === 0 && <span className="mr-1 text-xs">(نفد)</span>}
+                                      </Button>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                         
                         <Button
                           onClick={() => addToCart(product)}
