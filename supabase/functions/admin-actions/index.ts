@@ -348,10 +348,20 @@ serve(async (req) => {
       return jsonResponse({ data: { success: true, message: "Channel messages cleared" } });
     }
 
-    return jsonResponse({ error: "Invalid action" }, 400);
+    // Update product visibility (admin only)
+    if (action === "update_product_visibility") {
+      const { product_id, is_active } = body;
+      if (!product_id || typeof is_active !== 'boolean') {
+        return jsonResponse({ error: "product_id and is_active are required" }, 400);
+      }
+      const { data, error } = await supabase
+        .from('products')
+        .update({ is_active })
+        .eq('id', product_id)
+        .select('id, is_active')
+        .single();
+      if (error) return jsonResponse({ error: error.message }, 400);
+      return jsonResponse({ data, message: 'Product visibility updated' });
+    }
 
-  } catch (error: any) {
-    console.error("Edge function error:", error);
-    return jsonResponse({ error: error.message || "Internal server error" }, 500);
-  }
-});
+    return jsonResponse({ error: "Invalid action" }, 400);

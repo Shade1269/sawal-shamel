@@ -226,20 +226,22 @@ const Admin = () => {
 
   const handleToggleProductVisibility = async (product: any) => {
     try {
-      const { error } = await supabase
-        .from('products')
-        .update({ is_active: !product.is_active })
-        .eq('id', product.id);
+      const res = await callAdminApi('update_product_visibility', {
+        product_id: product.id,
+        is_active: !product.is_active,
+      });
 
-      if (error) throw error;
+      if ((res as any).error) throw new Error((res as any).error);
 
       toast({ 
         title: product.is_active ? "تم الإخفاء" : "تم الإظهار", 
         description: `تم ${product.is_active ? 'إخفاء' : 'إظهار'} المنتج بنجاح` 
       });
-      loadProducts();
+
+      // Update local state immediately for snappier UI
+      setProducts((prev) => prev.map(p => p.id === product.id ? { ...p, is_active: !product.is_active } : p));
     } catch (error) {
-      console.error('Error toggling product visibility:', error);
+      console.error('Error toggling product visibility (admin):', error);
       toast({ title: "خطأ", description: "فشل في تغيير حالة المنتج", variant: "destructive" });
     }
   };
@@ -595,6 +597,7 @@ const Admin = () => {
                             size="sm"
                             onClick={() => handleToggleProductVisibility(product)}
                             disabled={loading}
+                            className={!product.is_active ? "ring-2 ring-primary/50 ring-offset-2 ring-offset-background shadow-lg" : undefined}
                           >
                             {product.is_active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </Button>

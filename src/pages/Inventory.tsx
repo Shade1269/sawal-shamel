@@ -73,6 +73,20 @@ const Inventory = () => {
     }
   };
 
+  // Realtime updates: reflect changes immediately in the Inventory
+  useEffect(() => {
+    const channel = supabase
+      .channel('inventory-products')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
+        fetchProducts();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -339,6 +353,7 @@ const Inventory = () => {
                       src={product.image_urls[0]}
                       alt={product.title}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   ) : (
                     <Package className="h-12 w-12 text-muted-foreground" />
