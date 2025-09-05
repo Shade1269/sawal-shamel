@@ -249,14 +249,20 @@ const StoreManagement = () => {
   };
 
   const handleSaveStore = async () => {
-    // Step 1: Take store_name from field
+    // Step 1: Check if store name is empty
     if (!storeName.trim()) {
-      toast({
-        title: "خطأ",
-        description: "يجب إدخال اسم المتجر",
-        variant: "destructive"
-      });
-      return;
+      // If store name is empty and store exists, delete it
+      if (userShop?.id) {
+        await deleteStore();
+        return;
+      } else {
+        // If no store exists and name is empty, just show message
+        toast({
+          title: "لا يوجد اسم متجر",
+          description: "أدخل اسم المتجر لإنشائه",
+        });
+        return;
+      }
     }
 
     setSaving(true);
@@ -400,13 +406,24 @@ const StoreManagement = () => {
     }
   };
 
-  // Delete store function
+  // Delete store function - Enhanced for complete cleanup
   const deleteStore = async () => {
     if (!userShop?.id) return;
     
     try {
       setSaving(true);
       
+      // Delete all related data first (cascade delete)
+      // Delete product library entries
+      await supabase
+        .from('product_library')
+        .delete()
+        .eq('shop_id', userShop.id);
+      
+      // Delete orders and related data will be cleaned up by foreign key constraints
+      // or we can delete them explicitly if needed
+      
+      // Finally delete the shop
       const { error } = await supabase
         .from('shops')
         .delete()
@@ -414,22 +431,17 @@ const StoreManagement = () => {
         
       if (error) throw error;
       
-      // Clean up related data
-      await supabase
-        .from('product_library')
-        .delete()
-        .eq('shop_id', userShop.id);
-        
       toast({
         title: "تم حذف المتجر",
         description: "تم حذف المتجر وجميع بياناته نهائياً"
       });
       
-      // Reset local state
+      // Reset all local state completely
       setUserShop(null);
       setStoreName('');
       setStoreSlug('');
       setStoreUrl('');
+      setStoreLogo(null);
       setShowSuccessCard(false);
       
     } catch (error: any) {
