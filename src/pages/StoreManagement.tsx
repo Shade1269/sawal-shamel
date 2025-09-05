@@ -249,20 +249,14 @@ const StoreManagement = () => {
   };
 
   const handleSaveStore = async () => {
-    // Step 1: Check if store name is empty
+    // Step 1: Check if store name is provided
     if (!storeName.trim()) {
-      // If store name is empty and store exists, delete it
-      if (userShop?.id) {
-        await deleteStore();
-        return;
-      } else {
-        // If no store exists and name is empty, just show message
-        toast({
-          title: "لا يوجد اسم متجر",
-          description: "أدخل اسم المتجر لإنشائه",
-        });
-        return;
-      }
+      toast({
+        title: "خطأ",
+        description: "يجب إدخال اسم المتجر",
+        variant: "destructive"
+      });
+      return;
     }
 
     setSaving(true);
