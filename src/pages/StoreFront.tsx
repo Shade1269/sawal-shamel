@@ -39,16 +39,21 @@ const StoreFront = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
 
+  // Debug logging
+  console.log('StoreFrontبدء تشغيل  - slug:', slug);
+
   // Fetch shop data
   const { data: shop, isLoading: shopLoading, error: shopError } = useQuery({
     queryKey: ["shop", slug],
     queryFn: async () => {
+      console.log('جاري البحث عن المتجر بالـ slug:', slug);
       const { data, error } = await supabase
         .from("shops")
         .select("*")
         .eq("slug", slug)
         .maybeSingle();
 
+      console.log('نتيجة البحث عن المتجر:', { data, error });
       if (error) throw error;
       return data as Shop | null;
     },
@@ -96,7 +101,10 @@ const StoreFront = () => {
   const cartTotal = cart.reduce((sum, item) => sum + (item.product.price_sar * item.quantity), 0);
   const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  console.log('حالة المتجر:', { shop, shopLoading, shopError });
+
   if (shopLoading) {
+    console.log('جاري تحميل المتجر...');
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -108,6 +116,7 @@ const StoreFront = () => {
   }
 
   if (shopError || (!shopLoading && !shop)) {
+    console.log('خطأ في المتجر أو غير موجود:', { shopError, shop });
     return (
       <div className="min-h-screen bg-background flex items-center justify-center" dir="rtl">
         <div className="text-center space-y-4">
