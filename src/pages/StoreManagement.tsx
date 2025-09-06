@@ -27,6 +27,25 @@ const StoreManagement = () => {
   const [storeUrl, setStoreUrl] = useState('');
   const [showSuccessCard, setShowSuccessCard] = useState(false);
   const [theme, setTheme] = useState<string>('classic');
+  
+  // Store Payment & Shipping Settings
+  const [selectedPaymentProviders, setSelectedPaymentProviders] = useState<{name: string, enabled: boolean}[]>([]);
+  const [selectedShippingCompanies, setSelectedShippingCompanies] = useState<{name: string, enabled: boolean}[]>([]);
+  
+  // Mock data for payment providers and shipping companies (this should come from admin settings)
+  const [availablePaymentProviders] = useState([
+    { name: 'فيزا', apiKey: '••••••••' },
+    { name: 'ماستركارد', apiKey: '••••••••' },
+    { name: 'مدى', apiKey: '••••••••' },
+    { name: 'آبل باي', apiKey: '••••••••' }
+  ]);
+  
+  const [availableShippingCompanies] = useState([
+    { name: 'سبل', apiKey: '••••••••' },
+    { name: 'سمسا', apiKey: '••••••••' },
+    { name: 'ارامكس', apiKey: '••••••••' },
+    { name: 'فيدكس', apiKey: '••••••••' }
+  ]);
 
   // Redirect if not authenticated
   if (!user) {
@@ -452,6 +471,7 @@ const StoreManagement = () => {
   const sections = [
     { id: 'settings', title: 'إعدادات المتجر', icon: Settings },
     { id: 'products', title: 'إدارة المنتجات', icon: Package },
+    { id: 'payment-shipping', title: 'الشحن والمدفوعات', icon: Store },
     { id: 'store', title: 'المتجر', icon: Store },
     { id: 'analytics', title: 'الإحصائيات', icon: BarChart3 },
   ];
@@ -734,6 +754,146 @@ const StoreManagement = () => {
                         </div>
                       </div>
                     )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {activeSection === 'payment-shipping' && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-2xl flex items-center gap-2">
+                      <Settings className="h-6 w-6" />
+                      الشحن والمدفوعات
+                    </CardTitle>
+                    <CardDescription>
+                      اختر وسائل الدفع وشركات الشحن المتاحة في متجرك
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-8">
+                    {/* Payment Providers Section */}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold">وسائل الدفع</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {availablePaymentProviders.map((provider, index) => (
+                          <div key={index} className="flex items-center justify-between p-4 border rounded-lg bg-card">
+                            <div className="flex items-center gap-3">
+                              <div className="space-y-1">
+                                <p className="font-medium">{provider.name}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  API Key: {provider.apiKey}
+                                </p>
+                              </div>
+                            </div>
+                            <Switch
+                              checked={selectedPaymentProviders.find(p => p.name === provider.name)?.enabled || false}
+                              onCheckedChange={(checked) => {
+                                setSelectedPaymentProviders(prev => {
+                                  const existing = prev.find(p => p.name === provider.name);
+                                  if (existing) {
+                                    return prev.map(p => 
+                                      p.name === provider.name 
+                                        ? { ...p, enabled: checked }
+                                        : p
+                                    );
+                                  } else {
+                                    return [...prev, { name: provider.name, enabled: checked }];
+                                  }
+                                });
+                                toast({
+                                  title: checked ? "تم التفعيل" : "تم الإلغاء",
+                                  description: `${provider.name} ${checked ? 'مُفعل' : 'غير مُفعل'} في المتجر`
+                                });
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      {availablePaymentProviders.length === 0 && (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <p>لا توجد وسائل دفع متاحة</p>
+                          <p className="text-sm">يمكن للأدمن إضافة وسائل دفع جديدة من لوحة الإدارة</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Shipping Companies Section */}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold">شركات الشحن</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {availableShippingCompanies.map((company, index) => (
+                          <div key={index} className="flex items-center justify-between p-4 border rounded-lg bg-card">
+                            <div className="flex items-center gap-3">
+                              <div className="space-y-1">
+                                <p className="font-medium">{company.name}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  API Key: {company.apiKey}
+                                </p>
+                              </div>
+                            </div>
+                            <Switch
+                              checked={selectedShippingCompanies.find(c => c.name === company.name)?.enabled || false}
+                              onCheckedChange={(checked) => {
+                                setSelectedShippingCompanies(prev => {
+                                  const existing = prev.find(c => c.name === company.name);
+                                  if (existing) {
+                                    return prev.map(c => 
+                                      c.name === company.name 
+                                        ? { ...c, enabled: checked }
+                                        : c
+                                    );
+                                  } else {
+                                    return [...prev, { name: company.name, enabled: checked }];
+                                  }
+                                });
+                                toast({
+                                  title: checked ? "تم التفعيل" : "تم الإلغاء",
+                                  description: `${company.name} ${checked ? 'مُفعل' : 'غير مُفعل'} في المتجر`
+                                });
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      {availableShippingCompanies.length === 0 && (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <p>لا توجد شركات شحن متاحة</p>
+                          <p className="text-sm">يمكن للأدمن إضافة شركات شحن جديدة من لوحة الإدارة</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Active Services Summary */}
+                    <div className="space-y-4 pt-6 border-t">
+                      <h3 className="text-lg font-semibold">الخدمات المُفعلة</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <p className="font-medium text-sm">وسائل الدفع المُفعلة:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedPaymentProviders.filter(p => p.enabled).map((provider, index) => (
+                              <span key={index} className="inline-flex items-center px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                                {provider.name}
+                              </span>
+                            ))}
+                            {selectedPaymentProviders.filter(p => p.enabled).length === 0 && (
+                              <span className="text-xs text-muted-foreground">لا توجد وسائل دفع مُفعلة</span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="font-medium text-sm">شركات الشحن المُفعلة:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedShippingCompanies.filter(c => c.enabled).map((company, index) => (
+                              <span key={index} className="inline-flex items-center px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                                {company.name}
+                              </span>
+                            ))}
+                            {selectedShippingCompanies.filter(c => c.enabled).length === 0 && (
+                              <span className="text-xs text-muted-foreground">لا توجد شركات شحن مُفعلة</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               )}
