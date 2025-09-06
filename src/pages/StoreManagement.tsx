@@ -32,20 +32,26 @@ const StoreManagement = () => {
   const [selectedPaymentProviders, setSelectedPaymentProviders] = useState<{name: string, enabled: boolean}[]>([]);
   const [selectedShippingCompanies, setSelectedShippingCompanies] = useState<{name: string, enabled: boolean}[]>([]);
   
-  // Mock data for payment providers and shipping companies (this should come from admin settings)
-  const [availablePaymentProviders] = useState([
-    { name: 'فيزا', apiKey: '••••••••' },
-    { name: 'ماستركارد', apiKey: '••••••••' },
-    { name: 'مدى', apiKey: '••••••••' },
-    { name: 'آبل باي', apiKey: '••••••••' }
-  ]);
-  
-  const [availableShippingCompanies] = useState([
-    { name: 'سبل', apiKey: '••••••••', price: 15 },
-    { name: 'سمسا', apiKey: '••••••••', price: 20 },
-    { name: 'ارامكس', apiKey: '••••••••', price: 25 },
-    { name: 'فيدكس', apiKey: '••••••••', price: 35 }
-  ]);
+  // Data loaded from Admin settings (LocalStorage)
+  const [availablePaymentProviders, setAvailablePaymentProviders] = useState<{ name: string }[]>([]);
+  const [availableShippingCompanies, setAvailableShippingCompanies] = useState<{ name: string; price?: number }[]>([]);
+
+  React.useEffect(() => {
+    try {
+      const savedPayments = localStorage.getItem('admin_payment_providers');
+      const savedShippings = localStorage.getItem('admin_shipping_companies');
+      if (savedPayments) {
+        const parsed = JSON.parse(savedPayments);
+        setAvailablePaymentProviders(Array.isArray(parsed) ? parsed.map((p: any) => ({ name: p.name })) : []);
+      }
+      if (savedShippings) {
+        const parsed = JSON.parse(savedShippings);
+        setAvailableShippingCompanies(Array.isArray(parsed) ? parsed.map((s: any) => ({ name: s.name, price: s.price })) : []);
+      }
+    } catch (e) {
+      console.error('Failed to load providers from storage', e);
+    }
+  }, []);
 
   // Redirect if not authenticated
   if (!user) {
@@ -779,9 +785,6 @@ const StoreManagement = () => {
                             <div className="flex items-center gap-3">
                               <div className="space-y-1">
                                 <p className="font-medium">{provider.name}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  API Key: {provider.apiKey}
-                                </p>
                               </div>
                             </div>
                             <Switch
@@ -825,9 +828,6 @@ const StoreManagement = () => {
                             <div className="flex items-center gap-3">
                                <div className="space-y-1">
                                  <p className="font-medium">{company.name}</p>
-                                 <p className="text-sm text-muted-foreground">
-                                   API Key: {company.apiKey}
-                                 </p>
                                  <p className="text-sm font-medium text-primary">
                                    سعر الشحن: {company.price} ريال
                                  </p>

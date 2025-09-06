@@ -253,10 +253,7 @@ const Admin = () => {
     localStorage.setItem('admin_shipping_companies', JSON.stringify(shippingCompanies));
   };
 
-  // Auto-save when providers change
-  React.useEffect(() => {
-    saveProviders();
-  }, [paymentProviders, shippingCompanies]);
+  // تم إيقاف الحفظ التلقائي - استخدم زر الحفظ اليدوي في الأسفل
 
   const loadProducts = async () => {
     try {
@@ -1182,6 +1179,17 @@ const Admin = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="flex justify-end mb-8">
+            <Button
+              onClick={() => {
+                saveProviders();
+                toast({ title: "تم الحفظ", description: "تم حفظ إعدادات الدفع والشحن" });
+              }}
+            >
+              حفظ إعدادات الدفع والشحن
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
