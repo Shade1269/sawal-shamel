@@ -52,6 +52,8 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
     area: ''
   });
 
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  
   // Load shipping companies and payment providers from store settings
   const [shippingCompanies, setShippingCompanies] = useState<ShippingCompany[]>([]);
   const [paymentProviders, setPaymentProviders] = useState<PaymentProvider[]>([]);
@@ -61,6 +63,7 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
   }, [shopId]);
 
   const loadStoreSettings = async () => {
+    setIsLoadingSettings(true);
     try {
       // First get the admin settings for all available options with prices
       const savedShippings = localStorage.getItem('admin_shipping_companies');
@@ -100,8 +103,8 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
           { name: 'سمسا', price: 20 }
         ]);
         setPaymentProviders([
-          { name: 'فيزا' },
-          { name: 'ماستركارد' }
+          { name: 'دفع عند الاستلام' },
+          { name: 'تمارا' }
         ]);
       }
     } catch (error) {
@@ -112,9 +115,11 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
         { name: 'سمسا', price: 20 }
       ]);
       setPaymentProviders([
-        { name: 'فيزا' },
-        { name: 'ماستركارد' }
+        { name: 'دفع عند الاستلام' },
+        { name: 'تمارا' }
       ]);
+    } finally {
+      setIsLoadingSettings(false);
     }
   };
 
@@ -137,14 +142,8 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
       });
       return;
     }
-    if (paymentProviders.length === 0) {
-      toast({
-        title: "لا توجد وسائل دفع",
-        description: "يرجى تفعيل وسيلة دفع واحدة على الأقل من إعدادات المتجر",
-        variant: "destructive"
-      });
-      return;
-    }
+    
+    // Proceed to payment even if no payment providers (will show message on payment page)
     setCurrentStep('payment');
   };
 
@@ -287,6 +286,47 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
   }
 
   if (currentStep === 'payment') {
+    if (isLoadingSettings) {
+      return (
+        <div className="space-y-6" dir="rtl">
+          {renderStepIndicator()}
+          <Card>
+            <CardContent className="py-8">
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <span className="mr-3">جاري تحميل وسائل الدفع...</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    if (paymentProviders.length === 0) {
+      return (
+        <div className="space-y-6" dir="rtl">
+          {renderStepIndicator()}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5" />
+                اختيار وسيلة الدفع
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <p className="text-muted-foreground mb-4">لا توجد وسائل دفع متاحة حالياً</p>
+                <Button variant="outline" onClick={() => setCurrentStep('shipping')}>
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                  العودة للشحن
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-6" dir="rtl">
         {renderStepIndicator()}
