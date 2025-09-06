@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import StoreProductsSection from '@/components/StoreProductsSection';
+import { StoreOrders } from '@/components/StoreOrders';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const StoreManagement = () => {
@@ -569,6 +570,7 @@ const StoreManagement = () => {
   const sections = [
     { id: 'settings', title: 'إعدادات المتجر', icon: Settings },
     { id: 'products', title: 'إدارة المنتجات', icon: Package },
+    { id: 'orders', title: 'الطلبات', icon: Package },
     { id: 'payment-shipping', title: 'الشحن والمدفوعات', icon: Store },
     { id: 'store', title: 'المتجر', icon: Store },
     { id: 'analytics', title: 'الإحصائيات', icon: BarChart3 },
@@ -1003,6 +1005,23 @@ const StoreManagement = () => {
 
               {activeSection === 'products' && (
                 <StoreProductsSection userShop={userShop} />
+              )}
+
+              {activeSection === 'orders' && userShop && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-2xl flex items-center gap-2">
+                      <Package className="h-6 w-6" />
+                      الطلبات
+                    </CardTitle>
+                    <CardDescription>
+                      إدارة ومتابعة جميع الطلبات الواردة على متجرك
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <StoreOrders shopId={userShop.id} />
+                  </CardContent>
+                </Card>
               )}
 
               {activeSection === 'store' && (
