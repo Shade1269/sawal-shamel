@@ -660,12 +660,12 @@ const StoreFront = () => {
       </div>
 
       {/* Checkout Flow */}
-      {showCheckout && !orderCompleted && shop?.id && cart.length > 0 ? (
+      {showCheckout && !orderCompleted && cart.length > 0 ? (
         <div className="fixed inset-0 bg-background z-50 overflow-auto">
           <div className="container mx-auto px-4 py-8">
             <CheckoutFlow
               cart={cart}
-              shopId={shop.id}
+              shopId={shop?.id || ''}
               onBack={handleBackToCart}
               onComplete={handleCheckoutComplete}
             />

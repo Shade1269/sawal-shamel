@@ -248,17 +248,22 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
           return;
         }
 
-        if (data?.success && data?.payment_url) {
-          // Redirect to Emkan payment page
-          window.open(data.payment_url, '_blank');
-          toast({
-            title: "تم إنشاء طلب الدفع",
-            description: "سيتم توجيهك لصفحة الدفع الآمنة من امكان",
-          });
-          
-          // Set success state locally - actual payment confirmation will come via webhook
-          setCurrentStep('success');
-          onComplete(orderNumber);
+        if (data?.success) {
+          const paymentUrl = (data as any).payment_url || (data as any).redirectUrl;
+          if (paymentUrl) {
+            // Redirect to Emkan payment page
+            window.open(paymentUrl, '_blank');
+            toast({
+              title: "تم إنشاء طلب الدفع",
+              description: "سيتم توجيهك لصفحة الدفع الآمنة من امكان",
+            });
+            
+            // Set success state locally - actual payment confirmation will come via webhook
+            setCurrentStep('success');
+            onComplete(orderNumber);
+          } else {
+            throw new Error('Invalid payment response from Emkan: missing redirect URL');
+          }
         } else {
           throw new Error('Invalid payment response from Emkan');
         }
