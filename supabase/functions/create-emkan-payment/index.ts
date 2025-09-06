@@ -72,35 +72,29 @@ serve(async (req) => {
       throw new Error("Emkan API credentials not configured");
     }
 
-    // Create payment session with Emkan
-    // Note: This is a template based on common BNPL patterns
-    // The actual endpoint and payload structure should match Emkan's documentation
+    // Create payment session with Emkan based on actual API documentation
     const emkanPayload = {
-      merchant_id: emkanApiKey,
-      amount: paymentRequest.amount,
-      currency: paymentRequest.currency || "SAR",
-      order_id: paymentRequest.orderInfo.orderId,
-      customer: {
-        name: paymentRequest.customerInfo.name,
-        email: paymentRequest.customerInfo.email || "customer@example.com",
-        phone: paymentRequest.customerInfo.phone,
-        address: paymentRequest.customerInfo.address,
-      },
-      items: paymentRequest.orderInfo.items,
-      return_url: paymentRequest.redirectUrls.successUrl,
-      cancel_url: paymentRequest.redirectUrls.cancelUrl,
-      callback_url: `${req.headers.get("origin")}/api/emkan-webhook`, // For payment status updates
+      merchantId: "556480", // Merchant ID from your account
+      requestId: `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, // Unique request ID
+      callerReferenceNumber: paymentRequest.orderInfo.orderId,
+      orderItems: paymentRequest.orderInfo.items.map(item => ({
+        itemPrice: item.price,
+        quantity: item.quantity,
+        itemCode: `item_${Math.random().toString(36).substr(2, 9)}`,
+        createAt: new Date().toISOString()
+      })),
+      channel: "BNPL_MERCHANT"
     };
 
     console.log("Sending request to Emkan API...");
+    console.log("Payload:", JSON.stringify(emkanPayload, null, 2));
 
-    // Call Emkan API with correct endpoint  
-    const emkanResponse = await fetch("https://api.emkanfinance.com.sa/merchant/v1/vouchers", {
+    // Call Emkan API with correct endpoint from documentation
+    const emkanResponse = await fetch("https://merchants.emkanfinance.com.sa/retail/bnpl/bff/v1/order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${emkanApiKey}`,
-        "X-API-Password": emkanPassword,
+        "Authorization": `Basic ${btoa(`${emkanApiKey}:${emkanPassword}`)}`,
       },
       body: JSON.stringify(emkanPayload),
     });
@@ -125,22 +119,30 @@ serve(async (req) => {
       await supabaseService.from("payments").insert({
         order_id: paymentRequest.orderInfo.orderId,
         provider: "emkan",
-        provider_ref: emkanResult.payment_id || emkanResult.session_id,
+        provider_ref: emkanResult.orderCode || emkanResult.requestId,
         amount_sar: paymentRequest.amount,
-        status: "pending",
+        status: emkanResult.statusCode === "CREATED" ? "pending" : "failed",
         created_at: new Date().toISOString()
       });
     }
 
-    // Return the payment URL for redirection
-    return new Response(JSON.stringify({ 
-      success: true,
-      payment_url: emkanResult.payment_url || emkanResult.redirect_url,
-      payment_id: emkanResult.payment_id || emkanResult.session_id
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    // Return the response based on Emkan API structure
+    if (emkanResult.statusCode === "CREATED") {
+      return new Response(JSON.stringify({ 
+        success: true,
+        orderCode: emkanResult.orderCode,
+        requestId: emkanResult.requestId,
+        statusCode: emkanResult.statusCode,
+        description: emkanResult.description || "Order created successfully",
+        // For BNPL, there might be a redirect URL in the response
+        redirectUrl: emkanResult.redirectUrl || null
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    } else {
+      throw new Error(`Emkan order creation failed: ${emkanResult.description || 'Unknown error'}`);
+    }
 
   } catch (error) {
     console.error("Error in create-emkan-payment function:", error);
