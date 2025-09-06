@@ -46,7 +46,11 @@ const StoreManagement = () => {
       }
       if (savedShippings) {
         const parsed = JSON.parse(savedShippings);
-        setAvailableShippingCompanies(Array.isArray(parsed) ? parsed.map((s: any) => ({ name: s.name, price: s.price })) : []);
+        setAvailableShippingCompanies(
+          Array.isArray(parsed)
+            ? parsed.map((s: any) => ({ name: s.name, price: isNaN(Number(s.price)) ? 0 : Number(s.price) }))
+            : []
+        );
       }
     } catch (e) {
       console.error('Failed to load providers from storage', e);

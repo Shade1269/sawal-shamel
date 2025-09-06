@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,7 +59,7 @@ export const CheckoutFlow = ({ cart, onBack, onComplete }: CheckoutFlowProps) =>
         if (Array.isArray(parsed) && parsed.length > 0) {
           return parsed.map((s: any) => ({ 
             name: s.name || 'شركة شحن', 
-            price: typeof s.price === 'number' ? s.price : 15 
+            price: isNaN(Number(s.price)) ? 15 : Number(s.price)
           }));
         }
       }
@@ -96,6 +96,12 @@ export const CheckoutFlow = ({ cart, onBack, onComplete }: CheckoutFlowProps) =>
       { name: 'آبل باي' }
     ];
   });
+
+  useEffect(() => {
+    if (currentStep === 'payment' && !selectedPayment && paymentProviders.length > 0) {
+      setSelectedPayment(paymentProviders[0].name);
+    }
+  }, [currentStep, selectedPayment, paymentProviders]);
 
   const subtotal = cart.reduce((sum, item) => sum + ((item.product.final_price || item.product.price_sar) * item.quantity), 0);
   const shippingCost = selectedShipping?.price || 0;
@@ -200,6 +206,10 @@ export const CheckoutFlow = ({ cart, onBack, onComplete }: CheckoutFlowProps) =>
             <RadioGroup value={selectedShipping?.name || ''} onValueChange={(value) => {
               const company = shippingCompanies.find(c => c.name === value);
               setSelectedShipping(company || null);
+              // تقدم تلقائيًا لخطوة الدفع بعد اختيار شركة الشحن
+              if (company) {
+                setTimeout(() => setCurrentStep('payment'), 200);
+              }
             }}>
               <div className="space-y-4">
                 {shippingCompanies.map((company) => (
