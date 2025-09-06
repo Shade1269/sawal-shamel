@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { Truck, CreditCard, CheckCircle, ArrowRight, ArrowLeft, Package } from "lucide-react";
 
 interface CartItem {
@@ -31,13 +32,14 @@ interface PaymentProvider {
 
 interface CheckoutFlowProps {
   cart: CartItem[];
+  shopId: string;
   onBack: () => void;
   onComplete: (orderNumber: string) => void;
 }
 
 type CheckoutStep = 'shipping' | 'payment' | 'confirmation' | 'success';
 
-export const CheckoutFlow = ({ cart, onBack, onComplete }: CheckoutFlowProps) => {
+export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowProps) => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('shipping');
   const [selectedShipping, setSelectedShipping] = useState<ShippingCompany | null>(null);
@@ -50,52 +52,71 @@ export const CheckoutFlow = ({ cart, onBack, onComplete }: CheckoutFlowProps) =>
     area: ''
   });
 
-  // Load shipping companies and payment providers from localStorage with fallback
-  const [shippingCompanies] = useState<ShippingCompany[]>(() => {
-    try {
-      const saved = localStorage.getItem('admin_shipping_companies');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((s: any) => ({ 
-            name: s.name || 'شركة شحن', 
-            price: isNaN(Number(s.price)) ? 15 : Number(s.price)
-          }));
-        }
-      }
-    } catch (error) {
-      console.error('Error loading shipping companies:', error);
-    }
-    
-    // Fallback shipping companies
-    return [
-      { name: 'سبل', price: 15 },
-      { name: 'سمسا', price: 20 },
-      { name: 'ارامكس', price: 25 }
-    ];
-  });
+  // Load shipping companies and payment providers from store settings
+  const [shippingCompanies, setShippingCompanies] = useState<ShippingCompany[]>([]);
+  const [paymentProviders, setPaymentProviders] = useState<PaymentProvider[]>([]);
 
-  const [paymentProviders] = useState<PaymentProvider[]>(() => {
+  useEffect(() => {
+    loadStoreSettings();
+  }, [shopId]);
+
+  const loadStoreSettings = async () => {
     try {
-      const saved = localStorage.getItem('admin_payment_providers');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((p: any) => ({ name: p.name || 'وسيلة دفع' }));
-        }
+      // First get the admin settings for all available options with prices
+      const savedShippings = localStorage.getItem('admin_shipping_companies');
+      const adminShippingCompanies = savedShippings ? JSON.parse(savedShippings) : [];
+      
+      // Then get the store-specific enabled settings
+      const { data: storeSettings } = await supabase
+        .from('store_settings')
+        .select('*')
+        .eq('shop_id', shopId)
+        .single();
+
+      if (storeSettings) {
+        const enabledPayments = Array.isArray(storeSettings.payment_providers) 
+          ? storeSettings.payment_providers.filter((p: any) => p.enabled)
+          : [];
+        
+        const enabledShippings = Array.isArray(storeSettings.shipping_companies) 
+          ? storeSettings.shipping_companies.filter((s: any) => s.enabled)
+          : [];
+
+        // Match enabled shippings with admin prices
+        const shippingsWithPrices = enabledShippings.map((enabledShipping: any) => {
+          const adminCompany = adminShippingCompanies.find((admin: any) => admin.name === enabledShipping.name);
+          return {
+            name: enabledShipping.name,
+            price: adminCompany ? (isNaN(Number(adminCompany.price)) ? 15 : Number(adminCompany.price)) : 15
+          };
+        });
+
+        setPaymentProviders(enabledPayments.map((p: any) => ({ name: p.name })));
+        setShippingCompanies(shippingsWithPrices);
+      } else {
+        // Fallback if no store settings found
+        setShippingCompanies([
+          { name: 'سبل', price: 15 },
+          { name: 'سمسا', price: 20 }
+        ]);
+        setPaymentProviders([
+          { name: 'فيزا' },
+          { name: 'ماستركارد' }
+        ]);
       }
     } catch (error) {
-      console.error('Error loading payment providers:', error);
+      console.error('Error loading store settings:', error);
+      // Fallback on error
+      setShippingCompanies([
+        { name: 'سبل', price: 15 },
+        { name: 'سمسا', price: 20 }
+      ]);
+      setPaymentProviders([
+        { name: 'فيزا' },
+        { name: 'ماستركارد' }
+      ]);
     }
-    
-    // Fallback payment providers
-    return [
-      { name: 'فيزا' },
-      { name: 'ماستركارد' },
-      { name: 'مدى' },
-      { name: 'آبل باي' }
-    ];
-  });
+  };
 
   useEffect(() => {
     if (currentStep === 'payment' && !selectedPayment && paymentProviders.length > 0) {

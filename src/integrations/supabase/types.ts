@@ -868,6 +868,33 @@ export type Database = {
           },
         ]
       }
+      store_settings: {
+        Row: {
+          created_at: string
+          id: string
+          payment_providers: Json | null
+          shipping_companies: Json | null
+          shop_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payment_providers?: Json | null
+          shipping_companies?: Json | null
+          shop_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payment_providers?: Json | null
+          shipping_companies?: Json | null
+          shop_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_bans: {
         Row: {
           banned_by: string

@@ -605,6 +605,7 @@ const StoreFront = () => {
           <div className="container mx-auto px-4 py-8">
             <CheckoutFlow
               cart={cart}
+              shopId={shop.id}
               onBack={handleBackToCart}
               onComplete={handleCheckoutComplete}
             />
@@ -619,6 +620,7 @@ const StoreFront = () => {
             <div className="max-w-2xl mx-auto">
               <CheckoutFlow
                 cart={[]}
+                shopId={shop?.id || ''}
                 onBack={() => {}}
                 onComplete={() => {}}
               />

@@ -90,10 +90,64 @@ const StoreManagement = () => {
           setStoreEnabled(true);
           setTheme(shop.theme || 'classic');
           setStoreUrl(`https://atlantiss.tech/store/${shop.slug}`);
+          
+          // Load store settings
+          await loadStoreSettings(shop.id);
         }
       }
     } catch (error) {
       console.error('Error fetching user shop:', error);
+    }
+  };
+
+  const loadStoreSettings = async (shopId: string) => {
+    try {
+      const { data: storeSettings } = await supabase
+        .from('store_settings')
+        .select('*')
+        .eq('shop_id', shopId)
+        .single();
+
+      if (storeSettings) {
+        const paymentProviders = Array.isArray(storeSettings.payment_providers) ? storeSettings.payment_providers : [];
+        const shippingCompanies = Array.isArray(storeSettings.shipping_companies) ? storeSettings.shipping_companies : [];
+        
+        setSelectedPaymentProviders(paymentProviders as {name: string, enabled: boolean}[]);
+        setSelectedShippingCompanies(shippingCompanies as {name: string, enabled: boolean}[]);
+      }
+    } catch (error) {
+      console.error('Error loading store settings:', error);
+    }
+  };
+
+  const saveStoreSettings = async () => {
+    if (!userShop?.id) return;
+
+    try {
+      setSaving(true);
+      const { error } = await supabase
+        .from('store_settings')
+        .upsert({
+          shop_id: userShop.id,
+          payment_providers: selectedPaymentProviders,
+          shipping_companies: selectedShippingCompanies
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "تم الحفظ",
+        description: "تم حفظ إعدادات المتجر بنجاح"
+      });
+    } catch (error) {
+      console.error('Error saving store settings:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في حفظ الإعدادات",
+        variant: "destructive"
+      });
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -793,24 +847,28 @@ const StoreManagement = () => {
                             </div>
                             <Switch
                               checked={selectedPaymentProviders.find(p => p.name === provider.name)?.enabled || false}
-                              onCheckedChange={(checked) => {
-                                setSelectedPaymentProviders(prev => {
-                                  const existing = prev.find(p => p.name === provider.name);
-                                  if (existing) {
-                                    return prev.map(p => 
-                                      p.name === provider.name 
-                                        ? { ...p, enabled: checked }
-                                        : p
-                                    );
-                                  } else {
-                                    return [...prev, { name: provider.name, enabled: checked }];
-                                  }
-                                });
-                                toast({
-                                  title: checked ? "تم التفعيل" : "تم الإلغاء",
-                                  description: `${provider.name} ${checked ? 'مُفعل' : 'غير مُفعل'} في المتجر`
-                                });
-                              }}
+                               onCheckedChange={(checked) => {
+                                 setSelectedPaymentProviders(prev => {
+                                   const existing = prev.find(p => p.name === provider.name);
+                                   if (existing) {
+                                     return prev.map(p => 
+                                       p.name === provider.name 
+                                         ? { ...p, enabled: checked }
+                                         : p
+                                     );
+                                   } else {
+                                     return [...prev, { name: provider.name, enabled: checked }];
+                                   }
+                                 });
+                                 
+                                 // Auto-save store settings
+                                 setTimeout(() => saveStoreSettings(), 500);
+                                 
+                                 toast({
+                                   title: checked ? "تم التفعيل" : "تم الإلغاء",
+                                   description: `${provider.name} ${checked ? 'مُفعل' : 'غير مُفعل'} في المتجر`
+                                 });
+                               }}
                             />
                           </div>
                         ))}
@@ -848,14 +906,18 @@ const StoreManagement = () => {
                                         ? { ...c, enabled: checked }
                                         : c
                                     );
-                                  } else {
-                                    return [...prev, { name: company.name, enabled: checked }];
-                                  }
-                                });
-                                toast({
-                                  title: checked ? "تم التفعيل" : "تم الإلغاء",
-                                  description: `${company.name} ${checked ? 'مُفعل' : 'غير مُفعل'} في المتجر`
-                                });
+                                   } else {
+                                     return [...prev, { name: company.name, enabled: checked }];
+                                   }
+                                 });
+                                 
+                                 // Auto-save store settings
+                                 setTimeout(() => saveStoreSettings(), 500);
+                                 
+                                 toast({
+                                   title: checked ? "تم التفعيل" : "تم الإلغاء",
+                                   description: `${company.name} ${checked ? 'مُفعل' : 'غير مُفعل'} في المتجر`
+                                 });
                               }}
                             />
                           </div>
