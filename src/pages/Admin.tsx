@@ -71,6 +71,14 @@ const Admin = () => {
     stock: '',
     commission_rate: ''
   });
+  
+  // Payment Providers States
+  const [paymentProviders, setPaymentProviders] = useState<{name: string, apiKey: string}[]>([]);
+  const [newPaymentProvider, setNewPaymentProvider] = useState({name: '', apiKey: ''});
+  
+  // Shipping Companies States
+  const [shippingCompanies, setShippingCompanies] = useState<{name: string, apiKey: string}[]>([]);
+  const [newShippingCompany, setNewShippingCompany] = useState({name: '', apiKey: ''});
 
   const [productVariants, setProductVariants] = useState([
     { size: '', color: '', stock: 0 }
@@ -947,6 +955,176 @@ const Admin = () => {
                   {products.length === 0 && (
                     <div className="text-center py-8 text-muted-foreground">
                       لا توجد منتجات حالياً
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment Providers Section */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-6">
+              <Settings className="h-6 w-6 text-primary" />
+              <h2 className="text-xl font-bold">المدفوعات</h2>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Add Payment Provider */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Plus className="h-5 w-5 text-primary" />
+                  <h3 className="font-semibold">إضافة شركة دفع</h3>
+                </div>
+
+                <div className="space-y-3">
+                  <Input
+                    placeholder="اسم شركة الدفع"
+                    value={newPaymentProvider.name}
+                    onChange={(e) => setNewPaymentProvider({...newPaymentProvider, name: e.target.value})}
+                  />
+                  <Input
+                    placeholder="API Key"
+                    value={newPaymentProvider.apiKey}
+                    onChange={(e) => setNewPaymentProvider({...newPaymentProvider, apiKey: e.target.value})}
+                  />
+                  <Button
+                    onClick={() => {
+                      if (!newPaymentProvider.name.trim()) {
+                        toast({ title: "مطلوب", description: "اسم الشركة مطلوب", variant: "destructive" });
+                        return;
+                      }
+                      setPaymentProviders([...paymentProviders, {...newPaymentProvider}]);
+                      setNewPaymentProvider({name: '', apiKey: ''});
+                      toast({ title: "تم الإضافة", description: "تم إضافة شركة الدفع بنجاح" });
+                    }}
+                    className="w-full"
+                  >
+                    إضافة شركة دفع
+                  </Button>
+                </div>
+              </div>
+
+              {/* Payment Providers List */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Settings className="h-5 w-5 text-primary" />
+                  <h3 className="font-semibold">شركات الدفع</h3>
+                  <Badge variant="outline">{paymentProviders.length}</Badge>
+                </div>
+
+                <div className="max-h-96 overflow-y-auto space-y-3">
+                  {paymentProviders.map((provider, index) => (
+                    <div key={index} className="bg-card border rounded-lg p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <h4 className="font-medium">{provider.name}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            API Key: {provider.apiKey ? '••••••••' : 'غير محدد'}
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setPaymentProviders(prev => prev.filter((_, i) => i !== index));
+                            toast({ title: "تم الحذف", description: "تم حذف شركة الدفع بنجاح" });
+                          }}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  {paymentProviders.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      لا توجد شركات دفع محددة
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Shipping Companies Section */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-6">
+              <Package className="h-6 w-6 text-primary" />
+              <h2 className="text-xl font-bold">شركات الشحن</h2>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Add Shipping Company */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Plus className="h-5 w-5 text-primary" />
+                  <h3 className="font-semibold">إضافة شركة شحن</h3>
+                </div>
+
+                <div className="space-y-3">
+                  <Input
+                    placeholder="اسم شركة الشحن"
+                    value={newShippingCompany.name}
+                    onChange={(e) => setNewShippingCompany({...newShippingCompany, name: e.target.value})}
+                  />
+                  <Input
+                    placeholder="API Key"
+                    value={newShippingCompany.apiKey}
+                    onChange={(e) => setNewShippingCompany({...newShippingCompany, apiKey: e.target.value})}
+                  />
+                  <Button
+                    onClick={() => {
+                      if (!newShippingCompany.name.trim()) {
+                        toast({ title: "مطلوب", description: "اسم الشركة مطلوب", variant: "destructive" });
+                        return;
+                      }
+                      setShippingCompanies([...shippingCompanies, {...newShippingCompany}]);
+                      setNewShippingCompany({name: '', apiKey: ''});
+                      toast({ title: "تم الإضافة", description: "تم إضافة شركة الشحن بنجاح" });
+                    }}
+                    className="w-full"
+                  >
+                    إضافة شركة شحن
+                  </Button>
+                </div>
+              </div>
+
+              {/* Shipping Companies List */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Package className="h-5 w-5 text-primary" />
+                  <h3 className="font-semibold">شركات الشحن</h3>
+                  <Badge variant="outline">{shippingCompanies.length}</Badge>
+                </div>
+
+                <div className="max-h-96 overflow-y-auto space-y-3">
+                  {shippingCompanies.map((company, index) => (
+                    <div key={index} className="bg-card border rounded-lg p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <h4 className="font-medium">{company.name}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            API Key: {company.apiKey ? '••••••••' : 'غير محدد'}
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setShippingCompanies(prev => prev.filter((_, i) => i !== index));
+                            toast({ title: "تم الحذف", description: "تم حذف شركة الشحن بنجاح" });
+                          }}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  {shippingCompanies.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      لا توجد شركات شحن محددة
                     </div>
                   )}
                 </div>
