@@ -86,11 +86,13 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
   }, [shopId]);
 
   const loadStoreSettings = async () => {
+    console.log('CheckoutFlow: loadStoreSettings called', { shopId });
     setIsLoadingSettings(true);
     try {
       // First get the admin settings for all available options with prices
       const savedShippings = localStorage.getItem('admin_shipping_companies');
       const adminShippingCompanies = savedShippings ? JSON.parse(savedShippings) : [];
+      console.log('CheckoutFlow: Admin shipping companies from localStorage', adminShippingCompanies);
       
       // Then get the store-specific enabled settings
       const { data: storeSettings, error } = await supabase
@@ -98,6 +100,8 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
         .select('*')
         .eq('shop_id', shopId)
         .maybeSingle(); // Use maybeSingle to avoid 406 error
+
+      console.log('CheckoutFlow: Store settings from DB', { storeSettings, error });
 
       if (!error && storeSettings) {
         const enabledPayments = Array.isArray(storeSettings.payment_providers) 
@@ -108,6 +112,8 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
           ? storeSettings.shipping_companies.filter((s: any) => s.enabled)
           : [];
 
+        console.log('CheckoutFlow: Enabled payments and shippings', { enabledPayments, enabledShippings });
+
         // Match enabled shippings with admin prices
         const shippingsWithPrices = enabledShippings.map((enabledShipping: any) => {
           const adminCompany = adminShippingCompanies.find((admin: any) => admin.name === enabledShipping.name);
@@ -117,9 +123,12 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
           };
         });
 
+        console.log('CheckoutFlow: Final shippings with prices', shippingsWithPrices);
+
         setPaymentProviders(enabledPayments.map((p: any) => ({ name: p.name })));
         setShippingCompanies(shippingsWithPrices);
       } else {
+        console.log('CheckoutFlow: Using fallback settings');
         // Fallback if no store settings found
         setShippingCompanies([
           { name: 'سبل', price: 15 },
@@ -131,7 +140,7 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
         ]);
       }
     } catch (error) {
-      console.error('Error loading store settings:', error);
+      console.error('CheckoutFlow: Error loading store settings:', error);
       // Fallback on error
       setShippingCompanies([
         { name: 'سبل', price: 15 },
@@ -142,6 +151,7 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
         { name: 'إمكان - الشراء الآن والدفع لاحقاً' }
       ]);
     } finally {
+      console.log('CheckoutFlow: Settings loaded, setting isLoadingSettings to false');
       setIsLoadingSettings(false);
     }
   };
