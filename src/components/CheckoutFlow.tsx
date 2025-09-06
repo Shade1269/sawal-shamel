@@ -47,6 +47,7 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
     phone: '',
+    email: '',
     address: '',
     city: '',
     area: ''
@@ -57,6 +58,11 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
   // Load shipping companies and payment providers from store settings
   const [shippingCompanies, setShippingCompanies] = useState<ShippingCompany[]>([]);
   const [paymentProviders, setPaymentProviders] = useState<PaymentProvider[]>([]);
+
+  // Calculate totals
+  const subtotal = cart.reduce((sum, item) => sum + ((item.product.final_price || item.product.price_sar) * item.quantity), 0);
+  const shippingCost = selectedShipping?.price || 0;
+  const totalPrice = subtotal + shippingCost;
 
   useEffect(() => {
     loadStoreSettings();
@@ -104,7 +110,8 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
         ]);
         setPaymentProviders([
           { name: 'دفع عند الاستلام' },
-          { name: 'تمارا' }
+          { name: 'تمارا' },
+          { name: 'امكان - اشتري الآن وادفع لاحقاً' }
         ]);
       }
     } catch (error) {
@@ -116,7 +123,8 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
       ]);
       setPaymentProviders([
         { name: 'دفع عند الاستلام' },
-        { name: 'تمارا' }
+        { name: 'تمارا' },
+        { name: 'امكان - اشتري الآن وادفع لاحقاً' }
       ]);
     } finally {
       setIsLoadingSettings(false);
@@ -129,9 +137,6 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
     }
   }, [currentStep, selectedPayment, paymentProviders]);
 
-  const subtotal = cart.reduce((sum, item) => sum + ((item.product.final_price || item.product.price_sar) * item.quantity), 0);
-  const shippingCost = selectedShipping?.price || 0;
-  const total = subtotal + shippingCost;
 
   const handleShippingNext = () => {
     if (!selectedShipping) {
@@ -159,7 +164,7 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
     setCurrentStep('confirmation');
   };
 
-  const handleConfirmOrder = () => {
+  const handleConfirmOrder = async () => {
     // Validate customer info
     if (!customerInfo.name || !customerInfo.phone || !customerInfo.address || !customerInfo.city) {
       toast({
@@ -173,21 +178,89 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
     // Generate order number
     const orderNumber = `ORD-${Date.now().toString().slice(-6)}`;
     
-    // Show processing message
-    toast({
-      title: "جاري معالجة الطلب",
-      description: "يرجى الانتظار..."
-    });
-    
-    // Simulate payment processing
-    setTimeout(() => {
-      setCurrentStep('success');
+    try {
+      if (selectedPayment === 'امكان - اشتري الآن وادفع لاحقاً') {
+        // Show processing message for Emkan payment
+        toast({
+          title: "جاري إنشاء طلب الدفع",
+          description: "يرجى الانتظار..."
+        });
+
+        // Process Emkan payment
+        const { data, error } = await supabase.functions.invoke('create-emkan-payment', {
+          body: {
+            amount: Math.round(totalPrice * 100), // Convert to halalas (smallest SAR unit)
+            currency: 'SAR',
+            customerInfo: {
+              name: customerInfo.name,
+              email: customerInfo.email,
+              phone: customerInfo.phone,
+              address: `${customerInfo.address}, ${customerInfo.city}, ${customerInfo.area}`,
+            },
+            orderInfo: {
+              orderId: orderNumber,
+              items: cart.map(item => ({
+                name: item.product.title,
+                quantity: item.quantity,
+                price: item.product.final_price || item.product.price_sar
+              }))
+            },
+            redirectUrls: {
+              successUrl: `${window.location.origin}/payment-success?order=${orderNumber}`,
+              cancelUrl: `${window.location.origin}/payment-cancelled`
+            }
+          }
+        });
+
+        if (error) {
+          console.error('Emkan payment error:', error);
+          toast({
+            title: "خطأ في الدفع",
+            description: "فشل في إنشاء طلب الدفع. يرجى المحاولة مرة أخرى.",
+            variant: "destructive"
+          });
+          return;
+        }
+
+        if (data?.success && data?.payment_url) {
+          // Redirect to Emkan payment page
+          window.open(data.payment_url, '_blank');
+          toast({
+            title: "تم إنشاء طلب الدفع",
+            description: "سيتم توجيهك لصفحة الدفع الآمنة من امكان",
+          });
+          
+          // Set success state locally - actual payment confirmation will come via webhook
+          setCurrentStep('success');
+          onComplete(orderNumber);
+        } else {
+          throw new Error('Invalid payment response from Emkan');
+        }
+      } else {
+        // Show processing message for other payment methods
+        toast({
+          title: "جاري معالجة الطلب",
+          description: "يرجى الانتظار..."
+        });
+        
+        // Simulate payment processing for other methods
+        setTimeout(() => {
+          setCurrentStep('success');
+          toast({
+            title: "تم تأكيد الطلب بنجاح!",
+            description: `رقم الطلب: ${orderNumber}`,
+          });
+          onComplete(orderNumber);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Payment processing error:', error);
       toast({
-        title: "تم تأكيد الطلب بنجاح!",
-        description: `رقم الطلب: ${orderNumber}`,
+        title: "خطأ في معالجة الدفع",
+        description: "حدث خطأ أثناء معالجة الدفع. يرجى المحاولة مرة أخرى.",
+        variant: "destructive"
       });
-      onComplete(orderNumber);
-    }, 2000);
+    }
   };
 
   const renderStepIndicator = () => (
@@ -264,7 +337,7 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
                 </div>
                 <div className="flex items-center justify-between mt-2 pt-2 border-t">
                   <span className="font-semibold">المجموع الجديد:</span>
-                  <span className="font-bold text-lg text-primary">{total.toFixed(2)} ر.س</span>
+                  <span className="font-bold text-lg text-primary">{totalPrice.toFixed(2)} ر.س</span>
                 </div>
               </div>
             )}
@@ -371,7 +444,7 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
                 </div>
                 <div className="flex justify-between font-bold text-lg border-t pt-2">
                   <span>المجموع الكلي:</span>
-                  <span className="text-primary">{total.toFixed(2)} ر.س</span>
+                  <span className="text-primary">{totalPrice.toFixed(2)} ر.س</span>
                 </div>
               </div>
             </div>
@@ -425,6 +498,16 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
                     value={customerInfo.phone}
                     onChange={(e) => setCustomerInfo(prev => ({ ...prev, phone: e.target.value }))}
                     placeholder="05xxxxxxxx"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email">البريد الإلكتروني (اختياري)</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={customerInfo.email}
+                    onChange={(e) => setCustomerInfo(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="example@email.com"
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -502,7 +585,7 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
                 </div>
                 <div className="flex justify-between font-bold text-lg border-t pt-2">
                   <span>المجموع الكلي:</span>
-                  <span className="text-primary">{total.toFixed(2)} ر.س</span>
+                  <span className="text-primary">{totalPrice.toFixed(2)} ر.س</span>
                 </div>
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>وسيلة الدفع:</span>
@@ -555,7 +638,7 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
               <div className="border-t pt-4 space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>المبلغ المدفوع:</span>
-                  <span className="font-bold">{total.toFixed(2)} ر.س</span>
+                  <span className="font-bold">{totalPrice.toFixed(2)} ر.س</span>
                 </div>
                 <div className="flex justify-between">
                   <span>وسيلة الدفع:</span>
