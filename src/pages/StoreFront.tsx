@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ShoppingCart, Star, Store, Phone, Mail } from "lucide-react";
+import { ShoppingCart, Star, Store, Phone, Mail, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ProductImageCarousel } from "@/components/ProductImageCarousel";
@@ -231,11 +231,13 @@ const StoreFront = () => {
     setOrderCompleted(true);
     setCart([]);
     setShowCheckout(false);
+    setShowCart(false);
   };
 
   const handleBackToCart = () => {
     setShowCheckout(false);
     setShowCart(true);
+    setOrderCompleted(false);
   };
 
   console.log('حالة المتجر:', { shop, shopLoading, shopError });
@@ -655,16 +657,49 @@ const StoreFront = () => {
       )}
 
       {/* Order Completed Modal */}
-      {orderCompleted && (
+      {orderCompleted && orderNumber && (
         <div className="fixed inset-0 bg-background z-50 overflow-auto">
           <div className="container mx-auto px-4 py-8">
-            <div className="max-w-2xl mx-auto">
-              <CheckoutFlow
-                cart={[]}
-                shopId={shop?.id || ''}
-                onBack={() => {}}
-                onComplete={() => {}}
-              />
+            <div className="max-w-2xl mx-auto text-center space-y-6" dir="rtl">
+              <div className="mx-auto w-24 h-24 bg-green-500/10 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-12 w-12 text-green-500" />
+              </div>
+              
+              <div>
+                <h2 className="text-2xl font-bold text-green-600 mb-2">تم تأكيد طلبك بنجاح!</h2>
+                <p className="text-muted-foreground">شكراً لك على ثقتك بنا</p>
+              </div>
+
+              <Card className="max-w-md mx-auto">
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground mb-2">رقم الطلب</p>
+                      <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
+                        <p className="text-2xl font-bold text-primary tracking-wider">
+                          {orderNumber}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">احتفظ بهذا الرقم للمتابعة</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-muted/50 p-4 rounded-lg text-sm">
+                      <p className="font-medium mb-2">📞 سيتم التواصل معك قريباً</p>
+                      <p className="text-muted-foreground">
+                        سيقوم فريق خدمة العملاء بالتواصل معك خلال 24 ساعة لتأكيد الطلب وتحديد موعد التسليم
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Button onClick={() => {
+                setOrderCompleted(false);
+                setOrderNumber('');
+                setCart([]);
+              }} variant="outline">
+                العودة للمتجر
+              </Button>
             </div>
           </div>
         </div>

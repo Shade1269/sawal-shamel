@@ -59,6 +59,23 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
   const [shippingCompanies, setShippingCompanies] = useState<ShippingCompany[]>([]);
   const [paymentProviders, setPaymentProviders] = useState<PaymentProvider[]>([]);
 
+  // Early return if no cart items
+  if (!cart || cart.length === 0) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8 max-w-4xl" dir="rtl">
+          <Card>
+            <CardContent className="py-10 text-center space-y-4">
+              <Package className="h-16 w-16 text-muted-foreground mx-auto" />
+              <p className="text-muted-foreground">لم يتم العثور على منتجات في السلة</p>
+              <Button variant="outline" onClick={onBack}>العودة للمتجر</Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   // Calculate totals
   const subtotal = cart.reduce((sum, item) => sum + ((item.product.final_price || item.product.price_sar) * item.quantity), 0);
   const shippingCost = selectedShipping?.price || 0;
@@ -292,6 +309,55 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
 
   // Shipping Step
   if (currentStep === 'shipping') {
+    if (isLoadingSettings) {
+      return (
+        <div className="min-h-screen bg-background">
+          <div className="container mx-auto px-4 py-8 max-w-4xl">
+            <div className="space-y-6" dir="rtl">
+              {renderStepIndicator()}
+              <Card>
+                <CardContent className="py-8">
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <span className="mr-3">جاري تحميل شركات الشحن...</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (shippingCompanies.length === 0) {
+      return (
+        <div className="min-h-screen bg-background">
+          <div className="container mx-auto px-4 py-8 max-w-4xl">
+            <div className="space-y-6" dir="rtl">
+              {renderStepIndicator()}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Truck className="h-5 w-5" />
+                    اختيار شركة الشحن
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <Truck className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground mb-4">لا توجد شركات شحن متاحة حالياً</p>
+                    <Button variant="outline" onClick={onBack}>
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                      العودة للمتجر
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -716,14 +782,17 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
     );
   }
 
-  // Fallback UI to avoid blank screen
+  // Fallback for any unhandled state
+  console.log('CheckoutFlow: Unhandled state', { currentStep, isLoadingSettings, cart: cart?.length });
+  
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-4xl" dir="rtl">
         <Card>
           <CardContent className="py-10 text-center space-y-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="text-muted-foreground">جاري التحميل... إذا استمرت الشاشة فارغة اضغط العودة.</p>
+            <p className="text-muted-foreground">جاري المعالجة...</p>
+            <p className="text-xs text-muted-foreground">المرحلة الحالية: {currentStep}</p>
             <Button variant="outline" onClick={onBack}>العودة</Button>
           </CardContent>
         </Card>
