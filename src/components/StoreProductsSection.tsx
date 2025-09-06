@@ -46,6 +46,8 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
   const { user } = useAuth();
   const [storeProducts, setStoreProducts] = useState<ProductLibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [globalCommission, setGlobalCommission] = useState<number>(0);
+  const [editingCommissions, setEditingCommissions] = useState<{[key: string]: number}>({});
 
   useEffect(() => {
     if (userShop) {
@@ -188,6 +190,13 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
         description: "تم تحديث العمولة"
       });
 
+      // Remove from editing state
+      setEditingCommissions(prev => {
+        const newState = { ...prev };
+        delete newState[productLibraryId];
+        return newState;
+      });
+
       fetchStoreProducts();
     } catch (error) {
       console.error('Error updating commission:', error);
@@ -196,6 +205,48 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
         description: "فشل في تحديث العمولة",
         variant: "destructive"
       });
+    }
+  };
+
+  const applyGlobalCommission = async () => {
+    try {
+      const updatePromises = storeProducts.map(item => 
+        supabase
+          .from('product_library')
+          .update({ commission_amount: globalCommission })
+          .eq('id', item.id)
+      );
+
+      await Promise.all(updatePromises);
+
+      toast({
+        title: "تم بنجاح",
+        description: "تم تطبيق العمولة الثابتة على جميع المنتجات"
+      });
+
+      fetchStoreProducts();
+    } catch (error) {
+      console.error('Error applying global commission:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في تطبيق العمولة الثابتة",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleCommissionChange = (productLibraryId: string, value: string) => {
+    const numericValue = parseFloat(value) || 0;
+    setEditingCommissions(prev => ({
+      ...prev,
+      [productLibraryId]: numericValue
+    }));
+  };
+
+  const saveCommission = (productLibraryId: string) => {
+    const commissionAmount = editingCommissions[productLibraryId];
+    if (commissionAmount !== undefined) {
+      updateCommission(productLibraryId, commissionAmount);
     }
   };
 
@@ -249,6 +300,34 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
             <CardDescription>
               منتجات متجر {userShop.display_name} ({storeProducts.length} منتج)
             </CardDescription>
+          </div>
+        </div>
+        
+        {/* Global Commission Section */}
+        <div className="border-t pt-4 mt-4">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4" />
+              <Label htmlFor="globalCommission" className="text-sm font-medium">
+                عمولة ثابتة لجميع المنتجات:
+              </Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Input
+                id="globalCommission"
+                type="number"
+                min="0"
+                step="0.01"
+                value={globalCommission}
+                onChange={(e) => setGlobalCommission(parseFloat(e.target.value) || 0)}
+                className="w-24 h-8"
+                placeholder="0.00"
+              />
+              <span className="text-sm text-muted-foreground">ريال</span>
+              <Button size="sm" onClick={applyGlobalCommission}>
+                تطبيق على الكل
+              </Button>
+            </div>
           </div>
         </div>
       </CardHeader>
@@ -329,17 +408,26 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                             type="number"
                             min="0"
                             step="0.01"
-                            value={item.commission_amount}
-                            onChange={(e) => {
-                              const newValue = parseFloat(e.target.value) || 0;
-                              updateCommission(item.id, newValue);
-                            }}
+                            value={editingCommissions[item.id] !== undefined ? editingCommissions[item.id] : item.commission_amount}
+                            onChange={(e) => handleCommissionChange(item.id, e.target.value)}
                             className="w-20 h-8 text-sm"
-                            placeholder="0"
+                            placeholder="0.00"
                           />
                           <span className="text-sm">ريال</span>
                         </div>
                       </div>
+                      
+                      {editingCommissions[item.id] !== undefined && (
+                        <div className="flex justify-end">
+                          <Button
+                            size="sm"
+                            onClick={() => saveCommission(item.id)}
+                            className="h-7 px-3 text-xs"
+                          >
+                            حفظ
+                          </Button>
+                        </div>
+                      )}
                       
                       <div className="flex items-center justify-between border-t pt-2">
                         <span className="text-sm font-medium">السعر النهائي:</span>
