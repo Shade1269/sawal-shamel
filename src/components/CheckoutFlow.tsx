@@ -137,6 +137,14 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
       });
       return;
     }
+    if (paymentProviders.length === 0) {
+      toast({
+        title: "لا توجد وسائل دفع",
+        description: "يرجى تفعيل وسيلة دفع واحدة على الأقل من إعدادات المتجر",
+        variant: "destructive"
+      });
+      return;
+    }
     setCurrentStep('payment');
   };
 
@@ -227,10 +235,6 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
             <RadioGroup value={selectedShipping?.name || ''} onValueChange={(value) => {
               const company = shippingCompanies.find(c => c.name === value);
               setSelectedShipping(company || null);
-              // تقدم تلقائيًا لخطوة الدفع بعد اختيار شركة الشحن
-              if (company) {
-                setTimeout(() => setCurrentStep('payment'), 200);
-              }
             }}>
               <div className="space-y-4">
                 {shippingCompanies.map((company) => (
