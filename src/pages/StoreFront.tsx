@@ -59,9 +59,6 @@ const StoreFront = () => {
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
 
-  // Debug logging
-  console.log('StoreFrontبدء تشغيل  - slug:', slug);
-
   // Fetch shop data
   const { data: shop, isLoading: shopLoading, error: shopError } = useQuery({
     queryKey: ["shop", slug],
@@ -77,6 +74,16 @@ const StoreFront = () => {
       if (error) throw error;
       return data as Shop | null;
     },
+  });
+
+  // Debug logging
+  console.log('StoreFront render:', { 
+    slug, 
+    showCheckout, 
+    orderCompleted, 
+    cartLength: cart.length, 
+    shopId: shop?.id,
+    shopLoading 
   });
 
   // Fetch products for this shop
@@ -168,6 +175,8 @@ const StoreFront = () => {
 };
 
   const buyNow = (product: Product) => {
+    console.log('buyNow called for product:', product.id);
+    
     // تحقق من اختيار المتغيرات إن وجدت
     if (product.variants && product.variants.length > 0) {
       const productVariants = selectedVariants[product.id] || {};
@@ -187,21 +196,27 @@ const StoreFront = () => {
     const productVariants = selectedVariants[product.id] || {};
 
     // إنشاء سلة فورية بالمنتج المختار فقط
-    setCart([
+    const newCart = [
       {
         product,
         quantity,
         selectedVariants: Object.keys(productVariants).length > 0 ? productVariants : undefined,
       },
-    ]);
+    ];
+    
+    console.log('Setting cart and checkout states', { newCart, shopId: shop?.id });
+    setCart(newCart);
     setShowCheckout(true);
     setShowCart(false);
+    setOrderCompleted(false);
   };
 
   const cartTotal = cart.reduce((sum, item) => sum + ((item.product.final_price || item.product.price_sar) * item.quantity), 0);
   const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleCheckoutStart = () => {
+    console.log('handleCheckoutStart called', { cartLength: cart.length });
+    
     if (cart.length === 0) {
       toast({
         title: "السلة فارغة",
@@ -222,8 +237,10 @@ const StoreFront = () => {
       return;
     }
     
+    console.log('Setting showCheckout to true', { shopId: shop?.id });
     setShowCheckout(true);
     setShowCart(false);
+    setOrderCompleted(false);
   };
 
   const handleCheckoutComplete = (orderNum: string) => {
@@ -643,7 +660,7 @@ const StoreFront = () => {
       </div>
 
       {/* Checkout Flow */}
-      {showCheckout && !orderCompleted && (
+      {showCheckout && !orderCompleted && shop?.id && cart.length > 0 ? (
         <div className="fixed inset-0 bg-background z-50 overflow-auto">
           <div className="container mx-auto px-4 py-8">
             <CheckoutFlow
@@ -654,7 +671,24 @@ const StoreFront = () => {
             />
           </div>
         </div>
-      )}
+      ) : showCheckout && !orderCompleted ? (
+        <div className="fixed inset-0 bg-background z-50 overflow-auto">
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-2xl mx-auto" dir="rtl">
+              <Card>
+                <CardContent className="py-10 text-center space-y-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                  <p className="text-muted-foreground">جاري تحميل بيانات المتجر...</p>
+                  <p className="text-xs text-muted-foreground">
+                    Shop ID: {shop?.id || 'غير متوفر'} | Cart: {cart.length} items
+                  </p>
+                  <Button variant="outline" onClick={handleBackToCart}>العودة</Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {/* Order Completed Modal */}
       {orderCompleted && orderNumber && (
