@@ -12,15 +12,21 @@ export function EmkanTestButton() {
     setResult(null);
     
     try {
-      console.log("Testing Emkan API...");
+      console.log("🧪 Starting Emkan API test...");
+      
+      toast({
+        title: "🧪 بدء اختبار إمكان",
+        description: "جاري الاتصال بـ API إمكان...",
+      });
       
       const { data, error } = await supabase.functions.invoke('test-emkan-payment', {
         body: {}
       });
 
-      console.log("Test result:", { data, error });
+      console.log("🔍 Test result:", { data, error });
       
       if (error) {
+        console.error("❌ Function invoke error:", error);
         throw error;
       }
       
@@ -29,22 +35,22 @@ export function EmkanTestButton() {
       if (data?.success) {
         toast({
           title: "✅ اختبار إمكان نجح!",
-          description: `Status: ${data.status} - تم الاتصال بـ API إمكان بنجاح`,
+          description: `الحالة: ${data.status} - تم الاتصال بـ API إمكان بنجاح`,
         });
       } else {
         toast({
           title: "❌ اختبار إمكان فشل",
-          description: `خطأ: ${data?.error || 'Unknown error'}`,
+          description: `خطأ: ${data?.error || `HTTP ${data?.status}`}`,
           variant: "destructive"
         });
       }
       
     } catch (error) {
-      console.error("Test error:", error);
+      console.error("💥 Test error:", error);
       setResult({ error: error.message });
       toast({
         title: "❌ خطأ في الاختبار",
-        description: error.message,
+        description: `خطأ في الشبكة: ${error.message}`,
         variant: "destructive"
       });
     } finally {

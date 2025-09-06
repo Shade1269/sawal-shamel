@@ -42,6 +42,9 @@ serve(async (req) => {
     console.log("Test payload:", JSON.stringify(testPayload, null, 2));
 
     // Test the Emkan API
+    console.log("Calling Emkan API at:", "https://merchants.emkanfinance.com.sa/retail/bnpl/bff/v1/order");
+    console.log("Authorization header:", `Basic ${btoa(`${emkanApiKey}:${emkanPassword}`)}`);
+    
     const emkanResponse = await fetch("https://merchants.emkanfinance.com.sa/retail/bnpl/bff/v1/order", {
       method: "POST",
       headers: {
@@ -51,9 +54,11 @@ serve(async (req) => {
       body: JSON.stringify(testPayload),
     });
 
-    const responseText = await emkanResponse.text();
     console.log("Emkan API Response Status:", emkanResponse.status);
-    console.log("Emkan API Response:", responseText);
+    console.log("Response headers:", Object.fromEntries(emkanResponse.headers.entries()));
+    
+    const responseText = await emkanResponse.text();
+    console.log("Emkan API Response Body:", responseText);
 
     let emkanResult;
     try {
