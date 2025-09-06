@@ -179,6 +179,18 @@ const StoreFront = () => {
       });
       return;
     }
+    
+    // Check if products are still available
+    const unavailableProducts = cart.filter(item => item.product.stock < item.quantity);
+    if (unavailableProducts.length > 0) {
+      toast({
+        title: "منتجات غير متوفرة",
+        description: "بعض المنتجات في السلة لم تعد متوفرة بالكمية المطلوبة",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setShowCheckout(true);
     setShowCart(false);
   };
@@ -569,8 +581,13 @@ const StoreFront = () => {
                           </span>
                         </div>
                         
-                        <Button className="w-full" size="lg" onClick={handleCheckoutStart}>
-                          إتمام الطلب
+                        <Button 
+                          className="w-full" 
+                          size="lg" 
+                          onClick={handleCheckoutStart}
+                          disabled={cart.length === 0}
+                        >
+                          إتمام الطلب ({cartItemsCount} منتج)
                         </Button>
                       </div>
                     </div>

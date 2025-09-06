@@ -50,31 +50,51 @@ export const CheckoutFlow = ({ cart, onBack, onComplete }: CheckoutFlowProps) =>
     area: ''
   });
 
-  // Load shipping companies and payment providers from localStorage
+  // Load shipping companies and payment providers from localStorage with fallback
   const [shippingCompanies] = useState<ShippingCompany[]>(() => {
     try {
       const saved = localStorage.getItem('admin_shipping_companies');
-      return saved ? JSON.parse(saved).map((s: any) => ({ name: s.name, price: s.price || 15 })) : [];
-    } catch {
-      return [
-        { name: 'سبل', price: 15 },
-        { name: 'سمسا', price: 20 },
-        { name: 'ارامكس', price: 25 }
-      ];
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((s: any) => ({ 
+            name: s.name || 'شركة شحن', 
+            price: typeof s.price === 'number' ? s.price : 15 
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Error loading shipping companies:', error);
     }
+    
+    // Fallback shipping companies
+    return [
+      { name: 'سبل', price: 15 },
+      { name: 'سمسا', price: 20 },
+      { name: 'ارامكس', price: 25 }
+    ];
   });
 
   const [paymentProviders] = useState<PaymentProvider[]>(() => {
     try {
       const saved = localStorage.getItem('admin_payment_providers');
-      return saved ? JSON.parse(saved).map((p: any) => ({ name: p.name })) : [];
-    } catch {
-      return [
-        { name: 'فيزا' },
-        { name: 'ماستركارد' },
-        { name: 'مدى' }
-      ];
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((p: any) => ({ name: p.name || 'وسيلة دفع' }));
+        }
+      }
+    } catch (error) {
+      console.error('Error loading payment providers:', error);
     }
+    
+    // Fallback payment providers
+    return [
+      { name: 'فيزا' },
+      { name: 'ماستركارد' },
+      { name: 'مدى' },
+      { name: 'آبل باي' }
+    ];
   });
 
   const subtotal = cart.reduce((sum, item) => sum + ((item.product.final_price || item.product.price_sar) * item.quantity), 0);
@@ -119,9 +139,19 @@ export const CheckoutFlow = ({ cart, onBack, onComplete }: CheckoutFlowProps) =>
     // Generate order number
     const orderNumber = `ORD-${Date.now().toString().slice(-6)}`;
     
+    // Show processing message
+    toast({
+      title: "جاري معالجة الطلب",
+      description: "يرجى الانتظار..."
+    });
+    
     // Simulate payment processing
     setTimeout(() => {
       setCurrentStep('success');
+      toast({
+        title: "تم تأكيد الطلب بنجاح!",
+        description: `رقم الطلب: ${orderNumber}`,
+      });
       onComplete(orderNumber);
     }, 2000);
   };
@@ -439,9 +469,12 @@ export const CheckoutFlow = ({ cart, onBack, onComplete }: CheckoutFlowProps) =>
             <div className="space-y-4">
               <div className="text-center">
                 <p className="text-sm text-muted-foreground mb-2">رقم الطلب</p>
-                <p className="text-2xl font-bold text-primary tracking-wider">
-                  ORD-{Date.now().toString().slice(-6)}
-                </p>
+                <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
+                  <p className="text-2xl font-bold text-primary tracking-wider">
+                    ORD-{Date.now().toString().slice(-6)}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">احتفظ بهذا الرقم للمتابعة</p>
+                </div>
               </div>
               
               <div className="border-t pt-4 space-y-2 text-sm">
