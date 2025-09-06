@@ -102,13 +102,13 @@ const StoreManagement = () => {
 
   const loadStoreSettings = async (shopId: string) => {
     try {
-      const { data: storeSettings } = await supabase
+      const { data: storeSettings, error } = await supabase
         .from('store_settings')
         .select('*')
         .eq('shop_id', shopId)
-        .single();
+        .maybeSingle(); // Use maybeSingle instead of single to avoid 406 error
 
-      if (storeSettings) {
+      if (!error && storeSettings) {
         const paymentProviders = Array.isArray(storeSettings.payment_providers) ? storeSettings.payment_providers : [];
         const shippingCompanies = Array.isArray(storeSettings.shipping_companies) ? storeSettings.shipping_companies : [];
         
@@ -125,15 +125,38 @@ const StoreManagement = () => {
 
     try {
       setSaving(true);
-      const { error } = await supabase
+      
+      // First try to check if settings already exist
+      const { data: existingSettings } = await supabase
         .from('store_settings')
-        .upsert({
-          shop_id: userShop.id,
-          payment_providers: selectedPaymentProviders,
-          shipping_companies: selectedShippingCompanies
-        });
+        .select('id')
+        .eq('shop_id', userShop.id)
+        .single();
 
-      if (error) throw error;
+      if (existingSettings) {
+        // Update existing settings
+        const { error } = await supabase
+          .from('store_settings')
+          .update({
+            payment_providers: selectedPaymentProviders,
+            shipping_companies: selectedShippingCompanies,
+            updated_at: new Date().toISOString()
+          })
+          .eq('shop_id', userShop.id);
+
+        if (error) throw error;
+      } else {
+        // Insert new settings
+        const { error } = await supabase
+          .from('store_settings')
+          .insert({
+            shop_id: userShop.id,
+            payment_providers: selectedPaymentProviders,
+            shipping_companies: selectedShippingCompanies
+          });
+
+        if (error) throw error;
+      }
 
       toast({
         title: "تم الحفظ",

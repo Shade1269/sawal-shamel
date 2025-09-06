@@ -67,13 +67,13 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
       const adminShippingCompanies = savedShippings ? JSON.parse(savedShippings) : [];
       
       // Then get the store-specific enabled settings
-      const { data: storeSettings } = await supabase
+      const { data: storeSettings, error } = await supabase
         .from('store_settings')
         .select('*')
         .eq('shop_id', shopId)
-        .single();
+        .maybeSingle(); // Use maybeSingle to avoid 406 error
 
-      if (storeSettings) {
+      if (!error && storeSettings) {
         const enabledPayments = Array.isArray(storeSettings.payment_providers) 
           ? storeSettings.payment_providers.filter((p: any) => p.enabled)
           : [];
