@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { MessageCircle, Users, Hash, Package, LogOut, User, Store } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { EmkanTestButton } from '@/components/EmkanTestButton';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -165,10 +164,6 @@ const Index = () => {
                 </CardContent>
               </Card>
               
-              {/* Emkan Test Section */}
-              <div className="mt-8">
-                <EmkanTestButton />
-              </div>
             </div>
           )}
 

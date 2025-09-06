@@ -43,6 +43,12 @@ const StoreManagement = () => {
       if (savedPayments) {
         const parsed = JSON.parse(savedPayments);
         setAvailablePaymentProviders(Array.isArray(parsed) ? parsed.map((p: any) => ({ name: p.name })) : []);
+      } else {
+        // Set default payment providers including Emkan
+        setAvailablePaymentProviders([
+          { name: 'الدفع نقداً عند الاستلام' },
+          { name: 'إمكان - الشراء الآن والدفع لاحقاً' }
+        ]);
       }
       if (savedShippings) {
         const parsed = JSON.parse(savedShippings);
@@ -54,6 +60,11 @@ const StoreManagement = () => {
       }
     } catch (e) {
       console.error('Failed to load providers from storage', e);
+      // Set default payment providers including Emkan on error
+      setAvailablePaymentProviders([
+        { name: 'الدفع نقداً عند الاستلام' },
+        { name: 'إمكان - الشراء الآن والدفع لاحقاً' }
+      ]);
     }
   }, []);
 
