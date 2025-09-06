@@ -77,8 +77,8 @@ const Admin = () => {
   const [newPaymentProvider, setNewPaymentProvider] = useState({name: '', apiKey: ''});
   
   // Shipping Companies States
-  const [shippingCompanies, setShippingCompanies] = useState<{name: string, apiKey: string}[]>([]);
-  const [newShippingCompany, setNewShippingCompany] = useState({name: '', apiKey: ''});
+  const [shippingCompanies, setShippingCompanies] = useState<{name: string, apiKey: string, price: number}[]>([]);
+  const [newShippingCompany, setNewShippingCompany] = useState({name: '', apiKey: '', price: 0});
 
   const [productVariants, setProductVariants] = useState([
     { size: '', color: '', stock: 0 }
@@ -1073,6 +1073,12 @@ const Admin = () => {
                     value={newShippingCompany.apiKey}
                     onChange={(e) => setNewShippingCompany({...newShippingCompany, apiKey: e.target.value})}
                   />
+                  <Input
+                    type="number"
+                    placeholder="سعر الشحن (ريال)"
+                    value={newShippingCompany.price}
+                    onChange={(e) => setNewShippingCompany({...newShippingCompany, price: parseFloat(e.target.value) || 0})}
+                  />
                   <Button
                     onClick={() => {
                       if (!newShippingCompany.name.trim()) {
@@ -1080,7 +1086,7 @@ const Admin = () => {
                         return;
                       }
                       setShippingCompanies([...shippingCompanies, {...newShippingCompany}]);
-                      setNewShippingCompany({name: '', apiKey: ''});
+                      setNewShippingCompany({name: '', apiKey: '', price: 0});
                       toast({ title: "تم الإضافة", description: "تم إضافة شركة الشحن بنجاح" });
                     }}
                     className="w-full"
@@ -1101,25 +1107,43 @@ const Admin = () => {
                 <div className="max-h-96 overflow-y-auto space-y-3">
                   {shippingCompanies.map((company, index) => (
                     <div key={index} className="bg-card border rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <h4 className="font-medium">{company.name}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            API Key: {company.apiKey ? '••••••••' : 'غير محدد'}
-                          </p>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setShippingCompanies(prev => prev.filter((_, i) => i !== index));
-                            toast({ title: "تم الحذف", description: "تم حذف شركة الشحن بنجاح" });
-                          }}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                       <div className="flex items-start justify-between mb-2">
+                         <div className="flex-1">
+                           <h4 className="font-medium">{company.name}</h4>
+                           <p className="text-sm text-muted-foreground">
+                             API Key: {company.apiKey ? '••••••••' : 'غير محدد'}
+                           </p>
+                           <p className="text-sm font-medium text-primary">
+                             سعر الشحن: {company.price} ريال
+                           </p>
+                         </div>
+                         <div className="flex items-center gap-2">
+                           <Input
+                             type="number"
+                             placeholder="سعر جديد"
+                             className="w-24 h-8"
+                             onChange={(e) => {
+                               const newPrice = parseFloat(e.target.value) || 0;
+                               setShippingCompanies(prev => 
+                                 prev.map((comp, i) => 
+                                   i === index ? { ...comp, price: newPrice } : comp
+                                 )
+                               );
+                             }}
+                           />
+                           <Button
+                             variant="ghost"
+                             size="sm"
+                             onClick={() => {
+                               setShippingCompanies(prev => prev.filter((_, i) => i !== index));
+                               toast({ title: "تم الحذف", description: "تم حذف شركة الشحن بنجاح" });
+                             }}
+                             className="text-destructive hover:text-destructive"
+                           >
+                             <Trash2 className="h-4 w-4" />
+                           </Button>
+                         </div>
+                       </div>
                     </div>
                   ))}
                   {shippingCompanies.length === 0 && (

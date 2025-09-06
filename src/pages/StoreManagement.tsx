@@ -41,10 +41,10 @@ const StoreManagement = () => {
   ]);
   
   const [availableShippingCompanies] = useState([
-    { name: 'سبل', apiKey: '••••••••' },
-    { name: 'سمسا', apiKey: '••••••••' },
-    { name: 'ارامكس', apiKey: '••••••••' },
-    { name: 'فيدكس', apiKey: '••••••••' }
+    { name: 'سبل', apiKey: '••••••••', price: 15 },
+    { name: 'سمسا', apiKey: '••••••••', price: 20 },
+    { name: 'ارامكس', apiKey: '••••••••', price: 25 },
+    { name: 'فيدكس', apiKey: '••••••••', price: 35 }
   ]);
 
   // Redirect if not authenticated
@@ -823,12 +823,15 @@ const StoreManagement = () => {
                         {availableShippingCompanies.map((company, index) => (
                           <div key={index} className="flex items-center justify-between p-4 border rounded-lg bg-card">
                             <div className="flex items-center gap-3">
-                              <div className="space-y-1">
-                                <p className="font-medium">{company.name}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  API Key: {company.apiKey}
-                                </p>
-                              </div>
+                               <div className="space-y-1">
+                                 <p className="font-medium">{company.name}</p>
+                                 <p className="text-sm text-muted-foreground">
+                                   API Key: {company.apiKey}
+                                 </p>
+                                 <p className="text-sm font-medium text-primary">
+                                   سعر الشحن: {company.price} ريال
+                                 </p>
+                               </div>
                             </div>
                             <Switch
                               checked={selectedShippingCompanies.find(c => c.name === company.name)?.enabled || false}
