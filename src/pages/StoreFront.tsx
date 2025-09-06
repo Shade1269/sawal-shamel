@@ -103,6 +103,8 @@ const StoreFront = () => {
       })).filter(Boolean) as Product[];
     },
     enabled: !!shop?.id,
+    refetchInterval: 10000, // Refresh every 10 seconds
+    staleTime: 5000, // Consider data stale after 5 seconds
   });
 
   const addToCart = (product: Product) => {
@@ -314,22 +316,10 @@ const StoreFront = () => {
                            <div className="space-y-4">
                          <div className="flex items-center justify-between">
                            <div className="text-right">
-                             {product.commission_amount && product.commission_amount > 0 ? (
-                               <div className="space-y-1">
-                                 <div className="text-sm text-muted-foreground line-through">
-                                   {product.price_sar} ر.س
-                                 </div>
-                                 <div>
-                                   <span className="text-2xl font-bold text-primary">{product.final_price?.toFixed(2)}</span>
-                                   <span className="text-sm text-muted-foreground mr-1">ر.س</span>
-                                 </div>
-                               </div>
-                             ) : (
-                               <div>
-                                 <span className="text-2xl font-bold text-primary">{product.price_sar}</span>
-                                 <span className="text-sm text-muted-foreground mr-1">ر.س</span>
-                               </div>
-                             )}
+                             <span className="text-2xl font-bold text-primary">
+                               {(product.final_price || product.price_sar).toFixed(2)}
+                             </span>
+                             <span className="text-sm text-muted-foreground mr-1">ر.س</span>
                            </div>
                            {product.category && (
                              <Badge variant="secondary" className="text-xs">{product.category}</Badge>
