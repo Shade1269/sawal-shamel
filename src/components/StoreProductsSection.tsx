@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Package, Trash2, Star, Plus, Eye, EyeOff } from 'lucide-react';
+import { Package, Trash2, Star, Plus, Eye, EyeOff, DollarSign } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -34,6 +34,7 @@ interface ProductLibraryItem {
   is_featured: boolean;
   is_visible: boolean;
   sort_index: number;
+  commission_amount: number;
   products: Product;
 }
 
@@ -61,6 +62,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
           is_featured,
           is_visible,
           sort_index,
+          commission_amount,
           products (
             id,
             title,
@@ -172,6 +174,30 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
     }
   };
 
+  const updateCommission = async (productLibraryId: string, commissionAmount: number) => {
+    try {
+      const { error } = await supabase
+        .from('product_library')
+        .update({ commission_amount: commissionAmount })
+        .eq('id', productLibraryId);
+
+      if (error) throw error;
+
+      toast({
+        title: "تم بنجاح",
+        description: "تم تحديث العمولة"
+      });
+
+      fetchStoreProducts();
+    } catch (error) {
+      console.error('Error updating commission:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في تحديث العمولة",
+        variant: "destructive"
+      });
+    }
+  };
 
   if (!userShop) {
     return (
@@ -288,12 +314,43 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                     </p>
                   )}
                   
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="text-lg font-bold text-primary">
-                      {item.products.price_sar} ريال
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      المتوفر: {item.products.stock}
+                  {/* Price and Commission Section */}
+                  <div className="border-t pt-3 mb-3">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">السعر الأساسي:</span>
+                        <span className="font-semibold">{item.products.price_sar} ريال</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">العمولة المضافة:</span>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={item.commission_amount}
+                            onChange={(e) => {
+                              const newValue = parseFloat(e.target.value) || 0;
+                              updateCommission(item.id, newValue);
+                            }}
+                            className="w-20 h-8 text-sm"
+                            placeholder="0"
+                          />
+                          <span className="text-sm">ريال</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between border-t pt-2">
+                        <span className="text-sm font-medium">السعر النهائي:</span>
+                        <span className="text-lg font-bold text-primary">
+                          {(item.products.price_sar + item.commission_amount).toFixed(2)} ريال
+                        </span>
+                      </div>
+                      
+                      <div className="text-xs text-muted-foreground text-right">
+                        المتوفر: {item.products.stock}
+                      </div>
                     </div>
                   </div>
 

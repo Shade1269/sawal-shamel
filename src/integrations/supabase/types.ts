@@ -604,6 +604,7 @@ export type Database = {
       }
       product_library: {
         Row: {
+          commission_amount: number
           id: string
           is_featured: boolean
           is_visible: boolean
@@ -612,6 +613,7 @@ export type Database = {
           sort_index: number
         }
         Insert: {
+          commission_amount?: number
           id?: string
           is_featured?: boolean
           is_visible?: boolean
@@ -620,6 +622,7 @@ export type Database = {
           sort_index?: number
         }
         Update: {
+          commission_amount?: number
           id?: string
           is_featured?: boolean
           is_visible?: boolean
