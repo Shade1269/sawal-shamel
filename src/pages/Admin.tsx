@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -233,6 +233,30 @@ const Admin = () => {
     if (!profile.error) setCurrentUserProfile(profile.data);
     setLoading(false);
   };
+
+  // Load and save payment providers and shipping companies
+  const loadProviders = () => {
+    const savedPaymentProviders = localStorage.getItem('admin_payment_providers');
+    const savedShippingCompanies = localStorage.getItem('admin_shipping_companies');
+    
+    if (savedPaymentProviders) {
+      setPaymentProviders(JSON.parse(savedPaymentProviders));
+    }
+    
+    if (savedShippingCompanies) {
+      setShippingCompanies(JSON.parse(savedShippingCompanies));
+    }
+  };
+
+  const saveProviders = () => {
+    localStorage.setItem('admin_payment_providers', JSON.stringify(paymentProviders));
+    localStorage.setItem('admin_shipping_companies', JSON.stringify(shippingCompanies));
+  };
+
+  // Auto-save when providers change
+  React.useEffect(() => {
+    saveProviders();
+  }, [paymentProviders, shippingCompanies]);
 
   const loadProducts = async () => {
     try {
@@ -584,6 +608,7 @@ const Admin = () => {
   useEffect(() => {
     if (isAllowed) {
       loadLists();
+      loadProviders(); // Load saved providers
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAllowed]);
@@ -994,7 +1019,8 @@ const Admin = () => {
                         toast({ title: "مطلوب", description: "اسم الشركة مطلوب", variant: "destructive" });
                         return;
                       }
-                      setPaymentProviders([...paymentProviders, {...newPaymentProvider}]);
+                      const updatedProviders = [...paymentProviders, {...newPaymentProvider}];
+                      setPaymentProviders(updatedProviders);
                       setNewPaymentProvider({name: '', apiKey: ''});
                       toast({ title: "تم الإضافة", description: "تم إضافة شركة الدفع بنجاح" });
                     }}
@@ -1085,7 +1111,8 @@ const Admin = () => {
                         toast({ title: "مطلوب", description: "اسم الشركة مطلوب", variant: "destructive" });
                         return;
                       }
-                      setShippingCompanies([...shippingCompanies, {...newShippingCompany}]);
+                      const updatedCompanies = [...shippingCompanies, {...newShippingCompany}];
+                      setShippingCompanies(updatedCompanies);
                       setNewShippingCompany({name: '', apiKey: '', price: 0});
                       toast({ title: "تم الإضافة", description: "تم إضافة شركة الشحن بنجاح" });
                     }}
@@ -1135,7 +1162,8 @@ const Admin = () => {
                              variant="ghost"
                              size="sm"
                              onClick={() => {
-                               setShippingCompanies(prev => prev.filter((_, i) => i !== index));
+                               const updatedCompanies = shippingCompanies.filter((_, i) => i !== index);
+                               setShippingCompanies(updatedCompanies);
                                toast({ title: "تم الحذف", description: "تم حذف شركة الشحن بنجاح" });
                              }}
                              className="text-destructive hover:text-destructive"
