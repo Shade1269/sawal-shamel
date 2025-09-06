@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ProductImageCarousel } from "@/components/ProductImageCarousel";
 import { Input } from "@/components/ui/input";
+import { CheckoutFlow } from "@/components/CheckoutFlow";
 
 interface Product {
   id: string;
@@ -54,6 +55,9 @@ const StoreFront = () => {
   const [showCart, setShowCart] = useState(false);
   const [selectedVariants, setSelectedVariants] = useState<{ [productId: string]: { [variantType: string]: string } }>({});
   const [productQuantities, setProductQuantities] = useState<{ [productId: string]: number }>({});
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [orderCompleted, setOrderCompleted] = useState(false);
+  const [orderNumber, setOrderNumber] = useState('');
 
   // Debug logging
   console.log('StoreFrontبدء تشغيل  - slug:', slug);
@@ -165,6 +169,31 @@ const StoreFront = () => {
 
   const cartTotal = cart.reduce((sum, item) => sum + ((item.product.final_price || item.product.price_sar) * item.quantity), 0);
   const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleCheckoutStart = () => {
+    if (cart.length === 0) {
+      toast({
+        title: "السلة فارغة",
+        description: "يرجى إضافة منتجات إلى السلة أولاً",
+        variant: "destructive"
+      });
+      return;
+    }
+    setShowCheckout(true);
+    setShowCart(false);
+  };
+
+  const handleCheckoutComplete = (orderNum: string) => {
+    setOrderNumber(orderNum);
+    setOrderCompleted(true);
+    setCart([]);
+    setShowCheckout(false);
+  };
+
+  const handleBackToCart = () => {
+    setShowCheckout(false);
+    setShowCart(true);
+  };
 
   console.log('حالة المتجر:', { shop, shopLoading, shopError });
 
@@ -540,7 +569,7 @@ const StoreFront = () => {
                           </span>
                         </div>
                         
-                        <Button className="w-full" size="lg">
+                        <Button className="w-full" size="lg" onClick={handleCheckoutStart}>
                           إتمام الطلب
                         </Button>
                       </div>
@@ -552,6 +581,34 @@ const StoreFront = () => {
           )}
         </div>
       </div>
+
+      {/* Checkout Flow */}
+      {showCheckout && !orderCompleted && (
+        <div className="fixed inset-0 bg-background z-50 overflow-auto">
+          <div className="container mx-auto px-4 py-8">
+            <CheckoutFlow
+              cart={cart}
+              onBack={handleBackToCart}
+              onComplete={handleCheckoutComplete}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Order Completed Modal */}
+      {orderCompleted && (
+        <div className="fixed inset-0 bg-background z-50 overflow-auto">
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-2xl mx-auto">
+              <CheckoutFlow
+                cart={[]}
+                onBack={() => {}}
+                onComplete={() => {}}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
