@@ -716,5 +716,18 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
     );
   }
 
-  return null;
+  // Fallback UI to avoid blank screen
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8 max-w-4xl" dir="rtl">
+        <Card>
+          <CardContent className="py-10 text-center space-y-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="text-muted-foreground">جاري التحميل... إذا استمرت الشاشة فارغة اضغط العودة.</p>
+            <Button variant="outline" onClick={onBack}>العودة</Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
 };
