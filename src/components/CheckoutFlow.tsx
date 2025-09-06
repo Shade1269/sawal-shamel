@@ -109,9 +109,8 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
           { name: 'سمسا', price: 20 }
         ]);
         setPaymentProviders([
-          { name: 'دفع عند الاستلام' },
-          { name: 'تمارا' },
-          { name: 'امكان - اشتري الآن وادفع لاحقاً' }
+          { name: 'الدفع نقداً عند الاستلام' },
+          { name: 'إمكان - الشراء الآن والدفع لاحقاً' }
         ]);
       }
     } catch (error) {
@@ -122,9 +121,8 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
         { name: 'سمسا', price: 20 }
       ]);
       setPaymentProviders([
-        { name: 'دفع عند الاستلام' },
-        { name: 'تمارا' },
-        { name: 'امكان - اشتري الآن وادفع لاحقاً' }
+        { name: 'الدفع نقداً عند الاستلام' },
+        { name: 'إمكان - الشراء الآن والدفع لاحقاً' }
       ]);
     } finally {
       setIsLoadingSettings(false);
@@ -179,7 +177,8 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
     const orderNumber = `ORD-${Date.now().toString().slice(-6)}`;
     
     try {
-      if (selectedPayment === 'امكان - اشتري الآن وادفع لاحقاً') {
+      const isEmkan = /[إا]مكان/.test(selectedPayment);
+      if (isEmkan) {
         // Show processing message for Emkan payment
         toast({
           title: "جاري إنشاء طلب الدفع",
@@ -304,6 +303,28 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {/* ملخص المنتجات في السلة */}
+            <div className="mb-6 p-4 bg-muted/50 rounded-lg">
+              <h4 className="font-medium mb-3">المنتجات المختارة</h4>
+              <div className="space-y-3 text-sm">
+                {cart.map((item, idx) => (
+                  <div key={idx} className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <p className="font-medium line-clamp-1">{item.product.title}</p>
+                      {item.selectedVariants && (
+                        <p className="text-xs text-muted-foreground">
+                          {Object.entries(item.selectedVariants).map(([k,v]) => `${k}: ${v}`).join(' - ')}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-left min-w-[110px]">
+                      <span className="font-semibold">{item.quantity} × {(item.product.final_price || item.product.price_sar).toFixed(2)} ر.س</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <RadioGroup value={selectedShipping?.name || ''} onValueChange={(value) => {
               const company = shippingCompanies.find(c => c.name === value);
               setSelectedShipping(company || null);

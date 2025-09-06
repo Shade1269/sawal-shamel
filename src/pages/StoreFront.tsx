@@ -165,6 +165,37 @@ const StoreFront = () => {
         [variantType]: value
       }
     }));
+};
+
+  const buyNow = (product: Product) => {
+    // تحقق من اختيار المتغيرات إن وجدت
+    if (product.variants && product.variants.length > 0) {
+      const productVariants = selectedVariants[product.id] || {};
+      const variantTypes = [...new Set(product.variants.map(v => v.variant_type))];
+      const missing = variantTypes.filter(type => !productVariants[type]);
+      if (missing.length > 0) {
+        toast({
+          title: "اختيار مطلوب",
+          description: `يجب اختيار: ${missing.join(', ')}`,
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
+    const quantity = productQuantities[product.id] || 1;
+    const productVariants = selectedVariants[product.id] || {};
+
+    // إنشاء سلة فورية بالمنتج المختار فقط
+    setCart([
+      {
+        product,
+        quantity,
+        selectedVariants: Object.keys(productVariants).length > 0 ? productVariants : undefined,
+      },
+    ]);
+    setShowCheckout(true);
+    setShowCart(false);
   };
 
   const cartTotal = cart.reduce((sum, item) => sum + ((item.product.final_price || item.product.price_sar) * item.quantity), 0);
@@ -479,14 +510,24 @@ const StoreFront = () => {
                           </div>
                         </div>
                         
-                        <Button
-                          onClick={() => addToCart(product)}
-                          disabled={product.stock === 0}
-                          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2.5"
-                        >
-                          <ShoppingCart className="h-4 w-4 ml-2" />
-                          أضف للسلة
-                        </Button>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <Button
+                            onClick={() => buyNow(product)}
+                            disabled={product.stock === 0}
+                            className="w-full"
+                          >
+                            شراء مباشر
+                          </Button>
+                          <Button
+                            onClick={() => addToCart(product)}
+                            disabled={product.stock === 0}
+                            variant="outline"
+                            className="w-full"
+                          >
+                            <ShoppingCart className="h-4 w-4 ml-2" />
+                            أضف للسلة
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
