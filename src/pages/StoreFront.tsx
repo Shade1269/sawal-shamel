@@ -20,6 +20,8 @@ interface Product {
   stock: number;
   category: string;
   variants?: ProductVariant[];
+  commission_amount?: number; // Add commission amount
+  final_price?: number; // Add final price (base + commission)
 }
 
 interface ProductVariant {
@@ -83,6 +85,7 @@ const StoreFront = () => {
         .from("product_library")
         .select(`
           product_id,
+          commission_amount,
           products (
             *,
             product_variants (*)
@@ -94,7 +97,9 @@ const StoreFront = () => {
       if (error) throw error;
       return data.map(item => ({
         ...item.products,
-        variants: item.products.product_variants || []
+        variants: item.products.product_variants || [],
+        commission_amount: item.commission_amount || 0,
+        final_price: (item.products.price_sar || 0) + (item.commission_amount || 0)
       })).filter(Boolean) as Product[];
     },
     enabled: !!shop?.id,
@@ -156,7 +161,7 @@ const StoreFront = () => {
     }));
   };
 
-  const cartTotal = cart.reduce((sum, item) => sum + (item.product.price_sar * item.quantity), 0);
+  const cartTotal = cart.reduce((sum, item) => sum + ((item.product.final_price || item.product.price_sar) * item.quantity), 0);
   const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   console.log('حالة المتجر:', { shop, shopLoading, shopError });
@@ -309,8 +314,22 @@ const StoreFront = () => {
                            <div className="space-y-4">
                          <div className="flex items-center justify-between">
                            <div className="text-right">
-                             <span className="text-2xl font-bold text-primary">{product.price_sar}</span>
-                             <span className="text-sm text-muted-foreground mr-1">ر.س</span>
+                             {product.commission_amount && product.commission_amount > 0 ? (
+                               <div className="space-y-1">
+                                 <div className="text-sm text-muted-foreground line-through">
+                                   {product.price_sar} ر.س
+                                 </div>
+                                 <div>
+                                   <span className="text-2xl font-bold text-primary">{product.final_price?.toFixed(2)}</span>
+                                   <span className="text-sm text-muted-foreground mr-1">ر.س</span>
+                                 </div>
+                               </div>
+                             ) : (
+                               <div>
+                                 <span className="text-2xl font-bold text-primary">{product.price_sar}</span>
+                                 <span className="text-sm text-muted-foreground mr-1">ر.س</span>
+                               </div>
+                             )}
                            </div>
                            {product.category && (
                              <Badge variant="secondary" className="text-xs">{product.category}</Badge>
@@ -516,9 +535,9 @@ const StoreFront = () => {
                                  ))}
                                </div>
                              )}
-                             <p className="text-xs text-muted-foreground mt-1">
-                               {item.quantity} × {item.product.price_sar} ر.س
-                             </p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {item.quantity} × {(item.product.final_price || item.product.price_sar).toFixed(2)} ر.س
+                              </p>
                            </div>
                          </div>
                        ))}
