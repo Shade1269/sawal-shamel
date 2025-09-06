@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageCircle, Users, Hash, Package, LogOut, User, Store } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { CheckoutTest } from "@/components/CheckoutTest";
 import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
@@ -166,6 +167,21 @@ const Index = () => {
               
             </div>
           )}
+
+          {/* Checkout Test Section */}
+          <div className="mb-12">
+            <Card className="group hover:shadow-xl transition-all duration-300">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl">اختبار صفحة الدفع</CardTitle>
+                <CardDescription>
+                  اختبر صفحة الدفع للتأكد من أنها تعمل بشكل صحيح
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <CheckoutTest />
+              </CardContent>
+            </Card>
+          </div>
 
           {!user && (
             <div className="text-center">
