@@ -23,8 +23,8 @@ serve(async (req) => {
 
     console.log('Starting Zoho products sync for shop:', shopId);
 
-    // Fetch products from Zoho Inventory API
-    const zohoResponse = await fetch(`https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}`, {
+    // Fetch item groups from Zoho Inventory API
+    const zohoResponse = await fetch(`https://www.zohoapis.com/inventory/v1/itemgroups?organization_id=${organizationId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Zoho-oauthtoken ${accessToken}`,
@@ -39,12 +39,12 @@ serve(async (req) => {
     }
 
     const zohoData = await zohoResponse.json();
-    console.log('Zoho products fetched:', zohoData.items?.length || 0);
+    console.log('Zoho item groups fetched:', zohoData.itemgroups?.length || 0);
 
-    if (!zohoData.items || zohoData.items.length === 0) {
+    if (!zohoData.itemgroups || zohoData.itemgroups.length === 0) {
       return new Response(JSON.stringify({ 
         success: true, 
-        message: 'No products found in Zoho', 
+        message: 'No item groups found in Zoho', 
         synced: 0 
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -97,26 +97,6 @@ serve(async (req) => {
       merchant = newMerchant;
     }
 
-    let syncedCount = 0;
-    const mappings = [];
-
-    // Helper function to extract parent key from SKU or name
-    const extractParentKey = (item: any) => {
-      // First try to extract from SKU if it has the pattern "XXX-YYY/ZZZ"
-      if (item.sku && item.sku.includes('-')) {
-        const beforeDash = item.sku.split('-')[0];
-        if (beforeDash) return beforeDash;
-      }
-      
-      // Fallback: use name before any dash or special character
-      if (item.name) {
-        const beforeDash = item.name.split('-')[0];
-        return beforeDash.trim();
-      }
-      
-      return item.name || item.sku || item.item_id;
-    };
-
     // Helper function to extract color and size from SKU
     const extractColorSize = (item: any) => {
       let color = null;
@@ -152,34 +132,45 @@ serve(async (req) => {
       return { color, size };
     };
 
-    // Group items by parent key for proper variant handling
-    const productGroups = new Map();
-    
-    for (const item of zohoData.items) {
-      // Skip if already exists
-      if (existingZohoIds.has(item.item_id)) {
-        continue;
-      }
+    let syncedCount = 0;
+    const mappings = [];
 
-      // Extract parent key using the new logic
-      const parentKey = extractParentKey(item);
-
-      if (!productGroups.has(parentKey)) {
-        productGroups.set(parentKey, []);
-      }
-      productGroups.get(parentKey).push(item);
-    }
-
-    // Process each product group
-    for (const [parentKey, items] of productGroups) {
+    // Process each item group
+    for (const itemGroup of zohoData.itemgroups) {
       try {
+        // Skip if item group already exists
+        if (existingZohoIds.has(itemGroup.group_id)) {
+          continue;
+        }
+
+        // Fetch variants (items) for this item group
+        const variantsResponse = await fetch(`https://www.zohoapis.com/inventory/v1/itemgroups/${itemGroup.group_id}/items?organization_id=${organizationId}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Zoho-oauthtoken ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!variantsResponse.ok) {
+          console.error(`Failed to fetch variants for group ${itemGroup.group_id}:`, variantsResponse.status);
+          continue;
+        }
+
+        const variantsData = await variantsResponse.json();
+        const variants = variantsData.items || [];
+
+        if (variants.length === 0) {
+          continue;
+        }
+
         // Build attributes schema from all variants
         const attributesSchema: any = {};
         const colorValues = new Set();
         const sizeValues = new Set();
         
-        for (const item of items) {
-          const { color, size } = extractColorSize(item);
+        for (const variant of variants) {
+          const { color, size } = extractColorSize(variant);
           
           if (color) {
             colorValues.add(color);
@@ -204,31 +195,33 @@ serve(async (req) => {
           finalAttributesSchema[key] = Array.from(values as Set<string>);
         }
 
-        // Use first item for base product info
-        const baseItem = items[0];
+        // Use item group info for parent product
+        const baseVariant = variants[0];
         
-        // Process product images from first item
+        // Process product images from item group or first variant
         let imageUrls = [];
-        if (baseItem.image_documents && baseItem.image_documents.length > 0) {
-          imageUrls = baseItem.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
+        if (itemGroup.image_documents && itemGroup.image_documents.length > 0) {
+          imageUrls = itemGroup.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
+        } else if (baseVariant.image_documents && baseVariant.image_documents.length > 0) {
+          imageUrls = baseVariant.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
         }
 
-        // Calculate total stock for base product (sum of all variants)
-        const totalStock = items.reduce((sum, item) => sum + (parseInt(item.stock_on_hand) || 0), 0);
+        // Calculate total stock for parent product (sum of all variants)
+        const totalStock = variants.reduce((sum, variant) => sum + (parseInt(variant.stock_on_hand) || 0), 0);
         
-        // Use base price from first item
-        const basePrice = parseFloat(baseItem.rate) || 0;
+        // Use base price from first variant
+        const basePrice = parseFloat(baseVariant.rate) || 0;
 
         const productData = {
           merchant_id: merchant.id,
-          title: parentKey, // Use parent key as title
-          external_id: parentKey, // Use parent key as external_id
-          description: baseItem.description || `Parent product for ${parentKey}`,
+          title: itemGroup.group_name, // Use item group name as title
+          external_id: itemGroup.group_id, // Use item group ID as external_id
+          description: itemGroup.description || `Item group: ${itemGroup.group_name}`,
           price_sar: basePrice,
           stock: totalStock,
-          category: baseItem.category_name || 'General',
+          category: baseVariant.category_name || 'General',
           image_urls: imageUrls,
-          is_active: baseItem.status === 'active',
+          is_active: itemGroup.status === 'active',
           commission_rate: null,
           attributes_schema: finalAttributesSchema,
         };
@@ -237,7 +230,7 @@ serve(async (req) => {
         let { data: existingProduct } = await supabase
           .from('products')
           .select('id')
-          .eq('external_id', parentKey)
+          .eq('external_id', itemGroup.group_id)
           .eq('merchant_id', merchant.id)
           .single();
 
@@ -249,7 +242,7 @@ serve(async (req) => {
             .update({
               stock: totalStock,
               attributes_schema: finalAttributesSchema,
-              is_active: baseItem.status === 'active',
+              is_active: itemGroup.status === 'active',
               updated_at: new Date().toISOString()
             })
             .eq('id', existingProduct.id)
@@ -277,23 +270,23 @@ serve(async (req) => {
         }
 
         // Create/Update variants for each item in the group
-        for (const item of items) {
-          const { color, size } = extractColorSize(item);
+        for (const variant of variants) {
+          const { color, size } = extractColorSize(variant);
           
           // Check if variant already exists
           let { data: existingVariant } = await supabase
             .from('product_variants')
             .select('id')
-            .eq('external_id', item.item_id)
+            .eq('external_id', variant.item_id)
             .eq('product_id', product.id)
             .single();
 
           const variantData: any = {
             product_id: product.id,
-            external_id: item.item_id,
-            stock: parseInt(item.stock_on_hand) || 0,
-            price_modifier: (parseFloat(item.rate) || 0) - basePrice,
-            sku: item.sku || `${parentKey}-${item.item_id}`,
+            external_id: variant.item_id,
+            stock: parseInt(variant.stock_on_hand) || 0,
+            price_modifier: (parseFloat(variant.rate) || 0) - basePrice,
+            sku: variant.sku || `${itemGroup.group_name}-${variant.item_id}`,
             option1_name: color ? 'COLOR' : null,
             option1_value: color || null,
             option2_name: size ? 'SIZE' : null,
@@ -333,19 +326,26 @@ serve(async (req) => {
             }
           }
 
-          // Create mapping for each item
+          // Create mapping for each variant
           mappings.push({
             shop_id: shopId,
-            zoho_item_id: item.item_id,
+            zoho_item_id: variant.item_id,
             local_product_id: product.id
           });
         }
 
-        syncedCount += items.length;
-        console.log(`Synced product: ${parentKey} with ${items.length} variants`);
+        // Also create mapping for the item group itself
+        mappings.push({
+          shop_id: shopId,
+          zoho_item_id: itemGroup.group_id,
+          local_product_id: product.id
+        });
+
+        syncedCount += variants.length;
+        console.log(`Synced item group: ${itemGroup.group_name} with ${variants.length} variants`);
 
       } catch (error) {
-        console.error(`Error processing product group ${parentKey}:`, error);
+        console.error(`Error processing item group ${itemGroup.group_name}:`, error);
         continue;
       }
     }
@@ -370,11 +370,11 @@ serve(async (req) => {
       })
       .eq('shop_id', shopId);
 
-    console.log(`Sync completed. Products synced: ${syncedCount}`);
+    console.log(`Sync completed. Item groups synced: ${syncedCount}`);
 
     return new Response(JSON.stringify({ 
       success: true, 
-      message: `Successfully synced ${syncedCount} products from Zoho`,
+      message: `Successfully synced ${syncedCount} variants from ${zohoData.itemgroups.length} item groups`,
       synced: syncedCount
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
