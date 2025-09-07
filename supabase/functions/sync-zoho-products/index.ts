@@ -100,10 +100,27 @@ serve(async (req) => {
     let syncedCount = 0;
     const mappings = [];
 
+    // Helper function to check if product name follows code pattern (e.g., AS25-GR/XL)
+    const isCodedProduct = (name) => {
+      // Pattern: Start with letters/numbers, dash, letters, slash, letters/numbers
+      return /^[A-Z0-9]+-[A-Z]+\/[A-Z0-9]+$/.test(name || '');
+    };
+
+    // Filter products to only include coded products (exclude linguistic/descriptive names)
+    const codedProducts = zohoData.items.filter(item => {
+      const isCoded = isCodedProduct(item.name);
+      if (!isCoded) {
+        console.log(`Skipping non-coded product: ${item.name}`);
+      }
+      return isCoded;
+    });
+
+    console.log(`Found ${codedProducts.length} coded products out of ${zohoData.items.length} total products`);
+
     // Group products by model (extract product code before first dash)
     const productGroups = new Map();
     
-    for (const item of zohoData.items) {
+    for (const item of codedProducts) {
       // Extract product model from name (e.g., "AS25-GR/XL" -> "AS25")
       const modelMatch = item.name?.match(/^([A-Z0-9]+)-/);
       const modelCode = modelMatch ? modelMatch[1] : item.name || 'UNKNOWN';
