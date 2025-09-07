@@ -155,16 +155,28 @@ const Payment = () => {
 
       if (orderError) throw orderError;
 
-      // Create order items
-      const orderItems = cartItems.map(item => ({
-        order_id: order.id,
-        product_id: item.id,
-        quantity: item.quantity,
-        unit_price_sar: item.price,
-        line_total_sar: item.price * item.quantity,
-        merchant_id: shop.id,
-        title_snapshot: item.name
-      }));
+      // Create order items - need to get merchant_id from products
+      const orderItems = [];
+      for (const item of cartItems) {
+        // Get product to find its merchant_id
+        const { data: product } = await supabase
+          .from("products")
+          .select("merchant_id")
+          .eq("id", item.id)
+          .single();
+
+        if (product) {
+          orderItems.push({
+            order_id: order.id,
+            product_id: item.id,
+            quantity: item.quantity,
+            unit_price_sar: item.price,
+            line_total_sar: item.price * item.quantity,
+            merchant_id: product.merchant_id,
+            title_snapshot: item.name
+          });
+        }
+      }
 
       const { error: itemsError } = await supabase
         .from("order_items")
