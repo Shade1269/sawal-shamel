@@ -186,194 +186,212 @@ serve(async (req) => {
       itemsByModel.get(baseModel).push(item);
     }
 
+    // Process products in batches to avoid timeout
+    const BATCH_SIZE = 10;
+    let syncedCount = 0;
+    const mappings = [];
+
     console.log(`Found ${itemsByModel.size} unique product models from ${allItems.length} items`);
+    console.log(`Processing in batches of ${BATCH_SIZE} models...`);
 
-    // Process each product model
-    for (const [baseModel, modelItems] of itemsByModel) {
-      try {
-        // Skip if any item in this model already exists
-        const modelItemIds = modelItems.map(item => item.item_id);
-        const hasExistingItems = modelItemIds.some(id => existingZohoIds.has(id));
-        if (hasExistingItems) {
-          continue;
-        }
+    const modelEntries = Array.from(itemsByModel.entries());
+    
+    for (let i = 0; i < modelEntries.length; i += BATCH_SIZE) {
+      const batch = modelEntries.slice(i, i + BATCH_SIZE);
+      console.log(`Processing batch ${Math.floor(i/BATCH_SIZE) + 1}/${Math.ceil(modelEntries.length/BATCH_SIZE)}: ${batch.length} models`);
 
-        const variants = modelItems;
-
-        // Build attributes schema from all variants
-        const attributesSchema: any = {};
-        const colorValues = new Set();
-        const sizeValues = new Set();
-        
-        for (const variant of variants) {
-          const { color, size } = extractProductInfo(variant);
-          
-          if (color) {
-            colorValues.add(color);
-            if (!attributesSchema['COLOR']) {
-              attributesSchema['COLOR'] = new Set();
-            }
-            attributesSchema['COLOR'].add(color);
-          }
-          
-          if (size) {
-            sizeValues.add(size);
-            if (!attributesSchema['SIZE']) {
-              attributesSchema['SIZE'] = new Set();
-            }
-            attributesSchema['SIZE'].add(size);
-          }
-        }
-
-        // Convert Sets to Arrays for JSON storage
-        const finalAttributesSchema: any = {};
-        for (const [key, values] of Object.entries(attributesSchema)) {
-          finalAttributesSchema[key] = Array.from(values as Set<string>);
-        }
-
-        // Use first item as base for parent product
-        const baseVariant = variants[0];
-        
-        // Process product images from first variant
-        let imageUrls = [];
-        if (baseVariant.image_documents && baseVariant.image_documents.length > 0) {
-          imageUrls = baseVariant.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
-        }
-
-        // Calculate total stock for parent product (sum of all variants)
-        const totalStock = variants.reduce((sum, variant) => sum + (parseInt(variant.stock_on_hand) || 0), 0);
-        
-        // Use base price from first variant
-        const basePrice = parseFloat(baseVariant.rate) || 0;
-
-        const productData = {
-          merchant_id: merchant.id,
-          title: baseModel, // Use base model as title
-          external_id: `model_${baseModel}`, // Use custom external_id for model
-          description: `منتج ${baseModel} متوفر بألوان ومقاسات مختلفة`,
-          price_sar: basePrice,
-          stock: totalStock,
-          category: baseVariant.category_name || 'General',
-          image_urls: imageUrls,
-          is_active: baseVariant.status === 'active',
-          commission_rate: null,
-          attributes_schema: finalAttributesSchema,
-        };
-
-        // Check if product already exists with this external_id
-        let { data: existingProduct } = await supabase
-          .from('products')
-          .select('id')
-          .eq('external_id', `model_${baseModel}`)
-          .eq('merchant_id', merchant.id)
-          .single();
-
-        let product;
-        if (existingProduct) {
-          // Update existing product
-          const { data: updatedProduct, error: updateError } = await supabase
-            .from('products')
-            .update({
-              stock: totalStock,
-              attributes_schema: finalAttributesSchema,
-              is_active: baseVariant.status === 'active',
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', existingProduct.id)
-            .select('id')
-            .single();
-          
-          if (updateError) {
-            console.error('Error updating product:', updateError);
+      // Process each product model in current batch
+      for (const [baseModel, modelItems] of batch) {
+        try {
+          // Skip if any item in this model already exists
+          const modelItemIds = modelItems.map(item => item.item_id);
+          const hasExistingItems = modelItemIds.some(id => existingZohoIds.has(id));
+          if (hasExistingItems) {
             continue;
           }
-          product = updatedProduct;
-        } else {
-          // Create new product
-          const { data: newProduct, error: productError } = await supabase
-            .from('products')
-            .insert(productData)
-            .select('id')
-            .single();
 
-          if (productError) {
-            console.error('Error creating product:', productError);
-            continue;
-          }
-          product = newProduct;
-        }
+          const variants = modelItems;
 
-        // Create/Update variants for each item in the model
-        for (const variant of variants) {
-          const { color, size } = extractProductInfo(variant);
+          // Build attributes schema from all variants
+          const attributesSchema: any = {};
+          const colorValues = new Set();
+          const sizeValues = new Set();
           
-          // Check if variant already exists
-          let { data: existingVariant } = await supabase
-            .from('product_variants')
-            .select('id')
-            .eq('external_id', variant.item_id)
-            .eq('product_id', product.id)
-            .single();
+          for (const variant of variants) {
+            const { color, size } = extractProductInfo(variant);
+            
+            if (color) {
+              colorValues.add(color);
+              if (!attributesSchema['COLOR']) {
+                attributesSchema['COLOR'] = new Set();
+              }
+              attributesSchema['COLOR'].add(color);
+            }
+            
+            if (size) {
+              sizeValues.add(size);
+              if (!attributesSchema['SIZE']) {
+                attributesSchema['SIZE'] = new Set();
+              }
+              attributesSchema['SIZE'].add(size);
+            }
+          }
 
-          const variantData: any = {
-            product_id: product.id,
-            external_id: variant.item_id,
-            stock: parseInt(variant.stock_on_hand) || 0,
-            price_modifier: (parseFloat(variant.rate) || 0) - basePrice,
-            sku: variant.sku || `${baseModel}-${variant.item_id}`,
-            option1_name: color ? 'COLOR' : null,
-            option1_value: color || null,
-            option2_name: size ? 'SIZE' : null,
-            option2_value: size || null,
-            // Keep legacy fields for compatibility
-            variant_type: 'combination',
-            variant_value: [color, size].filter(Boolean).join('-') || 'default',
+          // Convert Sets to Arrays for JSON storage
+          const finalAttributesSchema: any = {};
+          for (const [key, values] of Object.entries(attributesSchema)) {
+            finalAttributesSchema[key] = Array.from(values as Set<string>);
+          }
+
+          // Use first item as base for parent product
+          const baseVariant = variants[0];
+          
+          // Process product images from first variant
+          let imageUrls = [];
+          if (baseVariant.image_documents && baseVariant.image_documents.length > 0) {
+            imageUrls = baseVariant.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
+          }
+
+          // Calculate total stock for parent product (sum of all variants)
+          const totalStock = variants.reduce((sum, variant) => sum + (parseInt(variant.stock_on_hand) || 0), 0);
+          
+          // Use base price from first variant
+          const basePrice = parseFloat(baseVariant.rate) || 0;
+
+          const productData = {
+            merchant_id: merchant.id,
+            title: baseModel, // Use base model as title
+            external_id: `model_${baseModel}`, // Use custom external_id for model
+            description: `منتج ${baseModel} متوفر بألوان ومقاسات مختلفة`,
+            price_sar: basePrice,
+            stock: totalStock,
+            category: baseVariant.category_name || 'General',
+            image_urls: imageUrls,
+            is_active: baseVariant.status === 'active',
+            commission_rate: null,
+            attributes_schema: finalAttributesSchema,
           };
 
-          if (existingVariant) {
-            // Update existing variant
-            const { error: updateVariantError } = await supabase
-              .from('product_variants')
+          // Check if product already exists with this external_id
+          let { data: existingProduct } = await supabase
+            .from('products')
+            .select('id')
+            .eq('external_id', `model_${baseModel}`)
+            .eq('merchant_id', merchant.id)
+            .single();
+
+          let product;
+          if (existingProduct) {
+            // Update existing product
+            const { data: updatedProduct, error: updateError } = await supabase
+              .from('products')
               .update({
-                stock: variantData.stock,
-                price_modifier: variantData.price_modifier,
-                option1_name: variantData.option1_name,
-                option1_value: variantData.option1_value,
-                option2_name: variantData.option2_name,
-                option2_value: variantData.option2_value,
-                variant_value: variantData.variant_value,
+                stock: totalStock,
+                attributes_schema: finalAttributesSchema,
+                is_active: baseVariant.status === 'active',
                 updated_at: new Date().toISOString()
               })
-              .eq('id', existingVariant.id);
-
-            if (updateVariantError) {
-              console.error('Error updating variant:', updateVariantError);
+              .eq('id', existingProduct.id)
+              .select('id')
+              .single();
+            
+            if (updateError) {
+              console.error('Error updating product:', updateError);
+              continue;
             }
+            product = updatedProduct;
           } else {
-            // Create new variant
-            const { error: variantError } = await supabase
-              .from('product_variants')
-              .insert(variantData);
+            // Create new product
+            const { data: newProduct, error: productError } = await supabase
+              .from('products')
+              .insert(productData)
+              .select('id')
+              .single();
 
-            if (variantError) {
-              console.error('Error creating variant:', variantError);
+            if (productError) {
+              console.error('Error creating product:', productError);
+              continue;
             }
+            product = newProduct;
           }
 
-          // Create mapping for each variant
-          mappings.push({
-            shop_id: shopId,
-            zoho_item_id: variant.item_id,
-            local_product_id: product.id
-          });
+          // Create/Update variants for each item in the model
+          for (const variant of variants) {
+            const { color, size } = extractProductInfo(variant);
+            
+            // Check if variant already exists
+            let { data: existingVariant } = await supabase
+              .from('product_variants')
+              .select('id')
+              .eq('external_id', variant.item_id)
+              .eq('product_id', product.id)
+              .single();
+
+            const variantData: any = {
+              product_id: product.id,
+              external_id: variant.item_id,
+              stock: parseInt(variant.stock_on_hand) || 0,
+              price_modifier: (parseFloat(variant.rate) || 0) - basePrice,
+              sku: variant.sku || `${baseModel}-${variant.item_id}`,
+              option1_name: color ? 'COLOR' : null,
+              option1_value: color || null,
+              option2_name: size ? 'SIZE' : null,
+              option2_value: size || null,
+              // Keep legacy fields for compatibility
+              variant_type: 'combination',
+              variant_value: [color, size].filter(Boolean).join('-') || 'default',
+            };
+
+            if (existingVariant) {
+              // Update existing variant
+              const { error: updateVariantError } = await supabase
+                .from('product_variants')
+                .update({
+                  stock: variantData.stock,
+                  price_modifier: variantData.price_modifier,
+                  option1_name: variantData.option1_name,
+                  option1_value: variantData.option1_value,
+                  option2_name: variantData.option2_name,
+                  option2_value: variantData.option2_value,
+                  variant_value: variantData.variant_value,
+                  updated_at: new Date().toISOString()
+                })
+                .eq('id', existingVariant.id);
+
+              if (updateVariantError) {
+                console.error('Error updating variant:', updateVariantError);
+              }
+            } else {
+              // Create new variant
+              const { error: variantError } = await supabase
+                .from('product_variants')
+                .insert(variantData);
+
+              if (variantError) {
+                console.error('Error creating variant:', variantError);
+              }
+            }
+
+            // Create mapping for each variant
+            mappings.push({
+              shop_id: shopId,
+              zoho_item_id: variant.item_id,
+              local_product_id: product.id
+            });
+          }
+
+          syncedCount++;
+          console.log(`Synced product model: ${baseModel} with ${variants.length} variants`);
+
+        } catch (error) {
+          console.error(`Error processing product model ${baseModel}:`, error);
+          continue;
         }
-
-        syncedCount++;
-        console.log(`Synced product model: ${baseModel} with ${variants.length} variants`);
-
-      } catch (error) {
-        console.error(`Error processing product model ${baseModel}:`, error);
-        continue;
+      }
+      
+      // Small delay between batches to prevent overwhelming the system
+      if (i + BATCH_SIZE < modelEntries.length) {
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
 
