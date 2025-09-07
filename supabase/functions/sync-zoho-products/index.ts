@@ -100,7 +100,59 @@ serve(async (req) => {
     let syncedCount = 0;
     const mappings = [];
 
-    // Group items by parent product name for proper variant handling
+    // Helper function to extract parent key from SKU or name
+    const extractParentKey = (item: any) => {
+      // First try to extract from SKU if it has the pattern "XXX-YYY/ZZZ"
+      if (item.sku && item.sku.includes('-')) {
+        const beforeDash = item.sku.split('-')[0];
+        if (beforeDash) return beforeDash;
+      }
+      
+      // Fallback: use name before any dash or special character
+      if (item.name) {
+        const beforeDash = item.name.split('-')[0];
+        return beforeDash.trim();
+      }
+      
+      return item.name || item.sku || item.item_id;
+    };
+
+    // Helper function to extract color and size from SKU
+    const extractColorSize = (item: any) => {
+      let color = null;
+      let size = null;
+      
+      // First try from Zoho attributes if available
+      if (item.attribute_name1 && item.attribute_option_name1) {
+        if (item.attribute_name1 === 'COLOR') {
+          color = item.attribute_option_name1;
+        }
+      }
+      
+      if (item.attribute_name2 && item.attribute_option_name2) {
+        if (item.attribute_name2 === 'SIZE') {
+          size = item.attribute_option_name2;
+        }
+      }
+      
+      // If not found in attributes, try to parse from SKU
+      // Expected format: "AS14-NB/M" where NB=color, M=size
+      if ((!color || !size) && item.sku && item.sku.includes('-') && item.sku.includes('/')) {
+        const parts = item.sku.split('-');
+        if (parts.length >= 2) {
+          const afterDash = parts[1]; // "NB/M"
+          const colorSizeParts = afterDash.split('/');
+          if (colorSizeParts.length === 2) {
+            if (!color) color = colorSizeParts[0]; // "NB"
+            if (!size) size = colorSizeParts[1];   // "M"
+          }
+        }
+      }
+      
+      return { color, size };
+    };
+
+    // Group items by parent key for proper variant handling
     const productGroups = new Map();
     
     for (const item of zohoData.items) {
@@ -109,8 +161,8 @@ serve(async (req) => {
         continue;
       }
 
-      // Use the product name as the parent key for grouping
-      const parentKey = item.name;
+      // Extract parent key using the new logic
+      const parentKey = extractParentKey(item);
 
       if (!productGroups.has(parentKey)) {
         productGroups.set(parentKey, []);
@@ -121,30 +173,31 @@ serve(async (req) => {
     // Process each product group
     for (const [parentKey, items] of productGroups) {
       try {
+    // Process each product group
+    for (const [parentKey, items] of productGroups) {
+      try {
         // Build attributes schema from all variants
         const attributesSchema: any = {};
         const colorValues = new Set();
         const sizeValues = new Set();
         
         for (const item of items) {
-          if (item.attribute_name1 && item.attribute_option_name1) {
-            if (item.attribute_name1 === 'COLOR') {
-              colorValues.add(item.attribute_option_name1);
+          const { color, size } = extractColorSize(item);
+          
+          if (color) {
+            colorValues.add(color);
+            if (!attributesSchema['COLOR']) {
+              attributesSchema['COLOR'] = new Set();
             }
-            if (!attributesSchema[item.attribute_name1]) {
-              attributesSchema[item.attribute_name1] = new Set();
-            }
-            attributesSchema[item.attribute_name1].add(item.attribute_option_name1);
+            attributesSchema['COLOR'].add(color);
           }
           
-          if (item.attribute_name2 && item.attribute_option_name2) {
-            if (item.attribute_name2 === 'SIZE') {
-              sizeValues.add(item.attribute_option_name2);
+          if (size) {
+            sizeValues.add(size);
+            if (!attributesSchema['SIZE']) {
+              attributesSchema['SIZE'] = new Set();
             }
-            if (!attributesSchema[item.attribute_name2]) {
-              attributesSchema[item.attribute_name2] = new Set();
-            }
-            attributesSchema[item.attribute_name2].add(item.attribute_option_name2);
+            attributesSchema['SIZE'].add(size);
           }
         }
 
@@ -171,9 +224,9 @@ serve(async (req) => {
 
         const productData = {
           merchant_id: merchant.id,
-          title: parentKey,
-          external_id: parentKey,
-          description: baseItem.description || `Parent product ${baseItem.item_id}`,
+          title: parentKey, // Use parent key as title
+          external_id: parentKey, // Use parent key as external_id
+          description: baseItem.description || `Parent product for ${parentKey}`,
           price_sar: basePrice,
           stock: totalStock,
           category: baseItem.category_name || 'General',
@@ -228,6 +281,8 @@ serve(async (req) => {
 
         // Create/Update variants for each item in the group
         for (const item of items) {
+          const { color, size } = extractColorSize(item);
+          
           // Check if variant already exists
           let { data: existingVariant } = await supabase
             .from('product_variants')
@@ -242,13 +297,13 @@ serve(async (req) => {
             stock: parseInt(item.stock_on_hand) || 0,
             price_modifier: (parseFloat(item.rate) || 0) - basePrice,
             sku: item.sku || `${parentKey}-${item.item_id}`,
-            option1_name: item.attribute_name1 || null,
-            option1_value: item.attribute_option_name1 || null,
-            option2_name: item.attribute_name2 || null,
-            option2_value: item.attribute_option_name2 || null,
+            option1_name: color ? 'COLOR' : null,
+            option1_value: color || null,
+            option2_name: size ? 'SIZE' : null,
+            option2_value: size || null,
             // Keep legacy fields for compatibility
             variant_type: 'combination',
-            variant_value: [item.attribute_option_name1, item.attribute_option_name2].filter(Boolean).join('-') || 'default',
+            variant_value: [color, size].filter(Boolean).join('-') || 'default',
           };
 
           if (existingVariant) {
