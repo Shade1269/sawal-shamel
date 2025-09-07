@@ -233,7 +233,7 @@ const Payment = () => {
             const msg = emkanResponse?.error || emkanResponse?.description || "فشل في إنشاء طلب الدفع";
             throw new Error(msg);
           }
-        } catch (emkanError: any) {
+        } catch (emkanError) {
           console.error("Emkan payment error:", emkanError);
           const message = emkanError?.message || emkanError?.error || "فشل في إنشاء طلب الدفع";
           toast.error(`خطأ في معالجة الطلب\n${message}`);
