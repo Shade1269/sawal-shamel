@@ -23,10 +23,14 @@ serve(async (req) => {
 
     console.log('Starting cleanup of linguistic products for shop:', shopId);
 
-    // Helper function to check if product name follows code pattern (e.g., AS25-GR/XL)
+    // Helper function to check if product name is a coded product
     const isCodedProduct = (name: string) => {
-      // Pattern: Start with letters/numbers, dash, letters, slash, letters/numbers
-      return /^[A-Z0-9]+-[A-Z]+\/[A-Z0-9]+$/.test(name || '');
+      // Pattern 1: Simple codes like AS25, ABT1, AS19 (letters+numbers)
+      const simpleCodePattern = /^[A-Z]+[0-9]+$/;
+      // Pattern 2: Complex codes like AS25-GR/XL (with variants)
+      const complexCodePattern = /^[A-Z0-9]+-[A-Z]+\/[A-Z0-9]+$/;
+      
+      return simpleCodePattern.test(name || '') || complexCodePattern.test(name || '');
     };
 
     // Get merchant for this shop
