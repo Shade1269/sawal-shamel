@@ -203,11 +203,17 @@ serve(async (req) => {
           }
           product = updatedProduct;
 
-          // Delete existing variants to recreate them
-          await supabase
-            .from('product_variants')
-            .delete()
-            .eq('product_id', product.id);
+        // Delete existing variants and mappings to recreate them
+        await supabase
+          .from('product_variants')
+          .delete()
+          .eq('product_id', product.id);
+          
+        // Delete existing mappings for this product to recreate them
+        await supabase
+          .from('zoho_product_mapping')
+          .delete()
+          .eq('local_product_id', product.id);
 
         } else {
           // Create new product
@@ -259,14 +265,12 @@ serve(async (req) => {
             });
           }
 
-          // Create mapping for each Zoho item
-          if (isNewProduct) {
-            mappings.push({
-              shop_id: shopId,
-              zoho_item_id: item.item_id,
-              local_product_id: product.id
-            });
-          }
+          // Create mapping for each Zoho item (both new and updated products need mappings)
+          mappings.push({
+            shop_id: shopId,
+            zoho_item_id: item.item_id,
+            local_product_id: product.id
+          });
         }
 
         // Insert variants if any exist
