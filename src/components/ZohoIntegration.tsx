@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Loader2, RefreshCw, Settings, CheckCircle2, AlertCircle, Zap, Database } from 'lucide-react';
+import { Loader2, RefreshCw, Settings, CheckCircle2, AlertCircle, Zap, Database, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -28,6 +28,7 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
   const [accessToken, setAccessToken] = useState('');
   const [organizationId, setOrganizationId] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isCleaningUp, setIsCleaningUp] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -182,6 +183,37 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
       });
     } finally {
       setIsSyncing(false);
+    }
+  };
+
+  const cleanupLinguisticProducts = async () => {
+    setIsCleaningUp(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('cleanup-linguistic-products', {
+        body: {
+          shopId: shopId
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "تم الحذف",
+        description: data.message || `تم حذف ${data.deletedCount} منتج ذو أسماء لغوية`,
+      });
+
+      console.log('Cleanup result:', data);
+    } catch (error) {
+      console.error('Error cleaning up products:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في حذف المنتجات ذات الأسماء اللغوية",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCleaningUp(false);
     }
   };
 
@@ -410,6 +442,45 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
                     </span>
                   </>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <Trash2 className="w-5 h-5 text-destructive" />
+                <div>
+                  <CardTitle className="text-lg">حذف المنتجات اللغوية</CardTitle>
+                  <CardDescription>
+                    حذف المنتجات ذات الأسماء اللغوية التي تم إضافتها بالمنطق القديم
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col gap-4">
+                <p className="text-sm text-muted-foreground">
+                  سيتم حذف المنتجات التي لا تتبع نمط الترميز (مثل AS25-GR/XL) والتي تحمل أسماء لغوية طويلة
+                </p>
+                <Button 
+                  onClick={cleanupLinguisticProducts}
+                  disabled={isCleaningUp}
+                  variant="destructive"
+                  size="lg"
+                >
+                  {isCleaningUp ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      جاري الحذف...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      حذف المنتجات اللغوية
+                    </>
+                  )}
+                </Button>
               </div>
             </CardContent>
           </Card>
