@@ -23,8 +23,8 @@ serve(async (req) => {
 
     console.log('Starting Zoho products sync for shop:', shopId);
 
-    // Fetch item groups from Zoho Inventory API
-    const zohoResponse = await fetch(`https://www.zohoapis.com/inventory/v1/itemgroups?organization_id=${organizationId}`, {
+    // Fetch individual items from Zoho Inventory API to handle custom grouping
+    const zohoResponse = await fetch(`https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Zoho-oauthtoken ${accessToken}`,
@@ -39,12 +39,12 @@ serve(async (req) => {
     }
 
     const zohoData = await zohoResponse.json();
-    console.log('Zoho item groups fetched:', zohoData.itemgroups?.length || 0);
+    console.log('Zoho items fetched:', zohoData.items?.length || 0);
 
-    if (!zohoData.itemgroups || zohoData.itemgroups.length === 0) {
+    if (!zohoData.items || zohoData.items.length === 0) {
       return new Response(JSON.stringify({ 
         success: true, 
-        message: 'No item groups found in Zoho', 
+        message: 'No items found in Zoho', 
         synced: 0 
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -97,8 +97,9 @@ serve(async (req) => {
       merchant = newMerchant;
     }
 
-    // Helper function to extract color and size from SKU
-    const extractColorSize = (item: any) => {
+    // Helper function to extract base model, color and size from SKU
+    const extractProductInfo = (item: any) => {
+      let baseModel = null;
       let color = null;
       let size = null;
       
@@ -115,54 +116,58 @@ serve(async (req) => {
         }
       }
       
-      // If not found in attributes, try to parse from SKU
-      // Expected format: "AS14-NB/M" where NB=color, M=size
-      if ((!color || !size) && item.sku && item.sku.includes('-') && item.sku.includes('/')) {
+      // Parse from SKU - Expected format: "AS14-NB/M" where AS14=model, NB=color, M=size
+      if (item.sku && item.sku.includes('-')) {
         const parts = item.sku.split('-');
         if (parts.length >= 2) {
-          const afterDash = parts[1]; // "NB/M"
-          const colorSizeParts = afterDash.split('/');
-          if (colorSizeParts.length === 2) {
-            if (!color) color = colorSizeParts[0]; // "NB"
-            if (!size) size = colorSizeParts[1];   // "M"
+          baseModel = parts[0]; // "AS14"
+          
+          if (parts[1].includes('/')) {
+            const afterDash = parts[1]; // "NB/M"
+            const colorSizeParts = afterDash.split('/');
+            if (colorSizeParts.length === 2) {
+              if (!color) color = colorSizeParts[0]; // "NB"
+              if (!size) size = colorSizeParts[1];   // "M"
+            }
           }
         }
       }
       
-      return { color, size };
+      // Fallback: use item name as base model if SKU parsing fails
+      if (!baseModel) {
+        baseModel = item.name?.split('-')[0] || item.name || `Item_${item.item_id}`;
+      }
+      
+      return { baseModel, color, size };
     };
 
     let syncedCount = 0;
     const mappings = [];
 
-    // Process each item group
-    for (const itemGroup of zohoData.itemgroups) {
+    // Group items by base model
+    const itemsByModel = new Map();
+    
+    for (const item of zohoData.items) {
+      const { baseModel } = extractProductInfo(item);
+      if (!itemsByModel.has(baseModel)) {
+        itemsByModel.set(baseModel, []);
+      }
+      itemsByModel.get(baseModel).push(item);
+    }
+
+    console.log(`Found ${itemsByModel.size} unique product models from ${zohoData.items.length} items`);
+
+    // Process each product model
+    for (const [baseModel, modelItems] of itemsByModel) {
       try {
-        // Skip if item group already exists
-        if (existingZohoIds.has(itemGroup.group_id)) {
+        // Skip if any item in this model already exists
+        const modelItemIds = modelItems.map(item => item.item_id);
+        const hasExistingItems = modelItemIds.some(id => existingZohoIds.has(id));
+        if (hasExistingItems) {
           continue;
         }
 
-        // Fetch variants (items) for this item group
-        const variantsResponse = await fetch(`https://www.zohoapis.com/inventory/v1/itemgroups/${itemGroup.group_id}/items?organization_id=${organizationId}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Zoho-oauthtoken ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!variantsResponse.ok) {
-          console.error(`Failed to fetch variants for group ${itemGroup.group_id}:`, variantsResponse.status);
-          continue;
-        }
-
-        const variantsData = await variantsResponse.json();
-        const variants = variantsData.items || [];
-
-        if (variants.length === 0) {
-          continue;
-        }
+        const variants = modelItems;
 
         // Build attributes schema from all variants
         const attributesSchema: any = {};
@@ -170,7 +175,7 @@ serve(async (req) => {
         const sizeValues = new Set();
         
         for (const variant of variants) {
-          const { color, size } = extractColorSize(variant);
+          const { color, size } = extractProductInfo(variant);
           
           if (color) {
             colorValues.add(color);
@@ -195,14 +200,12 @@ serve(async (req) => {
           finalAttributesSchema[key] = Array.from(values as Set<string>);
         }
 
-        // Use item group info for parent product
+        // Use first item as base for parent product
         const baseVariant = variants[0];
         
-        // Process product images from item group or first variant
+        // Process product images from first variant
         let imageUrls = [];
-        if (itemGroup.image_documents && itemGroup.image_documents.length > 0) {
-          imageUrls = itemGroup.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
-        } else if (baseVariant.image_documents && baseVariant.image_documents.length > 0) {
+        if (baseVariant.image_documents && baseVariant.image_documents.length > 0) {
           imageUrls = baseVariant.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
         }
 
@@ -214,14 +217,14 @@ serve(async (req) => {
 
         const productData = {
           merchant_id: merchant.id,
-          title: itemGroup.group_name, // Use item group name as title
-          external_id: itemGroup.group_id, // Use item group ID as external_id
-          description: itemGroup.description || `Item group: ${itemGroup.group_name}`,
+          title: baseModel, // Use base model as title
+          external_id: `model_${baseModel}`, // Use custom external_id for model
+          description: `منتج ${baseModel} متوفر بألوان ومقاسات مختلفة`,
           price_sar: basePrice,
           stock: totalStock,
           category: baseVariant.category_name || 'General',
           image_urls: imageUrls,
-          is_active: itemGroup.status === 'active',
+          is_active: baseVariant.status === 'active',
           commission_rate: null,
           attributes_schema: finalAttributesSchema,
         };
@@ -230,7 +233,7 @@ serve(async (req) => {
         let { data: existingProduct } = await supabase
           .from('products')
           .select('id')
-          .eq('external_id', itemGroup.group_id)
+          .eq('external_id', `model_${baseModel}`)
           .eq('merchant_id', merchant.id)
           .single();
 
@@ -242,7 +245,7 @@ serve(async (req) => {
             .update({
               stock: totalStock,
               attributes_schema: finalAttributesSchema,
-              is_active: itemGroup.status === 'active',
+              is_active: baseVariant.status === 'active',
               updated_at: new Date().toISOString()
             })
             .eq('id', existingProduct.id)
@@ -269,9 +272,9 @@ serve(async (req) => {
           product = newProduct;
         }
 
-        // Create/Update variants for each item in the group
+        // Create/Update variants for each item in the model
         for (const variant of variants) {
-          const { color, size } = extractColorSize(variant);
+          const { color, size } = extractProductInfo(variant);
           
           // Check if variant already exists
           let { data: existingVariant } = await supabase
@@ -286,7 +289,7 @@ serve(async (req) => {
             external_id: variant.item_id,
             stock: parseInt(variant.stock_on_hand) || 0,
             price_modifier: (parseFloat(variant.rate) || 0) - basePrice,
-            sku: variant.sku || `${itemGroup.group_name}-${variant.item_id}`,
+            sku: variant.sku || `${baseModel}-${variant.item_id}`,
             option1_name: color ? 'COLOR' : null,
             option1_value: color || null,
             option2_name: size ? 'SIZE' : null,
@@ -334,18 +337,11 @@ serve(async (req) => {
           });
         }
 
-        // Also create mapping for the item group itself
-        mappings.push({
-          shop_id: shopId,
-          zoho_item_id: itemGroup.group_id,
-          local_product_id: product.id
-        });
-
         syncedCount++;
-        console.log(`Synced item group: ${itemGroup.group_name} with ${variants.length} variants`);
+        console.log(`Synced product model: ${baseModel} with ${variants.length} variants`);
 
       } catch (error) {
-        console.error(`Error processing item group ${itemGroup.group_name}:`, error);
+        console.error(`Error processing product model ${baseModel}:`, error);
         continue;
       }
     }
@@ -374,7 +370,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ 
       success: true, 
-      message: `Successfully synced ${syncedCount} variants from ${zohoData.itemgroups.length} item groups`,
+      message: `Successfully synced ${syncedCount} product models from ${zohoData.items.length} items`,
       synced: syncedCount
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
