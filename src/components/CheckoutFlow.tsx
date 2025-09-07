@@ -204,6 +204,62 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
     const orderNumber = `ORD-${Date.now().toString().slice(-6)}`;
     
     try {
+      // First, save the order to database
+      console.log('Creating order in database...', { orderNumber, shopId, cart });
+      
+      const orderData = {
+        shop_id: shopId,
+        customer_name: customerInfo.name,
+        customer_phone: customerInfo.phone,
+        subtotal_sar: subtotal,
+        vat_sar: 0, // No VAT for now
+        total_sar: totalPrice,
+        payment_method: selectedPayment,
+        shipping_address: {
+          address: customerInfo.address,
+          city: customerInfo.city,
+          area: customerInfo.area,
+          email: customerInfo.email
+        },
+        status: 'PENDING' as const
+      };
+
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert(orderData)
+        .select()
+        .single();
+
+      if (orderError) {
+        console.error('Error creating order:', orderError);
+        throw new Error('فشل في إنشاء الطلب');
+      }
+
+      console.log('Order created successfully:', order);
+
+      // Create order items
+      const orderItems = cart.map(item => ({
+        order_id: order.id,
+        product_id: item.product.id,
+        merchant_id: shopId, // Will be updated when we have proper merchant linking
+        title_snapshot: item.product.title,
+        quantity: item.quantity,
+        unit_price_sar: item.product.final_price || item.product.price_sar,
+        line_total_sar: (item.product.final_price || item.product.price_sar) * item.quantity
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) {
+        console.error('Error creating order items:', itemsError);
+        // Don't fail the whole process for this, but log it
+        console.warn('Order items creation failed, but order was saved');
+      } else {
+        console.log('Order items created successfully');
+      }
+
       const isEmkan = /[إا]مكان/.test(selectedPayment);
       if (isEmkan) {
         // Show processing message for Emkan payment
@@ -273,6 +329,16 @@ export const CheckoutFlow = ({ cart, shopId, onBack, onComplete }: CheckoutFlowP
           title: "جاري معالجة الطلب",
           description: "يرجى الانتظار..."
         });
+        
+        // For cash on delivery, mark order as confirmed
+        const { error: updateError } = await supabase
+          .from('orders')
+          .update({ status: 'CONFIRMED' as const })
+          .eq('id', order.id);
+
+        if (updateError) {
+          console.error('Error updating order status:', updateError);
+        }
         
         // Simulate payment processing for other methods
         setTimeout(() => {
