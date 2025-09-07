@@ -92,29 +92,33 @@ serve(async (req) => {
       }
     }
 
-    const emkanOrderId = (paymentRequest.orderInfo.orderId || "").startsWith("ORD-")
-      ? paymentRequest.orderInfo.orderId
-      : `ORD-${paymentRequest.orderInfo.orderId}`;
+    // Create unique order ID with timestamp to ensure uniqueness
+    const timestamp = new Date().getTime();
+    const emkanOrderId = `ORD-${paymentRequest.orderInfo.orderId}-${timestamp}`;
 
     const emkanPayload = {
       merchantId: merchantId,
-      amount: paymentRequest.amount,
+      amount: Math.round(paymentRequest.amount * 100) / 100, // Ensure 2 decimal places
       currency: paymentRequest.currency || "SAR",
       orderId: emkanOrderId,
-      items: paymentRequest.orderInfo.items.map((item) => ({
+      items: paymentRequest.orderInfo.items.map((item, index) => ({
+        id: `item-${index + 1}`,
         name: item.name,
         quantity: item.quantity,
-        price: item.price,
+        price: Math.round(item.price * 100) / 100,
+        total: Math.round(item.price * item.quantity * 100) / 100
       })),
       customerInfo: {
         fullName: paymentRequest.customerInfo.name,
-        email: paymentRequest.customerInfo.email || undefined,
+        email: paymentRequest.customerInfo.email || "",
         phone: normalizedPhone,
+        address: paymentRequest.customerInfo.address || ""
       },
       redirectUrls: {
         successUrl: paymentRequest.redirectUrls.successUrl,
         cancelUrl: paymentRequest.redirectUrls.cancelUrl,
       },
+      description: `Order payment for ${emkanOrderId}`
     };
 
     console.log("Sending request to Emkan API...");
@@ -130,16 +134,41 @@ serve(async (req) => {
       body: JSON.stringify(emkanPayload),
     });
 
+    // Enhanced logging for better debugging
+    console.log("Emkan API response status:", emkanResponse.status);
+    console.log("Emkan API response headers:", Object.fromEntries(emkanResponse.headers.entries()));
+    
+    const responseText = await emkanResponse.text();
+    console.log("Emkan API raw response:", responseText);
+    
     if (!emkanResponse.ok) {
-      const raw = await emkanResponse.text();
       let parsed: any = null;
-      try { parsed = JSON.parse(raw); } catch { /* ignore */ }
-      console.error("Emkan API error:", emkanResponse.status, raw);
-      throw new Error(`Emkan API error ${emkanResponse.status}: ${parsed?.message || parsed?.error || raw}`);
+      try { 
+        parsed = JSON.parse(responseText); 
+      } catch (e) { 
+        console.error("Failed to parse error response:", e);
+      }
+      
+      const errorMessage = parsed?.message || parsed?.error || parsed?.description || responseText;
+      console.error("Emkan API error details:", {
+        status: emkanResponse.status,
+        statusText: emkanResponse.statusText,
+        error: errorMessage,
+        fullResponse: parsed
+      });
+      
+      throw new Error(`Emkan API error ${emkanResponse.status}: ${errorMessage}`);
     }
 
-    const emkanResult = await emkanResponse.json();
-    console.log("Emkan API response:", emkanResult);
+    let emkanResult: any;
+    try {
+      emkanResult = JSON.parse(responseText);
+    } catch (e) {
+      console.error("Failed to parse success response:", e);
+      throw new Error(`Invalid JSON response from Emkan API: ${responseText}`);
+    }
+    
+    console.log("Emkan API parsed response:", JSON.stringify(emkanResult, null, 2));
 
     // Store payment record in database for tracking
     if (user) {
