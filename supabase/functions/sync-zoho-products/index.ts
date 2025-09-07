@@ -341,7 +341,7 @@ serve(async (req) => {
           local_product_id: product.id
         });
 
-        syncedCount += variants.length;
+        syncedCount++;
         console.log(`Synced item group: ${itemGroup.group_name} with ${variants.length} variants`);
 
       } catch (error) {
