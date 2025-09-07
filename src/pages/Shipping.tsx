@@ -10,6 +10,7 @@ import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useStoreSettings, getEnabledShippingMethods } from "@/hooks/useStoreSettings";
+import { safeJsonParse } from "@/lib/utils";
 
 interface CartItem {
   id: string;
@@ -67,20 +68,22 @@ const Shipping = () => {
       
       setShop(shopData);
 
-      // Load cart from localStorage
+      // Load cart from localStorage (safe)
       const savedCart = localStorage.getItem(`cart_${slug}`);
-      if (savedCart) {
-        setCartItems(JSON.parse(savedCart));
+      const parsedCart = safeJsonParse<CartItem[]>(savedCart, []);
+      if (parsedCart.length > 0) {
+        setCartItems(parsedCart);
       } else {
         // If no cart, redirect to store
         navigate(`/store/${slug}`);
         return;
       }
 
-      // Load saved customer info
+      // Load saved customer info (safe)
       const savedCustomerInfo = localStorage.getItem(`customer_info_${slug}`);
-      if (savedCustomerInfo) {
-        setCustomerInfo(JSON.parse(savedCustomerInfo));
+      const parsedInfo = safeJsonParse<CustomerInfo | null>(savedCustomerInfo, null);
+      if (parsedInfo) {
+        setCustomerInfo(parsedInfo);
       }
 
       // Load saved shipping method
