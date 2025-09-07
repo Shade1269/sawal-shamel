@@ -187,6 +187,7 @@ const Payment = () => {
       // Handle Emkan payment if selected
       if (selectedPayment === "emkan") {
         try {
+          console.log("Calling create-emkan-payment function...");
           const { data: emkanResponse, error: emkanError } = await supabase.functions.invoke(
             'create-emkan-payment',
             {
@@ -215,7 +216,13 @@ const Payment = () => {
             }
           );
 
-          if (emkanError) throw emkanError;
+          console.log("Emkan response:", emkanResponse);
+          console.log("Emkan error:", emkanError);
+
+          if (emkanError) {
+            console.error("Emkan API call failed:", emkanError);
+            throw emkanError;
+          }
 
           const redirect = emkanResponse?.checkoutUrl || emkanResponse?.redirectUrl;
           if (redirect) {
