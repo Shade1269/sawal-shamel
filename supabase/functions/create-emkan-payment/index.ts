@@ -72,18 +72,31 @@ serve(async (req) => {
       throw new Error("Emkan API credentials not configured");
     }
 
-    // Create payment session with Emkan based on actual API documentation
+    // Create payment session with Emkan based on requested API shape
+    const merchantId = Deno.env.get("EMKAN_MERCHANT_ID");
+    if (!merchantId) {
+      throw new Error("EMKAN_MERCHANT_ID not configured");
+    }
+
     const emkanPayload = {
-      merchantId: "556480", // Merchant ID from your account
-      requestId: `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, // Unique request ID
-      callerReferenceNumber: paymentRequest.orderInfo.orderId,
-      orderItems: paymentRequest.orderInfo.items.map(item => ({
-        itemPrice: item.price,
+      merchantId: merchantId,
+      amount: paymentRequest.amount,
+      currency: paymentRequest.currency || "SAR",
+      orderId: paymentRequest.orderInfo.orderId,
+      items: paymentRequest.orderInfo.items.map((item) => ({
+        name: item.name,
         quantity: item.quantity,
-        itemCode: `item_${Math.random().toString(36).substr(2, 9)}`,
-        createAt: new Date().toISOString()
+        price: item.price,
       })),
-      channel: "BNPL_MERCHANT"
+      customerInfo: {
+        fullName: paymentRequest.customerInfo.name,
+        email: paymentRequest.customerInfo.email || undefined,
+        phone: paymentRequest.customerInfo.phone,
+      },
+      redirectUrls: {
+        successUrl: paymentRequest.redirectUrls.successUrl,
+        cancelUrl: paymentRequest.redirectUrls.cancelUrl,
+      },
     };
 
     console.log("Sending request to Emkan API...");
@@ -119,23 +132,21 @@ serve(async (req) => {
       await supabaseService.from("payments").insert({
         order_id: paymentRequest.orderInfo.orderId,
         provider: "emkan",
-        provider_ref: emkanResult.orderCode || emkanResult.requestId,
+        provider_ref: emkanResult.orderId || emkanResult.orderCode || emkanResult.requestId || null,
         amount_sar: paymentRequest.amount,
-        status: emkanResult.statusCode === "CREATED" ? "pending" : "failed",
+        status: (emkanResult.statusCode && ["CREATED", "PENDING", "INITIATED"].includes(emkanResult.statusCode)) ? "pending" : "failed",
         created_at: new Date().toISOString()
       });
     }
 
     // Return the response based on Emkan API structure
-    if (emkanResult.statusCode === "CREATED") {
+    if (emkanResult.statusCode === "CREATED" || emkanResult.checkoutUrl || emkanResult.redirectUrl) {
       return new Response(JSON.stringify({ 
         success: true,
-        orderCode: emkanResult.orderCode,
-        requestId: emkanResult.requestId,
+        orderId: emkanResult.orderId || paymentRequest.orderInfo.orderId,
+        checkoutUrl: emkanResult.checkoutUrl || emkanResult.redirectUrl || emkanResult.paymentUrl || null,
         statusCode: emkanResult.statusCode,
         description: emkanResult.description || "Order created successfully",
-        // For BNPL, there might be a redirect URL in the response
-        redirectUrl: emkanResult.redirectUrl || null
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,

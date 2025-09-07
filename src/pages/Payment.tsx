@@ -202,9 +202,10 @@ const Payment = () => {
 
           if (emkanError) throw emkanError;
 
-          if (emkanResponse?.redirectUrl) {
+          const redirect = emkanResponse?.checkoutUrl || emkanResponse?.redirectUrl;
+          if (redirect) {
             // Redirect to Emkan payment page
-            window.location.href = emkanResponse.redirectUrl;
+            window.location.href = redirect;
             return;
           }
         } catch (emkanError) {
