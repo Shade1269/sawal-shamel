@@ -118,6 +118,28 @@ const StoreFront = () => {
     staleTime: 5000, // Consider data stale after 5 seconds
   });
 
+  // Fetch store settings for checkout
+  const { data: storeSettings } = useQuery({
+    queryKey: ["store-settings", shop?.id],
+    queryFn: async () => {
+      if (!shop?.id) return null;
+      
+      const { data, error } = await supabase
+        .from("store_settings")
+        .select("*")
+        .eq("shop_id", shop.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching store settings:', error);
+        return { payment_providers: [], shipping_companies: [] };
+      }
+      
+      return data || { payment_providers: [], shipping_companies: [] };
+    },
+    enabled: !!shop?.id,
+  });
+
   const addToCart = (product: Product) => {
     // Check if product has variants and if they are selected
     if (product.variants && product.variants.length > 0) {
@@ -668,7 +690,7 @@ const StoreFront = () => {
               shopId={shop?.id || ''}
               onCancel={handleBackToCart}
               onOrderComplete={handleCheckoutComplete}
-              storeSettings={shopStoreSettings}
+              storeSettings={storeSettings}
             />
           </div>
         </div>
