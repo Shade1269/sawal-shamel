@@ -125,11 +125,43 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
 
     setIsSyncing(true);
     try {
+      // First, refresh the Zoho access token
+      console.log('Refreshing Zoho access token...');
+      const { data: refreshData, error: refreshError } = await supabase.functions.invoke('refresh-zoho-token');
+      
+      if (refreshError) {
+        console.error('Token refresh failed:', refreshError);
+        toast({
+          title: "خطأ في تجديد الرمز المميز",
+          description: "فشل في تجديد رمز الوصول من Zoho",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      console.log('Token refreshed successfully');
+      
+      // Reload integration data to get the new token
+      await loadZohoIntegration();
+      
+      // Get updated integration data
+      const { data: updatedIntegration } = await supabase
+        .from('zoho_integration')
+        .select('*')
+        .eq('shop_id', shopId)
+        .single();
+      
+      if (!updatedIntegration) {
+        throw new Error('Failed to get updated integration data');
+      }
+      
+      // Now sync products with the new token
+      console.log('Starting product sync...');
       const { data, error } = await supabase.functions.invoke('sync-zoho-products', {
         body: {
           shopId,
-          accessToken: integration.access_token,
-          organizationId: integration.organization_id,
+          accessToken: updatedIntegration.access_token,
+          organizationId: updatedIntegration.organization_id,
         },
       });
 
