@@ -1118,6 +1118,44 @@ export type Database = {
           },
         ]
       }
+      zoho_sync_settings: {
+        Row: {
+          auto_sync_enabled: boolean
+          created_at: string
+          id: string
+          last_auto_sync_at: string | null
+          shop_id: string
+          sync_frequency: string
+          updated_at: string
+        }
+        Insert: {
+          auto_sync_enabled?: boolean
+          created_at?: string
+          id?: string
+          last_auto_sync_at?: string | null
+          shop_id: string
+          sync_frequency?: string
+          updated_at?: string
+        }
+        Update: {
+          auto_sync_enabled?: boolean
+          created_at?: string
+          id?: string
+          last_auto_sync_at?: string | null
+          shop_id?: string
+          sync_frequency?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zoho_sync_settings_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: true
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
