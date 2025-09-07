@@ -232,7 +232,6 @@ const Payment = () => {
           toast.error(`خطأ في معالجة الطلب\n${message}`);
           return;
         }
-        }
       }
 
       // Clear cart and saved data
