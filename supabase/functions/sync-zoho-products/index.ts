@@ -173,9 +173,6 @@ serve(async (req) => {
     // Process each product group
     for (const [parentKey, items] of productGroups) {
       try {
-    // Process each product group
-    for (const [parentKey, items] of productGroups) {
-      try {
         // Build attributes schema from all variants
         const attributesSchema: any = {};
         const colorValues = new Set();
