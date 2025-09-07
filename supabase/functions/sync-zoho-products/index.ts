@@ -100,10 +100,17 @@ serve(async (req) => {
     let syncedCount = 0;
     const mappings = [];
 
-    // Helper function to check if product name follows code pattern (e.g., AS25-GR/XL)
+    // Helper function to check if product name follows code pattern
     const isCodedProduct = (name) => {
-      // Pattern: Start with letters/numbers, dash, letters, slash, letters/numbers
-      return /^[A-Z0-9]+-[A-Z]+\/[A-Z0-9]+$/.test(name || '');
+      if (!name) return false;
+      // Enhanced patterns to match various coded formats:
+      // - AS25-GR/XL, AS10-BL/M (slash format)
+      // - AS10-RE-XL, AS10-RE-L, AS10-RE-XXL (dash format)
+      const patterns = [
+        /^[A-Z0-9]+-[A-Z]+\/[A-Z0-9]+$/,    // AS25-GR/XL format
+        /^[A-Z0-9]+-[A-Z]+-[A-Z0-9]*$/      // AS10-RE-XL format
+      ];
+      return patterns.some(pattern => pattern.test(name));
     };
 
     // Filter products to only include coded products (exclude linguistic/descriptive names)
@@ -121,7 +128,7 @@ serve(async (req) => {
     const productGroups = new Map();
     
     for (const item of codedProducts) {
-      // Extract product model from name (e.g., "AS25-GR/XL" -> "AS25")
+      // Extract product model from name (e.g., "AS25-GR/XL" or "AS10-RE-XL" -> "AS25" or "AS10")
       const modelMatch = item.name?.match(/^([A-Z0-9]+)-/);
       const modelCode = modelMatch ? modelMatch[1] : item.name || 'UNKNOWN';
       
@@ -203,17 +210,11 @@ serve(async (req) => {
           }
           product = updatedProduct;
 
-        // Delete existing variants and mappings to recreate them
-        await supabase
-          .from('product_variants')
-          .delete()
-          .eq('product_id', product.id);
-          
-        // Delete existing mappings for this product to recreate them
-        await supabase
-          .from('zoho_product_mapping')
-          .delete()
-          .eq('local_product_id', product.id);
+          // Clear existing mappings for this product to recreate them
+          await supabase
+            .from('zoho_product_mapping')
+            .delete()
+            .eq('local_product_id', product.id);
 
         } else {
           // Create new product
@@ -237,14 +238,24 @@ serve(async (req) => {
         const variants = [];
         
         for (const item of items) {
-          // Parse color and size from item name (e.g., "AS25-GR/XL" -> color: "GR", size: "XL")
-          const variantMatch = item.name?.match(/^[A-Z0-9]+-([A-Z]+)\/([A-Z0-9]+)$/);
+          // Parse color and size from item name supporting multiple formats
+          let variantMatch = item.name?.match(/^[A-Z0-9]+-([A-Z]+)\/([A-Z0-9]*)$/); // AS25-GR/XL
+          let colorCode, sizeCode;
           
           if (variantMatch) {
-            const colorCode = variantMatch[1]; // e.g., "GR", "BL", "RE"
-            const sizeCode = variantMatch[2];  // e.g., "XL", "M", "L"
-
-            // Create color variant
+            colorCode = variantMatch[1]; // e.g., "GR", "BL", "RE"
+            sizeCode = variantMatch[2];  // e.g., "XL", "M", "L"
+          } else {
+            // Try dash format: AS10-RE-XL
+            variantMatch = item.name?.match(/^[A-Z0-9]+-([A-Z]+)-([A-Z0-9]*)$/);
+            if (variantMatch) {
+              colorCode = variantMatch[1];
+              sizeCode = variantMatch[2];
+            }
+          }
+          
+          if (colorCode) {
+            // Add color variant
             variants.push({
               product_id: product.id,
               variant_type: 'color',
@@ -254,15 +265,17 @@ serve(async (req) => {
               sku: `${modelCode}-${colorCode}`
             });
 
-            // Create size variant
-            variants.push({
-              product_id: product.id,
-              variant_type: 'size',
-              variant_value: sizeCode,
-              stock: item.available_stock || 0,
-              price_modifier: 0,
-              sku: `${modelCode}-${colorCode}-${sizeCode}`
-            });
+            // Add size variant if exists
+            if (sizeCode) {
+              variants.push({
+                product_id: product.id,
+                variant_type: 'size',
+                variant_value: sizeCode,
+                stock: item.available_stock || 0,
+                price_modifier: 0,
+                sku: `${modelCode}-${colorCode}-${sizeCode}`
+              });
+            }
           }
 
           // Create mapping for each Zoho item (both new and updated products need mappings)
@@ -273,16 +286,41 @@ serve(async (req) => {
           });
         }
 
-        // Insert variants if any exist
+        // Process variants using upsert to avoid duplicates
         if (variants.length > 0) {
-          const { error: variantsError } = await supabase
-            .from('product_variants')
-            .insert(variants);
+          console.log(`Processing ${variants.length} variants for product ${modelCode}`);
+          
+          // Group variants by type and value to avoid duplicates
+          const uniqueVariants = variants.reduce((acc, variant) => {
+            const key = `${variant.variant_type}-${variant.variant_value}`;
+            if (!acc.has(key)) {
+              acc.set(key, variant);
+            } else {
+              // Accumulate stock for duplicates
+              const existing = acc.get(key);
+              existing.stock += variant.stock;
+            }
+            return acc;
+          }, new Map());
 
-          if (variantsError) {
-            console.error('Error creating product variants:', variantsError);
-          } else {
-            console.log(`Created ${variants.length} variants for model: ${modelCode}`);
+          // Clear existing variants for this product to recreate them
+          await supabase
+            .from('product_variants')
+            .delete()
+            .eq('product_id', product.id);
+
+          // Insert unique variants
+          const uniqueVariantsList = Array.from(uniqueVariants.values());
+          if (uniqueVariantsList.length > 0) {
+            const { error: variantsError } = await supabase
+              .from('product_variants')
+              .insert(uniqueVariantsList);
+
+            if (variantsError) {
+              console.error(`Error creating product variants for ${modelCode}:`, variantsError);
+            } else {
+              console.log(`Created ${uniqueVariantsList.length} unique variants for model: ${modelCode}`);
+            }
           }
         }
 
