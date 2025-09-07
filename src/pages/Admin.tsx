@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import UserProfileDialog from "@/components/UserProfileDialog";
 import UserSettingsMenu from "@/components/UserSettingsMenu";
+import ZohoIntegration from "@/components/ZohoIntegration";
 import { 
   Shield, 
   Ban, 
@@ -58,7 +59,11 @@ const Admin = () => {
   const [moderationReason, setModerationReason] = useState("");
   const [moderationDuration, setModerationDuration] = useState("24h");
   const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+const [loading, setLoading] = useState(false);
+
+// Zoho integration admin state
+const [zohoShops, setZohoShops] = useState<any[]>([]);
+const [selectedZohoShopId, setSelectedZohoShopId] = useState<string>("");
   
   // Products Management States
   const [products, setProducts] = useState<any[]>([]);
@@ -610,6 +615,23 @@ const Admin = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAllowed]);
 
+  // Load shops for Zoho admin integration
+  useEffect(() => {
+    if (!isAllowed) return;
+    (async () => {
+      const { data, error } = await supabase
+        .from('shops')
+        .select('id, display_name, slug')
+        .order('created_at', { ascending: false });
+      if (!error) {
+        setZohoShops(data || []);
+        if (data && data.length > 0) {
+          setSelectedZohoShopId((prev) => prev || data[0].id);
+        }
+      }
+    })();
+  }, [isAllowed]);
+
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -635,6 +657,39 @@ const Admin = () => {
         </div>
         <p className="text-muted-foreground">إدارة شاملة للمستخدمين والغرف والصلاحيات</p>
       </header>
+
+      <section aria-labelledby="zoho-integration-admin">
+        <Card>
+          <CardHeader>
+            <CardTitle id="zoho-integration-admin" className="text-2xl">تكامل Zoho للمتاجر</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>اختر المتجر</Label>
+                <Select value={selectedZohoShopId} onValueChange={setSelectedZohoShopId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="اختر متجراً" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {zohoShops.map((s) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.display_name || s.slug || s.id}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {selectedZohoShopId ? (
+              <ZohoIntegration shopId={selectedZohoShopId} />
+            ) : (
+              <p className="text-muted-foreground">يرجى اختيار متجر لعرض إعدادات التكامل.</p>
+            )}
+          </CardContent>
+        </Card>
+      </section>
 
       <Card>
         <CardContent className="p-6">
