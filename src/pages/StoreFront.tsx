@@ -141,48 +141,28 @@ const StoreFront = () => {
   });
 
   const addToCart = (product: Product) => {
-    // Check if product has variants and if they are selected
-    if (product.variants && product.variants.length > 0) {
-      const productVariants = selectedVariants[product.id] || {};
-      const variantTypes = [...new Set(product.variants.map(v => v.variant_type))];
-      
-      // Check if all required variant types are selected
-      const missingVariants = variantTypes.filter(type => !productVariants[type]);
-      if (missingVariants.length > 0) {
-        toast({
-          title: "اختيار مطلوب",
-          description: `يجب اختيار: ${missingVariants.join(', ')}`,
-          variant: "destructive"
-        });
-        return;
-      }
+    const cartKey = `cart_${slug}`;
+    const existingCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
+    
+    const existingItemIndex = existingCart.findIndex((item: any) => item.id === product.id);
+    
+    if (existingItemIndex > -1) {
+      existingCart[existingItemIndex].quantity += 1;
+    } else {
+      existingCart.push({
+        id: product.id,
+        name: product.title,
+        price: product.price_sar,
+        quantity: 1,
+        image: product.image_urls?.[0]
+      });
     }
-
-    const quantity = productQuantities[product.id] || 1;
     
-    setCart(prev => {
-      const productVariants = selectedVariants[product.id] || {};
-      const existingItemIndex = prev.findIndex(item => 
-        item.product.id === product.id && 
-        JSON.stringify(item.selectedVariants) === JSON.stringify(productVariants)
-      );
-      
-      if (existingItemIndex >= 0) {
-        const newCart = [...prev];
-        newCart[existingItemIndex].quantity += quantity;
-        return newCart;
-      }
-      
-      return [...prev, { 
-        product, 
-        quantity, 
-        selectedVariants: Object.keys(productVariants).length > 0 ? productVariants : undefined 
-      }];
-    });
-    
+    localStorage.setItem(cartKey, JSON.stringify(existingCart));
+    setCart(existingCart);
     toast({
       title: "تمت الإضافة للسلة",
-      description: `تم إضافة ${quantity} من ${product.title} إلى سلة التسوق`,
+      description: `تم إضافة ${product.title} إلى سلة التسوق`,
     });
   };
 

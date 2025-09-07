@@ -12,6 +12,10 @@ import ChatRoom from "./pages/ChatRoom";
 import Inventory from "./pages/Inventory";
 import StoreManagement from "./pages/StoreManagement";
 import StoreFront from "./pages/StoreFront";
+import Cart from "./pages/Cart";
+import Shipping from "./pages/Shipping";
+import Payment from "./pages/Payment";
+import OrderConfirmation from "./pages/OrderConfirmation";
 import NotFound from "./pages/NotFound";
 import { lazy, Suspense } from "react";
 const AdminPageLazy = lazy(() => import("./pages/Admin"));
@@ -41,6 +45,10 @@ const AppContent = () => {
       <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
       <Route path="/store-management" element={<ProtectedRoute><StoreManagement /></ProtectedRoute>} />
       <Route path="/store/:slug" element={<StoreFront />} />
+      <Route path="/store/:slug/cart" element={<Cart />} />
+      <Route path="/store/:slug/shipping" element={<Shipping />} />
+      <Route path="/store/:slug/payment" element={<Payment />} />
+      <Route path="/store/:slug/order-confirmation/:orderId" element={<OrderConfirmation />} />
       <Route path="/admin" element={<ProtectedRoute><AdminPageLazy /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
