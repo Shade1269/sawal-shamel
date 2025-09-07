@@ -211,12 +211,13 @@ const Payment = () => {
             window.location.href = redirect;
             return;
           }
-        } catch (emkanError) {
+        } catch (emkanError: any) {
           console.error("Emkan payment error:", emkanError);
-          toast.error("حدث خطأ في الدفع عبر إمكان");
+          const message = emkanError?.message || emkanError?.error || "فشل في إنشاء طلب الدفع";
+          toast.error(`خطأ في معالجة الطلب\n${message}`);
           return;
         }
-      }
+        }
 
       // Clear cart and saved data
       localStorage.removeItem(`cart_${slug}`);

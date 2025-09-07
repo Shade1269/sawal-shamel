@@ -78,11 +78,29 @@ serve(async (req) => {
       throw new Error("EMKAN_MERCHANT_ID not configured");
     }
 
+    const rawPhone = paymentRequest.customerInfo.phone || "";
+    let normalizedPhone = rawPhone.trim();
+    if (!normalizedPhone.startsWith("+966")) {
+      if (/^05\d{8}$/.test(normalizedPhone)) {
+        normalizedPhone = "+966" + normalizedPhone.slice(1);
+      } else if (/^5\d{8}$/.test(normalizedPhone)) {
+        normalizedPhone = "+966" + normalizedPhone;
+      } else if (/^0\d{9,}$/.test(normalizedPhone)) {
+        normalizedPhone = "+966" + normalizedPhone.slice(1);
+      } else if (!normalizedPhone.startsWith("+")) {
+        normalizedPhone = "+966" + normalizedPhone;
+      }
+    }
+
+    const emkanOrderId = (paymentRequest.orderInfo.orderId || "").startsWith("ORD-")
+      ? paymentRequest.orderInfo.orderId
+      : `ORD-${paymentRequest.orderInfo.orderId}`;
+
     const emkanPayload = {
       merchantId: merchantId,
       amount: paymentRequest.amount,
       currency: paymentRequest.currency || "SAR",
-      orderId: paymentRequest.orderInfo.orderId,
+      orderId: emkanOrderId,
       items: paymentRequest.orderInfo.items.map((item) => ({
         name: item.name,
         quantity: item.quantity,
@@ -91,7 +109,7 @@ serve(async (req) => {
       customerInfo: {
         fullName: paymentRequest.customerInfo.name,
         email: paymentRequest.customerInfo.email || undefined,
-        phone: paymentRequest.customerInfo.phone,
+        phone: normalizedPhone,
       },
       redirectUrls: {
         successUrl: paymentRequest.redirectUrls.successUrl,
@@ -113,9 +131,11 @@ serve(async (req) => {
     });
 
     if (!emkanResponse.ok) {
-      const errorText = await emkanResponse.text();
-      console.error("Emkan API error:", errorText);
-      throw new Error(`Emkan API error: ${emkanResponse.status} - ${errorText}`);
+      const raw = await emkanResponse.text();
+      let parsed: any = null;
+      try { parsed = JSON.parse(raw); } catch { /* ignore */ }
+      console.error("Emkan API error:", emkanResponse.status, raw);
+      throw new Error(`Emkan API error ${emkanResponse.status}: ${parsed?.message || parsed?.error || raw}`);
     }
 
     const emkanResult = await emkanResponse.json();
