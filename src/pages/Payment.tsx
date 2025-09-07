@@ -222,6 +222,9 @@ const Payment = () => {
             // Redirect to Emkan payment page
             window.location.href = redirect;
             return;
+          } else {
+            const msg = emkanResponse?.error || emkanResponse?.description || "فشل في إنشاء طلب الدفع";
+            throw new Error(msg);
           }
         } catch (emkanError: any) {
           console.error("Emkan payment error:", emkanError);
@@ -230,6 +233,7 @@ const Payment = () => {
           return;
         }
         }
+      }
 
       // Clear cart and saved data
       localStorage.removeItem(`cart_${slug}`);
