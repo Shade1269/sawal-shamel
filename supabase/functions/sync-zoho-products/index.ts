@@ -23,25 +23,56 @@ serve(async (req) => {
 
     console.log('Starting Zoho products sync for shop:', shopId);
 
-    // Fetch individual items from Zoho Inventory API to handle custom grouping
-    const zohoResponse = await fetch(`https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Zoho-oauthtoken ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
+    // Fetch all items from Zoho Inventory API with pagination
+    let allItems = [];
+    let page = 1;
+    let hasMorePages = true;
+    const perPage = 200; // Maximum items per page for Zoho API
 
-    if (!zohoResponse.ok) {
-      const errorText = await zohoResponse.text();
-      console.error('Zoho API error:', zohoResponse.status, errorText);
-      throw new Error(`Zoho API error: ${zohoResponse.status} - ${errorText}`);
+    console.log('Starting to fetch all items from Zoho...');
+
+    while (hasMorePages) {
+      const zohoResponse = await fetch(`https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&page=${page}&per_page=${perPage}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Zoho-oauthtoken ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!zohoResponse.ok) {
+        const errorText = await zohoResponse.text();
+        console.error('Zoho API error:', zohoResponse.status, errorText);
+        throw new Error(`Zoho API error: ${zohoResponse.status} - ${errorText}`);
+      }
+
+      const zohoData = await zohoResponse.json();
+      const pageItems = zohoData.items || [];
+      
+      console.log(`Fetched page ${page}: ${pageItems.length} items`);
+      allItems = allItems.concat(pageItems);
+
+      // Check if there are more pages
+      const pageInfo = zohoData.page_context || {};
+      hasMorePages = pageInfo.has_more_page || false;
+      
+      // Also check if we got fewer items than requested (indicates last page)
+      if (pageItems.length < perPage) {
+        hasMorePages = false;
+      }
+
+      page++;
+      
+      // Safety check to prevent infinite loops
+      if (page > 50) {
+        console.warn('Reached maximum page limit (50), stopping pagination');
+        break;
+      }
     }
 
-    const zohoData = await zohoResponse.json();
-    console.log('Zoho items fetched:', zohoData.items?.length || 0);
+    console.log(`Total Zoho items fetched: ${allItems.length}`);
 
-    if (!zohoData.items || zohoData.items.length === 0) {
+    if (!allItems || allItems.length === 0) {
       return new Response(JSON.stringify({ 
         success: true, 
         message: 'No items found in Zoho', 
@@ -147,7 +178,7 @@ serve(async (req) => {
     // Group items by base model
     const itemsByModel = new Map();
     
-    for (const item of zohoData.items) {
+    for (const item of allItems) {
       const { baseModel } = extractProductInfo(item);
       if (!itemsByModel.has(baseModel)) {
         itemsByModel.set(baseModel, []);
@@ -155,7 +186,7 @@ serve(async (req) => {
       itemsByModel.get(baseModel).push(item);
     }
 
-    console.log(`Found ${itemsByModel.size} unique product models from ${zohoData.items.length} items`);
+    console.log(`Found ${itemsByModel.size} unique product models from ${allItems.length} items`);
 
     // Process each product model
     for (const [baseModel, modelItems] of itemsByModel) {
@@ -370,7 +401,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ 
       success: true, 
-      message: `Successfully synced ${syncedCount} product models from ${zohoData.items.length} items`,
+      message: `Successfully synced ${syncedCount} product models from ${allItems.length} items`,
       synced: syncedCount
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
