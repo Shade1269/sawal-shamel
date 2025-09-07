@@ -1041,6 +1041,8 @@ export type Database = {
       zoho_integration: {
         Row: {
           access_token: string | null
+          client_id: string | null
+          client_secret: string | null
           created_at: string
           id: string
           is_enabled: boolean
@@ -1051,6 +1053,8 @@ export type Database = {
         }
         Insert: {
           access_token?: string | null
+          client_id?: string | null
+          client_secret?: string | null
           created_at?: string
           id?: string
           is_enabled?: boolean
@@ -1061,6 +1065,8 @@ export type Database = {
         }
         Update: {
           access_token?: string | null
+          client_id?: string | null
+          client_secret?: string | null
           created_at?: string
           id?: string
           is_enabled?: boolean
