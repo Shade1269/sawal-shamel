@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useStoreSettings, getEnabledShippingMethods } from "@/hooks/useStoreSettings";
 
 interface CartItem {
   id: string;
@@ -46,49 +48,49 @@ const Shipping = () => {
     notes: ""
   });
   const [selectedShipping, setSelectedShipping] = useState<string>("");
+  const [shop, setShop] = useState<any>(null);
 
-  const shippingMethods: ShippingMethod[] = [
-    {
-      id: "standard",
-      name: "التوصيل العادي",
-      price: 15,
-      description: "3-5 أيام عمل"
-    },
-    {
-      id: "express",
-      name: "التوصيل السريع",
-      price: 30,
-      description: "1-2 أيام عمل"
-    },
-    {
-      id: "pickup",
-      name: "الاستلام من المتجر",
-      price: 0,
-      description: "مجاني"
-    }
-  ];
+  // Fetch shop data to get store settings
+  const { data: storeSettings, isLoading: settingsLoading } = useStoreSettings(shop?.id);
+  
+  // Get enabled shipping methods from store settings
+  const shippingMethods = getEnabledShippingMethods(storeSettings);
 
   useEffect(() => {
-    // Load cart from localStorage
-    const savedCart = localStorage.getItem(`cart_${slug}`);
-    if (savedCart) {
-      setCartItems(JSON.parse(savedCart));
-    } else {
-      // If no cart, redirect to store
-      navigate(`/store/${slug}`);
-    }
+    const fetchShopAndLoadData = async () => {
+      // Fetch shop data first
+      const { data: shopData } = await supabase
+        .from("shops")
+        .select("*")
+        .eq("slug", slug)
+        .maybeSingle();
+      
+      setShop(shopData);
 
-    // Load saved customer info
-    const savedCustomerInfo = localStorage.getItem(`customer_info_${slug}`);
-    if (savedCustomerInfo) {
-      setCustomerInfo(JSON.parse(savedCustomerInfo));
-    }
+      // Load cart from localStorage
+      const savedCart = localStorage.getItem(`cart_${slug}`);
+      if (savedCart) {
+        setCartItems(JSON.parse(savedCart));
+      } else {
+        // If no cart, redirect to store
+        navigate(`/store/${slug}`);
+        return;
+      }
 
-    // Load saved shipping method
-    const savedShipping = localStorage.getItem(`shipping_method_${slug}`);
-    if (savedShipping) {
-      setSelectedShipping(savedShipping);
-    }
+      // Load saved customer info
+      const savedCustomerInfo = localStorage.getItem(`customer_info_${slug}`);
+      if (savedCustomerInfo) {
+        setCustomerInfo(JSON.parse(savedCustomerInfo));
+      }
+
+      // Load saved shipping method
+      const savedShipping = localStorage.getItem(`shipping_method_${slug}`);
+      if (savedShipping) {
+        setSelectedShipping(savedShipping);
+      }
+    };
+
+    fetchShopAndLoadData();
   }, [slug, navigate]);
 
   const handleCustomerInfoChange = (field: keyof CustomerInfo, value: string) => {
@@ -230,24 +232,36 @@ const Shipping = () => {
                 <CardTitle>طريقة الشحن</CardTitle>
               </CardHeader>
               <CardContent>
-                <RadioGroup value={selectedShipping} onValueChange={handleShippingChange}>
-                  {shippingMethods.map((method) => (
-                    <div key={method.id} className="flex items-center space-x-2 space-x-reverse p-4 border rounded-lg">
-                      <RadioGroupItem value={method.id} id={method.id} />
-                      <Label htmlFor={method.id} className="flex-1 cursor-pointer">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <div className="font-semibold">{method.name}</div>
-                            <div className="text-sm text-muted-foreground">{method.description}</div>
+                {settingsLoading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
+                    <p className="text-sm text-muted-foreground">جاري تحميل خيارات الشحن...</p>
+                  </div>
+                ) : shippingMethods.length > 0 ? (
+                  <RadioGroup value={selectedShipping} onValueChange={handleShippingChange}>
+                    {shippingMethods.map((method) => (
+                      <div key={method.id} className="flex items-center space-x-2 space-x-reverse p-4 border rounded-lg">
+                        <RadioGroupItem value={method.id} id={method.id} />
+                        <Label htmlFor={method.id} className="flex-1 cursor-pointer">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <div className="font-semibold">{method.name}</div>
+                              <div className="text-sm text-muted-foreground">{method.description}</div>
+                            </div>
+                            <div className="font-bold text-primary">
+                              {method.price === 0 ? "مجاني" : `${method.price} ريال`}
+                            </div>
                           </div>
-                          <div className="font-bold text-primary">
-                            {method.price === 0 ? "مجاني" : `${method.price} ريال`}
-                          </div>
-                        </div>
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">لا توجد خيارات شحن متاحة حالياً</p>
+                    <p className="text-sm text-muted-foreground mt-2">يرجى التواصل مع المتجر</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

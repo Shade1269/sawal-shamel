@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,6 +50,7 @@ interface CartItem {
 
 const StoreFront = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
@@ -334,19 +335,19 @@ const StoreFront = () => {
               </div>
             </div>
             
-            <Button
-              variant="outline"
-              onClick={() => setShowCart(!showCart)}
-              className="relative bg-background/50 backdrop-blur-sm hover:bg-background/80 border-primary/20"
-            >
-              <ShoppingCart className="h-4 w-4 ml-2" />
-              السلة
-              {cartItemsCount > 0 && (
-                <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 p-0 text-xs font-bold">
-                  {cartItemsCount}
-                </Badge>
-              )}
-            </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate(`/store/${slug}/cart`)}
+                className="relative bg-background/50 backdrop-blur-sm hover:bg-background/80 border-primary/20"
+              >
+                <ShoppingCart className="h-4 w-4 ml-2" />
+                السلة
+                {cartItemsCount > 0 && (
+                  <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 p-0 text-xs font-bold">
+                    {cartItemsCount}
+                  </Badge>
+                )}
+              </Button>
           </div>
         </div>
       </header>

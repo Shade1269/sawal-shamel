@@ -4,10 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, CreditCard, Banknote } from "lucide-react";
+import { ArrowLeft, CreditCard, Banknote, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
+import { useStoreSettings, getEnabledPaymentMethods, getEnabledShippingMethods } from "@/hooks/useStoreSettings";
 
 interface CartItem {
   id: string;
@@ -41,55 +42,61 @@ const Payment = () => {
   const [selectedShipping, setSelectedShipping] = useState<string>("");
   const [selectedPayment, setSelectedPayment] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [shop, setShop] = useState<any>(null);
 
-  const paymentMethods: PaymentMethod[] = [
-    {
-      id: "online",
-      name: "الدفع الإلكتروني",
-      description: "فيزا، ماستركارد، مدى",
-      icon: <CreditCard className="h-5 w-5" />
-    },
-    {
-      id: "cod",
-      name: "الدفع عند الاستلام",
-      description: "ادفع نقداً عند وصول الطلب",
-      icon: <Banknote className="h-5 w-5" />
-    }
-  ];
-
-  const shippingMethods = [
-    { id: "standard", name: "التوصيل العادي", price: 15 },
-    { id: "express", name: "التوصيل السريع", price: 30 },
-    { id: "pickup", name: "الاستلام من المتجر", price: 0 }
-  ];
+  // Fetch shop data to get store settings
+  const { data: storeSettings, isLoading: settingsLoading } = useStoreSettings(shop?.id);
+  
+  // Get enabled payment and shipping methods from store settings
+  const paymentMethods = getEnabledPaymentMethods(storeSettings).map(method => ({
+    ...method,
+    icon: method.id === 'cod' ? <Banknote className="h-5 w-5" /> : 
+          method.id === 'emkan' ? <ShoppingBag className="h-5 w-5" /> :
+          <CreditCard className="h-5 w-5" />
+  }));
+  
+  const shippingMethods = getEnabledShippingMethods(storeSettings);
 
   useEffect(() => {
-    // Load cart from localStorage
-    const savedCart = localStorage.getItem(`cart_${slug}`);
-    if (savedCart) {
-      setCartItems(JSON.parse(savedCart));
-    } else {
-      navigate(`/store/${slug}`);
-      return;
-    }
+    const fetchShopAndLoadData = async () => {
+      // Fetch shop data first
+      const { data: shopData } = await supabase
+        .from("shops")
+        .select("*")
+        .eq("slug", slug)
+        .maybeSingle();
+      
+      setShop(shopData);
 
-    // Load customer info
-    const savedCustomerInfo = localStorage.getItem(`customer_info_${slug}`);
-    if (savedCustomerInfo) {
-      setCustomerInfo(JSON.parse(savedCustomerInfo));
-    } else {
-      navigate(`/store/${slug}/shipping`);
-      return;
-    }
+      // Load cart from localStorage
+      const savedCart = localStorage.getItem(`cart_${slug}`);
+      if (savedCart) {
+        setCartItems(JSON.parse(savedCart));
+      } else {
+        navigate(`/store/${slug}`);
+        return;
+      }
 
-    // Load shipping method
-    const savedShipping = localStorage.getItem(`shipping_method_${slug}`);
-    if (savedShipping) {
-      setSelectedShipping(savedShipping);
-    } else {
-      navigate(`/store/${slug}/shipping`);
-      return;
-    }
+      // Load customer info
+      const savedCustomerInfo = localStorage.getItem(`customer_info_${slug}`);
+      if (savedCustomerInfo) {
+        setCustomerInfo(JSON.parse(savedCustomerInfo));
+      } else {
+        navigate(`/store/${slug}/shipping`);
+        return;
+      }
+
+      // Load shipping method
+      const savedShipping = localStorage.getItem(`shipping_method_${slug}`);
+      if (savedShipping) {
+        setSelectedShipping(savedShipping);
+      } else {
+        navigate(`/store/${slug}/shipping`);
+        return;
+      }
+    };
+
+    fetchShopAndLoadData();
   }, [slug, navigate]);
 
   const getSubtotal = () => {
@@ -114,13 +121,6 @@ const Payment = () => {
     setLoading(true);
 
     try {
-      // Get shop ID
-      const { data: shop } = await supabase
-        .from("shops")
-        .select("id")
-        .eq("slug", slug)
-        .single();
-
       if (!shop) {
         throw new Error("المتجر غير موجود");
       }
@@ -152,13 +152,6 @@ const Payment = () => {
 
       if (orderError) throw orderError;
 
-      // Get shop merchant_id
-      const { data: shopData } = await supabase
-        .from("shops")
-        .select("id")
-        .eq("id", shop.id)
-        .single();
-
       // Create order items
       const orderItems = cartItems.map(item => ({
         order_id: order.id,
@@ -175,6 +168,51 @@ const Payment = () => {
         .insert(orderItems);
 
       if (itemsError) throw itemsError;
+
+      // Handle Emkan payment if selected
+      if (selectedPayment === "emkan") {
+        try {
+          const { data: emkanResponse, error: emkanError } = await supabase.functions.invoke(
+            'create-emkan-payment',
+            {
+              body: {
+                amount: getTotal(),
+                currency: 'SAR',
+                customerInfo: {
+                  name: customerInfo?.name,
+                  email: customerInfo?.email,
+                  phone: customerInfo?.phone,
+                  address: customerInfo?.address
+                },
+                orderInfo: {
+                  orderId: order.id,
+                  items: cartItems.map(item => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price
+                  }))
+                },
+                redirectUrls: {
+                  successUrl: `${window.location.origin}/store/${slug}/order-confirmation/${order.id}`,
+                  cancelUrl: `${window.location.origin}/store/${slug}/payment`
+                }
+              }
+            }
+          );
+
+          if (emkanError) throw emkanError;
+
+          if (emkanResponse?.redirectUrl) {
+            // Redirect to Emkan payment page
+            window.location.href = emkanResponse.redirectUrl;
+            return;
+          }
+        } catch (emkanError) {
+          console.error("Emkan payment error:", emkanError);
+          toast.error("حدث خطأ في الدفع عبر إمكان");
+          return;
+        }
+      }
 
       // Clear cart and saved data
       localStorage.removeItem(`cart_${slug}`);
@@ -229,22 +267,34 @@ const Payment = () => {
                 <CardTitle>طريقة الدفع</CardTitle>
               </CardHeader>
               <CardContent>
-                <RadioGroup value={selectedPayment} onValueChange={setSelectedPayment}>
-                  {paymentMethods.map((method) => (
-                    <div key={method.id} className="flex items-center space-x-2 space-x-reverse p-4 border rounded-lg">
-                      <RadioGroupItem value={method.id} id={method.id} />
-                      <Label htmlFor={method.id} className="flex-1 cursor-pointer">
-                        <div className="flex items-center gap-3">
-                          {method.icon}
-                          <div>
-                            <div className="font-semibold">{method.name}</div>
-                            <div className="text-sm text-muted-foreground">{method.description}</div>
+                {settingsLoading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
+                    <p className="text-sm text-muted-foreground">جاري تحميل خيارات الدفع...</p>
+                  </div>
+                ) : paymentMethods.length > 0 ? (
+                  <RadioGroup value={selectedPayment} onValueChange={setSelectedPayment}>
+                    {paymentMethods.map((method) => (
+                      <div key={method.id} className="flex items-center space-x-2 space-x-reverse p-4 border rounded-lg">
+                        <RadioGroupItem value={method.id} id={method.id} />
+                        <Label htmlFor={method.id} className="flex-1 cursor-pointer">
+                          <div className="flex items-center gap-3">
+                            {method.icon}
+                            <div>
+                              <div className="font-semibold">{method.name}</div>
+                              <div className="text-sm text-muted-foreground">{method.description}</div>
+                            </div>
                           </div>
-                        </div>
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">لا توجد وسائل دفع متاحة حالياً</p>
+                    <p className="text-sm text-muted-foreground mt-2">يرجى التواصل مع المتجر</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
