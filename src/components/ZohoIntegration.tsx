@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Loader2, RefreshCw, Settings, CheckCircle2, AlertCircle, Zap, Database, Trash2 } from 'lucide-react';
+import { Loader2, RefreshCw, Settings, CheckCircle2, AlertCircle, Zap, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -155,36 +155,6 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
     }
   };
 
-  const migrateProductsStructure = async () => {
-    setIsSyncing(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('migrate-products-structure', {
-        body: {
-          shopId: shopId
-        }
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      toast({
-        title: "تم التحويل",
-        description: data.message || `تم تحويل ${data.migrated} نموذج منتج بنجاح`,
-      });
-
-      console.log('Migration result:', data);
-    } catch (error) {
-      console.error('Error migrating products:', error);
-      toast({
-        title: "خطأ",
-        description: "فشل في تحويل هيكل المنتجات",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSyncing(false);
-    }
-  };
 
   const cleanupLinguisticProducts = async () => {
     setIsCleaningUp(true);
@@ -374,44 +344,6 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <Database className="w-5 h-5 text-primary" />
-                <div>
-                  <CardTitle className="text-lg">تحويل هيكل المنتجات</CardTitle>
-                  <CardDescription>
-                    تحويل المنتجات الموجودة لتتبع المنطق الجديد (نموذج + متغيرات)
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-4">
-                <p className="text-sm text-muted-foreground">
-                  سيتم تجميع المنتجات المتشابهة (مثل AS25-GR/XL, AS25-GR/M) في منتج واحد مع متغيرات للألوان والمقاسات
-                </p>
-                <Button 
-                  onClick={migrateProductsStructure}
-                  disabled={isSyncing}
-                  variant="outline"
-                  size="lg"
-                >
-                  {isSyncing ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      جاري التحويل...
-                    </>
-                  ) : (
-                    <>
-                      <Database className="w-4 h-4 mr-2" />
-                      تحويل هيكل المنتجات
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
 
           <Card>
             <CardHeader>
