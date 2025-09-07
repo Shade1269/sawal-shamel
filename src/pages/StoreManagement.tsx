@@ -1007,7 +1007,7 @@ const StoreManagement = () => {
                 <StoreProductsSection userShop={userShop} />
               )}
 
-              {activeSection === 'orders' && userShop && (
+              {activeSection === 'orders' && userShop?.id && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-2xl flex items-center gap-2">
@@ -1020,6 +1020,24 @@ const StoreManagement = () => {
                   </CardHeader>
                   <CardContent>
                     <StoreOrders shopId={userShop.id} />
+                  </CardContent>
+                </Card>
+              )}
+
+              {activeSection === 'orders' && !userShop && (
+                <Card>
+                  <CardContent className="text-center py-12">
+                    <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">لا يوجد متجر</h3>
+                    <p className="text-muted-foreground">
+                      يجب إنشاء متجر أولاً لعرض الطلبات
+                    </p>
+                    <Button 
+                      className="mt-4" 
+                      onClick={() => setActiveSection('settings')}
+                    >
+                      إنشاء متجر
+                    </Button>
                   </CardContent>
                 </Card>
               )}

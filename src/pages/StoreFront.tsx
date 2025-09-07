@@ -666,8 +666,9 @@ const StoreFront = () => {
             <CheckoutFlow
               cart={cart}
               shopId={shop?.id || ''}
-              onBack={handleBackToCart}
-              onComplete={handleCheckoutComplete}
+              onCancel={handleBackToCart}
+              onOrderComplete={handleCheckoutComplete}
+              storeSettings={shopStoreSettings}
             />
           </div>
         </div>

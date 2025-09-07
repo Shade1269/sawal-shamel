@@ -44,12 +44,13 @@ export const CheckoutTest = () => {
           <CheckoutFlow
             cart={testCart}
             shopId="test-shop-id"
-            onBack={() => setShowCheckout(false)}
-            onComplete={(orderNumber) => {
+            onCancel={() => setShowCheckout(false)}
+            onOrderComplete={(orderNumber) => {
               console.log('Order completed:', orderNumber);
               setCompleted(true);
               setShowCheckout(false);
             }}
+            storeSettings={{ payment_providers: [], shipping_companies: [] }}
           />
         </div>
       </div>
