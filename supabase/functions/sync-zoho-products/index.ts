@@ -103,11 +103,9 @@ serve(async (req) => {
     // Process each Zoho product
     for (const item of zohoData.items) {
       try {
-        // Skip if already synced
-        if (existingZohoIds.has(item.item_id)) {
-          console.log(`Product ${item.name} already synced, skipping...`);
-          continue;
-        }
+        // Check if already synced
+        const existingMapping = existingMappings?.find(m => m.zoho_item_id === item.item_id);
+        const isAlreadySynced = existingMapping !== undefined;
 
         // Fetch detailed product information including variants
         const itemDetailResponse = await fetch(`https://www.zohoapis.com/inventory/v1/items/${item.item_id}?organization_id=${organizationId}`, {
@@ -145,18 +143,65 @@ serve(async (req) => {
           is_active: itemDetail.status === 'active',
         };
 
-        const { data: product, error: productError } = await supabase
-          .from('products')
-          .insert(productData)
-          .select('id')
-          .single();
+        let product;
+        
+        if (isAlreadySynced) {
+          // Update existing product
+          console.log(`Updating existing product: ${itemDetail.name}`);
+          
+          const { data: updatedProduct, error: updateError } = await supabase
+            .from('products')
+            .update({
+              title: itemDetail.name || 'Untitled Product',
+              description: itemDetail.description || '',
+              price_sar: parseFloat(itemDetail.rate) || 0,
+              stock: itemDetail.available_stock || 0,
+              category: itemDetail.category_name || 'General',
+              image_urls: imageUrls,
+              is_active: itemDetail.status === 'active',
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', existingMapping.local_product_id)
+            .select('id')
+            .single();
 
-        if (productError) {
-          console.error('Error creating product:', productError);
-          continue;
+          if (updateError) {
+            console.error('Error updating product:', updateError);
+            continue;
+          }
+          product = updatedProduct;
+
+          // Delete existing variants to recreate them with new data
+          await supabase
+            .from('product_variants')
+            .delete()
+            .eq('product_id', product.id);
+
+        } else {
+          // Create new product
+          console.log(`Creating new product: ${itemDetail.name}`);
+          
+          const { data: newProduct, error: productError } = await supabase
+            .from('products')
+            .insert(productData)
+            .select('id')
+            .single();
+
+          if (productError) {
+            console.error('Error creating product:', productError);
+            continue;
+          }
+          product = newProduct;
+
+          // Create mapping for new product
+          mappings.push({
+            shop_id: shopId,
+            zoho_item_id: item.item_id,
+            local_product_id: product.id
+          });
         }
 
-        // Process product variants (sizes, colors, etc.)
+        // Process product variants (sizes, colors, etc.) for both new and existing products
         if (itemDetail.variant_attributes && itemDetail.variant_attributes.length > 0) {
           const variants = [];
           
@@ -200,15 +245,12 @@ serve(async (req) => {
           }
         }
 
-        // Create mapping
-        mappings.push({
-          shop_id: shopId,
-          zoho_item_id: item.item_id,
-          local_product_id: product.id
-        });
-
-        syncedCount++;
-        console.log(`Synced product with variants: ${itemDetail.name}`);
+        if (!isAlreadySynced) {
+          syncedCount++;
+          console.log(`Synced new product with variants: ${itemDetail.name}`);
+        } else {
+          console.log(`Updated existing product with variants: ${itemDetail.name}`);
+        }
 
       } catch (error) {
         console.error(`Error processing product ${item.name}:`, error);
@@ -236,12 +278,13 @@ serve(async (req) => {
       })
       .eq('shop_id', shopId);
 
-    console.log(`Sync completed. Products synced: ${syncedCount}`);
+    console.log(`Sync completed. New products synced: ${syncedCount}, Total products processed: ${zohoData.items?.length || 0}`);
 
     return new Response(JSON.stringify({ 
       success: true, 
-      message: `Successfully synced ${syncedCount} products from Zoho`,
-      synced: syncedCount 
+      message: `Successfully processed ${zohoData.items?.length || 0} products from Zoho (${syncedCount} new, ${(zohoData.items?.length || 0) - syncedCount} updated)`,
+      synced: syncedCount,
+      total_processed: zohoData.items?.length || 0
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
