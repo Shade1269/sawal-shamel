@@ -100,33 +100,62 @@ serve(async (req) => {
     let syncedCount = 0;
     const mappings = [];
 
-    // Process each product from Zoho
+    // Group items by base product name (extract base name from SKU or name)
+    const productGroups = new Map();
+    
     for (const item of zohoData.items) {
+      // Skip if already exists
+      if (existingZohoIds.has(item.item_id)) {
+        continue;
+      }
+
+      // Extract base product name (remove variant suffixes like /L, /M, -BE, etc.)
+      let baseName = item.name;
+      if (item.sku) {
+        // Try to extract base name from SKU (e.g., "TES-BE/L" -> "TES")
+        const skuParts = item.sku.split('-');
+        if (skuParts.length > 1) {
+          baseName = skuParts[0];
+        }
+      }
+
+      if (!productGroups.has(baseName)) {
+        productGroups.set(baseName, []);
+      }
+      productGroups.get(baseName).push(item);
+    }
+
+    // Process each product group
+    for (const [baseName, items] of productGroups) {
       try {
-        // Skip if already exists
-        if (existingZohoIds.has(item.item_id)) {
-          continue;
+        // Use first item for base product info
+        const baseItem = items[0];
+        
+        // Process product images from first item
+        let imageUrls = [];
+        if (baseItem.image_documents && baseItem.image_documents.length > 0) {
+          imageUrls = baseItem.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
         }
 
-        // Process product images
-        let imageUrls = [];
-        if (item.image_documents && item.image_documents.length > 0) {
-          imageUrls = item.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
-        }
+        // Calculate total stock for base product
+        const totalStock = items.reduce((sum, item) => sum + (parseInt(item.stock_on_hand) || 0), 0);
+        
+        // Use average price or price from first item
+        const basePrice = parseFloat(baseItem.rate) || 0;
 
         const productData = {
           merchant_id: merchant.id,
-          title: item.name || 'Untitled Product',
-          description: item.description || '',
-          price_sar: parseFloat(item.rate) || 0,
-          stock: parseInt(item.stock_on_hand) || 0,
-          category: item.category_name || 'General',
+          title: baseName,
+          description: baseItem.description || '',
+          price_sar: basePrice,
+          stock: totalStock,
+          category: baseItem.category_name || 'General',
           image_urls: imageUrls,
-          is_active: item.status === 'active',
+          is_active: baseItem.status === 'active',
           commission_rate: null,
         };
 
-        // Create the product
+        // Create the base product
         const { data: product, error: productError } = await supabase
           .from('products')
           .insert(productData)
@@ -138,58 +167,62 @@ serve(async (req) => {
           continue;
         }
 
-        // Create variants if the product has attributes
-        if (item.attribute_name1 || item.attribute_name2) {
-          const variants = [];
-          
-          // Create variant for attribute 1
-          if (item.attribute_name1 && item.attribute_option_name1) {
-            variants.push({
-              product_id: product.id,
-              variant_type: item.attribute_name1.toLowerCase(),
-              variant_value: item.attribute_option_name1,
-              stock: parseInt(item.stock_on_hand) || 0,
-              price_modifier: 0,
-              sku: item.sku || `${item.name}-${item.attribute_option_name1}`,
-            });
-          }
-          
-          // Create variant for attribute 2
-          if (item.attribute_name2 && item.attribute_option_name2) {
-            variants.push({
-              product_id: product.id,
-              variant_type: item.attribute_name2.toLowerCase(),
-              variant_value: item.attribute_option_name2,
-              stock: parseInt(item.stock_on_hand) || 0,
-              price_modifier: 0,
-              sku: item.sku || `${item.name}-${item.attribute_option_name2}`,
-            });
+        // Create variants for each item in the group
+        const variants = [];
+        for (const item of items) {
+          const variantData: any = {
+            product_id: product.id,
+            stock: parseInt(item.stock_on_hand) || 0,
+            price_modifier: (parseFloat(item.rate) || 0) - basePrice,
+            sku: item.sku || `${baseName}-${item.item_id}`,
+          };
+
+          // Determine variant type and value based on attributes or SKU
+          if (item.attribute_option_name1 || item.attribute_option_name2) {
+            // Use attributes if available
+            const variantParts = [];
+            if (item.attribute_option_name1) variantParts.push(item.attribute_option_name1);
+            if (item.attribute_option_name2) variantParts.push(item.attribute_option_name2);
+            
+            variantData.variant_type = 'color_size';
+            variantData.variant_value = variantParts.join('/');
+          } else if (item.sku && item.sku.includes('-')) {
+            // Extract variant from SKU
+            const skuVariant = item.sku.split('-').slice(1).join('-');
+            variantData.variant_type = 'variant';
+            variantData.variant_value = skuVariant;
+          } else {
+            // Default variant
+            variantData.variant_type = 'default';
+            variantData.variant_value = 'default';
           }
 
-          // Insert variants if any
-          if (variants.length > 0) {
-            const { error: variantsError } = await supabase
-              .from('product_variants')
-              .insert(variants);
+          variants.push(variantData);
 
-            if (variantsError) {
-              console.error('Error creating product variants:', variantsError);
-            }
+          // Create mapping for each item
+          mappings.push({
+            shop_id: shopId,
+            zoho_item_id: item.item_id,
+            local_product_id: product.id
+          });
+        }
+
+        // Insert all variants for this product
+        if (variants.length > 0) {
+          const { error: variantsError } = await supabase
+            .from('product_variants')
+            .insert(variants);
+
+          if (variantsError) {
+            console.error('Error creating product variants:', variantsError);
           }
         }
 
-        // Create mapping
-        mappings.push({
-          shop_id: shopId,
-          zoho_item_id: item.item_id,
-          local_product_id: product.id
-        });
-
-        syncedCount++;
-        console.log(`Synced product: ${item.name}`);
+        syncedCount += items.length;
+        console.log(`Synced product: ${baseName} with ${items.length} variants`);
 
       } catch (error) {
-        console.error(`Error processing product ${item.name}:`, error);
+        console.error(`Error processing product group ${baseName}:`, error);
         continue;
       }
     }
