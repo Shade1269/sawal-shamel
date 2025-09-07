@@ -100,7 +100,7 @@ serve(async (req) => {
     let syncedCount = 0;
     const mappings = [];
 
-    // Group items by base product name (extract base name from SKU or name)
+    // Group items by parent product name for proper variant handling
     const productGroups = new Map();
     
     for (const item of zohoData.items) {
@@ -109,25 +109,51 @@ serve(async (req) => {
         continue;
       }
 
-      // Extract base product name (remove variant suffixes like /L, /M, -BE, etc.)
-      let baseName = item.name;
-      if (item.sku) {
-        // Try to extract base name from SKU (e.g., "TES-BE/L" -> "TES")
-        const skuParts = item.sku.split('-');
-        if (skuParts.length > 1) {
-          baseName = skuParts[0];
-        }
-      }
+      // Use the product name as the parent key for grouping
+      const parentKey = item.name;
 
-      if (!productGroups.has(baseName)) {
-        productGroups.set(baseName, []);
+      if (!productGroups.has(parentKey)) {
+        productGroups.set(parentKey, []);
       }
-      productGroups.get(baseName).push(item);
+      productGroups.get(parentKey).push(item);
     }
 
     // Process each product group
-    for (const [baseName, items] of productGroups) {
+    for (const [parentKey, items] of productGroups) {
       try {
+        // Build attributes schema from all variants
+        const attributesSchema: any = {};
+        const colorValues = new Set();
+        const sizeValues = new Set();
+        
+        for (const item of items) {
+          if (item.attribute_name1 && item.attribute_option_name1) {
+            if (item.attribute_name1 === 'COLOR') {
+              colorValues.add(item.attribute_option_name1);
+            }
+            if (!attributesSchema[item.attribute_name1]) {
+              attributesSchema[item.attribute_name1] = new Set();
+            }
+            attributesSchema[item.attribute_name1].add(item.attribute_option_name1);
+          }
+          
+          if (item.attribute_name2 && item.attribute_option_name2) {
+            if (item.attribute_name2 === 'SIZE') {
+              sizeValues.add(item.attribute_option_name2);
+            }
+            if (!attributesSchema[item.attribute_name2]) {
+              attributesSchema[item.attribute_name2] = new Set();
+            }
+            attributesSchema[item.attribute_name2].add(item.attribute_option_name2);
+          }
+        }
+
+        // Convert Sets to Arrays for JSON storage
+        const finalAttributesSchema: any = {};
+        for (const [key, values] of Object.entries(attributesSchema)) {
+          finalAttributesSchema[key] = Array.from(values as Set<string>);
+        }
+
         // Use first item for base product info
         const baseItem = items[0];
         
@@ -137,67 +163,123 @@ serve(async (req) => {
           imageUrls = baseItem.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
         }
 
-        // Calculate total stock for base product
+        // Calculate total stock for base product (sum of all variants)
         const totalStock = items.reduce((sum, item) => sum + (parseInt(item.stock_on_hand) || 0), 0);
         
-        // Use average price or price from first item
+        // Use base price from first item
         const basePrice = parseFloat(baseItem.rate) || 0;
 
         const productData = {
           merchant_id: merchant.id,
-          title: baseName,
-          description: baseItem.description || '',
+          title: parentKey,
+          external_id: parentKey,
+          description: baseItem.description || `Parent product ${baseItem.item_id}`,
           price_sar: basePrice,
           stock: totalStock,
           category: baseItem.category_name || 'General',
           image_urls: imageUrls,
           is_active: baseItem.status === 'active',
           commission_rate: null,
+          attributes_schema: finalAttributesSchema,
         };
 
-        // Create the base product
-        const { data: product, error: productError } = await supabase
+        // Check if product already exists with this external_id
+        let { data: existingProduct } = await supabase
           .from('products')
-          .insert(productData)
           .select('id')
+          .eq('external_id', parentKey)
+          .eq('merchant_id', merchant.id)
           .single();
 
-        if (productError) {
-          console.error('Error creating product:', productError);
-          continue;
+        let product;
+        if (existingProduct) {
+          // Update existing product
+          const { data: updatedProduct, error: updateError } = await supabase
+            .from('products')
+            .update({
+              stock: totalStock,
+              attributes_schema: finalAttributesSchema,
+              is_active: baseItem.status === 'active',
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', existingProduct.id)
+            .select('id')
+            .single();
+          
+          if (updateError) {
+            console.error('Error updating product:', updateError);
+            continue;
+          }
+          product = updatedProduct;
+        } else {
+          // Create new product
+          const { data: newProduct, error: productError } = await supabase
+            .from('products')
+            .insert(productData)
+            .select('id')
+            .single();
+
+          if (productError) {
+            console.error('Error creating product:', productError);
+            continue;
+          }
+          product = newProduct;
         }
 
-        // Create variants for each item in the group
-        const variants = [];
+        // Create/Update variants for each item in the group
         for (const item of items) {
+          // Check if variant already exists
+          let { data: existingVariant } = await supabase
+            .from('product_variants')
+            .select('id')
+            .eq('external_id', item.item_id)
+            .eq('product_id', product.id)
+            .single();
+
           const variantData: any = {
             product_id: product.id,
+            external_id: item.item_id,
             stock: parseInt(item.stock_on_hand) || 0,
             price_modifier: (parseFloat(item.rate) || 0) - basePrice,
-            sku: item.sku || `${baseName}-${item.item_id}`,
+            sku: item.sku || `${parentKey}-${item.item_id}`,
+            option1_name: item.attribute_name1 || null,
+            option1_value: item.attribute_option_name1 || null,
+            option2_name: item.attribute_name2 || null,
+            option2_value: item.attribute_option_name2 || null,
+            // Keep legacy fields for compatibility
+            variant_type: 'combination',
+            variant_value: [item.attribute_option_name1, item.attribute_option_name2].filter(Boolean).join('-') || 'default',
           };
 
-          // Determine variant type and value based on attributes or SKU
-          if (item.attribute_option_name1 || item.attribute_option_name2) {
-            // Use attributes if available
-            const variantParts = [];
-            if (item.attribute_option_name1) variantParts.push(item.attribute_option_name1);
-            if (item.attribute_option_name2) variantParts.push(item.attribute_option_name2);
-            
-            variantData.variant_type = 'color_size';
-            variantData.variant_value = variantParts.join('/');
-          } else if (item.sku && item.sku.includes('-')) {
-            // Extract variant from SKU
-            const skuVariant = item.sku.split('-').slice(1).join('-');
-            variantData.variant_type = 'variant';
-            variantData.variant_value = skuVariant;
-          } else {
-            // Default variant
-            variantData.variant_type = 'default';
-            variantData.variant_value = 'default';
-          }
+          if (existingVariant) {
+            // Update existing variant
+            const { error: updateVariantError } = await supabase
+              .from('product_variants')
+              .update({
+                stock: variantData.stock,
+                price_modifier: variantData.price_modifier,
+                option1_name: variantData.option1_name,
+                option1_value: variantData.option1_value,
+                option2_name: variantData.option2_name,
+                option2_value: variantData.option2_value,
+                variant_value: variantData.variant_value,
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', existingVariant.id);
 
-          variants.push(variantData);
+            if (updateVariantError) {
+              console.error('Error updating variant:', updateVariantError);
+            }
+          } else {
+            // Create new variant
+            const { error: variantError } = await supabase
+              .from('product_variants')
+              .insert(variantData);
+
+            if (variantError) {
+              console.error('Error creating variant:', variantError);
+            }
+          }
 
           // Create mapping for each item
           mappings.push({
@@ -207,22 +289,11 @@ serve(async (req) => {
           });
         }
 
-        // Insert all variants for this product
-        if (variants.length > 0) {
-          const { error: variantsError } = await supabase
-            .from('product_variants')
-            .insert(variants);
-
-          if (variantsError) {
-            console.error('Error creating product variants:', variantsError);
-          }
-        }
-
         syncedCount += items.length;
-        console.log(`Synced product: ${baseName} with ${items.length} variants`);
+        console.log(`Synced product: ${parentKey} with ${items.length} variants`);
 
       } catch (error) {
-        console.error(`Error processing product group ${baseName}:`, error);
+        console.error(`Error processing product group ${parentKey}:`, error);
         continue;
       }
     }

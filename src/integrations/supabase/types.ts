@@ -650,7 +650,12 @@ export type Database = {
       product_variants: {
         Row: {
           created_at: string
+          external_id: string | null
           id: string
+          option1_name: string | null
+          option1_value: string | null
+          option2_name: string | null
+          option2_value: string | null
           price_modifier: number | null
           product_id: string
           sku: string | null
@@ -661,7 +666,12 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          external_id?: string | null
           id?: string
+          option1_name?: string | null
+          option1_value?: string | null
+          option2_name?: string | null
+          option2_value?: string | null
           price_modifier?: number | null
           product_id: string
           sku?: string | null
@@ -672,7 +682,12 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          external_id?: string | null
           id?: string
+          option1_name?: string | null
+          option1_value?: string | null
+          option2_name?: string | null
+          option2_value?: string | null
           price_modifier?: number | null
           product_id?: string
           sku?: string | null
@@ -693,10 +708,12 @@ export type Database = {
       }
       products: {
         Row: {
+          attributes_schema: Json | null
           category: string | null
           commission_rate: number | null
           created_at: string
           description: string | null
+          external_id: string | null
           id: string
           image_urls: string[] | null
           is_active: boolean
@@ -707,10 +724,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          attributes_schema?: Json | null
           category?: string | null
           commission_rate?: number | null
           created_at?: string
           description?: string | null
+          external_id?: string | null
           id?: string
           image_urls?: string[] | null
           is_active?: boolean
@@ -721,10 +740,12 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          attributes_schema?: Json | null
           category?: string | null
           commission_rate?: number | null
           created_at?: string
           description?: string | null
+          external_id?: string | null
           id?: string
           image_urls?: string[] | null
           is_active?: boolean
