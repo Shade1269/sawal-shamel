@@ -1038,6 +1038,86 @@ export type Database = {
         }
         Relationships: []
       }
+      zoho_integration: {
+        Row: {
+          access_token: string | null
+          created_at: string
+          id: string
+          is_enabled: boolean
+          last_sync_at: string | null
+          organization_id: string | null
+          shop_id: string
+          updated_at: string
+        }
+        Insert: {
+          access_token?: string | null
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          last_sync_at?: string | null
+          organization_id?: string | null
+          shop_id: string
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string | null
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          last_sync_at?: string | null
+          organization_id?: string | null
+          shop_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zoho_integration_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      zoho_product_mapping: {
+        Row: {
+          created_at: string
+          id: string
+          local_product_id: string
+          shop_id: string
+          zoho_item_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          local_product_id: string
+          shop_id: string
+          zoho_item_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          local_product_id?: string
+          shop_id?: string
+          zoho_item_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zoho_product_mapping_local_product_id_fkey"
+            columns: ["local_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "zoho_product_mapping_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

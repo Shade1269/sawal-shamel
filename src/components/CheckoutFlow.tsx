@@ -165,6 +165,16 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
             window.open(redirectUrl, '_blank');
           }, 2000);
           
+          // Update Zoho inventory for Emkan orders
+          try {
+            await supabase.functions.invoke('update-zoho-inventory', {
+              body: { orderId: order.id }
+            });
+          } catch (zohoError) {
+            console.error('CheckoutFlow: Zoho inventory update error:', zohoError);
+            // Don't fail the order if Zoho update fails
+          }
+
           // Call completion callback
           if (onOrderComplete) {
             onOrderComplete(orderNumber);
@@ -187,6 +197,16 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
 
         if (updateError) {
           console.error('Error updating order status:', updateError);
+        }
+
+        // Update Zoho inventory
+        try {
+          await supabase.functions.invoke('update-zoho-inventory', {
+            body: { orderId: order.id }
+          });
+        } catch (zohoError) {
+          console.error('CheckoutFlow: Zoho inventory update error:', zohoError);
+          // Don't fail the order if Zoho update fails
         }
         
         // Simulate payment processing for other methods

@@ -4,13 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ArrowRight, Store, Settings, Upload, Package, BarChart3, Loader2, Copy, ExternalLink, CheckCircle } from 'lucide-react';
+import { ArrowRight, Store, Settings, Upload, Package, BarChart3, Loader2, Copy, ExternalLink, CheckCircle, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import StoreProductsSection from '@/components/StoreProductsSection';
 import { StoreOrders } from '@/components/StoreOrders';
+import ZohoIntegration from '@/components/ZohoIntegration';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const StoreManagement = () => {
@@ -572,6 +573,7 @@ const StoreManagement = () => {
     { id: 'products', title: 'إدارة المنتجات', icon: Package },
     { id: 'orders', title: 'الطلبات', icon: Package },
     { id: 'payment-shipping', title: 'الشحن والمدفوعات', icon: Store },
+    { id: 'zoho-integration', title: 'تكامل Zoho', icon: Database },
     { id: 'store', title: 'المتجر', icon: Store },
     { id: 'analytics', title: 'الإحصائيات', icon: BarChart3 },
   ];
@@ -1106,6 +1108,28 @@ const StoreManagement = () => {
                         </div>
                       </>
                     )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {activeSection === 'zoho-integration' && userShop?.id && (
+                <ZohoIntegration shopId={userShop.id} />
+              )}
+
+              {activeSection === 'zoho-integration' && !userShop && (
+                <Card>
+                  <CardContent className="text-center py-12">
+                    <Database className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">لا يوجد متجر</h3>
+                    <p className="text-muted-foreground">
+                      يجب إنشاء متجر أولاً لتفعيل تكامل Zoho
+                    </p>
+                    <Button 
+                      className="mt-4"
+                      onClick={() => setActiveSection('settings')}
+                    >
+                      إنشاء متجر
+                    </Button>
                   </CardContent>
                 </Card>
               )}
