@@ -67,16 +67,38 @@ serve(async (req) => {
       description: "اختبار الاتصال مع إمكان"
     };
 
-    console.log("Sending test request to Emkan API...");
+    console.log("Sending test request to Emkan API with 12s timeout...");
 
-    const response = await fetch("https://merchants.emkanfinance.com.sa/retail/bnpl/bff/v1/order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Basic ${btoa(`${apiKey}:${password}`)}`
-      },
-      body: JSON.stringify(testPayload)
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+
+    let response: Response;
+    try {
+      response = await fetch("https://merchants.emkanfinance.com.sa/retail/bnpl/bff/v1/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Basic ${btoa(`${apiKey}:${password}`)}`
+        },
+        body: JSON.stringify(testPayload),
+        signal: controller.signal,
+      });
+    } catch (fetchErr) {
+      if ((fetchErr as Error).name === 'AbortError') {
+        console.error('Emkan API request timed out');
+        return new Response(JSON.stringify({
+          success: false,
+          error: "⏳ انتهت مهلة الاتصال بإمكان (12 ثانية). تحقق من الشبكة أو حاول لاحقاً."
+        }), { status: 408, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      console.error('Network error calling Emkan:', fetchErr);
+      return new Response(JSON.stringify({
+        success: false,
+        error: "فشل الاتصال بالشبكة إلى إمكان. تحقق من صحة الدومين أو جرب لاحقاً."
+      }), { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    } finally {
+      clearTimeout(timeout);
+    }
 
     const responseText = await response.text();
     console.log("Emkan API response:", {
