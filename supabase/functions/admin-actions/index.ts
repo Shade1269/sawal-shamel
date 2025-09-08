@@ -416,6 +416,45 @@ serve(async (req) => {
       }
     }
 
+    // Test Twilio connection
+    if (action === "test_twilio_connection") {
+      const { account_sid, auth_token } = body;
+      if (!account_sid || !auth_token) {
+        return jsonResponse({ error: "account_sid and auth_token are required" }, 400);
+      }
+
+      try {
+        // Test Twilio connection by getting account info
+        const auth = btoa(`${account_sid}:${auth_token}`);
+        const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${account_sid}.json`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Basic ${auth}`
+          }
+        });
+
+        if (response.ok) {
+          const accountData = await response.json();
+          return jsonResponse({ 
+            success: true, 
+            message: "Twilio connection successful", 
+            account: { 
+              sid: accountData.sid, 
+              friendly_name: accountData.friendly_name,
+              status: accountData.status 
+            } 
+          });
+        } else if (response.status === 401) {
+          return jsonResponse({ success: false, error: "Invalid Twilio credentials" }, 400);
+        } else {
+          const errorData = await response.text();
+          return jsonResponse({ success: false, error: `Twilio API error: ${errorData}` }, 400);
+        }
+      } catch (error: any) {
+        return jsonResponse({ success: false, error: `Network error: ${error.message}` }, 502);
+      }
+    }
+
     return jsonResponse({ error: "Invalid action" }, 400);
 
   } catch (error: any) {

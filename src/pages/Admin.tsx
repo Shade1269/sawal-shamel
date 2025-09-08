@@ -16,6 +16,7 @@ import UserProfileDialog from "@/components/UserProfileDialog";
 import UserSettingsMenu from "@/components/UserSettingsMenu";
 import ZohoIntegration from "@/components/ZohoIntegration";
 import EmkanIntegration from "@/components/EmkanIntegration";
+import TwilioIntegration from "@/components/TwilioIntegration";
 import { 
   Shield, 
   Ban, 
@@ -688,6 +689,18 @@ const [selectedZohoShopId, setSelectedZohoShopId] = useState<string>("");
             ) : (
               <p className="text-muted-foreground">يرجى اختيار متجر لعرض إعدادات التكامل.</p>
             )}
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Twilio Integration Section */}
+      <section aria-labelledby="twilio-integration-admin">
+        <Card>
+          <CardHeader>
+            <CardTitle id="twilio-integration-admin" className="text-2xl">تكامل Twilio - SMS وWhatsApp</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <TwilioIntegration />
           </CardContent>
         </Card>
       </section>
