@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   CreditCard, 
   Settings, 
@@ -129,6 +130,8 @@ const EmkanIntegration: React.FC = () => {
     }
   };
 
+  const { session } = useAuth();
+
   const testConnection = async () => {
     if (!settings.api_key || !settings.merchant_id || !settings.password) {
       toast({
@@ -139,44 +142,42 @@ const EmkanIntegration: React.FC = () => {
       return;
     }
 
+    if (!session?.access_token) {
+      toast({ title: "غير مصرح", description: "الرجاء تسجيل الدخول كمشرف لإجراء الاختبار", variant: "destructive" });
+      return;
+    }
+
     setLoading(true);
     try {
-      console.log('🔗 Testing Emkan connection via edge function...');
-      
-      // Use edge function to test connection (avoids CORS issues)
-      const { data, error } = await supabase.functions.invoke('test-emkan-connection', {
+      console.log('🔗 Testing Emkan via admin-actions...');
+      const { data, error } = await supabase.functions.invoke('admin-actions', {
         body: {
+          action: 'test_emkan_connection',
           merchantId: settings.merchant_id,
           apiKey: settings.api_key,
-          password: settings.password
-        }
+          password: settings.password,
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
 
       if (error) {
-        console.error('❌ Edge function error:', error);
-        throw new Error(`خطأ في استدعاء الخدمة: ${error.message}`);
+        console.error('❌ Admin function error:', error);
+        throw new Error(error.message || 'فشل استدعاء الخدمة');
       }
 
-      console.log('✅ Connection test result:', data);
-
-      if (data.success) {
-        toast({
-          title: "✅ نجح الاتصال",
-          description: data.message || "تم الاتصال بإمكان بنجاح - بيانات الاعتماد صحيحة"
-        });
+      if (data?.success) {
+        toast({ title: '✅ نجح الاتصال', description: data.message || 'تم الاتصال بإمكان بنجاح' });
       } else {
-        toast({
-          title: "❌ فشل الاتصال",
-          description: data.error || "فشل في الاتصال بإمكان",
-          variant: "destructive"
-        });
+        toast({ title: '❌ فشل الاتصال', description: data?.error || 'فشل في الاتصال بإمكان', variant: 'destructive' });
       }
     } catch (error) {
       console.error('❌ Connection test failed:', error);
       toast({
-        title: "❌ فشل الاتصال",
-        description: error instanceof Error ? error.message : "فشل في اختبار الاتصال مع إمكان",
-        variant: "destructive"
+        title: '❌ فشل الاتصال',
+        description: error instanceof Error ? error.message : 'فشل في اختبار الاتصال مع إمكان',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);

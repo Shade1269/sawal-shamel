@@ -364,6 +364,58 @@ serve(async (req) => {
       return jsonResponse({ data, message: 'Product visibility updated' });
     }
 
+    // Test Emkan connection via server (avoids CORS)
+    if (action === "test_emkan_connection") {
+      const { merchantId, apiKey, password } = body;
+      if (!merchantId || !apiKey || !password) {
+        return jsonResponse({ error: "merchantId, apiKey and password are required" }, 400);
+      }
+
+      const testPayload = {
+        merchantId,
+        amount: 1.00,
+        currency: "SAR",
+        orderId: `TEST-CONN-${Date.now()}`,
+        items: [{ id: "test-item", name: "اختبار الاتصال", quantity: 1, price: 1.00, total: 1.00 }],
+        customerInfo: { fullName: "اختبار العميل", email: "test@example.com", phone: "+966500000000", address: "عنوان تجريبي" },
+        redirectUrls: { successUrl: "https://example.com/success", cancelUrl: "https://example.com/cancel" },
+        description: "اختبار الاتصال مع إمكان"
+      };
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 12000);
+      try {
+        const res = await fetch("https://merchants.emkanfinance.com.sa/retail/bnpl/bff/v1/order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Basic ${btoa(`${apiKey}:${password}`)}`
+          },
+          body: JSON.stringify(testPayload),
+          signal: controller.signal,
+        });
+
+        const text = await res.text();
+        let parsed: any = null;
+        try { parsed = JSON.parse(text); } catch (_) { parsed = { raw: text }; }
+
+        if (res.ok || res.status === 400) {
+          return jsonResponse({ success: true, message: "Emkan reachable and credentials accepted (auth OK)", details: parsed });
+        }
+        if (res.status === 401 || res.status === 403) {
+          return jsonResponse({ success: false, error: "Invalid credentials for Emkan", statusCode: res.status, details: parsed }, 400);
+        }
+        return jsonResponse({ success: false, error: `Emkan error ${res.status}`, details: parsed }, 400);
+      } catch (e: any) {
+        if (e?.name === 'AbortError') {
+          return jsonResponse({ success: false, error: "Connection to Emkan timed out (12s)" }, 408);
+        }
+        return jsonResponse({ success: false, error: `Network error calling Emkan: ${e?.message || e}` }, 502);
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+
     return jsonResponse({ error: "Invalid action" }, 400);
 
   } catch (error: any) {
