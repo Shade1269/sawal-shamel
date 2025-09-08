@@ -54,11 +54,28 @@ export const setupRecaptcha = async (containerId: string) => {
 export const sendSMSOTP = async (phoneNumber: string, recaptchaVerifier: RecaptchaVerifier) => {
   try {
     const authInstance = await getFirebaseAuth();
+    console.log('Attempting to send SMS to:', phoneNumber);
     const confirmationResult = await signInWithPhoneNumber(authInstance, phoneNumber, recaptchaVerifier);
+    console.log('SMS sent successfully, confirmation result:', confirmationResult);
     return { success: true, confirmationResult };
   } catch (error: any) {
     console.error('Error sending SMS:', error);
-    return { success: false, error: error.message };
+    console.error('Error details:', {
+      code: error.code,
+      message: error.message,
+      phoneNumber: phoneNumber
+    });
+    
+    let errorMessage = error.message;
+    if (error.code === 'auth/invalid-phone-number') {
+      errorMessage = 'رقم الهاتف غير صحيح. تأكد من صيغة الرقم.';
+    } else if (error.code === 'auth/too-many-requests') {
+      errorMessage = 'تم تجاوز الحد المسموح من المحاولات. حاول مرة أخرى لاحقاً.';
+    } else if (error.code === 'auth/quota-exceeded') {
+      errorMessage = 'تم تجاوز حصة SMS اليومية في Firebase.';
+    }
+    
+    return { success: false, error: errorMessage };
   }
 };
 

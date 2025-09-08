@@ -55,7 +55,7 @@ const FirebaseSMSAuth = () => {
         setStep('verify');
         toast({
           title: "تم الإرسال",
-          description: "تم إرسال رمز التحقق إلى هاتفك"
+          description: `تم إرسال رمز التحقق إلى ${fullPhoneNumber}. إذا لم تصلك الرسالة، تحقق من إعدادات Firebase أو جرب رقم آخر.`
         });
       } else {
         throw new Error(result.error);
