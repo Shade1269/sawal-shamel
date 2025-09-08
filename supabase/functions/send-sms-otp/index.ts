@@ -17,7 +17,8 @@ serve(async (req) => {
   }
 
   try {
-    const { phone } = await req.json();
+    const { phone, message, test_mode = false } = await req.json();
+    console.log('Received SMS request:', { phone, hasMessage: !!message, test_mode });
 
     const rawPhone = String(phone || '').trim();
     const cleanPhone = rawPhone.replace(/\s+/g, '');
@@ -91,11 +92,12 @@ serve(async (req) => {
     console.log('SMS From/To:', smsFrom, cleanPhone);
 
     const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-    const message = `Your verification code is: ${otpCode}. This code expires in 5 minutes.`;
+    const smsMessage = message || `Your verification code is: ${otpCode}. This code expires in 5 minutes.`;
+    console.log('Sending SMS with message:', smsMessage);
 
     const params = new URLSearchParams({
       To: cleanPhone,
-      Body: message,
+      Body: smsMessage,
     });
 
     // Check if smsFrom is a Messaging Service SID (starts with MG) or a phone number
