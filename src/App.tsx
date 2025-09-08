@@ -4,13 +4,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { UserDataProvider } from "@/contexts/UserDataContext";
 import { DarkModeProvider } from "@/components/DarkModeProvider";
 import AuthPage from "@/components/AuthPage";
 import Index from "./pages/Index";
 import Chat from "./pages/Chat";
 import ChatRoom from "./pages/ChatRoom";
 import Inventory from "./pages/Inventory";
-import StoreManagement from "./pages/StoreManagement";
+import StoreManagement from "./pages/StoreManagementNew";
 import StoreFront from "./pages/StoreFront";
 import Cart from "./pages/Cart";
 import Shipping from "./pages/Shipping";
@@ -83,13 +84,15 @@ const App = () => {
         <Toaster />
         <Sonner />
         <AuthProvider>
-          <DarkModeProvider>
-            <BrowserRouter>
-              <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
-                <AppContent />
-              </Suspense>
-            </BrowserRouter>
-          </DarkModeProvider>
+          <UserDataProvider>
+            <DarkModeProvider>
+              <BrowserRouter>
+                <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
+                  <AppContent />
+                </Suspense>
+              </BrowserRouter>
+            </DarkModeProvider>
+          </UserDataProvider>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
