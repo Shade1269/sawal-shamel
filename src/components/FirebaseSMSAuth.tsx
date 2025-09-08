@@ -21,12 +21,23 @@ const FirebaseSMSAuth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Setup reCAPTCHA when component mounts
+    // Setup reCAPTCHA when component mounts or tab becomes active
     const timer = setTimeout(() => {
       setupRecaptcha('recaptcha-container');
     }, 1000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      // Clean up reCAPTCHA when component unmounts
+      if (window.recaptchaVerifier) {
+        try {
+          window.recaptchaVerifier.clear();
+          window.recaptchaVerifier = null;
+        } catch (error) {
+          console.log('Error cleaning up reCAPTCHA:', error);
+        }
+      }
+    };
   }, []);
 
   const handleSendOTP = async (e: React.FormEvent) => {

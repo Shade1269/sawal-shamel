@@ -36,17 +36,33 @@ export const getFirebaseAuth = async () => {
 // Configure reCAPTCHA for SMS verification
 export const setupRecaptcha = async (containerId: string) => {
   const authInstance = await getFirebaseAuth();
-  if (!window.recaptchaVerifier) {
-    window.recaptchaVerifier = new RecaptchaVerifier(authInstance, containerId, {
-      'size': 'invisible',
-      'callback': (response: any) => {
-        console.log('reCAPTCHA solved');
-      },
-      'expired-callback': () => {
-        console.log('reCAPTCHA expired');
-      }
-    });
+  
+  // Clear existing reCAPTCHA if it exists
+  if (window.recaptchaVerifier) {
+    try {
+      window.recaptchaVerifier.clear();
+    } catch (error) {
+      console.log('Error clearing existing reCAPTCHA:', error);
+    }
+    window.recaptchaVerifier = null;
   }
+  
+  // Make sure the container exists
+  const container = document.getElementById(containerId);
+  if (!container) {
+    throw new Error(`reCAPTCHA container with id '${containerId}' not found`);
+  }
+  
+  window.recaptchaVerifier = new RecaptchaVerifier(authInstance, containerId, {
+    'size': 'invisible',
+    'callback': (response: any) => {
+      console.log('reCAPTCHA solved');
+    },
+    'expired-callback': () => {
+      console.log('reCAPTCHA expired');
+    }
+  });
+  
   return window.recaptchaVerifier;
 };
 
