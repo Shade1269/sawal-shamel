@@ -21,20 +21,27 @@ const FirebaseSMSAuth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Setup reCAPTCHA when component mounts or tab becomes active
-    const timer = setTimeout(() => {
-      setupRecaptcha('recaptcha-container');
-    }, 1000);
+    const initializeRecaptcha = async () => {
+      try {
+        await setupRecaptcha('recaptcha-container');
+        console.log('reCAPTCHA initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize reCAPTCHA:', error);
+      }
+    };
+
+    // Delay initialization slightly to ensure DOM is ready
+    const timer = setTimeout(initializeRecaptcha, 500);
 
     return () => {
       clearTimeout(timer);
-      // Clean up reCAPTCHA when component unmounts
+      // Cleanup on unmount
       if (window.recaptchaVerifier) {
         try {
           window.recaptchaVerifier.clear();
           window.recaptchaVerifier = null;
         } catch (error) {
-          console.log('Error cleaning up reCAPTCHA:', error);
+          console.log('Cleanup reCAPTCHA error:', error);
         }
       }
     };
@@ -59,7 +66,13 @@ const FirebaseSMSAuth = () => {
         ? phoneNumber 
         : `${countryCode}${phoneNumber}`;
 
-      const recaptchaVerifier = await setupRecaptcha('recaptcha-container');
+      // تأكد من وجود reCAPTCHA قبل الإرسال
+      let recaptchaVerifier = window.recaptchaVerifier;
+      if (!recaptchaVerifier) {
+        console.log('reCAPTCHA not found, initializing...');
+        recaptchaVerifier = await setupRecaptcha('recaptcha-container');
+      }
+
       const result = await sendSMSOTP(fullPhoneNumber, recaptchaVerifier);
 
       if (result.success) {

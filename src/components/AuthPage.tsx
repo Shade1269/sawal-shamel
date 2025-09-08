@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogIn, UserPlus, Mail, MessageSquare } from 'lucide-react';
-import SupabaseSMSAuth from '@/components/SupabaseSMSAuth';
+import FirebaseSMSAuth from '@/components/FirebaseSMSAuth';
 import { useNavigate } from 'react-router-dom';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
@@ -249,7 +249,7 @@ const AuthPage = () => {
             </TabsContent>
 
             <TabsContent value="sms" className="space-y-0">
-              <SupabaseSMSAuth />
+              <FirebaseSMSAuth />
             </TabsContent>
           </Tabs>
         </Card>
