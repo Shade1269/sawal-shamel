@@ -30,12 +30,10 @@ const FirebaseSMSAuth = () => {
       }
     };
 
-    // Delay initialization slightly to ensure DOM is ready
     const timer = setTimeout(initializeRecaptcha, 500);
 
     return () => {
       clearTimeout(timer);
-      // Cleanup on unmount
       if (window.recaptchaVerifier) {
         try {
           window.recaptchaVerifier.clear();
@@ -66,10 +64,8 @@ const FirebaseSMSAuth = () => {
         ? phoneNumber 
         : `${countryCode}${phoneNumber}`;
 
-      // إعادة إنشاء reCAPTCHA في كل مرة لضمان عدم التداخل
       console.log('Setting up reCAPTCHA for SMS sending...');
       const recaptchaVerifier = await setupRecaptcha('recaptcha-container');
-
       const result = await sendSMSOTP(fullPhoneNumber, recaptchaVerifier);
 
       if (result.success) {
@@ -121,18 +117,26 @@ const FirebaseSMSAuth = () => {
       const result = await verifySMSOTP(confirmationResult, otp);
 
       if (result.success) {
-        // Firebase authentication successful
         const firebaseUser = result.user;
         
-        // Create or update user in Supabase
-        await createSupabaseUser(firebaseUser);
+        // Link Firebase user with Supabase
+        const { data: linkResult, error: linkError } = await supabase.functions.invoke('link-firebase-user', {
+          body: { phone: firebaseUser.phoneNumber }
+        });
+        
+        if (linkError) {
+          console.error('Failed to link with Supabase:', linkError);
+        }
         
         toast({
           title: "تم التحقق بنجاح",
           description: mode === 'signup' ? "تم إنشاء حسابك بنجاح!" : "مرحباً بعودتك!"
         });
         
-        navigate('/');
+        // Reload page to refresh auth state
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1000);
       } else {
         throw new Error(result.error);
       }
@@ -148,49 +152,6 @@ const FirebaseSMSAuth = () => {
     }
   };
 
-  const createSupabaseUser = async (firebaseUser: any) => {
-    try {
-      console.log('Checking/creating Supabase user for phone:', firebaseUser.phoneNumber);
-      
-      // Check if user exists in Supabase profiles
-      const { data: existingProfile, error: selectError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('phone', firebaseUser.phoneNumber)
-        .maybeSingle(); // Use maybeSingle instead of single to avoid errors
-
-      console.log('Existing profile search result:', { existingProfile, selectError });
-
-      if (selectError) {
-        console.error('Error searching for profile:', selectError);
-      }
-
-      if (!existingProfile) {
-        // No existing profile found - create new one (works for both signup and signin)
-        console.log('No existing profile found, creating new one...');
-        const { error: insertError } = await supabase
-          .from('profiles')
-          .insert({
-            phone: firebaseUser.phoneNumber,
-            full_name: firebaseUser.phoneNumber, // Use phone as default name
-            role: 'affiliate'
-          });
-
-        if (insertError) {
-          console.error('Error creating Supabase profile:', insertError);
-          // Don't throw error here - user can still continue
-        } else {
-          console.log('Successfully created new profile');
-        }
-      } else {
-        console.log('Found existing profile:', existingProfile);
-      }
-    } catch (error) {
-      console.error('Error handling Supabase user:', error);
-      // Don't throw error - let user continue with Firebase auth
-    }
-  };
-
   const handleBack = () => {
     setStep('phone');
     setOtp('');
@@ -202,7 +163,7 @@ const FirebaseSMSAuth = () => {
       <CardHeader className="text-center">
         <CardTitle className="flex items-center justify-center gap-2">
           <MessageSquare className="h-6 w-6 text-primary" />
-          {mode === 'signup' ? 'تسجيل عبر SMS' : 'دخول عبر SMS'}
+          {mode === 'signup' ? 'إنشاء حساب عبر SMS' : 'تسجيل دخول عبر SMS'}
         </CardTitle>
         <CardDescription>
           {step === 'phone' 
@@ -225,7 +186,7 @@ const FirebaseSMSAuth = () => {
                     : 'bg-muted text-muted-foreground hover:bg-muted/80'
                 }`}
               >
-                حساب جديد
+                إنشاء حساب جديد
               </button>
               <button
                 type="button"
@@ -327,7 +288,6 @@ const FirebaseSMSAuth = () => {
           </form>
         )}
 
-        {/* reCAPTCHA container - hidden */}
         <div id="recaptcha-container" className="hidden"></div>
         
         <div className="mt-4 text-xs text-muted-foreground text-center">
