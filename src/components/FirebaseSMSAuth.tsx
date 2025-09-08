@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const FirebaseSMSAuth = () => {
   const [step, setStep] = useState<'phone' | 'verify'>('phone');
+  const [mode, setMode] = useState<'signup' | 'signin'>('signup');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+966');
   const [otp, setOtp] = useState('');
@@ -107,7 +108,7 @@ const FirebaseSMSAuth = () => {
         
         toast({
           title: "تم التحقق بنجاح",
-          description: "مرحباً بك في المنصة!"
+          description: mode === 'signup' ? "تم إنشاء حسابك بنجاح!" : "مرحباً بعودتك!"
         });
         
         navigate('/');
@@ -135,8 +136,8 @@ const FirebaseSMSAuth = () => {
         .eq('phone', firebaseUser.phoneNumber)
         .single();
 
-      if (!existingProfile) {
-        // Create new profile in Supabase
+      if (!existingProfile && mode === 'signup') {
+        // Create new profile in Supabase for signup
         const { error } = await supabase
           .from('profiles')
           .insert({
@@ -148,9 +149,12 @@ const FirebaseSMSAuth = () => {
         if (error) {
           console.error('Error creating Supabase profile:', error);
         }
+      } else if (!existingProfile && mode === 'signin') {
+        throw new Error('لا يوجد حساب مرتبط بهذا الرقم. يرجى التسجيل أولاً.');
       }
     } catch (error) {
       console.error('Error handling Supabase user:', error);
+      throw error;
     }
   };
 
@@ -165,7 +169,7 @@ const FirebaseSMSAuth = () => {
       <CardHeader className="text-center">
         <CardTitle className="flex items-center justify-center gap-2">
           <MessageSquare className="h-6 w-6 text-primary" />
-          تسجيل عبر SMS
+          {mode === 'signup' ? 'تسجيل عبر SMS' : 'دخول عبر SMS'}
         </CardTitle>
         <CardDescription>
           {step === 'phone' 
@@ -178,6 +182,30 @@ const FirebaseSMSAuth = () => {
       <CardContent>
         {step === 'phone' ? (
           <form onSubmit={handleSendOTP} className="space-y-4">
+            <div className="flex gap-2 mb-4">
+              <button
+                type="button"
+                onClick={() => setMode('signup')}
+                className={`flex-1 px-3 py-2 text-sm rounded-md transition-colors ${
+                  mode === 'signup' 
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+              >
+                حساب جديد
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode('signin')}
+                className={`flex-1 px-3 py-2 text-sm rounded-md transition-colors ${
+                  mode === 'signin' 
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+              >
+                تسجيل دخول
+              </button>
+            </div>
             <div className="space-y-2 text-right">
               <Label htmlFor="phone">رقم الهاتف</Label>
               <div className="flex gap-2">
@@ -212,7 +240,9 @@ const FirebaseSMSAuth = () => {
               disabled={isLoading}
             >
               <MessageSquare className="ml-2 h-4 w-4" />
-              {isLoading ? 'جاري الإرسال...' : 'إرسال رمز التحقق'}
+              {isLoading ? 'جاري الإرسال...' : 
+                mode === 'signup' ? 'إرسال رمز التحقق للتسجيل' : 'إرسال رمز التحقق للدخول'
+              }
             </Button>
           </form>
         ) : (
