@@ -150,16 +150,25 @@ const FirebaseSMSAuth = () => {
 
   const createSupabaseUser = async (firebaseUser: any) => {
     try {
+      console.log('Checking/creating Supabase user for phone:', firebaseUser.phoneNumber);
+      
       // Check if user exists in Supabase profiles
-      const { data: existingProfile } = await supabase
+      const { data: existingProfile, error: selectError } = await supabase
         .from('profiles')
         .select('*')
         .eq('phone', firebaseUser.phoneNumber)
-        .single();
+        .maybeSingle(); // Use maybeSingle instead of single to avoid errors
 
-      if (!existingProfile && mode === 'signup') {
-        // Create new profile in Supabase for signup
-        const { error } = await supabase
+      console.log('Existing profile search result:', { existingProfile, selectError });
+
+      if (selectError) {
+        console.error('Error searching for profile:', selectError);
+      }
+
+      if (!existingProfile) {
+        // No existing profile found - create new one (works for both signup and signin)
+        console.log('No existing profile found, creating new one...');
+        const { error: insertError } = await supabase
           .from('profiles')
           .insert({
             phone: firebaseUser.phoneNumber,
@@ -167,15 +176,18 @@ const FirebaseSMSAuth = () => {
             role: 'affiliate'
           });
 
-        if (error) {
-          console.error('Error creating Supabase profile:', error);
+        if (insertError) {
+          console.error('Error creating Supabase profile:', insertError);
+          // Don't throw error here - user can still continue
+        } else {
+          console.log('Successfully created new profile');
         }
-      } else if (!existingProfile && mode === 'signin') {
-        throw new Error('لا يوجد حساب مرتبط بهذا الرقم. يرجى التسجيل أولاً.');
+      } else {
+        console.log('Found existing profile:', existingProfile);
       }
     } catch (error) {
       console.error('Error handling Supabase user:', error);
-      throw error;
+      // Don't throw error - let user continue with Firebase auth
     }
   };
 
