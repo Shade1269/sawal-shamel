@@ -66,12 +66,9 @@ const FirebaseSMSAuth = () => {
         ? phoneNumber 
         : `${countryCode}${phoneNumber}`;
 
-      // تأكد من وجود reCAPTCHA قبل الإرسال
-      let recaptchaVerifier = window.recaptchaVerifier;
-      if (!recaptchaVerifier) {
-        console.log('reCAPTCHA not found, initializing...');
-        recaptchaVerifier = await setupRecaptcha('recaptcha-container');
-      }
+      // إعادة إنشاء reCAPTCHA في كل مرة لضمان عدم التداخل
+      console.log('Setting up reCAPTCHA for SMS sending...');
+      const recaptchaVerifier = await setupRecaptcha('recaptcha-container');
 
       const result = await sendSMSOTP(fullPhoneNumber, recaptchaVerifier);
 

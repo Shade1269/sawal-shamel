@@ -37,23 +37,24 @@ export const getFirebaseAuth = async () => {
 export const setupRecaptcha = async (containerId: string) => {
   const authInstance = await getFirebaseAuth();
   
-  // Clear any existing reCAPTCHA
+  // Clear any existing reCAPTCHA completely
   if (window.recaptchaVerifier) {
     try {
       window.recaptchaVerifier.clear();
+      window.recaptchaVerifier = null;
     } catch (error) {
       console.log('Clearing existing reCAPTCHA:', error);
     }
-    window.recaptchaVerifier = null;
   }
   
-  // Ensure container exists
+  // Clear the container HTML to ensure clean state
   const container = document.getElementById(containerId);
   if (!container) {
     throw new Error(`Container ${containerId} not found`);
   }
+  container.innerHTML = ''; // Clear any existing content
   
-  // Create new reCAPTCHA verifier
+  // Create fresh reCAPTCHA verifier
   window.recaptchaVerifier = new RecaptchaVerifier(authInstance, containerId, {
     'size': 'invisible',
     'callback': (response: any) => {
@@ -66,9 +67,6 @@ export const setupRecaptcha = async (containerId: string) => {
       console.error('reCAPTCHA error:', error);
     }
   });
-  
-  // Render the reCAPTCHA
-  await window.recaptchaVerifier.render();
   
   return window.recaptchaVerifier;
 };
