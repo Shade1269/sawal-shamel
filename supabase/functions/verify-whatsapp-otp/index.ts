@@ -144,13 +144,29 @@ serve(async (req) => {
         );
       }
 
-      // The profile will be created automatically by the trigger
-      
+      // Generate magic link to create a session for the new user
+      const { data: authData, error: linkError } = await supabase.auth.admin.generateLink({
+        type: 'magiclink',
+        email: tempEmail,
+        options: {
+          redirectTo: `${Deno.env.get('SUPABASE_URL')}/auth/v1/callback`
+        }
+      });
+
+      if (linkError) {
+        console.error('Error generating auth link for new user:', linkError);
+        return new Response(
+          JSON.stringify({ error: 'Account created but failed to start session' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       return new Response(
         JSON.stringify({ 
           success: true, 
           message: 'Account created successfully',
-          user: authUser.user
+          user: authUser.user,
+          authData
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );

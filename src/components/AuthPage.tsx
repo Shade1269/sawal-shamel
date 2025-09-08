@@ -176,12 +176,17 @@ const AuthPage = () => {
       }
 
       if (data.success) {
+        // If edge function returned a magic link, redirect to it to establish a session
+        const actionLink = data?.authData?.properties?.action_link || data?.authData?.action_link;
+        if (actionLink) {
+          window.location.href = actionLink;
+          return; // Stop further execution; browser will redirect
+        }
+
         toast({
           title: "تم التحقق بنجاح",
           description: "مرحباً بك في دردشتي!"
         });
-        
-        // The user should be automatically logged in by the edge function
         navigate('/');
       } else {
         throw new Error(data.error || 'فشل في التحقق من الرمز');
