@@ -717,11 +717,14 @@ export type Database = {
           id: string
           image_urls: string[] | null
           is_active: boolean
+          last_viewed_at: string | null
           merchant_id: string
           price_sar: number
+          shop_id: string | null
           stock: number
           title: string
           updated_at: string
+          view_count: number | null
         }
         Insert: {
           attributes_schema?: Json | null
@@ -733,11 +736,14 @@ export type Database = {
           id?: string
           image_urls?: string[] | null
           is_active?: boolean
+          last_viewed_at?: string | null
           merchant_id: string
           price_sar: number
+          shop_id?: string | null
           stock?: number
           title: string
           updated_at?: string
+          view_count?: number | null
         }
         Update: {
           attributes_schema?: Json | null
@@ -749,11 +755,14 @@ export type Database = {
           id?: string
           image_urls?: string[] | null
           is_active?: boolean
+          last_viewed_at?: string | null
           merchant_id?: string
           price_sar?: number
+          shop_id?: string | null
           stock?: number
           title?: string
           updated_at?: string
+          view_count?: number | null
         }
         Relationships: [
           {
@@ -763,6 +772,13 @@ export type Database = {
             referencedRelation: "merchants"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "products_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
@@ -770,10 +786,12 @@ export type Database = {
           auth_user_id: string | null
           avatar_url: string | null
           created_at: string
+          created_shops_count: number | null
           email: string | null
           full_name: string | null
           id: string
           is_active: boolean
+          last_activity_at: string | null
           phone: string | null
           points: number
           role: Database["public"]["Enums"]["user_role"]
@@ -784,10 +802,12 @@ export type Database = {
           auth_user_id?: string | null
           avatar_url?: string | null
           created_at?: string
+          created_shops_count?: number | null
           email?: string | null
           full_name?: string | null
           id?: string
           is_active?: boolean
+          last_activity_at?: string | null
           phone?: string | null
           points?: number
           role?: Database["public"]["Enums"]["user_role"]
@@ -798,10 +818,12 @@ export type Database = {
           auth_user_id?: string | null
           avatar_url?: string | null
           created_at?: string
+          created_shops_count?: number | null
           email?: string | null
           full_name?: string | null
           id?: string
           is_active?: boolean
+          last_activity_at?: string | null
           phone?: string | null
           points?: number
           role?: Database["public"]["Enums"]["user_role"]
@@ -845,16 +867,73 @@ export type Database = {
           },
         ]
       }
+      shop_settings_extended: {
+        Row: {
+          business_hours: Json | null
+          created_at: string | null
+          currency: string | null
+          id: string
+          notification_settings: Json | null
+          payment_methods: Json | null
+          shipping_settings: Json | null
+          shop_id: string
+          social_links: Json | null
+          tax_rate: number | null
+          theme_settings: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          business_hours?: Json | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          notification_settings?: Json | null
+          payment_methods?: Json | null
+          shipping_settings?: Json | null
+          shop_id: string
+          social_links?: Json | null
+          tax_rate?: number | null
+          theme_settings?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          business_hours?: Json | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          notification_settings?: Json | null
+          payment_methods?: Json | null
+          shipping_settings?: Json | null
+          shop_id?: string
+          social_links?: Json | null
+          tax_rate?: number | null
+          theme_settings?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_settings_extended_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: true
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shops: {
         Row: {
           bio: string | null
           created_at: string
           display_name: string | null
           id: string
+          last_activity_at: string | null
           logo_url: string | null
           owner_id: string
+          settings: Json | null
           slug: string
           theme: string
+          total_orders: number | null
+          total_products: number | null
           updated_at: string
         }
         Insert: {
@@ -862,10 +941,14 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          last_activity_at?: string | null
           logo_url?: string | null
           owner_id: string
+          settings?: Json | null
           slug: string
           theme?: string
+          total_orders?: number | null
+          total_products?: number | null
           updated_at?: string
         }
         Update: {
@@ -873,10 +956,14 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          last_activity_at?: string | null
           logo_url?: string | null
           owner_id?: string
+          settings?: Json | null
           slug?: string
           theme?: string
+          total_orders?: number | null
+          total_products?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -915,6 +1002,51 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      user_activities: {
+        Row: {
+          activity_type: string
+          created_at: string | null
+          description: string | null
+          id: string
+          metadata: Json | null
+          shop_id: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          shop_id?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          shop_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_activities_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_activities_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_bans: {
         Row: {
@@ -1019,6 +1151,38 @@ export type Database = {
           },
           {
             foreignKeyName: "user_mutes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_sessions: {
+        Row: {
+          expires_at: string | null
+          id: string
+          last_saved_at: string | null
+          session_data: Json | null
+          user_id: string
+        }
+        Insert: {
+          expires_at?: string | null
+          id?: string
+          last_saved_at?: string | null
+          session_data?: Json | null
+          user_id: string
+        }
+        Update: {
+          expires_at?: string | null
+          id?: string
+          last_saved_at?: string | null
+          session_data?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_sessions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -1191,6 +1355,10 @@ export type Database = {
       cleanup_expired_otp: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      create_user_shop: {
+        Args: { p_shop_name: string; p_shop_slug?: string; p_user_id: string }
+        Returns: string
       }
       debug_user_profile: {
         Args: Record<PropertyKey, never>
