@@ -64,6 +64,7 @@ const TwilioIntegration: React.FC = () => {
     body: '',
     type: 'sms' as 'sms' | 'whatsapp'
   });
+  const [countryCode, setCountryCode] = useState('+966');
 
   useEffect(() => {
     loadTwilioSettings();
@@ -214,10 +215,11 @@ const TwilioIntegration: React.FC = () => {
     setLoading(true);
     try {
       const functionName = testMessage.type === 'whatsapp' ? 'send-whatsapp-otp' : 'send-sms-otp';
+      const fullPhone = testMessage.to.startsWith('+') ? testMessage.to : `${countryCode}${testMessage.to}`;
       
       const { data, error } = await supabase.functions.invoke(functionName, {
         body: {
-          phone: testMessage.to,
+          phone: fullPhone,
           message: testMessage.body,
           test_mode: true
         }
@@ -486,7 +488,8 @@ const TwilioIntegration: React.FC = () => {
                   <div className="flex gap-2">
                     <select 
                       className="px-3 py-2 border border-input bg-background rounded-md text-sm"
-                      defaultValue="+966"
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value)}
                     >
                       <option value="+966">🇸🇦 +966</option>
                       <option value="+971">🇦🇪 +971</option>
