@@ -5,7 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, UserPlus, Mail } from 'lucide-react';
+import { LogIn, UserPlus, Mail, MessageSquare } from 'lucide-react';
+import FirebaseSMSAuth from '@/components/FirebaseSMSAuth';
 import { useNavigate } from 'react-router-dom';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
@@ -102,7 +103,7 @@ const AuthPage = () => {
 
         <Card className="backdrop-blur-sm bg-card/80 border-border/50">
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsList className="grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="signin" className="gap-2">
                 <LogIn className="h-4 w-4" />
                 تسجيل دخول
@@ -110,6 +111,10 @@ const AuthPage = () => {
               <TabsTrigger value="signup" className="gap-2">
                 <UserPlus className="h-4 w-4" />
                 حساب جديد
+              </TabsTrigger>
+              <TabsTrigger value="sms" className="gap-2">
+                <MessageSquare className="h-4 w-4" />
+                SMS
               </TabsTrigger>
             </TabsList>
 
@@ -241,6 +246,10 @@ const AuthPage = () => {
                   </div>
                 </form>
               </CardContent>
+            </TabsContent>
+
+            <TabsContent value="sms" className="space-y-0">
+              <FirebaseSMSAuth />
             </TabsContent>
           </Tabs>
         </Card>
