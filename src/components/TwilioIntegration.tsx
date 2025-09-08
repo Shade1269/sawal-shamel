@@ -483,13 +483,28 @@ const TwilioIntegration: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="test_to">رقم الهاتف</Label>
-                  <Input
-                    id="test_to"
-                    value={testMessage.to}
-                    onChange={(e) => setTestMessage({...testMessage, to: e.target.value})}
-                    placeholder="+966501234567"
-                    dir="ltr"
-                  />
+                  <div className="flex gap-2">
+                    <select 
+                      className="px-3 py-2 border border-input bg-background rounded-md text-sm"
+                      defaultValue="+966"
+                    >
+                      <option value="+966">🇸🇦 +966</option>
+                      <option value="+971">🇦🇪 +971</option>
+                      <option value="+965">🇰🇼 +965</option>
+                      <option value="+973">🇧🇭 +973</option>
+                      <option value="+974">🇶🇦 +974</option>
+                      <option value="+968">🇴🇲 +968</option>
+                      <option value="+20">🇪🇬 +20</option>
+                    </select>
+                    <Input
+                      id="test_to"
+                      value={testMessage.to}
+                      onChange={(e) => setTestMessage({...testMessage, to: e.target.value})}
+                      placeholder="501234567"
+                      dir="ltr"
+                      className="flex-1"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="test_type">نوع الرسالة</Label>

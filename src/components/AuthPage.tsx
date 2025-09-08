@@ -33,6 +33,7 @@ const AuthPage = () => {
     phone: '',
     fullName: '',
     otp: '',
+    countryCode: '+966',
     step: 'phone' as 'phone' | 'verify'
   });
 
@@ -113,8 +114,12 @@ const AuthPage = () => {
     setIsLoading(true);
 
     try {
+      const fullPhoneNumber = whatsappOtpForm.phone.startsWith('+') 
+        ? whatsappOtpForm.phone 
+        : `${whatsappOtpForm.countryCode}${whatsappOtpForm.phone}`;
+
       const { data, error } = await supabase.functions.invoke('send-whatsapp-otp', {
-        body: { phone: whatsappOtpForm.phone }
+        body: { phone: fullPhoneNumber }
       });
 
       if (error) {
@@ -154,9 +159,13 @@ const AuthPage = () => {
     setIsLoading(true);
 
     try {
+      const fullPhoneNumber = whatsappOtpForm.phone.startsWith('+') 
+        ? whatsappOtpForm.phone 
+        : `${whatsappOtpForm.countryCode}${whatsappOtpForm.phone}`;
+
       const { data, error } = await supabase.functions.invoke('verify-whatsapp-otp', {
         body: { 
-          phone: whatsappOtpForm.phone,
+          phone: fullPhoneNumber,
           code: whatsappOtpForm.otp,
           fullName: whatsappOtpForm.fullName
         }
@@ -375,15 +384,30 @@ const AuthPage = () => {
 
                     <div className="space-y-2 text-right">
                       <Label htmlFor="whatsapp-phone">رقم الهاتف</Label>
-                      <Input
-                        id="whatsapp-phone"
-                        type="tel"
-                        value={whatsappOtpForm.phone}
-                        onChange={(e) => setWhatsappOtpForm(prev => ({...prev, phone: e.target.value}))}
-                        placeholder="مثال: +966501234567"
-                        required
-                        className="text-right"
-                      />
+                      <div className="flex gap-2">
+                        <select 
+                          value={whatsappOtpForm.countryCode}
+                          onChange={(e) => setWhatsappOtpForm(prev => ({...prev, countryCode: e.target.value}))}
+                          className="px-3 py-2 border border-input bg-background rounded-md text-sm"
+                        >
+                          <option value="+966">🇸🇦 +966</option>
+                          <option value="+971">🇦🇪 +971</option>
+                          <option value="+965">🇰🇼 +965</option>
+                          <option value="+973">🇧🇭 +973</option>
+                          <option value="+974">🇶🇦 +974</option>
+                          <option value="+968">🇴🇲 +968</option>
+                          <option value="+20">🇪🇬 +20</option>
+                        </select>
+                        <Input
+                          id="whatsapp-phone"
+                          type="tel"
+                          value={whatsappOtpForm.phone}
+                          onChange={(e) => setWhatsappOtpForm(prev => ({...prev, phone: e.target.value}))}
+                          placeholder="501234567"
+                          required
+                          className="text-right flex-1"
+                        />
+                      </div>
                     </div>
 
                     <Button 
