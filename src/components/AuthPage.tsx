@@ -5,10 +5,9 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, UserPlus, MessageCircle, Mail } from 'lucide-react';
+import { LogIn, UserPlus, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Checkbox } from '@/components/ui/checkbox';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 const AuthPage = () => {
@@ -27,14 +26,6 @@ const AuthPage = () => {
     email: '',
     password: '',
     fullName: '',
-  });
-
-  const [whatsappOtpForm, setWhatsappOtpForm] = useState({
-    phone: '',
-    fullName: '',
-    otp: '',
-    countryCode: '+966',
-    step: 'phone' as 'phone' | 'verify'
   });
 
   // Load saved credentials on component mount
@@ -99,116 +90,11 @@ const AuthPage = () => {
     setIsLoading(false);
   };
 
-  const handleWhatsAppSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!whatsappOtpForm.phone || !whatsappOtpForm.fullName) {
-      toast({
-        title: "خطأ",
-        description: "يرجى إدخال رقم الهاتف والاسم الكامل",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const fullPhoneNumber = whatsappOtpForm.phone.startsWith('+') 
-        ? whatsappOtpForm.phone 
-        : `${whatsappOtpForm.countryCode}${whatsappOtpForm.phone}`;
-
-      const { data, error } = await supabase.functions.invoke('send-whatsapp-otp', {
-        body: { phone: fullPhoneNumber }
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      toast({
-        title: "تم إرسال الرمز",
-        description: "تم إرسال رمز التحقق إلى WhatsApp"
-      });
-
-      setWhatsappOtpForm(prev => ({ ...prev, step: 'verify' }));
-    } catch (error: any) {
-      console.error('Error sending WhatsApp OTP:', error);
-      toast({
-        title: "خطأ في إرسال الرمز",
-        description: error.message || "حدث خطأ أثناء إرسال رمز التحقق",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleWhatsAppVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!whatsappOtpForm.otp) {
-      toast({
-        title: "خطأ",
-        description: "يرجى إدخال رمز التحقق",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const fullPhoneNumber = whatsappOtpForm.phone.startsWith('+') 
-        ? whatsappOtpForm.phone 
-        : `${whatsappOtpForm.countryCode}${whatsappOtpForm.phone}`;
-
-      const { data, error } = await supabase.functions.invoke('verify-whatsapp-otp', {
-        body: { 
-          phone: fullPhoneNumber,
-          code: whatsappOtpForm.otp,
-          fullName: whatsappOtpForm.fullName
-        }
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      if (data.success) {
-        // If edge function returned a magic link, redirect to it to establish a session
-        const actionLink = data?.authData?.properties?.action_link || data?.authData?.action_link;
-        if (actionLink) {
-          window.location.href = actionLink;
-          return; // Stop further execution; browser will redirect
-        }
-
-        toast({
-          title: "تم التحقق بنجاح",
-          description: "مرحباً بك في دردشتي!"
-        });
-        navigate('/');
-      } else {
-        throw new Error(data.error || 'فشل في التحقق من الرمز');
-      }
-    } catch (error: any) {
-      console.error('Error verifying WhatsApp OTP:', error);
-      toast({
-        title: "خطأ في التحقق",
-        description: error.message || "رمز التحقق غير صحيح أو منتهي الصلاحية",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <MessageCircle className="h-12 w-12 text-primary ml-2" />
             <h1 className="text-4xl font-bold text-primary">دردشتي</h1>
           </div>
           <p className="text-muted-foreground">منصة الدردشة العربية الحديثة</p>
@@ -216,7 +102,7 @@ const AuthPage = () => {
 
         <Card className="backdrop-blur-sm bg-card/80 border-border/50">
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="signin" className="gap-2">
                 <LogIn className="h-4 w-4" />
                 تسجيل دخول
@@ -224,10 +110,6 @@ const AuthPage = () => {
               <TabsTrigger value="signup" className="gap-2">
                 <UserPlus className="h-4 w-4" />
                 حساب جديد
-              </TabsTrigger>
-              <TabsTrigger value="whatsapp" className="gap-2">
-                <MessageCircle className="h-4 w-4" />
-                واتساب
               </TabsTrigger>
             </TabsList>
 
@@ -358,128 +240,6 @@ const AuthPage = () => {
                     سيتم إرسال رابط التحقق إلى بريدك الإلكتروني
                   </div>
                 </form>
-              </CardContent>
-            </TabsContent>
-
-            <TabsContent value="whatsapp" className="space-y-0">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-right">تسجيل عبر واتساب</CardTitle>
-                <CardDescription className="text-right">
-                  {whatsappOtpForm.step === 'phone' 
-                    ? 'أدخل رقم هاتفك لإرسال رمز التحقق'
-                    : 'أدخل رمز التحقق المرسل إلى واتساب'
-                  }
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {whatsappOtpForm.step === 'phone' ? (
-                  <form onSubmit={handleWhatsAppSendOtp} className="space-y-4">
-                    <div className="space-y-2 text-right">
-                      <Label htmlFor="whatsapp-fullname">الاسم الكامل</Label>
-                      <Input
-                        id="whatsapp-fullname"
-                        type="text"
-                        value={whatsappOtpForm.fullName}
-                        onChange={(e) => setWhatsappOtpForm(prev => ({...prev, fullName: e.target.value}))}
-                        placeholder="أدخل اسمك الكامل"
-                        required
-                        className="text-right"
-                      />
-                    </div>
-
-                    <div className="space-y-2 text-right">
-                      <Label htmlFor="whatsapp-phone">رقم الهاتف</Label>
-                      <div className="flex gap-2">
-                        <select 
-                          value={whatsappOtpForm.countryCode}
-                          onChange={(e) => setWhatsappOtpForm(prev => ({...prev, countryCode: e.target.value}))}
-                          className="px-3 py-2 border border-input bg-background rounded-md text-sm"
-                        >
-                          <option value="+966">🇸🇦 +966</option>
-                          <option value="+971">🇦🇪 +971</option>
-                          <option value="+965">🇰🇼 +965</option>
-                          <option value="+973">🇧🇭 +973</option>
-                          <option value="+974">🇶🇦 +974</option>
-                          <option value="+968">🇴🇲 +968</option>
-                          <option value="+20">🇪🇬 +20</option>
-                        </select>
-                        <Input
-                          id="whatsapp-phone"
-                          type="tel"
-                          value={whatsappOtpForm.phone}
-                          onChange={(e) => setWhatsappOtpForm(prev => ({...prev, phone: e.target.value}))}
-                          placeholder="501234567"
-                          required
-                          className="text-right flex-1"
-                        />
-                      </div>
-                    </div>
-
-                    <Button 
-                      type="submit" 
-                      className="w-full" 
-                      disabled={isLoading}
-                    >
-                      <MessageCircle className="ml-2 h-4 w-4" />
-                      {isLoading ? 'جاري الإرسال...' : 'إرسال رمز التحقق'}
-                    </Button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleWhatsAppVerifyOtp} className="space-y-4">
-                    <div className="space-y-2 text-right">
-                      <Label htmlFor="whatsapp-otp">رمز التحقق</Label>
-                      <Input
-                        id="whatsapp-otp"
-                        type="text"
-                        value={whatsappOtpForm.otp}
-                        onChange={(e) => setWhatsappOtpForm(prev => ({...prev, otp: e.target.value}))}
-                        placeholder="أدخل الرمز المكون من 6 أرقام"
-                        required
-                        className="text-right"
-                        maxLength={6}
-                      />
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button 
-                        type="button"
-                        variant="outline"
-                        className="flex-1"
-                        onClick={() => setWhatsappOtpForm(prev => ({...prev, step: 'phone', otp: ''}))}
-                      >
-                        رجوع
-                      </Button>
-                      <Button 
-                        type="submit" 
-                        className="flex-1" 
-                        disabled={isLoading}
-                      >
-                        <MessageCircle className="ml-2 h-4 w-4" />
-                        {isLoading ? 'جاري التحقق...' : 'تحقق'}
-                      </Button>
-                    </div>
-
-                    <div className="text-center">
-                      <Button
-                        type="button"
-                        variant="link"
-                        className="text-sm"
-                        onClick={() => {
-                          setWhatsappOtpForm(prev => ({...prev, step: 'phone', otp: ''}));
-                        }}
-                      >
-                        إعادة إرسال الرمز
-                      </Button>
-                    </div>
-                  </form>
-                )}
-
-                <div className="text-center text-sm text-muted-foreground mt-4">
-                  {whatsappOtpForm.step === 'phone' 
-                    ? 'سيتم إرسال رمز التحقق إلى رقم واتساب الخاص بك'
-                    : 'تحقق من رسائل واتساب لرؤية الرمز'
-                  }
-                </div>
               </CardContent>
             </TabsContent>
           </Tabs>
