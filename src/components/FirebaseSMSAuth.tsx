@@ -47,7 +47,7 @@ const FirebaseSMSAuth = () => {
         ? phoneNumber 
         : `${countryCode}${phoneNumber}`;
 
-      const recaptchaVerifier = setupRecaptcha('recaptcha-container');
+      const recaptchaVerifier = await setupRecaptcha('recaptcha-container');
       const result = await sendSMSOTP(fullPhoneNumber, recaptchaVerifier);
 
       if (result.success) {
