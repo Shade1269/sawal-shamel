@@ -60,8 +60,6 @@ verify_jwt = false
 [functions.send-sms-otp]
 verify_jwt = false
 
-[functions.create-emkan-payment]
-verify_jwt = false
 
 [analytics]
 enabled = false

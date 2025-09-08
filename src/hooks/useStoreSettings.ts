@@ -45,13 +45,6 @@ export const getEnabledPaymentMethods = (storeSettings: any) => {
           description: 'ادفع نقداً عند وصول الطلب'
         };
       }
-      if (provider.name === 'إمكان - الشراء الآن والدفع لاحقاً') {
-        return {
-          id: 'emkan',
-          name: 'إمكان - اشتري الآن وادفع لاحقاً',
-          description: 'قسط مشترياتك مع إمكان'
-        };
-      }
       return {
         id: provider.name.toLowerCase().replace(/\s+/g, '_'),
         name: provider.name,

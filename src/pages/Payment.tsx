@@ -51,9 +51,7 @@ const Payment = () => {
   // Get enabled payment and shipping methods from store settings
   const paymentMethods = getEnabledPaymentMethods(storeSettings).map(method => ({
     ...method,
-    icon: method.id === 'cod' ? <Banknote className="h-5 w-5" /> : 
-          method.id === 'emkan' ? <ShoppingBag className="h-5 w-5" /> :
-          <CreditCard className="h-5 w-5" />
+    icon: method.id === 'cod' ? <Banknote className="h-5 w-5" /> : <CreditCard className="h-5 w-5" />
   }));
   
   const shippingMethods = getEnabledShippingMethods(storeSettings);
@@ -183,63 +181,6 @@ const Payment = () => {
         .insert(orderItems);
 
       if (itemsError) throw itemsError;
-
-      // Handle Emkan payment if selected
-      if (selectedPayment === "emkan") {
-        try {
-          console.log("Calling create-emkan-payment function...");
-          const { data: emkanResponse, error: emkanError } = await supabase.functions.invoke(
-            'create-emkan-payment',
-            {
-              body: {
-                amount: getTotal(),
-                currency: 'SAR',
-                customerInfo: {
-                  name: customerInfo?.name,
-                  email: customerInfo?.email,
-                  phone: customerInfo?.phone,
-                  address: customerInfo?.address
-                },
-                orderInfo: {
-                  orderId: order.id,
-                  items: cartItems.map(item => ({
-                    name: item.name,
-                    quantity: item.quantity,
-                    price: item.price
-                  }))
-                },
-                redirectUrls: {
-                  successUrl: `${window.location.origin}/store/${slug}/order-confirmation/${order.id}`,
-                  cancelUrl: `${window.location.origin}/store/${slug}/payment`
-                }
-              }
-            }
-          );
-
-          console.log("Emkan response:", emkanResponse);
-          console.log("Emkan error:", emkanError);
-
-          if (emkanError) {
-            console.error("Emkan API call failed:", emkanError);
-            throw emkanError;
-          }
-
-          const redirect = emkanResponse?.checkoutUrl || emkanResponse?.redirectUrl;
-          if (redirect) {
-            // Redirect to Emkan payment page
-            window.location.href = redirect;
-            return;
-          } else {
-            const msg = emkanResponse?.error || emkanResponse?.description || "فشل في إنشاء طلب الدفع";
-            throw new Error(msg);
-          }
-        } catch (emkanError) {
-          console.error("Emkan payment error:", emkanError);
-          const message = emkanError?.message || emkanError?.error || "فشل في إنشاء طلب الدفع";
-          toast.error(`خطأ في معالجة الطلب\n${message}`);
-          return;
-        }
-      }
 
       // Clear cart and saved data
       localStorage.removeItem(`cart_${slug}`);

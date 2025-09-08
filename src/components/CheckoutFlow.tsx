@@ -118,112 +118,47 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
         console.log('Order items created successfully');
       }
 
-      const isEmkan = /[إا]مكان/.test(selectedPayment);
-      if (isEmkan) {
-        // Show processing message for Emkan payment
-        console.log('CheckoutFlow: Processing Emkan payment');
-        toast({
-          title: "جاري إعداد الدفع",
-          description: "سيتم توجيهك لصفحة الدفع خلال لحظات..."
-        });
+      // Handle non-payment gateway orders (COD, etc.)
+      console.log('CheckoutFlow: Processing non-Emkan payment');
+      toast({
+        title: "جاري معالجة الطلب",
+        description: "يرجى الانتظار..."
+      });
+      
+      // For cash on delivery, mark order as confirmed
+      const { error: updateError } = await supabase
+        .from('orders')
+        .update({ status: 'CONFIRMED' as const })
+        .eq('id', order.id);
 
-        const paymentData = {
-          amount: totalPrice,
-          currency: 'SAR',
-          description: `طلب رقم ${orderNumber}`,
-          customer_name: customerInfo.name,
-          customer_phone: customerInfo.phone,
-          items: cart.map(item => ({
-            name: item.product.title,
-            quantity: item.quantity,
-            price: item.product.final_price || item.product.price_sar
-          }))
-        };
-
-        console.log('CheckoutFlow: Calling Emkan payment function with:', paymentData);
-
-        const { data: paymentResponse, error: paymentError } = await supabase.functions.invoke(
-          'create-emkan-payment',
-          { body: paymentData }
-        );
-
-        if (paymentError) {
-          console.error('CheckoutFlow: Emkan payment error:', paymentError);
-          throw new Error('فشل في إنشاء طلب الدفع');
-        }
-
-        console.log('CheckoutFlow: Emkan payment response:', paymentResponse);
-
-        const redirectUrl = paymentResponse?.redirectUrl || paymentResponse?.payment_url;
-        if (redirectUrl) {
-          console.log('CheckoutFlow: Redirecting to Emkan payment:', redirectUrl);
-          setPaymentUrl(redirectUrl);
-          setOrderCompleted(true);
-          
-          // Auto-redirect after a short delay
-          setTimeout(() => {
-            window.open(redirectUrl, '_blank');
-          }, 2000);
-          
-          // Update Zoho inventory for Emkan orders
-          try {
-            await supabase.functions.invoke('update-zoho-inventory', {
-              body: { orderId: order.id }
-            });
-          } catch (zohoError) {
-            console.error('CheckoutFlow: Zoho inventory update error:', zohoError);
-            // Don't fail the order if Zoho update fails
-          }
-
-          // Call completion callback
-          if (onOrderComplete) {
-            onOrderComplete(orderNumber);
-          }
-        } else {
-          throw new Error('لم يتم استلام رابط الدفع');
-        }
-      } else {
-        console.log('CheckoutFlow: Processing non-Emkan payment');
-        toast({
-          title: "جاري معالجة الطلب",
-          description: "يرجى الانتظار..."
-        });
-        
-        // For cash on delivery, mark order as confirmed
-        const { error: updateError } = await supabase
-          .from('orders')
-          .update({ status: 'CONFIRMED' as const })
-          .eq('id', order.id);
-
-        if (updateError) {
-          console.error('Error updating order status:', updateError);
-        }
-
-        // Update Zoho inventory
-        try {
-          await supabase.functions.invoke('update-zoho-inventory', {
-            body: { orderId: order.id }
-          });
-        } catch (zohoError) {
-          console.error('CheckoutFlow: Zoho inventory update error:', zohoError);
-          // Don't fail the order if Zoho update fails
-        }
-        
-        // Simulate payment processing for other methods
-        setTimeout(() => {
-          console.log('CheckoutFlow: Payment processing completed');
-          setOrderCompleted(true);
-          
-          toast({
-            title: "تم إنشاء الطلب بنجاح!",
-            description: `رقم الطلب: ${orderNumber}`,
-          });
-          
-          if (onOrderComplete) {
-            onOrderComplete(orderNumber);
-          }
-        }, 2000);
+      if (updateError) {
+        console.error('Error updating order status:', updateError);
       }
+
+      // Update Zoho inventory
+      try {
+        await supabase.functions.invoke('update-zoho-inventory', {
+          body: { orderId: order.id }
+        });
+      } catch (zohoError) {
+        console.error('CheckoutFlow: Zoho inventory update error:', zohoError);
+        // Don't fail the order if Zoho update fails
+      }
+      
+      // Simulate payment processing for other methods
+      setTimeout(() => {
+        console.log('CheckoutFlow: Payment processing completed');
+        setOrderCompleted(true);
+        
+        toast({
+          title: "تم إنشاء الطلب بنجاح!",
+          description: `رقم الطلب: ${orderNumber}`,
+        });
+        
+        if (onOrderComplete) {
+          onOrderComplete(orderNumber);
+        }
+      }, 2000);
     } catch (error: any) {
       console.error('CheckoutFlow: Order processing error:', error);
       toast({

@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import UserProfileDialog from "@/components/UserProfileDialog";
 import UserSettingsMenu from "@/components/UserSettingsMenu";
 import ZohoIntegration from "@/components/ZohoIntegration";
+import EmkanIntegration from "@/components/EmkanIntegration";
 import { 
   Shield, 
   Ban, 
@@ -687,6 +688,18 @@ const [selectedZohoShopId, setSelectedZohoShopId] = useState<string>("");
             ) : (
               <p className="text-muted-foreground">يرجى اختيار متجر لعرض إعدادات التكامل.</p>
             )}
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Emkan Integration Section */}
+      <section aria-labelledby="emkan-integration-admin">
+        <Card>
+          <CardHeader>
+            <CardTitle id="emkan-integration-admin" className="text-2xl">تكامل إمكان - اشتري الآن وادفع لاحقاً</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EmkanIntegration />
           </CardContent>
         </Card>
       </section>
