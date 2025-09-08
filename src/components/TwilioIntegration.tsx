@@ -517,8 +517,8 @@ const TwilioIntegration: React.FC = () => {
                     onChange={(e) => setTestMessage({...testMessage, type: e.target.value as 'sms' | 'whatsapp'})}
                     className="w-full p-2 border border-input bg-background rounded-md"
                   >
-                    <option value="sms">SMS</option>
-                    <option value="whatsapp">WhatsApp</option>
+                    <option value="sms">📱 SMS</option>
+                    <option value="whatsapp">💬 WhatsApp</option>
                   </select>
                 </div>
               </div>
