@@ -98,11 +98,12 @@ serve(async (req) => {
       Body: message,
     });
 
-    const isMessagingService = smsFrom.startsWith('MG');
-    if (isMessagingService) {
-      console.log('Using Twilio Messaging Service SID for SMS');
+    // Check if smsFrom is a Messaging Service SID (starts with MG) or a phone number
+    if (smsFrom.startsWith('MG')) {
+      console.log('Using Twilio Messaging Service SID for SMS:', smsFrom);
       params.set('MessagingServiceSid', smsFrom);
     } else {
+      console.log('Using phone number for SMS:', smsFrom);
       params.set('From', smsFrom);
     }
 
