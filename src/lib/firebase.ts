@@ -37,11 +37,11 @@ export const getFirebaseAuth = async () => {
 export const setupRecaptcha = async (containerId: string) => {
   const authInstance = await getFirebaseAuth();
   
-  // Clear any existing reCAPTCHA completely
+  // Clear any existing reCAPTCHA instance globally
   if (window.recaptchaVerifier) {
     try {
       window.recaptchaVerifier.clear();
-      window.recaptchaVerifier = null;
+      delete window.recaptchaVerifier;
     } catch (error) {
       console.log('Clearing existing reCAPTCHA:', error);
     }

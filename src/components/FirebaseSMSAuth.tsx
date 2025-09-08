@@ -37,7 +37,7 @@ const FirebaseSMSAuth = () => {
       if (window.recaptchaVerifier) {
         try {
           window.recaptchaVerifier.clear();
-          window.recaptchaVerifier = null;
+          delete window.recaptchaVerifier;
         } catch (error) {
           console.log('Cleanup reCAPTCHA error:', error);
         }
