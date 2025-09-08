@@ -130,108 +130,52 @@ const EmkanIntegration: React.FC = () => {
   };
 
   const testConnection = async () => {
-    // Check for required Emkan secrets first
+    if (!settings.api_key || !settings.merchant_id || !settings.password) {
+      toast({
+        title: "مطلوب",
+        description: "يرجى ملء جميع بيانات الاتصال في النموذج أولاً",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
     try {
-      // Try to get Emkan secrets
-      const emkanApiKey = 'EMKAN_API_KEY'; // This would be from Supabase secrets
-      const emkanMerchantId = 'EMKAN_MERCHANT_ID'; // This would be from Supabase secrets
-      const emkanPassword = 'EMKAN_PASSWORD'; // This would be from Supabase secrets
-
-      if (!emkanApiKey || !emkanMerchantId || !emkanPassword) {
-        toast({
-          title: "إعدادات مفقودة",
-          description: "بيانات إمكان غير مكتملة في الأسرار (Secrets). يرجى التحقق من إعدادات Supabase",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      if (!settings.api_key || !settings.merchant_id || !settings.password) {
-        toast({
-          title: "مطلوب",
-          description: "يرجى ملء جميع بيانات الاتصال في النموذج أولاً",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      setLoading(true);
+      console.log('🔗 Testing Emkan connection via edge function...');
       
-      // Simple connectivity test to Emkan API
-      const response = await fetch("https://merchants.emkanfinance.com.sa/retail/bnpl/bff/v1/ping", {
-        method: "GET",
-        headers: {
-          "Authorization": `Basic ${btoa(`${settings.api_key}:${settings.password}`)}`
+      // Use edge function to test connection (avoids CORS issues)
+      const { data, error } = await supabase.functions.invoke('test-emkan-connection', {
+        body: {
+          merchantId: settings.merchant_id,
+          apiKey: settings.api_key,
+          password: settings.password
         }
       });
 
-      // If ping doesn't exist, try a minimal order creation to test auth
-      if (response.status === 404) {
-        // Test with minimal order data
-        const testPayload = {
-          merchantId: settings.merchant_id,
-          amount: 1.00,
-          currency: "SAR",
-          orderId: `TEST-CONN-${Date.now()}`,
-          items: [{
-            id: "test-item",
-            name: "اختبار الاتصال",
-            quantity: 1,
-            price: 1.00,
-            total: 1.00
-          }],
-          customerInfo: {
-            fullName: "اختبار العميل",
-            email: "test@example.com",
-            phone: "+966500000000",
-            address: "عنوان تجريبي"
-          },
-          description: "اختبار الاتصال مع إمكان"
-        };
+      if (error) {
+        console.error('❌ Edge function error:', error);
+        throw new Error(`خطأ في استدعاء الخدمة: ${error.message}`);
+      }
 
-        const orderResponse = await fetch("https://merchants.emkanfinance.com.sa/retail/bnpl/bff/v1/order", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Basic ${btoa(`${settings.api_key}:${settings.password}`)}`
-          },
-          body: JSON.stringify(testPayload)
-        });
+      console.log('✅ Connection test result:', data);
 
-        const responseText = await orderResponse.text();
-        console.log('Emkan test response:', {
-          status: orderResponse.status,
-          statusText: orderResponse.statusText,
-          body: responseText
-        });
-
-        if (orderResponse.ok || orderResponse.status === 400) {
-          // 400 might be expected for test data, but means auth worked
-          toast({
-            title: "✅ نجح الاتصال",
-            description: "تم الاتصال بإمكان بنجاح - بيانات الاعتماد صحيحة"
-          });
-        } else if (orderResponse.status === 401 || orderResponse.status === 403) {
-          throw new Error("بيانات الاعتماد غير صحيحة - تحقق من مفتاح API وكلمة المرور");
-        } else {
-          throw new Error(`خطأ في الاتصال: ${orderResponse.status} - ${responseText}`);
-        }
-      } else if (response.ok) {
+      if (data.success) {
         toast({
           title: "✅ نجح الاتصال",
-          description: "تم الاتصال بإمكان بنجاح"
+          description: data.message || "تم الاتصال بإمكان بنجاح - بيانات الاعتماد صحيحة"
         });
-      } else if (response.status === 401 || response.status === 403) {
-        throw new Error("بيانات الاعتماد غير صحيحة");
       } else {
-        const errorText = await response.text();
-        throw new Error(`فشل الاتصال: ${response.status} - ${errorText}`);
+        toast({
+          title: "❌ فشل الاتصال",
+          description: data.error || "فشل في الاتصال بإمكان",
+          variant: "destructive"
+        });
       }
     } catch (error) {
-      console.error('❌ Emkan connection test failed:', error);
+      console.error('❌ Connection test failed:', error);
       toast({
         title: "❌ فشل الاتصال",
-        description: error instanceof Error ? error.message : "فشل في الاتصال بإمكان - تحقق من بيانات الاعتماد",
+        description: error instanceof Error ? error.message : "فشل في اختبار الاتصال مع إمكان",
         variant: "destructive"
       });
     } finally {

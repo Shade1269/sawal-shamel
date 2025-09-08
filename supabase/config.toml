@@ -61,5 +61,5 @@ verify_jwt = false
 verify_jwt = false
 
 
-[analytics]
-enabled = false
+[functions.test-emkan-connection]
+verify_jwt = false
