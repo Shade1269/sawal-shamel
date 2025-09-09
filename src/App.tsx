@@ -12,7 +12,7 @@ import Index from "./pages/Index";
 import Chat from "./pages/Chat";
 import ChatRoom from "./pages/ChatRoom";
 import Inventory from "./pages/Inventory";
-import StoreManagement from "./pages/StoreManagement";
+import StoreManagementFirestore from "./pages/StoreManagementFirestore";
 import StoreFront from "./pages/StoreFront";
 import Cart from "./pages/Cart";
 import Shipping from "./pages/Shipping";
@@ -49,7 +49,7 @@ const AppContent = () => {
       <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
       <Route path="/chat/:channelId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
       <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
-      <Route path="/store-management" element={<ProtectedRoute><StoreManagement /></ProtectedRoute>} />
+      <Route path="/store-management" element={<ProtectedRoute><StoreManagementFirestore /></ProtectedRoute>} />
       <Route path="/store/:slug" element={<StoreFront />} />
       <Route path="/store/:slug/cart" element={<Cart />} />
       <Route path="/store/:slug/shipping" element={<Shipping />} />
