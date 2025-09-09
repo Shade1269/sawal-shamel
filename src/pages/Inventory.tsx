@@ -45,61 +45,9 @@ interface ProductVariant {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [syncing, setSyncing] = useState(false);
 
   // Add state for user's shop
   const [userShop, setUserShop] = useState<any>(null);
-
-  const syncFromZohoDirectly = async () => {
-    setSyncing(true);
-    try {
-      if (!user) {
-        toast({
-          title: "تنبيه",
-          description: "يجب تسجيل الدخول أولاً",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Call Zoho sync edge function to fetch normalized products (no Supabase storage)
-      const { data, error } = await supabase.functions.invoke('sync-zoho-to-firestore', {
-        body: { userId: user.uid, maxModels: 60 }
-      });
-
-      if (error) throw error;
-      if (!data?.success) throw new Error(data?.error || 'Sync failed');
-
-      const productsFromZoho = data.products || [];
-      if (productsFromZoho.length === 0) {
-        toast({ title: "لا توجد بيانات", description: "لم يتم العثور على منتجات في Zoho." });
-        return;
-      }
-
-      // Save products into Firestore (user store)
-      let saved = 0;
-      for (const p of productsFromZoho) {
-        try {
-          await addProduct(p);
-          saved++;
-        } catch (e) {
-          console.error('Failed saving product', p.title, e);
-        }
-      }
-
-      await fetchProducts();
-      toast({ title: "تمت المزامنة", description: `تم حفظ ${saved} منتج في المخزون لديك` });
-    } catch (error) {
-      console.error('Error syncing from Zoho directly:', error);
-      toast({
-        title: "خطأ في المزامنة",
-        description: "فشل في مزامنة المنتجات من Zoho",
-        variant: "destructive"
-      });
-    } finally {
-      setSyncing(false);
-    }
-  };
 
   const addToStore = async (productId: string) => {
     try {
@@ -225,26 +173,11 @@ interface ProductVariant {
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div>
-              <h1 className="text-3xl font-bold">المخزون</h1>
-              <p className="text-muted-foreground">إدارة كتالوج المنتجات</p>
-            </div>
+          <div>
+            <h1 className="text-3xl font-bold">المخزون</h1>
+            <p className="text-muted-foreground">إدارة كتالوج المنتجات</p>
           </div>
-          <div className="flex gap-2">
-            <Button
-              onClick={() => syncFromZohoDirectly()}
-              disabled={syncing}
-              variant="outline"
-              className="gap-2"
-            >
-              {syncing ? (
-                <RefreshCw className="h-4 w-4 animate-spin" />
-              ) : (
-                <RefreshCw className="h-4 w-4" />
-              )}
-              مزامنة من Zoho
-            </Button>
-          </div>
+        </div>
         </div>
 
         {/* Filters */}
@@ -282,15 +215,11 @@ interface ProductVariant {
               <h3 className="text-lg font-semibold mb-2">لا توجد منتجات</h3>
               <p className="text-muted-foreground mb-4">
                 {products.length === 0 
-                  ? "يمكنك مزامنة المنتجات من Zoho أو إضافة منتجات جديدة من صفحة الإدارة" 
+                  ? "يمكنك إضافة منتجات جديدة من صفحة الإدارة" 
                   : "لا توجد منتجات مطابقة للبحث"}
               </p>
               {products.length === 0 && (
                 <div className="flex gap-2 justify-center">
-                  <Button onClick={syncFromZohoDirectly} disabled={syncing} className="gap-2">
-                    <RefreshCw className="h-4 w-4" />
-                    مزامنة من Zoho
-                  </Button>
                   <Button onClick={() => navigate('/admin')} variant="outline" className="gap-2">
                     <Plus className="h-4 w-4" />
                     إضافة منتجات يدوياً
