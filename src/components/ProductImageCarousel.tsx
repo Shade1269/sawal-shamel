@@ -2,6 +2,11 @@ import React, { useState, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import {
+  extractImagesFromVariant,
+  uniqUrls,
+  logImageCounts,
+} from '@/lib/imageExtractors';
 
 interface ProductImageCarouselProps {
   images: string[] | null;
@@ -22,78 +27,15 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
   const [currentX, setCurrentX] = useState(0);
 
   // Use only Firebase images - collect from product AND all variants
-  const productImages = images && images.length > 0 ? images : [];
+  const productImages = Array.isArray(images) ? images : [];
   
-  // If we have variants, collect their images too
-  const variantImages: string[] = [];
-  const pushUrl = (u: any) => {
-    if (typeof u === 'string' && (u.startsWith('http://') || u.startsWith('https://'))) {
-      variantImages.push(u);
-    }
-  };
-  const extractVariantImages = (variant: any): string[] => {
-    const urls = new Set<string>();
-    const add = (u: any) => { if (typeof u === 'string' && (u.startsWith('http://') || u.startsWith('https://'))) urls.add(u); };
-
-    // Common direct fields
-    add(variant.image_url);
-    add(variant.imageUrl);
-    add(variant.image);
-    if (Array.isArray(variant.image_urls)) variant.image_urls.forEach(add);
-    if (Array.isArray(variant.imageUrls)) variant.imageUrls.forEach(add);
-    if (Array.isArray(variant.images)) variant.images.forEach(add);
-
-    // Other common aliases
-    add(variant.photo);
-    if (Array.isArray(variant.photos)) variant.photos.forEach(add);
-    add(variant.picture);
-    if (Array.isArray(variant.pictures)) variant.pictures.forEach(add);
-
-    // Nested media/galleries
-    const fromObj = (obj: any) => add(obj?.url || obj?.src || obj?.image_url);
-    if (Array.isArray(variant.media)) variant.media.forEach(fromObj);
-    else if (variant.media?.images && Array.isArray(variant.media.images)) variant.media.images.forEach(fromObj);
-    if (Array.isArray(variant.gallery)) variant.gallery.forEach(fromObj);
-    if (Array.isArray(variant.assets)) variant.assets.forEach(fromObj);
-
-    // Stringified arrays
-    ['image_urls', 'images', 'photos', 'pictures', 'gallery', 'media'].forEach((key) => {
-      const val = (variant as any)[key];
-      if (typeof val === 'string') {
-        try {
-          const arr = JSON.parse(val);
-          if (Array.isArray(arr)) arr.forEach(add);
-        } catch {}
-      }
-    });
-
-    // Zoho fallback: try Supabase storage convention if zoho_item_id exists
-    if (variant.zoho_item_id) {
-      const base = 'https://uewuiiopkctdtaexmtxu.supabase.co/storage/v1/object/public/product-images/zoho/';
-      ['jpg', 'png', 'webp'].forEach((ext) => add(`${base}${variant.zoho_item_id}.${ext}`));
-    }
-
-    return Array.from(urls);
-  };
-
-  if (variants && variants.length > 0) {
-    variants.forEach((variant: any) => {
-      extractVariantImages(variant).forEach(pushUrl);
-    });
-  }
-
-  // Combine all images: product images + variant images
-  const allImages = [...productImages, ...variantImages];
-  const validImages = [...new Set(allImages)].filter(Boolean); // Remove duplicates and empty values
+  const variants_array = Array.isArray(variants) ? variants : [];
+  const variantImages = variants_array.flatMap(extractImagesFromVariant);
+  
+  const validImages = uniqUrls([...productImages, ...variantImages]);
   const hasMultipleImages = validImages.length > 1;
 
-  console.log(`Product "${productTitle}":`, {
-    productImages: productImages.length,
-    variantImages: variantImages.length, 
-    totalImages: validImages.length,
-    variants: variants?.length || 0,
-    allImages: validImages
-  });
+  logImageCounts(productImages, variants_array, "ProductImageCarousel");
 
   const nextImage = useCallback(() => {
     if (validImages.length === 0) return;
