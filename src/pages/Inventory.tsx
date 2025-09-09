@@ -6,12 +6,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Package, Search, Filter, ArrowLeft, X, Upload } from 'lucide-react';
+import { Plus, Package, Search, Filter, ArrowLeft, X, Upload, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
 import { toast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Product {
   id: string;
@@ -44,9 +45,76 @@ interface ProductVariant {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [syncing, setSyncing] = useState(false);
 
   // Add state for user's shop
   const [userShop, setUserShop] = useState<any>(null);
+
+  const syncFromSupabase = async () => {
+    setSyncing(true);
+    try {
+      // This function will copy Supabase products to Firestore
+      const { data: supabaseProducts, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          product_variants(*)
+        `)
+        .eq('is_active', true)
+        .limit(100);
+
+      if (error) {
+        throw error;
+      }
+
+      if (!supabaseProducts || supabaseProducts.length === 0) {
+        toast({
+          title: "معلومات",
+          description: "لا توجد منتجات في النظام للمزامنة",
+        });
+        return;
+      }
+
+      // Copy products to Firestore using our Firebase hook
+      let syncedCount = 0;
+      for (const product of supabaseProducts) {
+        try {
+          await addProduct({
+            id: product.id,
+            title: product.title,
+            description: product.description,
+            price_sar: product.price_sar,
+            stock: product.stock,
+            category: product.category,
+            image_urls: product.image_urls || [],
+            is_active: product.is_active,
+            external_id: product.external_id,
+            source: 'supabase_sync'
+          });
+          syncedCount++;
+        } catch (prodError) {
+          console.error(`Error syncing product ${product.title}:`, prodError);
+        }
+      }
+
+      await fetchProducts(); // Refresh the list
+
+      toast({
+        title: "تمت المزامنة",
+        description: `تم مزامنة ${syncedCount} منتج بنجاح`,
+      });
+
+    } catch (error) {
+      console.error('Error syncing from Supabase:', error);
+      toast({
+        title: "خطأ في المزامنة",
+        description: "فشل في مزامنة المنتجات من النظام القديم",
+        variant: "destructive"
+      });
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const addToStore = async (productId: string) => {
     try {
@@ -148,6 +216,21 @@ interface ProductVariant {
               <h1 className="text-3xl font-bold">المخزون</h1>
               <p className="text-muted-foreground">إدارة كتالوج المنتجات</p>
             </div>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              onClick={syncFromSupabase}
+              disabled={syncing}
+              variant="outline"
+              className="gap-2"
+            >
+              {syncing ? (
+                <RefreshCw className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4" />
+              )}
+              مزامنة من النظام القديم
+            </Button>
           </div>
         </div>
 

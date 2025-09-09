@@ -178,16 +178,35 @@ export const addProductToUserStore = async (uid: string, productData: any) => {
   try {
     const firestore = await getFirestoreDB();
     
-    // Add product to user's products collection
-    const productsRef = collection(firestore, 'users', uid, 'products');
-    const productRef = await addDoc(productsRef, {
-      ...productData,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      isActive: true,
-      viewCount: 0,
-      orderCount: 0
-    });
+    let productId;
+    
+    // If productData has an id, use setDoc to set specific ID
+    if (productData.id) {
+      productId = productData.id;
+      const productRef = doc(firestore, 'users', uid, 'products', productId);
+      
+      const { id, ...dataWithoutId } = productData; // Remove id from data
+      await setDoc(productRef, {
+        ...dataWithoutId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isActive: productData.is_active !== false,
+        viewCount: 0,
+        orderCount: 0
+      });
+    } else {
+      // Use addDoc for auto-generated ID
+      const productsRef = collection(firestore, 'users', uid, 'products');
+      const productRef = await addDoc(productsRef, {
+        ...productData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isActive: productData.is_active !== false,
+        viewCount: 0,
+        orderCount: 0
+      });
+      productId = productRef.id;
+    }
 
     // Update statistics
     const statsRef = doc(firestore, 'users', uid, 'statistics', 'main');
@@ -203,10 +222,10 @@ export const addProductToUserStore = async (uid: string, productData: any) => {
     await logUserActivity(uid, {
       activity_type: 'product_added',
       description: `تم إضافة منتج: ${productData.title}`,
-      metadata: { productId: productRef.id, productTitle: productData.title }
+      metadata: { productId: productId, productTitle: productData.title }
     });
 
-    return { success: true, productId: productRef.id };
+    return { success: true, productId: productId };
   } catch (error) {
     console.error('Error adding product:', error);
     return { success: false, error };

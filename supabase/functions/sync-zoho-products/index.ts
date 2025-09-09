@@ -1,6 +1,8 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,6 +23,19 @@ serve(async (req) => {
     const { shopId, accessToken, organizationId } = await req.json();
 
     console.log('Starting Zoho products sync for shop (background):', shopId);
+
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: Deno.env.get('FIREBASE_API_KEY'),
+      authDomain: Deno.env.get('FIREBASE_AUTH_DOMAIN'),
+      projectId: Deno.env.get('FIREBASE_PROJECT_ID'),
+      storageBucket: Deno.env.get('FIREBASE_STORAGE_BUCKET'),
+      messagingSenderId: Deno.env.get('FIREBASE_MESSAGING_SENDER_ID'),
+      appId: Deno.env.get('FIREBASE_APP_ID')
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getFirestore(firebaseApp);
 
     // Run the heavy sync work in the background to avoid client timeouts
     EdgeRuntime.waitUntil((async () => {
@@ -99,6 +114,18 @@ serve(async (req) => {
 
         if (!shop) {
           throw new Error('Shop not found');
+        }
+
+        // Get shop owner's Firebase UID for saving to Firestore
+        const { data: shopOwner } = await supabase
+          .from('profiles')
+          .select('auth_user_id')
+          .eq('id', shop.profiles.id)
+          .single();
+
+        let shopOwnerFirebaseUID = null;
+        if (shopOwner?.auth_user_id) {
+          shopOwnerFirebaseUID = shopOwner.auth_user_id;
         }
 
         // Get or create merchant for the shop owner
@@ -276,7 +303,7 @@ serve(async (req) => {
 
               let product;
               if (existingProduct) {
-                // Update existing product
+                // Update existing product in Supabase
                 const { data: updatedProduct, error: updateError } = await supabase
                   .from('products')
                   .update({
@@ -295,7 +322,7 @@ serve(async (req) => {
                 }
                 product = updatedProduct;
               } else {
-                // Create new product
+                // Create new product in Supabase
                 const { data: newProduct, error: productError } = await supabase
                   .from('products')
                   .insert(productData)
@@ -307,6 +334,40 @@ serve(async (req) => {
                   continue;
                 }
                 product = newProduct;
+              }
+
+              // Also save/update in Firestore if we have the Firebase UID
+              if (shopOwnerFirebaseUID) {
+                try {
+                  const firestoreProductData = {
+                    id: product.id,
+                    title: productData.title,
+                    description: productData.description,
+                    price_sar: productData.price_sar,
+                    stock: productData.stock,
+                    category: productData.category,
+                    image_urls: productData.image_urls || [],
+                    is_active: productData.is_active,
+                    external_id: productData.external_id,
+                    attributes_schema: productData.attributes_schema,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                    source: 'zoho_sync'
+                  };
+
+                  const productDocRef = doc(db, 'users', shopOwnerFirebaseUID, 'products', product.id);
+                  
+                  if (existingProduct) {
+                    await updateDoc(productDocRef, firestoreProductData);
+                  } else {
+                    await setDoc(productDocRef, firestoreProductData);
+                  }
+
+                  console.log(`Saved product ${baseModel} to Firestore for user ${shopOwnerFirebaseUID}`);
+                } catch (firestoreError) {
+                  console.error('Error saving to Firestore:', firestoreError);
+                  // Continue with Supabase sync even if Firestore fails
+                }
               }
 
               // Create/Update variants for each item in the model
