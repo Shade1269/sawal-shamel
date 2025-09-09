@@ -119,44 +119,19 @@ const Inventory = () => {
     try {
       if (!user) return;
       
-      console.log('Fetching products via edge function...');
-      
-      // Use edge function to get products with proper permissions
-      const { data, error } = await supabase.functions.invoke('get-products-with-images');
-
-      if (error) {
-        console.error('Edge function error:', error);
-        // Fallback to Firestore if edge function fails
-        const firestoreProducts = await getShopProducts();
-        setProducts(firestoreProducts);
-        return;
-      }
-
-      if (data?.success && data?.products) {
-        console.log(`Loaded ${data.products.length} products from edge function:`, data.products.slice(0,3));
-        setProducts(data.products);
-      } else {
-        console.error('Invalid response from edge function:', data);
-        // Fallback to Firestore
-        const firestoreProducts = await getShopProducts();
-        setProducts(firestoreProducts);
-      }
+      console.log('Fetching products from Firebase...');
+      // Get products from Firebase only
+      const products = await getShopProducts();
+      console.log(`Loaded ${products.length} products from Firebase:`, products.slice(0,3));
+      setProducts(products);
       
     } catch (error) {
       console.error('Error fetching products:', error);
-      
-      // Fallback to Firestore
-      try {
-        const firestoreProducts = await getShopProducts();
-        setProducts(firestoreProducts);
-      } catch (fallbackError) {
-        console.error('Firestore fallback also failed:', fallbackError);
-        toast({
-          title: "خطأ",
-          description: "فشل في جلب المنتجات",
-          variant: "destructive"
-        });
-      }
+      toast({
+        title: "خطأ",
+        description: "فشل في جلب المنتجات",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -283,7 +258,7 @@ const Inventory = () => {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                        <div className="text-2xl font-bold text-primary">
-                         {(product.price_sar / 100).toFixed(2)} ريال
+                         {product.price_sar} ريال
                        </div>
                       <div className="text-sm text-muted-foreground">
                         المتوفر: {product.stock}
