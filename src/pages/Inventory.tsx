@@ -62,24 +62,33 @@ interface ProductVariant {
         return;
       }
 
-      // Call direct Zoho sync edge function (no Supabase involved)
+      // Call Zoho sync edge function to fetch normalized products (no Supabase storage)
       const { data, error } = await supabase.functions.invoke('sync-zoho-to-firestore', {
-        body: { userId: user.uid }
+        body: { userId: user.uid, maxModels: 60 }
       });
 
-      if (error) {
-        throw error;
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Sync failed');
+
+      const productsFromZoho = data.products || [];
+      if (productsFromZoho.length === 0) {
+        toast({ title: "لا توجد بيانات", description: "لم يتم العثور على منتجات في Zoho." });
+        return;
       }
 
-      // Wait a moment then refresh products list
-      setTimeout(async () => {
-        await fetchProducts();
-        toast({
-          title: "تمت المزامنة",
-          description: "تم مزامنة المنتجات من Zoho مباشرة إلى النظام",
-        });
-      }, 3000);
+      // Save products into Firestore (user store)
+      let saved = 0;
+      for (const p of productsFromZoho) {
+        try {
+          await addProduct(p);
+          saved++;
+        } catch (e) {
+          console.error('Failed saving product', p.title, e);
+        }
+      }
 
+      await fetchProducts();
+      toast({ title: "تمت المزامنة", description: `تم حفظ ${saved} منتج في المخزون لديك` });
     } catch (error) {
       console.error('Error syncing from Zoho directly:', error);
       toast({
