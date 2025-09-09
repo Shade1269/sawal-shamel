@@ -6,12 +6,14 @@ import { cn } from '@/lib/utils';
 interface ProductImageCarouselProps {
   images: string[] | null;
   productTitle: string;
+  variants?: any[]; // Add variants prop
   className?: string;
 }
 
 export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
   images,
   productTitle,
+  variants,
   className
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -19,11 +21,38 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
   const [startX, setStartX] = useState(0);
   const [currentX, setCurrentX] = useState(0);
 
-  // Use only Firebase images - no fallback to Supabase
-  const validImages = images && images.length > 0 ? images : [];
+  // Use only Firebase images - collect from product AND all variants
+  const productImages = images && images.length > 0 ? images : [];
+  
+  // If we have variants, collect their images too
+  const variantImages: string[] = [];
+  if (variants && variants.length > 0) {
+    variants.forEach((variant: any) => {
+      // Check multiple possible image fields in variants
+      if (variant.image_url) {
+        variantImages.push(variant.image_url);
+      }
+      if (variant.image_urls && Array.isArray(variant.image_urls)) {
+        variantImages.push(...variant.image_urls);
+      }
+      if (variant.images && Array.isArray(variant.images)) {
+        variantImages.push(...variant.images);
+      }
+    });
+  }
+
+  // Combine all images: product images + variant images
+  const allImages = [...productImages, ...variantImages];
+  const validImages = [...new Set(allImages)].filter(Boolean); // Remove duplicates and empty values
   const hasMultipleImages = validImages.length > 1;
 
-  console.log(`Product "${productTitle}" - Images from Firebase:`, validImages);
+  console.log(`Product "${productTitle}":`, {
+    productImages: productImages.length,
+    variantImages: variantImages.length, 
+    totalImages: validImages.length,
+    variants: variants?.length || 0,
+    allImages: validImages
+  });
 
   const nextImage = useCallback(() => {
     if (validImages.length === 0) return;

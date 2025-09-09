@@ -238,6 +238,7 @@ const Inventory = () => {
                 <ProductImageCarousel 
                   images={product.image_urls}
                   productTitle={product.title}
+                  variants={product.variants}
                 />
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
