@@ -37,38 +37,57 @@ export const getFirebaseAuth = async () => {
 export const setupRecaptcha = async (containerId: string) => {
   const authInstance = await getFirebaseAuth();
   
-  // Clear any existing reCAPTCHA instance globally
+  // Force clear any existing reCAPTCHA instances
   if (window.recaptchaVerifier) {
     try {
-      window.recaptchaVerifier.clear();
+      await window.recaptchaVerifier.clear();
       delete window.recaptchaVerifier;
     } catch (error) {
       console.log('Clearing existing reCAPTCHA:', error);
     }
   }
+
+  // Clear any global reCAPTCHA state
+  if (window.grecaptcha && window.grecaptcha.reset) {
+    try {
+      window.grecaptcha.reset();
+    } catch (error) {
+      console.log('Reset grecaptcha error:', error);
+    }
+  }
   
-  // Clear the container HTML to ensure clean state
+  // Clear the container completely
   const container = document.getElementById(containerId);
   if (!container) {
     throw new Error(`Container ${containerId} not found`);
   }
-  container.innerHTML = ''; // Clear any existing content
+  container.innerHTML = '';
   
-  // Create fresh reCAPTCHA verifier
-  window.recaptchaVerifier = new RecaptchaVerifier(authInstance, containerId, {
-    'size': 'invisible',
-    'callback': (response: any) => {
-      console.log('reCAPTCHA solved successfully');
-    },
-    'expired-callback': () => {
-      console.log('reCAPTCHA expired, please try again');
-    },
-    'error-callback': (error: any) => {
-      console.error('reCAPTCHA error:', error);
-    }
-  });
+  // Force DOM update and wait
+  await new Promise(resolve => setTimeout(resolve, 300));
   
-  return window.recaptchaVerifier;
+  console.log('Setting up fresh reCAPTCHA verifier...');
+  
+  try {
+    // Create completely fresh reCAPTCHA verifier
+    window.recaptchaVerifier = new RecaptchaVerifier(authInstance, containerId, {
+      'size': 'invisible',
+      'callback': (response: any) => {
+        console.log('reCAPTCHA solved successfully');
+      },
+      'expired-callback': () => {
+        console.log('reCAPTCHA expired, please try again');
+      },
+      'error-callback': (error: any) => {
+        console.error('reCAPTCHA error:', error);
+      }
+    });
+    
+    return window.recaptchaVerifier;
+  } catch (error) {
+    console.error('Error creating reCAPTCHA:', error);
+    throw error;
+  }
 };
 
 // Send SMS OTP
@@ -111,9 +130,13 @@ export const verifySMSOTP = async (confirmationResult: any, otp: string) => {
   }
 };
 
-// Declare global type for recaptchaVerifier
+// Declare global types
 declare global {
   interface Window {
     recaptchaVerifier: RecaptchaVerifier;
+    grecaptcha: {
+      reset: () => void;
+      render: (container: string | HTMLElement, params: any) => void;
+    };
   }
 }

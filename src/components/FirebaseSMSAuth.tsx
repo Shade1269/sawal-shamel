@@ -21,19 +21,8 @@ const FirebaseSMSAuth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const initializeRecaptcha = async () => {
-      try {
-        await setupRecaptcha('recaptcha-container');
-        console.log('reCAPTCHA initialized successfully');
-      } catch (error) {
-        console.error('Failed to initialize reCAPTCHA:', error);
-      }
-    };
-
-    const timer = setTimeout(initializeRecaptcha, 500);
-
+    // Don't initialize reCAPTCHA here, do it only when needed
     return () => {
-      clearTimeout(timer);
       if (window.recaptchaVerifier) {
         try {
           window.recaptchaVerifier.clear();
@@ -64,7 +53,9 @@ const FirebaseSMSAuth = () => {
         ? phoneNumber 
         : `${countryCode}${phoneNumber}`;
 
-      console.log('Setting up reCAPTCHA for SMS sending...');
+      console.log('Setting up fresh reCAPTCHA for SMS sending...');
+      
+      // Always setup fresh reCAPTCHA before sending
       const recaptchaVerifier = await setupRecaptcha('recaptcha-container');
       const result = await sendSMSOTP(fullPhoneNumber, recaptchaVerifier);
 
@@ -73,7 +64,7 @@ const FirebaseSMSAuth = () => {
         setStep('verify');
         toast({
           title: "تم الإرسال",
-          description: `تم إرسال رمز التحقق إلى ${fullPhoneNumber}. إذا لم تصلك الرسالة، تحقق من إعدادات Firebase أو جرب رقم آخر.`
+          description: `تم إرسال رمز التحقق إلى ${fullPhoneNumber}`
         });
       } else {
         throw new Error(result.error);
@@ -85,6 +76,16 @@ const FirebaseSMSAuth = () => {
         description: error.message || "فشل في إرسال رمز التحقق",
         variant: "destructive"
       });
+      
+      // Clean up reCAPTCHA on error for next attempt
+      if (window.recaptchaVerifier) {
+        try {
+          await window.recaptchaVerifier.clear();
+          delete window.recaptchaVerifier;
+        } catch (cleanupError) {
+          console.log('Error cleaning up reCAPTCHA:', cleanupError);
+        }
+      }
     } finally {
       setIsLoading(false);
     }
