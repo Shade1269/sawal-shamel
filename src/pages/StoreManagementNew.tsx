@@ -9,6 +9,7 @@ import { useUserDataContext } from '@/contexts/UserDataContext';
 import { Package, Plus, Store, Activity, BarChart3, User, Calendar } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserDashboard } from '@/components/UserDashboard';
+import { ProductImageCarousel } from '@/components/ProductImageCarousel';
 
 const StoreManagement = () => {
   const { user } = useAuth();
@@ -355,7 +356,11 @@ const StoreManagement = () => {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {products.map((product) => (
-                  <Card key={product.id} className="border">
+                  <Card key={product.id} className="border overflow-hidden">
+                    <ProductImageCarousel 
+                      images={product.image_urls}
+                      productTitle={product.title}
+                    />
                     <CardContent className="p-4">
                       <h3 className="font-semibold mb-2">{product.title}</h3>
                       <p className="text-sm text-muted-foreground mb-2">{product.description}</p>
