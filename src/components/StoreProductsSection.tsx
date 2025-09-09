@@ -61,6 +61,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
       if (!user) return;
       
       const products = await getShopProducts();
+      console.log('Store products loaded:', products);
       setStoreProducts(products as ProductLibraryItem[]);
     } catch (error) {
       console.error('Error fetching store products:', error);
@@ -276,12 +277,12 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
         {storeProducts.length === 0 ? (
           <div className="text-center py-12">
             <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">لا توجد منتجات في المتجر</h3>
+            <h3 className="text-lg font-semibold mb-2">متجرك فارغ حالياً</h3>
             <p className="text-muted-foreground mb-4">
-              ابدأ بإضافة منتجاتك الأولى باستخدام زر "إضافة المنتج لمتجري" أعلاه
+              لإضافة منتجات لمتجرك، اذهب إلى المخزون واختر المنتجات واضغط "إضافة إلى متجري"
             </p>
             <Button onClick={() => window.location.href = '/inventory'} variant="outline">
-              أو تصفح المخزون
+              انتقل إلى المخزون
             </Button>
           </div>
         ) : (
