@@ -185,19 +185,47 @@ export const extractImagesFromVariant = (variant: AnyObj): string[] => {
 /** استخراج كل صور المنتج (top/src + variants) */
 export const extractAllProductImages = (p: AnyObj) => {
   const src = p?.products ?? p ?? {};
+
+  // 1) اجمع صور المنتج نفسه (ليس فقط image_urls)
+  const productLevel: string[] = [];
+  const collectFrom = (obj: AnyObj | undefined | null) => {
+    if (!obj || typeof obj !== 'object') return;
+    // direct string fields
+    for (const f of DIRECT_STRING_FIELDS) {
+      const v = (obj as any)[f];
+      if (isHttpUrl(v)) productLevel.push(v);
+    }
+    // array or JSON-string fields
+    for (const f of ARRAY_FIELDS) {
+      const v = (obj as any)[f];
+      if (v) productLevel.push(...collectUrlsFromUnknown(v));
+    }
+    // nested common containers
+    for (const f of NESTED_FIELDS) {
+      const v = (obj as any)[f];
+      if (v) productLevel.push(...collectUrlsFromUnknown(v));
+    }
+  };
+  // existing arrays kept for backward compatibility
   const topImages = Array.isArray(p?.image_urls) ? p.image_urls : [];
   const srcImages = Array.isArray(src?.image_urls) ? src.image_urls : [];
+  collectFrom(p);
+  collectFrom(src);
 
-  const variants: AnyObj[] = Array.isArray(src?.variants)
-    ? src.variants
-    : Array.isArray(p?.variants)
-    ? p.variants
+  // Zoho fallback at product level
+  productLevel.push(...zohoFallbackUrls((src as any)?.zoho_item_id || (p as any)?.zoho_item_id));
+
+  // 2) Variants
+  const variants: AnyObj[] = Array.isArray((src as any)?.variants)
+    ? (src as any).variants
+    : Array.isArray((p as any)?.variants)
+    ? (p as any).variants
     : [];
 
   const variantImages = variants.flatMap(extractImagesFromVariant);
 
   const merged = uniqUrls(
-    [...(topImages || []), ...(srcImages || []), ...variantImages].filter(
+    [...(topImages || []), ...(srcImages || []), ...productLevel, ...variantImages].filter(
       isHttpUrl
     )
   );

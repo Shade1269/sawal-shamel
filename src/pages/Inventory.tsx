@@ -30,6 +30,7 @@ interface Product {
 
 interface ProductWithVariants extends Product {
   variants?: ProductVariant[];
+  raw_variants?: any[];
 }
 
 interface ProductVariant {
@@ -144,6 +145,7 @@ const Inventory = () => {
             variant_value: v?.variant_value || v?.value || '',
             stock: v?.stock || 0
           })),
+          raw_variants: variants,
         };
       });
       
@@ -263,7 +265,7 @@ const Inventory = () => {
                 <ProductImageCarousel 
                   images={product.image_urls}
                   productTitle={product.title}
-                  variants={product.variants}
+                  variants={(product as any).raw_variants || product.variants}
                 />
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
