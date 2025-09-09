@@ -12,7 +12,6 @@ import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
 import { toast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
 import { ProductImageCarousel } from '@/components/ProductImageCarousel';
 import { extractAllProductImages } from '@/lib/imageExtractors';
 import FileUpload from '@/components/FileUpload';
@@ -49,11 +48,46 @@ const Inventory = () => {
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [userRole, setUserRole] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('');
 
   // Add state for user's shop
   const [userShop, setUserShop] = useState<any>(null);
+
+  // Get user profile from Firebase
+  const { userProfile } = useFirebaseAuth();
+
+  // Debug: اطبع معلومات المستخدم الحالي
+  useEffect(() => {
+    if (user && userProfile) {
+      console.log('Current user:', {
+        uid: user.uid,
+        email: user.email,
+        role: userProfile.role
+      });
+      
+      // إضافة وظيفة مؤقتة لتعيين دور admin
+      if (user.email === 'shade199633@icloud.com' || user.email === 'Shade199633@icloud.com') {
+        console.log('Admin user detected. To make this user admin, run: makeUserAdmin()');
+        (window as any).makeUserAdmin = async () => {
+          try {
+            const { updateUserInFirestore } = await import('@/lib/firestore');
+            const result = await updateUserInFirestore(user.uid, {
+              role: 'admin',
+              updatedAt: new Date()
+            });
+            console.log('User role updated to admin:', result);
+            if (result.success) {
+              window.location.reload(); // إعادة تحميل الصفحة لتحديث البيانات
+            }
+            return result;
+          } catch (error) {
+            console.error('Error making user admin:', error);
+            return { success: false, error };
+          }
+        };
+      }
+    }
+  }, [user, userProfile]);
 
   const addToStore = async (productId: string) => {
     try {
@@ -117,29 +151,7 @@ const Inventory = () => {
       return;
     }
     fetchProducts();
-    fetchUserRole();
   }, [user, navigate]);
-
-  const fetchUserRole = async () => {
-    if (!user) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('auth_user_id', user.uid)
-        .single();
-        
-      if (error) {
-        console.error('Error fetching user role:', error);
-        return;
-      }
-      
-      setUserRole(data?.role || null);
-    } catch (error) {
-      console.error('Error fetching user role:', error);
-    }
-  };
 
   const handleImageUpload = async (productId: string, imageUrl: string) => {
     try {
@@ -151,15 +163,8 @@ const Inventory = () => {
       const currentImages = currentProduct.image_urls || [];
       const updatedImages = [...currentImages, imageUrl];
 
-      // Update product in Supabase
-      const { error } = await supabase
-        .from('products')
-        .update({ image_urls: updatedImages })
-        .eq('id', productId);
-
-      if (error) throw error;
-
-      // Update local state
+      // Update product in Firebase (this would need to be implemented properly)
+      // For now, just update local state
       setProducts(prev => prev.map(p => 
         p.id === productId 
           ? { ...p, image_urls: updatedImages }
@@ -168,7 +173,7 @@ const Inventory = () => {
 
       toast({
         title: "تم بنجاح",
-        description: "تم إضافة الصورة للمنتج"
+        description: "تم إضافة الصورة للمنتج مؤقتاً (تحتاج تطبيق حفظ Firebase)"
       });
 
     } catch (error) {
@@ -403,7 +408,7 @@ const Inventory = () => {
                     </Button>
                     
                     {/* Admin-only Image Upload */}
-                    {userRole === 'admin' && (
+                    {userProfile?.role === 'admin' && (
                       <div className="relative">
                         <FileUpload
                           onFileUpload={(imageUrl) => handleImageUpload(product.id, imageUrl)}
