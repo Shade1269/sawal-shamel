@@ -1,7 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ProductImageCarouselProps {
   images: string[] | null;
@@ -18,19 +19,41 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [currentX, setCurrentX] = useState(0);
+  const [overrideImages, setOverrideImages] = useState<string[] | null>(null);
 
   const validImages = images && images.length > 0 ? images : [];
-  const hasMultipleImages = validImages.length > 1;
+  const imagesToShow = (overrideImages && overrideImages.length > 0) ? overrideImages : validImages;
+  const hasMultipleImages = imagesToShow.length > 1;
+
+  // Fallback: fetch images from Supabase by title if none provided
+  useEffect(() => {
+    const fetchImages = async () => {
+      if (validImages.length > 0 || !productTitle) return;
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('image_urls')
+          .ilike('title', `%${productTitle}%`)
+          .limit(1);
+        if (!error && data && data.length > 0 && Array.isArray(data[0].image_urls) && data[0].image_urls.length > 0) {
+          setOverrideImages(data[0].image_urls as string[]);
+        }
+      } catch (e) {
+        console.error('Failed to load fallback images from Supabase', e);
+      }
+    };
+    fetchImages();
+  }, [productTitle, validImages.length]);
 
   const nextImage = useCallback(() => {
-    if (validImages.length === 0) return;
-    setCurrentIndex((prev) => (prev + 1) % validImages.length);
-  }, [validImages.length]);
+    if (imagesToShow.length === 0) return;
+    setCurrentIndex((prev) => (prev + 1) % imagesToShow.length);
+  }, [imagesToShow.length]);
 
   const prevImage = useCallback(() => {
-    if (validImages.length === 0) return;
-    setCurrentIndex((prev) => (prev - 1 + validImages.length) % validImages.length);
-  }, [validImages.length]);
+    if (imagesToShow.length === 0) return;
+    setCurrentIndex((prev) => (prev - 1 + imagesToShow.length) % imagesToShow.length);
+  }, [imagesToShow.length]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!hasMultipleImages) return;
@@ -88,7 +111,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
     }
   };
 
-  if (validImages.length === 0) {
+  if (imagesToShow.length === 0) {
     return (
       <div className={cn("aspect-square bg-muted flex items-center justify-center rounded-lg", className)}>
         <Package className="h-12 w-12 text-muted-foreground" />
@@ -110,7 +133,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
       {/* Main Image */}
       <div className="relative w-full h-full">
         <img
-          src={validImages[currentIndex]}
+          src={imagesToShow[currentIndex]}
           alt={`${productTitle} - صورة ${currentIndex + 1}`}
           className="w-full h-full object-cover transition-transform duration-200"
           style={{
@@ -121,14 +144,14 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
           loading="lazy"
         />
         
-        {/* Navigation Arrows - Only show if multiple images */}
-          {validImages.length > 0 && (
+        {/* Navigation Arrows */}
+          {imagesToShow.length > 0 && (
             <>
               <Button
                 variant="ghost"
                 size="icon"
                 className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/90 text-white h-12 w-12 rounded-full backdrop-blur-sm border border-white/30 shadow-lg"
-                disabled={validImages.length === 1}
+                disabled={imagesToShow.length === 1}
                 onClick={(e) => {
                   e.stopPropagation();
                   prevImage();
@@ -142,7 +165,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
                 variant="ghost"
                 size="icon"
                 className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/90 text-white h-12 w-12 rounded-full backdrop-blur-sm border border-white/30 shadow-lg"
-                disabled={validImages.length === 1}
+                disabled={imagesToShow.length === 1}
                 onClick={(e) => {
                   e.stopPropagation();
                   nextImage();
@@ -155,16 +178,16 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
           )}
         
         {/* Image Counter */}
-        {validImages.length > 0 && (
+        {imagesToShow.length > 0 && (
           <div className="absolute top-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
-            {currentIndex + 1} / {validImages.length}
+            {currentIndex + 1} / {imagesToShow.length}
           </div>
         )}
         
         {/* Dots Indicator */}
-        {hasMultipleImages && validImages.length <= 5 && (
+        {hasMultipleImages && imagesToShow.length <= 5 && (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
-            {validImages.map((_, index) => (
+            {imagesToShow.map((_, index) => (
               <button
                 key={index}
                 className={cn(
@@ -181,7 +204,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
         )}
         
         {/* Swipe Indicator */}
-        {validImages.length > 0 && (
+        {imagesToShow.length > 0 && (
           <div className="absolute bottom-3 left-3 text-white/70 text-xs bg-black/30 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
             {hasMultipleImages ? '👈👉 اسحب للتنقل' : 'صورة واحدة'}
           </div>
