@@ -165,13 +165,12 @@ serve(async (req) => {
     const accessToken = integration.access_token as string;
     const organizationId = integration.organization_id as string;
 
-    // Fetch Zoho items until we gather maxModels unique models
+    // Fetch Zoho items directly (no grouping by model)
     let allItems: any[] = [];
     let page = 1;
     const perPage = 200;
-    const itemsByModel = new Map<string, any[]>();
 
-    while (itemsByModel.size < maxModels) {
+    while (allItems.length < maxModels) {
       const resp = await fetch(`https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&page=${page}&per_page=${perPage}`, {
         method: 'GET',
         headers: {
@@ -193,11 +192,11 @@ serve(async (req) => {
       const pageItems = data.items || [];
       if (pageItems.length === 0) break;
 
-      for (const item of pageItems) {
-        const { baseModel } = extractProductInfo(item);
-        if (!itemsByModel.has(baseModel)) itemsByModel.set(baseModel, []);
-        itemsByModel.get(baseModel)!.push(item);
-        if (itemsByModel.size >= maxModels) break;
+      // Add items directly without grouping
+      allItems = allItems.concat(pageItems);
+      if (allItems.length >= maxModels) {
+        allItems = allItems.slice(0, maxModels); // Trim to exact limit
+        break;
       }
 
       page += 1;
@@ -207,63 +206,45 @@ serve(async (req) => {
     // Build normalized products for frontend to save into Firestore
     const products: any[] = [];
     let processedCount = 0;
-    const maxProductsWithImages = 10; // Limit image processing to prevent timeout
+    const maxProductsWithImages = 50; // Limit image processing to prevent timeout
     
-    for (const [baseModel, variants] of itemsByModel.entries()) {
-      const attributesSchema: Record<string, Set<string>> = {};
-      const baseVariant = variants[0];
+    for (const item of allItems) {
+      const { baseModel, color, size } = extractProductInfo(item);
       
       // Only process images for first few products to avoid timeout
       let uploadedImageUrl: string | null = null;
       if (processedCount < maxProductsWithImages) {
-        uploadedImageUrl = await getItemImagePublicUrl(baseVariant, accessToken, organizationId);
+        uploadedImageUrl = await getItemImagePublicUrl(item, accessToken, organizationId);
         processedCount++;
       }
       const imageUrls: string[] = uploadedImageUrl ? [uploadedImageUrl] : [];
 
-      let totalStock = 0;
-      const variantObjs = variants.map((v: any) => {
-        const { color, size } = extractProductInfo(v);
-        if (color) {
-          attributesSchema['COLOR'] = attributesSchema['COLOR'] || new Set();
-          attributesSchema['COLOR'].add(color);
-        }
-        if (size) {
-          attributesSchema['SIZE'] = attributesSchema['SIZE'] || new Set();
-          attributesSchema['SIZE'].add(size);
-        }
-        const stock = parseInt(v.stock_on_hand) || 0;
-        totalStock += stock;
-        return {
-          id: v.item_id,
-          variant_type: 'combination',
-          variant_value: [color, size].filter(Boolean).join('-') || 'default',
-          stock,
-          color,
-          size,
-          sku: v.sku || `${baseModel}-${v.item_id}`,
-          price_modifier: (parseFloat(v.rate) || 0) - (parseFloat(baseVariant.rate) || 0),
-        };
-      });
-
-      const finalSchema: Record<string, string[]> = {};
-      for (const [k, set] of Object.entries(attributesSchema)) {
-        finalSchema[k] = Array.from(set as Set<string>);
+      // Build attributes schema for individual item
+      const attributesSchema: Record<string, string[]> = {};
+      if (color) {
+        attributesSchema['COLOR'] = [color];
+      }
+      if (size) {
+        attributesSchema['SIZE'] = [size];
       }
 
+      const itemStock = parseInt(item.stock_on_hand) || 0;
+
       products.push({
-        id: `zoho_${baseModel}_${Date.now()}`,
-        title: baseModel,
-        description: `منتج ${baseModel} متوفر بألوان ومقاسات مختلفة`,
-        price_sar: parseFloat(baseVariant.rate) || 0,
-        stock: totalStock,
-        category: baseVariant.category_name || 'General',
+        id: `zoho_${item.item_id}_${Date.now()}`,
+        title: item.name || baseModel,
+        description: item.description || `${item.name || baseModel}${color ? ` - ${color}` : ''}${size ? ` - ${size}` : ''}`,
+        price_sar: parseFloat(item.rate) || 0,
+        stock: itemStock,
+        category: item.category_name || 'General',
         image_urls: imageUrls,
-        is_active: baseVariant.status === 'active',
-        external_id: `zoho_model_${baseModel}`,
-        variants: variantObjs,
-        attributes_schema: finalSchema,
-        source: 'zoho_direct_sync'
+        is_active: item.status === 'active',
+        external_id: item.item_id,
+        variants: [], // No variants for individual items
+        attributes_schema: attributesSchema,
+        source: 'zoho_individual_sync',
+        zoho_item_id: item.item_id,
+        sku: item.sku || baseModel
       });
     }
 
