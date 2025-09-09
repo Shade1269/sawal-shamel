@@ -137,7 +137,7 @@ serve(async (req) => {
   try {
     const body = await req.json();
     const userId: string | undefined = body?.userId;
-    const maxModels: number = Math.min(Math.max(parseInt(body?.maxModels ?? '50', 10) || 50, 1), 200);
+    const maxModels: number = Math.min(Math.max(parseInt(body?.maxModels ?? '1000', 10) || 1000, 1), 1000);
 
     if (!userId) {
       return new Response(JSON.stringify({ success: false, error: 'Missing userId' }), {
