@@ -10,6 +10,7 @@ import { Package, Trash2, Star, Plus, Eye, EyeOff, DollarSign } from 'lucide-rea
 import { toast } from '@/components/ui/use-toast';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
+import { ProductImageCarousel } from '@/components/ProductImageCarousel';
 
 interface Product {
   id: string;
@@ -310,34 +311,29 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
               .map((item) => {
                 console.log('Rendering product:', item);
                 return (
-                <Card key={item.id} className="overflow-hidden">
-                  <div className="aspect-video bg-muted flex items-center justify-center relative">
-                    {item.products && item.products.image_urls && item.products.image_urls.length > 0 ? (
-                      <img
-                        src={item.products.image_urls[0]}
-                        alt={item.products.title}
-                        className="w-full h-full object-cover"
+                  <Card key={item.id} className="overflow-hidden">
+                    <div className="relative">
+                      <ProductImageCarousel 
+                        images={item.products?.image_urls}
+                        productTitle={item.products?.title || 'منتج غير معروف'}
                       />
-                    ) : (
-                      <Package className="h-12 w-12 text-muted-foreground" />
-                    )}
-                  
-                  {/* Status Badges */}
-                  <div className="absolute top-2 left-2 flex flex-col gap-1">
-                    {item.is_featured && (
-                      <Badge className="bg-yellow-500">
-                        <Star className="h-3 w-3 mr-1" />
-                        مميز
-                      </Badge>
-                    )}
-                    {!item.is_visible && (
-                      <Badge variant="secondary" className="bg-gray-500">
-                        <EyeOff className="h-3 w-3 mr-1" />
-                        مخفي
-                      </Badge>
-                    )}
-                  </div>
-                </div>
+                      
+                      {/* Status Badges */}
+                      <div className="absolute top-2 left-2 flex flex-col gap-1">
+                        {item.is_featured && (
+                          <Badge className="bg-yellow-500">
+                            <Star className="h-3 w-3 mr-1" />
+                            مميز
+                          </Badge>
+                        )}
+                        {!item.is_visible && (
+                          <Badge variant="secondary" className="bg-gray-500">
+                            <EyeOff className="h-3 w-3 mr-1" />
+                            مخفي
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
                 
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">

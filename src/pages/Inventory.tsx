@@ -13,6 +13,7 @@ import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
 import { toast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
+import { ProductImageCarousel } from '@/components/ProductImageCarousel';
 
 interface Product {
   id: string;
@@ -232,18 +233,10 @@ interface ProductVariant {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
               <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow relative">
-                <div className="aspect-square bg-muted flex items-center justify-center">
-                  {product.image_urls && product.image_urls.length > 0 ? (
-                    <img
-                      src={product.image_urls[0]}
-                      alt={product.title}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <Package className="h-12 w-12 text-muted-foreground" />
-                  )}
-                </div>
+                <ProductImageCarousel 
+                  images={product.image_urls}
+                  productTitle={product.title}
+                />
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
                     <CardTitle className="text-lg line-clamp-2">{product.title}</CardTitle>
