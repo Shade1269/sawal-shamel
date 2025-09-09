@@ -22,11 +22,6 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
   const validImages = images && images.length > 0 ? images : [];
   const hasMultipleImages = validImages.length > 1;
 
-  // Debug logs
-  console.log('ProductImageCarousel - Images:', images);
-  console.log('ProductImageCarousel - Valid Images Count:', validImages.length);
-  console.log('ProductImageCarousel - Has Multiple Images:', hasMultipleImages);
-
   const nextImage = useCallback(() => {
     if (validImages.length === 0) return;
     setCurrentIndex((prev) => (prev + 1) % validImages.length);

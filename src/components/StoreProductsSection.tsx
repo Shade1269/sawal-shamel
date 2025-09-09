@@ -313,21 +313,8 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                 return (
                   <Card key={item.id} className="overflow-hidden">
                     <div className="relative">
-                      {/* Test with multiple images for debugging */}
                       <ProductImageCarousel 
-                        images={item.products?.image_urls && item.products.image_urls.length > 0 
-                          ? [
-                              ...item.products.image_urls,
-                              'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop',
-                              'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&h=400&fit=crop',
-                              'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop'
-                            ]
-                          : [
-                              'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop',
-                              'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&h=400&fit=crop',
-                              'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop'
-                            ]
-                        }
+                        images={item.products?.image_urls}
                         productTitle={item.products?.title || 'منتج غير معروف'}
                       />
                       

@@ -218,13 +218,33 @@ serve(async (req) => {
       const items = productsByModel[baseModel];
       const mainItem = items[0]; // Use first item as main product info
       
-      // Only process images for first few products to avoid timeout
-      let uploadedImageUrl: string | null = null;
+      // Process images from all variants for this model
+      const imageUrls: string[] = [];
       if (processedCount < maxProductsWithImages) {
-        uploadedImageUrl = await getItemImagePublicUrl(mainItem, accessToken, organizationId);
+        // Collect all unique images from all variants
+        const imageSet = new Set<string>();
+        
+        for (const item of items) {
+          // Try to get image for each variant
+          const imageUrl = await getItemImagePublicUrl(item, accessToken, organizationId);
+          if (imageUrl) {
+            imageSet.add(imageUrl);
+          }
+          
+          // Also check for direct image documents
+          if (item.image_documents && item.image_documents.length > 0) {
+            item.image_documents.forEach((img: any) => {
+              const directImageUrl = img.file_path || img.attachment_url || img.document_url;
+              if (directImageUrl) {
+                imageSet.add(directImageUrl);
+              }
+            });
+          }
+        }
+        
+        imageUrls.push(...Array.from(imageSet));
         processedCount++;
       }
-      const imageUrls: string[] = uploadedImageUrl ? [uploadedImageUrl] : [];
 
       // Build attributes schema from all variants
       const attributesSchema: Record<string, string[]> = {};

@@ -12,6 +12,96 @@ const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+// Download and upload image from Zoho with proper error handling
+async function uploadImageFromZoho(imageUrl: string, itemId: string, accessToken: string): Promise<string | null> {
+  try {
+    const timeoutMs = 10000; // 10 seconds timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    
+    const response = await fetch(imageUrl, {
+      headers: { 'Authorization': `Zoho-oauthtoken ${accessToken}` },
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      console.log(`Failed to fetch image for item ${itemId}: ${response.status}`);
+      return null;
+    }
+    
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    const buffer = await response.arrayBuffer();
+    
+    // Check file size (max 5MB)
+    if (buffer.byteLength > 5 * 1024 * 1024) {
+      console.log(`Image too large for item ${itemId}: ${buffer.byteLength} bytes`);
+      return null;
+    }
+    
+    const blob = new Blob([buffer], { type: contentType });
+    const ext = contentType.includes('png') ? 'png' : 
+                contentType.includes('webp') ? 'webp' : 
+                contentType.includes('gif') ? 'gif' : 'jpg';
+    const filePath = `zoho/${itemId}_${Date.now()}.${ext}`;
+    
+    const { error: uploadError } = await supabase.storage
+      .from('product-images')
+      .upload(filePath, blob, { upsert: true, contentType });
+      
+    if (uploadError) {
+      console.error(`Upload error for item ${itemId}:`, uploadError);
+      return null;
+    }
+    
+    const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
+    return data?.publicUrl || null;
+    
+  } catch (error) {
+    console.error(`Error processing image for item ${itemId}:`, error);
+    return null;
+  }
+}
+
+// Get all images for an item from various Zoho sources
+async function getAllItemImages(item: any, accessToken: string, organizationId: string): Promise<string[]> {
+  const uploadedImages: string[] = [];
+  
+  // 1. Process image_documents array
+  if (item.image_documents && item.image_documents.length > 0) {
+    for (const img of item.image_documents) {
+      const imageUrl = img.file_path || img.attachment_url || img.document_url;
+      if (imageUrl) {
+        const uploadedUrl = await uploadImageFromZoho(imageUrl, item.item_id, accessToken);
+        if (uploadedUrl) {
+          uploadedImages.push(uploadedUrl);
+        }
+      }
+    }
+  }
+  
+  // 2. Try direct image_url if available
+  if (item.image_url) {
+    const uploadedUrl = await uploadImageFromZoho(item.image_url, item.item_id, accessToken);
+    if (uploadedUrl) {
+      uploadedImages.push(uploadedUrl);
+    }
+  }
+  
+  // 3. Try standard Zoho API image endpoint
+  try {
+    const endpoint = `https://www.zohoapis.com/inventory/v1/items/${item.item_id}/image?organization_id=${organizationId}`;
+    const uploadedUrl = await uploadImageFromZoho(endpoint, item.item_id, accessToken);
+    if (uploadedUrl) {
+      uploadedImages.push(uploadedUrl);
+    }
+  } catch (error) {
+    console.log(`Failed to fetch from API endpoint for item ${item.item_id}`);
+  }
+  
+  return uploadedImages;
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -233,11 +323,20 @@ serve(async (req) => {
                 attributesSchema['SIZE'] = Array.from(allSizes);
               }
               
-              // Process product images
-              let imageUrls = [];
-              if (mainItem.image_documents && mainItem.image_documents.length > 0) {
-                imageUrls = mainItem.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
+              // Process product images from all variants
+              const allImageUrls: string[] = [];
+              
+              // Only process images for smaller products to avoid performance issues
+              if (items.length <= 10) { 
+                // Collect images from all variants
+                for (const item of items) {
+                  const itemImages = await getAllItemImages(item, integration.access_token, integration.organization_id);
+                  allImageUrls.push(...itemImages);
+                }
               }
+              
+              // Remove duplicates
+              const imageUrls = [...new Set(allImageUrls)];
 
               // Calculate total stock and average price
               const totalStock = items.reduce((sum, item) => sum + (parseInt(item.stock_on_hand) || 0), 0);
