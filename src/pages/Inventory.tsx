@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Package, Search, Filter, ArrowLeft, X, Upload, RefreshCw } from 'lucide-react';
+import { Plus, Package, Search, Filter, ArrowLeft, X, Upload, RefreshCw, ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { ProductImageCarousel } from '@/components/ProductImageCarousel';
 import { extractAllProductImages } from '@/lib/imageExtractors';
+import FileUpload from '@/components/FileUpload';
 
 interface Product {
   id: string;
@@ -48,6 +49,7 @@ const Inventory = () => {
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('');
 
   // Add state for user's shop
@@ -115,7 +117,69 @@ const Inventory = () => {
       return;
     }
     fetchProducts();
+    fetchUserRole();
   }, [user, navigate]);
+
+  const fetchUserRole = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('auth_user_id', user.uid)
+        .single();
+        
+      if (error) {
+        console.error('Error fetching user role:', error);
+        return;
+      }
+      
+      setUserRole(data?.role || null);
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+    }
+  };
+
+  const handleImageUpload = async (productId: string, imageUrl: string) => {
+    try {
+      // Get current product
+      const currentProduct = products.find(p => p.id === productId);
+      if (!currentProduct) return;
+
+      // Add new image to existing images
+      const currentImages = currentProduct.image_urls || [];
+      const updatedImages = [...currentImages, imageUrl];
+
+      // Update product in Supabase
+      const { error } = await supabase
+        .from('products')
+        .update({ image_urls: updatedImages })
+        .eq('id', productId);
+
+      if (error) throw error;
+
+      // Update local state
+      setProducts(prev => prev.map(p => 
+        p.id === productId 
+          ? { ...p, image_urls: updatedImages }
+          : p
+      ));
+
+      toast({
+        title: "تم بنجاح",
+        description: "تم إضافة الصورة للمنتج"
+      });
+
+    } catch (error) {
+      console.error('Error updating product images:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في إضافة الصورة",
+        variant: "destructive"
+      });
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -328,14 +392,31 @@ const Inventory = () => {
                   )}
 
                   {/* Add to Store Button */}
-                  <Button
-                    onClick={() => addToStore(product.id)}
-                    className="w-full gap-2 mt-4"
-                    variant="outline"
-                  >
-                    <Plus className="h-4 w-4" />
-                    إضافة إلى متجري
-                  </Button>
+                  <div className="flex gap-2 mt-4">
+                    <Button
+                      onClick={() => addToStore(product.id)}
+                      className="flex-1 gap-2"
+                      variant="outline"
+                    >
+                      <Plus className="h-4 w-4" />
+                      إضافة إلى متجري
+                    </Button>
+                    
+                    {/* Admin-only Image Upload */}
+                    {userRole === 'admin' && (
+                      <div className="relative">
+                        <FileUpload
+                          onFileUpload={(imageUrl) => handleImageUpload(product.id, imageUrl)}
+                          accept="image/*"
+                          maxSize={5}
+                          className="inline-block"
+                        />
+                        <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap text-xs text-muted-foreground">
+                          إضافة صورة
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
