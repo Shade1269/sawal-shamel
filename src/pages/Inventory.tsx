@@ -27,10 +27,6 @@ interface Product {
   created_at: string;
 }
 
-const Inventory = () => {
-  const navigate = useNavigate();
-  const { user } = useFirebaseAuth();
-  const { getShopProducts, addProduct } = useFirebaseUserData();
 interface ProductWithVariants extends Product {
   variants?: ProductVariant[];
 }
@@ -41,6 +37,11 @@ interface ProductVariant {
   variant_value: string;
   stock: number;
 }
+
+const Inventory = () => {
+  const navigate = useNavigate();
+  const { user } = useFirebaseAuth();
+  const { getShopProducts, addProduct } = useFirebaseUserData();
 
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,8 +139,6 @@ interface ProductVariant {
     // This would need to be implemented with Firestore listeners if needed
   }, []);
 
-  // handleAddProduct function is no longer needed as product addition was moved to Admin page only
-
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -174,11 +173,11 @@ interface ProductVariant {
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-          <div>
-            <h1 className="text-3xl font-bold">المخزون</h1>
-            <p className="text-muted-foreground">إدارة كتالوج المنتجات</p>
+            <div>
+              <h1 className="text-3xl font-bold">المخزون</h1>
+              <p className="text-muted-foreground">إدارة كتالوج المنتجات</p>
+            </div>
           </div>
-        </div>
         </div>
 
         {/* Filters */}
