@@ -3,12 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageCircle, Users, Hash, Package, LogOut, User, Store } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { CheckoutTest } from "@/components/CheckoutTest";
+
 import { useAuth } from '@/contexts/AuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user: sUser, signOut: sSignOut } = useAuth();
+  const { user: fUser, signOut: fSignOut } = useFirebaseAuth();
+  const user = (fUser as any) || (sUser as any);
 
   const handleChatClick = () => {
     if (!user) {
@@ -35,7 +38,8 @@ const Index = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    if (fUser && fSignOut) await fSignOut();
+    else if (sUser && sSignOut) await sSignOut();
     navigate('/auth');
   };
 
@@ -49,7 +53,7 @@ const Index = () => {
               <div className="flex items-center gap-2">
                 <User className="h-5 w-5 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
-                  مرحباً، {user.user_metadata?.full_name || user.email}
+                  مرحباً، { (fUser && (fUser.displayName || fUser.phoneNumber || fUser.email)) || (sUser && (sUser.user_metadata?.full_name || sUser.email)) }
                 </span>
               </div>
               <Button
@@ -168,20 +172,6 @@ const Index = () => {
             </div>
           )}
 
-          {/* Checkout Test Section */}
-          <div className="mb-12">
-            <Card className="group hover:shadow-xl transition-all duration-300">
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl">اختبار صفحة الدفع</CardTitle>
-                <CardDescription>
-                  اختبر صفحة الدفع للتأكد من أنها تعمل بشكل صحيح
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <CheckoutTest />
-              </CardContent>
-            </Card>
-          </div>
 
           {!user && (
             <div className="text-center">
