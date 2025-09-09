@@ -21,11 +21,15 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import NotFound from "./pages/NotFound";
 import { lazy, Suspense } from "react";
 const AdminPageLazy = lazy(() => import("./pages/Admin"));
+const MigrateToFirestore = lazy(() => import("./pages/MigrateToFirestore"));
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { user, loading } = useFirebaseAuth();
+  const { user: fUser, loading: fLoading } = useFirebaseAuth();
+  const { user: sUser, loading: sLoading } = useAuth();
+  const user = fUser || sUser as any;
+  const loading = fLoading || sLoading;
 
   if (loading) {
     return (
@@ -52,13 +56,17 @@ const AppContent = () => {
       <Route path="/store/:slug/payment" element={<Payment />} />
       <Route path="/store/:slug/order-confirmation/:orderId" element={<OrderConfirmation />} />
       <Route path="/admin" element={<ProtectedRoute><AdminPageLazy /></ProtectedRoute>} />
+      <Route path="/migrate-firestore" element={<ProtectedRoute><MigrateToFirestore /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useFirebaseAuth();
+  const { user: fUser, loading: fLoading } = useFirebaseAuth();
+  const { user: sUser, loading: sLoading } = useAuth();
+  const user = fUser || sUser as any;
+  const loading = fLoading || sLoading;
 
   if (loading) {
     return (
@@ -85,15 +93,17 @@ const App = () => {
         <Toaster />
         <Sonner />
         <FirebaseAuthProvider>
-          <UserDataProvider>
-            <DarkModeProvider>
-              <BrowserRouter>
-                <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
-                  <AppContent />
-                </Suspense>
-              </BrowserRouter>
-            </DarkModeProvider>
-          </UserDataProvider>
+          <AuthProvider>
+            <UserDataProvider>
+              <DarkModeProvider>
+                <BrowserRouter>
+                  <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
+                    <AppContent />
+                  </Suspense>
+                </BrowserRouter>
+              </DarkModeProvider>
+            </UserDataProvider>
+          </AuthProvider>
         </FirebaseAuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
