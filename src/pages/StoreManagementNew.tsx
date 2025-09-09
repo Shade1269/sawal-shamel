@@ -358,7 +358,19 @@ const StoreManagement = () => {
                 {products.map((product) => (
                   <Card key={product.id} className="border overflow-hidden">
                     <ProductImageCarousel 
-                      images={product.image_urls}
+                      images={product.image_urls && product.image_urls.length > 0 
+                        ? [
+                            ...product.image_urls,
+                            'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop',
+                            'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&h=400&fit=crop',
+                            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop'
+                          ]
+                        : [
+                            'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop',
+                            'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&h=400&fit=crop',
+                            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop'
+                          ]
+                      }
                       productTitle={product.title}
                     />
                     <CardContent className="p-4">

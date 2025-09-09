@@ -22,6 +22,11 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
   const validImages = images && images.length > 0 ? images : [];
   const hasMultipleImages = validImages.length > 1;
 
+  // Debug logs
+  console.log('ProductImageCarousel - Images:', images);
+  console.log('ProductImageCarousel - Valid Images Count:', validImages.length);
+  console.log('ProductImageCarousel - Has Multiple Images:', hasMultipleImages);
+
   const nextImage = useCallback(() => {
     if (validImages.length === 0) return;
     setCurrentIndex((prev) => (prev + 1) % validImages.length);
@@ -127,25 +132,25 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity h-10 w-10 rounded-full"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white h-10 w-10 rounded-full backdrop-blur-sm border border-white/20"
               onClick={(e) => {
                 e.stopPropagation();
                 prevImage();
               }}
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-5 w-5" />
             </Button>
             
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity h-10 w-10 rounded-full"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white h-10 w-10 rounded-full backdrop-blur-sm border border-white/20"
               onClick={(e) => {
                 e.stopPropagation();
                 nextImage();
               }}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-5 w-5" />
             </Button>
           </>
         )}
