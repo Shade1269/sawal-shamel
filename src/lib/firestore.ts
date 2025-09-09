@@ -1,4 +1,4 @@
-import { getFirestore as initFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { getFirestore as initFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
 import { getFirebaseAuth } from './firebase';
 
 let db: any = null;
@@ -14,7 +14,7 @@ export const getFirestoreDB = async () => {
   return db;
 };
 
-// Save user data to Firestore
+// Save user data to Firestore with complete user database structure
 export const saveUserToFirestore = async (user: any, additionalData: any = {}) => {
   try {
     const firestore = await getFirestoreDB();
@@ -47,13 +47,231 @@ export const saveUserToFirestore = async (user: any, additionalData: any = {}) =
         updatedAt: new Date()
       });
     } else {
-      // Create new user
+      // Create new user with complete database structure
       await setDoc(userRef, userData);
+      
+      // Initialize user's subcollections and data structure
+      await initializeUserDatabase(user.uid);
     }
     
     return { success: true, userData };
   } catch (error) {
     console.error('Error saving user to Firestore:', error);
+    return { success: false, error };
+  }
+};
+
+// Initialize complete database structure for new user
+export const initializeUserDatabase = async (uid: string) => {
+  try {
+    const firestore = await getFirestoreDB();
+    
+    // Create user's shop settings document
+    const shopSettingsRef = doc(firestore, 'users', uid, 'shopSettings', 'main');
+    await setDoc(shopSettingsRef, {
+      shopName: '',
+      shopSlug: '',
+      description: '',
+      logoUrl: '',
+      coverImageUrl: '',
+      isActive: false,
+      theme: 'classic',
+      currency: 'SAR',
+      taxRate: 15,
+      paymentMethods: ['cash_on_delivery'],
+      shippingMethods: ['standard'],
+      businessHours: {
+        monday: { open: '09:00', close: '17:00', isOpen: true },
+        tuesday: { open: '09:00', close: '17:00', isOpen: true },
+        wednesday: { open: '09:00', close: '17:00', isOpen: true },
+        thursday: { open: '09:00', close: '17:00', isOpen: true },
+        friday: { open: '09:00', close: '17:00', isOpen: true },
+        saturday: { open: '09:00', close: '17:00', isOpen: false },
+        sunday: { open: '09:00', close: '17:00', isOpen: false }
+      },
+      socialLinks: {
+        whatsapp: '',
+        instagram: '',
+        twitter: '',
+        facebook: ''
+      },
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    // Create initial statistics document
+    const statsRef = doc(firestore, 'users', uid, 'statistics', 'main');
+    await setDoc(statsRef, {
+      totalProducts: 0,
+      totalOrders: 0,
+      totalRevenue: 0,
+      totalCustomers: 0,
+      monthlyStats: {},
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    // Create preferences document
+    const preferencesRef = doc(firestore, 'users', uid, 'preferences', 'main');
+    await setDoc(preferencesRef, {
+      language: 'ar',
+      notifications: {
+        email: true,
+        sms: true,
+        push: true,
+        orderAlerts: true,
+        productAlerts: true
+      },
+      displaySettings: {
+        itemsPerPage: 20,
+        defaultView: 'grid',
+        showTutorials: true
+      },
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    console.log('User database structure initialized successfully');
+    return { success: true };
+  } catch (error) {
+    console.error('Error initializing user database:', error);
+    return { success: false, error };
+  }
+};
+
+// Create a shop for user
+export const createUserShop = async (uid: string, shopData: any) => {
+  try {
+    const firestore = await getFirestoreDB();
+    
+    // Update shop settings
+    const shopSettingsRef = doc(firestore, 'users', uid, 'shopSettings', 'main');
+    await updateDoc(shopSettingsRef, {
+      ...shopData,
+      isActive: true,
+      updatedAt: new Date()
+    });
+
+    // Update user's main document
+    const userRef = doc(firestore, 'users', uid);
+    await updateDoc(userRef, {
+      createdShopsCount: 1,
+      updatedAt: new Date()
+    });
+
+    // Log activity
+    await logUserActivity(uid, {
+      activity_type: 'shop_created',
+      description: `تم إنشاء متجر: ${shopData.shopName}`,
+      metadata: { shopName: shopData.shopName }
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error creating user shop:', error);
+    return { success: false, error };
+  }
+};
+
+// Add product to user's store
+export const addProductToUserStore = async (uid: string, productData: any) => {
+  try {
+    const firestore = await getFirestoreDB();
+    
+    // Add product to user's products collection
+    const productsRef = collection(firestore, 'users', uid, 'products');
+    const productRef = await addDoc(productsRef, {
+      ...productData,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isActive: true,
+      viewCount: 0,
+      orderCount: 0
+    });
+
+    // Update statistics
+    const statsRef = doc(firestore, 'users', uid, 'statistics', 'main');
+    const statsDoc = await getDoc(statsRef);
+    const currentStats = statsDoc.data();
+    
+    await updateDoc(statsRef, {
+      totalProducts: (currentStats?.totalProducts || 0) + 1,
+      updatedAt: new Date()
+    });
+
+    // Log activity
+    await logUserActivity(uid, {
+      activity_type: 'product_added',
+      description: `تم إضافة منتج: ${productData.title}`,
+      metadata: { productId: productRef.id, productTitle: productData.title }
+    });
+
+    return { success: true, productId: productRef.id };
+  } catch (error) {
+    console.error('Error adding product:', error);
+    return { success: false, error };
+  }
+};
+
+// Get user's products
+export const getUserProducts = async (uid: string) => {
+  try {
+    const firestore = await getFirestoreDB();
+    const productsRef = collection(firestore, 'users', uid, 'products');
+    const q = query(productsRef, where('isActive', '==', true), orderBy('createdAt', 'desc'));
+    
+    const querySnapshot = await getDocs(q);
+    const products = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    return { success: true, products };
+  } catch (error) {
+    console.error('Error getting user products:', error);
+    return { success: false, error, products: [] };
+  }
+};
+
+// Get user's shop settings
+export const getUserShopSettings = async (uid: string) => {
+  try {
+    const firestore = await getFirestoreDB();
+    const shopSettingsRef = doc(firestore, 'users', uid, 'shopSettings', 'main');
+    const shopSettingsDoc = await getDoc(shopSettingsRef);
+    
+    if (shopSettingsDoc.exists()) {
+      return { success: true, shopSettings: shopSettingsDoc.data() };
+    } else {
+      return { success: false, shopSettings: null };
+    }
+  } catch (error) {
+    console.error('Error getting shop settings:', error);
+    return { success: false, error, shopSettings: null };
+  }
+};
+
+// Update user's shop settings
+export const updateUserShopSettings = async (uid: string, settings: any) => {
+  try {
+    const firestore = await getFirestoreDB();
+    const shopSettingsRef = doc(firestore, 'users', uid, 'shopSettings', 'main');
+    
+    await updateDoc(shopSettingsRef, {
+      ...settings,
+      updatedAt: new Date()
+    });
+
+    // Log activity
+    await logUserActivity(uid, {
+      activity_type: 'settings_updated',
+      description: 'تم تحديث إعدادات المتجر',
+      metadata: settings
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating shop settings:', error);
     return { success: false, error };
   }
 };
@@ -98,7 +316,7 @@ export const updateUserInFirestore = async (uid: string, updateData: any) => {
 export const logUserActivity = async (uid: string, activityData: any) => {
   try {
     const firestore = await getFirestoreDB();
-    const activitiesRef = collection(firestore, 'user_activities');
+    const activitiesRef = collection(firestore, 'users', uid, 'activities');
     
     await addDoc(activitiesRef, {
       userId: uid,
@@ -113,5 +331,43 @@ export const logUserActivity = async (uid: string, activityData: any) => {
   } catch (error) {
     console.error('Error logging user activity:', error);
     return { success: false, error };
+  }
+};
+
+// Get user activities
+export const getUserActivities = async (uid: string, limitCount: number = 50) => {
+  try {
+    const firestore = await getFirestoreDB();
+    const activitiesRef = collection(firestore, 'users', uid, 'activities');
+    const q = query(activitiesRef, orderBy('createdAt', 'desc'), limit(limitCount));
+    
+    const querySnapshot = await getDocs(q);
+    const activities = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    return { success: true, activities };
+  } catch (error) {
+    console.error('Error getting user activities:', error);
+    return { success: false, error, activities: [] };
+  }
+};
+
+// Get user statistics
+export const getUserStatistics = async (uid: string) => {
+  try {
+    const firestore = await getFirestoreDB();
+    const statsRef = doc(firestore, 'users', uid, 'statistics', 'main');
+    const statsDoc = await getDoc(statsRef);
+    
+    if (statsDoc.exists()) {
+      return { success: true, statistics: statsDoc.data() };
+    } else {
+      return { success: false, statistics: null };
+    }
+  } catch (error) {
+    console.error('Error getting user statistics:', error);
+    return { success: false, error, statistics: null };
   }
 };

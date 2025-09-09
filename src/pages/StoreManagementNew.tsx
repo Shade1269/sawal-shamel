@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 import { Package, Plus, Store, Activity, BarChart3, User, Calendar } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserDashboard } from '@/components/UserDashboard';
 
 const StoreManagement = () => {
   const { user } = useAuth();
@@ -200,6 +201,9 @@ const StoreManagement = () => {
             </p>
           </div>
         </div>
+
+        {/* User Dashboard */}
+        <UserDashboard />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

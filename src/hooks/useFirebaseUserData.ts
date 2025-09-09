@@ -1,6 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
-import { logUserActivity, updateUserInFirestore, getUserFromFirestore } from '@/lib/firestore';
+import { 
+  logUserActivity, 
+  updateUserInFirestore, 
+  getUserFromFirestore,
+  createUserShop,
+  addProductToUserStore,
+  getUserProducts,
+  getUserShopSettings,
+  updateUserShopSettings,
+  getUserActivities,
+  getUserStatistics
+} from '@/lib/firestore';
 
 export interface UserShop {
   shop_id: string;
@@ -24,6 +35,7 @@ export const useFirebaseUserData = () => {
   const { user, userProfile } = useFirebaseAuth();
   const [userShop, setUserShop] = useState<UserShop | null>(null);
   const [userActivities, setUserActivities] = useState<UserActivity[]>([]);
+  const [userStatistics, setUserStatistics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,24 +56,15 @@ export const useFirebaseUserData = () => {
         metadata: metadata || {}
       });
       
-      // Add to local state
-      const newActivity = {
-        id: Date.now().toString(),
-        activity_type: activityType,
-        description: description || '',
-        metadata: metadata || {},
-        created_at: new Date().toISOString(),
-        shop_id: shopId
-      };
-      
-      setUserActivities(prev => [newActivity, ...prev.slice(0, 49)]);
+      // Refresh activities
+      await fetchUserActivities();
       
     } catch (err) {
       console.error('Error logging activity:', err);
     }
   };
 
-  // إنشاء متجر جديد - يتطلب Firebase Firestore
+  // إنشاء متجر جديد
   const createShop = async (shopName: string, shopSlug?: string) => {
     try {
       setLoading(true);
@@ -70,33 +73,26 @@ export const useFirebaseUserData = () => {
         throw new Error('User not authenticated');
       }
 
-      // Create shop data in Firestore
+      const slug = shopSlug || `${shopName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
+      
       const shopData = {
-        owner_id: user.uid,
-        display_name: shopName,
-        slug: shopSlug || `${shopName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
-        total_products: 0,
-        total_orders: 0,
-        created_at: new Date(),
-        updated_at: new Date()
+        shopName,
+        shopSlug: slug,
+        description: '',
+        logoUrl: '',
+        isActive: true
       };
 
-      // For now, we'll store shop data locally until full Firestore integration
-      const newShop: UserShop = {
-        shop_id: Date.now().toString(),
-        shop_name: shopName,
-        shop_slug: shopData.slug,
-        total_products: 0,
-        total_orders: 0,
-        created_at: new Date().toISOString()
-      };
-
-      setUserShop(newShop);
+      const result = await createUserShop(user.uid, shopData);
       
-      // Log activity
-      await logActivity('shop_created', `تم إنشاء متجر جديد: ${shopName}`, newShop.shop_id);
+      if (result.success) {
+        // Refresh shop data
+        await fetchUserShop();
+        return { shop_id: Date.now().toString(), ...shopData };
+      } else {
+        throw new Error('Failed to create shop');
+      }
       
-      return newShop;
     } catch (err: any) {
       setError(err.message);
       throw err;
@@ -110,10 +106,20 @@ export const useFirebaseUserData = () => {
     try {
       if (!user) return;
       
-      // For now, get from local storage or userProfile
-      const savedShop = localStorage.getItem(`user_shop_${user.uid}`);
-      if (savedShop) {
-        setUserShop(JSON.parse(savedShop));
+      const result = await getUserShopSettings(user.uid);
+      
+      if (result.success && result.shopSettings && result.shopSettings.isActive) {
+        const shopSettings = result.shopSettings;
+        setUserShop({
+          shop_id: user.uid,
+          shop_name: shopSettings.shopName || '',
+          shop_slug: shopSettings.shopSlug || '',
+          total_products: 0, // Will be updated from statistics
+          total_orders: 0,   // Will be updated from statistics
+          created_at: shopSettings.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
+        });
+      } else {
+        setUserShop(null);
       }
     } catch (err: any) {
       console.error('Error fetching user shop:', err);
@@ -126,10 +132,19 @@ export const useFirebaseUserData = () => {
     try {
       if (!user) return;
       
-      // For now, get from local storage
-      const savedActivities = localStorage.getItem(`user_activities_${user.uid}`);
-      if (savedActivities) {
-        setUserActivities(JSON.parse(savedActivities));
+      const result = await getUserActivities(user.uid, 50);
+      
+      if (result.success) {
+        const activities = result.activities.map((activity: any) => ({
+          id: activity.id,
+          activity_type: activity.activity_type,
+          description: activity.description || '',
+          metadata: activity.metadata || {},
+          created_at: activity.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+          shop_id: activity.shop_id
+        }));
+        
+        setUserActivities(activities);
       }
     } catch (err: any) {
       console.error('Error fetching user activities:', err);
@@ -137,26 +152,50 @@ export const useFirebaseUserData = () => {
     }
   };
 
+  // الحصول على إحصائيات المستخدم
+  const fetchUserStatistics = async () => {
+    try {
+      if (!user) return;
+      
+      const result = await getUserStatistics(user.uid);
+      
+      if (result.success && result.statistics) {
+        setUserStatistics(result.statistics);
+        
+        // Update shop with statistics if shop exists
+        if (userShop) {
+          setUserShop(prev => prev ? {
+            ...prev,
+            total_products: result.statistics.totalProducts || 0,
+            total_orders: result.statistics.totalOrders || 0
+          } : null);
+        }
+      }
+    } catch (err: any) {
+      console.error('Error fetching user statistics:', err);
+    }
+  };
+
   // إضافة منتج جديد
   const addProduct = async (productData: any) => {
     try {
-      if (!userShop) {
-        throw new Error('No shop found. Please create a shop first.');
+      if (!user) {
+        throw new Error('User not authenticated');
       }
 
-      // For now, just log the activity
-      await logActivity('product_added', `تم إضافة منتج جديد: ${productData.title}`, userShop.shop_id);
+      const result = await addProductToUserStore(user.uid, productData);
       
-      // Update shop products count
-      const updatedShop = {
-        ...userShop,
-        total_products: userShop.total_products + 1
-      };
-      
-      setUserShop(updatedShop);
-      localStorage.setItem(`user_shop_${user?.uid}`, JSON.stringify(updatedShop));
-      
-      return { id: Date.now().toString(), ...productData };
+      if (result.success) {
+        // Refresh data
+        await Promise.all([
+          fetchUserStatistics(),
+          fetchUserActivities()
+        ]);
+        
+        return { id: result.productId, ...productData };
+      } else {
+        throw new Error('Failed to add product');
+      }
     } catch (err: any) {
       setError(err.message);
       throw err;
@@ -166,9 +205,14 @@ export const useFirebaseUserData = () => {
   // الحصول على منتجات المتجر
   const getShopProducts = async () => {
     try {
-      if (!userShop) return [];
+      if (!user) return [];
       
-      // For now, return empty array - will be implemented with full Firestore
+      const result = await getUserProducts(user.uid);
+      
+      if (result.success) {
+        return result.products || [];
+      }
+      
       return [];
     } catch (err: any) {
       console.error('Error fetching shop products:', err);
@@ -179,17 +223,18 @@ export const useFirebaseUserData = () => {
   // حفظ إعدادات المتجر
   const saveShopSettings = async (settings: any) => {
     try {
-      if (!userShop || !user) {
-        throw new Error('No shop or user found');
+      if (!user) {
+        throw new Error('No user found');
       }
 
-      // Save to localStorage for now
-      const shopSettings = JSON.parse(localStorage.getItem(`shop_settings_${userShop.shop_id}`) || '{}');
-      const updatedSettings = { ...shopSettings, ...settings, updated_at: new Date().toISOString() };
+      const result = await updateUserShopSettings(user.uid, settings);
       
-      localStorage.setItem(`shop_settings_${userShop.shop_id}`, JSON.stringify(updatedSettings));
-
-      await logActivity('settings_updated', 'تم تحديث إعدادات المتجر', userShop.shop_id);
+      if (result.success) {
+        // Refresh shop data
+        await fetchUserShop();
+      } else {
+        throw new Error('Failed to save settings');
+      }
     } catch (err: any) {
       setError(err.message);
       throw err;
@@ -201,10 +246,13 @@ export const useFirebaseUserData = () => {
     try {
       if (!user) return;
 
-      localStorage.setItem(`user_session_${user.uid}`, JSON.stringify({
-        session_data: sessionData,
-        last_saved_at: new Date().toISOString()
-      }));
+      // Save session data to user's document
+      await updateUserInFirestore(user.uid, {
+        lastSession: {
+          data: sessionData,
+          savedAt: new Date()
+        }
+      });
     } catch (err: any) {
       console.error('Error saving session:', err);
     }
@@ -215,10 +263,10 @@ export const useFirebaseUserData = () => {
     try {
       if (!user) return null;
 
-      const savedSession = localStorage.getItem(`user_session_${user.uid}`);
-      if (savedSession) {
-        const sessionData = JSON.parse(savedSession);
-        return sessionData.session_data || null;
+      const result = await getUserFromFirestore(user.uid);
+      
+      if (result.success && result.user?.lastSession) {
+        return result.user.lastSession.data || null;
       }
       
       return null;
@@ -234,27 +282,23 @@ export const useFirebaseUserData = () => {
       setLoading(true);
       Promise.all([
         fetchUserShop(),
-        fetchUserActivities()
+        fetchUserActivities(),
+        fetchUserStatistics()
       ]).finally(() => {
         setLoading(false);
       });
     } else {
       setUserShop(null);
       setUserActivities([]);
+      setUserStatistics(null);
       setLoading(false);
     }
   }, [user]);
 
-  // Save activities to localStorage when they change
-  useEffect(() => {
-    if (user && userActivities.length > 0) {
-      localStorage.setItem(`user_activities_${user.uid}`, JSON.stringify(userActivities));
-    }
-  }, [user, userActivities]);
-
   return {
     userShop,
     userActivities,
+    userStatistics,
     loading,
     error,
     
@@ -271,6 +315,7 @@ export const useFirebaseUserData = () => {
     
     // وظائف التحديث
     refreshShop: fetchUserShop,
-    refreshActivities: fetchUserActivities
+    refreshActivities: fetchUserActivities,
+    refreshStatistics: fetchUserStatistics
   };
 };
