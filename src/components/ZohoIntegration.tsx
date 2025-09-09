@@ -7,6 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Loader2, RefreshCw, Settings, CheckCircle2, AlertCircle, Zap, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { getFirebaseFirestore } from '@/lib/firebase';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ZohoIntegrationProps {
@@ -30,25 +33,22 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isCleaningUp, setIsCleaningUp] = useState(false);
   const { toast } = useToast();
+  const { user } = useFirebaseAuth();
 
   useEffect(() => {
     loadZohoIntegration();
   }, [shopId]);
 
   const loadZohoIntegration = async () => {
+    if (!user?.uid) return;
+    
     try {
-      const { data, error } = await supabase
-        .from('zoho_integration')
-        .select('*')
-        .eq('shop_id', shopId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error loading Zoho integration:', error);
-        return;
-      }
-
-      if (data) {
+      const db = await getFirebaseFirestore();
+      const integrationDoc = doc(db, 'users', user.uid, 'integrations', 'zoho');
+      const docSnap = await getDoc(integrationDoc);
+      
+      if (docSnap.exists()) {
+        const data = { id: docSnap.id, ...docSnap.data() } as ZohoIntegration;
         setIntegration(data);
         setAccessToken(data.access_token || '');
         setOrganizationId(data.organization_id || '');
@@ -61,7 +61,7 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
   };
 
   const saveIntegrationSettings = async () => {
-    if (!accessToken.trim() || !organizationId.trim()) {
+    if (!accessToken.trim() || !organizationId.trim() || !user?.uid) {
       toast({
         title: "خطأ",
         description: "يرجى إدخال جميع البيانات المطلوبة",
@@ -77,26 +77,29 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
         access_token: accessToken.trim(),
         organization_id: organizationId.trim(),
         is_enabled: true,
+        updated_at: new Date().toISOString(),
+        last_sync_at: null,
       };
 
-      const { data, error } = integration 
-        ? await supabase
-            .from('zoho_integration')
-            .update(integrationData)
-            .eq('id', integration.id)
-            .select()
-            .single()
-        : await supabase
-            .from('zoho_integration')
-            .insert(integrationData)
-            .select()
-            .single();
-
-      if (error) {
-        throw error;
+      const db = await getFirebaseFirestore();
+      const integrationDoc = doc(db, 'users', user.uid, 'integrations', 'zoho');
+      
+      if (integration) {
+        await updateDoc(integrationDoc, integrationData);
+      } else {
+        await setDoc(integrationDoc, {
+          ...integrationData,
+          created_at: new Date().toISOString(),
+        });
       }
 
-      setIntegration(data);
+      const updatedIntegration = { 
+        id: 'zoho', 
+        ...integrationData, 
+        last_sync_at: null 
+      } as ZohoIntegration;
+      setIntegration(updatedIntegration);
+      
       toast({
         title: "تم الحفظ",
         description: "تم حفظ إعدادات التكامل مع Zoho بنجاح",
@@ -144,14 +147,8 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
       // Reload integration data to get the new token
       await loadZohoIntegration();
       
-      // Get updated integration data
-      const { data: updatedIntegration } = await supabase
-        .from('zoho_integration')
-        .select('*')
-        .eq('shop_id', shopId)
-        .single();
-      
-      if (!updatedIntegration) {
+      // Get updated integration from state
+      if (!integration) {
         throw new Error('Failed to get updated integration data');
       }
       
@@ -160,8 +157,8 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
       const { data, error } = await supabase.functions.invoke('sync-zoho-products', {
         body: {
           shopId,
-          accessToken: updatedIntegration.access_token,
-          organizationId: updatedIntegration.organization_id,
+          accessToken: integration.access_token,
+          organizationId: integration.organization_id,
         },
       });
 
@@ -220,17 +217,15 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
   };
 
   const toggleIntegration = async (enabled: boolean) => {
-    if (!integration) return;
+    if (!integration || !user?.uid) return;
 
     try {
-      const { error } = await supabase
-        .from('zoho_integration')
-        .update({ is_enabled: enabled })
-        .eq('id', integration.id);
-
-      if (error) {
-        throw error;
-      }
+      const db = await getFirebaseFirestore();
+      const integrationDoc = doc(db, 'users', user.uid, 'integrations', 'zoho');
+      await updateDoc(integrationDoc, { 
+        is_enabled: enabled,
+        updated_at: new Date().toISOString()
+      });
 
       setIntegration({ ...integration, is_enabled: enabled });
       
