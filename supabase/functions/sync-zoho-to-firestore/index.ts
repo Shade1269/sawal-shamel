@@ -165,12 +165,12 @@ serve(async (req) => {
     const accessToken = integration.access_token as string;
     const organizationId = integration.organization_id as string;
 
-    // Fetch Zoho items directly (no grouping by model)
+    // Fetch Zoho items and group by model
     let allItems: any[] = [];
     let page = 1;
     const perPage = 200;
 
-    while (allItems.length < maxModels) {
+    while (allItems.length < maxModels * 10) { // Allow more items to create the requested number of models
       const resp = await fetch(`https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&page=${page}&per_page=${perPage}`, {
         method: 'GET',
         headers: {
@@ -192,59 +192,103 @@ serve(async (req) => {
       const pageItems = data.items || [];
       if (pageItems.length === 0) break;
 
-      // Add items directly without grouping
       allItems = allItems.concat(pageItems);
-      if (allItems.length >= maxModels) {
-        allItems = allItems.slice(0, maxModels); // Trim to exact limit
-        break;
-      }
-
       page += 1;
       if (page > 50) break; // safety
     }
+
+    // Group items by base model
+    const productsByModel: { [key: string]: any[] } = {};
+    allItems.forEach(item => {
+      const { baseModel } = extractProductInfo(item);
+      if (!productsByModel[baseModel]) {
+        productsByModel[baseModel] = [];
+      }
+      productsByModel[baseModel].push(item);
+    });
 
     // Build normalized products for frontend to save into Firestore
     const products: any[] = [];
     let processedCount = 0;
     const maxProductsWithImages = 50; // Limit image processing to prevent timeout
     
-    for (const item of allItems) {
-      const { baseModel, color, size } = extractProductInfo(item);
+    const modelNames = Object.keys(productsByModel).slice(0, maxModels);
+    
+    for (const baseModel of modelNames) {
+      const items = productsByModel[baseModel];
+      const mainItem = items[0]; // Use first item as main product info
       
       // Only process images for first few products to avoid timeout
       let uploadedImageUrl: string | null = null;
       if (processedCount < maxProductsWithImages) {
-        uploadedImageUrl = await getItemImagePublicUrl(item, accessToken, organizationId);
+        uploadedImageUrl = await getItemImagePublicUrl(mainItem, accessToken, organizationId);
         processedCount++;
       }
       const imageUrls: string[] = uploadedImageUrl ? [uploadedImageUrl] : [];
 
-      // Build attributes schema for individual item
+      // Build attributes schema from all variants
       const attributesSchema: Record<string, string[]> = {};
-      if (color) {
-        attributesSchema['COLOR'] = [color];
+      const allColors = new Set<string>();
+      const allSizes = new Set<string>();
+      
+      items.forEach(item => {
+        const { color, size } = extractProductInfo(item);
+        if (color) allColors.add(color);
+        if (size) allSizes.add(size);
+      });
+
+      if (allColors.size > 0) {
+        attributesSchema['COLOR'] = Array.from(allColors);
       }
-      if (size) {
-        attributesSchema['SIZE'] = [size];
+      if (allSizes.size > 0) {
+        attributesSchema['SIZE'] = Array.from(allSizes);
       }
 
-      const itemStock = parseInt(item.stock_on_hand) || 0;
+      // Calculate total stock and average price
+      const totalStock = items.reduce((sum, item) => sum + (parseInt(item.stock_on_hand) || 0), 0);
+      const averagePrice = items.reduce((sum, item) => sum + (parseFloat(item.rate) || 0), 0) / items.length;
+
+      // Create variants for each item
+      const variants = items.map(item => {
+        const { color, size } = extractProductInfo(item);
+        let variantName = '';
+        if (color && size) {
+          variantName = `${color}/${size}`;
+        } else if (color) {
+          variantName = color;
+        } else if (size) {
+          variantName = size;
+        } else {
+          variantName = 'Default';
+        }
+
+        return {
+          id: `variant_${item.item_id}`,
+          name: variantName,
+          price_sar: parseFloat(item.rate) || 0,
+          stock: parseInt(item.stock_on_hand) || 0,
+          sku: item.sku || null,
+          attributes: {
+            ...(color && { COLOR: color }),
+            ...(size && { SIZE: size })
+          },
+          zoho_item_id: item.item_id
+        };
+      });
 
       products.push({
-        id: `zoho_${item.item_id}_${Date.now()}`,
-        title: item.name || baseModel,
-        description: item.description || `${item.name || baseModel}${color ? ` - ${color}` : ''}${size ? ` - ${size}` : ''}`,
-        price_sar: parseFloat(item.rate) || 0,
-        stock: itemStock,
-        category: item.category_name || 'General',
+        id: `zoho_${baseModel}_${Date.now()}`,
+        title: baseModel,
+        description: mainItem.description || baseModel,
+        price_sar: averagePrice,
+        stock: totalStock,
+        category: mainItem.category_name || 'General',
         image_urls: imageUrls,
-        is_active: item.status === 'active',
-        external_id: item.item_id,
-        variants: [], // No variants for individual items
+        is_active: mainItem.status === 'active',
+        external_id: baseModel,
+        variants: variants,
         attributes_schema: attributesSchema,
-        source: 'zoho_individual_sync',
-        zoho_item_id: item.item_id,
-        sku: item.sku || baseModel
+        source: 'zoho_sync'
       });
     }
 

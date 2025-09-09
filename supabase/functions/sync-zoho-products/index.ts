@@ -186,54 +186,73 @@ serve(async (req) => {
         let syncedCount = 0;
         const mappings = [];
 
-        // Process each item as individual product (no grouping by model)
-        const BATCH_SIZE = 50;
-        console.log(`Processing ${allItems.length} individual items as separate products`);
-        console.log(`Processing in batches of ${BATCH_SIZE} items...`);
-        
-        for (let i = 0; i < allItems.length; i += BATCH_SIZE) {
-          const batch = allItems.slice(i, i + BATCH_SIZE);
-          console.log(`Processing batch ${Math.floor(i/BATCH_SIZE) + 1}/${Math.ceil(allItems.length/BATCH_SIZE)}: ${batch.length} items`);
+        // Group items by base model
+        const productsByModel: { [key: string]: any[] } = {};
+        allItems.forEach(item => {
+          const { baseModel } = extractProductInfo(item);
+          if (!productsByModel[baseModel]) {
+            productsByModel[baseModel] = [];
+          }
+          productsByModel[baseModel].push(item);
+        });
 
-          // Process each item in current batch
-          for (const item of batch) {
+        const modelNames = Object.keys(productsByModel);
+        const BATCH_SIZE = 50;
+        console.log(`Processing ${modelNames.length} product models in batches of ${BATCH_SIZE}...`);
+        
+        for (let i = 0; i < modelNames.length; i += BATCH_SIZE) {
+          const batch = modelNames.slice(i, i + BATCH_SIZE);
+          console.log(`Processing batch ${Math.floor(i/BATCH_SIZE) + 1}/${Math.ceil(modelNames.length/BATCH_SIZE)}: ${batch.length} models`);
+
+          // Process each model in current batch
+          for (const baseModel of batch) {
             try {
-              // Skip if this item already exists
-              if (existingZohoIds.has(item.item_id)) {
+              const items = productsByModel[baseModel];
+              const mainItem = items[0]; // Use first item as main product info
+
+              // Skip if this model already exists
+              if (existingZohoIds.has(baseModel)) {
                 continue;
               }
 
-              const { baseModel, color, size } = extractProductInfo(item);
-
-              // Build attributes schema from item attributes
+              // Build attributes schema from all variants
               const attributesSchema: any = {};
-              if (color) {
-                attributesSchema['COLOR'] = [color];
+              const allColors = new Set<string>();
+              const allSizes = new Set<string>();
+              
+              items.forEach(item => {
+                const { color, size } = extractProductInfo(item);
+                if (color) allColors.add(color);
+                if (size) allSizes.add(size);
+              });
+
+              if (allColors.size > 0) {
+                attributesSchema['COLOR'] = Array.from(allColors);
               }
-              if (size) {
-                attributesSchema['SIZE'] = [size];
+              if (allSizes.size > 0) {
+                attributesSchema['SIZE'] = Array.from(allSizes);
               }
               
               // Process product images
               let imageUrls = [];
-              if (item.image_documents && item.image_documents.length > 0) {
-                imageUrls = item.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
+              if (mainItem.image_documents && mainItem.image_documents.length > 0) {
+                imageUrls = mainItem.image_documents.map((img: any) => img.file_path || img.attachment_url || img.document_url).filter(Boolean);
               }
 
-              // Use item stock and price directly
-              const itemStock = parseInt(item.stock_on_hand) || 0;
-              const itemPrice = parseFloat(item.rate) || 0;
+              // Calculate total stock and average price
+              const totalStock = items.reduce((sum, item) => sum + (parseInt(item.stock_on_hand) || 0), 0);
+              const averagePrice = items.reduce((sum, item) => sum + (parseFloat(item.rate) || 0), 0) / items.length;
 
               const productData = {
                 merchant_id: merchant.id,
-                title: item.name || baseModel, // Use item name directly
-                external_id: item.item_id, // Use item_id as external_id for individual items
-                description: item.description || `${item.name || baseModel}${color ? ` - ${color}` : ''}${size ? ` - ${size}` : ''}`,
-                price_sar: itemPrice,
-                stock: itemStock,
-                category: item.category_name || 'General',
+                title: baseModel,
+                external_id: baseModel,
+                description: mainItem.description || baseModel,
+                price_sar: averagePrice,
+                stock: totalStock,
+                category: mainItem.category_name || 'General',
                 image_urls: imageUrls,
-                is_active: item.status === 'active',
+                is_active: mainItem.status === 'active',
                 commission_rate: null,
                 attributes_schema: attributesSchema,
               };
@@ -242,7 +261,7 @@ serve(async (req) => {
               let { data: existingProduct } = await supabase
                 .from('products')
                 .select('id')
-                .eq('external_id', item.item_id)
+                .eq('external_id', baseModel)
                 .eq('merchant_id', merchant.id)
                 .single();
 
@@ -286,18 +305,56 @@ serve(async (req) => {
                 product = newProduct;
               }
 
-              // Create mapping for this item
+              // Create variants for each item
+              for (const item of items) {
+                const { color, size } = extractProductInfo(item);
+                
+                let variantValue = '';
+                if (color && size) {
+                  variantValue = `${color}/${size}`;
+                } else if (color) {
+                  variantValue = color;
+                } else if (size) {
+                  variantValue = size;
+                } else {
+                  variantValue = 'Default';
+                }
+
+                const variantData = {
+                  product_id: product.id,
+                  variant_type: color && size ? 'color_size' : color ? 'color' : size ? 'size' : 'default',
+                  variant_value: variantValue,
+                  option1_name: color ? 'COLOR' : null,
+                  option1_value: color || null,
+                  option2_name: size ? 'SIZE' : null,
+                  option2_value: size || null,
+                  stock: parseInt(item.stock_on_hand) || 0,
+                  price_modifier: parseFloat(item.rate) - averagePrice,
+                  sku: item.sku || null,
+                  external_id: item.item_id
+                };
+
+                const { error: variantError } = await supabase
+                  .from('product_variants')
+                  .upsert(variantData, { onConflict: 'external_id' });
+
+                if (variantError) {
+                  console.error('Error creating variant:', variantError);
+                }
+              }
+
+              // Create mapping for this model
               mappings.push({
                 shop_id: userProfile.id,
-                zoho_item_id: item.item_id,
+                zoho_item_id: baseModel,
                 local_product_id: product.id
               });
 
               syncedCount++;
-              console.log(`Synced individual item: ${item.name || baseModel} (${item.item_id})`);
+              console.log(`Synced product model: ${baseModel} with ${items.length} variants`);
 
             } catch (error) {
-              console.error(`Error processing item ${item.item_id}:`, error);
+              console.error(`Error processing model ${baseModel}:`, error);
               continue;
             }
           }
@@ -339,7 +396,7 @@ serve(async (req) => {
           })
           .single();
 
-        console.log(`Sync completed. Individual items synced: ${syncedCount}`);
+        console.log(`Sync completed. Product models synced: ${syncedCount}`);
       } catch (error) {
         console.error('Error in sync-zoho-products (background):', error);
       }
