@@ -158,6 +158,7 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
             updatedAt: new Date(),
             viewCount: 0,
             orderCount: 0,
+            // Normalize to isActive (no underscore) for consistency
             isActive: product.is_active !== false
           });
           saved++;

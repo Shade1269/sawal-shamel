@@ -190,6 +190,7 @@ export const addProductToUserStore = async (uid: string, productData: any) => {
         ...dataWithoutId,
         createdAt: new Date(),
         updatedAt: new Date(),
+        // Normalize to isActive (consistent field name)
         isActive: productData.is_active !== false,
         viewCount: 0,
         orderCount: 0
@@ -201,6 +202,7 @@ export const addProductToUserStore = async (uid: string, productData: any) => {
         ...productData,
         createdAt: new Date(),
         updatedAt: new Date(),
+        // Normalize to isActive (consistent field name)
         isActive: productData.is_active !== false,
         viewCount: 0,
         orderCount: 0
@@ -237,13 +239,19 @@ export const getUserProducts = async (uid: string) => {
   try {
     const firestore = await getFirestoreDB();
     const productsRef = collection(firestore, 'users', uid, 'products');
-    const q = query(productsRef, where('isActive', '==', true), orderBy('createdAt', 'desc'));
+    // Query both possible field names for backward compatibility
+    const q = query(productsRef, orderBy('createdAt', 'desc'));
     
     const querySnapshot = await getDocs(q);
-    const products = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const products = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        // Normalize the active field - check both isActive and is_active
+        is_active: data.isActive !== undefined ? data.isActive : data.is_active !== false
+      };
+    }).filter(product => product.is_active !== false); // Only return active products
 
     return { success: true, products };
   } catch (error) {
