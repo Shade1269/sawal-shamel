@@ -50,65 +50,41 @@ interface ProductVariant {
   // Add state for user's shop
   const [userShop, setUserShop] = useState<any>(null);
 
-  const syncFromSupabase = async () => {
+  const syncFromZohoDirectly = async () => {
     setSyncing(true);
     try {
-      // This function will copy Supabase products to Firestore
-      const { data: supabaseProducts, error } = await supabase
-        .from('products')
-        .select(`
-          *,
-          product_variants(*)
-        `)
-        .eq('is_active', true)
-        .limit(100);
+      if (!user) {
+        toast({
+          title: "تنبيه",
+          description: "يجب تسجيل الدخول أولاً",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Call direct Zoho sync edge function (no Supabase involved)
+      const { data, error } = await supabase.functions.invoke('sync-zoho-to-firestore', {
+        body: { userId: user.uid }
+      });
 
       if (error) {
         throw error;
       }
 
-      if (!supabaseProducts || supabaseProducts.length === 0) {
+      // Wait a moment then refresh products list
+      setTimeout(async () => {
+        await fetchProducts();
         toast({
-          title: "معلومات",
-          description: "لا توجد منتجات في النظام للمزامنة",
+          title: "تمت المزامنة",
+          description: "تم مزامنة المنتجات من Zoho مباشرة إلى النظام",
         });
-        return;
-      }
-
-      // Copy products to Firestore using our Firebase hook
-      let syncedCount = 0;
-      for (const product of supabaseProducts) {
-        try {
-          await addProduct({
-            id: product.id,
-            title: product.title,
-            description: product.description,
-            price_sar: product.price_sar,
-            stock: product.stock,
-            category: product.category,
-            image_urls: product.image_urls || [],
-            is_active: product.is_active,
-            external_id: product.external_id,
-            source: 'supabase_sync'
-          });
-          syncedCount++;
-        } catch (prodError) {
-          console.error(`Error syncing product ${product.title}:`, prodError);
-        }
-      }
-
-      await fetchProducts(); // Refresh the list
-
-      toast({
-        title: "تمت المزامنة",
-        description: `تم مزامنة ${syncedCount} منتج بنجاح`,
-      });
+      }, 3000);
 
     } catch (error) {
-      console.error('Error syncing from Supabase:', error);
+      console.error('Error syncing from Zoho directly:', error);
       toast({
         title: "خطأ في المزامنة",
-        description: "فشل في مزامنة المنتجات من النظام القديم",
+        description: "فشل في مزامنة المنتجات من Zoho",
         variant: "destructive"
       });
     } finally {
@@ -219,7 +195,7 @@ interface ProductVariant {
           </div>
           <div className="flex gap-2">
             <Button
-              onClick={syncFromSupabase}
+              onClick={() => syncFromZohoDirectly()}
               disabled={syncing}
               variant="outline"
               className="gap-2"
@@ -229,7 +205,7 @@ interface ProductVariant {
               ) : (
                 <RefreshCw className="h-4 w-4" />
               )}
-              مزامنة من النظام القديم
+              مزامنة من Zoho
             </Button>
           </div>
         </div>
@@ -269,14 +245,20 @@ interface ProductVariant {
               <h3 className="text-lg font-semibold mb-2">لا توجد منتجات</h3>
               <p className="text-muted-foreground mb-4">
                 {products.length === 0 
-                  ? "يمكنك إضافة منتجات جديدة من صفحة الإدارة" 
+                  ? "يمكنك مزامنة المنتجات من Zoho أو إضافة منتجات جديدة من صفحة الإدارة" 
                   : "لا توجد منتجات مطابقة للبحث"}
               </p>
               {products.length === 0 && (
-                <Button onClick={() => navigate('/admin')} className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  انتقل لصفحة الإدارة
-                </Button>
+                <div className="flex gap-2 justify-center">
+                  <Button onClick={syncFromZohoDirectly} disabled={syncing} className="gap-2">
+                    <RefreshCw className="h-4 w-4" />
+                    مزامنة من Zoho
+                  </Button>
+                  <Button onClick={() => navigate('/admin')} variant="outline" className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    إضافة منتجات يدوياً
+                  </Button>
+                </div>
               )}
             </CardContent>
           </Card>

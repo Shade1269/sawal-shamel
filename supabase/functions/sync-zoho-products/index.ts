@@ -1,8 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,22 +18,26 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-    const { shopId, accessToken, organizationId } = await req.json();
+    const { userId } = await req.json();
 
-    console.log('Starting Zoho products sync for shop (background):', shopId);
+    console.log('Starting Zoho products sync for user:', userId);
 
-    // Initialize Firebase
-    const firebaseConfig = {
-      apiKey: Deno.env.get('FIREBASE_API_KEY'),
-      authDomain: Deno.env.get('FIREBASE_AUTH_DOMAIN'),
-      projectId: Deno.env.get('FIREBASE_PROJECT_ID'),
-      storageBucket: Deno.env.get('FIREBASE_STORAGE_BUCKET'),
-      messagingSenderId: Deno.env.get('FIREBASE_MESSAGING_SENDER_ID'),
-      appId: Deno.env.get('FIREBASE_APP_ID')
-    };
+    // Get Zoho integration settings
+    const { data: integration } = await supabase
+      .from('zoho_integration')
+      .select('*')
+      .eq('is_enabled', true)
+      .single();
 
-    const firebaseApp = initializeApp(firebaseConfig);
-    const db = getFirestore(firebaseApp);
+    if (!integration) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'No Zoho integration found or disabled' 
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     // Run the heavy sync work in the background to avoid client timeouts
     EdgeRuntime.waitUntil((async () => {
@@ -49,10 +51,10 @@ serve(async (req) => {
         console.log('Starting to fetch all items from Zoho...');
 
         while (hasMorePages) {
-          const zohoResponse = await fetch(`https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&page=${page}&per_page=${perPage}`, {
+          const zohoResponse = await fetch(`https://www.zohoapis.com/inventory/v1/items?organization_id=${integration.organization_id}&page=${page}&per_page=${perPage}`, {
             method: 'GET',
             headers: {
-              'Authorization': `Zoho-oauthtoken ${accessToken}`,
+              'Authorization': `Zoho-oauthtoken ${integration.access_token}`,
               'Content-Type': 'application/json',
             },
           });
@@ -94,52 +96,37 @@ serve(async (req) => {
           return;
         }
 
-        // Get existing Zoho product mappings for this shop
+        // Get user profile
+        const { data: userProfile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('auth_user_id', userId)
+          .single();
+
+        if (!userProfile) {
+          throw new Error('User profile not found');
+        }
+
+        // Get existing Zoho product mappings for this user
         const { data: existingMappings } = await supabase
           .from('zoho_product_mapping')
           .select('zoho_item_id, local_product_id')
-          .eq('shop_id', shopId);
+          .eq('shop_id', userProfile.id);
 
         const existingZohoIds = new Set(existingMappings?.map(m => m.zoho_item_id) || []);
 
-        // Get merchant for this shop
-        const { data: shop } = await supabase
-          .from('shops')
-          .select(`
-            owner_id,
-            profiles!inner(id)
-          `)
-          .eq('id', shopId)
-          .single();
-
-        if (!shop) {
-          throw new Error('Shop not found');
-        }
-
-        // Get shop owner's Firebase UID for saving to Firestore
-        const { data: shopOwner } = await supabase
-          .from('profiles')
-          .select('auth_user_id')
-          .eq('id', shop.profiles.id)
-          .single();
-
-        let shopOwnerFirebaseUID = null;
-        if (shopOwner?.auth_user_id) {
-          shopOwnerFirebaseUID = shopOwner.auth_user_id;
-        }
-
-        // Get or create merchant for the shop owner
+        // Get or create merchant for the user
         let { data: merchant } = await supabase
           .from('merchants')
           .select('id')
-          .eq('profile_id', shop.profiles.id)
+          .eq('profile_id', userProfile.id)
           .single();
 
         if (!merchant) {
           const { data: newMerchant, error: merchantError } = await supabase
             .from('merchants')
             .insert({
-              profile_id: shop.profiles.id,
+              profile_id: userProfile.id,
               business_name: 'Zoho Import'
             })
             .select('id')
@@ -336,40 +323,6 @@ serve(async (req) => {
                 product = newProduct;
               }
 
-              // Also save/update in Firestore if we have the Firebase UID
-              if (shopOwnerFirebaseUID) {
-                try {
-                  const firestoreProductData = {
-                    id: product.id,
-                    title: productData.title,
-                    description: productData.description,
-                    price_sar: productData.price_sar,
-                    stock: productData.stock,
-                    category: productData.category,
-                    image_urls: productData.image_urls || [],
-                    is_active: productData.is_active,
-                    external_id: productData.external_id,
-                    attributes_schema: productData.attributes_schema,
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString(),
-                    source: 'zoho_sync'
-                  };
-
-                  const productDocRef = doc(db, 'users', shopOwnerFirebaseUID, 'products', product.id);
-                  
-                  if (existingProduct) {
-                    await updateDoc(productDocRef, firestoreProductData);
-                  } else {
-                    await setDoc(productDocRef, firestoreProductData);
-                  }
-
-                  console.log(`Saved product ${baseModel} to Firestore for user ${shopOwnerFirebaseUID}`);
-                } catch (firestoreError) {
-                  console.error('Error saving to Firestore:', firestoreError);
-                  // Continue with Supabase sync even if Firestore fails
-                }
-              }
-
               // Create/Update variants for each item in the model
               for (const variant of variants) {
                 const { color, size } = extractProductInfo(variant);
@@ -429,7 +382,7 @@ serve(async (req) => {
 
                 // Create mapping for each variant
                 mappings.push({
-                  shop_id: shopId,
+                  shop_id: userProfile.id,
                   zoho_item_id: variant.item_id,
                   local_product_id: product.id
                 });
@@ -479,7 +432,7 @@ serve(async (req) => {
             last_sync_at: new Date().toISOString(),
             is_enabled: true 
           })
-          .eq('shop_id', shopId);
+          .single();
 
         console.log(`Sync completed. Item groups synced: ${syncedCount}`);
       } catch (error) {
