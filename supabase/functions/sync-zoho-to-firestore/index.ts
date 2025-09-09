@@ -44,67 +44,87 @@ function extractProductInfo(item: any) {
   return { baseModel, color, size };
 }
 
-// Download an image from Zoho (requires Authorization) and upload to Supabase Storage to obtain a public URL
+// Download an image from Zoho with timeout and better error handling
 async function getItemImagePublicUrl(item: any, accessToken: string, organizationId: string): Promise<string | null> {
   try {
+    // Add timeout to prevent function from hanging
+    const timeoutMs = 10000; // 10 seconds timeout
+    
     // 1) Try direct image_url on the item
     if (item.image_url) {
-      const resp = await fetch(item.image_url, { headers: { 'Authorization': `Zoho-oauthtoken ${accessToken}` } });
-      if (resp.ok) {
-        const contentType = resp.headers.get('content-type') || 'image/jpeg';
-        const buffer = await resp.arrayBuffer();
-        const blob = new Blob([buffer], { type: contentType });
-        const ext = contentType.includes('png') ? 'png' : contentType.includes('webp') ? 'webp' : contentType.includes('gif') ? 'gif' : 'jpg';
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+        
+        const resp = await fetch(item.image_url, { 
+          headers: { 'Authorization': `Zoho-oauthtoken ${accessToken}` },
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        
+        if (resp.ok) {
+          const contentType = resp.headers.get('content-type') || 'image/jpeg';
+          const buffer = await resp.arrayBuffer();
+          
+          // Check file size (max 5MB)
+          if (buffer.byteLength > 5 * 1024 * 1024) {
+            console.log(`Image too large for item ${item.item_id}: ${buffer.byteLength} bytes`);
+            return null;
+          }
+          
+          const blob = new Blob([buffer], { type: contentType });
+          const ext = contentType.includes('png') ? 'png' : contentType.includes('webp') ? 'webp' : contentType.includes('gif') ? 'gif' : 'jpg';
+          const filePath = `zoho/${item.item_id}.${ext}`;
+          
+          const { error: uploadErr } = await supabase.storage.from('product-images').upload(filePath, blob, { upsert: true, contentType });
+          if (!uploadErr) {
+            const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
+            return data?.publicUrl || null;
+          }
+        }
+      } catch (fetchError) {
+        console.log(`Failed to fetch image from direct URL for item ${item.item_id}:`, fetchError);
+      }
+    }
+
+    // 2) Try the standard item image endpoint with timeout
+    try {
+      const endpoint = `https://www.zohoapis.com/inventory/v1/items/${item.item_id}/image?organization_id=${organizationId}`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      
+      const imgResp = await fetch(endpoint, { 
+        headers: { 'Authorization': `Zoho-oauthtoken ${accessToken}` },
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      
+      if (imgResp.ok) {
+        const ct = imgResp.headers.get('content-type') || 'image/jpeg';
+        const buf = await imgResp.arrayBuffer();
+        
+        // Check file size (max 5MB)
+        if (buf.byteLength > 5 * 1024 * 1024) {
+          console.log(`Image too large for item ${item.item_id}: ${buf.byteLength} bytes`);
+          return null;
+        }
+        
+        const blob = new Blob([buf], { type: ct });
+        const ext = ct.includes('png') ? 'png' : ct.includes('webp') ? 'webp' : ct.includes('gif') ? 'gif' : 'jpg';
         const filePath = `zoho/${item.item_id}.${ext}`;
-        const { error: uploadErr } = await supabase.storage.from('product-images').upload(filePath, blob, { upsert: true, contentType });
-        if (!uploadErr) {
+        
+        const { error: upErr } = await supabase.storage.from('product-images').upload(filePath, blob, { upsert: true, contentType: ct });
+        if (!upErr) {
           const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
           return data?.publicUrl || null;
         }
       }
+    } catch (fetchError) {
+      console.log(`Failed to fetch image from API endpoint for item ${item.item_id}:`, fetchError);
     }
 
-    // 2) Try the standard item image endpoint
-    const endpoint = `https://www.zohoapis.com/inventory/v1/items/${item.item_id}/image?organization_id=${organizationId}`;
-    const imgResp = await fetch(endpoint, { headers: { 'Authorization': `Zoho-oauthtoken ${accessToken}` } });
-    if (imgResp.ok) {
-      const ct = imgResp.headers.get('content-type') || 'image/jpeg';
-      const buf = await imgResp.arrayBuffer();
-      const blob = new Blob([buf], { type: ct });
-      const ext = ct.includes('png') ? 'png' : ct.includes('webp') ? 'webp' : ct.includes('gif') ? 'gif' : 'jpg';
-      const filePath = `zoho/${item.item_id}.${ext}`;
-      const { error: upErr } = await supabase.storage.from('product-images').upload(filePath, blob, { upsert: true, contentType: ct });
-      if (!upErr) {
-        const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
-        return data?.publicUrl || null;
-      }
-    }
-
-    // 3) Fallback: fetch item details and try image_url again
-    const detailResp = await fetch(`https://www.zohoapis.com/inventory/v1/items/${item.item_id}?organization_id=${organizationId}`, {
-      headers: { 'Authorization': `Zoho-oauthtoken ${accessToken}` }
-    });
-    if (detailResp.ok) {
-      const detail = await detailResp.json();
-      const imageUrl = detail?.item?.image_url;
-      if (imageUrl) {
-        const resp2 = await fetch(imageUrl, { headers: { 'Authorization': `Zoho-oauthtoken ${accessToken}` } });
-        if (resp2.ok) {
-          const ct2 = resp2.headers.get('content-type') || 'image/jpeg';
-          const buf2 = await resp2.arrayBuffer();
-          const blob2 = new Blob([buf2], { type: ct2 });
-          const ext2 = ct2.includes('png') ? 'png' : ct2.includes('webp') ? 'webp' : ct2.includes('gif') ? 'gif' : 'jpg';
-          const path2 = `zoho/${item.item_id}.${ext2}`;
-          const { error: upErr2 } = await supabase.storage.from('product-images').upload(path2, blob2, { upsert: true, contentType: ct2 });
-          if (!upErr2) {
-            const { data } = supabase.storage.from('product-images').getPublicUrl(path2);
-            return data?.publicUrl || null;
-          }
-        }
-      }
-    }
   } catch (e) {
-    console.error('getItemImagePublicUrl error:', e);
+    console.error(`getItemImagePublicUrl error for item ${item.item_id}:`, e);
   }
   return null;
 }
@@ -186,11 +206,19 @@ serve(async (req) => {
 
     // Build normalized products for frontend to save into Firestore
     const products: any[] = [];
+    let processedCount = 0;
+    const maxProductsWithImages = 10; // Limit image processing to prevent timeout
+    
     for (const [baseModel, variants] of itemsByModel.entries()) {
       const attributesSchema: Record<string, Set<string>> = {};
       const baseVariant = variants[0];
-      // Resolve and upload product image to public storage
-      const uploadedImageUrl = await getItemImagePublicUrl(baseVariant, accessToken, organizationId);
+      
+      // Only process images for first few products to avoid timeout
+      let uploadedImageUrl: string | null = null;
+      if (processedCount < maxProductsWithImages) {
+        uploadedImageUrl = await getItemImagePublicUrl(baseVariant, accessToken, organizationId);
+        processedCount++;
+      }
       const imageUrls: string[] = uploadedImageUrl ? [uploadedImageUrl] : [];
 
       let totalStock = 0;
