@@ -120,10 +120,32 @@ const Inventory = () => {
       if (!user) return;
       
       console.log('Fetching products from Firebase...');
-      // Get products from Firebase only
-      const products = await getShopProducts();
-      console.log(`Loaded ${products.length} products from Firebase:`, products.slice(0,3));
-      setProducts(products);
+      const raw = await getShopProducts();
+      
+      // Normalize Firebase data (supports nested `products` structure)
+      const normalized: ProductWithVariants[] = (raw || []).map((p: any) => {
+        const src = p?.products ? p.products : p;
+        const topImages = Array.isArray(p?.image_urls) ? p.image_urls : [];
+        const srcImages = Array.isArray(src?.image_urls) ? src.image_urls : [];
+        const mergedImages = Array.from(new Set([...topImages, ...srcImages].filter(Boolean)));
+        const variants = (src?.variants || p?.variants || []).map((v: any) => ({ ...v }));
+        
+        return {
+          id: src?.id || p?.id,
+          title: src?.title || '',
+          description: src?.description || null,
+          price_sar: src?.price_sar ?? src?.price ?? 0,
+          image_urls: mergedImages.length > 0 ? mergedImages : null,
+          category: src?.category || null,
+          stock: src?.stock ?? 0,
+          is_active: src?.is_active ?? p?.isActive ?? true,
+          created_at: src?.created_at || p?.createdAt?.toISOString?.() || new Date().toISOString(),
+          variants,
+        };
+      });
+      
+      console.log(`Loaded ${normalized.length} products from Firebase (normalized)`, normalized.slice(0,3));
+      setProducts(normalized);
       
     } catch (error) {
       console.error('Error fetching products:', error);
