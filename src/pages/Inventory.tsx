@@ -112,8 +112,36 @@ interface ProductVariant {
         return;
       }
 
-      // This would need to be implemented in Firestore
-      // For now, we'll show a success message
+      // Find the product from our current products list
+      const product = products.find(p => p.id === productId);
+      if (!product) {
+        toast({
+          title: "خطأ",
+          description: "لم يتم العثور على المنتج",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Add the product to user's store with proper structure for ProductLibraryItem
+      await addProduct({
+        id: product.id,
+        is_featured: false,
+        is_visible: true,
+        sort_index: 0,
+        commission_amount: 0,
+        products: {
+          id: product.id,
+          title: product.title,
+          description: product.description,
+          price_sar: product.price_sar,
+          image_urls: product.image_urls,
+          category: product.category,
+          stock: product.stock,
+          variants: product.variants
+        }
+      });
+
       toast({
         title: "تم بنجاح",
         description: "تم إضافة المنتج إلى متجرك"

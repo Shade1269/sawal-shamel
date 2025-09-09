@@ -255,12 +255,11 @@ export const addProductToUserStore = async (uid: string, productData: any) => {
   }
 };
 
-// Get user's products
+// Get user's products (including store products)
 export const getUserProducts = async (uid: string) => {
   try {
     const firestore = await getFirestoreDB();
     const productsRef = collection(firestore, 'users', uid, 'products');
-    // Query both possible field names for backward compatibility
     const q = query(productsRef, orderBy('createdAt', 'desc'));
     
     const querySnapshot = await getDocs(q);

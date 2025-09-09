@@ -56,12 +56,30 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
     }
   }, [userShop]);
 
+  // Refresh data when component comes into focus
+  useEffect(() => {
+    const handleFocus = () => {
+      if (userShop) {
+        console.log('Page focused, refreshing store products...');
+        fetchStoreProducts();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [userShop]);
+
   const fetchStoreProducts = async () => {
     try {
       if (!user) return;
       
       const products = await getShopProducts();
-      console.log('Store products loaded:', products);
+      console.log('Raw products from getShopProducts:', products);
+      console.log('Products type check:', products.map(p => ({ 
+        id: p.id, 
+        hasProducts: !!p.products,
+        type: typeof p
+      })));
       setStoreProducts(products as ProductLibraryItem[]);
     } catch (error) {
       console.error('Error fetching store products:', error);
@@ -289,7 +307,9 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {storeProducts
               .filter((item) => (item as any)?.products)
-              .map((item) => (
+              .map((item) => {
+                console.log('Rendering product:', item);
+                return (
                 <Card key={item.id} className="overflow-hidden">
                   <div className="aspect-video bg-muted flex items-center justify-center relative">
                     {item.products && item.products.image_urls && item.products.image_urls.length > 0 ? (
@@ -455,7 +475,8 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            );
+          })}
           </div>
         )}
       </CardContent>
