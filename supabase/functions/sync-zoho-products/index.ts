@@ -108,18 +108,55 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-    const { userId } = await req.json();
+    // Handle both manual sync (with userId) and scheduled sync (with shopId)
+    const requestBody = await req.json();
+    const { userId, shopId, accessToken: providedAccessToken, organizationId: providedOrgId } = requestBody;
 
-    console.log('Starting Zoho products sync for user:', userId);
+    let userProfile;
+    let integration;
 
-    // Get Zoho integration settings
-    const { data: integration } = await supabase
-      .from('zoho_integration')
-      .select('*')
-      .eq('is_enabled', true)
-      .single();
+    if (shopId && providedAccessToken && providedOrgId) {
+      // Scheduled sync - use provided shop data
+      console.log('Starting Zoho products sync for shop:', shopId);
+      userProfile = { id: shopId };
+      integration = {
+        access_token: providedAccessToken,
+        organization_id: providedOrgId,
+        shop_id: shopId
+      };
+    } else if (userId) {
+      // Manual sync - get user profile and integration
+      console.log('Starting Zoho products sync for user:', userId);
+      
+      // Get user profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', userId)
+        .single();
 
-    if (!integration) {
+      if (!profile) {
+        throw new Error('User profile not found');
+      }
+
+      userProfile = profile;
+
+      // Get Zoho integration settings
+      const { data: zohoIntegration } = await supabase
+        .from('zoho_integration')
+        .select('*')
+        .eq('shop_id', userProfile.id)
+        .eq('is_enabled', true)
+        .single();
+
+      if (!zohoIntegration) {
+        throw new Error('No enabled Zoho integration found');
+      }
+
+      integration = zohoIntegration;
+    } else {
+      throw new Error('Either userId or shopId with credentials must be provided');
+    }
       return new Response(JSON.stringify({ 
         success: false, 
         error: 'No Zoho integration found or disabled' 
@@ -186,18 +223,7 @@ serve(async (req) => {
           return;
         }
 
-        // Get user profile
-        const { data: userProfile } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('auth_user_id', userId)
-          .single();
-
-        if (!userProfile) {
-          throw new Error('User profile not found');
-        }
-
-        // Get existing Zoho product mappings for this user
+        // Get existing Zoho product mappings for this shop
         const { data: existingMappings } = await supabase
           .from('zoho_product_mapping')
           .select('zoho_item_id, local_product_id')
