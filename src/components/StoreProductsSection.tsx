@@ -274,7 +274,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
         </div>
       </CardHeader>
       <CardContent>
-        {storeProducts.length === 0 ? (
+        {(storeProducts.filter((i) => (i as any)?.products)).length === 0 ? (
           <div className="text-center py-12">
             <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">متجرك فارغ حالياً</h3>
@@ -287,18 +287,20 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {storeProducts.map((item) => (
-              <Card key={item.id} className="overflow-hidden">
-                <div className="aspect-video bg-muted flex items-center justify-center relative">
-                  {item.products && item.products.image_urls && item.products.image_urls.length > 0 ? (
-                    <img
-                      src={item.products.image_urls[0]}
-                      alt={item.products.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Package className="h-12 w-12 text-muted-foreground" />
-                  )}
+            {storeProducts
+              .filter((item) => (item as any)?.products)
+              .map((item) => (
+                <Card key={item.id} className="overflow-hidden">
+                  <div className="aspect-video bg-muted flex items-center justify-center relative">
+                    {item.products && item.products.image_urls && item.products.image_urls.length > 0 ? (
+                      <img
+                        src={item.products.image_urls[0]}
+                        alt={item.products.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Package className="h-12 w-12 text-muted-foreground" />
+                    )}
                   
                   {/* Status Badges */}
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
