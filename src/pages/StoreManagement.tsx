@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ArrowRight, Store, Settings, Upload, Package, BarChart3, Loader2, Copy, ExternalLink, CheckCircle, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import StoreProductsSection from '@/components/StoreProductsSection';
@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const StoreManagement = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useFirebaseAuth();
 
   // Store management form state
   const [storeName, setStoreName] = useState('');
@@ -84,7 +84,7 @@ const StoreManagement = () => {
       const { data: profile } = await supabase
         .from('profiles')
         .select('id')
-        .eq('auth_user_id', user?.id)
+        .eq('auth_user_id', user?.uid)
         .single();
 
       if (profile) {
@@ -403,7 +403,7 @@ const StoreManagement = () => {
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('id')
-        .eq('auth_user_id', user?.id)
+        .eq('auth_user_id', user?.uid)
         .single();
 
       if (profileError || !profile) {
@@ -418,13 +418,13 @@ const StoreManagement = () => {
         
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('avatars')
-          .upload(`${user?.id}/${fileName}`, storeLogo);
+          .upload(`${user?.uid}/${fileName}`, storeLogo);
 
         if (uploadError) throw uploadError;
 
         const { data: { publicUrl } } = supabase.storage
           .from('avatars')
-          .getPublicUrl(`${user?.id}/${fileName}`);
+          .getPublicUrl(`${user?.uid}/${fileName}`);
         
         logoUrl = publicUrl;
       }
