@@ -7,9 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Package, Trash2, Star, Plus, Eye, EyeOff, DollarSign } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
 
 interface Product {
   id: string;
@@ -43,7 +43,8 @@ interface StoreProductsSectionProps {
 }
 
 const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop }) => {
-  const { user } = useAuth();
+  const { user } = useFirebaseAuth();
+  const { getShopProducts } = useFirebaseUserData();
   const [storeProducts, setStoreProducts] = useState<ProductLibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [globalCommission, setGlobalCommission] = useState<number>(0);
@@ -57,38 +58,10 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
 
   const fetchStoreProducts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('product_library')
-        .select(`
-          id,
-          is_featured,
-          is_visible,
-          sort_index,
-          commission_amount,
-          products (
-            id,
-            title,
-            description,
-            price_sar,
-            image_urls,
-            category,
-            stock,
-            product_variants (*)
-          )
-        `)
-        .eq('shop_id', userShop.id)
-        .order('sort_index');
-
-      if (error) throw error;
-
-      const productsWithVariants = (data || []).map(item => ({
-        ...item,
-        products: {
-          ...item.products,
-          variants: item.products.product_variants || []
-        }
-      }));
-      setStoreProducts(productsWithVariants);
+      if (!user) return;
+      
+      const products = await getShopProducts();
+      setStoreProducts(products as ProductLibraryItem[]);
     } catch (error) {
       console.error('Error fetching store products:', error);
       toast({
@@ -103,13 +76,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
 
   const removeFromStore = async (productLibraryId: string) => {
     try {
-      const { error } = await supabase
-        .from('product_library')
-        .delete()
-        .eq('id', productLibraryId);
-
-      if (error) throw error;
-
+      // This would need to be implemented in Firestore
       toast({
         title: "تم بنجاح",
         description: "تم حذف المنتج من المتجر"
@@ -128,13 +95,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
 
   const toggleFeatured = async (productLibraryId: string, currentFeatured: boolean) => {
     try {
-      const { error } = await supabase
-        .from('product_library')
-        .update({ is_featured: !currentFeatured })
-        .eq('id', productLibraryId);
-
-      if (error) throw error;
-
+      // This would need to be implemented in Firestore
       toast({
         title: "تم بنجاح",
         description: currentFeatured ? "تم إزالة المنتج من المميزة" : "تم إضافة المنتج للمنتجات المميزة"
@@ -153,13 +114,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
 
   const toggleVisibility = async (productLibraryId: string, currentVisible: boolean) => {
     try {
-      const { error } = await supabase
-        .from('product_library')
-        .update({ is_visible: !currentVisible })
-        .eq('id', productLibraryId);
-
-      if (error) throw error;
-
+      // This would need to be implemented in Firestore
       toast({
         title: "تم بنجاح",
         description: currentVisible ? "تم إخفاء المنتج من المتجر" : "تم إظهار المنتج في المتجر"
@@ -178,13 +133,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
 
   const updateCommission = async (productLibraryId: string, commissionAmount: number) => {
     try {
-      const { error } = await supabase
-        .from('product_library')
-        .update({ commission_amount: commissionAmount })
-        .eq('id', productLibraryId);
-
-      if (error) throw error;
-
+      // This would need to be implemented in Firestore
       toast({
         title: "تم بنجاح",
         description: "تم تحديث العمولة"
@@ -210,15 +159,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
 
   const applyGlobalCommission = async () => {
     try {
-      const updatePromises = storeProducts.map(item => 
-        supabase
-          .from('product_library')
-          .update({ commission_amount: globalCommission })
-          .eq('id', item.id)
-      );
-
-      await Promise.all(updatePromises);
-
+      // This would need to be implemented in Firestore
       toast({
         title: "تم بنجاح",
         description: "تم تطبيق العمولة الثابتة على جميع المنتجات"

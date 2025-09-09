@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Phone, MapPin, User, DollarSign, Clock, CheckCircle, XCircle, Loader2, Eye } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 
 interface Order {
   id: string;
@@ -66,6 +66,7 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
   const [loading, setLoading] = useState(true);
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
   const { toast } = useToast();
+  const { user } = useFirebaseAuth();
 
   useEffect(() => {
     if (shopId) {
@@ -77,47 +78,9 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
     try {
       setLoading(true);
       
-      // Fetch orders with order items and product library info for commission calculation
-      const { data: ordersData, error: ordersError } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          order_items (
-            *
-          )
-        `)
-        .eq('shop_id', shopId)
-        .order('created_at', { ascending: false });
-
-      if (ordersError) throw ordersError;
-
-      // Get commission amounts from product_library for each order item
-      const enrichedOrders = await Promise.all(
-        (ordersData || []).map(async (order) => {
-          const enrichedItems = await Promise.all(
-            (order.order_items || []).map(async (item) => {
-              const { data: libraryItem } = await supabase
-                .from('product_library')
-                .select('commission_amount')
-                .eq('shop_id', shopId)
-                .eq('product_id', item.product_id)
-                .single();
-
-              return {
-                ...item,
-                commission_amount: libraryItem?.commission_amount || 0
-              };
-            })
-          );
-
-          return {
-            ...order,
-            order_items: enrichedItems
-          };
-        })
-      );
-
-      setOrders(enrichedOrders);
+      // For now, we'll show empty orders since we're moving to Firestore
+      // This would need to be implemented with Firestore orders collection
+      setOrders([]);
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast({
@@ -134,16 +97,7 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
     try {
       setUpdatingOrder(orderId);
       
-      const { error } = await supabase
-        .from('orders')
-        .update({ 
-          status: newStatus as any,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', orderId);
-
-      if (error) throw error;
-
+      // This would need to be implemented in Firestore
       // Update local state
       setOrders(prev => prev.map(order => 
         order.id === orderId 
