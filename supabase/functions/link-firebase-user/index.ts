@@ -25,22 +25,38 @@ serve(async (req) => {
       throw new Error('Phone number is required')
     }
 
-    // Create auth user with phone
-    const { data: authUser, error: authError } = await supabaseClient.auth.admin.createUser({
-      phone: phone,
-      phone_confirmed: true,
-      user_metadata: { 
-        phone: phone,
-        firebase_verified: true
-      }
+    // Check if user already exists
+    const { data: existingUsers } = await supabaseClient.auth.admin.listUsers({
+      page: 1,
+      perPage: 1000
     })
+    
+    let authUser = existingUsers?.users?.find(user => user.phone === phone)
+    let userId = authUser?.id
 
-    if (authError && !authError.message.includes('already been registered')) {
-      console.error('Auth creation error:', authError)
-      throw authError
+    if (!authUser) {
+      // Create new auth user if doesn't exist
+      console.log('Creating new user for phone:', phone)
+      const { data: newAuthUser, error: authError } = await supabaseClient.auth.admin.createUser({
+        phone: phone,
+        phone_confirmed: true,
+        user_metadata: { 
+          phone: phone,
+          firebase_verified: true
+        }
+      })
+
+      if (authError) {
+        console.error('Auth creation error:', authError)
+        throw authError
+      }
+      
+      authUser = newAuthUser?.user
+      userId = authUser?.id
+    } else {
+      console.log('User already exists, using existing user:', userId)
     }
 
-    const userId = authUser?.user?.id
     console.log('Auth user ID:', userId)
 
     // Create or update profile
@@ -61,7 +77,7 @@ serve(async (req) => {
       }
     }
 
-    // Generate session token
+    // Generate session for existing or new user
     const { data: session, error: sessionError } = await supabaseClient.auth.admin.generateLink({
       type: 'magiclink',
       phone: phone
