@@ -119,46 +119,28 @@ const Inventory = () => {
     try {
       if (!user) return;
       
-      // Get products from Supabase (where the synced Zoho products with images are stored)
-      const { data: products, error } = await supabase
-        .from('products')
-        .select(`
-          id,
-          title,
-          description,
-          category,
-          price_sar,
-          stock,
-          image_urls,
-          is_active,
-          created_at
-        `)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
+      console.log('Fetching products via edge function...');
+      
+      // Use edge function to get products with proper permissions
+      const { data, error } = await supabase.functions.invoke('get-products-with-images');
 
       if (error) {
-        console.error('Supabase error:', error);
-        // Fallback to Firestore if Supabase fails
+        console.error('Edge function error:', error);
+        // Fallback to Firestore if edge function fails
         const firestoreProducts = await getShopProducts();
         setProducts(firestoreProducts);
         return;
       }
 
-      // Transform Supabase products to match expected format
-      const transformedProducts = products?.map(product => ({
-        id: product.id,
-        title: product.title || '',
-        description: product.description,
-        price_sar: product.price_sar || 0,
-        image_urls: product.image_urls,
-        category: product.category,
-        stock: product.stock || 0,
-        is_active: product.is_active,
-        created_at: product.created_at
-      })) || [];
-
-      console.log(`Loaded ${transformedProducts.length} products from Supabase with images:`, transformedProducts.slice(0,3));
-      setProducts(transformedProducts);
+      if (data?.success && data?.products) {
+        console.log(`Loaded ${data.products.length} products from edge function:`, data.products.slice(0,3));
+        setProducts(data.products);
+      } else {
+        console.error('Invalid response from edge function:', data);
+        // Fallback to Firestore
+        const firestoreProducts = await getShopProducts();
+        setProducts(firestoreProducts);
+      }
       
     } catch (error) {
       console.error('Error fetching products:', error);

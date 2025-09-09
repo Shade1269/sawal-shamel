@@ -63,3 +63,6 @@ verify_jwt = false
 
 [functions.test-emkan-connection]
 verify_jwt = false
+
+[functions.get-products-with-images]
+verify_jwt = false
