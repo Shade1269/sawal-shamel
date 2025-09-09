@@ -122,36 +122,40 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
         />
         
         {/* Navigation Arrows - Only show if multiple images */}
-        {hasMultipleImages && (
-          <>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/90 text-white h-12 w-12 rounded-full backdrop-blur-sm border border-white/30 shadow-lg"
-              onClick={(e) => {
-                e.stopPropagation();
-                prevImage();
-              }}
-            >
-              <ChevronRight className="h-6 w-6" />
-            </Button>
-            
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/90 text-white h-12 w-12 rounded-full backdrop-blur-sm border border-white/30 shadow-lg"
-              onClick={(e) => {
-                e.stopPropagation();
-                nextImage();
-              }}
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </Button>
-          </>
-        )}
+          {validImages.length > 0 && (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/90 text-white h-12 w-12 rounded-full backdrop-blur-sm border border-white/30 shadow-lg"
+                disabled={validImages.length === 1}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevImage();
+                }}
+                aria-label="الصورة السابقة"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/90 text-white h-12 w-12 rounded-full backdrop-blur-sm border border-white/30 shadow-lg"
+                disabled={validImages.length === 1}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextImage();
+                }}
+                aria-label="الصورة التالية"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </Button>
+            </>
+          )}
         
         {/* Image Counter */}
-        {hasMultipleImages && (
+        {validImages.length > 0 && (
           <div className="absolute top-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
             {currentIndex + 1} / {validImages.length}
           </div>
@@ -177,9 +181,9 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
         )}
         
         {/* Swipe Indicator */}
-        {hasMultipleImages && (
+        {validImages.length > 0 && (
           <div className="absolute bottom-3 left-3 text-white/70 text-xs bg-black/30 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-            👈👉 اسحب للتنقل
+            {hasMultipleImages ? '👈👉 اسحب للتنقل' : 'صورة واحدة'}
           </div>
         )}
       </div>
