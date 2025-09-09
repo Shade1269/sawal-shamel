@@ -117,7 +117,7 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
   };
 
   const syncProducts = async () => {
-    if (!integration?.access_token || !integration?.organization_id) {
+    if (!integration?.access_token || !integration?.organization_id || !user) {
       toast({
         title: "خطأ",
         description: "يرجى إعداد بيانات التكامل أولاً",
@@ -128,50 +128,57 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
 
     setIsSyncing(true);
     try {
-      // First, refresh the Zoho access token
-      console.log('Refreshing Zoho access token...');
-      const { data: refreshData, error: refreshError } = await supabase.functions.invoke('refresh-zoho-token');
-      
-      if (refreshError) {
-        console.error('Token refresh failed:', refreshError);
-        toast({
-          title: "خطأ في تجديد الرمز المميز",
-          description: "فشل في تجديد رمز الوصول من Zoho",
-          variant: "destructive",
+      // Use new direct Zoho to Firestore sync
+      const { data, error } = await supabase.functions.invoke('sync-zoho-to-firestore', {
+        body: { userId: user.uid, maxModels: 60 }
+      });
+
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Sync failed');
+
+      const productsFromZoho = data.products || [];
+      if (productsFromZoho.length === 0) {
+        toast({ 
+          title: "لا توجد بيانات", 
+          description: "لم يتم العثور على منتجات في Zoho." 
         });
         return;
       }
+
+      // Save products to Firestore via user's Firebase system
+      const db = await getFirebaseFirestore();
+      let saved = 0;
       
-      console.log('Token refreshed successfully');
-      
-      // Reload integration data to get the new token
-      await loadZohoIntegration();
-      
-      // Get updated integration from state
-      if (!integration) {
-        throw new Error('Failed to get updated integration data');
+      for (const product of productsFromZoho) {
+        try {
+          const productRef = doc(db, 'users', user.uid, 'products', product.id);
+          await setDoc(productRef, {
+            ...product,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            viewCount: 0,
+            orderCount: 0,
+            isActive: product.is_active !== false
+          });
+          saved++;
+        } catch (productError) {
+          console.error('Failed to save product:', product.title, productError);
+        }
       }
-      
-      // Now sync products with the new token
-      console.log('Starting product sync...');
-      const { data, error } = await supabase.functions.invoke('sync-zoho-products', {
-        body: {
-          shopId,
-          accessToken: integration.access_token,
-          organizationId: integration.organization_id,
-        },
+
+      // Update integration last sync time
+      const integrationDoc = doc(db, 'users', user.uid, 'integrations', 'zoho');
+      await updateDoc(integrationDoc, { 
+        last_sync_at: new Date().toISOString() 
       });
-
-      if (error) {
-        throw error;
-      }
-
-      await loadZohoIntegration(); // Refresh data
+      
+      await loadZohoIntegration(); // Refresh integration data
       
       toast({
         title: "تمت المزامنة",
-        description: data.message || "تم تحديث المنتجات من Zoho بنجاح",
+        description: `تم حفظ ${saved} منتج في النظام من Zoho`,
       });
+      
     } catch (error) {
       console.error('Error syncing products:', error);
       toast({
