@@ -289,7 +289,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
             {storeProducts.map((item) => (
               <Card key={item.id} className="overflow-hidden">
                 <div className="aspect-video bg-muted flex items-center justify-center relative">
-                  {item.products.image_urls && item.products.image_urls.length > 0 ? (
+                  {item.products && item.products.image_urls && item.products.image_urls.length > 0 ? (
                     <img
                       src={item.products.image_urls[0]}
                       alt={item.products.title}
@@ -319,16 +319,16 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-semibold text-sm line-clamp-2">
-                      {item.products.title}
+                      {item.products?.title || 'منتج غير معروف'}
                     </h3>
-                    {item.products.category && (
+                    {item.products?.category && (
                       <Badge variant="secondary" className="text-xs">
                         {item.products.category}
                       </Badge>
                     )}
                   </div>
                   
-                  {item.products.description && (
+                  {item.products?.description && (
                     <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
                       {item.products.description}
                     </p>
@@ -339,7 +339,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">السعر الأساسي:</span>
-                        <span className="font-semibold">{item.products.price_sar} ريال</span>
+                        <span className="font-semibold">{item.products?.price_sar || 0} ريال</span>
                       </div>
                       
                       <div className="flex items-center justify-between">
@@ -373,21 +373,21 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                       <div className="flex items-center justify-between border-t pt-2">
                         <span className="text-sm font-medium">السعر النهائي:</span>
                         <span className="text-lg font-bold text-primary">
-                          {(item.products.price_sar + item.commission_amount).toFixed(2)} ريال
+                          {((item.products?.price_sar || 0) + (item.commission_amount || 0)).toFixed(2)} ريال
                         </span>
                       </div>
                       
                       <div className="text-xs text-muted-foreground text-right">
-                        المتوفر: {item.products.stock}
+                        المتوفر: {item.products?.stock || 0}
                       </div>
                     </div>
                   </div>
 
                   {/* Product Variants Display */}
-                  {item.products.variants && item.products.variants.length > 0 && (
+                  {item.products?.variants && item.products.variants.length > 0 && (
                     <div className="space-y-2 mb-3 border-t pt-3">
                       {[...new Set(item.products.variants.map(v => v.variant_type))].map(variantType => {
-                        const variantOptions = item.products.variants!.filter(v => v.variant_type === variantType);
+                        const variantOptions = item.products?.variants?.filter(v => v.variant_type === variantType) || [];
                         
                         return (
                           <div key={variantType} className="space-y-1">
