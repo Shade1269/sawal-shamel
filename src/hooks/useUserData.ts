@@ -27,7 +27,6 @@ export const useUserData = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // حفظ نشاط المستخدم
   const logActivity = async (
     activityType: string, 
     description?: string, 
@@ -35,12 +34,24 @@ export const useUserData = () => {
     metadata?: any
   ) => {
     try {
+      // Get user profile ID safely
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user?.id)
+        .single();
+
+      if (!profile) {
+        console.error('User profile not found');
+        return;
+      }
+
       const { error } = await supabase.from('user_activities').insert({
         activity_type: activityType,
         description: description,
         shop_id: shopId,
         metadata: metadata || {},
-        user_id: (await supabase.from('profiles').select('id').eq('auth_user_id', user?.id).single()).data?.id
+        user_id: profile.id
       });
 
       if (error) {
@@ -90,6 +101,18 @@ export const useUserData = () => {
   // الحصول على متجر المستخدم
   const fetchUserShop = async () => {
     try {
+      // Get user profile ID safely  
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user?.id)
+        .single();
+
+      if (!profile) {
+        console.error('User profile not found');
+        return;
+      }
+
       const { data, error } = await supabase
         .from('shops')
         .select(`
@@ -100,12 +123,15 @@ export const useUserData = () => {
           total_orders,
           created_at
         `)
-        .eq('owner_id', (await supabase.from('profiles').select('id').eq('auth_user_id', user?.id).single()).data?.id)
+        .eq('owner_id', profile.id)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle(); // Use maybeSingle() instead of single() for better error handling
       
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error) {
+        console.error('Error fetching user shop:', error);
+        throw error;
+      }
       
       if (data) {
         setUserShop({
