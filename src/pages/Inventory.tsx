@@ -119,16 +119,62 @@ const Inventory = () => {
     try {
       if (!user) return;
       
-      // Get products from Firestore
-      const products = await getShopProducts();
-      setProducts(products);
+      // Get products from Supabase (where the synced Zoho products with images are stored)
+      const { data: products, error } = await supabase
+        .from('products')
+        .select(`
+          id,
+          title,
+          description,
+          category,
+          price_sar,
+          stock,
+          image_urls,
+          is_active,
+          created_at
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        // Fallback to Firestore if Supabase fails
+        const firestoreProducts = await getShopProducts();
+        setProducts(firestoreProducts);
+        return;
+      }
+
+      // Transform Supabase products to match expected format
+      const transformedProducts = products?.map(product => ({
+        id: product.id,
+        title: product.title || '',
+        description: product.description,
+        price_sar: product.price_sar || 0,
+        image_urls: product.image_urls,
+        category: product.category,
+        stock: product.stock || 0,
+        is_active: product.is_active,
+        created_at: product.created_at
+      })) || [];
+
+      console.log(`Loaded ${transformedProducts.length} products from Supabase with images:`, transformedProducts.slice(0,3));
+      setProducts(transformedProducts);
+      
     } catch (error) {
       console.error('Error fetching products:', error);
-      toast({
-        title: "خطأ",
-        description: "فشل في جلب المنتجات",
-        variant: "destructive"
-      });
+      
+      // Fallback to Firestore
+      try {
+        const firestoreProducts = await getShopProducts();
+        setProducts(firestoreProducts);
+      } catch (fallbackError) {
+        console.error('Firestore fallback also failed:', fallbackError);
+        toast({
+          title: "خطأ",
+          description: "فشل في جلب المنتجات",
+          variant: "destructive"
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -254,9 +300,9 @@ const Inventory = () => {
                 <CardContent>
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <div className="text-2xl font-bold text-primary">
-                        {product.price_sar} ريال
-                      </div>
+                       <div className="text-2xl font-bold text-primary">
+                         {(product.price_sar / 100).toFixed(2)} ريال
+                       </div>
                       <div className="text-sm text-muted-foreground">
                         المتوفر: {product.stock}
                       </div>
