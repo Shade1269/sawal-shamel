@@ -1,7 +1,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { useUserData } from '@/hooks/useUserData';
+import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
 
-const UserDataContext = createContext<ReturnType<typeof useUserData> | null>(null);
+const UserDataContext = createContext<ReturnType<typeof useFirebaseUserData> | null>(null);
 
 export const useUserDataContext = () => {
   const context = useContext(UserDataContext);
@@ -16,7 +16,7 @@ interface UserDataProviderProps {
 }
 
 export const UserDataProvider: React.FC<UserDataProviderProps> = ({ children }) => {
-  const userData = useUserData();
+  const userData = useFirebaseUserData();
   
   return (
     <UserDataContext.Provider value={userData}>
