@@ -68,6 +68,7 @@ const [loading, setLoading] = useState(false);
 // Zoho integration admin state
 const [zohoShops, setZohoShops] = useState<any[]>([]);
 const [selectedZohoShopId, setSelectedZohoShopId] = useState<string>("");
+const [cronLogs, setCronLogs] = useState<any[]>([]);
   
   // Products Management States
   const [products, setProducts] = useState<any[]>([]);
@@ -196,6 +197,7 @@ const [selectedZohoShopId, setSelectedZohoShopId] = useState<string>("");
     setLoading(true);
     // Load data from Firestore instead
     await loadProducts();
+    await loadCronLogs();
     
     // Mock data for now
     setUsers([]);
@@ -240,6 +242,25 @@ const [selectedZohoShopId, setSelectedZohoShopId] = useState<string>("");
       setCategories(uniqueCategories);
     } catch (error) {
       console.error('Error loading products:', error);
+    }
+  };
+
+  const loadCronLogs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('cron_job_logs')
+        .select('*')
+        .order('executed_at', { ascending: false })
+        .limit(50);
+
+      if (error) {
+        console.error('Error loading cron logs:', error);
+        return;
+      }
+
+      setCronLogs(data || []);
+    } catch (error) {
+      console.error('Error loading cron logs:', error);
     }
   };
 
@@ -562,6 +583,90 @@ const [selectedZohoShopId, setSelectedZohoShopId] = useState<string>("");
         </Card>
       </section>
 
+      {/* Cron Jobs Monitoring Section */}
+      <section aria-labelledby="cron-monitoring">
+        <Card>
+          <CardHeader>
+            <CardTitle id="cron-monitoring" className="text-2xl flex items-center gap-2">
+              <Clock className="h-6 w-6" />
+              سجل المهام التلقائية (Cron Jobs)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-muted-foreground">
+                  آخر 50 عملية تحديث تلقائي لرموز Zoho
+                </p>
+                <Button 
+                  onClick={loadCronLogs} 
+                  size="sm"
+                  disabled={loading}
+                >
+                  تحديث
+                </Button>
+              </div>
+              
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>اسم المهمة</TableHead>
+                      <TableHead>وقت التنفيذ</TableHead>
+                      <TableHead>الحالة</TableHead>
+                      <TableHead>الرسالة</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {cronLogs.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center py-8">
+                          لا توجد سجلات متاحة
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      cronLogs.map((log) => (
+                        <TableRow key={log.id}>
+                          <TableCell className="font-medium">
+                            {log.job_name}
+                          </TableCell>
+                          <TableCell>
+                            {log.executed_at ? new Date(log.executed_at).toLocaleString('ar') : 'غير محدد'}
+                          </TableCell>
+                          <TableCell>
+                            <Badge 
+                              variant={
+                                log.status === 'success' ? 'default' : 
+                                log.status === 'partial_success' ? 'secondary' : 
+                                'destructive'
+                              }
+                            >
+                              {log.status === 'success' ? 'نجح' : 
+                               log.status === 'partial_success' ? 'نجح جزئياً' : 
+                               'فشل'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="max-w-md">
+                            <div className="truncate" title={log.message || ''}>
+                              {log.message || 'لا توجد رسالة'}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              
+              {cronLogs.length > 0 && (
+                <div className="text-sm text-muted-foreground">
+                  عرض {cronLogs.length} من آخر العمليات التلقائية
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </section>
 
       {/* Emkan Integration Section */}
       <section aria-labelledby="emkan-integration-admin">

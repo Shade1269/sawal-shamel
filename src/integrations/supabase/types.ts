@@ -282,6 +282,33 @@ export type Database = {
           },
         ]
       }
+      cron_job_logs: {
+        Row: {
+          created_at: string | null
+          executed_at: string | null
+          id: string
+          job_name: string
+          message: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          executed_at?: string | null
+          id?: string
+          job_name: string
+          message?: string | null
+          status: string
+        }
+        Update: {
+          created_at?: string | null
+          executed_at?: string | null
+          id?: string
+          job_name?: string
+          message?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       event_log: {
         Row: {
           actor_id: string | null
