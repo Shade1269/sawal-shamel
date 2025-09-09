@@ -12,7 +12,7 @@ import Index from "./pages/Index";
 import Chat from "./pages/Chat";
 import ChatRoom from "./pages/ChatRoom";
 import Inventory from "./pages/Inventory";
-import StoreManagement from "./pages/StoreManagementNew";
+import StoreManagement from "./pages/StoreManagement";
 import StoreFront from "./pages/StoreFront";
 import Cart from "./pages/Cart";
 import Shipping from "./pages/Shipping";
@@ -21,7 +21,7 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import NotFound from "./pages/NotFound";
 import { lazy, Suspense } from "react";
 const AdminPageLazy = lazy(() => import("./pages/Admin"));
-const MigrateToFirestore = lazy(() => import("./pages/MigrateToFirestore"));
+
 
 const queryClient = new QueryClient();
 
@@ -56,7 +56,7 @@ const AppContent = () => {
       <Route path="/store/:slug/payment" element={<Payment />} />
       <Route path="/store/:slug/order-confirmation/:orderId" element={<OrderConfirmation />} />
       <Route path="/admin" element={<ProtectedRoute><AdminPageLazy /></ProtectedRoute>} />
-      <Route path="/migrate-firestore" element={<ProtectedRoute><MigrateToFirestore /></ProtectedRoute>} />
+      
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
