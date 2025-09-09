@@ -26,18 +26,59 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
   
   // If we have variants, collect their images too
   const variantImages: string[] = [];
+  const pushUrl = (u: any) => {
+    if (typeof u === 'string' && (u.startsWith('http://') || u.startsWith('https://'))) {
+      variantImages.push(u);
+    }
+  };
+  const extractVariantImages = (variant: any): string[] => {
+    const urls = new Set<string>();
+    const add = (u: any) => { if (typeof u === 'string' && (u.startsWith('http://') || u.startsWith('https://'))) urls.add(u); };
+
+    // Common direct fields
+    add(variant.image_url);
+    add(variant.imageUrl);
+    add(variant.image);
+    if (Array.isArray(variant.image_urls)) variant.image_urls.forEach(add);
+    if (Array.isArray(variant.imageUrls)) variant.imageUrls.forEach(add);
+    if (Array.isArray(variant.images)) variant.images.forEach(add);
+
+    // Other common aliases
+    add(variant.photo);
+    if (Array.isArray(variant.photos)) variant.photos.forEach(add);
+    add(variant.picture);
+    if (Array.isArray(variant.pictures)) variant.pictures.forEach(add);
+
+    // Nested media/galleries
+    const fromObj = (obj: any) => add(obj?.url || obj?.src || obj?.image_url);
+    if (Array.isArray(variant.media)) variant.media.forEach(fromObj);
+    else if (variant.media?.images && Array.isArray(variant.media.images)) variant.media.images.forEach(fromObj);
+    if (Array.isArray(variant.gallery)) variant.gallery.forEach(fromObj);
+    if (Array.isArray(variant.assets)) variant.assets.forEach(fromObj);
+
+    // Stringified arrays
+    ['image_urls', 'images', 'photos', 'pictures', 'gallery', 'media'].forEach((key) => {
+      const val = (variant as any)[key];
+      if (typeof val === 'string') {
+        try {
+          const arr = JSON.parse(val);
+          if (Array.isArray(arr)) arr.forEach(add);
+        } catch {}
+      }
+    });
+
+    // Zoho fallback: try Supabase storage convention if zoho_item_id exists
+    if (variant.zoho_item_id) {
+      const base = 'https://uewuiiopkctdtaexmtxu.supabase.co/storage/v1/object/public/product-images/zoho/';
+      ['jpg', 'png', 'webp'].forEach((ext) => add(`${base}${variant.zoho_item_id}.${ext}`));
+    }
+
+    return Array.from(urls);
+  };
+
   if (variants && variants.length > 0) {
     variants.forEach((variant: any) => {
-      // Check multiple possible image fields in variants
-      if (variant.image_url) {
-        variantImages.push(variant.image_url);
-      }
-      if (variant.image_urls && Array.isArray(variant.image_urls)) {
-        variantImages.push(...variant.image_urls);
-      }
-      if (variant.images && Array.isArray(variant.images)) {
-        variantImages.push(...variant.images);
-      }
+      extractVariantImages(variant).forEach(pushUrl);
     });
   }
 

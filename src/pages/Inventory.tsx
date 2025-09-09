@@ -127,8 +127,27 @@ const Inventory = () => {
         const src = p?.products ? p.products : p;
         const topImages = Array.isArray(p?.image_urls) ? p.image_urls : [];
         const srcImages = Array.isArray(src?.image_urls) ? src.image_urls : [];
-        const mergedImages = Array.from(new Set([...topImages, ...srcImages].filter(Boolean)));
+        
+        // Collect images from variants as well (many possible shapes)
         const variants = (src?.variants || p?.variants || []).map((v: any) => ({ ...v }));
+        const variantImages: string[] = [];
+        const add = (u: any) => { if (typeof u === 'string' && (u.startsWith('http://') || u.startsWith('https://'))) variantImages.push(u); };
+        variants.forEach((v: any) => {
+          add(v.image_url); add(v.imageUrl); add(v.image);
+          if (Array.isArray(v.image_urls)) v.image_urls.forEach(add);
+          if (Array.isArray(v.imageUrls)) v.imageUrls.forEach(add);
+          if (Array.isArray(v.images)) v.images.forEach(add);
+          if (Array.isArray(v.photos)) v.photos.forEach(add);
+          if (Array.isArray(v.pictures)) v.pictures.forEach(add);
+          const fromObj = (o: any) => add(o?.url || o?.src || o?.image_url);
+          if (Array.isArray(v.media)) v.media.forEach(fromObj);
+          else if (v.media?.images && Array.isArray(v.media.images)) v.media.images.forEach(fromObj);
+          if (Array.isArray(v.gallery)) v.gallery.forEach(fromObj);
+          if (Array.isArray(v.assets)) v.assets.forEach(fromObj);
+          if (v.zoho_item_id) ['jpg','png','webp'].forEach(ext => add(`https://uewuiiopkctdtaexmtxu.supabase.co/storage/v1/object/public/product-images/zoho/${v.zoho_item_id}.${ext}`));
+        });
+        
+        const mergedImages = Array.from(new Set([...topImages, ...srcImages, ...variantImages].filter(Boolean)));
         
         return {
           id: src?.id || p?.id,
