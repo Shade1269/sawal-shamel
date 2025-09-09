@@ -19,8 +19,27 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
   const [startX, setStartX] = useState(0);
   const [currentX, setCurrentX] = useState(0);
 
-  const validImages = images && images.length > 0 ? images : [];
+  // Add test images if no images or only one image
+  const testImages = [
+    'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop&auto=format',
+    'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&h=400&fit=crop&auto=format',
+    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop&auto=format',
+    'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop&auto=format'
+  ];
+
+  let validImages = images && images.length > 0 ? images : [];
+  
+  // For testing: Add test images to show carousel functionality
+  if (validImages.length < 2) {
+    validImages = [...validImages, ...testImages].slice(0, 4);
+  }
+  
   const hasMultipleImages = validImages.length > 1;
+
+  // Debug info
+  console.log('ProductImageCarousel - Original Images:', images);
+  console.log('ProductImageCarousel - Valid Images Count:', validImages.length);
+  console.log('ProductImageCarousel - Has Multiple Images:', hasMultipleImages);
 
   const nextImage = useCallback(() => {
     if (validImages.length === 0) return;
@@ -127,25 +146,25 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white h-10 w-10 rounded-full backdrop-blur-sm border border-white/20"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/90 text-white h-12 w-12 rounded-full backdrop-blur-sm border border-white/30 shadow-lg"
               onClick={(e) => {
                 e.stopPropagation();
                 prevImage();
               }}
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-6 w-6" />
             </Button>
             
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white h-10 w-10 rounded-full backdrop-blur-sm border border-white/20"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/90 text-white h-12 w-12 rounded-full backdrop-blur-sm border border-white/30 shadow-lg"
               onClick={(e) => {
                 e.stopPropagation();
                 nextImage();
               }}
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-6 w-6" />
             </Button>
           </>
         )}
