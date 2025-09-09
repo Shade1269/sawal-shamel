@@ -44,6 +44,71 @@ function extractProductInfo(item: any) {
   return { baseModel, color, size };
 }
 
+// Download an image from Zoho (requires Authorization) and upload to Supabase Storage to obtain a public URL
+async function getItemImagePublicUrl(item: any, accessToken: string, organizationId: string): Promise<string | null> {
+  try {
+    // 1) Try direct image_url on the item
+    if (item.image_url) {
+      const resp = await fetch(item.image_url, { headers: { 'Authorization': `Zoho-oauthtoken ${accessToken}` } });
+      if (resp.ok) {
+        const contentType = resp.headers.get('content-type') || 'image/jpeg';
+        const buffer = await resp.arrayBuffer();
+        const blob = new Blob([buffer], { type: contentType });
+        const ext = contentType.includes('png') ? 'png' : contentType.includes('webp') ? 'webp' : contentType.includes('gif') ? 'gif' : 'jpg';
+        const filePath = `zoho/${item.item_id}.${ext}`;
+        const { error: uploadErr } = await supabase.storage.from('product-images').upload(filePath, blob, { upsert: true, contentType });
+        if (!uploadErr) {
+          const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
+          return data?.publicUrl || null;
+        }
+      }
+    }
+
+    // 2) Try the standard item image endpoint
+    const endpoint = `https://www.zohoapis.com/inventory/v1/items/${item.item_id}/image?organization_id=${organizationId}`;
+    const imgResp = await fetch(endpoint, { headers: { 'Authorization': `Zoho-oauthtoken ${accessToken}` } });
+    if (imgResp.ok) {
+      const ct = imgResp.headers.get('content-type') || 'image/jpeg';
+      const buf = await imgResp.arrayBuffer();
+      const blob = new Blob([buf], { type: ct });
+      const ext = ct.includes('png') ? 'png' : ct.includes('webp') ? 'webp' : ct.includes('gif') ? 'gif' : 'jpg';
+      const filePath = `zoho/${item.item_id}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('product-images').upload(filePath, blob, { upsert: true, contentType: ct });
+      if (!upErr) {
+        const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
+        return data?.publicUrl || null;
+      }
+    }
+
+    // 3) Fallback: fetch item details and try image_url again
+    const detailResp = await fetch(`https://www.zohoapis.com/inventory/v1/items/${item.item_id}?organization_id=${organizationId}`, {
+      headers: { 'Authorization': `Zoho-oauthtoken ${accessToken}` }
+    });
+    if (detailResp.ok) {
+      const detail = await detailResp.json();
+      const imageUrl = detail?.item?.image_url;
+      if (imageUrl) {
+        const resp2 = await fetch(imageUrl, { headers: { 'Authorization': `Zoho-oauthtoken ${accessToken}` } });
+        if (resp2.ok) {
+          const ct2 = resp2.headers.get('content-type') || 'image/jpeg';
+          const buf2 = await resp2.arrayBuffer();
+          const blob2 = new Blob([buf2], { type: ct2 });
+          const ext2 = ct2.includes('png') ? 'png' : ct2.includes('webp') ? 'webp' : ct2.includes('gif') ? 'gif' : 'jpg';
+          const path2 = `zoho/${item.item_id}.${ext2}`;
+          const { error: upErr2 } = await supabase.storage.from('product-images').upload(path2, blob2, { upsert: true, contentType: ct2 });
+          if (!upErr2) {
+            const { data } = supabase.storage.from('product-images').getPublicUrl(path2);
+            return data?.publicUrl || null;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.error('getItemImagePublicUrl error:', e);
+  }
+  return null;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -124,12 +189,9 @@ serve(async (req) => {
     for (const [baseModel, variants] of itemsByModel.entries()) {
       const attributesSchema: Record<string, Set<string>> = {};
       const baseVariant = variants[0];
-      let imageUrls: string[] = [];
-      if (baseVariant.image_documents?.length) {
-        imageUrls = baseVariant.image_documents
-          .map((img: any) => img.file_path || img.attachment_url || img.document_url)
-          .filter(Boolean);
-      }
+      // Resolve and upload product image to public storage
+      const uploadedImageUrl = await getItemImagePublicUrl(baseVariant, accessToken, organizationId);
+      const imageUrls: string[] = uploadedImageUrl ? [uploadedImageUrl] : [];
 
       let totalStock = 0;
       const variantObjs = variants.map((v: any) => {
