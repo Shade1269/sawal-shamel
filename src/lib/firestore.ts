@@ -144,20 +144,41 @@ export const createUserShop = async (uid: string, shopData: any) => {
   try {
     const firestore = await getFirestoreDB();
     
-    // Update shop settings
+    // Check if shop settings document exists, create if not
     const shopSettingsRef = doc(firestore, 'users', uid, 'shopSettings', 'main');
+    const shopSettingsDoc = await getDoc(shopSettingsRef);
+    
+    if (!shopSettingsDoc.exists()) {
+      // Initialize the document first if it doesn't exist
+      await initializeUserDatabase(uid);
+    }
+    
+    // Now update shop settings
     await updateDoc(shopSettingsRef, {
-      ...shopData,
+      shopName: shopData.shopName || shopData.shop_name,
+      shopSlug: shopData.shopSlug || shopData.shop_slug,
       isActive: true,
       updatedAt: new Date()
     });
 
     // Update user's main document
     const userRef = doc(firestore, 'users', uid);
-    await updateDoc(userRef, {
-      createdShopsCount: 1,
-      updatedAt: new Date()
-    });
+    const userDoc = await getDoc(userRef);
+    
+    if (!userDoc.exists()) {
+      // If user document doesn't exist, create it first
+      await setDoc(userRef, {
+        uid: uid,
+        createdShopsCount: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+    } else {
+      await updateDoc(userRef, {
+        createdShopsCount: 1,
+        updatedAt: new Date()
+      });
+    }
 
     // Log activity
     await logUserActivity(uid, {
