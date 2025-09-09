@@ -5,9 +5,9 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { setupRecaptcha, sendSMSOTP, verifySMSOTP } from '@/lib/firebase';
+import { saveUserToFirestore } from '@/lib/firestore';
 import { MessageSquare, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 
 const FirebaseSMSAuth = () => {
   const [step, setStep] = useState<'phone' | 'verify'>('phone');
@@ -120,13 +120,14 @@ const FirebaseSMSAuth = () => {
       if (result.success) {
         const firebaseUser = result.user;
         
-        // Link Firebase user with Supabase
-        const { data: linkResult, error: linkError } = await supabase.functions.invoke('link-firebase-user', {
-          body: { phone: firebaseUser.phoneNumber }
+        // Save user data to Firestore
+        const saveResult = await saveUserToFirestore(firebaseUser, {
+          role: 'affiliate',
+          registrationMethod: 'sms'
         });
         
-        if (linkError) {
-          console.error('Failed to link with Supabase:', linkError);
+        if (!saveResult.success) {
+          console.error('Failed to save user to Firestore:', saveResult.error);
         }
         
         toast({
@@ -134,10 +135,8 @@ const FirebaseSMSAuth = () => {
           description: mode === 'signup' ? "تم إنشاء حسابك بنجاح!" : "مرحباً بعودتك!"
         });
         
-        // Reload page to refresh auth state
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1000);
+        // Navigate to main page
+        navigate('/');
       } else {
         throw new Error(result.error);
       }

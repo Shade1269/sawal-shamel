@@ -1,15 +1,17 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 import { supabase } from '@/integrations/supabase/client';
 
 // Firebase configuration will be loaded from Supabase secrets
 let firebaseConfig: any = null;
 let app: any = null;
 let auth: any = null;
+let db: any = null;
 
 // Initialize Firebase with config from Supabase
 const initializeFirebase = async () => {
-  if (app && auth) return { app, auth };
+  if (app && auth && db) return { app, auth, db };
 
   try {
     const { data, error } = await supabase.functions.invoke('get-firebase-config');
@@ -19,8 +21,9 @@ const initializeFirebase = async () => {
     firebaseConfig = data.firebaseConfig;
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
+    db = getFirestore(app);
     
-    return { app, auth };
+    return { app, auth, db };
   } catch (error) {
     console.error('Error initializing Firebase:', error);
     throw error;
@@ -31,6 +34,12 @@ const initializeFirebase = async () => {
 export const getFirebaseAuth = async () => {
   const { auth } = await initializeFirebase();
   return auth;
+};
+
+// Get Firebase Firestore instance
+export const getFirebaseFirestore = async () => {
+  const { db } = await initializeFirebase();
+  return db;
 };
 
 // Configure reCAPTCHA for SMS verification

@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { LogIn, UserPlus, Mail, MessageSquare } from 'lucide-react';
 import FirebaseSMSAuth from '@/components/FirebaseSMSAuth';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp, resendVerification } = useAuth();
+  const { signIn, signUp } = useFirebaseAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { FirebaseAuthProvider, useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
 import { DarkModeProvider } from "@/components/DarkModeProvider";
 import AuthPage from "@/components/AuthPage";
@@ -24,7 +25,7 @@ const AdminPageLazy = lazy(() => import("./pages/Admin"));
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useFirebaseAuth();
 
   if (loading) {
     return (
@@ -57,7 +58,7 @@ const AppContent = () => {
 };
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useFirebaseAuth();
 
   if (loading) {
     return (
@@ -83,7 +84,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <AuthProvider>
+        <FirebaseAuthProvider>
           <UserDataProvider>
             <DarkModeProvider>
               <BrowserRouter>
@@ -93,7 +94,7 @@ const App = () => {
               </BrowserRouter>
             </DarkModeProvider>
           </UserDataProvider>
-        </AuthProvider>
+        </FirebaseAuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
