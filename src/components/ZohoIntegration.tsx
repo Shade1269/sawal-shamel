@@ -64,6 +64,28 @@ export const ZohoIntegration: React.FC = () => {
           is_enabled: data.is_enabled,
           token_status: data.token_status
         });
+        
+        // عرض معلومات تشخيصية إضافية
+        if (data.debug_info) {
+          console.log('🔍 Debug info:', data.debug_info);
+        }
+        
+        if (data.detailed_error) {
+          console.log('❌ Detailed error:', data.detailed_error);
+          toast({
+            title: "تفاصيل الخطأ",
+            description: `Domain: ${data.detailed_error.domain}, Status: ${data.detailed_error.status}, Error: ${data.detailed_error.error.substring(0, 100)}`,
+            variant: "destructive"
+          });
+        }
+        
+        if (data.working_domain) {
+          console.log('✅ Working domain:', data.working_domain);
+          toast({
+            title: "نجح الاتصال!",
+            description: `التوكن يعمل مع نطاق: ${data.working_domain}`
+          });
+        }
       } else {
         setIntegration({
           organization_id: null,

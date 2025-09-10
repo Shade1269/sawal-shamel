@@ -6,13 +6,23 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// قائمة بجميع نطاقات Zoho المختلفة
+const ZOHO_DOMAINS = [
+  'www.zohoapis.com',      // الولايات المتحدة وعالمي
+  'www.zohoapis.eu',       // أوروبا
+  'www.zohoapis.in',       // الهند
+  'www.zohoapis.com.au',   // أستراليا
+  'www.zohoapis.jp',       // اليابان
+  'www.zohoapis.ca'        // كندا
+];
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.log('🔍 Starting Zoho status check (FIXED VERSION)...');
+    console.log('🔍 Starting Enhanced Zoho Status Check...');
     
     const organizationId = Deno.env.get('ZOHO_ORGANIZATION_ID');
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -52,7 +62,8 @@ serve(async (req) => {
           organization_id: organizationId,
           is_enabled: false,
           token_status: 'error',
-          last_sync_at: null
+          last_sync_at: null,
+          debug_info: 'No database integration found'
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -75,47 +86,83 @@ serve(async (req) => {
           organization_id: organizationId,
           is_enabled: true,
           token_status: 'expired',
-          last_sync_at: integration.last_sync_at
+          last_sync_at: integration.last_sync_at,
+          debug_info: 'No access token in database'
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Test the token
-    console.log('🧪 Testing token with Zoho API...');
-    const testUrl = `https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&limit=1`;
-    
-    const testResponse = await fetch(testUrl, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Zoho-oauthtoken ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    console.log(`📡 Zoho API response: ${testResponse.status}`);
-
+    // Test the token across all Zoho domains
+    console.log('🌍 Testing token across all Zoho domains...');
     let tokenStatus = 'error';
-    
-    if (testResponse.ok) {
-      tokenStatus = 'active';
-      console.log('✅ Token is ACTIVE and working!');
-    } else {
-      const errorText = await testResponse.text();
-      console.log('❌ Token test failed:', errorText);
-      tokenStatus = 'error';
+    let workingDomain = null;
+    let lastError = null;
+    let debugInfo = [];
+
+    for (const domain of ZOHO_DOMAINS) {
+      try {
+        const testUrl = `https://${domain}/inventory/v1/items?organization_id=${organizationId}&limit=1`;
+        console.log(`🧪 Testing with domain: ${domain}`);
+        
+        const testResponse = await fetch(testUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Zoho-oauthtoken ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        console.log(`📡 ${domain} response: ${testResponse.status}`);
+        
+        if (testResponse.ok) {
+          tokenStatus = 'active';
+          workingDomain = domain;
+          console.log(`✅ SUCCESS! Token works with domain: ${domain}`);
+          debugInfo.push(`SUCCESS: ${domain} returned ${testResponse.status}`);
+          break;
+        } else {
+          const errorText = await testResponse.text();
+          console.log(`❌ ${domain} failed: ${testResponse.status} - ${errorText}`);
+          debugInfo.push(`FAILED: ${domain} returned ${testResponse.status} - ${errorText.substring(0, 100)}`);
+          
+          // Store the most detailed error
+          if (testResponse.status !== 404) {
+            lastError = {
+              domain: domain,
+              status: testResponse.status,
+              error: errorText
+            };
+          }
+        }
+      } catch (error) {
+        console.log(`💥 Error testing ${domain}:`, error.message);
+        debugInfo.push(`ERROR: ${domain} - ${error.message}`);
+      }
     }
 
-    console.log(`🏁 Final status: ${tokenStatus}`);
+    // Prepare detailed response
+    const response = {
+      success: true,
+      organization_id: organizationId,
+      is_enabled: true,
+      token_status: tokenStatus,
+      last_sync_at: integration.last_sync_at,
+      working_domain: workingDomain,
+      debug_info: debugInfo,
+      detailed_error: lastError
+    };
+
+    if (tokenStatus === 'active') {
+      console.log(`🎉 Final result: Token is ACTIVE with domain ${workingDomain}!`);
+    } else {
+      console.log('😞 Final result: Token failed on all domains');
+      console.log('📋 Debug info:', debugInfo);
+      console.log('🔍 Last error:', lastError);
+    }
 
     return new Response(
-      JSON.stringify({ 
-        success: true,
-        organization_id: organizationId,
-        is_enabled: true,
-        token_status: tokenStatus,
-        last_sync_at: integration.last_sync_at
-      }),
+      JSON.stringify(response),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
@@ -127,7 +174,8 @@ serve(async (req) => {
         success: false, 
         error: error.message,
         is_enabled: false,
-        token_status: 'error'
+        token_status: 'error',
+        debug_info: [`General error: ${error.message}`]
       }),
       { 
         status: 500,
