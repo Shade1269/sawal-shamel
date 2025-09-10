@@ -508,6 +508,39 @@ export type Database = {
           },
         ]
       }
+      migration_status: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          id: string
+          migrated_items: number | null
+          migration_type: string
+          status: string
+          total_items: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          migrated_items?: number | null
+          migration_type: string
+          status?: string
+          total_items?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          migrated_items?: number | null
+          migration_type?: string
+          status?: string
+          total_items?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           id: string
