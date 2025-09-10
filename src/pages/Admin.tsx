@@ -67,8 +67,6 @@ const Admin = () => {
 const [loading, setLoading] = useState(false);
 
 // Zoho integration admin state
-const [zohoShops, setZohoShops] = useState<any[]>([]);
-const [selectedZohoShopId, setSelectedZohoShopId] = useState<string>("");
 const [cronLogs, setCronLogs] = useState<any[]>([]);
   
   // Products Management States
@@ -538,19 +536,6 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAllowed]);
 
-  // Load shops for Zoho admin integration
-  useEffect(() => {
-    if (!isAllowed) return;
-    (async () => {
-      // Mock shops data for Firebase setup
-      const data: any[] = [];
-      setZohoShops(data || []);
-      if (data && data.length > 0) {
-        setSelectedZohoShopId((prev) => prev || data[0].id);
-      }
-    })();
-  }, [isAllowed]);
-
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -581,32 +566,10 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
       <section aria-labelledby="zoho-integration-admin">
         <Card>
           <CardHeader>
-            <CardTitle id="zoho-integration-admin" className="text-2xl">تكامل Zoho للمتاجر</CardTitle>
+            <CardTitle id="zoho-integration-admin" className="text-2xl">تكامل Zoho للمنصة</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>اختر المتجر</Label>
-                <Select value={selectedZohoShopId} onValueChange={setSelectedZohoShopId}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر متجراً" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {zohoShops.map((s) => (
-                      <SelectItem key={s.id} value={s.id}>
-                        {s.display_name || s.slug || s.id}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {selectedZohoShopId ? (
-              <ZohoIntegration shopId={selectedZohoShopId} />
-            ) : (
-              <p className="text-muted-foreground">يرجى اختيار متجر لعرض إعدادات التكامل.</p>
-            )}
+          <CardContent>
+            <ZohoIntegration />
           </CardContent>
         </Card>
       </section>

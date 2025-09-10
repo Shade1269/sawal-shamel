@@ -12,10 +12,6 @@ import { getFirebaseFirestore } from '@/lib/firebase';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { supabase } from '@/integrations/supabase/client';
 
-interface ZohoIntegrationProps {
-  shopId: string;
-}
-
 interface ZohoIntegration {
   id: string;
   access_token: string | null;
@@ -24,7 +20,7 @@ interface ZohoIntegration {
   is_enabled: boolean;
 }
 
-export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
+export const ZohoIntegration: React.FC = () => {
   const [integration, setIntegration] = useState<ZohoIntegration | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -37,7 +33,7 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
 
   useEffect(() => {
     loadZohoIntegration();
-  }, [shopId]);
+  }, []);
 
   const loadZohoIntegration = async () => {
     if (!user?.uid) return;
@@ -73,7 +69,6 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
     setIsUpdating(true);
     try {
       const integrationData = {
-        shop_id: shopId,
         access_token: accessToken.trim(),
         organization_id: organizationId.trim(),
         is_enabled: true,
@@ -197,9 +192,7 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
     setIsCleaningUp(true);
     try {
       const { data, error } = await supabase.functions.invoke('cleanup-linguistic-products', {
-        body: {
-          shopId: shopId
-        }
+        body: {}
       });
 
       if (error) {
@@ -275,7 +268,7 @@ export const ZohoIntegration: React.FC<ZohoIntegrationProps> = ({ shopId }) => {
               <div>
                 <CardTitle>تكامل Zoho Inventory</CardTitle>
                 <CardDescription>
-                  ربط متجرك مع نظام Zoho لإدارة المخزون تلقائياً
+                  ربط المنصة مع نظام Zoho لإدارة المخزون تلقائياً
                 </CardDescription>
               </div>
             </div>
