@@ -6,14 +6,14 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// قائمة بجميع نطاقات Zoho المختلفة
+// قائمة بنطاقات Zoho مع كندا أولاً
 const ZOHO_DOMAINS = [
+  'www.zohoapis.ca',       // كندا - أولاً بناءً على الخطأ
   'www.zohoapis.com',      // الولايات المتحدة وعالمي
   'www.zohoapis.eu',       // أوروبا
   'www.zohoapis.in',       // الهند
   'www.zohoapis.com.au',   // أستراليا
-  'www.zohoapis.jp',       // اليابان
-  'www.zohoapis.ca'        // كندا
+  'www.zohoapis.jp'        // اليابان
 ];
 
 serve(async (req) => {
@@ -115,7 +115,22 @@ serve(async (req) => {
 
         console.log(`📡 ${domain} response: ${testResponse.status}`);
         
-        if (testResponse.ok) {
+        // إضافة معلومات تشخيصية إضافية لخطأ 401
+        if (testResponse.status === 401) {
+          const errorText = await testResponse.text();
+          console.log(`🔐 Authorization error on ${domain}:`, errorText);
+          debugInfo.push(`AUTH_ERROR: ${domain} - Status 401 - ${errorText.substring(0, 150)}`);
+          
+          // هذا الخطأ مهم - قد يكون نقص في الصلاحيات
+          lastError = {
+            domain: domain,
+            status: 401,
+            error: errorText,
+            suggestion: domain === 'www.zohoapis.ca' ? 
+              'Try refreshing token with Canada domain (accounts.zoho.ca) and full access scope' :
+              'Authorization issue - check token scope and permissions'
+          };
+        } else if (testResponse.ok) {
           tokenStatus = 'active';
           workingDomain = domain;
           console.log(`✅ SUCCESS! Token works with domain: ${domain}`);

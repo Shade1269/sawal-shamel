@@ -80,8 +80,8 @@ serve(async (req) => {
       );
     }
 
-    // Refresh the access token using the refresh token
-    const refreshResponse = await fetch('https://accounts.zoho.com/oauth/v2/token', {
+    // Refresh the access token using the refresh token - Use Canada domain
+    const refreshResponse = await fetch('https://accounts.zoho.ca/oauth/v2/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -91,6 +91,7 @@ serve(async (req) => {
         client_id: Deno.env.get('ZOHO_CLIENT_ID') || '',
         client_secret: Deno.env.get('ZOHO_CLIENT_SECRET') || '',
         grant_type: 'refresh_token',
+        scope: 'ZohoInventory.fullaccess.all'
       }),
     });
 
