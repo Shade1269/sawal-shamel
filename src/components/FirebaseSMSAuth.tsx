@@ -156,8 +156,8 @@ const FirebaseSMSAuth = () => {
 
   const ensureProfile = async (firebaseUser: any, phone: string) => {
     try {
+      // إنشاء/تحديث ملف المستخدم في Firebase
       if (mode === 'signup') {
-        // للتسجيل الجديد - إنشاء ملف شخصي جديد
         const result = await saveUserToFirestore(firebaseUser, {
           phone,
           displayName: phone,
@@ -166,18 +166,68 @@ const FirebaseSMSAuth = () => {
         });
         
         if (!result.success) {
-          throw new Error('فشل في إنشاء الملف الشخصي');
+          throw new Error('فشل في إنشاء الملف الشخصي في Firebase');
         }
       } else {
-        // لتسجيل الدخول - تحديث auth_user_id
         await updateUserInFirestore(firebaseUser.uid, {
           phone,
           lastLoginAt: new Date(),
           lastActivityAt: new Date()
         });
       }
+
+      // إنشاء/تحديث ملف المستخدم في Supabase
+      await ensureSupabaseProfile(firebaseUser, phone);
+      
     } catch (error) {
       console.error('Error ensuring profile:', error);
+      throw error;
+    }
+  };
+
+  const ensureSupabaseProfile = async (firebaseUser: any, phone: string) => {
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      
+      // التحقق من وجود المستخدم في Supabase
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('phone', phone)
+        .maybeSingle();
+
+      if (existingProfile) {
+        // تحديث المستخدم الموجود
+        const { error } = await supabase
+          .from('profiles')
+          .update({
+            last_activity_at: new Date().toISOString(),
+          })
+          .eq('id', existingProfile.id);
+
+        if (error) {
+          console.error('Error updating Supabase profile:', error);
+        }
+      } else {
+        // إنشاء مستخدم جديد في Supabase
+        const { error } = await supabase
+          .from('profiles')
+          .insert({
+            phone,
+            full_name: phone,
+            role: 'affiliate',
+            is_active: true,
+            points: 0,
+            created_shops_count: 0
+          });
+
+        if (error) {
+          console.error('Error creating Supabase profile:', error);
+          throw new Error('فشل في إنشاء الملف الشخصي في النظام');
+        }
+      }
+    } catch (error) {
+      console.error('Error ensuring Supabase profile:', error);
       throw error;
     }
   };
