@@ -20,6 +20,8 @@ import Payment from "./pages/Payment";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import NotFound from "./pages/NotFound";
 import { lazy, Suspense } from "react";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+
 const AdminPageLazy = lazy(() => import("./pages/Admin"));
 
 const queryClient = new QueryClient();
@@ -60,38 +62,6 @@ const AppContent = () => {
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
-};
-
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user: supabaseUser, loading: supabaseLoading } = useSupabaseAuth();
-  const { user: firebaseUser, loading: firebaseLoading } = useFirebaseAuth();
-
-  const loading = supabaseLoading || firebaseLoading;
-  const user = firebaseUser || supabaseUser; // Firebase user takes priority
-
-  console.log('ProtectedRoute - Firebase user:', firebaseUser?.uid);
-  console.log('ProtectedRoute - Supabase user:', supabaseUser?.id);
-  console.log('ProtectedRoute - Combined user:', !!user);
-  console.log('ProtectedRoute - Loading:', loading);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري التحقق من الهوية...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    console.log('ProtectedRoute - No user, redirecting to auth');
-    return <AuthPage />;
-  }
-
-  console.log('ProtectedRoute - User authenticated, rendering children');
-  return <>{children}</>;
 };
 
 const App = () => {

@@ -5,21 +5,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowRight, Store, Settings, Package, BarChart3, Loader2, Copy, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
-import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
+import { useUserDataContext } from '@/contexts/UserDataContext';
 import { toast } from '@/hooks/use-toast';
 import StoreProductsSection from '@/components/StoreProductsSection';
 import { StoreOrders } from '@/components/StoreOrders';
 
 const StoreManagementFirestore = () => {
   const navigate = useNavigate();
-  const { user } = useFirebaseAuth();
   const { 
+    user, 
     userShop, 
     createShop, 
     loading,
     error 
-  } = useFirebaseUserData();
+  } = useUserDataContext();
 
   // Store management form state
   const [storeName, setStoreName] = useState('');
@@ -29,18 +28,14 @@ const StoreManagementFirestore = () => {
   const [storeUrl, setStoreUrl] = useState('');
   const [showSuccessCard, setShowSuccessCard] = useState(false);
 
-  // Redirect if not authenticated
-  if (!user) {
-    navigate('/auth');
-    return null;
-  }
+  // The ProtectedRoute component already handles authentication, so this check is not needed anymore
 
   // Update form data when userShop changes
   React.useEffect(() => {
     if (userShop) {
-      setStoreName(userShop.shop_name || '');
-      setStoreSlug(userShop.shop_slug || '');
-      setStoreUrl(`https://atlantiss.tech/store/${userShop.shop_slug}`);
+      setStoreName(userShop.display_name || '');
+      setStoreSlug(userShop.slug || '');
+      setStoreUrl(`https://atlantiss.tech/store/${userShop.slug}`);
     }
   }, [userShop]);
 
@@ -358,7 +353,7 @@ const StoreManagementFirestore = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <StoreOrders shopId={userShop?.shop_id || ''} />
+                <StoreOrders shopId={userShop?.shop_id || userShop?.id || ''} />
               </CardContent>
             </Card>
           )}
