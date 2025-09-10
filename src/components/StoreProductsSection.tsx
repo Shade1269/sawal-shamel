@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Package, Trash2, Star, Plus, Eye, EyeOff, DollarSign } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
+import { useSupabaseUserData } from '@/hooks/useSupabaseUserData';
 import { ProductImageCarousel } from '@/components/ProductImageCarousel';
 
 interface Product {
@@ -45,7 +45,7 @@ interface StoreProductsSectionProps {
 
 const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop }) => {
   const { user } = useSupabaseAuth();
-  const { getShopProducts } = useFirebaseUserData();
+  const { getShopProducts } = useSupabaseUserData();
   const [storeProducts, setStoreProducts] = useState<ProductLibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [globalCommission, setGlobalCommission] = useState<number>(0);

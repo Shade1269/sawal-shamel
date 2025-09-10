@@ -2,9 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Image, Upload, X } from 'lucide-react';
-// Removed Supabase client - using Firebase Storage instead
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { getFirebaseApp } from '@/lib/firebase';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface FileUploadProps {
@@ -57,15 +55,19 @@ const FileUpload: React.FC<FileUploadProps> = ({
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `uploads/${fileName}`;
 
-      // Upload to Firebase Storage
-      const app = await getFirebaseApp();
-      const storage = getStorage(app);
-      const storageRef = ref(storage, `product-images/${filePath}`);
-      const snapshot = await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(snapshot.ref);
-
+      // Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
+        .from('product-images')
+        .upload(filePath, file);
+      
+      if (uploadError) throw uploadError;
+      
+      const { data } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(filePath);
+      
       const fileType = file.type.startsWith('image/') ? 'image' : 'file';
-      onFileUpload(downloadURL, fileType);
+      onFileUpload(data.publicUrl, fileType);
 
       toast({
         title: "نجح الرفع",

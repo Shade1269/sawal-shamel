@@ -33,7 +33,7 @@ import {
 } from 'lucide-react';
 import { useRealTimeChat } from '@/hooks/useRealTimeChat';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { getFirebaseAuth } from '@/lib/firebase';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
@@ -63,7 +63,6 @@ import UserProfileMenu from './UserProfileMenu';
 import NotificationPrompt from './NotificationPrompt';
 import SimpleUserProfile from './SimpleUserProfile';
 import { useNotifications } from '@/hooks/useNotifications';
-import { supabase } from '@/integrations/supabase/client';
 import { useDarkMode } from '@/components/DarkModeProvider';
 
 const ChatInterface = () => {
@@ -727,8 +726,8 @@ const ChatInterface = () => {
                 <DropdownMenuContent align="start" className="z-[100] bg-popover/95 backdrop-blur supports-[backdrop-filter]:bg-popover/80 shadow-lg border border-border">
                   <DropdownMenuItem onClick={async () => {
                     try {
-                      const auth = await getFirebaseAuth();
-                      await auth.signOut();
+                      // Supabase auth is already available
+                      await supabase.auth.signOut();
                       toast({ title: 'تم تسجيل الخروج' });
                       window.location.href = '/';
                     } catch (e) {

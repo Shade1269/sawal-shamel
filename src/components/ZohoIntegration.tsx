@@ -7,10 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Loader2, RefreshCw, Settings, CheckCircle2, AlertCircle, Zap, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
-import { getFirebaseFirestore } from '@/lib/firebase';
-import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 
 interface ZohoIntegration {
   id: string;
@@ -18,6 +16,8 @@ interface ZohoIntegration {
   organization_id: string | null;
   last_sync_at: string | null;
   is_enabled: boolean;
+  client_id: string | null;
+  client_secret: string | null;
 }
 
 export const ZohoIntegration: React.FC = () => {
@@ -26,6 +26,8 @@ export const ZohoIntegration: React.FC = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [accessToken, setAccessToken] = useState('');
   const [organizationId, setOrganizationId] = useState('');
+  const [clientId, setClientId] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [isCleaningUp, setIsCleaningUp] = useState(false);
   const { toast } = useToast();
@@ -39,72 +41,59 @@ export const ZohoIntegration: React.FC = () => {
     if (!user?.id) return;
     
     try {
-      const db = await getFirebaseFirestore();
-      const integrationDoc = doc(db, 'users', user.id, 'integrations', 'zoho');
-      const docSnap = await getDoc(integrationDoc);
-      
-      if (docSnap.exists()) {
-        const data = { id: docSnap.id, ...docSnap.data() } as ZohoIntegration;
+      const { data, error } = await supabase
+        .from('zoho_integration')
+        .select('*')
+        .eq('shop_id', user?.id)
+        .single();
+
+      if (data) {
         setIntegration(data);
         setAccessToken(data.access_token || '');
         setOrganizationId(data.organization_id || '');
+        setClientId(data.client_id || '');
+        setClientSecret(data.client_secret || '');
       }
-    } catch (error) {
-      console.error('Error loading Zoho integration:', error);
+    } catch (err) {
+      console.error('Error loading Zoho integration:', err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const saveIntegrationSettings = async () => {
-    if (!accessToken.trim() || !organizationId.trim() || !user?.id) {
-      toast({
-        title: "خطأ",
-        description: "يرجى إدخال جميع البيانات المطلوبة",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const updateIntegration = async () => {
+    if (!user?.id) return;
+    
     setIsUpdating(true);
+    
     try {
-      const integrationData = {
-        access_token: accessToken.trim(),
-        organization_id: organizationId.trim(),
-        is_enabled: true,
-        updated_at: new Date().toISOString(),
-        last_sync_at: null,
-      };
-
-      const db = await getFirebaseFirestore();
-      const integrationDoc = doc(db, 'users', user.id, 'integrations', 'zoho');
-      
-      if (integration) {
-        await updateDoc(integrationDoc, integrationData);
-      } else {
-        await setDoc(integrationDoc, {
-          ...integrationData,
-          created_at: new Date().toISOString(),
+      const { error } = await supabase
+        .from('zoho_integration')
+        .upsert({
+          shop_id: user?.id,
+          client_id: clientId,
+          client_secret: clientSecret,
+          organization_id: organizationId,
+          access_token: accessToken,
+          is_enabled: true
         });
+
+      if (error) {
+        throw new Error(error.message);
       }
 
-      const updatedIntegration = { 
-        id: 'zoho', 
-        ...integrationData, 
-        last_sync_at: null 
-      } as ZohoIntegration;
-      setIntegration(updatedIntegration);
-      
       toast({
-        title: "تم الحفظ",
-        description: "تم حفظ إعدادات التكامل مع Zoho بنجاح",
+        title: "تم حفظ الإعدادات",
+        description: "تم حفظ إعدادات Zoho بنجاح"
       });
-    } catch (error) {
-      console.error('Error saving integration:', error);
+
+      await loadZohoIntegration();
+    } catch (err: any) {
+      console.error('Error updating integration:', err);
       toast({
-        title: "خطأ",
-        description: "فشل في حفظ الإعدادات",
-        variant: "destructive",
+        title: "خطأ في الحفظ",
+        description: err.message || "حدث خطأ أثناء حفظ الإعدادات",
+        variant: "destructive"
       });
     } finally {
       setIsUpdating(false);
@@ -112,147 +101,189 @@ export const ZohoIntegration: React.FC = () => {
   };
 
   const syncProducts = async () => {
-    if (!integration?.access_token || !integration?.organization_id || !user) {
-      toast({ title: "خطأ", description: "يرجى إعداد بيانات التكامل أولاً", variant: "destructive" });
+    if (!integration?.access_token || !integration?.organization_id) {
+      toast({
+        title: "بيانات غير مكتملة",
+        description: "يرجى إدخال جميع البيانات المطلوبة",
+        variant: "destructive"
+      });
       return;
     }
-
+    
     setIsSyncing(true);
+    
     try {
-      // نستخدم Edge Function فقط كبروكسي (لا تخزين في Supabase) لتجاوز CORS من Zoho
-      const { data, error } = await supabase.functions.invoke('sync-zoho-to-firestore', {
-        body: {
-          userId: user.id,
-          maxModels: 60,
+      const response = await fetch(`https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/sync-zoho-to-firestore`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MTg5NzY4NX0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
+        },
+        body: JSON.stringify({
+          userId: user?.id,
           accessToken: integration.access_token,
           organizationId: integration.organization_id,
-        },
+          maxModels: 100
+        })
       });
 
-      if (error) {
-        const isCors = (error as any)?.message?.toLowerCase().includes('failed to fetch');
-        toast({ title: 'خطأ في المزامنة', description: isCors ? 'تم حظر الطلب من Zoho (CORS). تمت إعادة التوجيه عبر الخادم — أعد المحاولة.' : (error as any)?.message, variant: 'destructive' });
-        return;
-      }
-      if (!data?.success) {
-        let detailMsg: string | undefined;
-        try {
-          const parsed = data?.detail ? JSON.parse(data.detail) : null;
-          detailMsg = parsed?.message || data?.error;
-        } catch {
-          detailMsg = data?.detail || data?.error;
-        }
-        toast({ title: 'رفض من Zoho', description: detailMsg || 'فشل في المزامنة. تحقق من صلاحية Access Token و Organization ID.', variant: 'destructive' });
-        return;
-      }
-
-      const productsFromZoho = data.products || [];
-      if (productsFromZoho.length === 0) {
-        toast({ title: 'لا توجد بيانات', description: 'لم يتم العثور على منتجات في Zoho.' });
-        return;
-      }
-
-      // الحفظ إلى Firebase فقط
-      const db = await getFirebaseFirestore();
-      let saved = 0;
-      for (const product of productsFromZoho) {
-        try {
-          const productRef = doc(db, 'users', user.id, 'products', product.id);
-          await setDoc(productRef, {
-            ...product,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            viewCount: 0,
-            orderCount: 0,
-            isActive: product.is_active !== false,
+      const result = await response.json();
+      
+      if (result.success) {
+        // Save to Supabase only
+        const { error } = await supabase
+          .from('zoho_integration')
+          .upsert({
+            shop_id: user?.id,
+            client_id: clientId,
+            client_secret: clientSecret,
+            organization_id: organizationId,
+            access_token: accessToken,
+            is_enabled: true
           });
-          saved++;
-        } catch (e) {
-          console.error('Failed to save product:', product.title, e);
+
+        if (error) {
+          throw new Error(error.message);
         }
+
+        toast({
+          title: "نجح التزامن",
+          description: `تم استيراد ${result.modelsReturned} منتج من Zoho`,
+        });
+        
+        await loadZohoIntegration();
+      } else {
+        throw new Error(result.error || 'فشل التزامن');
       }
-
-      // تحديث وقت آخر مزامنة
-      const integrationDoc = doc(db, 'users', user.id, 'integrations', 'zoho');
-      await updateDoc(integrationDoc, { last_sync_at: new Date().toISOString() });
-      await loadZohoIntegration();
-
-      toast({ title: 'تمت المزامنة', description: `تم حفظ ${saved} منتج في النظام من Zoho` });
-    } catch (error: any) {
-      console.error('Error syncing products:', error);
-      const isCors = error?.message?.toLowerCase?.().includes('failed to fetch');
-      toast({ title: 'خطأ في المزامنة', description: isCors ? 'تم حظر الطلب (CORS). سنستخدم الخادم كبروكسي تلقائياً.' : (error?.message || 'فشل في مزامنة المنتجات'), variant: 'destructive' });
+    } catch (err: any) {
+      console.error('Sync error:', err);
+      toast({
+        title: "فشل التزامن",
+        description: err.message || "حدث خطأ أثناء التزامن مع Zoho",
+        variant: "destructive"
+      });
     } finally {
       setIsSyncing(false);
     }
   };
 
-
-  const cleanupLinguisticProducts = async () => {
-    setIsCleaningUp(true);
+  const refreshToken = async () => {
+    if (!clientId || !clientSecret) {
+      toast({
+        title: "بيانات غير مكتملة",
+        description: "يرجى إدخال Client ID و Client Secret أولاً",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsUpdating(true);
+    
     try {
-      const { data, error } = await supabase.functions.invoke('cleanup-linguistic-products', {
-        body: {}
+      const response = await fetch(`https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/refresh-zoho-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MVkOTc2ODV0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
+        },
+        body: JSON.stringify({
+          clientId,
+          clientSecret,
+          refreshToken: integration?.access_token
+        })
       });
 
-      if (error) {
-        throw error;
+      const result = await response.json();
+      
+      if (result.success) {
+        const newAccessToken = result.access_token;
+        setAccessToken(newAccessToken);
+
+        const { error } = await supabase
+          .from('zoho_integration')
+          .upsert({
+            shop_id: user?.id,
+            client_id: clientId,
+            client_secret: clientSecret,
+            organization_id: organizationId,
+            access_token: newAccessToken,
+            is_enabled: true
+          });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+        
+        toast({
+          title: "تم تحديث الرمز المميز",
+          description: "تم تحديث رمز الوصول بنجاح"
+        });
+        
+        await loadZohoIntegration();
+      } else {
+        throw new Error(result.error || 'فشل تحديث الرمز المميز');
       }
-
+    } catch (err: any) {
+      console.error('Token refresh error:', err);
       toast({
-        title: "تم الحذف",
-        description: data.message || `تم حذف ${data.deletedCount} منتج ذو أسماء لغوية`,
+        title: "فشل تحديث الرمز المميز",
+        description: err.message || "حدث خطأ أثناء تحديث الرمز المميز",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const cleanupProducts = async () => {
+    setIsCleaningUp(true);
+    
+    try {
+      const response = await fetch(`https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/cleanup-linguistic-products`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MVkOTc2ODV0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
+        },
+        body: JSON.stringify({
+          userId: user?.id
+        })
       });
 
-      console.log('Cleanup result:', data);
-    } catch (error) {
-      console.error('Error cleaning up products:', error);
+      const result = await response.json();
+      
+      if (result.success) {
+        toast({
+          title: "تم التنظيف",
+          description: `تم حذف ${result.deletedCount} منتج مكرر`
+        });
+      } else {
+        throw new Error(result.error || 'فشل التنظيف');
+      }
+    } catch (err: any) {
+      console.error('Cleanup error:', err);
       toast({
-        title: "خطأ",
-        description: "فشل في حذف المنتجات ذات الأسماء اللغوية",
-        variant: "destructive",
+        title: "فشل التنظيف",
+        description: err.message || "حدث خطأ أثناء تنظيف المنتجات",
+        variant: "destructive"
       });
     } finally {
       setIsCleaningUp(false);
     }
   };
 
-  const toggleIntegration = async (enabled: boolean) => {
-    if (!integration || !user?.id) return;
-
-    try {
-      const db = await getFirebaseFirestore();
-      const integrationDoc = doc(db, 'users', user.id, 'integrations', 'zoho');
-      await updateDoc(integrationDoc, { 
-        is_enabled: enabled,
-        updated_at: new Date().toISOString()
-      });
-
-      setIntegration({ ...integration, is_enabled: enabled });
-      
-      toast({
-        title: enabled ? "تم التفعيل" : "تم الإيقاف",
-        description: enabled 
-          ? "تم تفعيل التكامل مع Zoho" 
-          : "تم إيقاف التكامل مع Zoho",
-      });
-    } catch (error) {
-      console.error('Error toggling integration:', error);
-      toast({
-        title: "خطأ",
-        description: "فشل في تحديث حالة التكامل",
-        variant: "destructive",
-      });
+  const getStatusBadge = () => {
+    if (integration?.is_enabled && integration?.access_token) {
+      return <Badge variant="default" className="bg-green-100 text-green-800"><CheckCircle2 className="w-3 h-3 mr-1" />متصل</Badge>;
     }
+    return <Badge variant="secondary"><AlertCircle className="w-3 h-3 mr-1" />غير متصل</Badge>;
   };
 
   if (isLoading) {
     return (
       <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-center">
-            <Loader2 className="w-6 h-6 animate-spin" />
-          </div>
+        <CardContent className="flex items-center justify-center p-6">
+          <Loader2 className="h-6 w-6 animate-spin" />
         </CardContent>
       </Card>
     );
@@ -263,33 +294,50 @@ export const ZohoIntegration: React.FC = () => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Settings className="w-6 h-6 text-primary" />
-              <div>
-                <CardTitle>تكامل Zoho Inventory</CardTitle>
-                <CardDescription>
-                  ربط المنصة مع نظام Zoho لإدارة المخزون تلقائياً
-                </CardDescription>
-              </div>
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5" />
+                تكامل Zoho Inventory
+              </CardTitle>
+              <CardDescription>
+                ربط متجرك مع نظام إدارة المخزون Zoho
+              </CardDescription>
             </div>
-            <div className="flex items-center gap-2">
-              {integration?.is_enabled && (
-                <Badge variant="outline" className="gap-1">
-                  <CheckCircle2 className="w-3 h-3" />
-                  نشط
-                </Badge>
-              )}
-              {integration && (
-                <Switch
-                  checked={integration.is_enabled}
-                  onCheckedChange={toggleIntegration}
-                />
-              )}
-            </div>
+            {getStatusBadge()}
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="clientId">Client ID</Label>
+              <Input
+                id="clientId"
+                type="text"
+                value={clientId}
+                onChange={(e) => setClientId(e.target.value)}
+                placeholder="أدخل Client ID"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="clientSecret">Client Secret</Label>
+              <Input
+                id="clientSecret"
+                type="password"
+                value={clientSecret}
+                onChange={(e) => setClientSecret(e.target.value)}
+                placeholder="أدخل Client Secret"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="organizationId">Organization ID</Label>
+              <Input
+                id="organizationId"
+                type="text"
+                value={organizationId}
+                onChange={(e) => setOrganizationId(e.target.value)}
+                placeholder="أدخل Organization ID"
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="accessToken">Access Token</Label>
               <Input
@@ -297,155 +345,73 @@ export const ZohoIntegration: React.FC = () => {
                 type="password"
                 value={accessToken}
                 onChange={(e) => setAccessToken(e.target.value)}
-                placeholder="أدخل Access Token من Zoho"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="organizationId">Organization ID</Label>
-              <Input
-                id="organizationId"
-                value={organizationId}
-                onChange={(e) => setOrganizationId(e.target.value)}
-                placeholder="أدخل Organization ID"
+                placeholder="أدخل Access Token"
               />
             </div>
           </div>
           
-          <Button 
-            onClick={saveIntegrationSettings}
-            disabled={isUpdating}
-            className="w-full md:w-auto"
-          >
-            {isUpdating ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                جاري الحفظ...
-              </>
-            ) : (
-              'حفظ الإعدادات'
-            )}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              onClick={updateIntegration} 
+              disabled={isUpdating}
+              className="flex-1 sm:flex-none"
+            >
+              {isUpdating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              حفظ الإعدادات
+            </Button>
+            
+            <Button 
+              onClick={refreshToken} 
+              disabled={isUpdating}
+              variant="outline"
+              className="flex-1 sm:flex-none"
+            >
+              {isUpdating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+              تحديث الرمز المميز
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
-      {integration?.access_token && integration?.organization_id && (
-        <>
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <RefreshCw className="w-5 h-5 text-primary" />
-                <div>
-                  <CardTitle className="text-lg">مزامنة المنتجات</CardTitle>
-                  <CardDescription>
-                    استيراد المنتجات من Zoho إلى المخزون
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                <div>
-                  {integration.last_sync_at && (
-                    <p className="text-sm text-muted-foreground">
-                      آخر مزامنة: {new Date(integration.last_sync_at).toLocaleString('ar')}
-                    </p>
-                  )}
-                </div>
-                <Button 
-                  onClick={syncProducts}
-                  disabled={isSyncing || !integration.is_enabled}
-                  size="lg"
-                >
-                  {isSyncing ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      جاري المزامنة...
-                    </>
-                  ) : (
-                    <>
-                      <RefreshCw className="w-4 h-4 mr-2" />
-                      مزامنة المنتجات
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <Zap className="w-5 h-5 text-primary" />
-                <div>
-                  <CardTitle className="text-lg">المزامنة التلقائية</CardTitle>
-                  <CardDescription>
-                    عند وصول طلب جديد، سيتم تحديث المخزون في Zoho تلقائياً
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2 p-4 bg-muted rounded-lg">
-                {integration.is_enabled ? (
-                  <>
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                    <span className="text-sm">
-                      المزامنة التلقائية مفعلة - سيتم خصم الكميات من Zoho عند كل طلب
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <AlertCircle className="w-5 h-5 text-amber-600" />
-                    <span className="text-sm">
-                      المزامنة التلقائية متوقفة - قم بتفعيل التكامل لبدء المزامنة
-                    </span>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <Trash2 className="w-5 h-5 text-destructive" />
-                <div>
-                  <CardTitle className="text-lg">حذف المنتجات اللغوية</CardTitle>
-                  <CardDescription>
-                    حذف المنتجات ذات الأسماء اللغوية التي تم إضافتها بالمنطق القديم
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-4">
-                <p className="text-sm text-muted-foreground">
-                  سيتم حذف المنتجات التي لا تتبع نمط الترميز (مثل AS25-GR/XL) والتي تحمل أسماء لغوية طويلة
-                </p>
-                <Button 
-                  onClick={cleanupLinguisticProducts}
-                  disabled={isCleaningUp}
-                  variant="destructive"
-                  size="lg"
-                >
-                  {isCleaningUp ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      جاري الحذف...
-                    </>
-                  ) : (
-                    <>
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      حذف المنتجات اللغوية
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </>
-      )}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5" />
+            مزامنة المنتجات
+          </CardTitle>
+          <CardDescription>
+            استيراد وتحديث المنتجات من Zoho Inventory
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {integration?.last_sync_at && (
+            <p className="text-sm text-muted-foreground">
+              آخر مزامنة: {new Date(integration.last_sync_at).toLocaleString('ar-SA')}
+            </p>
+          )}
+          
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              onClick={syncProducts} 
+              disabled={isSyncing || !integration?.access_token}
+              className="flex-1 sm:flex-none"
+            >
+              {isSyncing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+              مزامنة المنتجات
+            </Button>
+            
+            <Button 
+              onClick={cleanupProducts} 
+              disabled={isCleaningUp}
+              variant="outline"
+              className="flex-1 sm:flex-none"
+            >
+              {isCleaningUp ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+              تنظيف المنتجات المكررة
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

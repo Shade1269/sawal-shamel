@@ -16,7 +16,8 @@ import UserProfileDialog from "@/components/UserProfileDialog";
 import UserSettingsMenu from "@/components/UserSettingsMenu";
 import ZohoIntegration from "@/components/ZohoIntegration";
 import EmkanIntegration from "@/components/EmkanIntegration";
-import { useFirebaseUserData } from "@/hooks/useFirebaseUserData";
+import { useSupabaseUserData } from "@/hooks/useSupabaseUserData";
+import { supabase } from "@/integrations/supabase/client";
 
 
 import { 
@@ -45,7 +46,7 @@ const ADMIN_EMAIL = "Shade199633@icloud.com";
 
 const Admin = () => {
   const { user } = useSupabaseAuth();
-  const { addProduct, getShopProducts, updateProductInFirestore } = useFirebaseUserData();
+  const { addProduct, getShopProducts } = useSupabaseUserData();
   const { toast } = useToast();
 
   const isAllowed = useMemo(() => user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase(), [user]);
@@ -126,8 +127,8 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
     setImagePreviewUrls(prev => prev.filter((_, i) => i !== index));
   };
 
-  // Upload images to Firebase Storage
-  const uploadImagesToFirebase = async (productId: string, images: File[]): Promise<string[]> => {
+  // Upload images to Supabase Storage
+  const uploadImagesToSupabase = async (productId: string, images: File[]): Promise<string[]> => {
     if (images.length === 0) return [];
 
     const uploadedUrls: string[] = [];
@@ -165,7 +166,13 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
   // Update product with new data
   const updateProduct = async (productId: string, updates: any) => {
     try {
-      await updateProductInFirestore(productId, updates);
+      // Update product via Supabase
+      const { error } = await supabase
+        .from('products')
+        .update(updates)
+        .eq('id', productId);
+      
+      if (error) throw error;
     } catch (error) {
       console.error('Error updating product:', error);
       throw error;
@@ -262,7 +269,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
 
   const loadCronLogs = async () => {
     try {
-      // Mock cron logs for Firebase setup
+      // Mock cron logs for Supabase setup
       setCronLogs([]);
     } catch (error) {
       console.error('Error loading cron logs:', error);
@@ -292,10 +299,10 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
       // Add product first to get ID
       const productId = await addProduct(productData) as string;
       
-      // Upload images to Firebase Storage if any
+      // Upload images to Supabase Storage if any
       let imageUrls: string[] = [];
       if (productImages.length > 0) {
-        imageUrls = await uploadImagesToFirebase(productId, productImages);
+        imageUrls = await uploadImagesToSupabase(productId, productImages);
       }
       
       // Process variants with their images
