@@ -32,7 +32,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { useRealTimeChat } from '@/hooks/useRealTimeChat';
-import { useAuth } from '@/contexts/AuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
@@ -79,14 +79,14 @@ const ChatInterface = () => {
   const [newMessageAlert, setNewMessageAlert] = useState(false);
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { user, signOut, session } = useAuth();
+  const { user } = useFirebaseAuth();
   const { toast } = useToast();
   const { channelId } = useParams<{ channelId: string }>();
   const navigate = useNavigate();
   const activeRoom = channelId || '';
   const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage, setMessages, typingUsers, startTyping, stopTyping } = useRealTimeChat(activeRoom);
   const { isDarkMode, toggleDarkMode } = useDarkMode();
-  const notifications = useNotifications(user?.id);
+  const notifications = useNotifications(user?.uid);
 
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [mentionAlert, setMentionAlert] = useState(false);

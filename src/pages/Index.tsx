@@ -4,14 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { MessageCircle, Users, Hash, Package, LogOut, User, Store } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAuth } from '@/contexts/AuthContext';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user: sUser, signOut: sSignOut } = useAuth();
-  const { user: fUser, signOut: fSignOut } = useFirebaseAuth();
-  const user = (fUser as any) || (sUser as any);
+  const { user, signOut } = useFirebaseAuth();
 
   const handleChatClick = () => {
     if (!user) {
@@ -38,8 +35,7 @@ const Index = () => {
   };
 
   const handleSignOut = async () => {
-    if (fUser && fSignOut) await fSignOut();
-    else if (sUser && sSignOut) await sSignOut();
+    await signOut();
     navigate('/auth');
   };
 
@@ -53,7 +49,7 @@ const Index = () => {
               <div className="flex items-center gap-2">
                 <User className="h-5 w-5 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
-                  مرحباً، { (fUser && (fUser.displayName || fUser.phoneNumber || fUser.email)) || (sUser && (sUser.user_metadata?.full_name || sUser.email)) }
+                  مرحباً، {user && (user.displayName || user.phoneNumber || user.email)}
                 </span>
               </div>
               <Button

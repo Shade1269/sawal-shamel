@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Camera, Upload, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 interface AvatarUploadProps {
@@ -20,7 +20,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { user } = useAuth();
+  const { user } = useFirebaseAuth();
   const { toast } = useToast();
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,15 +69,15 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
       setUploading(true);
       
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      const fileName = `${user.uid}/${Date.now()}.${fileExt}`;
 
       // Delete old avatar if exists
       const { data: existingFiles } = await supabase.storage
         .from('avatars')
-        .list(user.id);
+        .list(user.uid);
 
       if (existingFiles && existingFiles.length > 0) {
-        const filesToDelete = existingFiles.map(file => `${user.id}/${file.name}`);
+        const filesToDelete = existingFiles.map(file => `${user.uid}/${file.name}`);
         await supabase.storage
           .from('avatars')
           .remove(filesToDelete);
