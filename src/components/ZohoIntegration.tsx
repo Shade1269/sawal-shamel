@@ -26,16 +26,34 @@ export const ZohoIntegration: React.FC = () => {
   const { user } = useSupabaseAuth();
 
   useEffect(() => {
+    console.log('ZohoIntegration: useEffect triggered, user:', user);
     if (user?.id) {
+      console.log('ZohoIntegration: User ID found, loading integration');
       loadZohoIntegration();
+    } else {
+      console.log('ZohoIntegration: No user ID, setting error state');
+      setIntegration({
+        organization_id: null,
+        last_sync_at: null,
+        is_enabled: false,
+        token_status: 'error'
+      });
+      setIsLoading(false);
     }
   }, [user?.id]);
 
   const loadZohoIntegration = async () => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      console.log('ZohoIntegration: No user ID available');
+      return;
+    }
+    
+    console.log('ZohoIntegration: Loading integration for user:', user.id);
     
     try {
       const { data, error } = await supabase.functions.invoke('check-zoho-status');
+
+      console.log('ZohoIntegration: Response from check-zoho-status:', { data, error });
 
       if (error) throw error;
 
@@ -232,6 +250,19 @@ export const ZohoIntegration: React.FC = () => {
             >
               {isRefreshing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
               تحديث التوكن الآن
+            </Button>
+            
+            <Button 
+              onClick={() => {
+                console.log('Test button clicked, user:', user);
+                loadZohoIntegration();
+              }} 
+              disabled={isLoading}
+              variant="secondary"
+              className="flex-1 sm:flex-none"
+            >
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Settings className="h-4 w-4 mr-2" />}
+              اختبار الاتصال
             </Button>
           </div>
         </CardContent>
