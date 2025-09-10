@@ -127,7 +127,19 @@ Deno.serve(async (req) => {
     if (shopId && providedAccessToken && providedOrgId) {
       // Scheduled sync - use provided shop data
       console.log('Starting Zoho products sync for shop:', shopId);
-      userProfile = { id: shopId };
+      
+      // Get shop owner's profile ID
+      const { data: shop } = await supabase
+        .from('shops')
+        .select('owner_id')
+        .eq('id', shopId)
+        .single();
+
+      if (!shop) {
+        throw new Error('Shop not found');
+      }
+
+      userProfile = { id: shop.owner_id };
       integration = {
         access_token: providedAccessToken,
         organization_id: providedOrgId,
