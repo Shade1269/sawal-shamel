@@ -123,52 +123,134 @@ export const ZohoIntegration: React.FC = () => {
 
     setIsSyncing(true);
     try {
-      // Use direct Zoho to Firestore sync with integration credentials
-      const { data, error } = await supabase.functions.invoke('sync-zoho-products', {
-        body: { 
-          userId: user.uid, 
-          maxModels: 60,
-          accessToken: integration.access_token,
-          organizationId: integration.organization_id
-        }
-      });
+      const accessToken = integration.access_token;
+      const organizationId = integration.organization_id;
 
-      if (error) {
-        console.error(error);
-        const message = (error as any)?.message || 'فشل في الاتصال بوظيفة المزامنة';
-        toast({ title: "خطأ في المزامنة", description: message, variant: "destructive" });
-        return;
-      }
-      if (!data?.success) {
-        let detailMsg = '' as string | undefined;
-        try {
-          const parsed = data?.detail ? JSON.parse(data.detail) : null;
-          detailMsg = parsed?.message || data?.error;
-        } catch {
-          detailMsg = data?.detail || data?.error;
-        }
-        toast({
-          title: "رفض من Zoho",
-          description: detailMsg || 'فشل في المزامنة. تحقق من صلاحية Access Token و Organization ID.',
-          variant: "destructive",
+      // 1) اجلب العناصر من Zoho مباشرة بدون Supabase
+      const perPage = 200;
+      let page = 1;
+      let allItems: any[] = [];
+
+      while (true) {
+        const url = `https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&page=${page}&per_page=${perPage}`;
+        const resp = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Zoho-oauthtoken ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
         });
+
+        if (!resp.ok) {
+          const errText = await resp.text();
+          console.error('Zoho API error:', resp.status, errText);
+          toast({
+            title: 'رفض من Zoho',
+            description: `Zoho API error: ${resp.status}`,
+            variant: 'destructive',
+          });
+          return;
+        }
+
+        const data = await resp.json();
+        const items = data.items || [];
+        allItems = allItems.concat(items);
+
+        const count = items.length;
+        if (count < perPage) break; // لا مزيد من الصفحات
+        page += 1;
+        // حد أمان لمنع الدورات الطويلة جداً
+        if (page > 30) break;
+      }
+
+      if (allItems.length === 0) {
+        toast({ title: 'لا توجد بيانات', description: 'لم يتم العثور على منتجات في Zoho.' });
         return;
       }
 
-      const productsFromZoho = data.products || [];
-      if (productsFromZoho.length === 0) {
-        toast({ 
-          title: "لا توجد بيانات", 
-          description: "لم يتم العثور على منتجات في Zoho." 
+      // 2) تجميع العناصر بحسب الموديل الأساسي
+      function extractProductInfo(item: any) {
+        let baseModel: string | null = null;
+        let color: string | null = null;
+        let size: string | null = null;
+
+        if (item.attribute_name1 && item.attribute_option_name1 && item.attribute_name1.toUpperCase() === 'COLOR') {
+          color = item.attribute_option_name1;
+        }
+        if (item.attribute_name2 && item.attribute_option_name2 && item.attribute_name2.toUpperCase() === 'SIZE') {
+          size = item.attribute_option_name2;
+        }
+
+        if (item.sku && item.sku.includes('-')) {
+          const parts = item.sku.split('-');
+          if (parts.length >= 2) {
+            baseModel = parts[0];
+            if (parts[1].includes('/')) {
+              const cs = parts[1].split('/');
+              if (cs.length === 2) {
+                if (!color) color = cs[0];
+                if (!size) size = cs[1];
+              }
+            }
+          }
+        }
+
+        if (!baseModel) {
+          baseModel = item.name?.split('-')[0] || item.name || `Item_${item.item_id}`;
+        }
+
+        return { baseModel, color, size };
+      }
+
+      const grouped: Record<string, any[]> = {};
+      for (const item of allItems) {
+        const { baseModel } = extractProductInfo(item);
+        if (!grouped[baseModel]) grouped[baseModel] = [];
+        grouped[baseModel].push(item);
+      }
+
+      // 3) بناء المنتجات بصيغة موحدة
+      const productsToSave: any[] = [];
+      for (const [baseModel, items] of Object.entries(grouped)) {
+        const mainItem: any = items[0];
+        const variants = items.map((it: any) => {
+          const { color, size } = extractProductInfo(it);
+          return {
+            variant_type: size && color ? 'size_color' : size ? 'size' : color ? 'color' : 'single',
+            variant_value: size && color ? `${size} - ${color}` : (size || color || 'default'),
+            sku: it.sku || null,
+            stock: typeof it.available_stock === 'number' ? it.available_stock : (it.stock_on_hand ?? 0),
+            price_modifier: 0,
+            zoho_item_id: it.item_id
+          };
         });
-        return;
+
+        const totalStock = variants.reduce((sum, v) => sum + (v.stock || 0), 0);
+        const avgPrice = items.reduce((s, it: any) => s + (Number(it.rate) || 0), 0) / items.length;
+
+        productsToSave.push({
+          id: `zoho_${baseModel}`,
+          title: baseModel,
+          description: mainItem.description || baseModel,
+          price_sar: Number(avgPrice.toFixed(2)) || 0,
+          stock: totalStock,
+          category: mainItem.category_name || 'General',
+          image_urls: [], // يمكن لاحقاً رفع صور إلى Firebase Storage إذا رغبت
+          is_active: mainItem.status === 'active',
+          external_id: baseModel,
+          variants,
+          attributes_schema: {
+            COLOR: Array.from(new Set(items.map((it: any) => extractProductInfo(it).color).filter(Boolean))),
+            SIZE: Array.from(new Set(items.map((it: any) => extractProductInfo(it).size).filter(Boolean)))
+          },
+          source: 'zoho_sync_client'
+        });
       }
 
-      // Save products to Firestore via user's Firebase system
+      // 4) حفظ في Firestore
       const db = await getFirebaseFirestore();
       let saved = 0;
-      
-      for (const product of productsFromZoho) {
+      for (const product of productsToSave) {
         try {
           const productRef = doc(db, 'users', user.uid, 'products', product.id);
           await setDoc(productRef, {
@@ -177,35 +259,23 @@ export const ZohoIntegration: React.FC = () => {
             updatedAt: new Date(),
             viewCount: 0,
             orderCount: 0,
-            // Normalize to isActive (no underscore) for consistency
             isActive: product.is_active !== false
           });
           saved++;
-        } catch (productError) {
-          console.error('Failed to save product:', product.title, productError);
+        } catch (e) {
+          console.error('Failed to save product:', product.title, e);
         }
       }
 
-      // Update integration last sync time
+      // 5) تحديث وقت آخر مزامنة في Firebase
       const integrationDoc = doc(db, 'users', user.uid, 'integrations', 'zoho');
-      await updateDoc(integrationDoc, { 
-        last_sync_at: new Date().toISOString() 
-      });
-      
-      await loadZohoIntegration(); // Refresh integration data
-      
-      toast({
-        title: "تمت المزامنة",
-        description: `تم حفظ ${saved} منتج في النظام من Zoho`,
-      });
-      
+      await updateDoc(integrationDoc, { last_sync_at: new Date().toISOString() });
+      await loadZohoIntegration();
+
+      toast({ title: 'تمت المزامنة', description: `تم حفظ ${saved} منتج في النظام من Zoho` });
     } catch (error) {
-      console.error('Error syncing products:', error);
-      toast({
-        title: "خطأ في المزامنة",
-        description: "فشل في مزامنة المنتجات من Zoho",
-        variant: "destructive",
-      });
+      console.error('Error syncing products (client):', error);
+      toast({ title: 'خطأ في المزامنة', description: 'فشل في مزامنة المنتجات من Zoho', variant: 'destructive' });
     } finally {
       setIsSyncing(false);
     }
