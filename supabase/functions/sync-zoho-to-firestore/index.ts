@@ -165,10 +165,10 @@ serve(async (req) => {
       if (!resp.ok) {
         const errText = await resp.text();
         console.error('Zoho API error:', resp.status, errText);
-        return new Response(JSON.stringify({ success: false, error: `Zoho API error: ${resp.status}`, detail: errText }), {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return new Response(
+          JSON.stringify({ success: false, error: `Zoho API error: ${resp.status}`, detail: errText }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
       const data = await resp.json();

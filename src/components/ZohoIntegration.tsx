@@ -133,8 +133,27 @@ export const ZohoIntegration: React.FC = () => {
         }
       });
 
-      if (error) throw error;
-      if (!data?.success) throw new Error(data?.error || 'Sync failed');
+      if (error) {
+        console.error(error);
+        const message = (error as any)?.message || 'فشل في الاتصال بوظيفة المزامنة';
+        toast({ title: "خطأ في المزامنة", description: message, variant: "destructive" });
+        return;
+      }
+      if (!data?.success) {
+        let detailMsg = '' as string | undefined;
+        try {
+          const parsed = data?.detail ? JSON.parse(data.detail) : null;
+          detailMsg = parsed?.message || data?.error;
+        } catch {
+          detailMsg = data?.detail || data?.error;
+        }
+        toast({
+          title: "رفض من Zoho",
+          description: detailMsg || 'فشل في المزامنة. تحقق من صلاحية Access Token و Organization ID.',
+          variant: "destructive",
+        });
+        return;
+      }
 
       const productsFromZoho = data.products || [];
       if (productsFromZoho.length === 0) {
