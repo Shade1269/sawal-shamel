@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -36,6 +37,29 @@ serve(async (req) => {
 
     let tokenStatus = 'active';
     let currentAccessToken = accessToken;
+    let lastSyncAt: string | null = null;
+
+    // Try to read the freshest access token from Supabase if available
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL');
+      const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+      if (supabaseUrl && serviceRoleKey) {
+        const supabase = createClient(supabaseUrl, serviceRoleKey);
+        const { data: dbIntegrations, error: dbErr } = await supabase
+          .from('zoho_integration')
+          .select('access_token, organization_id, last_sync_at, is_enabled, updated_at')
+          .eq('is_enabled', true)
+          .order('updated_at', { ascending: false })
+          .limit(1);
+        if (!dbErr && dbIntegrations && dbIntegrations.length > 0) {
+          const dbInt = dbIntegrations[0] as any;
+          if (dbInt?.access_token) currentAccessToken = dbInt.access_token;
+          if (dbInt?.last_sync_at) lastSyncAt = dbInt.last_sync_at;
+        }
+      }
+    } catch (dbError) {
+      console.warn('Could not fetch latest access token from DB:', dbError);
+    }
     
     // Test the access token by making a simple API call
     if (currentAccessToken) {
@@ -102,7 +126,7 @@ serve(async (req) => {
         organization_id: organizationId,
         is_enabled: true,
         token_status: tokenStatus,
-        last_sync_at: null // We can add this later if needed
+        last_sync_at: lastSyncAt
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
