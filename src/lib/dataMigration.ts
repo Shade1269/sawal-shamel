@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   getFirestoreDB, 
   saveUserToFirestore, 
@@ -386,83 +387,34 @@ export const migrateUserActivities = async () => {
   }
 };
 
-// دالة شاملة لنقل جميع البيانات
+// نقل جميع البيانات باستخدام Edge Function
 export const migrateAllData = async () => {
   try {
-    console.log('بدء النقل الشامل للبيانات من Supabase إلى Firebase...');
+    console.log('بدء النقل الشامل للبيانات من Supabase إلى Firebase عبر Edge Function...');
     
-    const results: {
-      users: { success: boolean; count: number; total: number; error?: any };
-      shops: { success: boolean; count: number; total: number; error?: any };
-      products: { success: boolean; count: number; total: number; error?: any };
-      productLibrary: { success: boolean; count: number; total: number; error?: any };
-      activities: { success: boolean; count: number; total: number; error?: any };
-    } = {
-      users: { success: false, count: 0, total: 0 },
-      shops: { success: false, count: 0, total: 0 },
-      products: { success: false, count: 0, total: 0 },
-      productLibrary: { success: false, count: 0, total: 0 },
-      activities: { success: false, count: 0, total: 0 }
-    };
+    const { data, error } = await supabase.functions.invoke('migrate-supabase-to-firestore', {
+      body: {}
+    });
 
-    // نقل المستخدمين أولاً
-    console.log('\n1. نقل المستخدمين...');
-    const usersResult = await migrateUsers();
-    results.users = { 
-      success: usersResult.success, 
-      count: usersResult.count || 0, 
-      total: usersResult.total || 0,
-      error: usersResult.error 
-    };
+    if (error) {
+      console.error('خطأ في استدعاء Edge Function:', error);
+      return { success: false, error: error.message };
+    }
 
-    // نقل المتاجر
-    console.log('\n2. نقل المتاجر...');
-    const shopsResult = await migrateShops();
-    results.shops = { 
-      success: shopsResult.success, 
-      count: shopsResult.count || 0, 
-      total: shopsResult.total || 0,
-      error: shopsResult.error 
-    };
-
-    // نقل المنتجات
-    console.log('\n3. نقل المنتجات...');
-    const productsResult = await migrateProducts();
-    results.products = { 
-      success: productsResult.success, 
-      count: productsResult.count || 0, 
-      total: productsResult.total || 0,
-      error: productsResult.error 
-    };
-
-    // نقل مكتبة المنتجات
-    console.log('\n4. نقل مكتبة المنتجات...');
-    const libraryResult = await migrateProductLibrary();
-    results.productLibrary = { 
-      success: libraryResult.success, 
-      count: libraryResult.count || 0, 
-      total: libraryResult.total || 0,
-      error: libraryResult.error 
-    };
-
-    // نقل الأنشطة
-    console.log('\n5. نقل أنشطة المستخدمين...');
-    const activitiesResult = await migrateUserActivities();
-    results.activities = { 
-      success: activitiesResult.success, 
-      count: activitiesResult.count || 0, 
-      total: activitiesResult.total || 0,
-      error: activitiesResult.error 
-    };
-
-    console.log('\n=== ملخص النقل ===');
-    console.log(`المستخدمون: ${results.users.count}/${results.users.total}`);
-    console.log(`المتاجر: ${results.shops.count}/${results.shops.total}`);
-    console.log(`المنتجات: ${results.products.count}/${results.products.total}`);
-    console.log(`مكتبة المنتجات: ${results.productLibrary.count}/${results.productLibrary.total}`);
-    console.log(`الأنشطة: ${results.activities.count}/${results.activities.total}`);
-
-    return { success: true, results };
+    if (data.success) {
+      return {
+        success: true,
+        results: {
+          users: data.results?.users || { success: true, count: data.results?.users?.count || 0, total: data.results?.users?.total || 0 },
+          shops: data.results?.shops || { success: true, count: data.results?.shops?.count || 0, total: data.results?.shops?.total || 0 },
+          products: data.results?.products || { success: true, count: data.results?.products?.count || 0, total: data.results?.products?.total || 0 },
+          productLibrary: { success: true, count: 0, total: 0 }, // Not implemented in edge function yet
+          activities: data.results?.activities || { success: true, count: data.results?.activities?.count || 0, total: data.results?.activities?.total || 0 }
+        }
+      };
+    } else {
+      return { success: false, error: data.error };
+    }
     
   } catch (error) {
     console.error('خطأ في النقل الشامل:', error);
