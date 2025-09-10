@@ -7,36 +7,23 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.log('🔍 Starting Zoho status check...');
+    console.log('🔍 Starting Zoho status check (FIXED VERSION)...');
     
-    // Get Zoho configuration from secrets
     const organizationId = Deno.env.get('ZOHO_ORGANIZATION_ID');
-    const accessToken = Deno.env.get('ZOHO_ACCESS_TOKEN');
-    const clientId = Deno.env.get('ZOHO_CLIENT_ID');
-    const clientSecret = Deno.env.get('ZOHO_CLIENT_SECRET');
-    const refreshToken = Deno.env.get('ZOHO_REFRESH_TOKEN');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
-    console.log('📋 Configuration check:', {
-      hasOrganizationId: !!organizationId,
-      hasAccessToken: !!accessToken,
-      hasClientId: !!clientId,
-      hasClientSecret: !!clientSecret,
-      hasRefreshToken: !!refreshToken,
-      organizationId: organizationId
-    });
-
-    if (!organizationId || !clientId || !clientSecret || !refreshToken) {
-      console.log('❌ Missing Zoho configuration in secrets');
+    if (!organizationId || !supabaseUrl || !serviceRoleKey) {
+      console.log('❌ Missing required configuration');
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'Missing Zoho configuration in secrets',
+          error: 'Missing configuration',
           is_enabled: false,
           token_status: 'error'
         }),
@@ -47,141 +34,79 @@ serve(async (req) => {
       );
     }
 
-    let tokenStatus = 'active';
-    let currentAccessToken = accessToken;
-    let lastSyncAt: string | null = null;
+    // Read access token from database
+    console.log('📊 Reading token from database...');
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
+    const { data: dbIntegrations, error: dbErr } = await supabase
+      .from('zoho_integration')
+      .select('access_token, last_sync_at, updated_at')
+      .eq('is_enabled', true)
+      .order('updated_at', { ascending: false })
+      .limit(1);
 
-    // Try to read the freshest access token from Supabase if available
-    try {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL');
-      const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-      console.log('🔗 Attempting to read from database...');
-      
-      if (supabaseUrl && serviceRoleKey) {
-        const supabase = createClient(supabaseUrl, serviceRoleKey);
-        const { data: dbIntegrations, error: dbErr } = await supabase
-          .from('zoho_integration')
-          .select('access_token, organization_id, last_sync_at, is_enabled, updated_at')
-          .eq('is_enabled', true)
-          .order('updated_at', { ascending: false })
-          .limit(1);
-        
-        console.log('📊 Database query result:', { 
-          foundRecords: dbIntegrations?.length || 0, 
-          hasError: !!dbErr,
-          error: dbErr?.message 
-        });
-        
-        if (!dbErr && dbIntegrations && dbIntegrations.length > 0) {
-          const dbInt = dbIntegrations[0] as any;
-          console.log('📝 Found database integration:', {
-            has_access_token: !!dbInt?.access_token,
-            token_preview: dbInt?.access_token?.substring(0, 20) + '...',
-            organization_id: dbInt?.organization_id,
-            updated_at: dbInt?.updated_at
-          });
-          
-          if (dbInt?.access_token) {
-            currentAccessToken = dbInt.access_token;
-            console.log('✅ Using access token from database');
-          }
-          if (dbInt?.last_sync_at) lastSyncAt = dbInt.last_sync_at;
-        } else {
-          console.log('❌ No database integration found or error occurred');
-        }
-      } else {
-        console.log('❌ Missing Supabase credentials');
-      }
-    } catch (dbError) {
-      console.warn('⚠️ Could not fetch latest access token from DB:', dbError);
+    if (dbErr || !dbIntegrations || dbIntegrations.length === 0) {
+      console.log('❌ No integration found in database');
+      return new Response(
+        JSON.stringify({ 
+          success: true,
+          organization_id: organizationId,
+          is_enabled: false,
+          token_status: 'error',
+          last_sync_at: null
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
+
+    const integration = dbIntegrations[0];
+    const accessToken = integration.access_token;
     
-    console.log('🎯 Final token status:', {
-      hasToken: !!currentAccessToken,
-      tokenPreview: currentAccessToken?.substring(0, 20) + '...'
+    console.log('🎯 Found token in database:', {
+      hasToken: !!accessToken,
+      tokenPreview: accessToken?.substring(0, 20) + '...',
+      lastUpdate: integration.updated_at
     });
-    
-    // Test the access token by making a simple API call
-    if (currentAccessToken) {
-      try {
-        // Use the correct Zoho API endpoint with organization_id as query parameter
-        const testUrl = `https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&limit=1`;
-        console.log(`🧪 Testing token with URL: ${testUrl}`);
-        
-        const testResponse = await fetch(testUrl, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Zoho-oauthtoken ${currentAccessToken}`,
-            'Content-Type': 'application/json',
-          },
-        });
 
-        console.log(`📡 Test response status: ${testResponse.status}`);
-        
-        if (testResponse.ok) {
-          tokenStatus = 'active';
-          console.log('✅ Token is active and working!');
-        } else {
-          const responseText = await testResponse.text();
-          console.log(`❌ Token test failed with status ${testResponse.status}`);
-          console.log(`📄 Response: ${responseText.substring(0, 200)}...`);
-          console.log('🔄 Attempting to refresh token...');
-          
-          // Try to refresh the token
-          const refreshResponse = await fetch('https://accounts.zoho.com/oauth/v2/token', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-              refresh_token: refreshToken,
-              client_id: clientId,
-              client_secret: clientSecret,
-              grant_type: 'refresh_token',
-            }),
-          });
-
-          console.log(`🔄 Refresh token response status: ${refreshResponse.status}`);
-          
-          if (refreshResponse.ok) {
-            const tokenData = await refreshResponse.json();
-            currentAccessToken = tokenData.access_token;
-            console.log('✅ Successfully refreshed access token');
-            
-            // Test the new token with correct endpoint
-            const reTestResponse = await fetch(testUrl, {
-              method: 'GET',
-              headers: {
-                'Authorization': `Zoho-oauthtoken ${currentAccessToken}`,
-                'Content-Type': 'application/json',
-              },
-            });
-            
-            console.log(`🔄 Re-test response status: ${reTestResponse.status}`);
-            
-            if (reTestResponse.ok) {
-              tokenStatus = 'active';
-              console.log('✅ Token is now active after refresh!');
-            } else {
-              tokenStatus = 'error';
-              console.log('❌ Token still not working after refresh');
-            }
-          } else {
-            const errorText = await refreshResponse.text();
-            console.error('❌ Failed to refresh token:', errorText);
-            tokenStatus = 'expired';
-          }
-        }
-      } catch (error) {
-        console.error('❌ Error testing access token:', error);
-        tokenStatus = 'error';
-      }
-    } else {
-      tokenStatus = 'expired';
-      console.log('❌ No access token available');
+    if (!accessToken) {
+      console.log('❌ No access token in database');
+      return new Response(
+        JSON.stringify({ 
+          success: true,
+          organization_id: organizationId,
+          is_enabled: true,
+          token_status: 'expired',
+          last_sync_at: integration.last_sync_at
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    console.log(`🏁 Final result: token_status = ${tokenStatus}`);
+    // Test the token
+    console.log('🧪 Testing token with Zoho API...');
+    const testUrl = `https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&limit=1`;
+    
+    const testResponse = await fetch(testUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Zoho-oauthtoken ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log(`📡 Zoho API response: ${testResponse.status}`);
+
+    let tokenStatus = 'error';
+    
+    if (testResponse.ok) {
+      tokenStatus = 'active';
+      console.log('✅ Token is ACTIVE and working!');
+    } else {
+      const errorText = await testResponse.text();
+      console.log('❌ Token test failed:', errorText);
+      tokenStatus = 'error';
+    }
+
+    console.log(`🏁 Final status: ${tokenStatus}`);
 
     return new Response(
       JSON.stringify({ 
@@ -189,7 +114,7 @@ serve(async (req) => {
         organization_id: organizationId,
         is_enabled: true,
         token_status: tokenStatus,
-        last_sync_at: lastSyncAt
+        last_sync_at: integration.last_sync_at
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
