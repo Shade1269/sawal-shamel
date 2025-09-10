@@ -127,34 +127,52 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
     setImagePreviewUrls(prev => prev.filter((_, i) => i !== index));
   };
 
-  const uploadProductImages = async (productId: string): Promise<string[]> => {
-    if (productImages.length === 0) return [];
+  // Upload images to Firebase Storage
+  const uploadImagesToFirebase = async (productId: string, images: File[]): Promise<string[]> => {
+    if (images.length === 0) return [];
 
     const uploadedUrls: string[] = [];
+    
+    try {
+      // Import Firebase Storage functions
+      const { getStorage, ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+      const { getFirebaseApp } = await import('@/lib/firebase');
+      const app = await getFirebaseApp();
+      
+      const storage = getStorage(app);
 
-    for (let i = 0; i < productImages.length; i++) {
-      const file = productImages[i];
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${productId}_${i}.${fileExt}`;
-      const filePath = `${fileName}`;
+      for (let i = 0; i < images.length; i++) {
+        const file = images[i];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `products/${productId}/${Date.now()}_${i}.${fileExt}`;
+        const storageRef = ref(storage, fileName);
 
-      const { error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(filePath, file);
-
-      if (uploadError) {
-        console.error('Error uploading image:', uploadError);
-        continue;
+        try {
+          // Upload file to Firebase Storage
+          const snapshot = await uploadBytes(storageRef, file);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+          uploadedUrls.push(downloadURL);
+        } catch (error) {
+          console.error(`Error uploading image ${i}:`, error);
+        }
       }
-
-      const { data } = supabase.storage
-        .from('product-images')
-        .getPublicUrl(filePath);
-
-      uploadedUrls.push(data.publicUrl);
+    } catch (error) {
+      console.error('Error with Firebase Storage:', error);
     }
 
     return uploadedUrls;
+  };
+
+  // Update product with new data
+  const updateProduct = async (productId: string, updates: any) => {
+    try {
+      const { updateProductInFirestore } = useFirebaseUserData();
+      await updateProductInFirestore(productId, updates);
+      
+    } catch (error) {
+      console.error('Error updating product:', error);
+      throw error;
+    }
   };
 
   const addVariant = () => {
@@ -271,6 +289,9 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
     }
 
     try {
+      setLoading(true);
+      
+      // Create base product data
       const productData = {
         title: newProduct.title.trim(),
         description: newProduct.description.trim() || null,
@@ -281,9 +302,35 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
         is_active: true
       };
 
-      await addProduct(productData);
+      // Add product first to get ID
+      const productId = await addProduct(productData);
+      
+      // Upload images to Firebase Storage if any
+      let imageUrls: string[] = [];
+      if (productImages.length > 0) {
+        imageUrls = await uploadImagesToFirebase(productId, productImages);
+      }
+      
+      // Process variants with their images
+      const processedVariants = productVariants
+        .filter(v => v.size || v.color) // Only include variants with at least size or color
+        .map(variant => ({
+          variant_type: variant.size && variant.color ? 'size_color' : variant.size ? 'size' : 'color',
+          variant_value: variant.size && variant.color ? `${variant.size} - ${variant.color}` : variant.size || variant.color,
+          stock: variant.stock || 0,
+          size: variant.size || null,
+          color: variant.color || null
+        }));
 
-      toast({ title: "تم الإضافة", description: "تم إضافة المنتج بنجاح" });
+      // Update product with images and variants
+      if (imageUrls.length > 0 || processedVariants.length > 0) {
+        await updateProduct(productId, {
+          image_urls: imageUrls,
+          variants: processedVariants
+        });
+      }
+
+      toast({ title: "تم الإضافة", description: "تم إضافة المنتج بنجاح مع الصور" });
       
       // Clean up
       setNewProduct({ title: '', description: '', price_sar: '', category: '', stock: '', commission_rate: '' });
@@ -295,6 +342,8 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
     } catch (error) {
       console.error('Error adding product:', error);
       toast({ title: "خطأ", description: "فشل في إضافة المنتج", variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
   };
 

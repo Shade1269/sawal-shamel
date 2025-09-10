@@ -39,6 +39,30 @@ export const useFirebaseUserData = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Update product in Firebase
+  const updateProductInFirestore = async (productId: string, updates: any) => {
+    try {
+      if (!user) throw new Error('User not authenticated');
+      
+      // Import Firebase functions
+      const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
+      const { getFirebaseApp } = await import('@/lib/firebase');
+      const app = await getFirebaseApp();
+      
+      const db = getFirestore(app);
+      const productRef = doc(db, 'products', productId);
+      
+      await updateDoc(productRef, updates);
+      
+      console.log('Product updated successfully in Firebase');
+      return { success: true };
+      
+    } catch (error) {
+      console.error('Error updating product in Firebase:', error);
+      throw error;
+    }
+  };
+
   // حفظ نشاط المستخدم
   const logActivity = async (
     activityType: string, 
@@ -316,6 +340,7 @@ export const useFirebaseUserData = () => {
     // وظائف التحديث
     refreshShop: fetchUserShop,
     refreshActivities: fetchUserActivities,
-    refreshStatistics: fetchUserStatistics
+    refreshStatistics: fetchUserStatistics,
+    updateProductInFirestore
   };
 };

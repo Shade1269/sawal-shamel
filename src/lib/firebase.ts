@@ -42,6 +42,12 @@ export const getFirebaseFirestore = async () => {
   return db;
 };
 
+// Get Firebase app instance
+export const getFirebaseApp = async () => {
+  const { app } = await initializeFirebase();
+  return app;
+};
+
 // Configure reCAPTCHA for SMS verification
 export const setupRecaptcha = async (containerId: string) => {
   const authInstance = await getFirebaseAuth();

@@ -163,8 +163,13 @@ const Inventory = () => {
       const currentImages = currentProduct.image_urls || [];
       const updatedImages = [...currentImages, imageUrl];
 
-      // Update product in Firebase (this would need to be implemented properly)
-      // For now, just update local state
+      // Update product in Firebase
+      const { updateProductInFirestore } = useFirebaseUserData();
+      await updateProductInFirestore(productId, {
+        image_urls: updatedImages
+      });
+
+      // Update local state
       setProducts(prev => prev.map(p => 
         p.id === productId 
           ? { ...p, image_urls: updatedImages }
@@ -173,7 +178,7 @@ const Inventory = () => {
 
       toast({
         title: "تم بنجاح",
-        description: "تم إضافة الصورة للمنتج مؤقتاً (تحتاج تطبيق حفظ Firebase)"
+        description: "تم إضافة الصورة للمنتج وحفظها في Firebase"
       });
 
     } catch (error) {
