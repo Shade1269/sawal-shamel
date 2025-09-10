@@ -69,6 +69,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const loading = supabaseLoading || firebaseLoading;
   const user = firebaseUser || supabaseUser; // Firebase user takes priority
 
+  console.log('ProtectedRoute - Firebase user:', firebaseUser?.uid);
+  console.log('ProtectedRoute - Supabase user:', supabaseUser?.id);
+  console.log('ProtectedRoute - Combined user:', !!user);
+  console.log('ProtectedRoute - Loading:', loading);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -81,9 +86,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user) {
+    console.log('ProtectedRoute - No user, redirecting to auth');
     return <AuthPage />;
   }
 
+  console.log('ProtectedRoute - User authenticated, rendering children');
   return <>{children}</>;
 };
 
