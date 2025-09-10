@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Package, Search, Filter, ArrowLeft, X, Upload, RefreshCw, ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
 import { toast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -42,7 +42,7 @@ interface ProductVariant {
 
 const Inventory = () => {
   const navigate = useNavigate();
-  const { user } = useSupabaseAuth();
+  const { user } = useFirebaseAuth();
   const { getShopProducts, addProduct, updateProductInFirestore } = useFirebaseUserData();
 
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
@@ -59,7 +59,7 @@ const Inventory = () => {
   useEffect(() => {
     if (user) {
       console.log('Current user:', {
-        id: user.id,
+        id: user.uid,
         email: user.email
       });
       
@@ -69,7 +69,7 @@ const Inventory = () => {
         (window as any).makeUserAdmin = async () => {
           try {
             const { updateUserInFirestore } = await import('@/lib/firestore');
-            const result = await updateUserInFirestore(user.id, {
+            const result = await updateUserInFirestore(user.uid, {
               role: 'admin',
               updatedAt: new Date()
             });
