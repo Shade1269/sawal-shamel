@@ -254,7 +254,9 @@ export const ZohoIntegration: React.FC = () => {
             
             <Button 
               onClick={() => {
-                console.log('Test button clicked, user:', user);
+                alert('تم الضغط على زر اختبار الاتصال!');
+                console.log('Test connection clicked!');
+                setIsLoading(true);
                 loadZohoIntegration();
               }} 
               disabled={isLoading}
@@ -263,6 +265,17 @@ export const ZohoIntegration: React.FC = () => {
             >
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Settings className="h-4 w-4 mr-2" />}
               اختبار الاتصال
+            </Button>
+            
+            <Button 
+              onClick={() => {
+                window.location.reload();
+              }} 
+              variant="ghost"
+              className="flex-1 sm:flex-none"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              إعادة تحميل الصفحة
             </Button>
           </div>
         </CardContent>
