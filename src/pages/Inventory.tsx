@@ -8,8 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Package, Search, Filter, ArrowLeft, X, Upload, RefreshCw, ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
-import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
+import { useUserDataContext } from '@/contexts/UserDataContext';
 import { toast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ProductImageCarousel } from '@/components/ProductImageCarousel';
@@ -42,8 +41,7 @@ interface ProductVariant {
 
 const Inventory = () => {
   const navigate = useNavigate();
-  const { user } = useFirebaseAuth();
-  const { getShopProducts, addProduct, updateProductInFirestore } = useFirebaseUserData();
+  const { user, getShopProducts, addProduct, updateProduct } = useUserDataContext();
 
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,8 +56,9 @@ const Inventory = () => {
   // Debug: اطبع معلومات المستخدم الحالي
   useEffect(() => {
     if (user) {
+      const userId = (user as any).uid || (user as any).id;
       console.log('Current user:', {
-        id: user.uid,
+        id: userId,
         email: user.email
       });
       
@@ -69,7 +68,7 @@ const Inventory = () => {
         (window as any).makeUserAdmin = async () => {
           try {
             const { updateUserInFirestore } = await import('@/lib/firestore');
-            const result = await updateUserInFirestore(user.uid, {
+            const result = await updateUserInFirestore(userId, {
               role: 'admin',
               updatedAt: new Date()
             });
@@ -161,8 +160,8 @@ const Inventory = () => {
       const currentImages = currentProduct.image_urls || [];
       const updatedImages = [...currentImages, imageUrl];
 
-      // Update product in Firebase
-      await updateProductInFirestore(productId, {
+      // Update product
+      await updateProduct(productId, {
         image_urls: updatedImages
       });
 

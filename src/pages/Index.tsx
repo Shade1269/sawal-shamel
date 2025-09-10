@@ -6,17 +6,19 @@ import { useNavigate } from 'react-router-dom';
 
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useUserDataContext } from '@/contexts/UserDataContext';
 
 const Index = () => {
   const navigate = useNavigate();
   const { user: supabaseUser, signOut: supabaseSignOut } = useSupabaseAuth();
-  const { user: firebaseUser, userProfile, signOut: firebaseSignOut } = useFirebaseAuth();
+  const { user: firebaseUser, signOut: firebaseSignOut } = useFirebaseAuth();
+  const { user, userProfile } = useUserDataContext();
 
   // Firebase user takes priority
-  const user = firebaseUser || supabaseUser;
+  const currentUser = user || firebaseUser || supabaseUser;
   
   const handleChatClick = () => {
-    if (!user) {
+    if (!currentUser) {
       navigate('/auth');
       return;
     }
@@ -24,7 +26,7 @@ const Index = () => {
   };
 
   const handleInventoryClick = () => {
-    if (!user) {
+    if (!currentUser) {
       navigate('/auth');
       return;
     }
@@ -32,7 +34,7 @@ const Index = () => {
   };
 
   const handleStoreManagementClick = () => {
-    if (!user) {
+    if (!currentUser) {
       navigate('/auth');
       return;
     }
@@ -50,8 +52,13 @@ const Index = () => {
   };
 
   const getUserDisplayName = () => {
+    // استخدام البيانات الموحدة أولاً
+    if (userProfile) {
+      return userProfile.full_name || userProfile.username || userProfile.phone || userProfile.email || 'المستخدم';
+    }
+    // الرجوع للبيانات الأصلية
     if (firebaseUser) {
-      return userProfile?.username || userProfile?.displayName || userProfile?.phone || firebaseUser.phoneNumber || 'مستخدم Firebase';
+      return firebaseUser.displayName || firebaseUser.phoneNumber || 'مستخدم Firebase';
     }
     if (supabaseUser) {
       return supabaseUser.user_metadata?.username || supabaseUser.user_metadata?.full_name || supabaseUser.email || 'مستخدم';
@@ -62,7 +69,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10">
       {/* Header with logout button */}
-      {user && (
+      {currentUser && (
         <div className="border-b bg-background/80 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
@@ -161,7 +168,7 @@ const Index = () => {
           </div>
 
           {/* Store Management Section */}
-          {user && (
+          {currentUser && (
             <div className="mb-12">
               <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-accent/50">
                 <CardHeader className="text-center">
@@ -189,7 +196,7 @@ const Index = () => {
           )}
 
 
-          {!user && (
+          {!currentUser && (
             <div className="text-center">
               <Card className="max-w-md mx-auto">
                 <CardHeader>

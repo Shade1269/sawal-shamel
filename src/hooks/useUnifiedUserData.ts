@@ -1,0 +1,421 @@
+import { useState, useEffect } from 'react';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { getUserFromFirestore, saveUserToFirestore } from '@/lib/firestore';
+
+export interface UserShop {
+  id: string;
+  shop_id: string;
+  display_name: string;
+  slug: string;
+  created_at: string;
+  total_products: number;
+  total_orders: number;
+  settings?: any;
+}
+
+export interface UserActivity {
+  id: string;
+  activity_type: string;
+  description: string;
+  metadata: any;
+  created_at: string;
+  shop_id?: string;
+}
+
+export const useUnifiedUserData = () => {
+  const { user: supabaseUser } = useSupabaseAuth();
+  const { user: firebaseUser, userProfile: firebaseProfile } = useFirebaseAuth();
+  const { toast } = useToast();
+  
+  const [userShop, setUserShop] = useState<UserShop | null>(null);
+  const [userActivities, setUserActivities] = useState<UserActivity[]>([]);
+  const [userStatistics, setUserStatistics] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [unifiedProfile, setUnifiedProfile] = useState<any>(null);
+
+  // دمج البيانات من كلا المصدرين
+  const unifyUserData = async () => {
+    let profile = null;
+    
+    // إذا كان المستخدم مسجل دخول عبر Supabase
+    if (supabaseUser) {
+      const { data: supabaseProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('auth_user_id', supabaseUser.id)
+        .maybeSingle();
+      
+      if (supabaseProfile) {
+        profile = supabaseProfile;
+        
+        // إذا كان هناك مستخدم Firebase أيضاً، نحفظ بياناته في Firebase
+        if (firebaseUser && !firebaseProfile) {
+          await saveUserToFirestore(firebaseUser, {
+            email: supabaseProfile.email,
+            fullName: supabaseProfile.full_name,
+            role: supabaseProfile.role
+          });
+        }
+      } else {
+        // إنشاء profile جديد في Supabase إذا لم يكن موجود
+        const { data: newProfile, error } = await supabase
+          .from('profiles')
+          .insert({
+            auth_user_id: supabaseUser.id,
+            email: supabaseUser.email,
+            full_name: supabaseUser.user_metadata?.full_name || supabaseUser.email,
+            role: 'affiliate'
+          })
+          .select()
+          .single();
+          
+        if (!error) {
+          profile = newProfile;
+        }
+      }
+    }
+    
+    // إذا كان المستخدم مسجل دخول عبر Firebase فقط
+    else if (firebaseUser) {
+      // البحث عن profile في Supabase بالهاتف
+      if (firebaseProfile?.phone) {
+        const { data: phoneProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('phone', firebaseProfile.phone)
+          .maybeSingle();
+          
+        if (phoneProfile) {
+          profile = phoneProfile;
+        } else {
+          // إنشاء profile جديد في Supabase مربوط بالهاتف
+          const { data: newProfile, error } = await supabase
+            .from('profiles')
+            .insert({
+              phone: firebaseProfile.phone,
+              full_name: firebaseProfile.displayName || firebaseProfile.phone,
+              role: 'affiliate'
+            })
+            .select()
+            .single();
+            
+          if (!error) {
+            profile = newProfile;
+          }
+        }
+      }
+    }
+    
+    setUnifiedProfile(profile);
+    return profile;
+  };
+
+  // باقي الدوال كما هي لكن تستخدم unifiedProfile
+  const logActivity = async (activityType: string, description?: string, shopId?: string, metadata?: any): Promise<void> => {
+    const profile = unifiedProfile || await unifyUserData();
+    if (!profile) return;
+
+    try {
+      const { error } = await supabase
+        .from('user_activities')
+        .insert({
+          user_id: profile.id,
+          shop_id: shopId || userShop?.shop_id,
+          activity_type: activityType,
+          description: description || '',
+          metadata: metadata || {}
+        });
+
+      if (error) {
+        console.error('Error logging activity:', error);
+      } else {
+        fetchUserActivities();
+      }
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
+  };
+
+  const createShop = async (shopName: string, shopSlug?: string): Promise<any> => {
+    const profile = unifiedProfile || await unifyUserData();
+    if (!profile) {
+      throw new Error('لم يتم العثور على ملف المستخدم');
+    }
+
+    try {
+      const { data, error } = await supabase.rpc('create_user_shop', {
+        p_user_id: profile.id,
+        p_shop_name: shopName,
+        p_shop_slug: shopSlug
+      });
+
+      if (error) {
+        console.error('Error creating shop:', error);
+        throw error;
+      }
+
+      toast({
+        title: "تم إنشاء المتجر بنجاح",
+        description: `متجر "${shopName}" تم إنشاؤه بنجاح`,
+      });
+
+      fetchUserShop();
+      fetchUserStatistics();
+      logActivity('shop_created', `تم إنشاء متجر: ${shopName}`);
+
+      return { success: true, shopId: data };
+    } catch (error: any) {
+      console.error('Error creating shop:', error);
+      throw error;
+    }
+  };
+
+  const fetchUserShop = async (): Promise<void> => {
+    const profile = unifiedProfile || await unifyUserData();
+    if (!profile) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('shops')
+        .select('*')
+        .eq('owner_id', profile.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching user shop:', error);
+        setError('فشل في جلب بيانات المتجر');
+        return;
+      }
+
+      if (data) {
+        setUserShop({
+          id: data.id,
+          shop_id: data.id,
+          display_name: data.display_name,
+          slug: data.slug,
+          created_at: data.created_at,
+          total_products: data.total_products || 0,
+          total_orders: data.total_orders || 0,
+          settings: data.settings
+        });
+      } else {
+        setUserShop(null);
+      }
+    } catch (error) {
+      console.error('Error fetching user shop:', error);
+      setError('فشل في جلب بيانات المتجر');
+    }
+  };
+
+  const fetchUserActivities = async (): Promise<void> => {
+    const profile = unifiedProfile || await unifyUserData();
+    if (!profile) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('user_activities')
+        .select('*')
+        .eq('user_id', profile.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error('Error fetching user activities:', error);
+        return;
+      }
+
+      setUserActivities(data || []);
+    } catch (error) {
+      console.error('Error fetching user activities:', error);
+    }
+  };
+
+  const fetchUserStatistics = async (): Promise<void> => {
+    const profile = unifiedProfile || await unifyUserData();
+    if (!profile) return;
+
+    try {
+      const { data: shopData } = await supabase
+        .from('shops')
+        .select('total_products, total_orders')
+        .eq('owner_id', profile.id)
+        .single();
+
+      setUserStatistics({
+        totalProducts: shopData?.total_products || 0,
+        totalOrders: shopData?.total_orders || 0,
+        totalRevenue: 0
+      });
+    } catch (error) {
+      console.error('Error fetching user statistics:', error);
+    }
+  };
+
+  const addProduct = async (productData: any): Promise<string | undefined> => {
+    const profile = unifiedProfile || await unifyUserData();
+    if (!profile || !userShop) {
+      throw new Error('المستخدم أو المتجر غير متوفر');
+    }
+
+    try {
+      let { data: merchant } = await supabase
+        .from('merchants')
+        .select('id')
+        .eq('profile_id', profile.id)
+        .single();
+
+      if (!merchant) {
+        const { data: newMerchant, error: merchantError } = await supabase
+          .from('merchants')
+          .insert({
+            profile_id: profile.id,
+            business_name: userShop.display_name
+          })
+          .select('id')
+          .single();
+
+        if (merchantError) throw merchantError;
+        merchant = newMerchant;
+      }
+
+      const { data, error } = await supabase
+        .from('products')
+        .insert({
+          ...productData,
+          merchant_id: merchant.id,
+          shop_id: userShop.shop_id
+        })
+        .select('id')
+        .single();
+
+      if (error) throw error;
+
+      await supabase
+        .from('shops')
+        .update({ 
+          total_products: (userShop.total_products || 0) + 1,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userShop.shop_id);
+
+      fetchUserShop();
+      fetchUserStatistics();
+      logActivity('product_added', `تم إضافة منتج: ${productData.title}`);
+
+      return data.id;
+    } catch (error) {
+      console.error('Error adding product:', error);
+      throw error;
+    }
+  };
+
+  const getShopProducts = async (): Promise<any[]> => {
+    if (!userShop) return [];
+
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('shop_id', userShop.shop_id)
+        .eq('is_active', true);
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching shop products:', error);
+      return [];
+    }
+  };
+
+  const saveShopSettings = async (settings: any): Promise<void> => {
+    if (!userShop) {
+      throw new Error('المتجر غير متوفر');
+    }
+
+    try {
+      const { error } = await supabase
+        .from('shops')
+        .update({ 
+          settings,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userShop.shop_id);
+
+      if (error) throw error;
+
+      fetchUserShop();
+      logActivity('settings_updated', 'تم تحديث إعدادات المتجر');
+    } catch (error) {
+      console.error('Error saving shop settings:', error);
+      throw error;
+    }
+  };
+
+  const updateProduct = async (productId: string, updateData: any): Promise<void> => {
+    if (!userShop) {
+      throw new Error('المتجر غير متوفر');
+    }
+
+    try {
+      const { error } = await supabase
+        .from('products')
+        .update({
+          ...updateData,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', productId);
+
+      if (error) throw error;
+
+      fetchUserShop();
+      logActivity('product_updated', `تم تحديث منتج`);
+    } catch (error) {
+      console.error('Error updating product:', error);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    if (supabaseUser || firebaseUser) {
+      setLoading(true);
+      unifyUserData().then(() => {
+        Promise.all([
+          fetchUserShop(),
+          fetchUserActivities(),
+          fetchUserStatistics()
+        ]).finally(() => {
+          setLoading(false);
+        });
+      });
+    } else {
+      setUserShop(null);
+      setUserActivities([]);
+      setUserStatistics(null);
+      setUnifiedProfile(null);
+      setLoading(false);
+    }
+  }, [supabaseUser, firebaseUser, firebaseProfile]);
+
+  return {
+    user: supabaseUser || firebaseUser,
+    userProfile: unifiedProfile,
+    userShop,
+    userActivities,
+    userStatistics,
+    loading,
+    error,
+    logActivity,
+    createShop,
+    fetchUserShop,
+    fetchUserActivities,
+    fetchUserStatistics,
+    addProduct,
+    updateProduct,
+    getShopProducts,
+    saveShopSettings
+  };
+};

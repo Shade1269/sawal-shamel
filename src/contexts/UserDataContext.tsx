@@ -1,7 +1,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { useSupabaseUserData } from '@/hooks/useSupabaseUserData';
+import { useUnifiedUserData } from '@/hooks/useUnifiedUserData';
 
-const UserDataContext = createContext<ReturnType<typeof useSupabaseUserData> | null>(null);
+const UserDataContext = createContext<ReturnType<typeof useUnifiedUserData> | null>(null);
 
 export const useUserDataContext = () => {
   const context = useContext(UserDataContext);
@@ -16,7 +16,7 @@ interface UserDataProviderProps {
 }
 
 export const UserDataProvider: React.FC<UserDataProviderProps> = ({ children }) => {
-  const userData = useSupabaseUserData();
+  const userData = useUnifiedUserData();
   
   return (
     <UserDataContext.Provider value={userData}>
