@@ -168,6 +168,10 @@ Deno.serve(async (req) => {
     const requestBody = await req.json();
     const { userId, shopId, accessToken: providedAccessToken, organizationId: providedOrgId } = requestBody;
 
+    // Get credentials from secrets
+    const secretAccessToken = Deno.env.get('ZOHO_ACCESS_TOKEN');
+    const secretOrganizationId = Deno.env.get('ZOHO_ORGANIZATION_ID');
+
     let userProfile;
     let integration;
 
@@ -195,8 +199,8 @@ Deno.serve(async (req) => {
 
       userProfile = { id: shop.owner_id };
       integration = {
-        access_token: providedAccessToken,
-        organization_id: providedOrgId,
+        access_token: providedAccessToken || secretAccessToken,
+        organization_id: providedOrgId || secretOrganizationId,
         shop_id: shopId,
         user_id: ownerProfile?.auth_user_id
       };
@@ -217,25 +221,12 @@ Deno.serve(async (req) => {
 
       userProfile = profile;
 
-      // Get Zoho integration settings from Firebase
-      console.log('Getting Zoho integration from Firebase for user:', userId);
-      
-      try {
-        const zohoIntegration = await getFirestoreDoc(`users/${userId}/integrations/zoho`);
-
-        if (!zohoIntegration || !zohoIntegration.is_enabled) {
-          throw new Error('No enabled Zoho integration found in Firebase');
-        }
-
-        integration = {
-          access_token: zohoIntegration.access_token,
-          organization_id: zohoIntegration.organization_id,
-          shop_id: userProfile.id
-        };
-      } catch (firebaseError) {
-        console.error('Firebase error:', firebaseError);
-        throw new Error('Failed to get Zoho integration from Firebase');
-      }
+      // Use credentials from secrets
+      integration = {
+        access_token: secretAccessToken,
+        organization_id: secretOrganizationId,
+        shop_id: userProfile.id
+      };
     } else {
       throw new Error('Either userId or shopId with credentials must be provided');
     }

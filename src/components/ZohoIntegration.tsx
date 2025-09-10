@@ -4,31 +4,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
 import { Loader2, RefreshCw, Settings, CheckCircle2, AlertCircle, Zap, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 
 interface ZohoIntegration {
-  id: string;
-  access_token: string | null;
   organization_id: string | null;
   last_sync_at: string | null;
   is_enabled: boolean;
-  client_id: string | null;
-  client_secret: string | null;
+  token_status: 'active' | 'expired' | 'error';
 }
 
 export const ZohoIntegration: React.FC = () => {
   const [integration, setIntegration] = useState<ZohoIntegration | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
-  const [accessToken, setAccessToken] = useState('');
-  const [organizationId, setOrganizationId] = useState('');
-  const [clientId, setClientId] = useState('');
-  const [clientSecret, setClientSecret] = useState('');
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isCleaningUp, setIsCleaningUp] = useState(false);
   const { toast } = useToast();
   const { user } = useSupabaseAuth();
@@ -41,70 +32,48 @@ export const ZohoIntegration: React.FC = () => {
     if (!user?.id) return;
     
     try {
-      const { data, error } = await supabase
-        .from('zoho_integration')
-        .select('*')
-        .eq('shop_id', user?.id)
-        .single();
+      // Check integration status from edge function
+      const response = await fetch(`https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/check-zoho-status`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MVgOTc2ODV0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
+        }
+      });
 
-      if (data) {
-        setIntegration(data);
-        setAccessToken(data.access_token || '');
-        setOrganizationId(data.organization_id || '');
-        setClientId(data.client_id || '');
-        setClientSecret(data.client_secret || '');
+      if (response.ok) {
+        const data = await response.json();
+        setIntegration({
+          organization_id: data.organization_id,
+          last_sync_at: data.last_sync_at,
+          is_enabled: data.is_enabled,
+          token_status: data.token_status
+        });
+      } else {
+        setIntegration({
+          organization_id: null,
+          last_sync_at: null,
+          is_enabled: false,
+          token_status: 'error'
+        });
       }
     } catch (err) {
-      console.error('Error loading Zoho integration:', err);
+      console.error('Error loading Zoho integration status:', err);
+      setIntegration({
+        organization_id: null,
+        last_sync_at: null,
+        is_enabled: false,
+        token_status: 'error'
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const updateIntegration = async () => {
-    if (!user?.id) return;
-    
-    setIsUpdating(true);
-    
-    try {
-      const { error } = await supabase
-        .from('zoho_integration')
-        .upsert({
-          shop_id: user?.id,
-          client_id: clientId,
-          client_secret: clientSecret,
-          organization_id: organizationId,
-          access_token: accessToken,
-          is_enabled: true
-        });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      toast({
-        title: "تم حفظ الإعدادات",
-        description: "تم حفظ إعدادات Zoho بنجاح"
-      });
-
-      await loadZohoIntegration();
-    } catch (err: any) {
-      console.error('Error updating integration:', err);
-      toast({
-        title: "خطأ في الحفظ",
-        description: err.message || "حدث خطأ أثناء حفظ الإعدادات",
-        variant: "destructive"
-      });
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
   const syncProducts = async () => {
-    if (!integration?.access_token || !integration?.organization_id) {
+    if (!integration?.is_enabled) {
       toast({
-        title: "بيانات غير مكتملة",
-        description: "يرجى إدخال جميع البيانات المطلوبة",
+        title: "تكامل Zoho غير نشط",
+        description: "يرجى التأكد من حالة التكامل أولاً",
         variant: "destructive"
       });
       return;
@@ -113,42 +82,23 @@ export const ZohoIntegration: React.FC = () => {
     setIsSyncing(true);
     
     try {
-      const response = await fetch(`https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/sync-zoho-to-firestore`, {
+      const response = await fetch(`https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/sync-zoho-products`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MTg5NzY4NX0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MVgOTc2ODV0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
         },
         body: JSON.stringify({
-          userId: user?.id,
-          accessToken: integration.access_token,
-          organizationId: integration.organization_id,
-          maxModels: 100
+          userId: user?.id
         })
       });
 
       const result = await response.json();
       
       if (result.success) {
-        // Save to Supabase only
-        const { error } = await supabase
-          .from('zoho_integration')
-          .upsert({
-            shop_id: user?.id,
-            client_id: clientId,
-            client_secret: clientSecret,
-            organization_id: organizationId,
-            access_token: accessToken,
-            is_enabled: true
-          });
-
-        if (error) {
-          throw new Error(error.message);
-        }
-
         toast({
           title: "نجح التزامن",
-          description: `تم استيراد ${result.modelsReturned} منتج من Zoho`,
+          description: `تم استيراد ${result.synced || 0} منتج من Zoho`,
         });
         
         await loadZohoIntegration();
@@ -167,56 +117,24 @@ export const ZohoIntegration: React.FC = () => {
     }
   };
 
-  const refreshToken = async () => {
-    if (!clientId || !clientSecret) {
-      toast({
-        title: "بيانات غير مكتملة",
-        description: "يرجى إدخال Client ID و Client Secret أولاً",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    setIsUpdating(true);
+  const refreshAccessToken = async () => {
+    setIsRefreshing(true);
     
     try {
       const response = await fetch(`https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/refresh-zoho-token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MVkOTc2ODV0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
-        },
-        body: JSON.stringify({
-          clientId,
-          clientSecret,
-          refreshToken: integration?.access_token
-        })
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MVgOTc2ODV0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
+        }
       });
 
       const result = await response.json();
       
       if (result.success) {
-        const newAccessToken = result.access_token;
-        setAccessToken(newAccessToken);
-
-        const { error } = await supabase
-          .from('zoho_integration')
-          .upsert({
-            shop_id: user?.id,
-            client_id: clientId,
-            client_secret: clientSecret,
-            organization_id: organizationId,
-            access_token: newAccessToken,
-            is_enabled: true
-          });
-
-        if (error) {
-          throw new Error(error.message);
-        }
-        
         toast({
           title: "تم تحديث الرمز المميز",
-          description: "تم تحديث رمز الوصول بنجاح"
+          description: "تم تحديث رمز الوصول بنجاح من السيكرت"
         });
         
         await loadZohoIntegration();
@@ -231,7 +149,7 @@ export const ZohoIntegration: React.FC = () => {
         variant: "destructive"
       });
     } finally {
-      setIsUpdating(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -243,7 +161,7 @@ export const ZohoIntegration: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MVkOTc2ODV0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MVgOTc2ODV0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
         },
         body: JSON.stringify({
           userId: user?.id
@@ -273,8 +191,10 @@ export const ZohoIntegration: React.FC = () => {
   };
 
   const getStatusBadge = () => {
-    if (integration?.is_enabled && integration?.access_token) {
-      return <Badge variant="default" className="bg-green-100 text-green-800"><CheckCircle2 className="w-3 h-3 mr-1" />متصل</Badge>;
+    if (integration?.is_enabled && integration?.token_status === 'active') {
+      return <Badge variant="default" className="bg-green-100 text-green-800"><CheckCircle2 className="w-3 h-3 mr-1" />متصل ونشط</Badge>;
+    } else if (integration?.token_status === 'expired') {
+      return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" />التوكن منتهي الصلاحية</Badge>;
     }
     return <Badge variant="secondary"><AlertCircle className="w-3 h-3 mr-1" />غير متصل</Badge>;
   };
@@ -307,67 +227,33 @@ export const ZohoIntegration: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="clientId">Client ID</Label>
-              <Input
-                id="clientId"
-                type="text"
-                value={clientId}
-                onChange={(e) => setClientId(e.target.value)}
-                placeholder="أدخل Client ID"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="clientSecret">Client Secret</Label>
-              <Input
-                id="clientSecret"
-                type="password"
-                value={clientSecret}
-                onChange={(e) => setClientSecret(e.target.value)}
-                placeholder="أدخل Client Secret"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="organizationId">Organization ID</Label>
-              <Input
-                id="organizationId"
-                type="text"
-                value={organizationId}
-                onChange={(e) => setOrganizationId(e.target.value)}
-                placeholder="أدخل Organization ID"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="accessToken">Access Token</Label>
-              <Input
-                id="accessToken"
-                type="password"
-                value={accessToken}
-                onChange={(e) => setAccessToken(e.target.value)}
-                placeholder="أدخل Access Token"
-              />
-            </div>
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <p className="text-sm text-blue-800">
+              🔒 جميع بيانات التكامل محفوظة بشكل آمن في السيكرت. يتم تحديث التوكن تلقائياً كل 30 دقيقة.
+            </p>
           </div>
+          
+          {integration?.organization_id && (
+            <div className="space-y-2">
+              <Label>Organization ID</Label>
+              <Input
+                type="text"
+                value={integration.organization_id}
+                readOnly
+                className="bg-gray-50"
+              />
+            </div>
+          )}
           
           <div className="flex flex-wrap gap-2">
             <Button 
-              onClick={updateIntegration} 
-              disabled={isUpdating}
-              className="flex-1 sm:flex-none"
-            >
-              {isUpdating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              حفظ الإعدادات
-            </Button>
-            
-            <Button 
-              onClick={refreshToken} 
-              disabled={isUpdating}
+              onClick={refreshAccessToken} 
+              disabled={isRefreshing}
               variant="outline"
               className="flex-1 sm:flex-none"
             >
-              {isUpdating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
-              تحديث الرمز المميز
+              {isRefreshing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+              تحديث التوكن الآن
             </Button>
           </div>
         </CardContent>
@@ -393,7 +279,7 @@ export const ZohoIntegration: React.FC = () => {
           <div className="flex flex-wrap gap-2">
             <Button 
               onClick={syncProducts} 
-              disabled={isSyncing || !integration?.access_token}
+              disabled={isSyncing || !integration?.is_enabled || integration?.token_status !== 'active'}
               className="flex-1 sm:flex-none"
             >
               {isSyncing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
