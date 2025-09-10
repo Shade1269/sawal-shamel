@@ -89,12 +89,51 @@ const FirebaseSMSAuth = () => {
     setIsLoading(true);
     try {
       const auth = await getFirebaseAuth();
+      const phone = fullPhone();
       
-      // للتحقق من وجود المستخدم في حالة تسجيل الدخول
+      // للتسجيل الجديد - التحقق من عدم وجود المستخدم
+      if (mode === 'signup') {
+        const userExists = await checkUserExists(phone);
+        if (userExists) {
+          toast({
+            title: 'الحساب موجود مسبقاً',
+            description: 'يوجد حساب مرتبط بهذا الرقم. يرجى تسجيل الدخول بدلاً من ذلك.',
+            variant: 'destructive',
+            action: (
+              <Button
+                size="sm"
+                onClick={() => setMode('signin')}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                تسجيل الدخول
+              </Button>
+            ),
+          });
+          setIsLoading(false);
+          return;
+        }
+      }
+      
+      // لتسجيل الدخول - التحقق من وجود المستخدم
       if (mode === 'signin') {
         const userExists = await checkUserExists(phone);
         if (!userExists) {
-          throw new Error('لا يوجد حساب مرتبط بهذا الرقم. يرجى إنشاء حساب جديد أولاً.');
+          toast({
+            title: 'الحساب غير موجود',
+            description: 'لا يوجد حساب مرتبط بهذا الرقم. يرجى إنشاء حساب جديد أولاً.',
+            variant: 'destructive',
+            action: (
+              <Button
+                size="sm"
+                onClick={() => setMode('signup')}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                إنشاء حساب
+              </Button>
+            ),
+          });
+          setIsLoading(false);
+          return;
         }
       }
 
@@ -150,7 +189,21 @@ const FirebaseSMSAuth = () => {
       return !querySnapshot.empty;
     } catch (error) {
       console.error('Error checking user existence:', error);
-      return false;
+      
+      // البحث في Supabase كذلك
+      try {
+        const { supabase } = await import('@/integrations/supabase/client');
+        const { data } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('phone', phone)
+          .maybeSingle();
+        
+        return !!data;
+      } catch (supabaseError) {
+        console.error('Error checking Supabase profiles:', supabaseError);
+        return false;
+      }
     }
   };
 
@@ -274,10 +327,30 @@ const FirebaseSMSAuth = () => {
       if (firebaseUser) {
         await ensureProfile(firebaseUser, fullPhone());
         
-        toast({ 
-          title: 'تم التحقق بنجاح', 
-          description: mode === 'signup' ? 'تم إنشاء حسابك بنجاح!' : 'مرحباً بعودتك!' 
-        });
+        if (mode === 'signup') {
+          // رسالة نجاح للتسجيل الجديد
+          toast({ 
+            title: 'تم إنشاء الحساب بنجاح!', 
+            description: 'مرحباً بك! تم إنشاء حسابك بنجاح وتسجيل دخولك.',
+            action: (
+              <Button
+                size="sm"
+                onClick={() => navigate('/')}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                الذهاب للرئيسية
+              </Button>
+            ),
+          });
+        } else {
+          // رسالة ترحيب لتسجيل الدخول
+          toast({ 
+            title: 'مرحباً بعودتك!', 
+            description: 'تم تسجيل دخولك بنجاح.'
+          });
+        }
+        
+        // الانتقال للصفحة الرئيسية
         navigate('/');
       }
     } catch (error: any) {
