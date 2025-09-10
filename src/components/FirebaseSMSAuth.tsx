@@ -297,13 +297,29 @@ const FirebaseSMSAuth = () => {
   };
 
   const handleResendOTP = async () => {
-    // إعادة تعيين reCAPTCHA
-    if (recaptchaVerifier) {
-      recaptchaVerifier.clear();
-    }
-
-    // إنشاء reCAPTCHA جديد
+    setIsLoading(true);
+    
     try {
+      // إعادة تعيين reCAPTCHA تماماً
+      if (recaptchaVerifier) {
+        try {
+          recaptchaVerifier.clear();
+        } catch (error) {
+          console.log('reCAPTCHA already cleared');
+        }
+        setRecaptchaVerifier(null);
+      }
+
+      // إزالة وإعادة إنشاء عنصر reCAPTCHA
+      const recaptchaContainer = document.getElementById('recaptcha-container');
+      if (recaptchaContainer) {
+        recaptchaContainer.innerHTML = '';
+      }
+
+      // انتظار قصير لضمان التنظيف
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // إنشاء reCAPTCHA جديد
       const auth = await getFirebaseAuth();
       const newVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
         'size': 'invisible',
@@ -329,7 +345,6 @@ const FirebaseSMSAuth = () => {
         return;
       }
 
-      setIsLoading(true);
       const confirmation = await signInWithPhoneNumber(auth, phone, newVerifier);
       setConfirmationResult(confirmation);
       
@@ -345,6 +360,8 @@ const FirebaseSMSAuth = () => {
         msg = 'تم تجاوز حد الإرسال. حاول لاحقاً.';
       } else if (msg.includes('invalid-phone-number')) {
         msg = 'تنسيق رقم الهاتف غير صحيح.';
+      } else if (msg.includes('reCAPTCHA')) {
+        msg = 'مشكلة في نظام التحقق. يرجى إعادة تحميل الصفحة.';
       }
       
       toast({ title: 'خطأ في إعادة الإرسال', description: msg, variant: 'destructive' });
