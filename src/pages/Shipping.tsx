@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useStoreSettings, getEnabledShippingMethods } from "@/hooks/useStoreSettings";
 import { safeJsonParse } from "@/lib/utils";
+import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
 
 interface CartItem {
   id: string;
@@ -39,6 +40,7 @@ interface ShippingMethod {
 const Shipping = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
+  const { user: firebaseUser } = useFirebaseAuth();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: "",
@@ -51,6 +53,15 @@ const Shipping = () => {
   const [selectedShipping, setSelectedShipping] = useState<string>("");
   const [shop, setShop] = useState<any>(null);
 
+  // التحقق من تسجيل الدخول
+  useEffect(() => {
+    if (!firebaseUser) {
+      // إعادة توجيه إلى صفحة تسجيل الدخول مع رابط العودة
+      navigate(`/store/${slug}/auth?returnUrl=${encodeURIComponent(`/store/${slug}/shipping`)}`);
+      return;
+    }
+  }, [firebaseUser, navigate, slug]);
+
   // Fetch shop data to get store settings
   const { data: storeSettings, isLoading: settingsLoading } = useStoreSettings(shop?.id);
   
@@ -58,6 +69,9 @@ const Shipping = () => {
   const shippingMethods = getEnabledShippingMethods(storeSettings);
 
   useEffect(() => {
+    // فقط إذا كان المستخدم مسجل دخول
+    if (!firebaseUser) return;
+    
     const fetchShopAndLoadData = async () => {
       // Fetch shop data first
       const { data: shopData } = await supabase
@@ -94,7 +108,7 @@ const Shipping = () => {
     };
 
     fetchShopAndLoadData();
-  }, [slug, navigate]);
+  }, [slug, navigate, firebaseUser]);
 
   const handleCustomerInfoChange = (field: keyof CustomerInfo, value: string) => {
     const updatedInfo = { ...customerInfo, [field]: value };
@@ -138,6 +152,18 @@ const Shipping = () => {
   const handleBackToCart = () => {
     navigate(`/store/${slug}/cart`);
   };
+
+  // رسالة تحميل أثناء التحقق من تسجيل الدخول
+  if (!firebaseUser) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">جاري التحقق من تسجيل الدخول...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

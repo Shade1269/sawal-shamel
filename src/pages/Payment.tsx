@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 import { useStoreSettings, getEnabledPaymentMethods, getEnabledShippingMethods } from "@/hooks/useStoreSettings";
 import { safeJsonParse } from "@/lib/utils";
+import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
 
 interface CartItem {
   id: string;
@@ -38,12 +39,21 @@ interface PaymentMethod {
 const Payment = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
+  const { user: firebaseUser } = useFirebaseAuth();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [selectedShipping, setSelectedShipping] = useState<string>("");
   const [selectedPayment, setSelectedPayment] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [shop, setShop] = useState<any>(null);
+
+  // التحقق من تسجيل الدخول
+  useEffect(() => {
+    if (!firebaseUser) {
+      navigate(`/store/${slug}/auth?returnUrl=${encodeURIComponent(`/store/${slug}/payment`)}`);
+      return;
+    }
+  }, [firebaseUser, navigate, slug]);
 
   // Fetch shop data to get store settings
   const { data: storeSettings, isLoading: settingsLoading } = useStoreSettings(shop?.id);

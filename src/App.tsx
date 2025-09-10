@@ -18,6 +18,7 @@ import Cart from "./pages/Cart";
 import Shipping from "./pages/Shipping";
 import Payment from "./pages/Payment";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import StoreAuth from "./pages/StoreAuth";
 import NotFound from "./pages/NotFound";
 import { lazy, Suspense } from "react";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -53,6 +54,7 @@ const AppContent = () => {
       <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
       <Route path="/store-management" element={<ProtectedRoute><StoreManagementFirestore /></ProtectedRoute>} />
       <Route path="/store/:slug" element={<StoreFront />} />
+      <Route path="/store/:slug/auth" element={<StoreAuth />} />
       <Route path="/store/:slug/cart" element={<Cart />} />
       <Route path="/store/:slug/shipping" element={<Shipping />} />
       <Route path="/store/:slug/payment" element={<Payment />} />
