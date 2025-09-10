@@ -13,6 +13,8 @@ import FirebaseSMSAuth from "@/components/FirebaseSMSAuth";
 import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
+// Store Auth Component for customer authentication in stores
+
 interface Shop {
   id: string;
   display_name: string;
