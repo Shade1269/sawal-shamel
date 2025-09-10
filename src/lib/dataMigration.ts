@@ -387,34 +387,181 @@ export const migrateUserActivities = async () => {
   }
 };
 
-// نقل جميع البيانات باستخدام Edge Function
+// نقل جميع البيانات مباشرة إلى Firebase
 export const migrateAllData = async () => {
   try {
-    console.log('بدء النقل الشامل للبيانات من Supabase إلى Firebase عبر Edge Function...');
+    console.log('بدء النقل الشامل للبيانات من Supabase إلى Firebase...');
     
+    const results = {
+      users: { success: false, count: 0, total: 0, error: null },
+      shops: { success: false, count: 0, total: 0, error: null },
+      products: { success: false, count: 0, total: 0, error: null },
+      productLibrary: { success: true, count: 0, total: 0 },
+      activities: { success: false, count: 0, total: 0, error: null }
+    };
+
+    // استدعاء Edge Function للحصول على البيانات
     const { data, error } = await supabase.functions.invoke('migrate-supabase-to-firestore', {
-      body: {}
+      body: { action: 'get_data_only' }
     });
 
     if (error) {
-      console.error('خطأ في استدعاء Edge Function:', error);
+      console.error('خطأ في جلب البيانات:', error);
       return { success: false, error: error.message };
     }
 
-    if (data.success) {
-      return {
-        success: true,
-        results: {
-          users: data.results?.users || { success: true, count: data.results?.users?.count || 0, total: data.results?.users?.total || 0 },
-          shops: data.results?.shops || { success: true, count: data.results?.shops?.count || 0, total: data.results?.shops?.total || 0 },
-          products: data.results?.products || { success: true, count: data.results?.products?.count || 0, total: data.results?.products?.total || 0 },
-          productLibrary: { success: true, count: 0, total: 0 }, // Not implemented in edge function yet
-          activities: data.results?.activities || { success: true, count: data.results?.activities?.count || 0, total: data.results?.activities?.total || 0 }
-        }
-      };
-    } else {
+    if (!data.success) {
       return { success: false, error: data.error };
     }
+
+    // الآن ننقل البيانات مباشرة إلى Firebase
+    const { getFirestoreDB } = await import('./firestore');
+    const { doc, setDoc, collection } = await import('firebase/firestore');
+    const firestore = await getFirestoreDB();
+
+    // 1. نقل المستخدمين
+    if (data.profiles && data.profiles.length > 0) {
+      results.users.total = data.profiles.length;
+      
+      for (const profile of data.profiles) {
+        try {
+          const userData = {
+            uid: profile.auth_user_id || profile.id,
+            phone: profile.phone || profile.whatsapp,
+            email: profile.email,
+            displayName: profile.full_name || profile.email,
+            photoURL: profile.avatar_url,
+            role: profile.role || 'affiliate',
+            isActive: profile.is_active !== false,
+            points: profile.points || 0,
+            createdShopsCount: profile.created_shops_count || 0,
+            createdAt: profile.created_at ? new Date(profile.created_at) : new Date(),
+            updatedAt: profile.updated_at ? new Date(profile.updated_at) : new Date(),
+            lastActivityAt: profile.last_activity_at ? new Date(profile.last_activity_at) : new Date()
+          };
+
+          const userRef = doc(firestore, 'users', userData.uid);
+          await setDoc(userRef, userData, { merge: true });
+          results.users.count++;
+          console.log(`✓ نُقل المستخدم: ${userData.email || userData.phone}`);
+        } catch (error) {
+          console.error(`✗ خطأ في نقل المستخدم ${profile.email}:`, error);
+        }
+      }
+      results.users.success = true;
+    }
+
+    // 2. نقل المتاجر
+    if (data.shops && data.shops.length > 0) {
+      results.shops.total = data.shops.length;
+      
+      for (const shop of data.shops) {
+        try {
+          const ownerUid = shop.profiles?.auth_user_id || shop.owner_id;
+          if (!ownerUid) {
+            console.warn(`⚠ متجر بدون مالك: ${shop.display_name}`);
+            continue;
+          }
+
+          const shopSettings = {
+            shopName: shop.display_name || '',
+            shopSlug: shop.slug || '',
+            description: shop.bio || '',
+            logoUrl: shop.logo_url || '',
+            isActive: true,
+            theme: shop.theme || 'classic',
+            currency: 'SAR',
+            taxRate: shop.shop_settings_extended?.[0]?.tax_rate || 15,
+            settings: shop.settings || {},
+            createdAt: shop.created_at ? new Date(shop.created_at) : new Date(),
+            updatedAt: shop.updated_at ? new Date(shop.updated_at) : new Date()
+          };
+
+          const shopRef = doc(firestore, 'users', ownerUid, 'shopSettings', 'main');
+          await setDoc(shopRef, shopSettings, { merge: true });
+
+          const stats = {
+            totalProducts: shop.total_products || 0,
+            totalOrders: shop.total_orders || 0,
+            totalRevenue: 0,
+            totalCustomers: 0,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+
+          const statsRef = doc(firestore, 'users', ownerUid, 'statistics', 'main');
+          await setDoc(statsRef, stats, { merge: true });
+
+          results.shops.count++;
+          console.log(`✓ نُقل المتجر: ${shop.display_name}`);
+        } catch (error) {
+          console.error(`✗ خطأ في نقل المتجر ${shop.display_name}:`, error);
+        }
+      }
+      results.shops.success = true;
+    }
+
+    // 3. نقل المنتجات
+    if (data.products && data.products.length > 0) {
+      results.products.total = data.products.length;
+      
+      for (const product of data.products) {
+        try {
+          const ownerUid = product.merchants?.profiles?.auth_user_id;
+          if (!ownerUid) {
+            console.warn(`⚠ منتج بدون مالك: ${product.title}`);
+            continue;
+          }
+
+          const productData = {
+            id: product.id,
+            title: product.title,
+            description: product.description,
+            price_sar: product.price_sar,
+            category: product.category,
+            stock: product.stock || 0,
+            image_urls: product.image_urls || [],
+            commission_rate: product.commission_rate || 10,
+            is_active: product.is_active !== false,
+            external_id: product.external_id,
+            view_count: product.view_count || 0,
+            last_viewed_at: product.last_viewed_at ? new Date(product.last_viewed_at) : null,
+            attributes_schema: product.attributes_schema || {},
+            variants: (product.product_variants || []).map((v: any) => ({
+              id: v.id,
+              variant_type: v.variant_type,
+              variant_value: v.variant_value,
+              stock: v.stock || 0,
+              price_modifier: v.price_modifier || 0,
+              sku: v.sku,
+              external_id: v.external_id,
+              option1_name: v.option1_name,
+              option1_value: v.option1_value,
+              option2_name: v.option2_name,
+              option2_value: v.option2_value
+            })),
+            createdAt: product.created_at ? new Date(product.created_at) : new Date(),
+            updatedAt: product.updated_at ? new Date(product.updated_at) : new Date()
+          };
+
+          const productRef = doc(firestore, 'users', ownerUid, 'products', product.id);
+          await setDoc(productRef, productData, { merge: true });
+
+          results.products.count++;
+          console.log(`✓ نُقل المنتج: ${product.title}`);
+        } catch (error) {
+          console.error(`✗ خطأ في نقل المنتج ${product.title}:`, error);
+        }
+      }
+      results.products.success = true;
+    }
+
+    console.log('\n=== ملخص النقل ===');
+    console.log(`المستخدمون: ${results.users.count}/${results.users.total}`);
+    console.log(`المتاجر: ${results.shops.count}/${results.shops.total}`);
+    console.log(`المنتجات: ${results.products.count}/${results.products.total}`);
+
+    return { success: true, results };
     
   } catch (error) {
     console.error('خطأ في النقل الشامل:', error);
