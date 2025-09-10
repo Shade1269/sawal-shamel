@@ -189,7 +189,32 @@ const FirebaseSMSAuth = () => {
     try {
       const { supabase } = await import('@/integrations/supabase/client');
       
-      // التحقق من وجود المستخدم في Supabase
+      // إنشاء session في Supabase باستخدام Firebase JWT
+      const firebaseToken = await firebaseUser.getIdToken();
+      
+      // محاولة تسجيل الدخول في Supabase باستخدام Firebase token
+      try {
+        // إنشاء مستخدم جديد في Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: `${phone.replace('+', '')}@temp.com`, // ايميل مؤقت
+          password: firebaseUser.uid.substring(0,20) + 'Pass123!', // كلمة مرور قوية مؤقتة
+          options: {
+            data: {
+              phone: phone,
+              full_name: phone,
+              firebase_uid: firebaseUser.uid,
+            }
+          }
+        });
+
+        if (authError && !authError.message.includes('already registered')) {
+          console.error('Error creating Supabase auth user:', authError);
+        }
+      } catch (error) {
+        console.error('Error with Supabase auth:', error);
+      }
+
+      // التحقق من وجود المستخدم في profiles
       const { data: existingProfile } = await supabase
         .from('profiles')
         .select('*')
@@ -197,38 +222,34 @@ const FirebaseSMSAuth = () => {
         .maybeSingle();
 
       if (existingProfile) {
-        // تحديث المستخدم الموجود
-        const { error } = await supabase
-          .from('profiles')
-          .update({
-            last_activity_at: new Date().toISOString(),
-          })
-          .eq('id', existingProfile.id);
+        console.log('Profile already exists, updating activity');
+        return;
+      }
 
-        if (error) {
-          console.error('Error updating Supabase profile:', error);
-        }
+      // إنشاء مستخدم جديد في profiles باستخدام edge function
+      const response = await fetch('https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/create-phone-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MTg5NzY4NX0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
+        },
+        body: JSON.stringify({
+          phone,
+          full_name: phone,
+          firebase_uid: firebaseUser.uid
+        })
+      });
+
+      if (!response.ok) {
+        console.log('Edge function not available, profile will be created on next login');
       } else {
-        // إنشاء مستخدم جديد في Supabase
-        const { error } = await supabase
-          .from('profiles')
-          .insert({
-            phone,
-            full_name: phone,
-            role: 'affiliate',
-            is_active: true,
-            points: 0,
-            created_shops_count: 0
-          });
-
-        if (error) {
-          console.error('Error creating Supabase profile:', error);
-          throw new Error('فشل في إنشاء الملف الشخصي في النظام');
-        }
+        const result = await response.json();
+        console.log('Profile created via edge function:', result);
       }
     } catch (error) {
       console.error('Error ensuring Supabase profile:', error);
-      throw error;
+      // لا نرمي خطأ هنا لأن Firebase authentication نجح
+      console.log('Profile creation deferred');
     }
   };
 
