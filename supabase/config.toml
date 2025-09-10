@@ -69,3 +69,6 @@ verify_jwt = false
 
 [functions.sync-zoho-to-firestore]
 verify_jwt = false
+
+[functions.sync-zoho-products]
+verify_jwt = false
