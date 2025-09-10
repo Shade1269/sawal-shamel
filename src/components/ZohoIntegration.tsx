@@ -268,6 +268,45 @@ export const ZohoIntegration: React.FC = () => {
             </Button>
             
             <Button 
+              onClick={async () => {
+                setIsLoading(true);
+                try {
+                  console.log('🧪 Testing Zoho token directly...');
+                  const { data, error } = await supabase.functions.invoke('test-zoho-token');
+                  console.log('🧪 Direct test result:', { data, error });
+                  
+                  if (data?.success && data?.token_works) {
+                    toast({
+                      title: "✅ نجح الاختبار!",
+                      description: `التوكن يعمل بشكل مثالي! Organization: ${data.organization_id}`
+                    });
+                  } else {
+                    toast({
+                      title: "❌ فشل الاختبار",
+                      description: data?.error || "التوكن لا يعمل",
+                      variant: "destructive"
+                    });
+                  }
+                } catch (err: any) {
+                  console.error('🔥 Test error:', err);
+                  toast({
+                    title: "خطأ في الاختبار",
+                    description: err.message,
+                    variant: "destructive"
+                  });
+                } finally {
+                  setIsLoading(false);
+                }
+              }} 
+              disabled={isLoading}
+              variant="default"
+              className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700"
+            >
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
+              اختبار مباشر 🧪
+            </Button>
+            
+            <Button 
               onClick={() => {
                 window.location.reload();
               }} 

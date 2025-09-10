@@ -78,3 +78,6 @@ verify_jwt = false
 
 [functions.refresh-zoho-token]
 verify_jwt = false
+
+[functions.test-zoho-token]
+verify_jwt = false
