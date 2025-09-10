@@ -66,3 +66,6 @@ verify_jwt = false
 
 [functions.get-products-with-images]
 verify_jwt = false
+
+[functions.sync-zoho-to-firestore]
+verify_jwt = false
