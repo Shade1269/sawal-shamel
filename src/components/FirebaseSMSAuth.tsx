@@ -296,6 +296,63 @@ const FirebaseSMSAuth = () => {
     }
   };
 
+  const handleResendOTP = async () => {
+    // إعادة تعيين reCAPTCHA
+    if (recaptchaVerifier) {
+      recaptchaVerifier.clear();
+    }
+
+    // إنشاء reCAPTCHA جديد
+    try {
+      const auth = await getFirebaseAuth();
+      const newVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        'size': 'invisible',
+        'callback': () => {
+          console.log('reCAPTCHA solved for resend');
+        },
+        'expired-callback': () => {
+          console.log('reCAPTCHA expired for resend');
+          toast({
+            title: 'انتهت صلاحية التحقق',
+            description: 'يرجى المحاولة مرة أخرى',
+            variant: 'destructive'
+          });
+        }
+      });
+      
+      setRecaptchaVerifier(newVerifier);
+      
+      // إرسال رمز جديد
+      const phone = fullPhone();
+      if (!phone || phone.length < 7) {
+        toast({ title: 'خطأ', description: 'يرجى إدخال رقم هاتف صحيح', variant: 'destructive' });
+        return;
+      }
+
+      setIsLoading(true);
+      const confirmation = await signInWithPhoneNumber(auth, phone, newVerifier);
+      setConfirmationResult(confirmation);
+      
+      toast({
+        title: 'تم الإرسال',
+        description: `تم إرسال رمز التحقق الجديد إلى ${phone}`,
+      });
+    } catch (error: any) {
+      console.error('Error resending OTP:', error);
+      let msg = error?.message || 'فشل في إعادة إرسال الرمز';
+      
+      if (msg.includes('too-many-requests')) {
+        msg = 'تم تجاوز حد الإرسال. حاول لاحقاً.';
+      } else if (msg.includes('invalid-phone-number')) {
+        msg = 'تنسيق رقم الهاتف غير صحيح.';
+      }
+      
+      toast({ title: 'خطأ في إعادة الإرسال', description: msg, variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleBack = () => {
     setStep('phone');
     setOtp('');
@@ -405,7 +462,13 @@ const FirebaseSMSAuth = () => {
               </div>
 
               <div className="text-center">
-                <Button type="button" variant="ghost" size="sm" onClick={handleSendOTP} disabled={isLoading}>
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => handleResendOTP()}
+                  disabled={isLoading}
+                >
                   إعادة إرسال الرمز
                 </Button>
               </div>
