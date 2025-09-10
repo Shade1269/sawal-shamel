@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { 
   CreditCard, 
   Settings, 
@@ -130,7 +130,7 @@ const EmkanIntegration: React.FC = () => {
     }
   };
 
-  const { user } = useFirebaseAuth();
+  const { user, session } = useSupabaseAuth();
 
   const testConnection = async () => {
     if (!settings.api_key || !settings.merchant_id || !settings.password) {
@@ -149,7 +149,7 @@ const EmkanIntegration: React.FC = () => {
 
     setLoading(true);
     try {
-      const token = await user.getIdToken();
+      const token = session?.access_token;
       console.log('🔗 Testing Emkan via admin-actions...');
       const { data, error } = await supabase.functions.invoke('admin-actions', {
         body: {

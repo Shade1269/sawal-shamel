@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 export interface Message {
@@ -46,7 +46,7 @@ export const useRealTimeChat = (channelId: string) => {
   const [loading, setLoading] = useState(true);
   const [currentProfile, setCurrentProfile] = useState<any>(null);
   const [typingUsers, setTypingUsers] = useState<Record<string, any>>({});
-  const { user } = useFirebaseAuth();
+  const { user } = useSupabaseAuth();
   const { toast } = useToast();
   const channelRef = useRef<any>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -65,7 +65,7 @@ export const useRealTimeChat = (channelId: string) => {
       let { data: profile, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('auth_user_id', user.uid)
+        .eq('auth_user_id', user.id)
         .single();
 
       if (error && error.code === 'PGRST116') {
@@ -73,9 +73,9 @@ export const useRealTimeChat = (channelId: string) => {
         const { data: newProfile, error: createError } = await supabase
           .from('profiles')
           .insert({
-            auth_user_id: user.uid,
+            auth_user_id: user.id,
             email: user.email,
-            full_name: user.displayName || user.email?.split('@')[0] || 'مستخدم جديد'
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'مستخدم جديد'
           })
           .select()
           .single();

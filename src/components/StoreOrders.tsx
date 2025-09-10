@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Package, Phone, MapPin, User, DollarSign, Clock, CheckCircle, XCircle, Loader2, Eye } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 
 interface Order {
   id: string;
@@ -66,7 +66,7 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
   const [loading, setLoading] = useState(true);
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
   const { toast } = useToast();
-  const { user } = useFirebaseAuth();
+  const { user } = useSupabaseAuth();
 
   useEffect(() => {
     if (shopId) {

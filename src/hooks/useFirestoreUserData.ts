@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { 
   getUserFromFirestore,
   getUserProducts,
@@ -31,7 +31,7 @@ export interface UserActivity {
 }
 
 export const useFirestoreUserData = () => {
-  const { user } = useFirebaseAuth();
+  const { user } = useSupabaseAuth();
   const [userShop, setUserShop] = useState<UserShop | null>(null);
   const [userActivities, setUserActivities] = useState<UserActivity[]>([]);
   const [userStatistics, setUserStatistics] = useState<any>(null);
@@ -48,7 +48,7 @@ export const useFirestoreUserData = () => {
     try {
       if (!user) return;
       
-      await logUserActivity(user.uid, {
+      await logUserActivity(user.id, {
         activity_type: activityType,
         description: description,
         shop_id: shopId,
@@ -82,7 +82,7 @@ export const useFirestoreUserData = () => {
         isActive: true
       };
 
-      const result = await createUserShop(user.uid, shopData);
+      const result = await createUserShop(user.id, shopData);
       
       if (result.success) {
         // Refresh shop data
@@ -105,12 +105,12 @@ export const useFirestoreUserData = () => {
     try {
       if (!user) return;
       
-      const result = await getUserShopSettings(user.uid);
+      const result = await getUserShopSettings(user.id);
       
       if (result.success && result.shopSettings && result.shopSettings.isActive) {
         const shopSettings = result.shopSettings;
         setUserShop({
-          shop_id: user.uid,
+          shop_id: user.id,
           shop_name: shopSettings.shopName || '',
           shop_slug: shopSettings.shopSlug || '',
           total_products: 0,
@@ -131,7 +131,7 @@ export const useFirestoreUserData = () => {
     try {
       if (!user) return;
       
-      const result = await getUserActivities(user.uid, 50);
+      const result = await getUserActivities(user.id, 50);
       
       if (result.success) {
         const activities = result.activities.map((activity: any) => ({
@@ -156,7 +156,7 @@ export const useFirestoreUserData = () => {
     try {
       if (!user) return;
       
-      const result = await getUserStatistics(user.uid);
+      const result = await getUserStatistics(user.id);
       
       if (result.success && result.statistics) {
         setUserStatistics(result.statistics);
@@ -182,7 +182,7 @@ export const useFirestoreUserData = () => {
         throw new Error('User not authenticated');
       }
 
-      const result = await addProductToUserStore(user.uid, productData);
+      const result = await addProductToUserStore(user.id, productData);
       
       if (result.success) {
         // Refresh data
@@ -206,7 +206,7 @@ export const useFirestoreUserData = () => {
     try {
       if (!user) return [];
       
-      const result = await getUserProducts(user.uid);
+      const result = await getUserProducts(user.id);
       
       if (result.success) {
         return result.products || [];

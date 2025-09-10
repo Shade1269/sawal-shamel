@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Package, Search, Filter, ArrowLeft, X, Upload, RefreshCw, ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
 import { toast } from '@/components/ui/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -42,7 +42,7 @@ interface ProductVariant {
 
 const Inventory = () => {
   const navigate = useNavigate();
-  const { user } = useFirebaseAuth();
+  const { user } = useSupabaseAuth();
   const { getShopProducts, addProduct, updateProductInFirestore } = useFirebaseUserData();
 
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
@@ -53,16 +53,14 @@ const Inventory = () => {
   // Add state for user's shop
   const [userShop, setUserShop] = useState<any>(null);
 
-  // Get user profile from Firebase
-  const { userProfile } = useFirebaseAuth();
+  // Get user profile from Supabase
 
   // Debug: اطبع معلومات المستخدم الحالي
   useEffect(() => {
-    if (user && userProfile) {
+    if (user) {
       console.log('Current user:', {
-        uid: user.uid,
-        email: user.email,
-        role: userProfile.role
+        id: user.id,
+        email: user.email
       });
       
       // إضافة وظيفة مؤقتة لتعيين دور admin
@@ -71,7 +69,7 @@ const Inventory = () => {
         (window as any).makeUserAdmin = async () => {
           try {
             const { updateUserInFirestore } = await import('@/lib/firestore');
-            const result = await updateUserInFirestore(user.uid, {
+            const result = await updateUserInFirestore(user.id, {
               role: 'admin',
               updatedAt: new Date()
             });
@@ -87,7 +85,7 @@ const Inventory = () => {
         };
       }
     }
-  }, [user, userProfile]);
+  }, [user]);
 
   const addToStore = async (productId: string) => {
     try {
@@ -411,8 +409,8 @@ const Inventory = () => {
                       إضافة إلى متجري
                     </Button>
                     
-                    {/* Admin-only Image Upload */}
-                    {userProfile?.role === 'admin' && (
+                    {/* Admin-only Image Upload - Disabled for Supabase */}
+                    {false && (
                       <div className="relative">
                         <FileUpload
                           onFileUpload={(imageUrl) => handleImageUpload(product.id, imageUrl)}

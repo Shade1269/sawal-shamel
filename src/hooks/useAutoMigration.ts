@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { getFirebaseFirestore } from '@/lib/firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 export const useAutoMigration = () => {
-  const { user } = useFirebaseAuth();
+  const { user } = useSupabaseAuth();
   const [migrationStatus, setMigrationStatus] = useState<'idle' | 'checking' | 'migrating' | 'completed' | 'error'>('idle');
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export const useAutoMigration = () => {
       
       // Check if user already exists in Firestore
       const db = await getFirebaseFirestore();
-      const userDocRef = doc(db, 'users', user.uid);
+      const userDocRef = doc(db, 'users', user.id);
       const userDoc = await getDoc(userDocRef);
       
       if (userDoc.exists() && userDoc.data()?.source !== 'supabase-migration') {
@@ -34,7 +34,7 @@ export const useAutoMigration = () => {
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('*')
-        .or(`auth_user_id.eq.${user.uid},phone.eq.${user.phoneNumber}`)
+        .or(`auth_user_id.eq.${user.id},phone.eq.${user.phone || 'null'}`)
         .single();
 
       if (error || !profile) {
@@ -45,13 +45,13 @@ export const useAutoMigration = () => {
       // Perform migration
       setMigrationStatus('migrating');
       
-      const uid = user.uid;
+      const uid = user.id;
       const userDocData = {
         uid,
         email: profile.email || null,
-        phone: profile.phone || user.phoneNumber || null,
-        displayName: profile.full_name || user.displayName || profile.email || profile.phone || 'User',
-        photoURL: profile.avatar_url || user.photoURL || null,
+        phone: profile.phone || user.phone || null,
+        displayName: profile.full_name || user.user_metadata?.full_name || profile.email || profile.phone || 'User',
+        photoURL: profile.avatar_url || null,
         role: profile.role || 'affiliate',
         isActive: profile.is_active,
         points: profile.points || 0,

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { 
   logUserActivity, 
   updateUserInFirestore, 
@@ -32,7 +32,7 @@ export interface UserActivity {
 }
 
 export const useFirebaseUserData = () => {
-  const { user, userProfile } = useFirebaseAuth();
+  const { user } = useSupabaseAuth();
   const [userShop, setUserShop] = useState<UserShop | null>(null);
   const [userActivities, setUserActivities] = useState<UserActivity[]>([]);
   const [userStatistics, setUserStatistics] = useState<any>(null);
@@ -50,7 +50,7 @@ export const useFirebaseUserData = () => {
       const app = await getFirebaseApp();
       
       const db = getFirestore(app);
-      const productRef = doc(db, 'users', user.uid, 'products', productId);
+      const productRef = doc(db, 'users', user.id, 'products', productId);
       
       await updateDoc(productRef, updates);
       
@@ -73,7 +73,7 @@ export const useFirebaseUserData = () => {
     try {
       if (!user) return;
       
-      await logUserActivity(user.uid, {
+      await logUserActivity(user.id, {
         activity_type: activityType,
         description: description,
         shop_id: shopId,
@@ -107,7 +107,7 @@ export const useFirebaseUserData = () => {
         isActive: true
       };
 
-      const result = await createUserShop(user.uid, shopData);
+      const result = await createUserShop(user.id, shopData);
       
       if (result.success) {
         // Refresh shop data
@@ -130,12 +130,12 @@ export const useFirebaseUserData = () => {
     try {
       if (!user) return;
       
-      const result = await getUserShopSettings(user.uid);
+      const result = await getUserShopSettings(user.id);
       
       if (result.success && result.shopSettings && result.shopSettings.isActive) {
         const shopSettings = result.shopSettings;
         setUserShop({
-          shop_id: user.uid,
+          shop_id: user.id,
           shop_name: shopSettings.shopName || '',
           shop_slug: shopSettings.shopSlug || '',
           total_products: 0, // Will be updated from statistics
@@ -156,7 +156,7 @@ export const useFirebaseUserData = () => {
     try {
       if (!user) return;
       
-      const result = await getUserActivities(user.uid, 50);
+      const result = await getUserActivities(user.id, 50);
       
       if (result.success) {
         const activities = result.activities.map((activity: any) => ({
@@ -181,7 +181,7 @@ export const useFirebaseUserData = () => {
     try {
       if (!user) return;
       
-      const result = await getUserStatistics(user.uid);
+      const result = await getUserStatistics(user.id);
       
       if (result.success && result.statistics) {
         setUserStatistics(result.statistics);
@@ -207,7 +207,7 @@ export const useFirebaseUserData = () => {
         throw new Error('User not authenticated');
       }
 
-      const result = await addProductToUserStore(user.uid, productData);
+      const result = await addProductToUserStore(user.id, productData);
       
       if (result.success) {
         // Refresh data
@@ -231,7 +231,7 @@ export const useFirebaseUserData = () => {
     try {
       if (!user) return [];
       
-      const result = await getUserProducts(user.uid);
+      const result = await getUserProducts(user.id);
       
       if (result.success) {
         return result.products || [];
@@ -251,7 +251,7 @@ export const useFirebaseUserData = () => {
         throw new Error('No user found');
       }
 
-      const result = await updateUserShopSettings(user.uid, settings);
+      const result = await updateUserShopSettings(user.id, settings);
       
       if (result.success) {
         // Refresh shop data
@@ -271,7 +271,7 @@ export const useFirebaseUserData = () => {
       if (!user) return;
 
       // Save session data to user's document
-      await updateUserInFirestore(user.uid, {
+      await updateUserInFirestore(user.id, {
         lastSession: {
           data: sessionData,
           savedAt: new Date()
@@ -287,7 +287,7 @@ export const useFirebaseUserData = () => {
     try {
       if (!user) return null;
 
-      const result = await getUserFromFirestore(user.uid);
+      const result = await getUserFromFirestore(user.id);
       
       if (result.success && result.user?.lastSession) {
         return result.user.lastSession.data || null;

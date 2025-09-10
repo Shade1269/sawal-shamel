@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Hash, Lock, Users, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { toast } from 'sonner';
 
 interface Channel {
@@ -23,7 +23,7 @@ const RoomsList = () => {
   const [loading, setLoading] = useState(true);
   const [memberCounts, setMemberCounts] = useState<Record<string, number>>({});
   const navigate = useNavigate();
-  const { user } = useFirebaseAuth();
+  const { user } = useSupabaseAuth();
 
   useEffect(() => {
     loadChannels();
@@ -67,7 +67,7 @@ const RoomsList = () => {
       const { data: profile } = await supabase
         .from('profiles')
         .select('id')
-        .eq('auth_user_id', user.uid)
+        .eq('auth_user_id', user.id)
         .single();
 
       if (!profile) {

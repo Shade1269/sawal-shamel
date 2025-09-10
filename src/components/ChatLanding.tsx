@@ -3,12 +3,12 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Users, Shield, Zap, Globe, Heart, User, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
+import { useSupabaseAuth } from "@/contexts/SupabaseAuthContext";
 import { useDarkMode } from "@/components/DarkModeProvider";
 
 const ChatLanding = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useFirebaseAuth();
+  const { user, signOut } = useSupabaseAuth();
   const { isDarkMode } = useDarkMode();
   
   return (

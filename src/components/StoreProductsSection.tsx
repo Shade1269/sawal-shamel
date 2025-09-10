@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Package, Trash2, Star, Plus, Eye, EyeOff, DollarSign } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
 import { ProductImageCarousel } from '@/components/ProductImageCarousel';
 
@@ -44,7 +44,7 @@ interface StoreProductsSectionProps {
 }
 
 const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop }) => {
-  const { user } = useFirebaseAuth();
+  const { user } = useSupabaseAuth();
   const { getShopProducts } = useFirebaseUserData();
   const [storeProducts, setStoreProducts] = useState<ProductLibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
