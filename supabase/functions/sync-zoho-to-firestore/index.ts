@@ -11,6 +11,33 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+// Firebase configuration
+const firebaseConfig = {
+  projectId: Deno.env.get('FIREBASE_PROJECT_ID')!,
+};
+
+// Firebase Firestore REST API helper
+async function updateFirestoreDoc(path: string, data: any) {
+  const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/${path}`;
+  
+  // Convert data to Firestore format
+  const fields: any = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (typeof value === 'string') fields[key] = { stringValue: value };
+    else if (typeof value === 'boolean') fields[key] = { booleanValue: value };
+    else if (typeof value === 'number') fields[key] = { integerValue: value.toString() };
+    else if (value instanceof Date) fields[key] = { timestampValue: value.toISOString() };
+  }
+  
+  const response = await fetch(url, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields })
+  });
+  
+  return response.ok;
+}
+
 function extractProductInfo(item: any) {
   let baseModel: string | null = null;
   let color: string | null = null;

@@ -11,6 +11,53 @@ const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+// Firebase configuration
+const firebaseConfig = {
+  projectId: Deno.env.get('FIREBASE_PROJECT_ID')!,
+};
+
+// Firebase Firestore REST API helper
+async function getFirestoreDoc(path: string) {
+  const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/${path}`;
+  const response = await fetch(url);
+  if (!response.ok) return null;
+  const data = await response.json();
+  
+  // Convert Firestore format to regular object
+  const result: any = {};
+  if (data.fields) {
+    for (const [key, value] of Object.entries(data.fields as any)) {
+      if (value.stringValue !== undefined) result[key] = value.stringValue;
+      if (value.booleanValue !== undefined) result[key] = value.booleanValue;
+      if (value.integerValue !== undefined) result[key] = parseInt(value.integerValue);
+      if (value.timestampValue !== undefined) result[key] = value.timestampValue;
+    }
+  }
+  return result;
+}
+
+// Firebase Firestore REST API helper
+async function updateFirestoreDoc(path: string, data: any) {
+  const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/${path}`;
+  
+  // Convert data to Firestore format
+  const fields: any = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (typeof value === 'string') fields[key] = { stringValue: value };
+    else if (typeof value === 'boolean') fields[key] = { booleanValue: value };
+    else if (typeof value === 'number') fields[key] = { integerValue: value.toString() };
+    else if (value instanceof Date) fields[key] = { timestampValue: value.toISOString() };
+  }
+  
+  const response = await fetch(url, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields })
+  });
+  
+  return response.ok;
+}
+
 // Download and upload image from Zoho with proper error handling
 async function uploadImageFromZoho(imageUrl: string, itemId: string, accessToken: string): Promise<string | null> {
   try {
@@ -139,11 +186,19 @@ Deno.serve(async (req) => {
         throw new Error('Shop not found');
       }
 
+      // Get the owner's auth_user_id from profiles
+      const { data: ownerProfile } = await supabase
+        .from('profiles')
+        .select('auth_user_id')
+        .eq('id', shop.owner_id)
+        .single();
+
       userProfile = { id: shop.owner_id };
       integration = {
         access_token: providedAccessToken,
         organization_id: providedOrgId,
-        shop_id: shopId
+        shop_id: shopId,
+        user_id: ownerProfile?.auth_user_id
       };
     } else if (userId) {
       // Manual sync - get user profile and integration
@@ -162,19 +217,25 @@ Deno.serve(async (req) => {
 
       userProfile = profile;
 
-      // Get Zoho integration settings
-      const { data: zohoIntegration } = await supabase
-        .from('zoho_integration')
-        .select('*')
-        .eq('shop_id', userProfile.id)
-        .eq('is_enabled', true)
-        .single();
+      // Get Zoho integration settings from Firebase
+      console.log('Getting Zoho integration from Firebase for user:', userId);
+      
+      try {
+        const zohoIntegration = await getFirestoreDoc(`users/${userId}/integrations/zoho`);
 
-      if (!zohoIntegration) {
-        throw new Error('No enabled Zoho integration found');
+        if (!zohoIntegration || !zohoIntegration.is_enabled) {
+          throw new Error('No enabled Zoho integration found in Firebase');
+        }
+
+        integration = {
+          access_token: zohoIntegration.access_token,
+          organization_id: zohoIntegration.organization_id,
+          shop_id: userProfile.id
+        };
+      } catch (firebaseError) {
+        console.error('Firebase error:', firebaseError);
+        throw new Error('Failed to get Zoho integration from Firebase');
       }
-
-      integration = zohoIntegration;
     } else {
       throw new Error('Either userId or shopId with credentials must be provided');
     }
@@ -463,11 +524,20 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Update the sync timestamp
-    await supabase
-      .from('zoho_integration')
-      .update({ last_sync_at: new Date().toISOString() })
-      .eq('shop_id', userProfile.id);
+    // Update the sync timestamp in Firebase
+    try {
+      const userIdForUpdate = userId || (integration as any).user_id;
+      if (userIdForUpdate) {
+        await updateFirestoreDoc(`users/${userIdForUpdate}/integrations/zoho`, {
+          last_sync_at: new Date()
+        });
+        console.log('Updated last_sync_at in Firebase for user:', userIdForUpdate);
+      } else {
+        console.log('No userId available to update Firebase sync timestamp');
+      }
+    } catch (firebaseError) {
+      console.error('Failed to update last_sync_at in Firebase:', firebaseError);
+    }
 
     console.log(`Sync completed. Total synced: ${syncedCount} products`);
 
