@@ -10,6 +10,7 @@ import FirebaseSMSAuth from '@/components/FirebaseSMSAuth';
 import { useNavigate } from 'react-router-dom';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
+import UsernameRegistration from '@/components/UsernameRegistration';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +28,10 @@ const AuthPage = () => {
     email: '',
     password: '',
     fullName: '',
+    username: '',
   });
+
+  const [signUpStep, setSignUpStep] = useState<'details' | 'username'>('details');
 
   // Load saved credentials on component mount
   useEffect(() => {
@@ -84,9 +88,27 @@ const AuthPage = () => {
       return;
     }
     
+    // انتقل لخطوة اسم المستخدم
+    setSignUpStep('username');
+  };
+
+  const handleUsernameSubmit = async (username: string) => {
     setIsLoading(true);
     
-    const result = await signUp(signUpForm.email, signUpForm.password, signUpForm.fullName);
+    const result = await signUp(
+      signUpForm.email, 
+      signUpForm.password, 
+      signUpForm.fullName,
+      username
+    );
+    
+    if (!result.error) {
+      toast({
+        title: 'تم إنشاء الحساب بنجاح!',
+        description: `مرحباً ${username}! تم إنشاء حسابك بنجاح`,
+      });
+      navigate('/');
+    }
     
     setIsLoading(false);
   };
@@ -186,65 +208,90 @@ const AuthPage = () => {
 
             <TabsContent value="signup" className="space-y-0">
               <CardHeader className="pb-4">
-                <CardTitle className="text-right">إنشاء حساب جديد</CardTitle>
+                <CardTitle className="text-right">
+                  {signUpStep === 'details' ? 'إنشاء حساب جديد' : 'اختر اسم المستخدم'}
+                </CardTitle>
                 <CardDescription className="text-right">
-                  أدخل بياناتك لإنشاء حساب جديد
+                  {signUpStep === 'details' 
+                    ? 'أدخل بياناتك لإنشاء حساب جديد'
+                    : 'اختر اسم المستخدم الذي سيظهر في المحادثات'
+                  }
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="space-y-2 text-right">
-                    <Label htmlFor="signup-fullname">الاسم الكامل</Label>
-                    <Input
-                      id="signup-fullname"
-                      type="text"
-                      value={signUpForm.fullName}
-                      onChange={(e) => setSignUpForm(prev => ({...prev, fullName: e.target.value}))}
-                      placeholder="أدخل اسمك الكامل"
-                      required
-                      className="text-right"
+                {signUpStep === 'details' ? (
+                  <form onSubmit={handleSignUp} className="space-y-4">
+                    <div className="space-y-2 text-right">
+                      <Label htmlFor="signup-fullname">الاسم الكامل</Label>
+                      <Input
+                        id="signup-fullname"
+                        type="text"
+                        value={signUpForm.fullName}
+                        onChange={(e) => setSignUpForm(prev => ({...prev, fullName: e.target.value}))}
+                        placeholder="أدخل اسمك الكامل"
+                        required
+                        className="text-right"
+                      />
+                    </div>
+
+                    <div className="space-y-2 text-right">
+                      <Label htmlFor="signup-email">البريد الإلكتروني</Label>
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        value={signUpForm.email}
+                        onChange={(e) => setSignUpForm(prev => ({...prev, email: e.target.value}))}
+                        placeholder="أدخل بريدك الإلكتروني"
+                        required
+                        className="text-right"
+                      />
+                    </div>
+
+                    <div className="space-y-2 text-right">
+                      <Label htmlFor="signup-password">كلمة المرور</Label>
+                      <Input
+                        id="signup-password"
+                        type="password"
+                        value={signUpForm.password}
+                        onChange={(e) => setSignUpForm(prev => ({...prev, password: e.target.value}))}
+                        placeholder="أدخل كلمة مرور قوية"
+                        required
+                        className="text-right"
+                      />
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      disabled={isLoading}
+                    >
+                      <Mail className="ml-2 h-4 w-4" />
+                      {isLoading ? 'جاري المعالجة...' : 'متابعة'}
+                    </Button>
+
+                    <div className="text-center text-sm text-muted-foreground">
+                      ستحتاج لاختيار اسم المستخدم في الخطوة التالية
+                    </div>
+                  </form>
+                ) : (
+                  <div className="space-y-4">
+                    <UsernameRegistration
+                      onUsernameSubmit={handleUsernameSubmit}
+                      isLoading={isLoading}
                     />
+                    <div className="text-center">
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setSignUpStep('details')}
+                        disabled={isLoading}
+                      >
+                        رجوع للخطوة السابقة
+                      </Button>
+                    </div>
                   </div>
-
-                  <div className="space-y-2 text-right">
-                    <Label htmlFor="signup-email">البريد الإلكتروني</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      value={signUpForm.email}
-                      onChange={(e) => setSignUpForm(prev => ({...prev, email: e.target.value}))}
-                      placeholder="أدخل بريدك الإلكتروني"
-                      required
-                      className="text-right"
-                    />
-                  </div>
-
-                  <div className="space-y-2 text-right">
-                    <Label htmlFor="signup-password">كلمة المرور</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      value={signUpForm.password}
-                      onChange={(e) => setSignUpForm(prev => ({...prev, password: e.target.value}))}
-                      placeholder="أدخل كلمة مرور قوية"
-                      required
-                      className="text-right"
-                    />
-                  </div>
-
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
-                    disabled={isLoading}
-                  >
-                    <Mail className="ml-2 h-4 w-4" />
-                    {isLoading ? 'جاري إنشاء الحساب...' : 'إنشاء حساب'}
-                  </Button>
-
-                  <div className="text-center text-sm text-muted-foreground">
-                    سيتم إرسال رابط التحقق إلى بريدك الإلكتروني
-                  </div>
-                </form>
+                )}
               </CardContent>
             </TabsContent>
 

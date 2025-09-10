@@ -51,10 +51,10 @@ const Index = () => {
 
   const getUserDisplayName = () => {
     if (firebaseUser) {
-      return userProfile?.phone || firebaseUser.phoneNumber || 'مستخدم Firebase';
+      return userProfile?.username || userProfile?.displayName || userProfile?.phone || firebaseUser.phoneNumber || 'مستخدم Firebase';
     }
     if (supabaseUser) {
-      return supabaseUser.user_metadata?.full_name || supabaseUser.email || 'مستخدم';
+      return supabaseUser.user_metadata?.username || supabaseUser.user_metadata?.full_name || supabaseUser.email || 'مستخدم';
     }
     return 'ضيف';
   };

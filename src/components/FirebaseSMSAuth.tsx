@@ -15,13 +15,16 @@ import {
 } from 'firebase/auth';
 import { getFirebaseAuth } from '@/lib/firebase';
 import { saveUserToFirestore, getUserFromFirestore, updateUserInFirestore } from '@/lib/firestore';
+import UsernameRegistration from '@/components/UsernameRegistration';
 
 const FirebaseSMSAuth = () => {
-  const [step, setStep] = useState<'phone' | 'verify'>('phone');
+  const [step, setStep] = useState<'phone' | 'verify' | 'username'>('phone');
   const [mode, setMode] = useState<'signup' | 'signin'>('signup');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+966');
   const [otp, setOtp] = useState('');
+  const [username, setUsername] = useState('');
+  const [firebaseUser, setFirebaseUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [recaptchaVerifier, setRecaptchaVerifier] = useState<RecaptchaVerifier | null>(null);
@@ -207,14 +210,15 @@ const FirebaseSMSAuth = () => {
     }
   };
 
-  const ensureProfile = async (firebaseUser: any, phone: string) => {
+  const ensureProfile = async (firebaseUser: any, phone: string, username?: string) => {
     try {
       // إنشاء/تحديث ملف المستخدم في Firebase
       if (mode === 'signup') {
         const result = await saveUserToFirestore(firebaseUser, {
           phone,
-          displayName: phone,
-          fullName: phone,
+          displayName: username || phone,
+          fullName: username || phone,
+          username: username || phone,
           role: 'affiliate'
         });
         
@@ -230,7 +234,7 @@ const FirebaseSMSAuth = () => {
       }
 
       // إنشاء/تحديث ملف المستخدم في Supabase
-      await ensureSupabaseProfile(firebaseUser, phone);
+      await ensureSupabaseProfile(firebaseUser, phone, username);
       
     } catch (error) {
       console.error('Error ensuring profile:', error);
@@ -238,7 +242,7 @@ const FirebaseSMSAuth = () => {
     }
   };
 
-  const ensureSupabaseProfile = async (firebaseUser: any, phone: string) => {
+  const ensureSupabaseProfile = async (firebaseUser: any, phone: string, username?: string) => {
     try {
       const { supabase } = await import('@/integrations/supabase/client');
       
@@ -288,7 +292,7 @@ const FirebaseSMSAuth = () => {
         },
         body: JSON.stringify({
           phone,
-          full_name: phone,
+          full_name: username || phone,
           firebase_uid: firebaseUser.uid
         })
       });
@@ -322,36 +326,26 @@ const FirebaseSMSAuth = () => {
     setIsLoading(true);
     try {
       const result = await confirmationResult.confirm(otp);
-      const firebaseUser = result.user;
+      const verifiedUser = result.user;
       
-      if (firebaseUser) {
-        await ensureProfile(firebaseUser, fullPhone());
-        
+      if (verifiedUser) {
         if (mode === 'signup') {
-          // رسالة نجاح للتسجيل الجديد
+          // للمستخدمين الجدد، انتقل لخطوة اسم المستخدم
+          setFirebaseUser(verifiedUser);
+          setStep('username');
           toast({ 
-            title: 'تم إنشاء الحساب بنجاح!', 
-            description: 'مرحباً بك! تم إنشاء حسابك بنجاح وتسجيل دخولك.',
-            action: (
-              <Button
-                size="sm"
-                onClick={() => navigate('/')}
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
-              >
-                الذهاب للرئيسية
-              </Button>
-            ),
+            title: 'تم التحقق بنجاح!', 
+            description: 'الآن اختر اسم المستخدم الذي سيظهر في المحادثات',
           });
         } else {
-          // رسالة ترحيب لتسجيل الدخول
+          // لتسجيل الدخول، أكمل العملية مباشرة
+          await ensureProfile(verifiedUser, fullPhone());
           toast({ 
             title: 'مرحباً بعودتك!', 
             description: 'تم تسجيل دخولك بنجاح.'
           });
+          navigate('/');
         }
-        
-        // الانتقال للصفحة الرئيسية
-        navigate('/');
       }
     } catch (error: any) {
       console.error('Firebase OTP verification error:', error);
@@ -443,10 +437,48 @@ const FirebaseSMSAuth = () => {
     }
   };
 
+  const handleUsernameSubmit = async (usernameInput: string) => {
+    if (!firebaseUser) {
+      toast({
+        title: 'خطأ',
+        description: 'لم يتم العثور على بيانات المستخدم',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await ensureProfile(firebaseUser, fullPhone(), usernameInput);
+      
+      toast({ 
+        title: 'تم إنشاء الحساب بنجاح!', 
+        description: `مرحباً ${usernameInput}! تم إنشاء حسابك بنجاح`,
+      });
+      
+      navigate('/');
+    } catch (error) {
+      console.error('Error completing registration:', error);
+      toast({
+        title: 'خطأ في إكمال التسجيل',
+        description: 'فشل في إكمال عملية التسجيل. يرجى المحاولة مرة أخرى.',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleBack = () => {
-    setStep('phone');
-    setOtp('');
-    setConfirmationResult(null);
+    if (step === 'username') {
+      setStep('verify');
+      setUsername('');
+      setFirebaseUser(null);
+    } else {
+      setStep('phone');
+      setOtp('');
+      setConfirmationResult(null);
+    }
   };
 
   return (
@@ -459,7 +491,12 @@ const FirebaseSMSAuth = () => {
             {mode === 'signup' ? 'إنشاء حساب عبر SMS' : 'تسجيل دخول عبر SMS'}
           </CardTitle>
           <CardDescription>
-            {step === 'phone' ? 'أدخل رقم هاتفك لإرسال رمز التحقق' : 'أدخل رمز التحقق المرسل إلى هاتفك'}
+            {step === 'phone' 
+              ? 'أدخل رقم هاتفك لإرسال رمز التحقق' 
+              : step === 'verify' 
+                ? 'أدخل رمز التحقق المرسل إلى هاتفك'
+                : 'اختر اسم المستخدم الذي سيظهر في المحادثات'
+            }
           </CardDescription>
         </CardHeader>
 
@@ -525,7 +562,7 @@ const FirebaseSMSAuth = () => {
                 }
               </Button>
             </form>
-          ) : (
+          ) : step === 'verify' ? (
             <form onSubmit={handleVerifyOTP} className="space-y-4">
               <div className="space-y-2 text-right">
                 <Label htmlFor="otp">رمز التحقق</Label>
@@ -563,6 +600,24 @@ const FirebaseSMSAuth = () => {
                 </Button>
               </div>
             </form>
+          ) : (
+            <div className="space-y-4">
+              <UsernameRegistration
+                onUsernameSubmit={handleUsernameSubmit}
+                isLoading={isLoading}
+              />
+              <div className="text-center">
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={handleBack}
+                  disabled={isLoading}
+                >
+                  رجوع للخطوة السابقة
+                </Button>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>
