@@ -35,20 +35,58 @@ serve(async (req) => {
     }
 
     let tokenStatus = 'active';
+    let currentAccessToken = accessToken;
     
     // Test the access token by making a simple API call
-    if (accessToken) {
+    if (currentAccessToken) {
       try {
         const testResponse = await fetch(`https://www.zohoapis.com/inventory/v1/organizations/${organizationId}`, {
           method: 'GET',
           headers: {
-            'Authorization': `Zoho-oauthtoken ${accessToken}`,
+            'Authorization': `Zoho-oauthtoken ${currentAccessToken}`,
             'Content-Type': 'application/json',
           },
         });
 
         if (!testResponse.ok) {
-          tokenStatus = 'expired';
+          console.log('Access token expired, attempting to refresh...');
+          // Try to refresh the token
+          const refreshResponse = await fetch('https://accounts.zoho.com/oauth/v2/token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+              refresh_token: refreshToken,
+              client_id: clientId,
+              client_secret: clientSecret,
+              grant_type: 'refresh_token',
+            }),
+          });
+
+          if (refreshResponse.ok) {
+            const tokenData = await refreshResponse.json();
+            currentAccessToken = tokenData.access_token;
+            console.log('Successfully refreshed access token');
+            
+            // Test the new token
+            const reTestResponse = await fetch(`https://www.zohoapis.com/inventory/v1/organizations/${organizationId}`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Zoho-oauthtoken ${currentAccessToken}`,
+                'Content-Type': 'application/json',
+              },
+            });
+            
+            if (reTestResponse.ok) {
+              tokenStatus = 'active';
+            } else {
+              tokenStatus = 'error';
+            }
+          } else {
+            console.error('Failed to refresh token:', await refreshResponse.text());
+            tokenStatus = 'expired';
+          }
         }
       } catch (error) {
         console.error('Error testing access token:', error);
