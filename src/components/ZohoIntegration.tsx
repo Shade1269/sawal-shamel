@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, RefreshCw, Settings, CheckCircle2, AlertCircle, Zap, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ZohoIntegration {
   organization_id: string | null;
@@ -32,16 +33,11 @@ export const ZohoIntegration: React.FC = () => {
     if (!user?.id) return;
     
     try {
-      // Check integration status from edge function
-      const response = await fetch(`https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/check-zoho-status`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MVgOTc2ODV0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
-        }
-      });
+      const { data, error } = await supabase.functions.invoke('check-zoho-status');
 
-      if (response.ok) {
-        const data = await response.json();
+      if (error) throw error;
+
+      if (data && data.success) {
         setIntegration({
           organization_id: data.organization_id,
           last_sync_at: data.last_sync_at,
@@ -82,28 +78,21 @@ export const ZohoIntegration: React.FC = () => {
     setIsSyncing(true);
     
     try {
-      const response = await fetch(`https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/sync-zoho-products`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MVgOTc2ODV0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
-        },
-        body: JSON.stringify({
-          userId: user?.id
-        })
+      const { data, error } = await supabase.functions.invoke('sync-zoho-products', {
+        body: { userId: user?.id }
       });
 
-      const result = await response.json();
+      if (error) throw error;
       
-      if (result.success) {
+      if (data && data.success) {
         toast({
           title: "نجح التزامن",
-          description: `تم استيراد ${result.synced || 0} منتج من Zoho`,
+          description: `تم استيراد ${data.synced || 0} منتج من Zoho`,
         });
         
         await loadZohoIntegration();
       } else {
-        throw new Error(result.error || 'فشل التزامن');
+        throw new Error(data?.error || 'فشل التزامن');
       }
     } catch (err: any) {
       console.error('Sync error:', err);
@@ -121,17 +110,11 @@ export const ZohoIntegration: React.FC = () => {
     setIsRefreshing(true);
     
     try {
-      const response = await fetch(`https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/refresh-zoho-token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MVgOTc2ODV0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
-        }
-      });
+      const { data, error } = await supabase.functions.invoke('refresh-zoho-token');
 
-      const result = await response.json();
+      if (error) throw error;
       
-      if (result.success) {
+      if (data && data.success) {
         toast({
           title: "تم تحديث الرمز المميز",
           description: "تم تحديث رمز الوصول بنجاح من السيكرت"
@@ -139,7 +122,7 @@ export const ZohoIntegration: React.FC = () => {
         
         await loadZohoIntegration();
       } else {
-        throw new Error(result.error || 'فشل تحديث الرمز المميز');
+        throw new Error(data?.error || 'فشل تحديث الرمز المميز');
       }
     } catch (err: any) {
       console.error('Token refresh error:', err);
@@ -157,26 +140,19 @@ export const ZohoIntegration: React.FC = () => {
     setIsCleaningUp(true);
     
     try {
-      const response = await fetch(`https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/cleanup-linguistic-products`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MVgOTc2ODV0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA`
-        },
-        body: JSON.stringify({
-          userId: user?.id
-        })
+      const { data, error } = await supabase.functions.invoke('cleanup-linguistic-products', {
+        body: { userId: user?.id }
       });
 
-      const result = await response.json();
+      if (error) throw error;
       
-      if (result.success) {
+      if (data && data.success) {
         toast({
           title: "تم التنظيف",
-          description: `تم حذف ${result.deletedCount} منتج مكرر`
+          description: `تم حذف ${data.deletedCount} منتج مكرر`
         });
       } else {
-        throw new Error(result.error || 'فشل التنظيف');
+        throw new Error(data?.error || 'فشل التنظيف');
       }
     } catch (err: any) {
       console.error('Cleanup error:', err);
