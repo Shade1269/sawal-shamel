@@ -41,73 +41,110 @@ export const useUnifiedUserData = () => {
   const unifyUserData = async () => {
     let profile = null;
     
-    // إذا كان المستخدم مسجل دخول عبر Supabase
-    if (supabaseUser) {
-      const { data: supabaseProfile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('auth_user_id', supabaseUser.id)
-        .maybeSingle();
-      
-      if (supabaseProfile) {
-        profile = supabaseProfile;
+    try {
+      // إذا كان المستخدم مسجل دخول عبر Supabase
+      if (supabaseUser) {
+        console.log('Unifying Supabase user:', supabaseUser.id);
         
-        // إذا كان هناك مستخدم Firebase أيضاً، نحفظ بياناته في Firebase
-        if (firebaseUser && !firebaseProfile) {
-          await saveUserToFirestore(firebaseUser, {
-            email: supabaseProfile.email,
-            fullName: supabaseProfile.full_name,
-            role: supabaseProfile.role
-          });
-        }
-      } else {
-        // إنشاء profile جديد في Supabase إذا لم يكن موجود
-        const { data: newProfile, error } = await supabase
-          .from('profiles')
-          .insert({
-            auth_user_id: supabaseUser.id,
-            email: supabaseUser.email,
-            full_name: supabaseUser.user_metadata?.full_name || supabaseUser.email,
-            role: 'affiliate'
-          })
-          .select()
-          .single();
-          
-        if (!error) {
-          profile = newProfile;
-        }
-      }
-    }
-    
-    // إذا كان المستخدم مسجل دخول عبر Firebase فقط
-    else if (firebaseUser) {
-      // البحث عن profile في Supabase بالهاتف
-      if (firebaseProfile?.phone) {
-        const { data: phoneProfile } = await supabase
+        const { data: supabaseProfile, error: fetchError } = await supabase
           .from('profiles')
           .select('*')
-          .eq('phone', firebaseProfile.phone)
+          .eq('auth_user_id', supabaseUser.id)
           .maybeSingle();
+        
+        if (fetchError) {
+          console.error('Error fetching Supabase profile:', fetchError);
+        }
+        
+        if (supabaseProfile) {
+          profile = supabaseProfile;
+          console.log('Found existing Supabase profile:', profile.id);
           
-        if (phoneProfile) {
-          profile = phoneProfile;
+          // إذا كان هناك مستخدم Firebase أيضاً، نحفظ بياناته في Firebase
+          if (firebaseUser && !firebaseProfile) {
+            try {
+              await saveUserToFirestore(firebaseUser, {
+                email: supabaseProfile.email,
+                fullName: supabaseProfile.full_name,
+                role: supabaseProfile.role
+              });
+            } catch (error) {
+              console.error('Error saving to Firestore:', error);
+            }
+          }
         } else {
-          // إنشاء profile جديد في Supabase مربوط بالهاتف
+          // إنشاء profile جديد في Supabase إذا لم يكن موجود
+          console.log('Creating new Supabase profile for user:', supabaseUser.id);
+          
           const { data: newProfile, error } = await supabase
             .from('profiles')
             .insert({
-              phone: firebaseProfile.phone,
-              full_name: firebaseProfile.displayName || firebaseProfile.phone,
+              auth_user_id: supabaseUser.id,
+              email: supabaseUser.email,
+              full_name: supabaseUser.user_metadata?.full_name || supabaseUser.email,
               role: 'affiliate'
             })
             .select()
             .single();
             
-          if (!error) {
+          if (error) {
+            console.error('Error creating Supabase profile:', error);
+          } else {
             profile = newProfile;
+            console.log('Created new Supabase profile:', profile.id);
           }
         }
       }
+      
+      // إذا كان المستخدم مسجل دخول عبر Firebase فقط
+      else if (firebaseUser) {
+        console.log('Unifying Firebase user:', firebaseUser.uid);
+        console.log('Firebase profile:', firebaseProfile);
+        
+        const phoneNumber = firebaseProfile?.phone || firebaseUser.phoneNumber;
+        
+        if (phoneNumber) {
+          // البحث عن profile في Supabase بالهاتف
+          const { data: phoneProfile, error: fetchError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('phone', phoneNumber)
+            .maybeSingle();
+            
+          if (fetchError) {
+            console.error('Error fetching profile by phone:', fetchError);
+          }
+            
+          if (phoneProfile) {
+            profile = phoneProfile;
+            console.log('Found existing profile by phone:', profile.id);
+          } else {
+            // إنشاء profile جديد في Supabase مربوط بالهاتف
+            console.log('Creating new profile for Firebase user with phone:', phoneNumber);
+            
+            const { data: newProfile, error } = await supabase
+              .from('profiles')
+              .insert({
+                phone: phoneNumber,
+                full_name: firebaseProfile?.displayName || firebaseProfile?.fullName || phoneNumber,
+                role: 'affiliate'
+              })
+              .select()
+              .single();
+              
+            if (error) {
+              console.error('Error creating profile for Firebase user:', error);
+            } else {
+              profile = newProfile;
+              console.log('Created new profile for Firebase user:', profile.id);
+            }
+          }
+        } else {
+          console.error('Firebase user has no phone number');
+        }
+      }
+    } catch (error) {
+      console.error('Error in unifyUserData:', error);
     }
     
     setUnifiedProfile(profile);
