@@ -9,7 +9,7 @@ import { Loader2, RefreshCw, Settings, CheckCircle2, AlertCircle, Zap, Trash2 } 
 import { useToast } from '@/hooks/use-toast';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { getFirebaseFirestore } from '@/lib/firebase';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ZohoIntegration {
@@ -29,18 +29,18 @@ export const ZohoIntegration: React.FC = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isCleaningUp, setIsCleaningUp] = useState(false);
   const { toast } = useToast();
-  const { user } = useFirebaseAuth();
+  const { user } = useSupabaseAuth();
 
   useEffect(() => {
     loadZohoIntegration();
   }, []);
 
   const loadZohoIntegration = async () => {
-    if (!user?.uid) return;
+    if (!user?.id) return;
     
     try {
       const db = await getFirebaseFirestore();
-      const integrationDoc = doc(db, 'users', user.uid, 'integrations', 'zoho');
+      const integrationDoc = doc(db, 'users', user.id, 'integrations', 'zoho');
       const docSnap = await getDoc(integrationDoc);
       
       if (docSnap.exists()) {
@@ -57,7 +57,7 @@ export const ZohoIntegration: React.FC = () => {
   };
 
   const saveIntegrationSettings = async () => {
-    if (!accessToken.trim() || !organizationId.trim() || !user?.uid) {
+    if (!accessToken.trim() || !organizationId.trim() || !user?.id) {
       toast({
         title: "خطأ",
         description: "يرجى إدخال جميع البيانات المطلوبة",
@@ -77,7 +77,7 @@ export const ZohoIntegration: React.FC = () => {
       };
 
       const db = await getFirebaseFirestore();
-      const integrationDoc = doc(db, 'users', user.uid, 'integrations', 'zoho');
+      const integrationDoc = doc(db, 'users', user.id, 'integrations', 'zoho');
       
       if (integration) {
         await updateDoc(integrationDoc, integrationData);
@@ -122,7 +122,7 @@ export const ZohoIntegration: React.FC = () => {
       // نستخدم Edge Function فقط كبروكسي (لا تخزين في Supabase) لتجاوز CORS من Zoho
       const { data, error } = await supabase.functions.invoke('sync-zoho-to-firestore', {
         body: {
-          userId: user.uid,
+          userId: user.id,
           maxModels: 60,
           accessToken: integration.access_token,
           organizationId: integration.organization_id,
@@ -157,7 +157,7 @@ export const ZohoIntegration: React.FC = () => {
       let saved = 0;
       for (const product of productsFromZoho) {
         try {
-          const productRef = doc(db, 'users', user.uid, 'products', product.id);
+          const productRef = doc(db, 'users', user.id, 'products', product.id);
           await setDoc(productRef, {
             ...product,
             createdAt: new Date(),
@@ -173,7 +173,7 @@ export const ZohoIntegration: React.FC = () => {
       }
 
       // تحديث وقت آخر مزامنة
-      const integrationDoc = doc(db, 'users', user.uid, 'integrations', 'zoho');
+      const integrationDoc = doc(db, 'users', user.id, 'integrations', 'zoho');
       await updateDoc(integrationDoc, { last_sync_at: new Date().toISOString() });
       await loadZohoIntegration();
 
@@ -218,11 +218,11 @@ export const ZohoIntegration: React.FC = () => {
   };
 
   const toggleIntegration = async (enabled: boolean) => {
-    if (!integration || !user?.uid) return;
+    if (!integration || !user?.id) return;
 
     try {
       const db = await getFirebaseFirestore();
-      const integrationDoc = doc(db, 'users', user.uid, 'integrations', 'zoho');
+      const integrationDoc = doc(db, 'users', user.id, 'integrations', 'zoho');
       await updateDoc(integrationDoc, { 
         is_enabled: enabled,
         updated_at: new Date().toISOString()

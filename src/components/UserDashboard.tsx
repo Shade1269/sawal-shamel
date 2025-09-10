@@ -12,11 +12,11 @@ import {
   User,
   Star
 } from 'lucide-react';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 
 export const UserDashboard: React.FC = () => {
-  const { user, userProfile } = useFirebaseAuth();
+  const { user } = useSupabaseAuth();
   const { userShop, userActivities, userStatistics, loading } = useUserDataContext();
 
   if (loading) {
@@ -44,25 +44,25 @@ export const UserDashboard: React.FC = () => {
         <CardHeader>
           <div className="flex items-center gap-4">
             <Avatar className="h-16 w-16">
-              <AvatarImage src={user?.photoURL || userProfile?.photoURL || ''} />
+              <AvatarImage src={''} />
               <AvatarFallback>
                 <User className="h-8 w-8" />
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <CardTitle className="text-xl">
-                {user?.displayName || userProfile?.displayName || user?.phoneNumber}
+                {user?.user_metadata?.full_name || user?.email}
               </CardTitle>
               <p className="text-muted-foreground">
-                {user?.email || user?.phoneNumber}
+                {user?.email}
               </p>
               <div className="flex items-center gap-2 mt-2">
                 <Badge variant="outline">
-                  {userProfile?.role || 'affiliate'}
+                  مستخدم
                 </Badge>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Star className="h-4 w-4" />
-                  {userProfile?.points || 0} نقطة
+                  0 نقطة
                 </div>
               </div>
             </div>
@@ -154,11 +154,11 @@ export const UserDashboard: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">اسم المتجر</p>
-                <p className="font-medium">{userShop.shop_name}</p>
+                <p className="font-medium">{userShop.display_name}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">رابط المتجر</p>
-                <p className="font-medium text-primary">{userShop.shop_slug}</p>
+                <p className="font-medium text-primary">{userShop.slug}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">تاريخ الإنشاء</p>

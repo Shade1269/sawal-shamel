@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,7 +44,7 @@ import {
 const ADMIN_EMAIL = "Shade199633@icloud.com";
 
 const Admin = () => {
-  const { user } = useFirebaseAuth();
+  const { user } = useSupabaseAuth();
   const { addProduct, getShopProducts, updateProductInFirestore } = useFirebaseUserData();
   const { toast } = useToast();
 
@@ -365,7 +365,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
       const { getFirebaseApp } = await import('@/lib/firebase');
       const app = await getFirebaseApp();
       const db = getFirestore(app);
-      const productRef = doc(db, 'users', user.uid, 'products', product.id);
+      const productRef = doc(db, 'users', user.id, 'products', product.id);
       await deleteDoc(productRef);
 
       toast({ title: "تم الحذف", description: "تم حذف المنتج بنجاح" });
@@ -402,7 +402,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
       setLoading(true);
       
       // Mock profile data for Firebase setup
-      const currentProfile = { id: user?.uid };
+      const currentProfile = { id: user?.id };
       
       let expiresAt = null;
       if (action === 'mute' || action === 'tempban') {

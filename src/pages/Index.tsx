@@ -4,11 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { MessageCircle, Users, Hash, Package, LogOut, User, Store } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useFirebaseAuth();
+  const { user, signOut } = useSupabaseAuth();
 
   const handleChatClick = () => {
     if (!user) {
@@ -49,7 +49,7 @@ const Index = () => {
               <div className="flex items-center gap-2">
                 <User className="h-5 w-5 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
-                  مرحباً، {user && (user.displayName || user.phoneNumber || user.email)}
+                  مرحباً، {user && (user.user_metadata?.full_name || user.email)}
                 </span>
               </div>
               <Button

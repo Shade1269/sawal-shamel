@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { LogIn, UserPlus, Mail, MessageSquare } from 'lucide-react';
 import FirebaseSMSAuth from '@/components/FirebaseSMSAuth';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, signUp } = useFirebaseAuth();
+  const { signIn, signUp } = useSupabaseAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -60,7 +60,7 @@ const AuthPage = () => {
     
     setIsLoading(true);
     
-    const result = await signIn(signInForm.email, signInForm.password, signInForm.rememberMe);
+    const result = await signIn(signInForm.email, signInForm.password);
     
     console.log('SignIn result:', result);
     

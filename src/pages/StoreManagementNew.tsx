@@ -7,12 +7,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useUserDataContext } from '@/contexts/UserDataContext';
 import { Package, Plus, Store, Activity, BarChart3, User, Calendar } from 'lucide-react';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { UserDashboard } from '@/components/UserDashboard';
 import { ProductImageCarousel } from '@/components/ProductImageCarousel';
 
 const StoreManagement = () => {
-  const { user } = useFirebaseAuth();
+  const { user } = useSupabaseAuth();
   const { 
     userShop, 
     userActivities,
@@ -198,7 +198,7 @@ const StoreManagement = () => {
           <div>
             <h1 className="text-3xl font-bold">إدارة المتجر</h1>
             <p className="text-muted-foreground">
-              مرحباً بك في لوحة تحكم متجر "{userShop.shop_name}"
+              مرحباً بك في لوحة تحكم متجر "{userShop.display_name}"
             </p>
           </div>
         </div>

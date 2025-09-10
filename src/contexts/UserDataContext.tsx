@@ -1,8 +1,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
-import { useAutoMigration } from '@/hooks/useAutoMigration';
+import { useSupabaseUserData } from '@/hooks/useSupabaseUserData';
 
-const UserDataContext = createContext<ReturnType<typeof useFirebaseUserData> | null>(null);
+const UserDataContext = createContext<ReturnType<typeof useSupabaseUserData> | null>(null);
 
 export const useUserDataContext = () => {
   const context = useContext(UserDataContext);
@@ -17,10 +16,7 @@ interface UserDataProviderProps {
 }
 
 export const UserDataProvider: React.FC<UserDataProviderProps> = ({ children }) => {
-  const userData = useFirebaseUserData();
-  
-  // Auto-migrate user data from Supabase to Firestore
-  useAutoMigration();
+  const userData = useSupabaseUserData();
   
   return (
     <UserDataContext.Provider value={userData}>

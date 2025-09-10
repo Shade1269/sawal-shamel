@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
+import { SupabaseAuthProvider, useSupabaseAuth } from "@/contexts/SupabaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
 import { DarkModeProvider } from "@/components/DarkModeProvider";
 import AuthPage from "@/components/AuthPage";
@@ -24,7 +24,7 @@ const AdminPageLazy = lazy(() => import("./pages/Admin"));
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { user, loading } = useFirebaseAuth();
+  const { user, loading } = useSupabaseAuth();
 
   if (loading) {
     return (
@@ -58,7 +58,7 @@ const AppContent = () => {
 };
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useFirebaseAuth();
+  const { user, loading } = useSupabaseAuth();
 
   if (loading) {
     return (
@@ -84,15 +84,17 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <UserDataProvider>
-          <DarkModeProvider>
-            <BrowserRouter>
-              <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
-                <AppContent />
-              </Suspense>
-            </BrowserRouter>
-          </DarkModeProvider>
-        </UserDataProvider>
+        <SupabaseAuthProvider>
+          <UserDataProvider>
+            <DarkModeProvider>
+              <BrowserRouter>
+                <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
+                  <AppContent />
+                </Suspense>
+              </BrowserRouter>
+            </DarkModeProvider>
+          </UserDataProvider>
+        </SupabaseAuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

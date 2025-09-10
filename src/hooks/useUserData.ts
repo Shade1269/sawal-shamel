@@ -1,1 +1,1 @@
-export { useFirestoreUserData as useUserData } from './useFirestoreUserData';
+export { useSupabaseUserData as useUserData } from './useSupabaseUserData';
