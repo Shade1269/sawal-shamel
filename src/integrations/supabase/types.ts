@@ -1602,6 +1602,10 @@ export type Database = {
         Args: { channel_uuid: string }
         Returns: number
       }
+      get_current_user_phone: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
