@@ -17,6 +17,7 @@ import UserSettingsMenu from "@/components/UserSettingsMenu";
 import ZohoIntegration from "@/components/ZohoIntegration";
 import EmkanIntegration from "@/components/EmkanIntegration";
 import { useFirebaseUserData } from "@/hooks/useFirebaseUserData";
+import DataMigrationPanel from '@/components/DataMigrationPanel';
 
 import { 
   Shield, 
@@ -575,6 +576,11 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
         </div>
         <p className="text-muted-foreground">إدارة شاملة للمستخدمين والغرف والصلاحيات</p>
       </header>
+
+      {/* Data Migration Section */}
+      <section aria-labelledby="data-migration">
+        <DataMigrationPanel />
+      </section>
 
       <section aria-labelledby="zoho-integration-admin">
         <Card>
