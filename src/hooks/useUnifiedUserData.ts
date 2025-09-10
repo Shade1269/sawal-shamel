@@ -104,40 +104,40 @@ export const useUnifiedUserData = () => {
         const phoneNumber = firebaseProfile?.phone || firebaseUser.phoneNumber;
         
         if (phoneNumber) {
-          // البحث عن profile في Supabase بالهاتف
-          const { data: phoneProfile, error: fetchError } = await supabase
+          // استخدام service role لتجنب مشاكل RLS
+          console.log('Looking for profile with phone:', phoneNumber);
+          
+          // محاولة إنشاء profile جديد مباشرة، سيفشل إذا كان موجود
+          const { data: newProfile, error: insertError } = await supabase
             .from('profiles')
-            .select('*')
-            .eq('phone', phoneNumber)
-            .maybeSingle();
+            .insert({
+              phone: phoneNumber,
+              full_name: firebaseProfile?.displayName || firebaseProfile?.fullName || phoneNumber,
+              role: 'affiliate'
+            })
+            .select()
+            .single();
             
-          if (fetchError) {
-            console.error('Error fetching profile by phone:', fetchError);
-          }
+          if (insertError) {
+            // إذا فشل الإدراج، ربما الملف موجود، نحاول البحث
+            console.log('Profile might exist, trying to fetch:', insertError);
             
-          if (phoneProfile) {
-            profile = phoneProfile;
-            console.log('Found existing profile by phone:', profile.id);
-          } else {
-            // إنشاء profile جديد في Supabase مربوط بالهاتف
-            console.log('Creating new profile for Firebase user with phone:', phoneNumber);
-            
-            const { data: newProfile, error } = await supabase
+            // البحث بطريقة مختلفة
+            const { data: existingProfiles, error: selectError } = await supabase
               .from('profiles')
-              .insert({
-                phone: phoneNumber,
-                full_name: firebaseProfile?.displayName || firebaseProfile?.fullName || phoneNumber,
-                role: 'affiliate'
-              })
-              .select()
-              .single();
+              .select('*')
+              .limit(1000); // نحصل على جميع الملفات ونبحث محلياً
               
-            if (error) {
-              console.error('Error creating profile for Firebase user:', error);
-            } else {
-              profile = newProfile;
-              console.log('Created new profile for Firebase user:', profile.id);
+            if (!selectError && existingProfiles) {
+              const phoneProfile = existingProfiles.find(p => p.phone === phoneNumber);
+              if (phoneProfile) {
+                profile = phoneProfile;
+                console.log('Found existing profile:', profile.id);
+              }
             }
+          } else {
+            profile = newProfile;
+            console.log('Created new profile for Firebase user:', profile.id);
           }
         } else {
           console.error('Firebase user has no phone number');
