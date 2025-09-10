@@ -64,13 +64,17 @@ serve(async (req) => {
     // Test the access token by making a simple API call
     if (currentAccessToken) {
       try {
-        const testResponse = await fetch(`https://www.zohoapis.com/inventory/v1/organizations/${organizationId}`, {
+        // Use the correct Zoho API endpoint with organization_id as query parameter
+        const testResponse = await fetch(`https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&limit=1`, {
           method: 'GET',
           headers: {
             'Authorization': `Zoho-oauthtoken ${currentAccessToken}`,
             'Content-Type': 'application/json',
           },
         });
+
+        console.log(`Testing token with URL: https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&limit=1`);
+        console.log(`Test response status: ${testResponse.status}`);
 
         if (!testResponse.ok) {
           console.log('Access token expired, attempting to refresh...');
@@ -93,8 +97,8 @@ serve(async (req) => {
             currentAccessToken = tokenData.access_token;
             console.log('Successfully refreshed access token');
             
-            // Test the new token
-            const reTestResponse = await fetch(`https://www.zohoapis.com/inventory/v1/organizations/${organizationId}`, {
+            // Test the new token with correct endpoint
+            const reTestResponse = await fetch(`https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&limit=1`, {
               method: 'GET',
               headers: {
                 'Authorization': `Zoho-oauthtoken ${currentAccessToken}`,
@@ -102,15 +106,22 @@ serve(async (req) => {
               },
             });
             
+            console.log(`Re-test response status: ${reTestResponse.status}`);
+            
             if (reTestResponse.ok) {
               tokenStatus = 'active';
+              console.log('Token is now active after refresh');
             } else {
               tokenStatus = 'error';
+              console.log('Token still not working after refresh');
             }
           } else {
             console.error('Failed to refresh token:', await refreshResponse.text());
             tokenStatus = 'expired';
           }
+        } else {
+          tokenStatus = 'active';
+          console.log('Token is active and working');
         }
       } catch (error) {
         console.error('Error testing access token:', error);
@@ -118,6 +129,7 @@ serve(async (req) => {
       }
     } else {
       tokenStatus = 'expired';
+      console.log('No access token available');
     }
 
     return new Response(
