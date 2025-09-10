@@ -50,7 +50,7 @@ export const useFirebaseUserData = () => {
       const app = await getFirebaseApp();
       
       const db = getFirestore(app);
-      const productRef = doc(db, 'products', productId);
+      const productRef = doc(db, 'users', user.uid, 'products', productId);
       
       await updateDoc(productRef, updates);
       
@@ -216,7 +216,7 @@ export const useFirebaseUserData = () => {
           fetchUserActivities()
         ]);
         
-        return { id: result.productId, ...productData };
+        return result.productId;
       } else {
         throw new Error('Failed to add product');
       }

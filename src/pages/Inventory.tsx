@@ -43,7 +43,7 @@ interface ProductVariant {
 const Inventory = () => {
   const navigate = useNavigate();
   const { user } = useFirebaseAuth();
-  const { getShopProducts, addProduct } = useFirebaseUserData();
+  const { getShopProducts, addProduct, updateProductInFirestore } = useFirebaseUserData();
 
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
@@ -164,7 +164,6 @@ const Inventory = () => {
       const updatedImages = [...currentImages, imageUrl];
 
       // Update product in Firebase
-      const { updateProductInFirestore } = useFirebaseUserData();
       await updateProductInFirestore(productId, {
         image_urls: updatedImages
       });

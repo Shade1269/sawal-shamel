@@ -44,7 +44,7 @@ const ADMIN_EMAIL = "Shade199633@icloud.com";
 
 const Admin = () => {
   const { user } = useFirebaseAuth();
-  const { addProduct, getShopProducts } = useFirebaseUserData();
+  const { addProduct, getShopProducts, updateProductInFirestore } = useFirebaseUserData();
   const { toast } = useToast();
 
   const isAllowed = useMemo(() => user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase(), [user]);
@@ -166,9 +166,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
   // Update product with new data
   const updateProduct = async (productId: string, updates: any) => {
     try {
-      const { updateProductInFirestore } = useFirebaseUserData();
       await updateProductInFirestore(productId, updates);
-      
     } catch (error) {
       console.error('Error updating product:', error);
       throw error;
@@ -293,7 +291,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
       };
 
       // Add product first to get ID
-      const productId = await addProduct(productData);
+      const productId = await addProduct(productData) as string;
       
       // Upload images to Firebase Storage if any
       let imageUrls: string[] = [];
@@ -363,7 +361,14 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
     if (!confirm(`هل أنت متأكد من حذف المنتج "${product.title}"؟`)) return;
 
     try {
-      // Firebase delete logic will be implemented here
+      if (!user) throw new Error('المستخدم غير مسجل');
+      const { getFirestore, doc, deleteDoc } = await import('firebase/firestore');
+      const { getFirebaseApp } = await import('@/lib/firebase');
+      const app = await getFirebaseApp();
+      const db = getFirestore(app);
+      const productRef = doc(db, 'users', user.uid, 'products', product.id);
+      await deleteDoc(productRef);
+
       toast({ title: "تم الحذف", description: "تم حذف المنتج بنجاح" });
       loadProducts();
     } catch (error) {
@@ -1593,9 +1598,14 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                 <Button 
                   onClick={async () => {
                     try {
-                      // Firebase update logic will be implemented here
-                      console.log('Update product:', editingProduct);
-                      
+                      await updateProduct(editingProduct.id, {
+                        title: editingProduct.title,
+                        description: editingProduct.description,
+                        price_sar: Number(editingProduct.price_sar) || 0,
+                        stock: Number(editingProduct.stock) || 0,
+                        category: editingProduct.category || null,
+                        commission_rate: Number(editingProduct.commission_rate) || 0,
+                      });
                       toast({ title: "تم التحديث", description: "تم تحديث المنتج بنجاح" });
                       setEditingProduct(null);
                       loadProducts();
