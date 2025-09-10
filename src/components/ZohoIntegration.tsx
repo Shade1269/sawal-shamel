@@ -26,8 +26,10 @@ export const ZohoIntegration: React.FC = () => {
   const { user } = useSupabaseAuth();
 
   useEffect(() => {
-    loadZohoIntegration();
-  }, []);
+    if (user?.id) {
+      loadZohoIntegration();
+    }
+  }, [user?.id]);
 
   const loadZohoIntegration = async () => {
     if (!user?.id) return;
