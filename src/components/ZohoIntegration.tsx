@@ -123,9 +123,14 @@ export const ZohoIntegration: React.FC = () => {
 
     setIsSyncing(true);
     try {
-      // Use new direct Zoho to Firestore sync
+      // Use direct Zoho to Firestore sync with integration credentials
       const { data, error } = await supabase.functions.invoke('sync-zoho-to-firestore', {
-        body: { userId: user.uid, maxModels: 60 }
+        body: { 
+          userId: user.uid, 
+          maxModels: 60,
+          accessToken: integration.access_token,
+          organizationId: integration.organization_id
+        }
       });
 
       if (error) throw error;

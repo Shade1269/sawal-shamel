@@ -138,32 +138,15 @@ serve(async (req) => {
     const body = await req.json();
     const userId: string | undefined = body?.userId;
     const maxModels: number = Math.min(Math.max(parseInt(body?.maxModels ?? '1000', 10) || 1000, 1), 1000);
+    const accessToken: string | undefined = body?.accessToken;
+    const organizationId: string | undefined = body?.organizationId;
 
-    if (!userId) {
-      return new Response(JSON.stringify({ success: false, error: 'Missing userId' }), {
+    if (!userId || !accessToken || !organizationId) {
+      return new Response(JSON.stringify({ success: false, error: 'Missing required parameters: userId, accessToken, or organizationId' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    // Get latest Zoho credentials from integration table (kept fresh by refresh-zoho-token)
-    const { data: integration, error: intErr } = await supabase
-      .from('zoho_integration')
-      .select('access_token, organization_id, is_enabled')
-      .eq('is_enabled', true)
-      .order('updated_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (intErr || !integration?.access_token || !integration?.organization_id) {
-      return new Response(JSON.stringify({ success: false, error: 'Zoho integration not configured or disabled' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const accessToken = integration.access_token as string;
-    const organizationId = integration.organization_id as string;
 
     // Fetch Zoho items and group by model
     let allItems: any[] = [];
