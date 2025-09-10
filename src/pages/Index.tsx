@@ -5,11 +5,16 @@ import { MessageCircle, Users, Hash, Package, LogOut, User, Store } from 'lucide
 import { useNavigate } from 'react-router-dom';
 
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useSupabaseAuth();
+  const { user: supabaseUser, signOut: supabaseSignOut } = useSupabaseAuth();
+  const { user: firebaseUser, userProfile, signOut: firebaseSignOut } = useFirebaseAuth();
 
+  // Firebase user takes priority
+  const user = firebaseUser || supabaseUser;
+  
   const handleChatClick = () => {
     if (!user) {
       navigate('/auth');
@@ -35,8 +40,23 @@ const Index = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    if (firebaseUser) {
+      await firebaseSignOut();
+    }
+    if (supabaseUser) {
+      await supabaseSignOut();
+    }
     navigate('/auth');
+  };
+
+  const getUserDisplayName = () => {
+    if (firebaseUser) {
+      return userProfile?.phone || firebaseUser.phoneNumber || 'مستخدم Firebase';
+    }
+    if (supabaseUser) {
+      return supabaseUser.user_metadata?.full_name || supabaseUser.email || 'مستخدم';
+    }
+    return 'ضيف';
   };
 
   return (
@@ -49,7 +69,7 @@ const Index = () => {
               <div className="flex items-center gap-2">
                 <User className="h-5 w-5 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
-                  مرحباً، {user && (user.user_metadata?.full_name || user.email)}
+                  مرحباً، {getUserDisplayName()}
                 </span>
               </div>
               <Button

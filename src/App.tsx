@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SupabaseAuthProvider, useSupabaseAuth } from "@/contexts/SupabaseAuthContext";
+import { FirebaseAuthProvider, useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
 import { DarkModeProvider } from "@/components/DarkModeProvider";
 import AuthPage from "@/components/AuthPage";
@@ -24,7 +25,11 @@ const AdminPageLazy = lazy(() => import("./pages/Admin"));
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { user, loading } = useSupabaseAuth();
+  const { user: supabaseUser, loading: supabaseLoading } = useSupabaseAuth();
+  const { user: firebaseUser, loading: firebaseLoading } = useFirebaseAuth();
+
+  const loading = supabaseLoading || firebaseLoading;
+  const user = firebaseUser || supabaseUser; // Firebase user takes priority
 
   if (loading) {
     return (
@@ -58,7 +63,11 @@ const AppContent = () => {
 };
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useSupabaseAuth();
+  const { user: supabaseUser, loading: supabaseLoading } = useSupabaseAuth();
+  const { user: firebaseUser, loading: firebaseLoading } = useFirebaseAuth();
+
+  const loading = supabaseLoading || firebaseLoading;
+  const user = firebaseUser || supabaseUser; // Firebase user takes priority
 
   if (loading) {
     return (
@@ -85,15 +94,17 @@ const App = () => {
         <Toaster />
         <Sonner />
         <SupabaseAuthProvider>
-          <UserDataProvider>
-            <DarkModeProvider>
-              <BrowserRouter>
-                <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
-                  <AppContent />
-                </Suspense>
-              </BrowserRouter>
-            </DarkModeProvider>
-          </UserDataProvider>
+          <FirebaseAuthProvider>
+            <UserDataProvider>
+              <DarkModeProvider>
+                <BrowserRouter>
+                  <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
+                    <AppContent />
+                  </Suspense>
+                </BrowserRouter>
+              </DarkModeProvider>
+            </UserDataProvider>
+          </FirebaseAuthProvider>
         </SupabaseAuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowRight, Store, Settings, Package, BarChart3, Loader2, Copy, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { useFirebaseUserData } from '@/hooks/useFirebaseUserData';
 import { toast } from '@/hooks/use-toast';
 import StoreProductsSection from '@/components/StoreProductsSection';
@@ -13,7 +13,7 @@ import { StoreOrders } from '@/components/StoreOrders';
 
 const StoreManagementFirestore = () => {
   const navigate = useNavigate();
-  const { user } = useSupabaseAuth();
+  const { user } = useFirebaseAuth();
   const { 
     userShop, 
     createShop, 
