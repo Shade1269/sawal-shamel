@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { createClient } from '@supabase/supabase-js';
 import { 
   getFirestoreDB, 
   saveUserToFirestore, 
@@ -8,13 +8,28 @@ import {
 } from './firestore';
 import { doc, setDoc, collection, getDocs, query, orderBy, getDoc } from 'firebase/firestore';
 
+// Create admin Supabase client for data migration
+const getSupabaseAdmin = () => {
+  const supabaseUrl = 'https://uewuiiopkctdtaexmtxu.supabase.co';
+  const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MTg5NzY4NX0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA';
+  
+  return createClient(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false
+    }
+  });
+};
+
 // نقل المستخدمين من Supabase إلى Firebase
 export const migrateUsers = async () => {
   try {
     console.log('بدء نقل المستخدمين...');
     
-    // جلب المستخدمين من Supabase
-    const { data: profiles, error: profilesError } = await supabase
+    // جلب المستخدمين من Supabase باستخدام admin client
+    const supabaseAdmin = getSupabaseAdmin();
+    const { data: profiles, error: profilesError } = await supabaseAdmin
       .from('profiles')
       .select('*')
       .order('created_at', { ascending: false });
@@ -74,7 +89,8 @@ export const migrateShops = async () => {
   try {
     console.log('بدء نقل المتاجر...');
     
-    const { data: shops, error: shopsError } = await supabase
+    const supabaseAdmin = getSupabaseAdmin();
+    const { data: shops, error: shopsError } = await supabaseAdmin
       .from('shops')
       .select(`
         *,
@@ -154,7 +170,8 @@ export const migrateProducts = async () => {
   try {
     console.log('بدء نقل المنتجات...');
     
-    const { data: products, error: productsError } = await supabase
+    const supabaseAdmin = getSupabaseAdmin();
+    const { data: products, error: productsError } = await supabaseAdmin
       .from('products')
       .select(`
         *,
@@ -239,7 +256,8 @@ export const migrateProductLibrary = async () => {
   try {
     console.log('بدء نقل مكتبة المنتجات...');
     
-    const { data: libraryItems, error: libraryError } = await supabase
+    const supabaseAdmin = getSupabaseAdmin();
+    const { data: libraryItems, error: libraryError } = await supabaseAdmin
       .from('product_library')
       .select(`
         *,
@@ -312,7 +330,8 @@ export const migrateUserActivities = async () => {
   try {
     console.log('بدء نقل أنشطة المستخدمين...');
     
-    const { data: activities, error: activitiesError } = await supabase
+    const supabaseAdmin = getSupabaseAdmin();
+    const { data: activities, error: activitiesError } = await supabaseAdmin
       .from('user_activities')
       .select(`
         *,
