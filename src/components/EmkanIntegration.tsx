@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { 
   CreditCard, 
   Settings, 
@@ -130,7 +130,7 @@ const EmkanIntegration: React.FC = () => {
     }
   };
 
-  const { session } = useAuth();
+  const { user } = useFirebaseAuth();
 
   const testConnection = async () => {
     if (!settings.api_key || !settings.merchant_id || !settings.password) {
@@ -142,13 +142,14 @@ const EmkanIntegration: React.FC = () => {
       return;
     }
 
-    if (!session?.access_token) {
+    if (!user) {
       toast({ title: "غير مصرح", description: "الرجاء تسجيل الدخول كمشرف لإجراء الاختبار", variant: "destructive" });
       return;
     }
 
     setLoading(true);
     try {
+      const token = await user.getIdToken();
       console.log('🔗 Testing Emkan via admin-actions...');
       const { data, error } = await supabase.functions.invoke('admin-actions', {
         body: {
@@ -158,7 +159,7 @@ const EmkanIntegration: React.FC = () => {
           password: settings.password,
         },
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 

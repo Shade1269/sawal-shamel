@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { User, Camera, Save } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import AvatarUpload from './AvatarUpload';
 
@@ -20,7 +20,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onProfileUpdate }) =
   const [fullName, setFullName] = useState(profile?.full_name || '');
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || '');
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
+  const { user } = useFirebaseAuth();
   const { toast } = useToast();
 
   useEffect(() => {

@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { useRealTimeChat } from '@/hooks/useRealTimeChat';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { getFirebaseAuth } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
@@ -437,7 +438,7 @@ const ChatInterface = () => {
           channel_id: activeRoom
         },
         headers: {
-          Authorization: `Bearer ${session?.access_token}`,
+          Authorization: `Bearer ${await user?.getIdToken()}`,
         },
       });
       
@@ -726,7 +727,8 @@ const ChatInterface = () => {
                 <DropdownMenuContent align="start" className="z-[100] bg-popover/95 backdrop-blur supports-[backdrop-filter]:bg-popover/80 shadow-lg border border-border">
                   <DropdownMenuItem onClick={async () => {
                     try {
-                      await signOut();
+                      const auth = await getFirebaseAuth();
+                      await auth.signOut();
                       toast({ title: 'تم تسجيل الخروج' });
                       window.location.href = '/';
                     } catch (e) {

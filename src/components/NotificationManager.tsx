@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNotifications } from '@/hooks/useNotifications';
-import { useAuth } from '@/contexts/AuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { Button } from '@/components/ui/button';
 import { Bell, BellOff } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,8 +10,8 @@ interface NotificationManagerProps {
 }
 
 const NotificationManager: React.FC<NotificationManagerProps> = ({ className }) => {
-  const { user } = useAuth();
-  const notifications = useNotifications(user?.id);
+  const { user } = useFirebaseAuth();
+  const notifications = useNotifications(user?.uid);
 
   if (!notifications.isSupported) {
     return null;
