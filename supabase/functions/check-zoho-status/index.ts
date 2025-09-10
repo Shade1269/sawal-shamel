@@ -43,6 +43,7 @@ serve(async (req) => {
     try {
       const supabaseUrl = Deno.env.get('SUPABASE_URL');
       const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+      console.log('Attempting to read from database...');
       if (supabaseUrl && serviceRoleKey) {
         const supabase = createClient(supabaseUrl, serviceRoleKey);
         const { data: dbIntegrations, error: dbErr } = await supabase
@@ -51,15 +52,34 @@ serve(async (req) => {
           .eq('is_enabled', true)
           .order('updated_at', { ascending: false })
           .limit(1);
+        
+        console.log('Database query result:', { data: dbIntegrations, error: dbErr });
+        
         if (!dbErr && dbIntegrations && dbIntegrations.length > 0) {
           const dbInt = dbIntegrations[0] as any;
-          if (dbInt?.access_token) currentAccessToken = dbInt.access_token;
+          console.log('Found database integration:', {
+            has_access_token: !!dbInt?.access_token,
+            token_preview: dbInt?.access_token?.substring(0, 20) + '...',
+            organization_id: dbInt?.organization_id,
+            updated_at: dbInt?.updated_at
+          });
+          
+          if (dbInt?.access_token) {
+            currentAccessToken = dbInt.access_token;
+            console.log('Using access token from database');
+          }
           if (dbInt?.last_sync_at) lastSyncAt = dbInt.last_sync_at;
+        } else {
+          console.log('No database integration found or error occurred');
         }
+      } else {
+        console.log('Missing Supabase credentials');
       }
     } catch (dbError) {
       console.warn('Could not fetch latest access token from DB:', dbError);
     }
+    
+    console.log('Final currentAccessToken preview:', currentAccessToken?.substring(0, 20) + '...');
     
     // Test the access token by making a simple API call
     if (currentAccessToken) {
