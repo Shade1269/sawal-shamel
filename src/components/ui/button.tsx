@@ -21,7 +21,7 @@ const buttonVariants = cva(
         hero: "bg-gradient-hero text-white hover:shadow-glow transition-all duration-300 font-semibold",
         luxury: "bg-gradient-luxury text-white shadow-luxury hover:shadow-glow hover:scale-105 transition-all duration-500 font-bold",
         premium: "bg-gradient-premium text-white shadow-soft hover:shadow-luxury hover:-translate-y-1 transition-all duration-300 font-semibold",
-        damascus: "bg-gradient-damascus text-white shadow-damascus hover:shadow-glow hover:scale-105 transition-all duration-400 font-bold",
+        atlantis: "bg-gradient-atlantis text-white shadow-atlantis hover:shadow-glow hover:scale-105 transition-all duration-400 font-bold",
         commerce: "bg-gradient-commerce text-white shadow-elegant hover:shadow-damascus hover:-translate-y-0.5 transition-all duration-300 font-semibold",
         glass: "bg-gradient-glass backdrop-blur-md border border-white/30 text-foreground shadow-glass hover:bg-white/15 transition-all duration-300",
       },

@@ -129,7 +129,7 @@ const Index = () => {
               </CardHeader>
               <CardContent className="text-center">
                 <Button 
-                  variant="damascus"
+                  variant="atlantis"
                   size="lg" 
                   className="w-full h-12 text-lg font-bold rounded-xl"
                   onClick={handleChatClick}
@@ -188,14 +188,14 @@ const Index = () => {
                   <div className="mx-auto w-24 h-24 bg-gradient-damascus rounded-3xl flex items-center justify-center mb-6 group-hover:shadow-damascus group-hover:scale-110 transition-all duration-500 shadow-elegant">
                     <Store className="h-12 w-12 text-white" />
                   </div>
-                  <CardTitle className="text-3xl font-black bg-gradient-damascus bg-clip-text text-transparent">لوحة التحكم التجارية</CardTitle>
+                  <CardTitle className="text-3xl font-black bg-gradient-atlantis bg-clip-text text-transparent">لوحة التحكم التجارية</CardTitle>
                   <CardDescription className="text-lg mt-3">
                     إدارة شاملة لمتجرك الإلكتروني ومنتجاتك وطلباتك
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="text-center space-y-4">
                   <Button 
-                    variant="damascus"
+                    variant="atlantis"
                     size="lg" 
                     className="w-full h-14 text-xl font-black rounded-2xl"
                     onClick={handleStoreManagementClick}
@@ -224,14 +224,14 @@ const Index = () => {
                   <div className="mx-auto w-16 h-16 bg-gradient-damascus rounded-2xl flex items-center justify-center mb-4 shadow-glow">
                     <User className="h-8 w-8 text-white" />
                   </div>
-                  <CardTitle className="text-2xl font-bold bg-gradient-damascus bg-clip-text text-transparent">انضم إلى أتلانتس</CardTitle>
+                  <CardTitle className="text-2xl font-bold bg-gradient-atlantis bg-clip-text text-transparent">انضم إلى أتلانتس</CardTitle>
                   <CardDescription className="text-lg mt-2">
                     سجل حساب جديد واستمتع بتجربة تسوق لا تُنسى
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Button 
-                    variant="damascus"
+                    variant="atlantis"
                     size="lg"
                     className="w-full h-12 text-lg font-bold rounded-xl"
                     onClick={() => navigate('/auth')}

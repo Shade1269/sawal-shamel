@@ -8,85 +8,85 @@
 
 @layer base {
   :root {
-    /* Umayyad Damascus Heritage Color Palette */
-    --background: 45 25% 95%;        /* عاجي دمشقي */
-    --foreground: 25 40% 15%;        /* بني محروق */
+    /* Atlantis Ocean Heritage Color Palette */
+    --background: 200 25% 98%;        /* لؤلؤي محيطي */
+    --foreground: 210 40% 8%;        /* أزرق عميق */
     
-    /* Damascus Traditional Colors */
-    --primary: 25 85% 45%;           /* ذهبي دمشقي */
-    --primary-glow: 30 80% 55%;      /* ذهبي مضيء */
-    --primary-dark: 20 90% 35%;      /* ذهبي داكن */
+    /* Atlantis Traditional Colors */
+    --primary: 193 82% 55%;           /* أزرق أتلانتس */
+    --primary-glow: 180 85% 65%;      /* أزرق مائي مضيء */
+    --primary-dark: 200 90% 45%;      /* أزرق عميق */
     --primary-foreground: 0 0% 100%; /* أبيض ناصع */
     
-    --secondary: 45 30% 88%;         /* كريمي فاتح */
-    --secondary-foreground: 25 35% 25%; /* بني متوسط */
+    --secondary: 188 45% 85%;         /* أزرق فاتح */
+    --secondary-foreground: 210 40% 15%; /* أزرق داكن */
     
-    --accent: 15 75% 50%;            /* أحمر قاني دمشقي */
-    --accent-glow: 15 70% 60%;       /* أحمر مضيء */
+    --accent: 180 65% 50%;            /* تركوازي أتلانتس */
+    --accent-glow: 175 70% 60%;       /* تركوازي مضيء */
     --accent-foreground: 0 0% 100%;  /* أبيض */
     
-    /* Damascus Luxury Variants */
-    --luxury: 25 85% 45%;            /* ذهبي أموي */
+    /* Atlantis Luxury Variants */
+    --luxury: 180 65% 45%;            /* تركوازي فاخر */
     --luxury-foreground: 0 0% 100%;
-    --premium: 20 75% 40%;           /* بني ذهبي */
+    --premium: 210 40% 15%;           /* أزرق داكن */
     --premium-foreground: 0 0% 100%;
-    --damascus: 100 25% 35%;         /* أخضر زيتوني */
-    --damascus-foreground: 0 0% 100%;
-    --coral: 15 75% 50%;             /* مرجاني دمشقي */
+    --atlantis: 193 82% 55%;         /* أزرق أتلانتس */
+    --atlantis-foreground: 0 0% 100%;
+    --coral: 15 85% 65%;             /* مرجاني محيطي */
     --coral-foreground: 0 0% 100%;
-    --pearl: 45 20% 90%;             /* لؤلؤي */
-    --pearl-foreground: 25 40% 20%;
-    --jasmine: 50 60% 85%;           /* ياسميني */
-    --jasmine-foreground: 25 40% 25%;
+    --pearl: 190 15% 95%;            /* لؤلؤي */
+    --pearl-foreground: 210 40% 15%;
+    --jasmine: 180 25% 90%;          /* أزرق فاتح */
+    --jasmine-foreground: 210 40% 20%;
     
-    --muted: 45 20% 90%;
-    --muted-foreground: 30 30% 45%;
+    --muted: 188 25% 92%;
+    --muted-foreground: 210 20% 50%;
     
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
     
-    --card: 45 35% 96%;              /* بيج دمشقي */
-    --card-foreground: 25 40% 15%;
+    --card: 195 20% 96%;              /* بطاقة محيطية */
+    --card-foreground: 210 40% 8%;
     
-    --popover: 45 35% 96%;
-    --popover-foreground: 25 40% 15%;
+    --popover: 195 20% 96%;
+    --popover-foreground: 210 40% 8%;
     
-    --border: 35 25% 80%;
-    --input: 40 30% 85%;
-    --ring: 25 85% 45%;
+    --border: 188 25% 88%;
+    --input: 188 25% 88%;
+    --ring: 193 82% 55%;
     
     --radius: 0.75rem;
     
-    /* Damascus Heritage Environment */
-    --chat-bg: 45 25% 92%;
-    --chat-sent: 25 85% 45%;
-    --chat-received: 45 35% 96%;
-    --status-online: 100 60% 45%;
-    --status-offline: 30 20% 60%;
+    /* Atlantis Heritage Environment */
+    --chat-bg: 200 25% 98%;
+    --chat-sent: 193 82% 55%;
+    --chat-received: 195 20% 96%;
+    --status-online: 140 60% 45%;
+    --status-offline: 210 15% 60%;
     
-    /* Umayyad Gradients - Damascus Heritage */
-    --gradient-primary: linear-gradient(135deg, hsl(25 85% 45%), hsl(30 80% 55%));
-    --gradient-hero: linear-gradient(135deg, hsl(25 85% 45%) 0%, hsl(15 75% 50%) 30%, hsl(100 25% 35%) 70%, hsl(25 85% 45%) 100%);
-    --gradient-luxury: linear-gradient(135deg, hsl(25 85% 45%), hsl(15 75% 50%));
-    --gradient-premium: linear-gradient(45deg, hsl(25 85% 45%) 0%, hsl(20 75% 40%) 100%);
-    --gradient-damascus: linear-gradient(135deg, hsl(100 25% 35%) 0%, hsl(25 85% 45%) 50%, hsl(15 75% 50%) 100%);
-    --gradient-commerce: linear-gradient(135deg, hsl(25 85% 45%) 0%, hsl(100 25% 35%) 30%, hsl(15 75% 50%) 70%, hsl(25 85% 45%) 100%);
-    --gradient-heritage: linear-gradient(180deg, hsl(45 30% 88%) 0%, hsl(40 25% 82%) 20%, hsl(35 30% 78%) 40%, hsl(30 35% 72%) 100%);
-    --gradient-damascus-bg: radial-gradient(ellipse at center, hsl(45 25% 95%) 0%, hsl(40 20% 90%) 25%, hsl(35 25% 85%) 50%, hsl(30 30% 80%) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(255,248,225,0.4), rgba(255,248,225,0.2));
+    /* Atlantis Gradients - Ocean Heritage */
+    --gradient-primary: linear-gradient(135deg, hsl(193 82% 55%), hsl(180 85% 65%));
+    --gradient-hero: linear-gradient(135deg, hsl(193 82% 55%) 0%, hsl(180 65% 50%) 30%, hsl(175 70% 60%) 70%, hsl(193 82% 55%) 100%);
+    --gradient-luxury: linear-gradient(135deg, hsl(180 65% 45%), hsl(175 70% 60%));
+    --gradient-premium: linear-gradient(45deg, hsl(193 82% 55%) 0%, hsl(210 40% 15%) 100%);
+    --gradient-atlantis: linear-gradient(135deg, hsl(193 82% 55%) 0%, hsl(180 65% 45%) 50%, hsl(175 70% 60%) 100%);
+    --gradient-commerce: linear-gradient(135deg, hsl(193 82% 55%) 0%, hsl(175 70% 60%) 30%, hsl(15 85% 65%) 70%, hsl(193 82% 55%) 100%);
+    --gradient-heritage: linear-gradient(180deg, hsl(188 45% 85%) 0%, hsl(188 40% 82%) 20%, hsl(188 35% 78%) 40%, hsl(188 30% 72%) 100%);
+    --gradient-atlantis-bg: radial-gradient(ellipse at center, hsl(200 25% 98%) 0%, hsl(195 20% 95%) 25%, hsl(188 25% 92%) 50%, hsl(188 30% 88%) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(225,248,255,0.4), rgba(225,248,255,0.2));
     
-    /* Damascus Shadows - Heritage Effects */
-    --shadow-soft: 0 8px 32px hsl(25 85% 45% / 0.12);
-    --shadow-glow: 0 0 40px hsl(30 80% 55% / 0.25);
-    --shadow-luxury: 0 20px 60px hsl(25 85% 45% / 0.18), 0 8px 25px hsl(15 75% 50% / 0.1);
-    --shadow-glass: 0 8px 32px hsl(25 50% 50% / 0.15);
-    --shadow-elegant: 0 15px 35px hsl(25 40% 30% / 0.12), 0 5px 15px hsl(20 30% 40% / 0.08);
-    --shadow-damascus: 0 25px 50px hsl(25 85% 45% / 0.2), 0 10px 20px hsl(100 25% 35% / 0.15);
-    --shadow-heritage: 0 20px 40px hsl(25 50% 40% / 0.15), inset 0 1px 0 hsl(45 40% 85% / 0.4);
+    /* Atlantis Shadows - Ocean Effects */
+    --shadow-soft: 0 8px 32px hsl(193 82% 55% / 0.12);
+    --shadow-glow: 0 0 40px hsl(180 85% 65% / 0.25);
+    --shadow-luxury: 0 20px 60px hsl(180 65% 45% / 0.18), 0 8px 25px hsl(175 70% 60% / 0.1);
+    --shadow-glass: 0 8px 32px hsl(193 50% 50% / 0.15);
+    --shadow-elegant: 0 15px 35px hsl(210 40% 30% / 0.12), 0 5px 15px hsl(200 30% 40% / 0.08);
+    --shadow-atlantis: 0 25px 50px hsl(193 82% 55% / 0.2), 0 10px 20px hsl(180 65% 45% / 0.15);
+    --shadow-heritage: 0 20px 40px hsl(193 50% 40% / 0.15), inset 0 1px 0 hsl(188 40% 85% / 0.4);
     
-    /* Damascus Patterns - Traditional Islamic Geometry */
-    --pattern-arabesque: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.04'%3E%3Cpath d='M40 40l20-20V0H40v20L20 0H0v20l20 20L0 60v20h20l20-20 20 20h20V60L60 40l20-20V0H60v20L40 40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    --pattern-geometric: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23B8860B' fill-opacity='0.03'%3E%3Cpath d='M30 30c0-16.569-13.431-30-30-30s-30 13.431-30 30 13.431 30 30 30 30-13.431 30-30zm-30-2c-15.464 0-28 12.536-28 28s12.536 28 28 28 28-12.536 28-28-12.536-28-28-28z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    /* Atlantis Patterns - Ocean Geometry */
+    --pattern-arabesque: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2340E0D0' fill-opacity='0.04'%3E%3Cpath d='M40 40l20-20V0H40v20L20 0H0v20l20 20L0 60v20h20l20-20 20 20h20V60L60 40l20-20V0H60v20L40 40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    --pattern-geometric: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2320B2AA' fill-opacity='0.03'%3E%3Cpath d='M30 30c0-16.569-13.431-30-30-30s-30 13.431-30 30 13.431 30 30 30 30-13.431 30-30zm-30-2c-15.464 0-28 12.536-28 28s12.536 28 28 28 28-12.536 28-28-12.536-28-28-28z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     
     /* Smooth transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -95,56 +95,56 @@
   }
 
   .dark {
-    /* Umayyad Damascus Night Heritage */
-    --background: 25 30% 12%;       /* ليل دمشقي */
-    --foreground: 45 25% 85%;       /* عاجي فاتح */
+    /* Atlantis Ocean Night Heritage */
+    --background: 210 40% 8%;       /* ليل محيطي */
+    --foreground: 195 20% 90%;       /* لؤلؤي فاتح */
     
-    --primary: 30 80% 55%;          /* ذهبي ليلي */
-    --primary-glow: 35 75% 65%;     /* ذهبي متوهج */
-    --primary-dark: 25 85% 40%;     /* ذهبي داكن */
-    --primary-foreground: 25 30% 12%;
+    --primary: 193 72% 50%;          /* أزرق ليلي */
+    --primary-glow: 180 75% 65%;     /* أزرق متوهج */
+    --primary-dark: 200 85% 40%;     /* أزرق عميق */
+    --primary-foreground: 210 40% 8%;
     
-    --secondary: 30 25% 18%;        /* بني ليلي */
-    --secondary-foreground: 45 20% 75%;
+    --secondary: 210 30% 16%;        /* أزرق ليلي */
+    --secondary-foreground: 195 20% 85%;
     
-    --accent: 15 70% 55%;           /* أحمر ليلي */
-    --accent-glow: 15 65% 65%;      /* أحمر متوهج */
-    --accent-foreground: 25 30% 12%;
+    --accent: 180 60% 55%;           /* تركوازي ليلي */
+    --accent-glow: 175 65% 65%;      /* تركوازي متوهج */
+    --accent-foreground: 210 40% 8%;
     
-    --luxury: 30 80% 60%;           /* ذهبي فاخر */
-    --luxury-foreground: 25 30% 12%;
-    --premium: 25 70% 45%;          /* بني ذهبي داكن */
-    --premium-foreground: 25 30% 12%;
-    --damascus: 100 20% 40%;        /* زيتوني ليلي */
-    --damascus-foreground: 25 30% 12%;
-    --coral: 15 70% 55%;            /* مرجاني ليلي */
-    --coral-foreground: 25 30% 12%;
-    --pearl: 45 15% 75%;            /* لؤلؤي ليلي */
-    --pearl-foreground: 25 30% 20%;
-    --jasmine: 50 40% 70%;          /* ياسميني ليلي */
-    --jasmine-foreground: 25 30% 15%;
+    --luxury: 180 55% 50%;           /* تركوازي فاخر */
+    --luxury-foreground: 210 40% 8%;
+    --premium: 210 35% 15%;          /* أزرق داكن */
+    --premium-foreground: 210 40% 8%;
+    --atlantis: 193 65% 45%;        /* أزرق أتلانتس ليلي */
+    --atlantis-foreground: 210 40% 8%;
+    --coral: 15 75% 55%;            /* مرجاني ليلي */
+    --coral-foreground: 210 40% 8%;
+    --pearl: 190 10% 85%;            /* لؤلؤي ليلي */
+    --pearl-foreground: 210 30% 20%;
+    --jasmine: 180 20% 80%;          /* أزرق فاتح ليلي */
+    --jasmine-foreground: 210 30% 15%;
     
-    --muted: 30 20% 15%;
-    --muted-foreground: 35 15% 50%;
+    --muted: 210 25% 15%;
+    --muted-foreground: 195 15% 60%;
     
     --destructive: 0 70% 60%;
-    --destructive-foreground: 25 30% 12%;
+    --destructive-foreground: 210 40% 8%;
     
-    --card: 30 25% 15%;             /* بطاقة ليلية */
-    --card-foreground: 45 25% 85%;
+    --card: 210 35% 12%;             /* بطاقة ليلية */
+    --card-foreground: 195 20% 90%;
     
-    --popover: 30 25% 15%;
-    --popover-foreground: 45 25% 85%;
+    --popover: 210 35% 12%;
+    --popover-foreground: 195 20% 90%;
     
-    --border: 30 20% 25%;
-    --input: 30 20% 20%;
-    --ring: 30 80% 55%;
+    --border: 210 30% 20%;
+    --input: 210 30% 18%;
+    --ring: 193 72% 50%;
     
-    --chat-bg: 25 30% 10%;
-    --chat-sent: 30 80% 50%;
-    --chat-received: 30 25% 18%;
-    --status-online: 100 55% 50%;
-    --status-offline: 30 15% 40%;
+    --chat-bg: 210 40% 6%;
+    --chat-sent: 193 65% 45%;
+    --chat-received: 210 30% 16%;
+    --status-online: 140 55% 50%;
+    --status-offline: 210 15% 40%;
   }
 }
 
@@ -158,7 +158,7 @@
   }
 
   body {
-    @apply bg-gradient-damascus-bg text-foreground font-cairo font-medium;
+    @apply bg-gradient-atlantis-bg text-foreground font-cairo font-medium;
     font-family: 'Amiri', 'Cairo', 'Traditional Arabic', serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -178,15 +178,15 @@
     right: 0;
     bottom: 0;
     background: 
-      radial-gradient(circle at 25% 25%, hsl(25 40% 75% / 0.4) 0%, transparent 30%),
-      radial-gradient(circle at 75% 75%, hsl(15 50% 65% / 0.3) 0%, transparent 25%),
-      radial-gradient(circle at 50% 50%, hsl(100 30% 70% / 0.2) 0%, transparent 35%),
+      radial-gradient(circle at 25% 25%, hsl(193 82% 75% / 0.4) 0%, transparent 30%),
+      radial-gradient(circle at 75% 75%, hsl(180 65% 65% / 0.3) 0%, transparent 25%),
+      radial-gradient(circle at 50% 50%, hsl(175 70% 70% / 0.2) 0%, transparent 35%),
       linear-gradient(45deg, 
-        hsl(45 25% 95% / 0.9) 0%, 
-        hsl(40 20% 90% / 0.7) 25%, 
-        hsl(35 25% 85% / 0.8) 50%, 
-        hsl(30 30% 80% / 0.6) 75%,
-        hsl(45 25% 95% / 0.9) 100%);
+        hsl(200 25% 98% / 0.9) 0%, 
+        hsl(195 20% 95% / 0.7) 25%, 
+        hsl(188 25% 92% / 0.8) 50%, 
+        hsl(188 30% 88% / 0.6) 75%,
+        hsl(200 25% 98% / 0.9) 100%);
     pointer-events: none;
     z-index: -2;
   }
@@ -199,12 +199,12 @@
     right: 0;
     bottom: 0;
     background-image: 
-      radial-gradient(circle at 20% 20%, hsl(25 70% 60% / 0.08) 0%, transparent 35%),
-      radial-gradient(circle at 80% 30%, hsl(15 60% 50% / 0.05) 0%, transparent 30%),
-      radial-gradient(circle at 60% 80%, hsl(100 40% 60% / 0.06) 0%, transparent 35%);
+      radial-gradient(circle at 20% 20%, hsl(193 82% 60% / 0.08) 0%, transparent 35%),
+      radial-gradient(circle at 80% 30%, hsl(180 65% 50% / 0.05) 0%, transparent 30%),
+      radial-gradient(circle at 60% 80%, hsl(175 70% 60% / 0.06) 0%, transparent 35%);
     pointer-events: none;
     z-index: -1;
-    animation: damascusGlow 10s ease-in-out infinite alternate;
+    animation: atlantisGlow 10s ease-in-out infinite alternate;
   }
   
   /* RTL Support */
@@ -241,13 +241,13 @@
     animation: messageAppear 0.3s ease-out;
   }
 
-  /* Damascus-specific animations */
-  .damascus-float {
-    animation: damascusFloat 5s ease-in-out infinite;
+  /* Atlantis-specific animations */
+  .atlantis-float {
+    animation: atlantisFloat 5s ease-in-out infinite;
   }
 
-  .damascus-shimmer {
-    animation: damascusShimmer 4s linear infinite;
+  .atlantis-shimmer {
+    animation: atlantisShimmer 4s linear infinite;
   }
 
   .heritage-wave {
@@ -307,8 +307,8 @@
   }
 }
 
-/* Damascus-inspired animations */
-@keyframes damascusGlow {
+/* Atlantis-inspired animations */
+@keyframes atlantisGlow {
   0%, 100% {
     opacity: 0.7;
     transform: scale(1);
@@ -319,7 +319,7 @@
   }
 }
 
-@keyframes damascusFloat {
+@keyframes atlantisFloat {
   0%, 100% {
     transform: translateY(0px) rotate(0deg);
   }
@@ -334,7 +334,7 @@
   }
 }
 
-@keyframes damascusShimmer {
+@keyframes atlantisShimmer {
   0% {
     background-position: -200% center;
   }

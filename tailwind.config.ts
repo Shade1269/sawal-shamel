@@ -66,9 +66,9 @@ export default {
 					DEFAULT: 'hsl(var(--premium))',
 					foreground: 'hsl(var(--premium-foreground))'
 				},
-				damascus: {
-					DEFAULT: 'hsl(var(--damascus))',
-					foreground: 'hsl(var(--damascus-foreground))'
+				atlantis: {
+					DEFAULT: 'hsl(var(--atlantis))',
+					foreground: 'hsl(var(--atlantis-foreground))'
 				},
 				coral: {
 					DEFAULT: 'hsl(var(--coral))',
@@ -111,7 +111,7 @@ export default {
 				'luxury': 'var(--shadow-luxury)',
 				'glass': 'var(--shadow-glass)',
 				'elegant': 'var(--shadow-elegant)',
-				'damascus': 'var(--shadow-damascus)',
+				'atlantis': 'var(--shadow-atlantis)',
 				'heritage': 'var(--shadow-heritage)',
 			},
 			transitionTimingFunction: {
@@ -144,9 +144,9 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'damascus-glow': 'damascusGlow 10s ease-in-out infinite alternate',
-				'damascus-float': 'damascusFloat 5s ease-in-out infinite',
-				'damascus-shimmer': 'damascusShimmer 4s linear infinite',
+				'atlantis-glow': 'atlantisGlow 10s ease-in-out infinite alternate',
+				'atlantis-float': 'atlantisFloat 5s ease-in-out infinite',
+				'atlantis-shimmer': 'atlantisShimmer 4s linear infinite',
 				'heritage-wave': 'heritageWave 8s ease-in-out infinite',
 				'arabesque-rotate': 'arabesqueRotate 12s linear infinite',
 			}
