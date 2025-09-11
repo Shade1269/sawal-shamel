@@ -1,18 +1,22 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { MessageCircle, Users, Hash, Package, LogOut, User, Store } from 'lucide-react';
+import { MessageCircle, Users, Hash, Package, LogOut, User, Store, Moon, Sun, Languages } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { useUserDataContext } from '@/contexts/UserDataContext';
+import { useDarkMode } from '@/components/DarkModeProvider';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index = () => {
   const navigate = useNavigate();
   const { user: supabaseUser, signOut: supabaseSignOut } = useSupabaseAuth();
   const { user: firebaseUser, signOut: firebaseSignOut } = useFirebaseAuth();
   const { user, userProfile } = useUserDataContext();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const { language, toggleLanguage, t } = useLanguage();
 
   // Firebase user takes priority
   const currentUser = user || firebaseUser || supabaseUser;
@@ -80,7 +84,7 @@ const Index = () => {
         <div className="absolute bottom-0 left-0 w-full h-32 opacity-8 bg-gradient-to-r from-transparent via-primary to-transparent animate-heritage-wave" style={{ animationDelay: '2s' }}></div>
       </div>
       
-      {/* Header with logout button */}
+      {/* Header with user controls */}
       {currentUser && (
         <div className="border-b bg-gradient-to-r from-card to-card/80 backdrop-blur-md border-persian/20 shadow-persian">
           <div className="container mx-auto px-4 py-4">
@@ -91,15 +95,41 @@ const Index = () => {
                   مرحباً، {getUserDisplayName()}
                 </span>
               </div>
-              <Button
-                variant="persian"
-                size="sm"
-                onClick={handleSignOut}
-                className="gap-2 hover:shadow-persian border border-persian/30"
-              >
-                <LogOut className="h-4 w-4" />
-                تسجيل خروج
-              </Button>
+              
+              <div className="flex items-center gap-3">
+                {/* Language Toggle */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleLanguage}
+                  className="gap-2 hover:bg-persian/10 border border-persian/20 text-persian hover:text-persian"
+                >
+                  <Languages className="h-4 w-4" />
+                  {language === 'ar' ? 'EN' : 'AR'}
+                </Button>
+                
+                {/* Dark Mode Toggle */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleDarkMode}
+                  className="gap-2 hover:bg-persian/10 border border-persian/20 text-persian hover:text-persian"
+                >
+                  {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                  {isDarkMode ? 'نهاري' : 'ليلي'}
+                </Button>
+                
+                {/* Logout Button */}
+                <Button
+                  variant="persian"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="gap-2 hover:shadow-persian border border-persian/30"
+                >
+                  <LogOut className="h-4 w-4" />
+                  تسجيل خروج
+                </Button>
+              </div>
             </div>
           </div>
         </div>
