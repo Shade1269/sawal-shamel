@@ -14,6 +14,7 @@ import { lazy, Suspense } from "react";
 
 // Lazy load dashboard pages
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
@@ -61,6 +62,14 @@ const App = () => {
                         element={
                           <ProtectedRoute requiredRole="admin">
                             <AdminDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/admin/users" 
+                        element={
+                          <ProtectedRoute requiredRole="admin">
+                            <AdminUsers />
                           </ProtectedRoute>
                         } 
                       />

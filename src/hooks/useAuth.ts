@@ -62,11 +62,24 @@ export const useAuth = () => {
 
   const fetchUserProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      // Try user_profiles first, then profiles table
+      let { data, error } = await supabase
         .from('user_profiles')
         .select('*')
         .eq('auth_user_id', userId)
-        .single();
+        .maybeSingle();
+
+      // If not found in user_profiles, try profiles table
+      if (!data && (error?.code === 'PGRST116' || !data)) {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('auth_user_id', userId)
+          .maybeSingle();
+        
+        data = profileData;
+        error = profileError;
+      }
 
       if (error && error.code !== 'PGRST116') {
         console.error('Error fetching profile:', error);
