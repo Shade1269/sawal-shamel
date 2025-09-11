@@ -1,14 +1,20 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useUserDataContext } from '@/contexts/UserDataContext';
 import { Loader2 } from 'lucide-react';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user, loading } = useUserDataContext();
+  // استخدم مزودي المصادقة مباشرة لتجنب الاعتماد على UserDataContext هنا
+  const { user: supabaseUser, loading: supabaseLoading } = useSupabaseAuth();
+  const { user: firebaseUser, loading: firebaseLoading } = useFirebaseAuth();
+
+  const loading = supabaseLoading || firebaseLoading;
+  const user = firebaseUser || supabaseUser;
 
   if (loading) {
     return (
