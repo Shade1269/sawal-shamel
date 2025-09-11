@@ -158,14 +158,14 @@
   }
 
   body {
-    @apply bg-gradient-atlantis-bg text-foreground font-cairo font-medium;
-    font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    @apply bg-gradient-damascus-bg text-foreground font-cairo font-medium;
+    font-family: 'Amiri', 'Cairo', 'Traditional Arabic', serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    background-image: var(--pattern-waves), var(--pattern-scales);
-    background-size: 60px 60px, 40px 40px;
-    background-position: 0 0, 20px 20px;
+    background-image: var(--pattern-arabesque), var(--pattern-geometric);
+    background-size: 80px 80px, 60px 60px;
+    background-position: 0 0, 40px 40px;
     min-height: 100vh;
     position: relative;
   }
@@ -178,15 +178,15 @@
     right: 0;
     bottom: 0;
     background: 
-      radial-gradient(circle at 20% 20%, hsl(185 40% 85% / 0.3) 0%, transparent 25%),
-      radial-gradient(circle at 80% 80%, hsl(175 50% 75% / 0.2) 0%, transparent 25%),
-      radial-gradient(circle at 40% 60%, hsl(45 60% 80% / 0.1) 0%, transparent 20%),
-      linear-gradient(135deg, 
-        hsl(185 30% 88% / 0.8) 0%, 
-        hsl(190 25% 85% / 0.6) 25%, 
-        hsl(195 30% 82% / 0.7) 50%, 
-        hsl(200 35% 78% / 0.5) 75%,
-        hsl(185 25% 85% / 0.8) 100%);
+      radial-gradient(circle at 25% 25%, hsl(25 40% 75% / 0.4) 0%, transparent 30%),
+      radial-gradient(circle at 75% 75%, hsl(15 50% 65% / 0.3) 0%, transparent 25%),
+      radial-gradient(circle at 50% 50%, hsl(100 30% 70% / 0.2) 0%, transparent 35%),
+      linear-gradient(45deg, 
+        hsl(45 25% 95% / 0.9) 0%, 
+        hsl(40 20% 90% / 0.7) 25%, 
+        hsl(35 25% 85% / 0.8) 50%, 
+        hsl(30 30% 80% / 0.6) 75%,
+        hsl(45 25% 95% / 0.9) 100%);
     pointer-events: none;
     z-index: -2;
   }
@@ -199,12 +199,12 @@
     right: 0;
     bottom: 0;
     background-image: 
-      radial-gradient(circle at 15% 15%, hsl(185 80% 70% / 0.05) 0%, transparent 30%),
-      radial-gradient(circle at 85% 25%, hsl(175 70% 60% / 0.03) 0%, transparent 25%),
-      radial-gradient(circle at 50% 85%, hsl(45 80% 70% / 0.04) 0%, transparent 30%);
+      radial-gradient(circle at 20% 20%, hsl(25 70% 60% / 0.08) 0%, transparent 35%),
+      radial-gradient(circle at 80% 30%, hsl(15 60% 50% / 0.05) 0%, transparent 30%),
+      radial-gradient(circle at 60% 80%, hsl(100 40% 60% / 0.06) 0%, transparent 35%);
     pointer-events: none;
     z-index: -1;
-    animation: atlantisGlow 8s ease-in-out infinite alternate;
+    animation: damascusGlow 10s ease-in-out infinite alternate;
   }
   
   /* RTL Support */
