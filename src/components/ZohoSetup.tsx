@@ -248,6 +248,45 @@ export const ZohoSetup: React.FC = () => {
     }
   };
 
+  const generateNewToken = async () => {
+    setIsTesting(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-zoho-token');
+
+      if (error) throw error;
+
+      if (data.success) {
+        // تحديث التوكن الجديد في النموذج
+        setCredentials(prev => ({
+          ...prev,
+          access_token: data.access_token
+        }));
+
+        toast({
+          title: "تم توليد توكن جديد! 🎉",
+          description: `تم توليد وتفعيل توكن جديد بنجاح. صالح لمدة ${Math.floor((data.expires_in || 3600) / 3600)} ساعة`
+        });
+
+        // حفظ التوكن الجديد تلقائياً إذا كان المستخدم والمتجر موجودين
+        if (user?.id) {
+          await saveConfiguration();
+        }
+      } else {
+        throw new Error(data.error || 'فشل في توليد التوكن');
+      }
+    } catch (error) {
+      console.error('Generate token error:', error);
+      toast({
+        title: "خطأ في توليد التوكن",
+        description: error.message || 'تعذر توليد توكن جديد. تأكد من صحة refresh token',
+        variant: "destructive"
+      });
+    } finally {
+      setIsTesting(false);
+    }
+  };
+
   const syncProducts = async () => {
     if (!status.isConnected) {
       toast({
@@ -421,6 +460,16 @@ export const ZohoSetup: React.FC = () => {
             >
               {isTesting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
               اختبار الاتصال
+            </Button>
+            
+            <Button 
+              onClick={generateNewToken}
+              disabled={isTesting}
+              variant="secondary"
+              className="flex-1 sm:flex-none"
+            >
+              {isTesting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+              توليد توكن جديد
             </Button>
           </div>
         </CardContent>
