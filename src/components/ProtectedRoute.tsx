@@ -1,34 +1,41 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
-import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
+import { ReactNode } from 'react';
+import { useAuthContext } from '@/contexts/AuthContext';
+import AuthForm from '@/components/auth/AuthForm';
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
+  children: ReactNode;
+  requiredRole?: 'admin' | 'merchant' | 'affiliate' | 'customer';
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  // استخدم مزودي المصادقة مباشرة لتجنب الاعتماد على UserDataContext هنا
-  const { user: supabaseUser, loading: supabaseLoading } = useSupabaseAuth();
-  const { user: firebaseUser, loading: firebaseLoading } = useFirebaseAuth();
-
-  const loading = supabaseLoading || firebaseLoading;
-  const user = firebaseUser || supabaseUser;
+export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
+  const { isAuthenticated, profile, loading } = useAuthContext();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-persian-bg flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-          <p className="text-muted-foreground">جاري التحقق من صحة تسجيل الدخول...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">جاري التحقق من الصلاحيات...</p>
         </div>
       </div>
     );
   }
 
-  if (!user) {
-    return <Navigate to="/auth" replace />;
+  if (!isAuthenticated) {
+    return <AuthForm />;
+  }
+
+  if (requiredRole && profile?.role !== requiredRole) {
+    return (
+      <div className="min-h-screen bg-gradient-persian-bg flex items-center justify-center">
+        <div className="text-center p-8">
+          <h2 className="text-2xl font-bold text-destructive mb-4">غير مسموح</h2>
+          <p className="text-muted-foreground">
+            ليس لديك الصلاحية للوصول إلى هذه الصفحة
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;
