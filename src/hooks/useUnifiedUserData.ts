@@ -161,7 +161,7 @@ export const useUnifiedUserData = () => {
         .from('user_activities')
         .insert({
           user_id: profile.id,
-          shop_id: shopId || userShop?.shop_id,
+          shop_id: shopId || userShop?.id,
           activity_type: activityType,
           description: description || '',
           metadata: metadata || {}
@@ -324,7 +324,7 @@ export const useUnifiedUserData = () => {
         .insert({
           ...productData,
           merchant_id: merchant.id,
-          shop_id: userShop.shop_id
+          shop_id: userShop.id
         })
         .select('id')
         .single();
@@ -337,7 +337,7 @@ export const useUnifiedUserData = () => {
           total_products: (userShop.total_products || 0) + 1,
           updated_at: new Date().toISOString()
         })
-        .eq('id', userShop.shop_id);
+        .eq('id', userShop.id);
 
       fetchUserShop();
       fetchUserStatistics();
@@ -357,7 +357,7 @@ export const useUnifiedUserData = () => {
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .eq('shop_id', userShop.shop_id)
+        .eq('shop_id', userShop.id)
         .eq('is_active', true);
 
       if (error) throw error;
@@ -380,7 +380,7 @@ export const useUnifiedUserData = () => {
           settings,
           updated_at: new Date().toISOString()
         })
-        .eq('id', userShop.shop_id);
+        .eq('id', userShop.id);
 
       if (error) throw error;
 
