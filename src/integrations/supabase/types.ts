@@ -1450,7 +1450,7 @@ export type Database = {
           {
             foreignKeyName: "zoho_integration_shop_id_fkey"
             columns: ["shop_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "shops"
             referencedColumns: ["id"]
           },
