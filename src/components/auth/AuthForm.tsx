@@ -33,7 +33,7 @@ const AuthForm = () => {
     try {
       const result = await signIn(signInData.email, signInData.password);
       if (!result?.error) {
-        // التوجيه بناءً على نوع المستخدم سيحدث تلقائياً بواسطة useAuth
+        // سيتم التوجيه تلقائياً للداشبورد من useAuth
         console.log('تم تسجيل الدخول بنجاح');
       }
     } catch (error) {

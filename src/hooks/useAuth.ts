@@ -148,6 +148,9 @@ export const useAuth = () => {
         description: "تم تسجيل الدخول بنجاح",
       });
 
+      // التوجيه للداشبورد الموحد بعد تسجيل الدخول
+      window.location.href = '/dashboard';
+
       return { data, error: null };
     } catch (error) {
       console.error('Signin error:', error);
