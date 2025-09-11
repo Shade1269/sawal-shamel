@@ -95,73 +95,74 @@ const Index = () => {
       
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
-            مرحباً بك في منصة الدردشة
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-atlantis bg-clip-text text-transparent mb-4">
+            منصة أتلانتس للتجارة الإلكترونية
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            انضم إلى مجتمعنا وتواصل مع الآخرين في بيئة آمنة ومريحة
+            استكشف عالم التسوق الفاخر مع تجربة تجارة إلكترونية لا مثيل لها
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/50">
+            <Card className="group hover:shadow-luxury transition-all duration-500 cursor-pointer border border-border/30 hover:border-primary/50 bg-gradient-to-br from-card/50 to-card backdrop-blur-sm">
               <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <MessageCircle className="h-8 w-8 text-primary" />
+                <div className="mx-auto w-20 h-20 bg-gradient-primary rounded-2xl flex items-center justify-center mb-6 group-hover:shadow-glow group-hover:scale-110 transition-all duration-500 shadow-soft">
+                  <MessageCircle className="h-10 w-10 text-white" />
                 </div>
-                <CardTitle className="text-2xl">الدردشة الجماعية</CardTitle>
-                <CardDescription>
-                  تواصل مع المجتمع في غرف الدردشة المختلفة
+                <CardTitle className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">دردشة العملاء</CardTitle>
+                <CardDescription className="text-lg">
+                  تواصل مع فريق الدعم والعملاء الآخرين
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
                 <Button 
+                  variant="atlantis"
                   size="lg" 
-                  className="w-full"
+                  className="w-full h-12 text-lg font-bold rounded-xl"
                   onClick={handleChatClick}
                 >
-                  دخول غرف الدردشة
+                  بدء المحادثة
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-secondary/50">
+            <Card className="group hover:shadow-luxury transition-all duration-500 cursor-pointer border border-border/30 hover:border-luxury/50 bg-gradient-to-br from-card/50 to-card backdrop-blur-sm">
               <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-secondary/20 transition-colors">
-                  <Package className="h-8 w-8 text-secondary" />
+                <div className="mx-auto w-20 h-20 bg-gradient-luxury rounded-2xl flex items-center justify-center mb-6 group-hover:shadow-glow group-hover:scale-110 transition-all duration-500 shadow-soft">
+                  <Package className="h-10 w-10 text-white" />
                 </div>
-                <CardTitle className="text-2xl">المخزون</CardTitle>
-                <CardDescription>
-                  تصفح كتالوج المنتجات والأسعار المتوفرة
+                <CardTitle className="text-2xl font-bold bg-gradient-luxury bg-clip-text text-transparent">كتالوج المنتجات</CardTitle>
+                <CardDescription className="text-lg">
+                  استكشف مجموعة منتجاتنا الفاخرة والحصرية
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
                 <Button 
+                  variant="commerce"
                   size="lg" 
-                  className="w-full"
-                  variant="secondary"
+                  className="w-full h-12 text-lg font-bold rounded-xl"
                   onClick={handleInventoryClick}
                 >
-                  عرض المنتجات
+                  تصفح المنتجات
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-xl transition-all duration-300">
+            <Card className="group hover:shadow-luxury transition-all duration-500 border border-border/30 hover:border-premium/50 bg-gradient-to-br from-card/50 to-card backdrop-blur-sm">
               <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
-                  <Users className="h-8 w-8 text-accent" />
+                <div className="mx-auto w-20 h-20 bg-gradient-premium rounded-2xl flex items-center justify-center mb-6 group-hover:shadow-glow group-hover:scale-110 transition-all duration-500 shadow-soft">
+                  <Users className="h-10 w-10 text-white" />
                 </div>
-                <CardTitle className="text-2xl">المجتمع النشط</CardTitle>
-                <CardDescription>
-                  انضم إلى مجتمع من المستخدمين الودودين والنشطين
+                <CardTitle className="text-2xl font-bold bg-gradient-premium bg-clip-text text-transparent">مجتمع أتلانتس</CardTitle>
+                <CardDescription className="text-lg">
+                  انضم إلى مجتمع المتسوقين المميزين والحصريين
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
-                <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                  <Hash className="h-4 w-4" />
-                  <span>متوفر 24/7</span>
+                <div className="flex items-center justify-center gap-3 text-muted-foreground bg-gradient-to-r from-muted/20 to-muted/10 p-3 rounded-xl border border-border/20">
+                  <Hash className="h-5 w-5" />
+                  <span className="font-medium">تجربة تسوق حصرية 24/7</span>
                 </div>
               </CardContent>
             </Card>
@@ -170,25 +171,33 @@ const Index = () => {
           {/* Store Management Section */}
           {currentUser && (
             <div className="mb-12">
-              <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-accent/50">
+              <Card className="group hover:shadow-atlantis transition-all duration-500 cursor-pointer border border-border/30 hover:border-atlantis/50 bg-gradient-to-br from-card/60 to-card backdrop-blur-sm">
                 <CardHeader className="text-center">
-                  <div className="mx-auto w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
-                    <Store className="h-8 w-8 text-accent" />
+                  <div className="mx-auto w-24 h-24 bg-gradient-atlantis rounded-3xl flex items-center justify-center mb-6 group-hover:shadow-atlantis group-hover:scale-110 transition-all duration-500 shadow-elegant">
+                    <Store className="h-12 w-12 text-white" />
                   </div>
-                  <CardTitle className="text-2xl">إدارة المتجر</CardTitle>
-                  <CardDescription>
-                    إعدادات متجرك الإلكتروني وإدارة المنتجات
+                  <CardTitle className="text-3xl font-black bg-gradient-atlantis bg-clip-text text-transparent">لوحة التحكم التجارية</CardTitle>
+                  <CardDescription className="text-lg mt-3">
+                    إدارة شاملة لمتجرك الإلكتروني ومنتجاتك وطلباتك
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="text-center">
+                <CardContent className="text-center space-y-4">
                   <Button 
+                    variant="atlantis"
                     size="lg" 
-                    className="w-full"
-                    variant="outline"
+                    className="w-full h-14 text-xl font-black rounded-2xl"
                     onClick={handleStoreManagementClick}
                   >
-                    دخول إدارة المتجر
+                    دخول لوحة التحكم
                   </Button>
+                  <div className="grid grid-cols-2 gap-3 mt-4">
+                    <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-3 rounded-xl border border-primary/20">
+                      <p className="text-sm font-medium text-primary">إدارة المنتجات</p>
+                    </div>
+                    <div className="bg-gradient-to-r from-luxury/10 to-luxury/5 p-3 rounded-xl border border-luxury/20">
+                      <p className="text-sm font-medium text-luxury">تتبع المبيعات</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
               
@@ -198,21 +207,33 @@ const Index = () => {
 
           {!currentUser && (
             <div className="text-center">
-              <Card className="max-w-md mx-auto">
-                <CardHeader>
-                  <CardTitle>هل تريد الانضمام؟</CardTitle>
-                  <CardDescription>
-                    سجل حساب جديد أو سجل دخول للبدء
+              <Card className="max-w-lg mx-auto border border-border/30 bg-gradient-to-br from-card/60 to-card backdrop-blur-sm shadow-elegant">
+                <CardHeader className="text-center">
+                  <div className="mx-auto w-16 h-16 bg-gradient-atlantis rounded-2xl flex items-center justify-center mb-4 shadow-glow">
+                    <User className="h-8 w-8 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl font-bold bg-gradient-atlantis bg-clip-text text-transparent">انضم إلى أتلانتس</CardTitle>
+                  <CardDescription className="text-lg mt-2">
+                    سجل حساب جديد واستمتع بتجربة تسوق لا تُنسى
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
                   <Button 
-                    variant="outline" 
-                    className="w-full"
+                    variant="atlantis"
+                    size="lg"
+                    className="w-full h-12 text-lg font-bold rounded-xl"
                     onClick={() => navigate('/auth')}
                   >
-                    تسجيل دخول / إنشاء حساب
+                    بدء رحلة التسوق
                   </Button>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="text-center p-2 bg-primary/5 rounded-lg border border-primary/10">
+                      <p className="font-medium text-primary">تسوق آمن</p>
+                    </div>
+                    <div className="text-center p-2 bg-luxury/5 rounded-lg border border-luxury/10">
+                      <p className="font-medium text-luxury">شحن مجاني</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </div>

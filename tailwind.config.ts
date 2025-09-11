@@ -66,6 +66,10 @@ export default {
 					DEFAULT: 'hsl(var(--premium))',
 					foreground: 'hsl(var(--premium-foreground))'
 				},
+				atlantis: {
+					DEFAULT: 'hsl(var(--atlantis))',
+					foreground: 'hsl(var(--atlantis-foreground))'
+				},
 				chat: {
 					bg: 'hsl(var(--chat-bg))',
 					sent: 'hsl(var(--chat-sent))',
@@ -81,6 +85,8 @@ export default {
 				'gradient-hero': 'var(--gradient-hero)',
 				'gradient-luxury': 'var(--gradient-luxury)',
 				'gradient-premium': 'var(--gradient-premium)',
+				'gradient-atlantis': 'var(--gradient-atlantis)',
+				'gradient-commerce': 'var(--gradient-commerce)',
 				'gradient-chat': 'var(--gradient-chat)',
 				'gradient-landing': 'var(--gradient-landing)',
 				'gradient-glass': 'var(--gradient-glass)',
@@ -91,6 +97,7 @@ export default {
 				'luxury': 'var(--shadow-luxury)',
 				'glass': 'var(--shadow-glass)',
 				'elegant': 'var(--shadow-elegant)',
+				'atlantis': 'var(--shadow-atlantis)',
 			},
 			transitionTimingFunction: {
 				'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',

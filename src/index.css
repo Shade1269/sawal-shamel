@@ -8,111 +8,127 @@
 
 @layer base {
   :root {
-    --background: 225 25% 98%;
-    --foreground: 220 25% 10%;
+    /* Enhanced E-commerce Light Theme - Premium Atlantis */
+    --background: 220 20% 98%;
+    --foreground: 220 25% 12%;
     
-    /* Premium Chat Colors */
-    --primary: 250 85% 62%;
-    --primary-glow: 250 80% 72%;
-    --primary-dark: 250 90% 45%;
+    /* Premium E-commerce Colors */
+    --primary: 220 85% 55%;
+    --primary-glow: 220 80% 65%;
+    --primary-dark: 220 90% 40%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 240 20% 96%;
-    --secondary-foreground: 220 20% 20%;
+    --secondary: 210 25% 96%;
+    --secondary-foreground: 220 20% 15%;
     
-    --accent: 280 85% 68%;
-    --accent-glow: 280 80% 78%;
+    --accent: 280 75% 60%;
+    --accent-glow: 280 70% 70%;
     --accent-foreground: 0 0% 100%;
     
-    /* Premium variants */
-    --luxury: 45 85% 58%;
+    /* Luxury variants for e-commerce */
+    --luxury: 35 80% 55%;
     --luxury-foreground: 0 0% 100%;
-    --premium: 280 70% 55%;
+    --premium: 260 65% 50%;
     --premium-foreground: 0 0% 100%;
+    --atlantis: 195 85% 45%;
+    --atlantis-foreground: 0 0% 100%;
     
-    --muted: 225 20% 94%;
-    --muted-foreground: 220 10% 50%;
+    --muted: 210 20% 94%;
+    --muted-foreground: 220 15% 45%;
     
-    --destructive: 0 85% 65%;
+    --destructive: 0 80% 60%;
     --destructive-foreground: 0 0% 100%;
     
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 10%;
+    --card-foreground: 220 25% 12%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 10%;
+    --popover-foreground: 220 25% 12%;
     
-    --border: 225 15% 88%;
-    --input: 225 15% 92%;
-    --ring: 250 90% 65%;
+    --border: 210 20% 88%;
+    --input: 210 25% 92%;
+    --ring: 220 85% 55%;
     
     --radius: 0.75rem;
     
-    --chat-bg: 225 30% 96%; /* chat area */
-    --chat-sent: 250 90% 65%;
+    --chat-bg: 210 25% 96%;
+    --chat-sent: 220 85% 55%;
     --chat-received: 0 0% 100%;
-    --landing-olive: 100 22% 20%; /* زيتوني غامق */
-    --status-online: 120 85% 50%;
-    --status-offline: 220 10% 70%;
+    --landing-olive: 100 22% 20%;
+    --status-online: 120 80% 50%;
+    --status-offline: 220 15% 65%;
     
-    /* Premium Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(250 85% 62%) 0%, hsl(280 85% 68%) 50%, hsl(45 85% 58%) 100%);
-    --gradient-luxury: linear-gradient(135deg, hsl(var(--luxury)), hsl(var(--accent)));
-    --gradient-premium: linear-gradient(45deg, hsl(var(--primary)) 0%, hsl(var(--premium)) 100%);
-    --gradient-chat: linear-gradient(180deg, hsl(225 30% 98%), hsl(225 20% 94%));
-    --gradient-landing: linear-gradient(180deg, hsl(90 25% 94%), hsl(100 20% 90%));
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    /* Premium E-commerce Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(220 85% 55%), hsl(220 80% 65%));
+    --gradient-hero: linear-gradient(135deg, hsl(220 85% 55%) 0%, hsl(280 75% 60%) 50%, hsl(35 80% 55%) 100%);
+    --gradient-luxury: linear-gradient(135deg, hsl(35 80% 55%), hsl(280 75% 60%));
+    --gradient-premium: linear-gradient(45deg, hsl(220 85% 55%) 0%, hsl(260 65% 50%) 100%);
+    --gradient-atlantis: linear-gradient(135deg, hsl(195 85% 45%) 0%, hsl(220 85% 55%) 100%);
+    --gradient-commerce: linear-gradient(135deg, hsl(220 85% 55%) 0%, hsl(195 85% 45%) 50%, hsl(35 80% 55%) 100%);
+    --gradient-chat: linear-gradient(180deg, hsl(210 25% 98%), hsl(210 20% 94%));
+    --gradient-landing: linear-gradient(180deg, hsl(210 25% 96%), hsl(210 20% 92%));
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.08));
     
-    /* Premium Shadows */
-    --shadow-soft: 0 8px 32px hsl(var(--primary) / 0.12);
-    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.3);
-    --shadow-luxury: 0 20px 60px hsl(var(--primary) / 0.15), 0 8px 25px hsl(var(--accent) / 0.1);
-    --shadow-glass: 0 8px 32px rgba(31, 38, 135, 0.2);
-    --shadow-elegant: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.08);
+    /* Premium E-commerce Shadows */
+    --shadow-soft: 0 8px 32px hsl(220 85% 55% / 0.08);
+    --shadow-glow: 0 0 40px hsl(220 85% 55% / 0.15);
+    --shadow-luxury: 0 20px 60px hsl(220 85% 55% / 0.12), 0 8px 25px hsl(35 80% 55% / 0.08);
+    --shadow-glass: 0 8px 32px rgba(31, 38, 135, 0.15);
+    --shadow-elegant: 0 15px 35px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0, 0, 0, 0.06);
+    --shadow-atlantis: 0 25px 50px hsl(195 85% 45% / 0.15), 0 10px 20px hsl(220 85% 55% / 0.1);
     
-    /* Animations */
+    /* Smooth transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
   .dark {
-    --background: 220 25% 8%;
-    --foreground: 225 15% 92%;
+    /* Enhanced E-commerce Dark Theme - Premium Atlantis */
+    --background: 220 30% 6%;
+    --foreground: 210 20% 92%;
     
-    --primary: 250 90% 70%;
-    --primary-glow: 250 85% 80%;
-    --primary-foreground: 220 25% 8%;
+    --primary: 220 80% 65%;
+    --primary-glow: 220 75% 75%;
+    --primary-dark: 220 85% 50%;
+    --primary-foreground: 220 30% 6%;
     
-    --secondary: 220 20% 15%;
-    --secondary-foreground: 225 15% 85%;
+    --secondary: 220 25% 12%;
+    --secondary-foreground: 210 20% 85%;
     
-    --accent: 280 85% 75%;
-    --accent-foreground: 220 25% 8%;
+    --accent: 280 70% 65%;
+    --accent-glow: 280 65% 75%;
+    --accent-foreground: 220 30% 6%;
     
-    --muted: 220 20% 12%;
-    --muted-foreground: 220 10% 60%;
+    --luxury: 35 75% 60%;
+    --luxury-foreground: 220 30% 6%;
+    --premium: 260 60% 55%;
+    --premium-foreground: 220 30% 6%;
+    --atlantis: 195 80% 50%;
+    --atlantis-foreground: 220 30% 6%;
     
-    --destructive: 0 85% 70%;
-    --destructive-foreground: 220 25% 8%;
+    --muted: 220 25% 10%;
+    --muted-foreground: 220 15% 55%;
     
-    --card: 220 20% 10%;
-    --card-foreground: 225 15% 92%;
+    --destructive: 0 75% 65%;
+    --destructive-foreground: 220 30% 6%;
     
-    --popover: 220 20% 10%;
-    --popover-foreground: 225 15% 92%;
+    --card: 220 25% 8%;
+    --card-foreground: 210 20% 92%;
     
-    --border: 220 15% 18%;
-    --input: 220 15% 15%;
-    --ring: 250 90% 70%;
+    --popover: 220 25% 8%;
+    --popover-foreground: 210 20% 92%;
     
-    --chat-bg: 220 25% 6%;
-    --chat-sent: 250 90% 65%;
-    --chat-received: 220 20% 12%;
-    --status-online: 120 85% 55%;
-    --status-offline: 220 10% 40%;
+    --border: 220 20% 15%;
+    --input: 220 20% 12%;
+    --ring: 220 80% 65%;
     
-    --landing-olive: 100 22% 16%;
+    --chat-bg: 220 30% 4%;
+    --chat-sent: 220 80% 60%;
+    --chat-received: 220 25% 10%;
+    --status-online: 120 75% 55%;
+    --status-offline: 220 15% 40%;
+    
+    --landing-olive: 100 22% 14%;
   }
 }
 
