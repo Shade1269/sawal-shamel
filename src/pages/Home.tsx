@@ -271,6 +271,15 @@ const HomePage = () => {
               >
                 تعرّف على المنصة
               </Button>
+              <Button 
+                size="lg" 
+                variant="secondary" 
+                className="bg-gradient-luxury text-luxury-foreground text-lg px-8 py-4"
+                onClick={() => navigate('/create-admin')}
+              >
+                <Crown className="ml-2 h-5 w-5" />
+                إنشاء حساب مدير
+              </Button>
             </div>
           </div>
         </div>

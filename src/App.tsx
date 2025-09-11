@@ -19,6 +19,7 @@ const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
 const ProfilePage = lazy(() => import("./pages/Profile"));
 const AboutPage = lazy(() => import("./pages/About"));
+const CreateAdminPage = lazy(() => import("./pages/CreateAdmin"));
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => {
                       <Route path="/auth" element={<AuthForm />} />
                       <Route path="/products" element={<ProductsPage />} />
                       <Route path="/about" element={<AboutPage />} />
+                      <Route path="/create-admin" element={<CreateAdminPage />} />
                       <Route path="/profile" element={
                         <ProtectedRoute>
                           <ProfilePage />
