@@ -44,6 +44,25 @@ serve(async (req) => {
       throw new Error('User profile not found');
     }
 
+    // Get user's shop (create if missing)
+    let { data: shop } = await supabase
+      .from('shops')
+      .select('id')
+      .eq('owner_id', profile.id)
+      .maybeSingle();
+
+    if (!shop) {
+      const { data: newShopId, error: shopErr } = await supabase
+        .rpc('create_user_shop', { p_user_id: profile.id, p_shop_name: 'متجري' });
+      if (shopErr) throw new Error('Failed to create shop: ' + shopErr.message);
+      const { data: createdShop } = await supabase
+        .from('shops')
+        .select('id')
+        .eq('id', newShopId)
+        .single();
+      shop = createdShop;
+    }
+
     // Get or create merchant
     let { data: merchant } = await supabase
       .from('merchants')
@@ -193,7 +212,7 @@ serve(async (req) => {
 
         // Create product mapping
         const mappingData = {
-          shop_id: profile.id,
+          shop_id: shop.id,
           zoho_item_id: item.item_id,
           local_product_id: product.id
         };

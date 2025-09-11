@@ -49,10 +49,30 @@ export const SimpleZohoIntegration: React.FC = () => {
 
       if (!profile) return;
 
+      // احصل على متجر المستخدم (أو أنشئ واحداً إذا لم يوجد)
+      let { data: shop } = await supabase
+        .from('shops')
+        .select('id')
+        .eq('owner_id', profile.id)
+        .maybeSingle();
+
+      if (!shop) {
+        const { data: newShopId, error: createShopError } = await supabase
+          .rpc('create_user_shop', { p_user_id: profile.id, p_shop_name: 'متجري' });
+        if (createShopError) throw createShopError;
+        // استعلم عن المتجر الذي تم إنشاؤه للتو
+        const { data: createdShop } = await supabase
+          .from('shops')
+          .select('id')
+          .eq('id', newShopId)
+          .single();
+        shop = createdShop;
+      }
+
       const { data } = await supabase
         .from('zoho_integration')
         .select('*')
-        .eq('shop_id', profile.id)
+        .eq('shop_id', shop.id)
         .maybeSingle();
 
       if (data) {
@@ -69,7 +89,6 @@ export const SimpleZohoIntegration: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   const saveSettings = async () => {
     if (!user?.id || !settings.access_token || !settings.organization_id) {
       toast({
@@ -90,10 +109,29 @@ export const SimpleZohoIntegration: React.FC = () => {
 
       if (!profile) throw new Error('Profile not found');
 
+      // احصل على متجر المستخدم (أو أنشئ واحداً إذا لم يوجد)
+      let { data: shop } = await supabase
+        .from('shops')
+        .select('id')
+        .eq('owner_id', profile.id)
+        .maybeSingle();
+
+      if (!shop) {
+        const { data: newShopId, error: createShopError } = await supabase
+          .rpc('create_user_shop', { p_user_id: profile.id, p_shop_name: 'متجري' });
+        if (createShopError) throw createShopError;
+        const { data: createdShop } = await supabase
+          .from('shops')
+          .select('id')
+          .eq('id', newShopId)
+          .single();
+        shop = createdShop;
+      }
+
       const { error } = await supabase
         .from('zoho_integration')
         .upsert({
-          shop_id: profile.id,
+          shop_id: shop.id,
           access_token: settings.access_token,
           organization_id: settings.organization_id,
           is_enabled: true,
