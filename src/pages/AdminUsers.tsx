@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Textarea } from '@/components/ui/textarea';
 import { 
   Users, 
   Search,
@@ -39,11 +40,20 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  MoreVertical
+  MoreVertical,
+  Bell,
+  Ban,
+  Key,
+  MessageSquare,
+  Send,
+  History
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { UserActivityLog } from '@/components/admin/UserActivityLog';
+import { UserPermissions } from '@/components/admin/UserPermissions';
+import { UserAnalytics } from '@/components/admin/UserAnalytics';
 
 interface User {
   id: string;
@@ -73,6 +83,8 @@ const AdminUsers = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
+  const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -262,7 +274,66 @@ const AdminUsers = () => {
     }
   };
 
-  const toggleUserStatus = async (userId: string, currentStatus: boolean) => {
+  const sendNotificationToUser = async (userId: string, message: string, type: 'info' | 'warning' | 'success' = 'info') => {
+    try {
+      // In a real app, this would send notification through your notification system
+      // For now, we'll simulate it
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "تم إرسال الإشعار",
+        description: "تم إرسال الإشعار للمستخدم بنجاح",
+      });
+      
+      setIsNotificationDialogOpen(false);
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      toast({
+        title: "خطأ في الإرسال",
+        description: "تعذر إرسال الإشعار",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const banUser = async (userId: string, reason: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ 
+          is_active: false, 
+          updated_at: new Date().toISOString() 
+        })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      // Log the ban action
+      await supabase
+        .from('user_activities')
+        .insert([{
+          user_id: userId,
+          activity_type: 'user_banned',
+          description: `تم حظر المستخدم. السبب: ${reason}`,
+          metadata: { reason, banned_by: 'admin', banned_at: new Date().toISOString() }
+        }]);
+
+      toast({
+        title: "تم حظر المستخدم",
+        description: "تم حظر المستخدم بنجاح",
+      });
+
+      fetchUsers();
+      fetchStats();
+    } catch (error) {
+      console.error('Error banning user:', error);
+      toast({
+        title: "خطأ في الحظر",
+        description: "تعذر حظر المستخدم",
+        variant: "destructive",
+      });
+    }
+  };
     try {
       const { error } = await supabase
         .from('profiles')
@@ -442,10 +513,12 @@ const AdminUsers = () => {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
           <TabsTrigger value="users">المستخدمين</TabsTrigger>
           <TabsTrigger value="analytics">تحليلات</TabsTrigger>
+          <TabsTrigger value="activity">الأنشطة</TabsTrigger>
+          <TabsTrigger value="permissions">الصلاحيات</TabsTrigger>
           <TabsTrigger value="settings">الإعدادات</TabsTrigger>
         </TabsList>
 
@@ -720,14 +793,32 @@ const AdminUsers = () => {
                               <Eye className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>
-                          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                             <DialogHeader>
                               <DialogTitle>تفاصيل المستخدم</DialogTitle>
                               <DialogDescription>
                                 معلومات مفصلة عن {user.full_name}
                               </DialogDescription>
                             </DialogHeader>
-                            <UserDetailsView user={user} />
+                            <Tabs defaultValue="details" className="w-full">
+                              <TabsList className="grid w-full grid-cols-3">
+                                <TabsTrigger value="details">التفاصيل</TabsTrigger>
+                                <TabsTrigger value="permissions">الصلاحيات</TabsTrigger>
+                                <TabsTrigger value="activity">الأنشطة</TabsTrigger>
+                              </TabsList>
+                              
+                              <TabsContent value="details" className="space-y-4">
+                                <UserDetailsView user={user} />
+                              </TabsContent>
+                              
+                              <TabsContent value="permissions" className="space-y-4">
+                                <UserPermissions user={user} />
+                              </TabsContent>
+                              
+                              <TabsContent value="activity" className="space-y-4">
+                                <UserActivityLog userId={user.id} />
+                              </TabsContent>
+                            </Tabs>
                           </DialogContent>
                         </Dialog>
                         
@@ -755,6 +846,46 @@ const AdminUsers = () => {
                             />
                           </DialogContent>
                         </Dialog>
+
+                        <Dialog open={isNotificationDialogOpen && selectedUser?.id === user.id} onOpenChange={setIsNotificationDialogOpen}>
+                          <DialogTrigger asChild>
+                            <Button 
+                              size="sm" 
+                              variant="ghost"
+                              onClick={() => setSelectedUser(user)}
+                            >
+                              <Bell className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-md">
+                            <DialogHeader>
+                              <DialogTitle>إرسال إشعار</DialogTitle>
+                              <DialogDescription>
+                                إرسال إشعار للمستخدم {user.full_name}
+                              </DialogDescription>
+                            </DialogHeader>
+                            <NotificationForm 
+                              user={user} 
+                              onSend={sendNotificationToUser} 
+                              onCancel={() => setIsNotificationDialogOpen(false)}
+                            />
+                          </DialogContent>
+                        </Dialog>
+                        
+                        {user.role !== 'admin' && (
+                          <Button 
+                            size="sm" 
+                            variant="ghost"
+                            onClick={() => {
+                              const reason = prompt('سبب الحظر:');
+                              if (reason) {
+                                banUser(user.id, reason);
+                              }
+                            }}
+                          >
+                            <Ban className="h-4 w-4 text-orange-500" />
+                          </Button>
+                        )}
                         
                         {user.role !== 'admin' && (
                           <Button 
@@ -775,74 +906,34 @@ const AdminUsers = () => {
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>إحصائيات الأدوار</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <Crown className="h-4 w-4 text-red-500" />
-                      <span>مدراء</span>
-                    </div>
-                    <Badge variant="outline">{stats.admins}</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <Store className="h-4 w-4 text-blue-500" />
-                      <span>تجار</span>
-                    </div>
-                    <Badge variant="outline">{stats.merchants}</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <Star className="h-4 w-4 text-green-500" />
-                      <span>مسوقين</span>
-                    </div>
-                    <Badge variant="outline">{stats.affiliates}</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-purple-500" />
-                      <span>مشرفين</span>
-                    </div>
-                    <Badge variant="outline">{stats.moderators}</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <ShoppingCart className="h-4 w-4 text-gray-500" />
-                      <span>عملاء</span>
-                    </div>
-                    <Badge variant="outline">{stats.customers}</Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <UserAnalytics />
+        </TabsContent>
 
+        <TabsContent value="activity" className="space-y-6">
+          <UserActivityLog />
+        </TabsContent>
+
+        <TabsContent value="permissions" className="space-y-6">
+          <Alert>
+            <Key className="h-4 w-4" />
+            <AlertDescription>
+              إدارة الصلاحيات - اختر مستخدم لعرض وتعديل صلاحياته
+            </AlertDescription>
+          </Alert>
+          
+          {selectedUser ? (
+            <UserPermissions user={selectedUser} />
+          ) : (
             <Card>
-              <CardHeader>
-                <CardTitle>النشاط الشهري</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span>مستخدمين جدد هذا الشهر</span>
-                    <Badge className="bg-green-100 text-green-800">{stats.newUsersThisMonth}</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>المستخدمين النشطين</span>
-                    <Badge className="bg-blue-100 text-blue-800">{stats.activeUsers}</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>إجمالي الأرباح</span>
-                    <Badge className="bg-amber-100 text-amber-800">{stats.totalEarnings.toLocaleString()} ر.س</Badge>
-                  </div>
-                </div>
+              <CardContent className="p-8 text-center">
+                <Key className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">اختر مستخدماً</h3>
+                <p className="text-muted-foreground">
+                  اختر مستخدماً من قائمة المستخدمين لعرض وإدارة صلاحياته
+                </p>
               </CardContent>
             </Card>
-          </div>
+          )}
         </TabsContent>
 
         <TabsContent value="settings" className="space-y-6">
@@ -1158,6 +1249,58 @@ const AddUserForm = ({ onSave, onCancel }: any) => {
       <div className="flex gap-2">
         <Button type="submit" className="flex-1">
           إضافة المستخدم
+        </Button>
+        <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
+          إلغاء
+        </Button>
+      </div>
+    </form>
+  );
+};
+
+// Component for notification form
+const NotificationForm = ({ user, onSend, onCancel }: any) => {
+  const [formData, setFormData] = useState({
+    message: '',
+    type: 'info' as 'info' | 'warning' | 'success'
+  });
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    onSend(user.id, formData.message, formData.type);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-2">
+        <Label>نوع الإشعار</Label>
+        <Select value={formData.type} onValueChange={(value: 'info' | 'warning' | 'success') => setFormData({...formData, type: value})}>
+          <SelectTrigger>
+            <SelectValue placeholder="اختر نوع الإشعار" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="info">معلوماتي</SelectItem>
+            <SelectItem value="warning">تحذير</SelectItem>
+            <SelectItem value="success">نجح</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
+      <div className="space-y-2">
+        <Label>نص الإشعار</Label>
+        <Textarea
+          value={formData.message}
+          onChange={(e) => setFormData({...formData, message: e.target.value})}
+          placeholder="اكتب نص الإشعار..."
+          rows={4}
+          required
+        />
+      </div>
+      
+      <div className="flex gap-2">
+        <Button type="submit" className="flex-1">
+          <Send className="h-4 w-4 ml-2" />
+          إرسال الإشعار
         </Button>
         <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
           إلغاء
