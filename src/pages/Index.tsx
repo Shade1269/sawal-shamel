@@ -88,7 +88,7 @@ const Index = () => {
               <div className="flex items-center gap-3 bg-gradient-to-r from-primary/15 to-damascus/15 p-3 rounded-xl border border-primary/25">
                 <User className="h-5 w-5 text-damascus animate-damascus-float" />
                 <span className="text-sm font-medium text-foreground">
-                  أهلاً وسهلاً يا تاجر، {getUserDisplayName()}
+                  مرحباً، {getUserDisplayName()}
                 </span>
               </div>
               <Button
@@ -98,7 +98,7 @@ const Index = () => {
                 className="gap-2 hover:shadow-heritage"
               >
                 <LogOut className="h-4 w-4" />
-                خروج من البازار
+                تسجيل خروج
               </Button>
             </div>
           </div>
@@ -108,10 +108,10 @@ const Index = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-damascus bg-clip-text text-transparent mb-4">
-            بازار الشام الدمشقي للتجارة
+            منصة أتلانتس للتجارة الإلكترونية
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            اكتشف كنوز التجارة الأصيلة في الأسواق الدمشقية العريقة
+            استكشف عالم التسوق الفاخر مع تجربة تجارة إلكترونية لا مثيل لها
           </p>
         </div>
 
@@ -122,9 +122,9 @@ const Index = () => {
                 <div className="mx-auto w-20 h-20 bg-gradient-primary rounded-2xl flex items-center justify-center mb-6 group-hover:shadow-glow group-hover:scale-110 transition-all duration-500 shadow-soft">
                   <MessageCircle className="h-10 w-10 text-white" />
                 </div>
-                <CardTitle className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">مجلس التجار</CardTitle>
+                <CardTitle className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">دردشة العملاء</CardTitle>
                 <CardDescription className="text-lg">
-                  تواصل مع التجار وأصحاب الحرف في البازار
+                  تواصل مع فريق الدعم والعملاء الآخرين
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
@@ -134,7 +134,7 @@ const Index = () => {
                   className="w-full h-12 text-lg font-bold rounded-xl"
                   onClick={handleChatClick}
                 >
-                  دخول المجلس
+                  بدء المحادثة
                 </Button>
               </CardContent>
             </Card>
@@ -144,9 +144,9 @@ const Index = () => {
                 <div className="mx-auto w-20 h-20 bg-gradient-luxury rounded-2xl flex items-center justify-center mb-6 group-hover:shadow-glow group-hover:scale-110 transition-all duration-500 shadow-soft">
                   <Package className="h-10 w-10 text-white" />
                 </div>
-                <CardTitle className="text-2xl font-bold bg-gradient-luxury bg-clip-text text-transparent">خزائن البضائع</CardTitle>
+                <CardTitle className="text-2xl font-bold bg-gradient-luxury bg-clip-text text-transparent">كتالوج المنتجات</CardTitle>
                 <CardDescription className="text-lg">
-                  استكشف البضائع الفاخرة والحرف اليدوية الأصيلة
+                  استكشف مجموعة منتجاتنا الفاخرة والحصرية
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
@@ -156,7 +156,7 @@ const Index = () => {
                   className="w-full h-12 text-lg font-bold rounded-xl"
                   onClick={handleInventoryClick}
                 >
-                  تصفح البضائع
+                  تصفح المنتجات
                 </Button>
               </CardContent>
             </Card>
@@ -166,15 +166,15 @@ const Index = () => {
                 <div className="mx-auto w-20 h-20 bg-gradient-premium rounded-2xl flex items-center justify-center mb-6 group-hover:shadow-glow group-hover:scale-110 transition-all duration-500 shadow-soft">
                   <Users className="h-10 w-10 text-white" />
                 </div>
-                <CardTitle className="text-2xl font-bold bg-gradient-premium bg-clip-text text-transparent">نقابة التجار الشاميين</CardTitle>
+                <CardTitle className="text-2xl font-bold bg-gradient-premium bg-clip-text text-transparent">مجتمع أتلانتس</CardTitle>
                 <CardDescription className="text-lg">
-                  انضم إلى نقابة التجار والحرفيين العريقة في دمشق
+                  انضم إلى مجتمع المتسوقين المميزين والحصريين
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
                 <div className="flex items-center justify-center gap-3 text-muted-foreground bg-gradient-to-r from-muted/20 to-muted/10 p-3 rounded-xl border border-border/20">
                   <Hash className="h-5 w-5" />
-                  <span className="font-medium">تجارة أصيلة عبر التاريخ</span>
+                  <span className="font-medium">تجربة تسوق حصرية 24/7</span>
                 </div>
               </CardContent>
             </Card>
@@ -188,9 +188,9 @@ const Index = () => {
                   <div className="mx-auto w-24 h-24 bg-gradient-damascus rounded-3xl flex items-center justify-center mb-6 group-hover:shadow-damascus group-hover:scale-110 transition-all duration-500 shadow-elegant">
                     <Store className="h-12 w-12 text-white" />
                   </div>
-                  <CardTitle className="text-3xl font-black bg-gradient-damascus bg-clip-text text-transparent">ديوان إدارة التجارة</CardTitle>
+                  <CardTitle className="text-3xl font-black bg-gradient-damascus bg-clip-text text-transparent">لوحة التحكم التجارية</CardTitle>
                   <CardDescription className="text-lg mt-3">
-                    إدارة شاملة لمتجرك وبضائعك وسجلات المبيعات
+                    إدارة شاملة لمتجرك الإلكتروني ومنتجاتك وطلباتك
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="text-center space-y-4">
@@ -200,14 +200,14 @@ const Index = () => {
                     className="w-full h-14 text-xl font-black rounded-2xl"
                     onClick={handleStoreManagementClick}
                   >
-                    دخول الديوان
+                    دخول لوحة التحكم
                   </Button>
                   <div className="grid grid-cols-2 gap-3 mt-4">
                     <div className="bg-gradient-to-r from-primary/15 to-primary/8 p-3 rounded-xl border border-primary/25">
-                      <p className="text-sm font-medium text-primary">إدارة البضائع</p>
+                      <p className="text-sm font-medium text-primary">إدارة المنتجات</p>
                     </div>
                     <div className="bg-gradient-to-r from-luxury/15 to-luxury/8 p-3 rounded-xl border border-luxury/25">
-                      <p className="text-sm font-medium text-luxury">سجل المبيعات</p>
+                      <p className="text-sm font-medium text-luxury">تتبع المبيعات</p>
                     </div>
                   </div>
                 </CardContent>
@@ -224,9 +224,9 @@ const Index = () => {
                   <div className="mx-auto w-16 h-16 bg-gradient-damascus rounded-2xl flex items-center justify-center mb-4 shadow-glow">
                     <User className="h-8 w-8 text-white" />
                   </div>
-                  <CardTitle className="text-2xl font-bold bg-gradient-damascus bg-clip-text text-transparent">انضم لبازار الشام</CardTitle>
+                  <CardTitle className="text-2xl font-bold bg-gradient-damascus bg-clip-text text-transparent">انضم إلى أتلانتس</CardTitle>
                   <CardDescription className="text-lg mt-2">
-                    سجل حساب جديد واستمتع بالتجارة الأصيلة في الأسواق الدمشقية
+                    سجل حساب جديد واستمتع بتجربة تسوق لا تُنسى
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -236,14 +236,14 @@ const Index = () => {
                     className="w-full h-12 text-lg font-bold rounded-xl"
                     onClick={() => navigate('/auth')}
                   >
-                    بداية رحلة التجارة
+                    بدء رحلة التسوق
                   </Button>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div className="text-center p-2 bg-primary/8 rounded-lg border border-primary/15">
-                      <p className="font-medium text-primary">تجارة مضمونة</p>
+                      <p className="font-medium text-primary">تسوق آمن</p>
                     </div>
                     <div className="text-center p-2 bg-luxury/8 rounded-lg border border-luxury/15">
-                      <p className="font-medium text-luxury">جودة عالية</p>
+                      <p className="font-medium text-luxury">شحن مجاني</p>
                     </div>
                   </div>
                 </CardContent>
