@@ -360,6 +360,77 @@ export const useSupabaseUserData = () => {
     }
   }, [user]);
 
+  // حفظ المنتج داخل مكتبة المتجر لظهوره في قسم المنتجات
+  const addProductToLibrary = async (productId: string): Promise<string | undefined> => {
+    if (!user || !userShop) {
+      throw new Error('المستخدم أو المتجر غير متوفر');
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('product_library')
+        .insert({
+          shop_id: userShop.id,
+          product_id: productId,
+          is_visible: true,
+          is_featured: false,
+          sort_index: 0,
+          commission_amount: 0
+        })
+        .select('id')
+        .single();
+
+      if (error) throw error;
+
+      // سجل نشاط الحفظ
+      await logActivity('product_saved_to_library', 'تم حفظ المنتج في قسم المنتجات', userShop.id, { productId });
+
+      return data?.id;
+    } catch (error) {
+      console.error('Error adding product to library:', error);
+      throw error;
+    }
+  };
+
+  // جلب عناصر مكتبة المتجر مع تفاصيل المنتجات
+  const getProductLibraryItems = async (): Promise<any[]> => {
+    if (!user || !userShop) return [];
+
+    try {
+      const { data: libraryRows, error: libError } = await supabase
+        .from('product_library')
+        .select('*')
+        .eq('shop_id', userShop.id);
+
+      if (libError) throw libError;
+      if (!libraryRows || libraryRows.length === 0) return [];
+
+      const productIds = libraryRows.map((r: any) => r.product_id).filter(Boolean);
+      if (productIds.length === 0) return [];
+
+      const { data: products, error: prodError } = await supabase
+        .from('products')
+        .select('*')
+        .in('id', productIds);
+
+      if (prodError) throw prodError;
+
+      const productMap = new Map((products || []).map((p: any) => [p.id, p]));
+
+      return libraryRows.map((row: any) => ({
+        id: row.id,
+        is_featured: row.is_featured,
+        is_visible: row.is_visible,
+        sort_index: row.sort_index,
+        commission_amount: row.commission_amount,
+        products: productMap.get(row.product_id) || null,
+      }));
+    } catch (error) {
+      console.error('Error fetching product library items:', error);
+      return [];
+    }
+  };
+
   return {
     userShop,
     userActivities,
@@ -373,6 +444,8 @@ export const useSupabaseUserData = () => {
     fetchUserStatistics,
     addProduct,
     getShopProducts,
-    saveShopSettings
+    saveShopSettings,
+    addProductToLibrary,
+    getProductLibraryItems,
   };
 };

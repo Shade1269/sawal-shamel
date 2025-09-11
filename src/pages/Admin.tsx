@@ -46,7 +46,7 @@ const ADMIN_EMAIL = "Shade199633@icloud.com";
 
 const Admin = () => {
   const { user } = useSupabaseAuth();
-  const { addProduct, getShopProducts } = useSupabaseUserData();
+  const { addProduct, getShopProducts, addProductToLibrary } = useSupabaseUserData();
   const { toast } = useToast();
 
   const isAllowed = useMemo(() => user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase(), [user]);
@@ -324,7 +324,10 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
         });
       }
 
-      toast({ title: "تم الإضافة", description: "تم إضافة المنتج بنجاح مع الصور" });
+      // حفظ المنتج في قسم المنتجات (مكتبة المتجر)
+      await addProductToLibrary(productId);
+
+      toast({ title: "تم الحفظ", description: "تم إضافة المنتج وحفظه في قسم المنتجات" });
       
       // Clean up
       setNewProduct({ title: '', description: '', price_sar: '', category: '', stock: '', commission_rate: '' });

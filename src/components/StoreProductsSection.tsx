@@ -45,7 +45,7 @@ interface StoreProductsSectionProps {
 
 const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop }) => {
   const { user } = useSupabaseAuth();
-  const { getShopProducts } = useSupabaseUserData();
+  const { getProductLibraryItems } = useSupabaseUserData();
   const [storeProducts, setStoreProducts] = useState<ProductLibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [globalCommission, setGlobalCommission] = useState<number>(0);
@@ -74,14 +74,9 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
     try {
       if (!user) return;
       
-      const products = await getShopProducts();
-      console.log('Raw products from getShopProducts:', products);
-      console.log('Products type check:', products.map(p => ({ 
-        id: p.id, 
-        hasProducts: !!p.products,
-        type: typeof p
-      })));
-      setStoreProducts(products as ProductLibraryItem[]);
+      const items = await getProductLibraryItems();
+      console.log('Loaded product library items:', items);
+      setStoreProducts(items as ProductLibraryItem[]);
     } catch (error) {
       console.error('Error fetching store products:', error);
       toast({

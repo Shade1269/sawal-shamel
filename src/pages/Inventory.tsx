@@ -41,7 +41,7 @@ interface ProductVariant {
 
 const Inventory = () => {
   const navigate = useNavigate();
-  const { user, getShopProducts, addProduct, updateProduct } = useUserDataContext();
+  const { user, getShopProducts, addProductToLibrary, updateProduct } = useUserDataContext();
 
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,24 +108,8 @@ const Inventory = () => {
         return;
       }
 
-      // Add the product to user's store with proper structure for ProductLibraryItem
-      await addProduct({
-        id: product.id,
-        is_featured: false,
-        is_visible: true,
-        sort_index: 0,
-        commission_amount: 0,
-        products: {
-          id: product.id,
-          title: product.title,
-          description: product.description,
-          price_sar: product.price_sar,
-          image_urls: product.image_urls,
-          category: product.category,
-          stock: product.stock,
-          variants: product.variants
-        }
-      });
+      // حفظ المنتج في مكتبة المتجر ليظهر في قسم المنتجات
+      await addProductToLibrary(product.id);
 
       toast({
         title: "تم بنجاح",
