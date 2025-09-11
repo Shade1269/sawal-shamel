@@ -30,6 +30,7 @@ export default {
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					glow: 'hsl(var(--primary-glow))',
+					dark: 'hsl(var(--primary-dark))',
 					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
@@ -46,6 +47,7 @@ export default {
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
+					glow: 'hsl(var(--accent-glow))',
 					foreground: 'hsl(var(--accent-foreground))'
 				},
 				popover: {
@@ -55,6 +57,14 @@ export default {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
+				},
+				luxury: {
+					DEFAULT: 'hsl(var(--luxury))',
+					foreground: 'hsl(var(--luxury-foreground))'
+				},
+				premium: {
+					DEFAULT: 'hsl(var(--premium))',
+					foreground: 'hsl(var(--premium-foreground))'
 				},
 				chat: {
 					bg: 'hsl(var(--chat-bg))',
@@ -69,12 +79,18 @@ export default {
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-hero': 'var(--gradient-hero)',
+				'gradient-luxury': 'var(--gradient-luxury)',
+				'gradient-premium': 'var(--gradient-premium)',
 				'gradient-chat': 'var(--gradient-chat)',
 				'gradient-landing': 'var(--gradient-landing)',
+				'gradient-glass': 'var(--gradient-glass)',
 			},
 			boxShadow: {
 				'soft': 'var(--shadow-soft)',
 				'glow': 'var(--shadow-glow)',
+				'luxury': 'var(--shadow-luxury)',
+				'glass': 'var(--shadow-glass)',
+				'elegant': 'var(--shadow-elegant)',
 			},
 			transitionTimingFunction: {
 				'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',

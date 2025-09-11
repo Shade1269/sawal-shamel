@@ -114,43 +114,52 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <h1 className="text-4xl font-bold text-primary">دردشتي</h1>
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/5 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5"></div>
+      <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-hero opacity-10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-20 right-20 w-48 h-48 bg-gradient-luxury opacity-15 rounded-full blur-2xl"></div>
+      
+      <div className="w-full max-w-lg relative z-10">
+        <div className="text-center mb-12 animate-fade-in">
+          <div className="flex items-center justify-center mb-6">
+            <div className="relative">
+              <h1 className="text-6xl font-black bg-gradient-hero bg-clip-text text-transparent">دردشتي</h1>
+              <div className="absolute -inset-1 bg-gradient-hero opacity-20 blur-lg rounded-lg"></div>
+            </div>
           </div>
-          <p className="text-muted-foreground">منصة الدردشة العربية الحديثة</p>
+          <p className="text-xl text-muted-foreground font-medium">منصة الدردشة العربية الفاخرة</p>
+          <div className="w-24 h-1 bg-gradient-hero mx-auto mt-4 rounded-full"></div>
         </div>
 
-        <Card className="backdrop-blur-sm bg-card/80 border-border/50">
+        <Card className="backdrop-blur-xl bg-card/60 border border-white/20 shadow-luxury animate-slide-up">
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
-              <TabsTrigger value="signin" className="gap-2">
+            <TabsList className="grid w-full grid-cols-3 mb-8 bg-muted/50 p-1 rounded-xl">
+              <TabsTrigger value="signin" className="gap-2 data-[state=active]:bg-gradient-primary data-[state=active]:text-white data-[state=active]:shadow-soft transition-all duration-300 rounded-lg py-3 font-semibold">
                 <LogIn className="h-4 w-4" />
                 تسجيل دخول
               </TabsTrigger>
-              <TabsTrigger value="signup" className="gap-2">
+              <TabsTrigger value="signup" className="gap-2 data-[state=active]:bg-gradient-luxury data-[state=active]:text-white data-[state=active]:shadow-soft transition-all duration-300 rounded-lg py-3 font-semibold">
                 <UserPlus className="h-4 w-4" />
                 حساب جديد
               </TabsTrigger>
-              <TabsTrigger value="sms" className="gap-2">
+              <TabsTrigger value="sms" className="gap-2 data-[state=active]:bg-gradient-premium data-[state=active]:text-white data-[state=active]:shadow-soft transition-all duration-300 rounded-lg py-3 font-semibold">
                 <MessageSquare className="h-4 w-4" />
                 SMS
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="signin" className="space-y-0">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-right">مرحباً بعودتك</CardTitle>
-                <CardDescription className="text-right">
-                  سجل دخولك للمتابعة إلى الدردشة
+              <CardHeader className="pb-6 text-center">
+                <CardTitle className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">مرحباً بعودتك</CardTitle>
+                <CardDescription className="text-lg text-muted-foreground mt-2">
+                  سجل دخولك للمتابعة إلى عالم الدردشة المميز
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSignIn} className="space-y-4">
-                  <div className="space-y-2 text-right">
-                    <Label htmlFor="signin-email">البريد الإلكتروني</Label>
+              <CardContent className="space-y-6">
+                <form onSubmit={handleSignIn} className="space-y-6">
+                  <div className="space-y-3 text-right">
+                    <Label htmlFor="signin-email" className="text-base font-semibold text-foreground">البريد الإلكتروني</Label>
                     <Input
                       id="signin-email"
                       type="email"
@@ -161,12 +170,12 @@ const AuthPage = () => {
                       }}
                       placeholder="أدخل بريدك الإلكتروني"
                       required
-                      className="text-right"
+                      className="text-right h-12 bg-background/50 border-border/50 focus:border-primary/50 focus:bg-background transition-all duration-300 rounded-xl"
                     />
                   </div>
                   
-                  <div className="space-y-2 text-right">
-                    <Label htmlFor="signin-password">كلمة المرور</Label>
+                  <div className="space-y-3 text-right">
+                    <Label htmlFor="signin-password" className="text-base font-semibold text-foreground">كلمة المرور</Label>
                     <Input
                       id="signin-password"
                       type="password"
@@ -174,21 +183,22 @@ const AuthPage = () => {
                       onChange={(e) => setSignInForm(prev => ({...prev, password: e.target.value}))}
                       placeholder="أدخل كلمة المرور"
                       required
-                      className="text-right"
+                      className="text-right h-12 bg-background/50 border-border/50 focus:border-primary/50 focus:bg-background transition-all duration-300 rounded-xl"
                     />
                   </div>
                   
-                  <div className="flex items-center space-x-2 space-x-reverse">
+                  <div className="flex items-center space-x-3 space-x-reverse justify-end p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl border border-border/30">
                     <Checkbox 
                       id="remember-me"
                       checked={signInForm.rememberMe}
                       onCheckedChange={(checked) => 
                         setSignInForm(prev => ({...prev, rememberMe: checked as boolean}))
                       }
+                      className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
                     <Label 
                       htmlFor="remember-me" 
-                      className="text-sm font-normal cursor-pointer"
+                      className="text-base font-medium cursor-pointer"
                     >
                       تذكرني (البقاء متصلاً)
                     </Label>
@@ -196,10 +206,12 @@ const AuthPage = () => {
 
                   <Button 
                     type="submit" 
-                    className="w-full" 
+                    variant="luxury"
+                    size="lg"
+                    className="w-full h-14 text-lg font-bold rounded-xl mt-8" 
                     disabled={isLoading}
                   >
-                    <Mail className="ml-2 h-4 w-4" />
+                    <Mail className="ml-2 h-5 w-5" />
                     {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل دخول'}
                   </Button>
                 </form>
@@ -207,22 +219,22 @@ const AuthPage = () => {
             </TabsContent>
 
             <TabsContent value="signup" className="space-y-0">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-right">
+              <CardHeader className="pb-6 text-center">
+                <CardTitle className="text-3xl font-bold bg-gradient-luxury bg-clip-text text-transparent">
                   {signUpStep === 'details' ? 'إنشاء حساب جديد' : 'اختر اسم المستخدم'}
                 </CardTitle>
-                <CardDescription className="text-right">
+                <CardDescription className="text-lg text-muted-foreground mt-2">
                   {signUpStep === 'details' 
-                    ? 'أدخل بياناتك لإنشاء حساب جديد'
+                    ? 'انضم إلى مجتمع الدردشة المميز'
                     : 'اختر اسم المستخدم الذي سيظهر في المحادثات'
                   }
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-6">
                 {signUpStep === 'details' ? (
-                  <form onSubmit={handleSignUp} className="space-y-4">
-                    <div className="space-y-2 text-right">
-                      <Label htmlFor="signup-fullname">الاسم الكامل</Label>
+                  <form onSubmit={handleSignUp} className="space-y-6">
+                    <div className="space-y-3 text-right">
+                      <Label htmlFor="signup-fullname" className="text-base font-semibold text-foreground">الاسم الكامل</Label>
                       <Input
                         id="signup-fullname"
                         type="text"
@@ -230,12 +242,12 @@ const AuthPage = () => {
                         onChange={(e) => setSignUpForm(prev => ({...prev, fullName: e.target.value}))}
                         placeholder="أدخل اسمك الكامل"
                         required
-                        className="text-right"
+                        className="text-right h-12 bg-background/50 border-border/50 focus:border-accent/50 focus:bg-background transition-all duration-300 rounded-xl"
                       />
                     </div>
 
-                    <div className="space-y-2 text-right">
-                      <Label htmlFor="signup-email">البريد الإلكتروني</Label>
+                    <div className="space-y-3 text-right">
+                      <Label htmlFor="signup-email" className="text-base font-semibold text-foreground">البريد الإلكتروني</Label>
                       <Input
                         id="signup-email"
                         type="email"
@@ -243,12 +255,12 @@ const AuthPage = () => {
                         onChange={(e) => setSignUpForm(prev => ({...prev, email: e.target.value}))}
                         placeholder="أدخل بريدك الإلكتروني"
                         required
-                        className="text-right"
+                        className="text-right h-12 bg-background/50 border-border/50 focus:border-accent/50 focus:bg-background transition-all duration-300 rounded-xl"
                       />
                     </div>
 
-                    <div className="space-y-2 text-right">
-                      <Label htmlFor="signup-password">كلمة المرور</Label>
+                    <div className="space-y-3 text-right">
+                      <Label htmlFor="signup-password" className="text-base font-semibold text-foreground">كلمة المرور</Label>
                       <Input
                         id="signup-password"
                         type="password"
@@ -256,41 +268,44 @@ const AuthPage = () => {
                         onChange={(e) => setSignUpForm(prev => ({...prev, password: e.target.value}))}
                         placeholder="أدخل كلمة مرور قوية"
                         required
-                        className="text-right"
+                        className="text-right h-12 bg-background/50 border-border/50 focus:border-accent/50 focus:bg-background transition-all duration-300 rounded-xl"
                       />
                     </div>
 
                     <Button 
                       type="submit" 
-                      className="w-full" 
+                      variant="premium"
+                      size="lg"
+                      className="w-full h-14 text-lg font-bold rounded-xl mt-8" 
                       disabled={isLoading}
                     >
-                      <Mail className="ml-2 h-4 w-4" />
+                      <Mail className="ml-2 h-5 w-5" />
                       {isLoading ? 'جاري المعالجة...' : 'متابعة'}
                     </Button>
 
-                    <div className="text-center text-sm text-muted-foreground">
+                    <div className="text-center text-base text-muted-foreground bg-gradient-to-r from-muted via-background to-muted p-4 rounded-xl border border-border/30">
                       ستحتاج لاختيار اسم المستخدم في الخطوة التالية
                     </div>
                   </form>
                 ) : (
-                  <div className="space-y-4">
-                    <UsernameRegistration
-                      onUsernameSubmit={handleUsernameSubmit}
-                      isLoading={isLoading}
-                    />
-                    <div className="text-center">
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => setSignUpStep('details')}
-                        disabled={isLoading}
-                      >
-                        رجوع للخطوة السابقة
-                      </Button>
+                    <div className="space-y-6">
+                      <UsernameRegistration
+                        onUsernameSubmit={handleUsernameSubmit}
+                        isLoading={isLoading}
+                      />
+                      <div className="text-center">
+                        <Button 
+                          type="button" 
+                          variant="glass" 
+                          size="sm" 
+                          onClick={() => setSignUpStep('details')}
+                          disabled={isLoading}
+                          className="px-6 py-2 rounded-lg"
+                        >
+                          رجوع للخطوة السابقة
+                        </Button>
+                      </div>
                     </div>
-                  </div>
                 )}
               </CardContent>
             </TabsContent>
