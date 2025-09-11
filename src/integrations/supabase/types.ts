@@ -14,6 +14,108 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_products: {
+        Row: {
+          added_at: string | null
+          affiliate_store_id: string | null
+          id: string
+          is_visible: boolean
+          product_id: string | null
+          sort_order: number | null
+        }
+        Insert: {
+          added_at?: string | null
+          affiliate_store_id?: string | null
+          id?: string
+          is_visible?: boolean
+          product_id?: string | null
+          sort_order?: number | null
+        }
+        Update: {
+          added_at?: string | null
+          affiliate_store_id?: string | null
+          id?: string
+          is_visible?: boolean
+          product_id?: string | null
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_products_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_stores: {
+        Row: {
+          bio: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          profile_id: string | null
+          store_name: string
+          store_slug: string
+          theme: Database["public"]["Enums"]["theme_type"]
+          total_orders: number | null
+          total_sales: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          profile_id?: string | null
+          store_name: string
+          store_slug: string
+          theme?: Database["public"]["Enums"]["theme_type"]
+          total_orders?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          profile_id?: string | null
+          store_name?: string
+          store_slug?: string
+          theme?: Database["public"]["Enums"]["theme_type"]
+          total_orders?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_stores_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_stores_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       channel_locks: {
         Row: {
           channel_id: string
@@ -220,34 +322,43 @@ export type Database = {
       commissions: {
         Row: {
           affiliate_id: string
+          affiliate_profile_id: string | null
           amount_sar: number
           commission_rate: number
+          confirmed_at: string | null
           created_at: string
           id: string
           order_id: string
           order_item_id: string
+          paid_at: string | null
           status: string
           updated_at: string
         }
         Insert: {
           affiliate_id: string
+          affiliate_profile_id?: string | null
           amount_sar: number
           commission_rate: number
+          confirmed_at?: string | null
           created_at?: string
           id?: string
           order_id: string
           order_item_id: string
+          paid_at?: string | null
           status?: string
           updated_at?: string
         }
         Update: {
           affiliate_id?: string
+          affiliate_profile_id?: string | null
           amount_sar?: number
           commission_rate?: number
+          confirmed_at?: string | null
           created_at?: string
           id?: string
           order_id?: string
           order_item_id?: string
+          paid_at?: string | null
           status?: string
           updated_at?: string
         }
@@ -262,6 +373,20 @@ export type Database = {
           {
             foreignKeyName: "commissions_affiliate_id_fkey"
             columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commissions_affiliate_profile_id_fkey"
+            columns: ["affiliate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commissions_affiliate_profile_id_fkey"
+            columns: ["affiliate_profile_id"]
             isOneToOne: false
             referencedRelation: "safe_profiles"
             referencedColumns: ["id"]
@@ -543,6 +668,7 @@ export type Database = {
       }
       order_items: {
         Row: {
+          commission_rate: number
           id: string
           line_total_sar: number
           merchant_id: string
@@ -553,6 +679,7 @@ export type Database = {
           unit_price_sar: number
         }
         Insert: {
+          commission_rate?: number
           id?: string
           line_total_sar: number
           merchant_id: string
@@ -563,6 +690,7 @@ export type Database = {
           unit_price_sar: number
         }
         Update: {
+          commission_rate?: number
           id?: string
           line_total_sar?: number
           merchant_id?: string
@@ -598,48 +726,90 @@ export type Database = {
       }
       orders: {
         Row: {
+          affiliate_store_id: string | null
           created_at: string
           customer_name: string
           customer_phone: string
+          customer_profile_id: string | null
+          delivered_at: string | null
           id: string
+          order_number: string | null
           payment_method: string
           shipping_address: Json
+          shipping_sar: number | null
           shop_id: string
           status: Database["public"]["Enums"]["order_status"]
           subtotal_sar: number
+          tax_sar: number | null
           total_sar: number
+          tracking_number: string | null
           updated_at: string
           vat_sar: number
         }
         Insert: {
+          affiliate_store_id?: string | null
           created_at?: string
           customer_name: string
           customer_phone: string
+          customer_profile_id?: string | null
+          delivered_at?: string | null
           id?: string
+          order_number?: string | null
           payment_method: string
           shipping_address: Json
+          shipping_sar?: number | null
           shop_id: string
           status?: Database["public"]["Enums"]["order_status"]
           subtotal_sar?: number
+          tax_sar?: number | null
           total_sar?: number
+          tracking_number?: string | null
           updated_at?: string
           vat_sar?: number
         }
         Update: {
+          affiliate_store_id?: string | null
           created_at?: string
           customer_name?: string
           customer_phone?: string
+          customer_profile_id?: string | null
+          delivered_at?: string | null
           id?: string
+          order_number?: string | null
           payment_method?: string
           shipping_address?: Json
+          shipping_sar?: number | null
           shop_id?: string
           status?: Database["public"]["Enums"]["order_status"]
           subtotal_sar?: number
+          tax_sar?: number | null
           total_sar?: number
+          tracking_number?: string | null
           updated_at?: string
           vat_sar?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "orders_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "orders_shop_id_fkey"
             columns: ["shop_id"]
@@ -846,10 +1016,12 @@ export type Database = {
           external_id: string | null
           id: string
           image_urls: string[] | null
+          images: Json | null
           is_active: boolean
           last_viewed_at: string | null
           merchant_id: string
           price_sar: number
+          sales_count: number | null
           shop_id: string | null
           stock: number
           title: string
@@ -865,10 +1037,12 @@ export type Database = {
           external_id?: string | null
           id?: string
           image_urls?: string[] | null
+          images?: Json | null
           is_active?: boolean
           last_viewed_at?: string | null
           merchant_id: string
           price_sar: number
+          sales_count?: number | null
           shop_id?: string | null
           stock?: number
           title: string
@@ -884,10 +1058,12 @@ export type Database = {
           external_id?: string | null
           id?: string
           image_urls?: string[] | null
+          images?: Json | null
           is_active?: boolean
           last_viewed_at?: string | null
           merchant_id?: string
           price_sar?: number
+          sales_count?: number | null
           shop_id?: string | null
           stock?: number
           title?: string
@@ -922,9 +1098,11 @@ export type Database = {
           id: string
           is_active: boolean
           last_activity_at: string | null
+          level: Database["public"]["Enums"]["user_level"] | null
           phone: string | null
           points: number
           role: Database["public"]["Enums"]["user_role"]
+          total_earnings: number | null
           updated_at: string
           whatsapp: string | null
         }
@@ -938,9 +1116,11 @@ export type Database = {
           id?: string
           is_active?: boolean
           last_activity_at?: string | null
+          level?: Database["public"]["Enums"]["user_level"] | null
           phone?: string | null
           points?: number
           role?: Database["public"]["Enums"]["user_role"]
+          total_earnings?: number | null
           updated_at?: string
           whatsapp?: string | null
         }
@@ -954,9 +1134,11 @@ export type Database = {
           id?: string
           is_active?: boolean
           last_activity_at?: string | null
+          level?: Database["public"]["Enums"]["user_level"] | null
           phone?: string | null
           points?: number
           role?: Database["public"]["Enums"]["user_role"]
+          total_earnings?: number | null
           updated_at?: string
           whatsapp?: string | null
         }
