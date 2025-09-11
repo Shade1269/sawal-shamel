@@ -30,13 +30,12 @@ serve(async (req) => {
       throw new Error('Missing required Zoho credentials in environment');
     }
 
-    // Try multiple Zoho account regions for token refresh
+    // Try multiple Zoho account regions for token refresh (Saudi Arabia priority)
     console.log('🔄 Requesting new access token from Zoho...');
     const TOKEN_DOMAINS = [
-      'https://accounts.zoho.ca',
-      'https://accounts.zoho.com',
+      'https://accounts.zoho.com',      // Primary for Saudi Arabia
+      'https://accounts.zoho.in',       // Alternative for Middle East
       'https://accounts.zoho.eu',
-      'https://accounts.zoho.in',
       'https://accounts.zoho.com.au',
       'https://accounts.zoho.jp'
     ];
@@ -92,12 +91,11 @@ serve(async (req) => {
     console.log('✅ New access token generated successfully');
     console.log('🔗 Token preview:', accessToken.substring(0, 20) + '...');
 
-    // Test the new token against multiple API regions
+    // Test the new token against multiple API regions (Saudi Arabia priority)
     const API_DOMAINS = [
-      'https://www.zohoapis.ca',
-      'https://www.zohoapis.com',
+      'https://www.zohoapis.com',       // Primary for Saudi Arabia  
+      'https://www.zohoapis.in',        // Alternative for Middle East
       'https://www.zohoapis.eu',
-      'https://www.zohoapis.in',
       'https://www.zohoapis.com.au',
       'https://www.zohoapis.jp'
     ];
