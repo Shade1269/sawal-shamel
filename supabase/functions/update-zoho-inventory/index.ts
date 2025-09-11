@@ -94,7 +94,7 @@ serve(async (req) => {
       try {
         // First, get current stock from Zoho
         const getStockResponse = await fetch(
-          `https://www.zohoapis.com/inventory/v1/items/${zohoItemId}?organization_id=${zohoIntegration.organization_id}`, 
+          `https://www.zohoapis.ca/inventory/v1/items/${zohoItemId}?organization_id=${zohoIntegration.organization_id}`,
           {
             method: 'GET',
             headers: {
@@ -125,7 +125,7 @@ serve(async (req) => {
         };
 
         const adjustmentResponse = await fetch(
-          `https://www.zohoapis.com/inventory/v1/inventoryadjustments?organization_id=${zohoIntegration.organization_id}`, 
+          `https://www.zohoapis.ca/inventory/v1/inventoryadjustments?organization_id=${zohoIntegration.organization_id}`,
           {
             method: 'POST',
             headers: {

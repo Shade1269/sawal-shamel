@@ -115,7 +115,7 @@ async function getItemImagePublicUrl(item: any, accessToken: string, organizatio
 
     // 2) Try the standard item image endpoint with timeout
     try {
-      const endpoint = `https://www.zohoapis.com/inventory/v1/items/${item.item_id}/image?organization_id=${organizationId}`;
+      const endpoint = `https://www.zohoapis.ca/inventory/v1/items/${item.item_id}/image?organization_id=${organizationId}`;
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
       
@@ -180,7 +180,7 @@ Deno.serve(async (req) => {
     const perPage = 200;
 
     while (allItems.length < maxModels * 10) { // Allow more items to create the requested number of models
-      const resp = await fetch(`https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&page=${page}&per_page=${perPage}`, {
+      const resp = await fetch(`https://www.zohoapis.ca/inventory/v1/items?organization_id=${organizationId}&page=${page}&per_page=${perPage}`, {
         method: 'GET',
         headers: {
           'Authorization': `Zoho-oauthtoken ${accessToken}`,

@@ -132,14 +132,14 @@ async function getAllItemImages(item: any, accessToken: string, organizationId: 
 
   // Get images from different sources
   if (item.image_name && item.image_type) {
-    imageUrls.push(`https://www.zohoapis.com/inventory/v1/items/${item.item_id}/image?organization_id=${organizationId}`);
+    imageUrls.push(`https://www.zohoapis.ca/inventory/v1/items/${item.item_id}/image?organization_id=${organizationId}`);
   }
 
   // Check for additional images in documents
   if (item.documents && Array.isArray(item.documents)) {
     for (const doc of item.documents) {
       if (doc.file_type && doc.file_type.startsWith('image/')) {
-        imageUrls.push(`https://www.zohoapis.com/inventory/v1/items/${item.item_id}/documents/${doc.document_id}?organization_id=${organizationId}`);
+        imageUrls.push(`https://www.zohoapis.ca/inventory/v1/items/${item.item_id}/documents/${doc.document_id}?organization_id=${organizationId}`);
       }
     }
   }
@@ -250,7 +250,7 @@ Deno.serve(async (req) => {
     console.log('Starting to fetch all items from Zoho...');
 
     while (hasMorePages) {
-      const zohoResponse = await fetch(`https://www.zohoapis.com/inventory/v1/items?organization_id=${integration.organization_id}&page=${page}&per_page=${perPage}`, {
+      const zohoResponse = await fetch(`https://www.zohoapis.ca/inventory/v1/items?organization_id=${integration.organization_id}&page=${page}&per_page=${perPage}`, {
         method: 'GET',
         headers: {
           'Authorization': `Zoho-oauthtoken ${integration.access_token}`,
