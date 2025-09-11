@@ -82,20 +82,20 @@ const Index = () => {
       
       {/* Header with logout button */}
       {currentUser && (
-        <div className="border-b bg-card/60 backdrop-blur-md border-border/30 shadow-heritage">
+        <div className="border-b bg-gradient-to-r from-card to-card/80 backdrop-blur-md border-persian/20 shadow-persian">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 bg-gradient-to-r from-primary/15 to-persian/15 p-3 rounded-xl border border-primary/25">
+              <div className="flex items-center gap-3 bg-gradient-to-r from-persian/20 to-primary/20 p-4 rounded-xl border border-persian/30 shadow-soft">
                 <User className="h-5 w-5 text-persian animate-persian-float" />
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-base font-semibold text-persian">
                   مرحباً، {getUserDisplayName()}
                 </span>
               </div>
               <Button
-                variant="glass"
+                variant="persian"
                 size="sm"
                 onClick={handleSignOut}
-                className="gap-2 hover:shadow-heritage"
+                className="gap-2 hover:shadow-persian border border-persian/30"
               >
                 <LogOut className="h-4 w-4" />
                 تسجيل خروج
