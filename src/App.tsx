@@ -18,6 +18,7 @@ const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
 const ProfilePage = lazy(() => import("./pages/Profile"));
+const AboutPage = lazy(() => import("./pages/About"));
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => {
                       <Route path="/" element={<HomePage />} />
                       <Route path="/auth" element={<AuthForm />} />
                       <Route path="/products" element={<ProductsPage />} />
+                      <Route path="/about" element={<AboutPage />} />
                       <Route path="/profile" element={
                         <ProtectedRoute>
                           <ProfilePage />

@@ -30,18 +30,33 @@ const AuthForm = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    await signIn(signInData.email, signInData.password);
-    
-    setIsLoading(false);
+    try {
+      const result = await signIn(signInData.email, signInData.password);
+      if (!result?.error) {
+        // التوجيه بناءً على نوع المستخدم سيحدث تلقائياً بواسطة useAuth
+        console.log('تم تسجيل الدخول بنجاح');
+      }
+    } catch (error) {
+      console.error('خطأ في تسجيل الدخول:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    await signUp(signUpData.email, signUpData.password, signUpData.fullName, signUpData.role);
-    
-    setIsLoading(false);
+    try {
+      const result = await signUp(signUpData.email, signUpData.password, signUpData.fullName, signUpData.role);
+      if (!result?.error) {
+        console.log('تم إنشاء الحساب بنجاح');
+      }
+    } catch (error) {
+      console.error('خطأ في إنشاء الحساب:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (loading) {
