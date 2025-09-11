@@ -9,7 +9,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import Header from "@/components/common/Header";
 import AuthForm from "@/components/auth/AuthForm";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import HomePage from "./pages/Home";
+import Index from "./pages/Index";
+import FastIndex from "./pages/FastIndex";
 import { lazy, Suspense } from "react";
 
 // Lazy load dashboard pages
@@ -18,6 +19,7 @@ const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const FastAuth = lazy(() => import("./pages/FastAuth"));
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
 const ProfilePage = lazy(() => import("./pages/Profile"));
 const AboutPage = lazy(() => import("./pages/About"));
@@ -46,8 +48,9 @@ const App = () => {
                     </div>
                   }>
                     <Routes>
-                      <Route path="/" element={<HomePage />} />
+                      <Route path="/" element={<FastIndex />} />
                       <Route path="/auth" element={<AuthForm />} />
+                      <Route path="/fast-auth" element={<FastAuth />} />
                       <Route path="/products" element={<ProductsPage />} />
                       <Route path="/about" element={<AboutPage />} />
                       <Route path="/create-admin" element={<CreateAdminPage />} />
@@ -102,7 +105,7 @@ const App = () => {
                       />
                       
                       {/* Catch all - redirect to home */}
-                      <Route path="*" element={<HomePage />} />
+                      <Route path="*" element={<FastIndex />} />
                     </Routes>
                   </Suspense>
                 </div>

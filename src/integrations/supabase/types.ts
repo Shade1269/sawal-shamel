@@ -1840,6 +1840,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_user_role_cached: {
+        Args: { user_id: string }
+        Returns: string
+      }
+      has_any_role: {
+        Args: { allowed_roles: string[]; user_id: string }
+        Returns: boolean
+      }
       update_user_role: {
         Args: {
           new_role: Database["public"]["Enums"]["user_role"]
