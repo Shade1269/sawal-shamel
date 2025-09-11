@@ -271,7 +271,7 @@ export const useSupabaseUserData = () => {
         .insert({
           ...productData,
           merchant_id: merchant.id,
-          shop_id: userShop.shop_id
+          shop_id: userShop.id
         })
         .select('id')
         .single();
