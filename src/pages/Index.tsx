@@ -70,13 +70,13 @@ const Index = () => {
     <div className="min-h-screen relative overflow-hidden">
       {/* Floating Damascus decorative elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-damascus opacity-12 rounded-full blur-2xl animate-damascus-float"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-luxury opacity-18 rounded-full blur-xl animate-damascus-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-20 left-20 w-40 h-40 bg-gradient-primary opacity-10 rounded-full blur-3xl animate-damascus-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-persian opacity-12 rounded-full blur-2xl animate-persian-float"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-luxury opacity-18 rounded-full blur-xl animate-persian-float" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-20 left-20 w-40 h-40 bg-gradient-primary opacity-10 rounded-full blur-3xl animate-persian-float" style={{ animationDelay: '2s' }}></div>
         <div className="absolute bottom-40 right-10 w-28 h-28 bg-gradient-premium opacity-15 rounded-full blur-2xl animate-damascus-float" style={{ animationDelay: '3s' }}></div>
         
         {/* Heritage arabesque patterns */}
-        <div className="absolute top-0 left-0 w-full h-32 opacity-8 bg-gradient-to-r from-transparent via-damascus to-transparent animate-heritage-wave"></div>
+        <div className="absolute top-0 left-0 w-full h-32 opacity-8 bg-gradient-to-r from-transparent via-persian to-transparent animate-heritage-wave"></div>
         <div className="absolute bottom-0 left-0 w-full h-32 opacity-8 bg-gradient-to-r from-transparent via-primary to-transparent animate-heritage-wave" style={{ animationDelay: '2s' }}></div>
       </div>
       
@@ -85,8 +85,8 @@ const Index = () => {
         <div className="border-b bg-card/60 backdrop-blur-md border-border/30 shadow-heritage">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 bg-gradient-to-r from-primary/15 to-damascus/15 p-3 rounded-xl border border-primary/25">
-                <User className="h-5 w-5 text-damascus animate-damascus-float" />
+              <div className="flex items-center gap-3 bg-gradient-to-r from-primary/15 to-persian/15 p-3 rounded-xl border border-primary/25">
+                <User className="h-5 w-5 text-persian animate-persian-float" />
                 <span className="text-sm font-medium text-foreground">
                   مرحباً، {getUserDisplayName()}
                 </span>
@@ -107,7 +107,7 @@ const Index = () => {
       
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-damascus bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-persian bg-clip-text text-transparent mb-4">
             منصة أتلانتس للتجارة الإلكترونية
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -183,9 +183,9 @@ const Index = () => {
           {/* Store Management Section */}
           {currentUser && (
             <div className="mb-12">
-              <Card className="group hover:shadow-damascus transition-all duration-500 cursor-pointer border border-border/30 hover:border-damascus/50 bg-gradient-to-br from-card/60 to-card backdrop-blur-sm">
+              <Card className="group hover:shadow-persian transition-all duration-500 cursor-pointer border border-border/30 hover:border-persian/50 bg-gradient-to-br from-card/60 to-card backdrop-blur-sm">
                 <CardHeader className="text-center">
-                  <div className="mx-auto w-24 h-24 bg-gradient-damascus rounded-3xl flex items-center justify-center mb-6 group-hover:shadow-damascus group-hover:scale-110 transition-all duration-500 shadow-elegant">
+                  <div className="mx-auto w-24 h-24 bg-gradient-persian rounded-3xl flex items-center justify-center mb-6 group-hover:shadow-persian group-hover:scale-110 transition-all duration-500 shadow-elegant">
                     <Store className="h-12 w-12 text-white" />
                   </div>
                   <CardTitle className="text-3xl font-black bg-gradient-persian bg-clip-text text-transparent">لوحة التحكم التجارية</CardTitle>
@@ -221,7 +221,7 @@ const Index = () => {
             <div className="text-center">
               <Card className="max-w-lg mx-auto border border-border/30 bg-gradient-to-br from-card/60 to-card backdrop-blur-sm shadow-elegant">
                 <CardHeader className="text-center">
-                  <div className="mx-auto w-16 h-16 bg-gradient-damascus rounded-2xl flex items-center justify-center mb-4 shadow-glow">
+                  <div className="mx-auto w-16 h-16 bg-gradient-persian rounded-2xl flex items-center justify-center mb-4 shadow-glow">
                     <User className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle className="text-2xl font-bold bg-gradient-persian bg-clip-text text-transparent">انضم إلى أتلانتس</CardTitle>
