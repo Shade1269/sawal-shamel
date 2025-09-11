@@ -8,139 +8,143 @@
 
 @layer base {
   :root {
-    /* Atlantis-Inspired Color Palette */
-    --background: 200 35% 95%;
-    --foreground: 200 30% 15%;
+    /* Umayyad Damascus Heritage Color Palette */
+    --background: 45 25% 95%;        /* عاجي دمشقي */
+    --foreground: 25 40% 15%;        /* بني محروق */
     
-    /* Atlantis Ocean Colors */
-    --primary: 190 85% 45%;        /* Deep ocean blue */
-    --primary-glow: 185 80% 55%;
-    --primary-dark: 195 90% 35%;
-    --primary-foreground: 0 0% 100%;
+    /* Damascus Traditional Colors */
+    --primary: 25 85% 45%;           /* ذهبي دمشقي */
+    --primary-glow: 30 80% 55%;      /* ذهبي مضيء */
+    --primary-dark: 20 90% 35%;      /* ذهبي داكن */
+    --primary-foreground: 0 0% 100%; /* أبيض ناصع */
     
-    --secondary: 180 25% 92%;      /* Soft sea foam */
-    --secondary-foreground: 200 25% 20%;
+    --secondary: 45 30% 88%;         /* كريمي فاتح */
+    --secondary-foreground: 25 35% 25%; /* بني متوسط */
     
-    --accent: 175 70% 50%;         /* Atlantis teal */
-    --accent-glow: 175 65% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 15 75% 50%;            /* أحمر قاني دمشقي */
+    --accent-glow: 15 70% 60%;       /* أحمر مضيء */
+    --accent-foreground: 0 0% 100%;  /* أبيض */
     
-    /* Luxury Atlantis variants */
-    --luxury: 45 85% 55%;          /* Atlantis gold */
+    /* Damascus Luxury Variants */
+    --luxury: 25 85% 45%;            /* ذهبي أموي */
     --luxury-foreground: 0 0% 100%;
-    --premium: 210 60% 45%;        /* Deep sea blue */
+    --premium: 20 75% 40%;           /* بني ذهبي */
     --premium-foreground: 0 0% 100%;
-    --atlantis: 185 85% 45%;       /* Signature atlantis blue */
-    --atlantis-foreground: 0 0% 100%;
-    --coral: 15 85% 60%;           /* Coral accent */
+    --damascus: 100 25% 35%;         /* أخضر زيتوني */
+    --damascus-foreground: 0 0% 100%;
+    --coral: 15 75% 50%;             /* مرجاني دمشقي */
     --coral-foreground: 0 0% 100%;
-    --pearl: 200 20% 88%;          /* Pearl white */
-    --pearl-foreground: 200 30% 20%;
+    --pearl: 45 20% 90%;             /* لؤلؤي */
+    --pearl-foreground: 25 40% 20%;
+    --jasmine: 50 60% 85%;           /* ياسميني */
+    --jasmine-foreground: 25 40% 25%;
     
-    --muted: 190 25% 90%;
-    --muted-foreground: 200 20% 40%;
+    --muted: 45 20% 90%;
+    --muted-foreground: 30 30% 45%;
     
-    --destructive: 0 80% 60%;
+    --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
     
-    --card: 200 40% 96%;           /* Soft ocean mist */
-    --card-foreground: 200 30% 15%;
+    --card: 45 35% 96%;              /* بيج دمشقي */
+    --card-foreground: 25 40% 15%;
     
-    --popover: 200 40% 96%;
-    --popover-foreground: 200 30% 15%;
+    --popover: 45 35% 96%;
+    --popover-foreground: 25 40% 15%;
     
-    --border: 190 30% 85%;
-    --input: 190 35% 88%;
-    --ring: 190 85% 45%;
+    --border: 35 25% 80%;
+    --input: 40 30% 85%;
+    --ring: 25 85% 45%;
     
     --radius: 0.75rem;
     
-    /* Atlantis Ocean Environment */
-    --chat-bg: 190 30% 94%;
-    --chat-sent: 190 85% 45%;
-    --chat-received: 200 40% 96%;
-    --status-online: 150 80% 50%;
-    --status-offline: 200 20% 65%;
+    /* Damascus Heritage Environment */
+    --chat-bg: 45 25% 92%;
+    --chat-sent: 25 85% 45%;
+    --chat-received: 45 35% 96%;
+    --status-online: 100 60% 45%;
+    --status-offline: 30 20% 60%;
     
-    /* Atlantis Gradients - Ocean Depths */
-    --gradient-primary: linear-gradient(135deg, hsl(190 85% 45%), hsl(185 80% 55%));
-    --gradient-hero: linear-gradient(135deg, hsl(190 85% 45%) 0%, hsl(175 70% 50%) 30%, hsl(45 85% 55%) 70%, hsl(185 85% 45%) 100%);
-    --gradient-luxury: linear-gradient(135deg, hsl(45 85% 55%), hsl(175 70% 50%));
-    --gradient-premium: linear-gradient(45deg, hsl(190 85% 45%) 0%, hsl(210 60% 45%) 100%);
-    --gradient-atlantis: linear-gradient(135deg, hsl(185 85% 45%) 0%, hsl(190 85% 45%) 50%, hsl(175 70% 50%) 100%);
-    --gradient-commerce: linear-gradient(135deg, hsl(190 85% 45%) 0%, hsl(185 85% 45%) 30%, hsl(45 85% 55%) 70%, hsl(175 70% 50%) 100%);
-    --gradient-ocean: linear-gradient(180deg, hsl(185 60% 85%) 0%, hsl(190 50% 75%) 20%, hsl(195 60% 65%) 40%, hsl(200 70% 55%) 100%);
-    --gradient-atlantis-bg: radial-gradient(ellipse at center, hsl(185 40% 88%) 0%, hsl(190 35% 82%) 25%, hsl(195 40% 78%) 50%, hsl(200 45% 72%) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1));
+    /* Umayyad Gradients - Damascus Heritage */
+    --gradient-primary: linear-gradient(135deg, hsl(25 85% 45%), hsl(30 80% 55%));
+    --gradient-hero: linear-gradient(135deg, hsl(25 85% 45%) 0%, hsl(15 75% 50%) 30%, hsl(100 25% 35%) 70%, hsl(25 85% 45%) 100%);
+    --gradient-luxury: linear-gradient(135deg, hsl(25 85% 45%), hsl(15 75% 50%));
+    --gradient-premium: linear-gradient(45deg, hsl(25 85% 45%) 0%, hsl(20 75% 40%) 100%);
+    --gradient-damascus: linear-gradient(135deg, hsl(100 25% 35%) 0%, hsl(25 85% 45%) 50%, hsl(15 75% 50%) 100%);
+    --gradient-commerce: linear-gradient(135deg, hsl(25 85% 45%) 0%, hsl(100 25% 35%) 30%, hsl(15 75% 50%) 70%, hsl(25 85% 45%) 100%);
+    --gradient-heritage: linear-gradient(180deg, hsl(45 30% 88%) 0%, hsl(40 25% 82%) 20%, hsl(35 30% 78%) 40%, hsl(30 35% 72%) 100%);
+    --gradient-damascus-bg: radial-gradient(ellipse at center, hsl(45 25% 95%) 0%, hsl(40 20% 90%) 25%, hsl(35 25% 85%) 50%, hsl(30 30% 80%) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255,248,225,0.4), rgba(255,248,225,0.2));
     
-    /* Atlantis Shadows - Underwater Effects */
-    --shadow-soft: 0 8px 32px hsl(190 85% 45% / 0.1);
-    --shadow-glow: 0 0 40px hsl(185 80% 55% / 0.3);
-    --shadow-luxury: 0 20px 60px hsl(190 85% 45% / 0.15), 0 8px 25px hsl(45 85% 55% / 0.1);
-    --shadow-glass: 0 8px 32px hsl(190 60% 50% / 0.2);
-    --shadow-elegant: 0 15px 35px hsl(190 40% 30% / 0.1), 0 5px 15px hsl(185 30% 40% / 0.08);
-    --shadow-atlantis: 0 25px 50px hsl(185 85% 45% / 0.2), 0 10px 20px hsl(175 70% 50% / 0.15);
-    --shadow-ocean: 0 20px 40px hsl(190 60% 40% / 0.12), inset 0 1px 0 hsl(185 40% 80% / 0.3);
+    /* Damascus Shadows - Heritage Effects */
+    --shadow-soft: 0 8px 32px hsl(25 85% 45% / 0.12);
+    --shadow-glow: 0 0 40px hsl(30 80% 55% / 0.25);
+    --shadow-luxury: 0 20px 60px hsl(25 85% 45% / 0.18), 0 8px 25px hsl(15 75% 50% / 0.1);
+    --shadow-glass: 0 8px 32px hsl(25 50% 50% / 0.15);
+    --shadow-elegant: 0 15px 35px hsl(25 40% 30% / 0.12), 0 5px 15px hsl(20 30% 40% / 0.08);
+    --shadow-damascus: 0 25px 50px hsl(25 85% 45% / 0.2), 0 10px 20px hsl(100 25% 35% / 0.15);
+    --shadow-heritage: 0 20px 40px hsl(25 50% 40% / 0.15), inset 0 1px 0 hsl(45 40% 85% / 0.4);
     
-    /* Atlantis Patterns */
-    --pattern-waves: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    --pattern-scales: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02' fill-rule='evenodd'%3E%3Cpath d='M20 20c0-8.837-7.163-16-16-16s-16 7.163-16 16 7.163 16 16 16 16-7.163 16-16zm-16-2c-7.732 0-14 6.268-14 14s6.268 14 14 14 14-6.268 14-14-6.268-14-14-14z'/%3E%3C/g%3E%3C/svg%3E");
+    /* Damascus Patterns - Traditional Islamic Geometry */
+    --pattern-arabesque: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.04'%3E%3Cpath d='M40 40l20-20V0H40v20L20 0H0v20l20 20L0 60v20h20l20-20 20 20h20V60L60 40l20-20V0H60v20L40 40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    --pattern-geometric: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23B8860B' fill-opacity='0.03'%3E%3Cpath d='M30 30c0-16.569-13.431-30-30-30s-30 13.431-30 30 13.431 30 30 30 30-13.431 30-30zm-30-2c-15.464 0-28 12.536-28 28s12.536 28 28 28 28-12.536 28-28-12.536-28-28-28z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     
     /* Smooth transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    --transition-ocean: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --transition-heritage: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   .dark {
-    /* Atlantis Deep Ocean Dark Theme */
-    --background: 200 50% 8%;      /* Deep ocean depths */
-    --foreground: 185 25% 90%;
+    /* Umayyad Damascus Night Heritage */
+    --background: 25 30% 12%;       /* ليل دمشقي */
+    --foreground: 45 25% 85%;       /* عاجي فاتح */
     
-    --primary: 185 80% 60%;        /* Glowing ocean blue */
-    --primary-glow: 185 75% 70%;
-    --primary-dark: 190 85% 45%;
-    --primary-foreground: 200 50% 8%;
+    --primary: 30 80% 55%;          /* ذهبي ليلي */
+    --primary-glow: 35 75% 65%;     /* ذهبي متوهج */
+    --primary-dark: 25 85% 40%;     /* ذهبي داكن */
+    --primary-foreground: 25 30% 12%;
     
-    --secondary: 195 40% 12%;      /* Deep sea floor */
-    --secondary-foreground: 185 25% 85%;
+    --secondary: 30 25% 18%;        /* بني ليلي */
+    --secondary-foreground: 45 20% 75%;
     
-    --accent: 175 65% 55%;         /* Bioluminescent teal */
-    --accent-glow: 175 60% 65%;
-    --accent-foreground: 200 50% 8%;
+    --accent: 15 70% 55%;           /* أحمر ليلي */
+    --accent-glow: 15 65% 65%;      /* أحمر متوهج */
+    --accent-foreground: 25 30% 12%;
     
-    --luxury: 45 80% 65%;          /* Golden treasures */
-    --luxury-foreground: 200 50% 8%;
-    --premium: 210 55% 50%;        /* Mysterious depths */
-    --premium-foreground: 200 50% 8%;
-    --atlantis: 185 80% 55%;       /* Signature deep atlantis */
-    --atlantis-foreground: 200 50% 8%;
-    --coral: 15 80% 65%;
-    --coral-foreground: 200 50% 8%;
-    --pearl: 200 30% 85%;
-    --pearl-foreground: 200 50% 15%;
+    --luxury: 30 80% 60%;           /* ذهبي فاخر */
+    --luxury-foreground: 25 30% 12%;
+    --premium: 25 70% 45%;          /* بني ذهبي داكن */
+    --premium-foreground: 25 30% 12%;
+    --damascus: 100 20% 40%;        /* زيتوني ليلي */
+    --damascus-foreground: 25 30% 12%;
+    --coral: 15 70% 55%;            /* مرجاني ليلي */
+    --coral-foreground: 25 30% 12%;
+    --pearl: 45 15% 75%;            /* لؤلؤي ليلي */
+    --pearl-foreground: 25 30% 20%;
+    --jasmine: 50 40% 70%;          /* ياسميني ليلي */
+    --jasmine-foreground: 25 30% 15%;
     
-    --muted: 195 35% 10%;
-    --muted-foreground: 190 20% 55%;
+    --muted: 30 20% 15%;
+    --muted-foreground: 35 15% 50%;
     
-    --destructive: 0 75% 65%;
-    --destructive-foreground: 200 50% 8%;
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 25 30% 12%;
     
-    --card: 195 45% 10%;           /* Deep ocean cavern */
-    --card-foreground: 185 25% 90%;
+    --card: 30 25% 15%;             /* بطاقة ليلية */
+    --card-foreground: 45 25% 85%;
     
-    --popover: 195 45% 10%;
-    --popover-foreground: 185 25% 90%;
+    --popover: 30 25% 15%;
+    --popover-foreground: 45 25% 85%;
     
-    --border: 190 30% 20%;
-    --input: 190 35% 15%;
-    --ring: 185 80% 60%;
+    --border: 30 20% 25%;
+    --input: 30 20% 20%;
+    --ring: 30 80% 55%;
     
-    --chat-bg: 200 50% 6%;
-    --chat-sent: 185 80% 55%;
-    --chat-received: 195 45% 12%;
-    --status-online: 150 75% 55%;
-    --status-offline: 200 25% 40%;
+    --chat-bg: 25 30% 10%;
+    --chat-sent: 30 80% 50%;
+    --chat-received: 30 25% 18%;
+    --status-online: 100 55% 50%;
+    --status-offline: 30 15% 40%;
   }
 }
 
@@ -237,17 +241,21 @@
     animation: messageAppear 0.3s ease-out;
   }
 
-  /* Atlantis-specific animations */
-  .atlantis-float {
-    animation: atlantisFloat 4s ease-in-out infinite;
+  /* Damascus-specific animations */
+  .damascus-float {
+    animation: damascusFloat 5s ease-in-out infinite;
   }
 
-  .atlantis-shimmer {
-    animation: atlantisShimmer 3s linear infinite;
+  .damascus-shimmer {
+    animation: damascusShimmer 4s linear infinite;
   }
 
-  .ocean-wave {
-    animation: oceanWave 6s ease-in-out infinite;
+  .heritage-wave {
+    animation: heritageWave 8s ease-in-out infinite;
+  }
+
+  .arabesque-rotate {
+    animation: arabesqueRotate 12s linear infinite;
   }
 }
 
@@ -299,31 +307,34 @@
   }
 }
 
-/* Atlantis-inspired animations */
-@keyframes atlantisGlow {
+/* Damascus-inspired animations */
+@keyframes damascusGlow {
   0%, 100% {
-    opacity: 0.6;
+    opacity: 0.7;
     transform: scale(1);
   }
   50% {
-    opacity: 0.8;
-    transform: scale(1.05);
+    opacity: 0.9;
+    transform: scale(1.02);
   }
 }
 
-@keyframes atlantisFloat {
+@keyframes damascusFloat {
   0%, 100% {
     transform: translateY(0px) rotate(0deg);
   }
-  33% {
-    transform: translateY(-10px) rotate(1deg);
+  25% {
+    transform: translateY(-8px) rotate(1deg);
   }
-  66% {
-    transform: translateY(5px) rotate(-0.5deg);
+  50% {
+    transform: translateY(-12px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-4px) rotate(-0.5deg);
   }
 }
 
-@keyframes atlantisShimmer {
+@keyframes damascusShimmer {
   0% {
     background-position: -200% center;
   }
@@ -332,18 +343,27 @@
   }
 }
 
-@keyframes oceanWave {
+@keyframes heritageWave {
   0%, 100% {
     transform: translateX(0px) translateY(0px) rotate(0deg);
   }
   25% {
-    transform: translateX(5px) translateY(-3px) rotate(0.5deg);
+    transform: translateX(3px) translateY(-2px) rotate(0.3deg);
   }
   50% {
-    transform: translateX(-3px) translateY(-5px) rotate(-0.3deg);
+    transform: translateX(-2px) translateY(-4px) rotate(-0.2deg);
   }
   75% {
-    transform: translateX(-5px) translateY(2px) rotate(0.2deg);
+    transform: translateX(-3px) translateY(1px) rotate(0.1deg);
+  }
+}
+
+@keyframes arabesqueRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 

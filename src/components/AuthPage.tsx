@@ -124,36 +124,36 @@ const AuthPage = () => {
         <div className="text-center mb-12 animate-fade-in">
           <div className="flex items-center justify-center mb-6">
             <div className="relative">
-              <h1 className="text-6xl font-black bg-gradient-atlantis bg-clip-text text-transparent">أتلانتس</h1>
-              <div className="absolute -inset-1 bg-gradient-atlantis opacity-20 blur-lg rounded-lg"></div>
+              <h1 className="text-6xl font-black bg-gradient-damascus bg-clip-text text-transparent">قصر الشام الأموي</h1>
+              <div className="absolute -inset-1 bg-gradient-damascus opacity-20 blur-lg rounded-lg"></div>
             </div>
           </div>
-          <p className="text-xl text-muted-foreground font-medium">منصة أتلانتس للتجارة الإلكترونية الفاخرة</p>
-          <div className="w-24 h-1 bg-gradient-atlantis mx-auto mt-4 rounded-full"></div>
+          <p className="text-xl text-muted-foreground font-medium">بازار الشام الدمشقي للتجارة الأصيلة</p>
+          <div className="w-24 h-1 bg-gradient-damascus mx-auto mt-4 rounded-full"></div>
         </div>
 
         <Card className="backdrop-blur-xl bg-card/60 border border-white/20 shadow-luxury animate-slide-up">
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-8 bg-muted/30 backdrop-blur-sm p-1.5 rounded-2xl border border-border/30">
-              <TabsTrigger value="signin" className="gap-2 data-[state=active]:bg-gradient-atlantis data-[state=active]:text-white data-[state=active]:shadow-atlantis transition-all duration-400 rounded-xl py-3.5 font-bold text-sm">
+              <TabsTrigger value="signin" className="gap-2 data-[state=active]:bg-gradient-damascus data-[state=active]:text-white data-[state=active]:shadow-damascus transition-all duration-400 rounded-xl py-3.5 font-bold text-sm">
                 <LogIn className="h-4 w-4" />
-                تسجيل دخول
+                دخول الديوان
               </TabsTrigger>
               <TabsTrigger value="signup" className="gap-2 data-[state=active]:bg-gradient-commerce data-[state=active]:text-white data-[state=active]:shadow-luxury transition-all duration-400 rounded-xl py-3.5 font-bold text-sm">
                 <UserPlus className="h-4 w-4" />
-                حساب جديد
+                تسجيل جديد
               </TabsTrigger>
               <TabsTrigger value="sms" className="gap-2 data-[state=active]:bg-gradient-premium data-[state=active]:text-white data-[state=active]:shadow-soft transition-all duration-400 rounded-xl py-3.5 font-bold text-sm">
                 <MessageSquare className="h-4 w-4" />
-                SMS
+                رسائل
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="signin" className="space-y-0">
               <CardHeader className="pb-6 text-center">
-                <CardTitle className="text-3xl font-bold bg-gradient-atlantis bg-clip-text text-transparent">مرحباً بعودتك</CardTitle>
+                <CardTitle className="text-3xl font-bold bg-gradient-damascus bg-clip-text text-transparent">أهلاً وسهلاً بعودتك</CardTitle>
                 <CardDescription className="text-lg text-muted-foreground mt-2">
-                  سجل دخولك لمتابعة رحلة التسوق الفاخرة
+                  ادخل إلى بازار الشام للتجارة الأصيلة
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -206,13 +206,13 @@ const AuthPage = () => {
 
                   <Button 
                     type="submit" 
-                    variant="atlantis"
+                    variant="damascus"
                     size="lg"
                     className="w-full h-14 text-lg font-bold rounded-xl mt-8" 
                     disabled={isLoading}
                   >
                     <Mail className="ml-2 h-5 w-5" />
-                    {isLoading ? 'جاري تسجيل الدخول...' : 'دخول إلى أتلانتس'}
+                    {isLoading ? 'جاري الدخول...' : 'دخول البازار الشامي'}
                   </Button>
                 </form>
               </CardContent>
@@ -221,12 +221,12 @@ const AuthPage = () => {
             <TabsContent value="signup" className="space-y-0">
               <CardHeader className="pb-6 text-center">
                 <CardTitle className="text-3xl font-bold bg-gradient-commerce bg-clip-text text-transparent">
-                  {signUpStep === 'details' ? 'انضم إلى أتلانتس' : 'اختر اسم المستخدم'}
+                  {signUpStep === 'details' ? 'انضم إلى بازار الشام' : 'اختر اسم التاجر'}
                 </CardTitle>
                 <CardDescription className="text-lg text-muted-foreground mt-2">
                   {signUpStep === 'details' 
-                    ? 'ابدأ رحلة التجارة الإلكترونية المميزة'
-                    : 'اختر اسم المستخدم الذي سيظهر في حسابك'
+                    ? 'ابدأ تجارتك في الأسواق الدمشقية العريقة'
+                    : 'اختر اسم التاجر الذي سيظهر في حسابك'
                   }
                 </CardDescription>
               </CardHeader>

@@ -66,9 +66,9 @@ export default {
 					DEFAULT: 'hsl(var(--premium))',
 					foreground: 'hsl(var(--premium-foreground))'
 				},
-				atlantis: {
-					DEFAULT: 'hsl(var(--atlantis))',
-					foreground: 'hsl(var(--atlantis-foreground))'
+				damascus: {
+					DEFAULT: 'hsl(var(--damascus))',
+					foreground: 'hsl(var(--damascus-foreground))'
 				},
 				coral: {
 					DEFAULT: 'hsl(var(--coral))',
@@ -77,6 +77,10 @@ export default {
 				pearl: {
 					DEFAULT: 'hsl(var(--pearl))',
 					foreground: 'hsl(var(--pearl-foreground))'
+				},
+				jasmine: {
+					DEFAULT: 'hsl(var(--jasmine))',
+					foreground: 'hsl(var(--jasmine-foreground))'
 				},
 				chat: {
 					bg: 'hsl(var(--chat-bg))',
@@ -93,10 +97,10 @@ export default {
 				'gradient-hero': 'var(--gradient-hero)',
 				'gradient-luxury': 'var(--gradient-luxury)',
 				'gradient-premium': 'var(--gradient-premium)',
-				'gradient-atlantis': 'var(--gradient-atlantis)',
+				'gradient-damascus': 'var(--gradient-damascus)',
 				'gradient-commerce': 'var(--gradient-commerce)',
-				'gradient-ocean': 'var(--gradient-ocean)',
-				'gradient-atlantis-bg': 'var(--gradient-atlantis-bg)',
+				'gradient-heritage': 'var(--gradient-heritage)',
+				'gradient-damascus-bg': 'var(--gradient-damascus-bg)',
 				'gradient-chat': 'var(--gradient-chat)',
 				'gradient-landing': 'var(--gradient-landing)',
 				'gradient-glass': 'var(--gradient-glass)',
@@ -107,8 +111,8 @@ export default {
 				'luxury': 'var(--shadow-luxury)',
 				'glass': 'var(--shadow-glass)',
 				'elegant': 'var(--shadow-elegant)',
-				'atlantis': 'var(--shadow-atlantis)',
-				'ocean': 'var(--shadow-ocean)',
+				'damascus': 'var(--shadow-damascus)',
+				'heritage': 'var(--shadow-heritage)',
 			},
 			transitionTimingFunction: {
 				'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
@@ -140,10 +144,11 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'atlantis-glow': 'atlantisGlow 8s ease-in-out infinite alternate',
-				'atlantis-float': 'atlantisFloat 4s ease-in-out infinite',
-				'atlantis-shimmer': 'atlantisShimmer 3s linear infinite',
-				'ocean-wave': 'oceanWave 6s ease-in-out infinite',
+				'damascus-glow': 'damascusGlow 10s ease-in-out infinite alternate',
+				'damascus-float': 'damascusFloat 5s ease-in-out infinite',
+				'damascus-shimmer': 'damascusShimmer 4s linear infinite',
+				'heritage-wave': 'heritageWave 8s ease-in-out infinite',
+				'arabesque-rotate': 'arabesqueRotate 12s linear infinite',
 			}
 		}
 	},
