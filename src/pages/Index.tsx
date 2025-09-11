@@ -67,23 +67,35 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Floating Atlantis decorative elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-atlantis opacity-10 rounded-full blur-2xl animate-atlantis-float"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-luxury opacity-15 rounded-full blur-xl animate-atlantis-float" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-20 left-20 w-40 h-40 bg-gradient-primary opacity-8 rounded-full blur-3xl animate-atlantis-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-40 right-10 w-28 h-28 bg-gradient-premium opacity-12 rounded-full blur-2xl animate-atlantis-float" style={{ animationDelay: '3s' }}></div>
+        
+        {/* Ocean wave patterns */}
+        <div className="absolute top-0 left-0 w-full h-32 opacity-5 bg-gradient-to-r from-transparent via-atlantis to-transparent animate-ocean-wave"></div>
+        <div className="absolute bottom-0 left-0 w-full h-32 opacity-5 bg-gradient-to-r from-transparent via-primary to-transparent animate-ocean-wave" style={{ animationDelay: '2s' }}></div>
+      </div>
+      
       {/* Header with logout button */}
       {currentUser && (
-        <div className="border-b bg-background/80 backdrop-blur-sm">
+        <div className="border-b bg-card/60 backdrop-blur-md border-border/30 shadow-ocean">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <User className="h-5 w-5 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">
-                  مرحباً، {getUserDisplayName()}
+              <div className="flex items-center gap-3 bg-gradient-to-r from-primary/10 to-atlantis/10 p-3 rounded-xl border border-primary/20">
+                <User className="h-5 w-5 text-atlantis animate-atlantis-float" />
+                <span className="text-sm font-medium text-foreground">
+                  أهلاً وسهلاً، {getUserDisplayName()}
                 </span>
               </div>
               <Button
-                variant="outline"
+                variant="glass"
                 size="sm"
                 onClick={handleSignOut}
-                className="gap-2"
+                className="gap-2 hover:shadow-ocean"
               >
                 <LogOut className="h-4 w-4" />
                 تسجيل خروج

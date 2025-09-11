@@ -70,6 +70,14 @@ export default {
 					DEFAULT: 'hsl(var(--atlantis))',
 					foreground: 'hsl(var(--atlantis-foreground))'
 				},
+				coral: {
+					DEFAULT: 'hsl(var(--coral))',
+					foreground: 'hsl(var(--coral-foreground))'
+				},
+				pearl: {
+					DEFAULT: 'hsl(var(--pearl))',
+					foreground: 'hsl(var(--pearl-foreground))'
+				},
 				chat: {
 					bg: 'hsl(var(--chat-bg))',
 					sent: 'hsl(var(--chat-sent))',
@@ -87,6 +95,8 @@ export default {
 				'gradient-premium': 'var(--gradient-premium)',
 				'gradient-atlantis': 'var(--gradient-atlantis)',
 				'gradient-commerce': 'var(--gradient-commerce)',
+				'gradient-ocean': 'var(--gradient-ocean)',
+				'gradient-atlantis-bg': 'var(--gradient-atlantis-bg)',
 				'gradient-chat': 'var(--gradient-chat)',
 				'gradient-landing': 'var(--gradient-landing)',
 				'gradient-glass': 'var(--gradient-glass)',
@@ -98,6 +108,7 @@ export default {
 				'glass': 'var(--shadow-glass)',
 				'elegant': 'var(--shadow-elegant)',
 				'atlantis': 'var(--shadow-atlantis)',
+				'ocean': 'var(--shadow-ocean)',
 			},
 			transitionTimingFunction: {
 				'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
@@ -128,7 +139,11 @@ export default {
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'atlantis-glow': 'atlantisGlow 8s ease-in-out infinite alternate',
+				'atlantis-float': 'atlantisFloat 4s ease-in-out infinite',
+				'atlantis-shimmer': 'atlantisShimmer 3s linear infinite',
+				'ocean-wave': 'oceanWave 6s ease-in-out infinite',
 			}
 		}
 	},

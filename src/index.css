@@ -8,127 +8,139 @@
 
 @layer base {
   :root {
-    /* Enhanced E-commerce Light Theme - Premium Atlantis */
-    --background: 220 20% 98%;
-    --foreground: 220 25% 12%;
+    /* Atlantis-Inspired Color Palette */
+    --background: 200 35% 95%;
+    --foreground: 200 30% 15%;
     
-    /* Premium E-commerce Colors */
-    --primary: 220 85% 55%;
-    --primary-glow: 220 80% 65%;
-    --primary-dark: 220 90% 40%;
+    /* Atlantis Ocean Colors */
+    --primary: 190 85% 45%;        /* Deep ocean blue */
+    --primary-glow: 185 80% 55%;
+    --primary-dark: 195 90% 35%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 210 25% 96%;
-    --secondary-foreground: 220 20% 15%;
+    --secondary: 180 25% 92%;      /* Soft sea foam */
+    --secondary-foreground: 200 25% 20%;
     
-    --accent: 280 75% 60%;
-    --accent-glow: 280 70% 70%;
+    --accent: 175 70% 50%;         /* Atlantis teal */
+    --accent-glow: 175 65% 60%;
     --accent-foreground: 0 0% 100%;
     
-    /* Luxury variants for e-commerce */
-    --luxury: 35 80% 55%;
+    /* Luxury Atlantis variants */
+    --luxury: 45 85% 55%;          /* Atlantis gold */
     --luxury-foreground: 0 0% 100%;
-    --premium: 260 65% 50%;
+    --premium: 210 60% 45%;        /* Deep sea blue */
     --premium-foreground: 0 0% 100%;
-    --atlantis: 195 85% 45%;
+    --atlantis: 185 85% 45%;       /* Signature atlantis blue */
     --atlantis-foreground: 0 0% 100%;
+    --coral: 15 85% 60%;           /* Coral accent */
+    --coral-foreground: 0 0% 100%;
+    --pearl: 200 20% 88%;          /* Pearl white */
+    --pearl-foreground: 200 30% 20%;
     
-    --muted: 210 20% 94%;
-    --muted-foreground: 220 15% 45%;
+    --muted: 190 25% 90%;
+    --muted-foreground: 200 20% 40%;
     
     --destructive: 0 80% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    --card: 0 0% 100%;
-    --card-foreground: 220 25% 12%;
+    --card: 200 40% 96%;           /* Soft ocean mist */
+    --card-foreground: 200 30% 15%;
     
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 12%;
+    --popover: 200 40% 96%;
+    --popover-foreground: 200 30% 15%;
     
-    --border: 210 20% 88%;
-    --input: 210 25% 92%;
-    --ring: 220 85% 55%;
+    --border: 190 30% 85%;
+    --input: 190 35% 88%;
+    --ring: 190 85% 45%;
     
     --radius: 0.75rem;
     
-    --chat-bg: 210 25% 96%;
-    --chat-sent: 220 85% 55%;
-    --chat-received: 0 0% 100%;
-    --landing-olive: 100 22% 20%;
-    --status-online: 120 80% 50%;
-    --status-offline: 220 15% 65%;
+    /* Atlantis Ocean Environment */
+    --chat-bg: 190 30% 94%;
+    --chat-sent: 190 85% 45%;
+    --chat-received: 200 40% 96%;
+    --status-online: 150 80% 50%;
+    --status-offline: 200 20% 65%;
     
-    /* Premium E-commerce Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(220 85% 55%), hsl(220 80% 65%));
-    --gradient-hero: linear-gradient(135deg, hsl(220 85% 55%) 0%, hsl(280 75% 60%) 50%, hsl(35 80% 55%) 100%);
-    --gradient-luxury: linear-gradient(135deg, hsl(35 80% 55%), hsl(280 75% 60%));
-    --gradient-premium: linear-gradient(45deg, hsl(220 85% 55%) 0%, hsl(260 65% 50%) 100%);
-    --gradient-atlantis: linear-gradient(135deg, hsl(195 85% 45%) 0%, hsl(220 85% 55%) 100%);
-    --gradient-commerce: linear-gradient(135deg, hsl(220 85% 55%) 0%, hsl(195 85% 45%) 50%, hsl(35 80% 55%) 100%);
-    --gradient-chat: linear-gradient(180deg, hsl(210 25% 98%), hsl(210 20% 94%));
-    --gradient-landing: linear-gradient(180deg, hsl(210 25% 96%), hsl(210 20% 92%));
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.08));
+    /* Atlantis Gradients - Ocean Depths */
+    --gradient-primary: linear-gradient(135deg, hsl(190 85% 45%), hsl(185 80% 55%));
+    --gradient-hero: linear-gradient(135deg, hsl(190 85% 45%) 0%, hsl(175 70% 50%) 30%, hsl(45 85% 55%) 70%, hsl(185 85% 45%) 100%);
+    --gradient-luxury: linear-gradient(135deg, hsl(45 85% 55%), hsl(175 70% 50%));
+    --gradient-premium: linear-gradient(45deg, hsl(190 85% 45%) 0%, hsl(210 60% 45%) 100%);
+    --gradient-atlantis: linear-gradient(135deg, hsl(185 85% 45%) 0%, hsl(190 85% 45%) 50%, hsl(175 70% 50%) 100%);
+    --gradient-commerce: linear-gradient(135deg, hsl(190 85% 45%) 0%, hsl(185 85% 45%) 30%, hsl(45 85% 55%) 70%, hsl(175 70% 50%) 100%);
+    --gradient-ocean: linear-gradient(180deg, hsl(185 60% 85%) 0%, hsl(190 50% 75%) 20%, hsl(195 60% 65%) 40%, hsl(200 70% 55%) 100%);
+    --gradient-atlantis-bg: radial-gradient(ellipse at center, hsl(185 40% 88%) 0%, hsl(190 35% 82%) 25%, hsl(195 40% 78%) 50%, hsl(200 45% 72%) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1));
     
-    /* Premium E-commerce Shadows */
-    --shadow-soft: 0 8px 32px hsl(220 85% 55% / 0.08);
-    --shadow-glow: 0 0 40px hsl(220 85% 55% / 0.15);
-    --shadow-luxury: 0 20px 60px hsl(220 85% 55% / 0.12), 0 8px 25px hsl(35 80% 55% / 0.08);
-    --shadow-glass: 0 8px 32px rgba(31, 38, 135, 0.15);
-    --shadow-elegant: 0 15px 35px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0, 0, 0, 0.06);
-    --shadow-atlantis: 0 25px 50px hsl(195 85% 45% / 0.15), 0 10px 20px hsl(220 85% 55% / 0.1);
+    /* Atlantis Shadows - Underwater Effects */
+    --shadow-soft: 0 8px 32px hsl(190 85% 45% / 0.1);
+    --shadow-glow: 0 0 40px hsl(185 80% 55% / 0.3);
+    --shadow-luxury: 0 20px 60px hsl(190 85% 45% / 0.15), 0 8px 25px hsl(45 85% 55% / 0.1);
+    --shadow-glass: 0 8px 32px hsl(190 60% 50% / 0.2);
+    --shadow-elegant: 0 15px 35px hsl(190 40% 30% / 0.1), 0 5px 15px hsl(185 30% 40% / 0.08);
+    --shadow-atlantis: 0 25px 50px hsl(185 85% 45% / 0.2), 0 10px 20px hsl(175 70% 50% / 0.15);
+    --shadow-ocean: 0 20px 40px hsl(190 60% 40% / 0.12), inset 0 1px 0 hsl(185 40% 80% / 0.3);
+    
+    /* Atlantis Patterns */
+    --pattern-waves: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    --pattern-scales: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02' fill-rule='evenodd'%3E%3Cpath d='M20 20c0-8.837-7.163-16-16-16s-16 7.163-16 16 7.163 16 16 16 16-7.163 16-16zm-16-2c-7.732 0-14 6.268-14 14s6.268 14 14 14 14-6.268 14-14-6.268-14-14-14z'/%3E%3C/g%3E%3C/svg%3E");
     
     /* Smooth transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-ocean: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   .dark {
-    /* Enhanced E-commerce Dark Theme - Premium Atlantis */
-    --background: 220 30% 6%;
-    --foreground: 210 20% 92%;
+    /* Atlantis Deep Ocean Dark Theme */
+    --background: 200 50% 8%;      /* Deep ocean depths */
+    --foreground: 185 25% 90%;
     
-    --primary: 220 80% 65%;
-    --primary-glow: 220 75% 75%;
-    --primary-dark: 220 85% 50%;
-    --primary-foreground: 220 30% 6%;
+    --primary: 185 80% 60%;        /* Glowing ocean blue */
+    --primary-glow: 185 75% 70%;
+    --primary-dark: 190 85% 45%;
+    --primary-foreground: 200 50% 8%;
     
-    --secondary: 220 25% 12%;
-    --secondary-foreground: 210 20% 85%;
+    --secondary: 195 40% 12%;      /* Deep sea floor */
+    --secondary-foreground: 185 25% 85%;
     
-    --accent: 280 70% 65%;
-    --accent-glow: 280 65% 75%;
-    --accent-foreground: 220 30% 6%;
+    --accent: 175 65% 55%;         /* Bioluminescent teal */
+    --accent-glow: 175 60% 65%;
+    --accent-foreground: 200 50% 8%;
     
-    --luxury: 35 75% 60%;
-    --luxury-foreground: 220 30% 6%;
-    --premium: 260 60% 55%;
-    --premium-foreground: 220 30% 6%;
-    --atlantis: 195 80% 50%;
-    --atlantis-foreground: 220 30% 6%;
+    --luxury: 45 80% 65%;          /* Golden treasures */
+    --luxury-foreground: 200 50% 8%;
+    --premium: 210 55% 50%;        /* Mysterious depths */
+    --premium-foreground: 200 50% 8%;
+    --atlantis: 185 80% 55%;       /* Signature deep atlantis */
+    --atlantis-foreground: 200 50% 8%;
+    --coral: 15 80% 65%;
+    --coral-foreground: 200 50% 8%;
+    --pearl: 200 30% 85%;
+    --pearl-foreground: 200 50% 15%;
     
-    --muted: 220 25% 10%;
-    --muted-foreground: 220 15% 55%;
+    --muted: 195 35% 10%;
+    --muted-foreground: 190 20% 55%;
     
     --destructive: 0 75% 65%;
-    --destructive-foreground: 220 30% 6%;
+    --destructive-foreground: 200 50% 8%;
     
-    --card: 220 25% 8%;
-    --card-foreground: 210 20% 92%;
+    --card: 195 45% 10%;           /* Deep ocean cavern */
+    --card-foreground: 185 25% 90%;
     
-    --popover: 220 25% 8%;
-    --popover-foreground: 210 20% 92%;
+    --popover: 195 45% 10%;
+    --popover-foreground: 185 25% 90%;
     
-    --border: 220 20% 15%;
-    --input: 220 20% 12%;
-    --ring: 220 80% 65%;
+    --border: 190 30% 20%;
+    --input: 190 35% 15%;
+    --ring: 185 80% 60%;
     
-    --chat-bg: 220 30% 4%;
-    --chat-sent: 220 80% 60%;
-    --chat-received: 220 25% 10%;
-    --status-online: 120 75% 55%;
-    --status-offline: 220 15% 40%;
-    
-    --landing-olive: 100 22% 14%;
+    --chat-bg: 200 50% 6%;
+    --chat-sent: 185 80% 55%;
+    --chat-received: 195 45% 12%;
+    --status-online: 150 75% 55%;
+    --status-offline: 200 25% 40%;
   }
 }
 
@@ -142,11 +154,53 @@
   }
 
   body {
-    @apply bg-background text-foreground font-cairo font-medium;
+    @apply bg-gradient-atlantis-bg text-foreground font-cairo font-medium;
     font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    background-image: var(--pattern-waves), var(--pattern-scales);
+    background-size: 60px 60px, 40px 40px;
+    background-position: 0 0, 20px 20px;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 20%, hsl(185 40% 85% / 0.3) 0%, transparent 25%),
+      radial-gradient(circle at 80% 80%, hsl(175 50% 75% / 0.2) 0%, transparent 25%),
+      radial-gradient(circle at 40% 60%, hsl(45 60% 80% / 0.1) 0%, transparent 20%),
+      linear-gradient(135deg, 
+        hsl(185 30% 88% / 0.8) 0%, 
+        hsl(190 25% 85% / 0.6) 25%, 
+        hsl(195 30% 82% / 0.7) 50%, 
+        hsl(200 35% 78% / 0.5) 75%,
+        hsl(185 25% 85% / 0.8) 100%);
+    pointer-events: none;
+    z-index: -2;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 15% 15%, hsl(185 80% 70% / 0.05) 0%, transparent 30%),
+      radial-gradient(circle at 85% 25%, hsl(175 70% 60% / 0.03) 0%, transparent 25%),
+      radial-gradient(circle at 50% 85%, hsl(45 80% 70% / 0.04) 0%, transparent 30%);
+    pointer-events: none;
+    z-index: -1;
+    animation: atlantisGlow 8s ease-in-out infinite alternate;
   }
   
   /* RTL Support */
@@ -181,6 +235,19 @@
   /* Message bubble animations */
   .message-appear {
     animation: messageAppear 0.3s ease-out;
+  }
+
+  /* Atlantis-specific animations */
+  .atlantis-float {
+    animation: atlantisFloat 4s ease-in-out infinite;
+  }
+
+  .atlantis-shimmer {
+    animation: atlantisShimmer 3s linear infinite;
+  }
+
+  .ocean-wave {
+    animation: oceanWave 6s ease-in-out infinite;
   }
 }
 
@@ -229,6 +296,54 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+/* Atlantis-inspired animations */
+@keyframes atlantisGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes atlantisFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  66% {
+    transform: translateY(5px) rotate(-0.5deg);
+  }
+}
+
+@keyframes atlantisShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes oceanWave {
+  0%, 100% {
+    transform: translateX(0px) translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateX(5px) translateY(-3px) rotate(0.5deg);
+  }
+  50% {
+    transform: translateX(-3px) translateY(-5px) rotate(-0.3deg);
+  }
+  75% {
+    transform: translateX(-5px) translateY(2px) rotate(0.2deg);
   }
 }
 
