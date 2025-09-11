@@ -20,10 +20,12 @@ import {
 import { useAuthContext } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const { profile } = useAuthContext();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalUsers: 0,
     activeUsers: 0,
@@ -324,7 +326,7 @@ const AdminDashboard = () => {
           <CardContent>
             <Button 
               className="w-full bg-gradient-primary hover:opacity-90"
-              onClick={() => window.location.href = '/admin/users'}
+              onClick={() => navigate('/admin/users')}
             >
               إدارة المستخدمين
             </Button>
@@ -344,7 +346,7 @@ const AdminDashboard = () => {
           <CardContent>
             <Button 
               className="w-full bg-gradient-luxury hover:opacity-90"
-              onClick={() => window.location.href = '/admin/reports'}
+              onClick={() => navigate('/admin/reports')}
             >
               عرض التقارير
             </Button>
@@ -364,7 +366,7 @@ const AdminDashboard = () => {
           <CardContent>
             <Button 
               className="w-full bg-gradient-premium hover:opacity-90"
-              onClick={() => window.location.href = '/admin/settings'}
+              onClick={() => navigate('/admin/settings')}
             >
               الإعدادات
             </Button>
