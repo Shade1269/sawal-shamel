@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
 
 export interface UserProfile {
   id: string;
@@ -26,7 +25,7 @@ export const useAuth = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const navigate = useNavigate();
+  
 
   useEffect(() => {
     // Get initial session
@@ -59,7 +58,7 @@ export const useAuth = () => {
     );
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, []);
 
   const fetchUserProfile = async (userId: string) => {
     try {
@@ -135,14 +134,6 @@ export const useAuth = () => {
         title: "مرحباً بك",
         description: "تم تسجيل الدخول بنجاح",
       });
-
-      // التوجيه التلقائي بناءً على دور المستخدم
-      setTimeout(() => {
-        if (data.user) {
-          // سيتم جلب الملف الشخصي تلقائياً وسيحدث التوجيه
-          navigate('/');
-        }
-      }, 1000);
 
       return { data, error: null };
     } catch (error) {
