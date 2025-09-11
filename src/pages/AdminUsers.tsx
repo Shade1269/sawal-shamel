@@ -334,6 +334,7 @@ const AdminUsers = () => {
       });
     }
   };
+  const toggleUserStatus = async (userId: string, currentStatus: boolean) => {
     try {
       const { error } = await supabase
         .from('profiles')
