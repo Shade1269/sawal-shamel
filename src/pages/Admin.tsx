@@ -316,11 +316,10 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
           color: variant.color || null
         }));
 
-      // Update product with images and variants
-      if (imageUrls.length > 0 || processedVariants.length > 0) {
+      // Update product with images only (variants stored separately in DB)
+      if (imageUrls.length > 0) {
         await updateProduct(productId, {
-          image_urls: imageUrls,
-          variants: processedVariants
+          image_urls: imageUrls
         });
       }
 
