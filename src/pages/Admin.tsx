@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import UserProfileDialog from "@/components/UserProfileDialog";
 import UserSettingsMenu from "@/components/UserSettingsMenu";
-import SimpleZohoIntegration from "@/components/SimpleZohoIntegration";
+import ZohoSetup from "@/components/ZohoSetup";
 import EmkanIntegration from "@/components/EmkanIntegration";
 import { useSupabaseUserData } from "@/hooks/useSupabaseUserData";
 import { supabase } from "@/integrations/supabase/client";
@@ -576,7 +576,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
             <CardTitle id="zoho-integration-admin" className="text-2xl">تكامل Zoho للمنصة</CardTitle>
           </CardHeader>
           <CardContent>
-            <SimpleZohoIntegration />
+            <ZohoSetup />
           </CardContent>
         </Card>
       </section>
