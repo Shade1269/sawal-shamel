@@ -326,10 +326,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
         });
       }
 
-      // حفظ المنتج في قسم المنتجات (مكتبة المتجر)
-      await addProductToLibrary(productId);
-
-      toast({ title: "تم الحفظ", description: "تم إضافة المنتج وحفظه في قسم المنتجات" });
+      toast({ title: "تم الحفظ", description: "تم إضافة المنتج إلى المخزون العام" });
       
       // إغلاق النافذة
       setShowAddProduct(false);

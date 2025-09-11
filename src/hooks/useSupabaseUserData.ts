@@ -300,13 +300,11 @@ export const useSupabaseUserData = () => {
 
   // جلب منتجات المتجر
   const getShopProducts = async (): Promise<any[]> => {
-    if (!user || !userShop) return [];
-
     try {
+      // جلب جميع المنتجات المتاحة (للمخزون العام)
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .eq('shop_id', userShop.id)
         .eq('is_active', true);
 
       if (error) throw error;
@@ -431,6 +429,25 @@ export const useSupabaseUserData = () => {
     }
   };
 
+  // جلب منتجات متجري المحددة (المضافة لمكتبة المتجر)
+  const getMyStoreProducts = async (): Promise<any[]> => {
+    if (!user || !userShop) return [];
+
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('shop_id', userShop.id)
+        .eq('is_active', true);
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching my store products:', error);
+      return [];
+    }
+  };
+
   return {
     userShop,
     userActivities,
@@ -443,7 +460,8 @@ export const useSupabaseUserData = () => {
     fetchUserActivities,
     fetchUserStatistics,
     addProduct,
-    getShopProducts,
+    getShopProducts, // جميع المنتجات المتاحة (للمخزون)
+    getMyStoreProducts, // منتجات متجري فقط
     saveShopSettings,
     addProductToLibrary,
     getProductLibraryItems,

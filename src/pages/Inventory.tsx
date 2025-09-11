@@ -175,8 +175,8 @@ const Inventory = () => {
     try {
       if (!user) return;
       
-      console.log('Fetching products from Firebase...');
-      const raw = await getShopProducts();
+      console.log('Fetching all available products...');
+      const raw = await getShopProducts(); // جلب جميع المنتجات المتاحة
       
       // Normalize Firebase data (supports nested `products` structure)
       const normalized: ProductWithVariants[] = (raw || []).map((p: any) => {
@@ -203,7 +203,7 @@ const Inventory = () => {
         };
       });
       
-      console.log(`Loaded ${normalized.length} products from Firebase (normalized)`, normalized.slice(0,3));
+      console.log(`Loaded ${normalized.length} products from database (normalized)`, normalized.slice(0,3));
       setProducts(normalized);
       
     } catch (error) {
@@ -258,8 +258,8 @@ const Inventory = () => {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>
-              <h1 className="text-3xl font-bold">المخزون</h1>
-              <p className="text-muted-foreground">إدارة كتالوج المنتجات</p>
+              <h1 className="text-3xl font-bold">المخزون العام</h1>
+              <p className="text-muted-foreground">استعراض جميع المنتجات المتاحة وإضافتها لمتجرك</p>
             </div>
           </div>
         </div>
@@ -296,20 +296,12 @@ const Inventory = () => {
           <Card className="text-center py-12">
             <CardContent>
               <Package className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">لا توجد منتجات</h3>
+              <h3 className="text-lg font-semibold mb-2">لا توجد منتجات متاحة</h3>
               <p className="text-muted-foreground mb-4">
                 {products.length === 0 
-                  ? "يمكنك إضافة منتجات جديدة من صفحة الإدارة" 
+                  ? "لا توجد منتجات متاحة في النظام. اتصل بالإدارة لإضافة منتجات جديدة" 
                   : "لا توجد منتجات مطابقة للبحث"}
               </p>
-              {products.length === 0 && (
-                <div className="flex gap-2 justify-center">
-                  <Button onClick={() => navigate('/admin')} variant="outline" className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    إضافة منتجات يدوياً
-                  </Button>
-                </div>
-              )}
             </CardContent>
           </Card>
         ) : (
