@@ -7,6 +7,8 @@ import { SupabaseAuthProvider, useSupabaseAuth } from "@/contexts/SupabaseAuthCo
 import { FirebaseAuthProvider, useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
 import { DarkModeProvider } from "@/components/DarkModeProvider";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import { GlobalHeader } from "@/components/GlobalHeader";
 import AuthPage from "@/components/AuthPage";
 import Index from "./pages/Index";
 import Chat from "./pages/Chat";
@@ -46,7 +48,9 @@ const AppContent = () => {
   }
 
   return (
-    <Routes>
+    <div className="min-h-screen bg-background">
+      <GlobalHeader />
+      <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
@@ -62,7 +66,8 @@ const AppContent = () => {
       <Route path="/admin" element={<ProtectedRoute><AdminPageLazy /></ProtectedRoute>} />
       
       <Route path="*" element={<NotFound />} />
-    </Routes>
+      </Routes>
+    </div>
   );
 };
 
@@ -74,15 +79,17 @@ const App = () => {
         <Sonner />
         <SupabaseAuthProvider>
           <FirebaseAuthProvider>
-            <UserDataProvider>
-              <DarkModeProvider>
+      <UserDataProvider>
+        <LanguageProvider>
+          <DarkModeProvider>
                 <BrowserRouter>
                   <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
                     <AppContent />
                   </Suspense>
                 </BrowserRouter>
-              </DarkModeProvider>
-            </UserDataProvider>
+          </DarkModeProvider>
+        </LanguageProvider>
+      </UserDataProvider>
           </FirebaseAuthProvider>
         </SupabaseAuthProvider>
       </TooltipProvider>
