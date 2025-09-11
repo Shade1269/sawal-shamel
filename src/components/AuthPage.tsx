@@ -206,7 +206,7 @@ const AuthPage = () => {
 
                   <Button 
                     type="submit" 
-                    variant="atlantis"
+                    variant="burgundy"
                     size="lg"
                     className="w-full h-14 text-lg font-bold rounded-xl mt-8" 
                     disabled={isLoading}
