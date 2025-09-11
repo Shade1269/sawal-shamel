@@ -435,7 +435,7 @@ export const useUnifiedUserData = () => {
       setUnifiedProfile(null);
       setLoading(false);
     }
-  }, [supabaseUser, firebaseUser, firebaseProfile]);
+  }, [supabaseUser?.id, firebaseUser?.uid]);
 
   return {
     user: supabaseUser || firebaseUser,
