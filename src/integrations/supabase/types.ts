@@ -1337,6 +1337,54 @@ export type Database = {
           },
         ]
       }
+      user_profiles: {
+        Row: {
+          auth_user_id: string | null
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          is_active: boolean
+          level: Database["public"]["Enums"]["user_level"]
+          phone: string | null
+          points: number
+          role: Database["public"]["Enums"]["user_role"]
+          total_earnings: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          auth_user_id?: string | null
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean
+          level?: Database["public"]["Enums"]["user_level"]
+          phone?: string | null
+          points?: number
+          role?: Database["public"]["Enums"]["user_role"]
+          total_earnings?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          auth_user_id?: string | null
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          is_active?: boolean
+          level?: Database["public"]["Enums"]["user_level"]
+          phone?: string | null
+          points?: number
+          role?: Database["public"]["Enums"]["user_role"]
+          total_earnings?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       user_sessions: {
         Row: {
           expires_at: string | null
@@ -1626,6 +1674,8 @@ export type Database = {
         | "DELIVERED"
         | "CANCELED"
         | "RETURNED"
+      theme_type: "classic" | "feminine" | "damascus"
+      user_level: "bronze" | "silver" | "gold" | "legendary"
       user_role: "affiliate" | "merchant" | "admin" | "moderator"
     }
     CompositeTypes: {
@@ -1762,6 +1812,8 @@ export const Constants = {
         "CANCELED",
         "RETURNED",
       ],
+      theme_type: ["classic", "feminine", "damascus"],
+      user_level: ["bronze", "silver", "gold", "legendary"],
       user_role: ["affiliate", "merchant", "admin", "moderator"],
     },
   },
