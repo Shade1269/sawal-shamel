@@ -66,21 +66,21 @@ export default {
 					DEFAULT: 'hsl(var(--premium))',
 					foreground: 'hsl(var(--premium-foreground))'
 				},
-				burgundy: {
-					DEFAULT: 'hsl(var(--burgundy))',
-					foreground: 'hsl(var(--burgundy-foreground))'
+				persian: {
+					DEFAULT: 'hsl(var(--persian))',
+					foreground: 'hsl(var(--persian-foreground))'
 				},
-				obsidian: {
-					DEFAULT: 'hsl(var(--obsidian))',
-					foreground: 'hsl(var(--obsidian-foreground))'
+				turquoise: {
+					DEFAULT: 'hsl(var(--turquoise))',
+					foreground: 'hsl(var(--turquoise-foreground))'
 				},
-				charcoal: {
-					DEFAULT: 'hsl(var(--charcoal))',
-					foreground: 'hsl(var(--charcoal-foreground))'
+				bronze: {
+					DEFAULT: 'hsl(var(--bronze))',
+					foreground: 'hsl(var(--bronze-foreground))'
 				},
-				mahogany: {
-					DEFAULT: 'hsl(var(--mahogany))',
-					foreground: 'hsl(var(--mahogany-foreground))'
+				olive: {
+					DEFAULT: 'hsl(var(--olive))',
+					foreground: 'hsl(var(--olive-foreground))'
 				},
 				coral: {
 					DEFAULT: 'hsl(var(--coral))',
@@ -109,10 +109,10 @@ export default {
 				'gradient-hero': 'var(--gradient-hero)',
 				'gradient-luxury': 'var(--gradient-luxury)',
 				'gradient-premium': 'var(--gradient-premium)',
-				'gradient-burgundy': 'var(--gradient-burgundy)',
+				'gradient-persian': 'var(--gradient-persian)',
 				'gradient-commerce': 'var(--gradient-commerce)',
 				'gradient-heritage': 'var(--gradient-heritage)',
-				'gradient-burgundy-bg': 'var(--gradient-burgundy-bg)',
+				'gradient-persian-bg': 'var(--gradient-persian-bg)',
 				'gradient-chat': 'var(--gradient-chat)',
 				'gradient-landing': 'var(--gradient-landing)',
 				'gradient-glass': 'var(--gradient-glass)',
@@ -123,7 +123,7 @@ export default {
 				'luxury': 'var(--shadow-luxury)',
 				'glass': 'var(--shadow-glass)',
 				'elegant': 'var(--shadow-elegant)',
-				'burgundy': 'var(--shadow-burgundy)',
+				'persian': 'var(--shadow-persian)',
 				'heritage': 'var(--shadow-heritage)',
 			},
 			transitionTimingFunction: {
@@ -156,9 +156,9 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'burgundy-glow': 'burgundyGlow 10s ease-in-out infinite alternate',
-				'burgundy-float': 'burgundyFloat 5s ease-in-out infinite',
-				'burgundy-shimmer': 'burgundyShimmer 4s linear infinite',
+				'persian-glow': 'persianGlow 10s ease-in-out infinite alternate',
+				'persian-float': 'persianFloat 5s ease-in-out infinite',
+				'persian-shimmer': 'persianShimmer 4s linear infinite',
 				'heritage-wave': 'heritageWave 8s ease-in-out infinite',
 				'arabesque-rotate': 'arabesqueRotate 12s linear infinite',
 			}

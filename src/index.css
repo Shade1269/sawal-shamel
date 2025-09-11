@@ -8,85 +8,87 @@
 
 @layer base {
   :root {
-    /* Dark Burgundy Luxury Color Palette */
-    --background: 0 0% 98%;          /* أبيض فاتح للخلفية */
-    --foreground: 350 95% 11%;       /* خمري غامق جداً */
+    /* Persian Carpet Luxury Color Palette */
+    --background: 0 5% 97%;          /* كريمي فاتح للخلفية */
+    --foreground: 0 70% 15%;         /* أحمر داكن عميق */
     
-    /* Primary Burgundy Colors */
-    --primary: 350 95% 11%;          /* خمري غامق جداً #350306 */
-    --primary-glow: 350 93% 13%;     /* خمري مضيء قليلاً */
-    --primary-dark: 350 97% 10%;     /* خمري أغمق #340205 */
+    /* Primary Persian Colors */
+    --primary: 0 70% 35%;            /* أحمر فارسي عميق */
+    --primary-glow: 0 65% 45%;       /* أحمر مضيء */
+    --primary-dark: 0 75% 25%;       /* أحمر أغمق */
     --primary-foreground: 0 0% 100%; /* أبيض ناصع */
     
-    --secondary: 25 8% 23%;          /* رمادي متوسط #3E3D3B */
-    --secondary-foreground: 0 0% 100%; /* أبيض */
+    --secondary: 45 35% 75%;         /* كريمي ذهبي */
+    --secondary-foreground: 0 70% 15%; /* أحمر داكن */
     
-    --accent: 350 95% 11%;           /* خمري غامق للتأكيد */
-    --accent-glow: 350 90% 15%;      /* خمري مضيء للتوهج */
+    --accent: 180 60% 35%;           /* تركوازي فارسي */
+    --accent-glow: 180 55% 45%;      /* تركوازي مضيء */
     --accent-foreground: 0 0% 100%;  /* أبيض */
     
-    /* Luxury Dark Variants */
-    --luxury: 350 95% 11%;           /* خمري فاخر */
+    /* Persian Luxury Variants */
+    --luxury: 0 70% 35%;             /* أحمر فاخر */
     --luxury-foreground: 0 0% 100%;
-    --premium: 0 0% 0%;              /* أسود صافي #000000 */
+    --premium: 35 70% 45%;           /* ذهبي برونزي */
     --premium-foreground: 0 0% 100%;
-    --burgundy: 350 97% 10%;         /* خمري غامق درجة ثانية */
+    --persian: 0 75% 30%;            /* أحمر فارسي */
+    --persian-foreground: 0 0% 100%;
+    --turquoise: 180 60% 35%;        /* تركوازي */
+    --turquoise-foreground: 0 0% 100%;
+    --bronze: 35 60% 40%;            /* برونزي */
+    --bronze-foreground: 0 0% 100%;
+    --olive: 75 30% 30%;             /* زيتوني */
+    --olive-foreground: 0 0% 100%;
+    --burgundy: 0 65% 25%;           /* بني محمر */
     --burgundy-foreground: 0 0% 100%;
-    --obsidian: 25 10% 6%;           /* أسود داكن #0E0A09 */
-    --obsidian-foreground: 0 0% 100%;
-    --charcoal: 30 17% 6%;           /* رمادي داكن جداً #0F0B0A */
-    --charcoal-foreground: 0 0% 100%;
-    --mahogany: 350 93% 5%;          /* بني محمر غامق #100404 */
-    --mahogany-foreground: 0 0% 100%;
     
-    --muted: 25 8% 23%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 45 25% 85%;
+    --muted-foreground: 0 50% 25%;
     
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
     
-    --card: 0 0% 96%;                /* بطاقة فاتحة */
-    --card-foreground: 350 95% 11%;
+    --card: 0 5% 95%;                /* بطاقة كريمية */
+    --card-foreground: 0 70% 15%;
     
-    --popover: 0 0% 96%;
-    --popover-foreground: 350 95% 11%;
+    --popover: 0 5% 95%;
+    --popover-foreground: 0 70% 15%;
     
-    --border: 25 8% 85%;
-    --input: 25 8% 90%;
-    --ring: 350 95% 11%;
+    --border: 45 20% 80%;
+    --input: 45 15% 85%;
+    --ring: 0 70% 35%;
     
     --radius: 0.75rem;
     
-    /* Dark Burgundy Environment */
-    --chat-bg: 0 0% 98%;
-    --chat-sent: 350 95% 11%;
-    --chat-received: 0 0% 96%;
+    /* Persian Carpet Environment */
+    --chat-bg: 0 5% 97%;
+    --chat-sent: 0 70% 35%;
+    --chat-received: 0 5% 95%;
     --status-online: 120 60% 45%;
-    --status-offline: 25 8% 50%;
+    --status-offline: 45 15% 50%;
     
-    /* Dark Burgundy Gradients - Luxury Heritage */
-    --gradient-primary: linear-gradient(135deg, hsl(350 95% 11%), hsl(350 90% 15%));
-    --gradient-hero: linear-gradient(135deg, hsl(350 95% 11%) 0%, hsl(0 0% 0%) 30%, hsl(25 10% 6%) 70%, hsl(350 95% 11%) 100%);
-    --gradient-luxury: linear-gradient(135deg, hsl(350 95% 11%), hsl(350 97% 10%));
-    --gradient-premium: linear-gradient(45deg, hsl(0 0% 0%) 0%, hsl(25 10% 6%) 100%);
-    --gradient-burgundy: linear-gradient(135deg, hsl(350 97% 10%) 0%, hsl(350 95% 11%) 50%, hsl(0 0% 0%) 100%);
-    --gradient-commerce: linear-gradient(135deg, hsl(350 95% 11%) 0%, hsl(25 10% 6%) 30%, hsl(350 93% 5%) 70%, hsl(350 95% 11%) 100%);
-    --gradient-heritage: linear-gradient(180deg, hsl(0 0% 96%) 0%, hsl(25 8% 90%) 20%, hsl(25 8% 85%) 40%, hsl(25 8% 80%) 100%);
-    --gradient-burgundy-bg: radial-gradient(ellipse at center, hsl(0 0% 98%) 0%, hsl(0 0% 95%) 25%, hsl(25 8% 92%) 50%, hsl(25 8% 88%) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(53,3,6,0.1), rgba(53,3,6,0.05));
+    /* Persian Carpet Gradients - Oriental Heritage */
+    --gradient-primary: linear-gradient(135deg, hsl(0 70% 35%), hsl(0 65% 45%));
+    --gradient-hero: linear-gradient(135deg, hsl(0 70% 35%) 0%, hsl(180 60% 35%) 30%, hsl(35 70% 45%) 70%, hsl(0 70% 35%) 100%);
+    --gradient-luxury: linear-gradient(135deg, hsl(0 70% 35%), hsl(35 70% 45%));
+    --gradient-premium: linear-gradient(45deg, hsl(35 70% 45%) 0%, hsl(35 60% 40%) 100%);
+    --gradient-persian: linear-gradient(135deg, hsl(0 75% 30%) 0%, hsl(180 60% 35%) 50%, hsl(35 70% 45%) 100%);
+    --gradient-commerce: linear-gradient(135deg, hsl(0 70% 35%) 0%, hsl(180 60% 35%) 30%, hsl(75 30% 30%) 70%, hsl(0 70% 35%) 100%);
+    --gradient-heritage: linear-gradient(180deg, hsl(45 35% 75%) 0%, hsl(45 30% 70%) 20%, hsl(45 25% 65%) 40%, hsl(45 20% 60%) 100%);
+    --gradient-persian-bg: radial-gradient(ellipse at center, hsl(0 5% 97%) 0%, hsl(45 10% 93%) 25%, hsl(45 15% 89%) 50%, hsl(45 20% 85%) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(139,0,0,0.1), rgba(139,0,0,0.05));
     
-    /* Dark Burgundy Shadows - Luxury Effects */
-    --shadow-soft: 0 8px 32px hsl(350 95% 11% / 0.15);
-    --shadow-glow: 0 0 40px hsl(350 90% 15% / 0.3);
-    --shadow-luxury: 0 20px 60px hsl(350 95% 11% / 0.25), 0 8px 25px hsl(0 0% 0% / 0.15);
-    --shadow-glass: 0 8px 32px hsl(350 50% 20% / 0.2);
-    --shadow-elegant: 0 15px 35px hsl(350 80% 5% / 0.2), 0 5px 15px hsl(25 10% 6% / 0.15);
-    --shadow-burgundy: 0 25px 50px hsl(350 95% 11% / 0.3), 0 10px 20px hsl(25 10% 6% / 0.2);
-    --shadow-heritage: 0 20px 40px hsl(350 70% 8% / 0.25), inset 0 1px 0 hsl(0 0% 85% / 0.4);
+    /* Persian Carpet Shadows - Oriental Effects */
+    --shadow-soft: 0 8px 32px hsl(0 70% 35% / 0.15);
+    --shadow-glow: 0 0 40px hsl(0 65% 45% / 0.3);
+    --shadow-luxury: 0 20px 60px hsl(0 70% 35% / 0.25), 0 8px 25px hsl(35 70% 45% / 0.15);
+    --shadow-glass: 0 8px 32px hsl(0 50% 30% / 0.2);
+    --shadow-elegant: 0 15px 35px hsl(0 60% 20% / 0.2), 0 5px 15px hsl(35 60% 40% / 0.15);
+    --shadow-persian: 0 25px 50px hsl(0 70% 35% / 0.3), 0 10px 20px hsl(180 60% 35% / 0.2);
+    --shadow-heritage: 0 20px 40px hsl(0 55% 25% / 0.25), inset 0 1px 0 hsl(45 35% 75% / 0.4);
     
-    /* Dark Burgundy Patterns - Gothic Geometry */
-    --pattern-arabesque: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23350306' fill-opacity='0.04'%3E%3Cpath d='M40 40l20-20V0H40v20L20 0H0v20l20 20L0 60v20h20l20-20 20 20h20V60L60 40l20-20V0H60v20L40 40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    --pattern-geometric: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23340205' fill-opacity='0.03'%3E%3Cpath d='M30 30c0-16.569-13.431-30-30-30s-30 13.431-30 30 13.431 30 30 30 30-13.431 30-30zm-30-2c-15.464 0-28 12.536-28 28s12.536 28 28 28 28-12.536 28-28-12.536-28-28-28z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    /* Persian Carpet Patterns - Oriental Geometry */
+    --pattern-arabesque: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238B0000' fill-opacity='0.04'%3E%3Cpath d='M40 40l20-20V0H40v20L20 0H0v20l20 20L0 60v20h20l20-20 20 20h20V60L60 40l20-20V0H60v20L40 40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    --pattern-geometric: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23008B8B' fill-opacity='0.03'%3E%3Cpath d='M30 30c0-16.569-13.431-30-30-30s-30 13.431-30 30 13.431 30 30 30 30-13.431 30-30zm-30-2c-15.464 0-28 12.536-28 28s12.536 28 28 28 28-12.536 28-28-12.536-28-28-28z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     
     /* Smooth transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -95,56 +97,58 @@
   }
 
   .dark {
-    /* Dark Burgundy Night Luxury */
-    --background: 25 10% 6%;         /* أسود داكن #0E0A09 */
-    --foreground: 0 0% 90%;          /* رمادي فاتح */
+    /* Persian Carpet Dark Luxury */
+    --background: 0 30% 8%;          /* أحمر داكن جداً */
+    --foreground: 45 25% 85%;        /* كريمي فاتح */
     
-    --primary: 350 90% 15%;          /* خمري مضيء قليلاً */
-    --primary-glow: 350 85% 20%;     /* خمري متوهج */
-    --primary-dark: 0 0% 0%;         /* أسود صافي */
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 65% 45%;            /* أحمر مضيء */
+    --primary-glow: 0 60% 55%;       /* أحمر متوهج */
+    --primary-dark: 0 70% 25%;       /* أحمر عميق */
+    --primary-foreground: 0 5% 97%;
     
-    --secondary: 30 17% 6%;          /* رمادي داكن جداً #0F0B0A */
-    --secondary-foreground: 0 0% 85%;
+    --secondary: 35 40% 20%;         /* برونزي داكن */
+    --secondary-foreground: 45 25% 85%;
     
-    --accent: 350 93% 5%;            /* بني محمر غامق #100404 */
-    --accent-glow: 350 90% 10%;      /* خمري غامق متوهج */
-    --accent-foreground: 0 0% 100%;
+    --accent: 180 50% 40%;           /* تركوازي داكن */
+    --accent-glow: 180 45% 50%;      /* تركوازي متوهج */
+    --accent-foreground: 0 5% 97%;
     
-    --luxury: 350 95% 11%;           /* خمري فاخر */
-    --luxury-foreground: 0 0% 100%;
-    --premium: 0 0% 0%;              /* أسود صافي */
-    --premium-foreground: 0 0% 100%;
-    --burgundy: 350 97% 10%;         /* خمري غامق درجة ثانية */
-    --burgundy-foreground: 0 0% 100%;
-    --obsidian: 25 10% 6%;           /* أسود داكن */
-    --obsidian-foreground: 0 0% 100%;
-    --charcoal: 30 17% 6%;           /* رمادي داكن جداً */
-    --charcoal-foreground: 0 0% 100%;
-    --mahogany: 350 93% 5%;          /* بني محمر غامق آخر #110505 */
-    --mahogany-foreground: 0 0% 100%;
+    --luxury: 0 65% 45%;             /* أحمر فاخر */
+    --luxury-foreground: 0 5% 97%;
+    --premium: 35 60% 40%;           /* ذهبي برونزي */
+    --premium-foreground: 0 5% 97%;
+    --persian: 0 70% 30%;            /* أحمر فارسي داكن */
+    --persian-foreground: 0 5% 97%;
+    --turquoise: 180 50% 40%;        /* تركوازي داكن */
+    --turquoise-foreground: 0 5% 97%;
+    --bronze: 35 50% 30%;            /* برونزي داكن */
+    --bronze-foreground: 0 5% 97%;
+    --olive: 75 25% 25%;             /* زيتوني داكن */
+    --olive-foreground: 0 5% 97%;
+    --burgundy: 0 60% 20%;           /* بني محمر داكن */
+    --burgundy-foreground: 0 5% 97%;
     
-    --muted: 25 8% 15%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 0 20% 15%;
+    --muted-foreground: 45 15% 60%;
     
     --destructive: 0 70% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 0 5% 97%;
     
-    --card: 25 10% 8%;               /* بطاقة داكنة */
-    --card-foreground: 0 0% 90%;
+    --card: 0 25% 12%;               /* بطاقة داكنة */
+    --card-foreground: 45 25% 85%;
     
-    --popover: 25 10% 8%;
-    --popover-foreground: 0 0% 90%;
+    --popover: 0 25% 12%;
+    --popover-foreground: 45 25% 85%;
     
-    --border: 25 8% 20%;
-    --input: 25 8% 15%;
-    --ring: 350 90% 15%;
+    --border: 0 20% 20%;
+    --input: 0 15% 18%;
+    --ring: 0 65% 45%;
     
-    --chat-bg: 25 10% 4%;
-    --chat-sent: 350 90% 15%;
-    --chat-received: 25 10% 8%;
+    --chat-bg: 0 30% 6%;
+    --chat-sent: 0 65% 45%;
+    --chat-received: 0 25% 12%;
     --status-online: 120 55% 50%;
-    --status-offline: 25 8% 40%;
+    --status-offline: 45 15% 40%;
   }
 }
 
@@ -158,7 +162,7 @@
   }
 
   body {
-    @apply bg-gradient-burgundy-bg text-foreground font-cairo font-medium;
+    @apply bg-gradient-persian-bg text-foreground font-cairo font-medium;
     font-family: 'Amiri', 'Cairo', 'Traditional Arabic', serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -178,15 +182,15 @@
     right: 0;
     bottom: 0;
     background: 
-      radial-gradient(circle at 25% 25%, hsl(350 95% 15% / 0.4) 0%, transparent 30%),
-      radial-gradient(circle at 75% 75%, hsl(350 90% 10% / 0.3) 0%, transparent 25%),
-      radial-gradient(circle at 50% 50%, hsl(0 0% 5% / 0.2) 0%, transparent 35%),
+      radial-gradient(circle at 25% 25%, hsl(0 70% 45% / 0.4) 0%, transparent 30%),
+      radial-gradient(circle at 75% 75%, hsl(180 60% 45% / 0.3) 0%, transparent 25%),
+      radial-gradient(circle at 50% 50%, hsl(35 70% 55% / 0.2) 0%, transparent 35%),
       linear-gradient(45deg, 
-        hsl(0 0% 98% / 0.9) 0%, 
-        hsl(0 0% 95% / 0.7) 25%, 
-        hsl(25 8% 92% / 0.8) 50%, 
-        hsl(25 8% 88% / 0.6) 75%,
-        hsl(0 0% 98% / 0.9) 100%);
+        hsl(0 5% 97% / 0.9) 0%, 
+        hsl(45 10% 93% / 0.7) 25%, 
+        hsl(45 15% 89% / 0.8) 50%, 
+        hsl(45 20% 85% / 0.6) 75%,
+        hsl(0 5% 97% / 0.9) 100%);
     pointer-events: none;
     z-index: -2;
   }
@@ -199,12 +203,12 @@
     right: 0;
     bottom: 0;
     background-image: 
-      radial-gradient(circle at 20% 20%, hsl(350 95% 11% / 0.08) 0%, transparent 35%),
-      radial-gradient(circle at 80% 30%, hsl(350 90% 8% / 0.05) 0%, transparent 30%),
-      radial-gradient(circle at 60% 80%, hsl(25 10% 6% / 0.06) 0%, transparent 35%);
+      radial-gradient(circle at 20% 20%, hsl(0 70% 35% / 0.08) 0%, transparent 35%),
+      radial-gradient(circle at 80% 30%, hsl(180 60% 35% / 0.05) 0%, transparent 30%),
+      radial-gradient(circle at 60% 80%, hsl(35 70% 45% / 0.06) 0%, transparent 35%);
     pointer-events: none;
     z-index: -1;
-    animation: burgundyGlow 10s ease-in-out infinite alternate;
+    animation: persianGlow 10s ease-in-out infinite alternate;
   }
   
   /* RTL Support */
@@ -241,13 +245,13 @@
     animation: messageAppear 0.3s ease-out;
   }
 
-  /* Burgundy-specific animations */
-  .burgundy-float {
-    animation: burgundyFloat 5s ease-in-out infinite;
+  /* Persian-specific animations */
+  .persian-float {
+    animation: persianFloat 5s ease-in-out infinite;
   }
 
-  .burgundy-shimmer {
-    animation: burgundyShimmer 4s linear infinite;
+  .persian-shimmer {
+    animation: persianShimmer 4s linear infinite;
   }
 
   .heritage-wave {
@@ -307,8 +311,8 @@
   }
 }
 
-/* Burgundy-inspired animations */
-@keyframes burgundyGlow {
+/* Persian-inspired animations */
+@keyframes persianGlow {
   0%, 100% {
     opacity: 0.7;
     transform: scale(1);
@@ -319,7 +323,7 @@
   }
 }
 
-@keyframes burgundyFloat {
+@keyframes persianFloat {
   0%, 100% {
     transform: translateY(0px) rotate(0deg);
   }
@@ -334,7 +338,7 @@
   }
 }
 
-@keyframes burgundyShimmer {
+@keyframes persianShimmer {
   0% {
     background-position: -200% center;
   }
