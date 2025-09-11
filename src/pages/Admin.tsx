@@ -66,6 +66,7 @@ const Admin = () => {
   const [moderationDuration, setModerationDuration] = useState("24h");
   const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
 const [loading, setLoading] = useState(false);
+const [addingProduct, setAddingProduct] = useState(false);
 
 // Zoho integration admin state
 const [cronLogs, setCronLogs] = useState<any[]>([]);
@@ -283,7 +284,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
     }
 
     try {
-      setLoading(true);
+      setAddingProduct(true);
       
       // Create base product data
       const productData = {
@@ -336,7 +337,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
       console.error('Error adding product:', error);
       toast({ title: "خطأ", description: "فشل في إضافة المنتج", variant: "destructive" });
     } finally {
-      setLoading(false);
+      setAddingProduct(false);
     }
   };
 
@@ -937,7 +938,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                           />
                         </div>
                         <div className="flex gap-2">
-                          <Button onClick={handleAddProduct} disabled={loading}>
+                          <Button onClick={handleAddProduct} disabled={addingProduct}>
                             إضافة المنتج
                           </Button>
                           <Button variant="outline" onClick={() => setShowAddProduct(false)}>
