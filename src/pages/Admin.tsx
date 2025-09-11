@@ -18,6 +18,7 @@ import ZohoSetup from "@/components/ZohoSetup";
 import EmkanIntegration from "@/components/EmkanIntegration";
 import { useSupabaseUserData } from "@/hooks/useSupabaseUserData";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from 'react-router-dom';
 
 
 import { 
@@ -46,6 +47,7 @@ const ADMIN_EMAIL = "Shade199633@icloud.com";
 
 const Admin = () => {
   const { user } = useSupabaseAuth();
+  const navigate = useNavigate();
   const { addProduct, getShopProducts, addProductToLibrary } = useSupabaseUserData();
   const { toast } = useToast();
 
@@ -329,12 +331,16 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
 
       toast({ title: "تم الحفظ", description: "تم إضافة المنتج وحفظه في قسم المنتجات" });
       
+      // إغلاق النافذة والانتقال إلى صفحة المنتجات
+      setShowAddProduct(false);
+      navigate('/inventory');
+      
       // Clean up
       setNewProduct({ title: '', description: '', price_sar: '', category: '', stock: '', commission_rate: '' });
       setProductVariants([{ size: '', color: '', stock: 0 }]);
       setProductImages([]);
       setImagePreviewUrls([]);
-      setShowAddProduct(false);
+      // تحديث القائمة محلياً (اختياري)
       loadProducts();
     } catch (error) {
       console.error('Error adding product:', error);
