@@ -32,7 +32,7 @@ serve(async (req) => {
 
     // Generate new access token
     console.log('🔄 Generating new access token...');
-    const refreshResponse = await fetch('https://accounts.zoho.com/oauth/v2/token', {
+    const refreshResponse = await fetch('https://accounts.zoho.ca/oauth/v2/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -59,7 +59,7 @@ serve(async (req) => {
     console.log('✅ Got new access token:', newAccessToken?.substring(0, 20) + '...');
 
     // Test the new token
-    const testUrl = `https://www.zohoapis.com/inventory/v1/items?organization_id=${organizationId}&limit=1`;
+    const testUrl = `https://www.zohoapis.ca/inventory/v1/items?organization_id=${organizationId}&limit=1`;
     console.log(`🧪 Testing with URL: ${testUrl}`);
     
     const testResponse = await fetch(testUrl, {

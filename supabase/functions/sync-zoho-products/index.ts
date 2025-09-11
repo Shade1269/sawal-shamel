@@ -436,19 +436,31 @@ Deno.serve(async (req) => {
           const totalStock = items.reduce((sum, item) => sum + (item.available_stock || 0), 0);
           const averagePrice = items.reduce((sum, item) => sum + (parseFloat(item.rate) || 0), 0) / items.length;
 
-          // Create main product
+          // Create main product and build attributes schema
+          const colors = new Set<string>();
+          const sizes = new Set<string>();
+          for (const it of items) {
+            const c = it.extracted?.color || '';
+            const s = it.extracted?.size || '';
+            if (c) colors.add(c);
+            if (s) sizes.add(s);
+          }
+          const attributesSchema: Record<string, string[]> = {};
+          if (colors.size) attributesSchema.COLOR = Array.from(colors);
+          if (sizes.size) attributesSchema.SIZE = Array.from(sizes);
           const { data: product, error: productError } = await supabase
             .from('products')
             .upsert({
               title: baseModel,
               description: items[0].description || `${baseModel} with multiple variants`,
-              category: items[0].category?.name || 'General',
+              category: items[0].category_name || items[0].category?.name || 'General',
               merchant_id: merchant.id,
-              price: Math.round(averagePrice * 100), // Convert to cents
-              status: 'active',
+              price_sar: averagePrice,
+              is_active: items[0].status === 'active',
               stock: totalStock,
               image_urls: uniqueImages,
-              external_id: baseModel
+              external_id: baseModel,
+              attributes_schema: attributesSchema
             }, { 
               onConflict: 'external_id',
               ignoreDuplicates: false 
@@ -463,14 +475,21 @@ Deno.serve(async (req) => {
 
           // Create variants for each item
           for (const item of items) {
+            const color = item.extracted?.color || null;
+            const size = item.extracted?.size || null;
+            const variantName = (color && size) ? `${color}/${size}` : (color || size || 'Default');
+            const itemPrice = parseFloat(item.rate) || 0;
+            const priceModifier = itemPrice - averagePrice;
+
             const variantData = {
               product_id: product.id,
-              type: 'combination',
-              attributes: JSON.stringify({
-                color: item.extracted.color || 'Default',
-                size: item.extracted.size || 'One Size'
-              }),
-              price: Math.round((parseFloat(item.rate) || 0) * 100),
+              variant_type: 'combination',
+              variant_value: variantName,
+              option1_name: color ? 'COLOR' : null,
+              option1_value: color,
+              option2_name: size ? 'SIZE' : null,
+              option2_value: size,
+              price_modifier: priceModifier,
               stock: item.available_stock || 0,
               sku: item.sku || '',
               external_id: item.item_id
