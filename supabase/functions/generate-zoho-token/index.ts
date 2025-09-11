@@ -43,48 +43,54 @@ serve(async (req) => {
 
     let accessToken: string | null = null;
     let tokenDomainUsed: string | null = null;
+    let expiresIn = 3600;
     const tokenErrors: Array<{ domain: string; status?: number; body?: string }> = [];
 
     for (const domain of TOKEN_DOMAINS) {
       const url = `${domain}/oauth/v2/token`;
       console.log(`🌐 Trying token endpoint: ${url}`);
 
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          refresh_token: refreshToken,
-          client_id: clientId,
-          client_secret: clientSecret,
-          grant_type: 'refresh_token',
-        }),
-      });
+      try {
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            refresh_token: refreshToken,
+            client_id: clientId,
+            client_secret: clientSecret,
+            grant_type: 'refresh_token',
+          }),
+        });
 
-      if (!resp.ok) {
-        const errText = await resp.text().catch(() => '');
-        tokenErrors.push({ domain, status: resp.status, body: errText });
-        console.warn(`⚠️ Token refresh failed on ${domain}: ${resp.status} ${errText}`);
-        continue;
-      }
+        if (!resp.ok) {
+          const errText = await resp.text().catch(() => '');
+          tokenErrors.push({ domain, status: resp.status, body: errText });
+          console.warn(`⚠️ Token refresh failed on ${domain}: ${resp.status} ${errText}`);
+          continue;
+        }
 
-      const tokenData = await resp.json();
-      if (tokenData?.access_token) {
-        accessToken = tokenData.access_token as string;
-        tokenDomainUsed = domain;
-        console.log(`✅ Token obtained from ${domain}`);
-        // Attach expires_in to be returned later
-        (tokenData.expires_in ??= 3600);
-        // Proceed with testing below
-        var expiresIn = tokenData.expires_in as number;
-        break;
-      } else {
-        tokenErrors.push({ domain, body: JSON.stringify(tokenData).slice(0, 300) });
+        const tokenData = await resp.json();
+        if (tokenData?.access_token) {
+          accessToken = tokenData.access_token as string;
+          expiresIn = tokenData.expires_in || 3600;
+          tokenDomainUsed = domain;
+          console.log(`✅ Token obtained from ${domain}`);
+          break;
+        } else {
+          tokenErrors.push({ domain, body: JSON.stringify(tokenData).slice(0, 300) });
+        }
+      } catch (e: any) {
+        tokenErrors.push({ domain, body: e.message });
+        console.warn(`⚠️ Exception on ${domain}: ${e.message}`);
       }
     }
 
     if (!accessToken) {
       throw new Error(`All token endpoints failed. Details: ${JSON.stringify(tokenErrors).slice(0, 800)}`);
     }
+
+    console.log('✅ New access token generated successfully');
+    console.log('🔗 Token preview:', accessToken.substring(0, 20) + '...');
 
     // Test the new token against multiple API regions
     const API_DOMAINS = [
@@ -103,21 +109,28 @@ serve(async (req) => {
     for (const api of API_DOMAINS) {
       const testUrl = `${api}/inventory/v1/items?organization_id=${organizationId}&limit=1`;
       console.log(`🧪 Testing token on: ${testUrl}`);
-      const tr = await fetch(testUrl, {
-        headers: {
-          'Authorization': `Zoho-oauthtoken ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      if (tr.ok) {
-        tokenValid = true;
-        workingApiDomain = api;
-        console.log(`📊 Token test succeeded on ${api}`);
-        break;
-      } else {
-        const errText = await tr.text().catch(() => '');
-        apiErrors.push({ domain: api, status: tr.status, body: errText });
-        console.warn(`⚠️ Token test failed on ${api}: ${tr.status} ${errText}`);
+      
+      try {
+        const tr = await fetch(testUrl, {
+          headers: {
+            'Authorization': `Zoho-oauthtoken ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (tr.ok) {
+          tokenValid = true;
+          workingApiDomain = api;
+          console.log(`📊 Token test succeeded on ${api}`);
+          break;
+        } else {
+          const errText = await tr.text().catch(() => '');
+          apiErrors.push({ domain: api, status: tr.status, body: errText });
+          console.warn(`⚠️ Token test failed on ${api}: ${tr.status} ${errText}`);
+        }
+      } catch (e: any) {
+        apiErrors.push({ domain: api, body: e.message });
+        console.warn(`⚠️ Exception testing on ${api}: ${e.message}`);
       }
     }
 
@@ -129,6 +142,7 @@ serve(async (req) => {
         token_valid: tokenValid,
         working_api_domain: workingApiDomain,
         token_domain_used: tokenDomainUsed,
+        expires_in: expiresIn,
         debug: { tokenErrors, apiErrors },
         message: tokenValid ? 'New access token generated and tested successfully!' : 'Token generated but API test failed on all regions',
       }),
