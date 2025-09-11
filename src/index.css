@@ -99,56 +99,56 @@
   .dark {
     /* Persian Carpet Dark Luxury */
     --background: 0 30% 8%;          /* أحمر داكن جداً */
-    --foreground: 45 25% 85%;        /* كريمي فاتح */
+    --foreground: 0 60% 75%;         /* خمري فاتح للنصوص */
     
-    --primary: 0 65% 45%;            /* أحمر مضيء */
-    --primary-glow: 0 60% 55%;       /* أحمر متوهج */
-    --primary-dark: 0 70% 25%;       /* أحمر عميق */
-    --primary-foreground: 0 5% 97%;
+    --primary: 0 65% 55%;            /* أحمر مضيء */
+    --primary-glow: 0 60% 65%;       /* أحمر متوهج */
+    --primary-dark: 0 70% 35%;       /* أحمر عميق */
+    --primary-foreground: 0 60% 75%;
     
-    --secondary: 35 40% 20%;         /* برونزي داكن */
-    --secondary-foreground: 45 25% 85%;
+    --secondary: 35 40% 25%;         /* برونزي داكن */
+    --secondary-foreground: 0 50% 70%;
     
-    --accent: 180 50% 40%;           /* تركوازي داكن */
-    --accent-glow: 180 45% 50%;      /* تركوازي متوهج */
-    --accent-foreground: 0 5% 97%;
+    --accent: 180 50% 50%;           /* تركوازي داكن */
+    --accent-glow: 180 45% 60%;      /* تركوازي متوهج */
+    --accent-foreground: 0 55% 70%;
     
-    --luxury: 0 65% 45%;             /* أحمر فاخر */
-    --luxury-foreground: 0 5% 97%;
-    --premium: 35 60% 40%;           /* ذهبي برونزي */
-    --premium-foreground: 0 5% 97%;
-    --persian: 0 70% 30%;            /* أحمر فارسي داكن */
-    --persian-foreground: 0 5% 97%;
-    --turquoise: 180 50% 40%;        /* تركوازي داكن */
-    --turquoise-foreground: 0 5% 97%;
-    --bronze: 35 50% 30%;            /* برونزي داكن */
-    --bronze-foreground: 0 5% 97%;
-    --olive: 75 25% 25%;             /* زيتوني داكن */
-    --olive-foreground: 0 5% 97%;
-    --burgundy: 0 60% 20%;           /* بني محمر داكن */
-    --burgundy-foreground: 0 5% 97%;
+    --luxury: 0 65% 55%;             /* أحمر فاخر */
+    --luxury-foreground: 0 60% 75%;
+    --premium: 35 60% 50%;           /* ذهبي برونزي */
+    --premium-foreground: 0 55% 70%;
+    --persian: 0 70% 40%;            /* أحمر فارسي داكن */
+    --persian-foreground: 0 60% 75%;
+    --turquoise: 180 50% 50%;        /* تركوازي داكن */
+    --turquoise-foreground: 0 55% 70%;
+    --bronze: 35 50% 40%;            /* برونزي داكن */
+    --bronze-foreground: 0 60% 75%;
+    --olive: 75 25% 35%;             /* زيتوني داكن */
+    --olive-foreground: 0 55% 70%;
+    --burgundy: 0 60% 30%;           /* بني محمر داكن */
+    --burgundy-foreground: 0 60% 75%;
     
-    --muted: 0 20% 15%;
-    --muted-foreground: 45 15% 60%;
+    --muted: 0 20% 18%;
+    --muted-foreground: 0 40% 65%;
     
     --destructive: 0 70% 60%;
-    --destructive-foreground: 0 5% 97%;
+    --destructive-foreground: 0 60% 75%;
     
     --card: 0 25% 12%;               /* بطاقة داكنة */
-    --card-foreground: 45 25% 85%;
+    --card-foreground: 0 55% 70%;
     
     --popover: 0 25% 12%;
-    --popover-foreground: 45 25% 85%;
+    --popover-foreground: 0 55% 70%;
     
-    --border: 0 20% 20%;
-    --input: 0 15% 18%;
-    --ring: 0 65% 45%;
+    --border: 0 30% 25%;
+    --input: 0 25% 20%;
+    --ring: 0 65% 55%;
     
-    --chat-bg: 0 30% 6%;
-    --chat-sent: 0 65% 45%;
-    --chat-received: 0 25% 12%;
-    --status-online: 120 55% 50%;
-    --status-offline: 45 15% 40%;
+    --chat-bg: 0 30% 8%;
+    --chat-sent: 0 65% 55%;
+    --chat-received: 0 25% 15%;
+    --status-online: 120 55% 60%;
+    --status-offline: 0 20% 50%;
   }
 }
 
