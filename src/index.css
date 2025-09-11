@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 /* Arabic RTL Chat App Design System - All colors MUST be HSL */
 
@@ -162,8 +162,8 @@
   }
 
   body {
-    @apply bg-gradient-persian-bg text-foreground font-cairo font-medium;
-    font-family: 'Amiri', 'Cairo', 'Traditional Arabic', serif;
+    @apply bg-gradient-persian-bg text-foreground font-noto font-medium;
+    font-family: 'Noto Sans Arabic', Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -219,9 +219,9 @@
   
   /* Arabic Typography */
   .arabic-text {
-    font-family: 'Cairo', Arial, sans-serif;
+    font-family: 'Noto Sans Arabic', Arial, sans-serif;
     line-height: 1.8;
-    font-weight: 500;
+    font-weight: 400;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
