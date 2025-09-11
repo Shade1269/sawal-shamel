@@ -331,9 +331,8 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
 
       toast({ title: "تم الحفظ", description: "تم إضافة المنتج وحفظه في قسم المنتجات" });
       
-      // إغلاق النافذة والانتقال إلى صفحة المنتجات
+      // إغلاق النافذة
       setShowAddProduct(false);
-      navigate('/inventory');
       
       // Clean up
       setNewProduct({ title: '', description: '', price_sar: '', category: '', stock: '', commission_rate: '' });
