@@ -167,7 +167,7 @@ export const useAuth = () => {
     }
   };
 
-  const updateProfile = async (updates: Partial<Omit<UserProfile, 'id' | 'auth_user_id' | 'created_at' | 'updated_at'>>) => {
+  const updateProfile = async (updates: any) => {
     if (!user) return { error: 'No user found' };
 
     try {

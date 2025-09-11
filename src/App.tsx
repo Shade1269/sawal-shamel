@@ -3,73 +3,22 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SupabaseAuthProvider, useSupabaseAuth } from "@/contexts/SupabaseAuthContext";
-import { FirebaseAuthProvider, useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
-import { UserDataProvider } from "@/contexts/UserDataContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { DarkModeProvider } from "@/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import { GlobalHeader } from "@/components/GlobalHeader";
-import AuthPage from "@/components/AuthPage";
-import Index from "./pages/Index";
-import Chat from "./pages/Chat";
-import ChatRoom from "./pages/ChatRoom";
-import Inventory from "./pages/Inventory";
-import StoreManagementFirestore from "./pages/StoreManagementFirestore";
-import StoreFront from "./pages/StoreFront";
-import Cart from "./pages/Cart";
-import Shipping from "./pages/Shipping";
-import Payment from "./pages/Payment";
-import OrderConfirmation from "./pages/OrderConfirmation";
-import StoreAuth from "./pages/StoreAuth";
-import NotFound from "./pages/NotFound";
-import { lazy, Suspense } from "react";
+import Header from "@/components/common/Header";
+import AuthForm from "@/components/auth/AuthForm";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import HomePage from "./pages/Home";
+import { lazy, Suspense } from "react";
 
-const AdminPageLazy = lazy(() => import("./pages/Admin"));
+// Lazy load dashboard pages
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
+const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
+const ProductsPage = lazy(() => import("./pages/ProductsPage"));
 
 const queryClient = new QueryClient();
-
-const AppContent = () => {
-  const { user: supabaseUser, loading: supabaseLoading } = useSupabaseAuth();
-  const { user: firebaseUser, loading: firebaseLoading } = useFirebaseAuth();
-
-  const loading = supabaseLoading || firebaseLoading;
-  const user = firebaseUser || supabaseUser; // Firebase user takes priority
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري التحقق من الهوية...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-background">
-      <GlobalHeader />
-      <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/auth" element={<AuthPage />} />
-      <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-      <Route path="/chat/:channelId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
-      <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
-      <Route path="/store-management" element={<ProtectedRoute><StoreManagementFirestore /></ProtectedRoute>} />
-      <Route path="/store/:slug" element={<StoreFront />} />
-      <Route path="/store/:slug/auth" element={<StoreAuth />} />
-      <Route path="/store/:slug/cart" element={<Cart />} />
-      <Route path="/store/:slug/shipping" element={<Shipping />} />
-      <Route path="/store/:slug/payment" element={<Payment />} />
-      <Route path="/store/:slug/order-confirmation/:orderId" element={<OrderConfirmation />} />
-      <Route path="/admin" element={<ProtectedRoute><AdminPageLazy /></ProtectedRoute>} />
-      
-      <Route path="*" element={<NotFound />} />
-      </Routes>
-    </div>
-  );
-};
 
 const App = () => {
   return (
@@ -77,21 +26,60 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <SupabaseAuthProvider>
-          <FirebaseAuthProvider>
-      <UserDataProvider>
-        <LanguageProvider>
-          <DarkModeProvider>
-                <BrowserRouter>
-                  <Suspense fallback={<div className="p-6">جارٍ التحميل...</div>}>
-                    <AppContent />
+        <AuthProvider>
+          <LanguageProvider>
+            <DarkModeProvider>
+              <BrowserRouter>
+                <div className="min-h-screen bg-gradient-persian-bg">
+                  <Header />
+                  <Suspense fallback={
+                    <div className="min-h-screen flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                        <p className="text-muted-foreground">جاري التحميل...</p>
+                      </div>
+                    </div>
+                  }>
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+      <Route path="/auth" element={<AuthForm />} />
+                      <Route path="/products" element={<ProductsPage />} />
+                      
+                      {/* Protected Routes */}
+                      <Route 
+                        path="/admin" 
+                        element={
+                          <ProtectedRoute requiredRole="admin">
+                            <AdminDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/merchant" 
+                        element={
+                          <ProtectedRoute requiredRole="merchant">
+                            <MerchantDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/affiliate" 
+                        element={
+                          <ProtectedRoute requiredRole="affiliate">
+                            <AffiliateDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      
+                      {/* Catch all - redirect to home */}
+                      <Route path="*" element={<HomePage />} />
+                    </Routes>
                   </Suspense>
-                </BrowserRouter>
-          </DarkModeProvider>
-        </LanguageProvider>
-      </UserDataProvider>
-          </FirebaseAuthProvider>
-        </SupabaseAuthProvider>
+                </div>
+              </BrowserRouter>
+            </DarkModeProvider>
+          </LanguageProvider>
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

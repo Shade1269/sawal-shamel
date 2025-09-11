@@ -1858,7 +1858,7 @@ export type Database = {
         | "RETURNED"
       theme_type: "classic" | "feminine" | "damascus"
       user_level: "bronze" | "silver" | "gold" | "legendary"
-      user_role: "affiliate" | "merchant" | "admin" | "moderator"
+      user_role: "affiliate" | "merchant" | "admin" | "moderator" | "customer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1996,7 +1996,7 @@ export const Constants = {
       ],
       theme_type: ["classic", "feminine", "damascus"],
       user_level: ["bronze", "silver", "gold", "legendary"],
-      user_role: ["affiliate", "merchant", "admin", "moderator"],
+      user_role: ["affiliate", "merchant", "admin", "moderator", "customer"],
     },
   },
 } as const
