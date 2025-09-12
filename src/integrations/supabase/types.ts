@@ -5290,6 +5290,42 @@ export type Database = {
           },
         ]
       }
+      user_levels: {
+        Row: {
+          created_at: string
+          current_level: Database["public"]["Enums"]["user_level"]
+          id: string
+          level_achieved_at: string | null
+          level_points: number
+          next_level_threshold: number
+          total_points: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_level?: Database["public"]["Enums"]["user_level"]
+          id?: string
+          level_achieved_at?: string | null
+          level_points?: number
+          next_level_threshold?: number
+          total_points?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_level?: Database["public"]["Enums"]["user_level"]
+          id?: string
+          level_achieved_at?: string | null
+          level_points?: number
+          next_level_threshold?: number
+          total_points?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_mutes: {
         Row: {
           channel_id: string
@@ -6161,7 +6197,15 @@ export type Database = {
         | "CANCELLED"
         | "REFUNDED"
       shipping_method: "STANDARD" | "EXPRESS" | "SAME_DAY" | "PICKUP"
-      theme_type: "classic" | "feminine" | "damascus"
+      theme_type:
+        | "classic"
+        | "feminine"
+        | "damascus"
+        | "modern"
+        | "elegant"
+        | "gold"
+        | "alliance_special"
+        | "legendary"
       user_level: "bronze" | "silver" | "gold" | "legendary"
       user_role: "affiliate" | "merchant" | "admin" | "moderator" | "customer"
     }
@@ -6321,7 +6365,16 @@ export const Constants = {
         "REFUNDED",
       ],
       shipping_method: ["STANDARD", "EXPRESS", "SAME_DAY", "PICKUP"],
-      theme_type: ["classic", "feminine", "damascus"],
+      theme_type: [
+        "classic",
+        "feminine",
+        "damascus",
+        "modern",
+        "elegant",
+        "gold",
+        "alliance_special",
+        "legendary",
+      ],
       user_level: ["bronze", "silver", "gold", "legendary"],
       user_role: ["affiliate", "merchant", "admin", "moderator", "customer"],
     },
