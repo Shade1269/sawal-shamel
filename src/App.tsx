@@ -62,6 +62,7 @@ const ExecutiveDashboard = lazy(() => import("./pages/ExecutiveDashboard"));
 const SecurityCenter = lazy(() => import("./pages/SecurityCenter"));
 const MarketingDashboard = lazy(() => import("./pages/MarketingDashboard"));
 const AdminSettings = lazy(() => import("./pages/AdminSettings"));
+const AtlantisSystem = lazy(() => import("./pages/AtlantisSystem"));
 
 // Product Management Pages
 const ProductManagement = lazy(() => import("./pages/ProductManagement"));
@@ -285,23 +286,33 @@ const App = () => {
                         } 
                       />
                       
-                      {/* Affiliate Routes */}
-                      <Route 
-                        path="/affiliate" 
-                        element={
-                          <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                            <AffiliateDashboard />
-                          </ProtectedRoute>
-                        } 
-                      />
-                      <Route 
-                        path="/affiliate-dashboard" 
-                        element={
-                          <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                            <AffiliateDashboard />
-                          </ProtectedRoute>
-                        } 
-                      />
+                       {/* Affiliate Routes */}
+                       <Route 
+                         path="/affiliate" 
+                         element={
+                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                             <AffiliateDashboard />
+                           </ProtectedRoute>
+                         } 
+                       />
+                       <Route 
+                         path="/affiliate-dashboard" 
+                         element={
+                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                             <AffiliateDashboard />
+                           </ProtectedRoute>
+                         } 
+                       />
+                       
+                       {/* Atlantis System */}
+                       <Route 
+                         path="/atlantis" 
+                         element={
+                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                             <AtlantisSystem />
+                           </ProtectedRoute>
+                         } 
+                       />
                       
                       {/* Store Management */}
                       <Route 

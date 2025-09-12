@@ -79,10 +79,10 @@ const Dashboard = () => {
       color: 'bg-gradient-primary'
     },
     {
-      title: 'لوحة الإحصائيات',
-      description: 'مراقبة أداء المنصة والمبيعات',
-      icon: <BarChart3 className="h-8 w-8" />,
-      route: '/admin',
+      title: 'نظام أتلانتس',
+      description: 'نظام التحفيز والمنافسة للمسوقين',
+      icon: <Crown className="h-8 w-8" />,
+      route: '/atlantis',
       color: 'bg-gradient-luxury'
     },
     {
@@ -150,10 +150,10 @@ const Dashboard = () => {
       color: 'bg-gradient-primary'
     },
     {
-      title: 'العمولات',
-      description: 'تتبع أرباحك والعمولات المستحقة',
-      icon: <DollarSign className="h-8 w-8" />,
-      route: '/affiliate',
+      title: 'نظام أتلانتس',
+      description: 'التحديات والمنافسات والتحالفات',
+      icon: <Crown className="h-8 w-8" />,
+      route: '/atlantis',
       color: 'bg-gradient-luxury'
     },
     {
@@ -164,9 +164,9 @@ const Dashboard = () => {
       color: 'bg-gradient-premium'
     },
     {
-      title: 'أدوات التسويق',
-      description: 'روابط تسويقية وأدوات ترويجية',
-      icon: <Target className="h-8 w-8" />,
+      title: 'العمولات',
+      description: 'تتبع أرباحك والعمولات المستحقة',
+      icon: <DollarSign className="h-8 w-8" />,
       route: '/affiliate',
       color: 'bg-gradient-heritage'
     },
