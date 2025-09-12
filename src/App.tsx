@@ -26,8 +26,9 @@ const AdminActivity = lazy(() => import("./pages/admin/AdminActivity"));
 const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
-const StoreCheckout = lazy(() => import("./pages/StoreCheckout"));
-const StoreOrderConfirmation = lazy(() => import("./pages/StoreOrderConfirmation"));
+// Direct imports for store components to avoid lazy loading issues
+import StoreCheckout from "./pages/StoreCheckout";
+import StoreOrderConfirmation from "./pages/StoreOrderConfirmation";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AdminOrderManagement = lazy(() => import("./pages/AdminOrderManagement"));
 const FastAuth = lazy(() => import("./pages/FastAuth"));
