@@ -15,15 +15,22 @@ import {
   Clock,
   Eye,
   Edit,
-  Trash2
+  Trash2,
+  Activity,
+  Package,
+  CreditCard,
+  MessageSquare,
+  Bell,
+  Zap,
+  ArrowRight
 } from 'lucide-react';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useFastAuth } from '@/hooks/useFastAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
-  const { profile } = useAuthContext();
+  const { profile } = useFastAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [stats, setStats] = useState({
@@ -155,19 +162,25 @@ const AdminDashboard = () => {
   return (
     <div className="container mx-auto p-6 space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            لوحة الإدارة
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            مرحباً، {profile?.full_name || 'مدير النظام'}
           </h1>
-          <p className="text-muted-foreground mt-2">
-            مرحباً {profile?.full_name}، إليك نظرة عامة على أداء المنصة
+          <p className="text-muted-foreground mt-2 text-lg">
+            إليك نظرة عامة على أداء المنصة اليوم
           </p>
         </div>
-        <Badge className="bg-gradient-luxury text-luxury-foreground">
-          <Crown className="ml-1 h-4 w-4" />
-          مدير النظام
-        </Badge>
+        <div className="flex items-center gap-3">
+          <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2">
+            <Activity className="ml-1 h-4 w-4" />
+            النظام يعمل بشكل طبيعي
+          </Badge>
+          <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2">
+            <Crown className="ml-1 h-4 w-4" />
+            مدير النظام
+          </Badge>
+        </div>
       </div>
 
       {/* Stats Overview */}

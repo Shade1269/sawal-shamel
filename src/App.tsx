@@ -11,11 +11,13 @@ import AuthForm from "@/components/auth/AuthForm";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import FastIndex from "./pages/FastIndex";
+import AdminLayout from "@/layouts/AdminLayout";
 import { lazy, Suspense } from "react";
 
 // Lazy load dashboard pages
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
+const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -60,7 +62,7 @@ const App = () => {
                         </ProtectedRoute>
                       } />
                       
-                      {/* Unified Dashboard - Main entry point after login */}
+                      {/* Unified Dashboard */}
                       <Route 
                         path="/dashboard" 
                         element={
@@ -70,23 +72,18 @@ const App = () => {
                         } 
                       />
                       
-                      {/* Protected Routes */}
-                      <Route 
-                        path="/admin" 
-                        element={
-                          <ProtectedRoute requiredRole="admin">
-                            <AdminDashboard />
-                          </ProtectedRoute>
-                        } 
-                      />
-                      <Route 
-                        path="/admin/users" 
-                        element={
-                          <ProtectedRoute requiredRole="admin">
-                            <AdminUsers />
-                          </ProtectedRoute>
-                        } 
-                      />
+                      {/* Admin Routes with Sidebar Layout */}
+                      <Route path="/admin" element={
+                        <ProtectedRoute requiredRole="admin">
+                          <AdminLayout />
+                        </ProtectedRoute>
+                      }>
+                        <Route index element={<AdminDashboard />} />
+                        <Route path="users" element={<AdminUsers />} />
+                        <Route path="analytics" element={<AdminAnalytics />} />
+                      </Route>
+                      
+                      {/* Other Protected Routes */}
                       <Route 
                         path="/merchant" 
                         element={
@@ -104,7 +101,7 @@ const App = () => {
                         } 
                       />
                       
-                      {/* Catch all - redirect to home */}
+                      {/* Catch all */}
                       <Route path="*" element={<FastIndex />} />
                     </Routes>
                   </Suspense>
