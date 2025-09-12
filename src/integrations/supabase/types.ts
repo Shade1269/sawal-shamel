@@ -1792,6 +1792,320 @@ export type Database = {
           },
         ]
       }
+      shipment_tracking: {
+        Row: {
+          created_at: string | null
+          id: string
+          location: string | null
+          occurred_at: string
+          provider_data: Json | null
+          shipment_id: string
+          status: string
+          status_description: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          location?: string | null
+          occurred_at: string
+          provider_data?: Json | null
+          shipment_id: string
+          status: string
+          status_description?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          location?: string | null
+          occurred_at?: string
+          provider_data?: Json | null
+          shipment_id?: string
+          status?: string
+          status_description?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipment_tracking_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shipments: {
+        Row: {
+          actual_delivery_date: string | null
+          cash_on_delivery: number | null
+          cod_fee: number | null
+          created_at: string | null
+          current_location: string | null
+          declared_value: number | null
+          dimensions: Json | null
+          estimated_delivery: string | null
+          external_tracking_id: string | null
+          id: string
+          insurance_cost: number | null
+          metadata: Json | null
+          order_id: string | null
+          provider_id: string
+          recipient_address: Json
+          recipient_name: string
+          recipient_phone: string
+          sender_address: Json
+          sender_name: string
+          sender_phone: string
+          service_type: string
+          shipment_number: string
+          shipping_cost: number
+          shop_id: string | null
+          special_instructions: string | null
+          status: string
+          total_cost: number
+          tracking_number: string | null
+          updated_at: string | null
+          weight_kg: number
+        }
+        Insert: {
+          actual_delivery_date?: string | null
+          cash_on_delivery?: number | null
+          cod_fee?: number | null
+          created_at?: string | null
+          current_location?: string | null
+          declared_value?: number | null
+          dimensions?: Json | null
+          estimated_delivery?: string | null
+          external_tracking_id?: string | null
+          id?: string
+          insurance_cost?: number | null
+          metadata?: Json | null
+          order_id?: string | null
+          provider_id: string
+          recipient_address: Json
+          recipient_name: string
+          recipient_phone: string
+          sender_address: Json
+          sender_name: string
+          sender_phone: string
+          service_type: string
+          shipment_number: string
+          shipping_cost: number
+          shop_id?: string | null
+          special_instructions?: string | null
+          status?: string
+          total_cost: number
+          tracking_number?: string | null
+          updated_at?: string | null
+          weight_kg: number
+        }
+        Update: {
+          actual_delivery_date?: string | null
+          cash_on_delivery?: number | null
+          cod_fee?: number | null
+          created_at?: string | null
+          current_location?: string | null
+          declared_value?: number | null
+          dimensions?: Json | null
+          estimated_delivery?: string | null
+          external_tracking_id?: string | null
+          id?: string
+          insurance_cost?: number | null
+          metadata?: Json | null
+          order_id?: string | null
+          provider_id?: string
+          recipient_address?: Json
+          recipient_name?: string
+          recipient_phone?: string
+          sender_address?: Json
+          sender_name?: string
+          sender_phone?: string
+          service_type?: string
+          shipment_number?: string
+          shipping_cost?: number
+          shop_id?: string | null
+          special_instructions?: string | null
+          status?: string
+          total_cost?: number
+          tracking_number?: string | null
+          updated_at?: string | null
+          weight_kg?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shipping_providers: {
+        Row: {
+          api_endpoint: string | null
+          code: string
+          configuration: Json | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          logo_url: string | null
+          name: string
+          name_en: string
+          supported_services: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          api_endpoint?: string | null
+          code: string
+          configuration?: Json | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          name: string
+          name_en: string
+          supported_services?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          api_endpoint?: string | null
+          code?: string
+          configuration?: Json | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          name?: string
+          name_en?: string
+          supported_services?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      shipping_rates: {
+        Row: {
+          base_price: number | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          max_price: number | null
+          min_price: number | null
+          price_per_kg: number | null
+          provider_id: string
+          service_type: string
+          weight_from: number | null
+          weight_to: number | null
+          zone_id: string
+        }
+        Insert: {
+          base_price?: number | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_price?: number | null
+          min_price?: number | null
+          price_per_kg?: number | null
+          provider_id: string
+          service_type: string
+          weight_from?: number | null
+          weight_to?: number | null
+          zone_id: string
+        }
+        Update: {
+          base_price?: number | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_price?: number | null
+          min_price?: number | null
+          price_per_kg?: number | null
+          provider_id?: string
+          service_type?: string
+          weight_from?: number | null
+          weight_to?: number | null
+          zone_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipping_rates_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipping_rates_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shipping_zones: {
+        Row: {
+          created_at: string | null
+          delivery_days_max: number | null
+          delivery_days_min: number | null
+          id: string
+          is_active: boolean | null
+          name: string
+          name_en: string
+          parent_zone_id: string | null
+          postal_codes: string[] | null
+          zone_code: string
+          zone_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          delivery_days_max?: number | null
+          delivery_days_min?: number | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          name_en: string
+          parent_zone_id?: string | null
+          postal_codes?: string[] | null
+          zone_code: string
+          zone_type: string
+        }
+        Update: {
+          created_at?: string | null
+          delivery_days_max?: number | null
+          delivery_days_min?: number | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          name_en?: string
+          parent_zone_id?: string | null
+          postal_codes?: string[] | null
+          zone_code?: string
+          zone_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipping_zones_parent_zone_id_fkey"
+            columns: ["parent_zone_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shop_settings_extended: {
         Row: {
           business_hours: Json | null
@@ -2466,6 +2780,10 @@ export type Database = {
         Returns: string
       }
       generate_refund_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_shipment_number: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
