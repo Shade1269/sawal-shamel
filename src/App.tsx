@@ -26,6 +26,8 @@ const AdminActivity = lazy(() => import("./pages/admin/AdminActivity"));
 const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
+const StoreCheckout = lazy(() => import("./pages/StoreCheckout"));
+const StoreOrderConfirmation = lazy(() => import("./pages/StoreOrderConfirmation"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AdminOrderManagement = lazy(() => import("./pages/AdminOrderManagement"));
 const FastAuth = lazy(() => import("./pages/FastAuth"));
@@ -112,7 +114,9 @@ const App = () => {
                        <Route path="/testing" element={<TestingDashboard />} />
                       <Route path="/about" element={<AboutPage />} />
                       <Route path="/create-admin" element={<CreateAdminPage />} />
-                      <Route path="/store/:storeSlug" element={<AffiliateStoreFront />} />
+          <Route path="/store/:storeSlug" element={<AffiliateStoreFront />} />
+          <Route path="/store/:storeSlug/checkout" element={<StoreCheckout />} />
+          <Route path="/store/:storeSlug/order-confirmation/:orderId" element={<StoreOrderConfirmation />} />
                       
                       {/* E-commerce Routes */}
                       <Route path="/cart" element={<Cart />} />

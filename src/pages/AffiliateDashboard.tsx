@@ -84,7 +84,6 @@ const AffiliateDashboard = () => {
   
   const [newStore, setNewStore] = useState({
     store_name: '',
-    store_slug: '',
     bio: ''
   });
 
@@ -264,12 +263,22 @@ const AffiliateDashboard = () => {
     }
 
     try {
+      // توليد slug تلقائي مع معرف فريد
+      const baseSlug = newStore.store_name
+        .toLowerCase()
+        .replace(/[^\u0600-\u06FF\w\s]/g, '') // إزالة الرموز الخاصة والاحتفاظ بالعربي والانجليزي
+        .replace(/\s+/g, '-')
+        .trim();
+      
+      const uniqueId = Math.random().toString(36).substring(2, 8);
+      const finalSlug = `${baseSlug}-${uniqueId}`;
+
       const { data, error } = await supabase
         .from('affiliate_stores')
         .insert({
           profile_id: profile.id,
           store_name: newStore.store_name,
-          store_slug: newStore.store_slug || newStore.store_name.toLowerCase().replace(/\s+/g, '-'),
+          store_slug: finalSlug,
           bio: newStore.bio,
           is_active: true
         })
@@ -278,13 +287,15 @@ const AffiliateDashboard = () => {
 
       if (error) throw error;
 
+      const storeUrl = `${window.location.origin}/store/${finalSlug}`;
+
       toast({
         title: "تم إنشاء المتجر",
-        description: "تم إنشاء متجرك بنجاح",
+        description: `تم إنشاء متجرك بنجاح. رابط المتجر: ${storeUrl}`,
       });
 
       setIsCreateStoreOpen(false);
-      setNewStore({ store_name: '', store_slug: '', bio: '' });
+      setNewStore({ store_name: '', bio: '' });
       fetchAffiliateData();
     } catch (error: any) {
       console.error('Error creating store:', error);
@@ -390,20 +401,15 @@ const AffiliateDashboard = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>رابط المتجر (اختياري)</Label>
-                      <Input
-                        value={newStore.store_slug}
-                        onChange={(e) => setNewStore({...newStore, store_slug: e.target.value})}
-                        placeholder="my-store (سيتم إنشاؤه تلقائياً)"
-                      />
-                    </div>
-                    <div className="space-y-2">
                       <Label>نبذة عن المتجر</Label>
                       <Input
                         value={newStore.bio}
                         onChange={(e) => setNewStore({...newStore, bio: e.target.value})}
                         placeholder="وصف قصير لمتجرك"
                       />
+                      <div className="text-xs text-muted-foreground">
+                        سيتم إنشاء رابط المتجر تلقائياً بناءً على اسم المتجر
+                      </div>
                     </div>
                     <div className="flex gap-2">
                       <Button type="submit" className="flex-1">إنشاء المتجر</Button>
@@ -611,7 +617,16 @@ const AffiliateDashboard = () => {
                   </div>
                   <div>
                     <Label>رابط المتجر</Label>
-                    <Input value={affiliateStore?.store_slug || ''} disabled />
+                    <div className="flex gap-2">
+                      <Input value={`${window.location.origin}/store/${affiliateStore?.store_slug || ''}`} disabled className="flex-1" />
+                      <Button 
+                        variant="outline" 
+                        onClick={() => copyAffiliateLink()}
+                        className="shrink-0"
+                      >
+                        نسخ
+                      </Button>
+                    </div>
                   </div>
                   <div>
                     <Label>نبذة عن المتجر</Label>

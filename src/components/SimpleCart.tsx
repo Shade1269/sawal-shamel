@@ -290,6 +290,12 @@ export const useSimpleCart = (shopSlug: string = 'default') => {
     toast.success(`تم إضافة ${product.name} للسلة`);
   };
 
+  const clearCart = () => {
+    localStorage.setItem(`cart_${shopSlug}`, JSON.stringify([]));
+    setCartItems([]);
+    toast.success('تم تفريغ السلة');
+  };
+
   const getTotalItems = () => {
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
@@ -301,6 +307,7 @@ export const useSimpleCart = (shopSlug: string = 'default') => {
   return {
     cartItems,
     addToCart,
+    clearCart,
     getTotalItems,
     getTotalPrice
   };
