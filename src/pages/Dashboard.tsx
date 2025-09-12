@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import QuickLinks from '@/components/navigation/QuickLinks';
+import { AtlantisStatusWidget } from '@/components/AtlantisStatusWidget';
 import { 
   Crown, 
   Store, 
@@ -286,10 +287,17 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
+        {/* Atlantis Widget for Affiliates/Admins */}
+        {(profile?.role === 'affiliate' || profile?.role === 'admin') && (
+          <div className="mb-8">
+            <AtlantisStatusWidget />
+          </div>
+        )}
+
         {/* Stats Cards */}
         {profile?.role !== 'customer' && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="bg-gradient-primary text-primary-foreground">
+            <Card className="bg-gradient-primary text-primary-foreground animate-fade-in">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -303,7 +311,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-luxury text-luxury-foreground">
+            <Card className="bg-gradient-luxury text-luxury-foreground animate-fade-in" style={{ animationDelay: '0.1s' }}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -315,7 +323,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-premium text-premium-foreground">
+            <Card className="bg-gradient-premium text-premium-foreground animate-fade-in" style={{ animationDelay: '0.2s' }}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -346,7 +354,8 @@ const Dashboard = () => {
             {getSections().map((section, index) => (
               <Card 
                 key={index}
-                className="group cursor-pointer hover:shadow-luxury transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm overflow-hidden"
+                className="group cursor-pointer hover:shadow-luxury transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm overflow-hidden hover-scale animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
                 onClick={() => navigate(section.route)}
               >
                 <CardHeader className="pb-4">
@@ -376,7 +385,7 @@ const Dashboard = () => {
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-gradient-to-br from-card/60 to-card backdrop-blur-sm">
+            <Card className="bg-gradient-to-br from-card/60 to-card backdrop-blur-sm animate-fade-in">
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gradient-premium rounded-xl flex items-center justify-center">
@@ -390,7 +399,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-card/60 to-card backdrop-blur-sm">
+            <Card className="bg-gradient-to-br from-card/60 to-card backdrop-blur-sm animate-fade-in" style={{ animationDelay: '0.1s' }}>
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gradient-heritage rounded-xl flex items-center justify-center">

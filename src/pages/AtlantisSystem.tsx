@@ -4,6 +4,9 @@ import { Badge } from '@/components/ui/badge';
 import { AtlantisLeaderboard } from '@/components/AtlantisLeaderboard';
 import { AllianceManager } from '@/components/AllianceManager';
 import { UserProgressCard } from '@/components/UserProgressCard';
+import { AtlantisNotifications } from '@/components/AtlantisNotifications';
+import { LiveLeaderboardUpdates } from '@/components/LiveLeaderboardUpdates';
+import { AtlantisAnimations, useAtlantisAnimations } from '@/components/AtlantisAnimations';
 import { BackButton } from '@/components/ui/back-button';
 import { 
   Crown, 
@@ -16,25 +19,34 @@ import {
 } from 'lucide-react';
 
 const AtlantisSystem = () => {
+  const { animationTrigger, triggerLevelUp, clearTrigger } = useAtlantisAnimations();
+
   return (
     <div className="min-h-screen bg-gradient-persian-bg">
       {/* Header */}
       <div className="border-b bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-4">
-            <BackButton fallbackRoute="/dashboard" />
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl flex items-center justify-center">
-                <Crown className="h-6 w-6 text-white" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <BackButton fallbackRoute="/dashboard" />
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl flex items-center justify-center">
+                  <Crown className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                    نظام أتلانتس
+                  </h1>
+                  <p className="text-muted-foreground">
+                    نظام التحفيز والمنافسة للمسوقين
+                  </p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  نظام أتلانتس
-                </h1>
-                <p className="text-muted-foreground">
-                  نظام التحفيز والمنافسة للمسوقين
-                </p>
-              </div>
+            </div>
+            
+            {/* Notifications */}
+            <div className="flex items-center gap-2">
+              <AtlantisNotifications />
             </div>
           </div>
         </div>
@@ -44,8 +56,9 @@ const AtlantisSystem = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar - User Progress */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <UserProgressCard />
+            <LiveLeaderboardUpdates />
           </div>
 
           {/* Main Content Area */}
@@ -134,8 +147,14 @@ const AtlantisSystem = () => {
             </CardContent>
           </Card>
         </div>
+        </div>
+
+        {/* Animations */}
+        <AtlantisAnimations 
+          trigger={animationTrigger} 
+          onAnimationComplete={clearTrigger} 
+        />
       </div>
-    </div>
   );
 };
 
