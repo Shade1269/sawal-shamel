@@ -92,11 +92,28 @@ const MerchantDashboard = () => {
       if (productsError) throw productsError;
       setProducts(productsData || []);
 
-      // جلب الطلبات
+      // جلب الطلبات مع إخفاء معلومات المسوقين
       const { data: ordersData, error: ordersError } = await supabase
         .from('orders')
         .select(`
-          *,
+          id,
+          shop_id,
+          customer_name,
+          customer_phone,
+          shipping_address,
+          payment_method,
+          status,
+          subtotal_sar,
+          vat_sar,
+          total_sar,
+          created_at,
+          updated_at,
+          order_number,
+          customer_profile_id,
+          shipping_sar,
+          tax_sar,
+          tracking_number,
+          delivered_at,
           order_items (
             *,
             product:products (title)
@@ -107,19 +124,26 @@ const MerchantDashboard = () => {
         .limit(10);
 
       if (ordersError) throw ordersError;
-      setOrders(ordersData || []);
+      
+      // إضافة معلومة إذا كان الطلب من مسوق بدون كشف الهوية
+      const ordersWithAffiliateInfo = ordersData?.map(order => ({
+        ...order,
+        is_affiliate_order: false // سيتم تحديثها من جدول admin_order_reviews
+      })) || [];
+      
+      setOrders(ordersWithAffiliateInfo);
 
       // حساب الإحصائيات
       const totalProducts = productsData?.length || 0;
       const totalOrders = ordersData?.length || 0;
       const totalRevenue = ordersData?.reduce((sum, order) => sum + (order.total_sar || 0), 0) || 0;
 
-      setStats({
-        totalProducts,
-        totalOrders,
-        totalRevenue,
-        activeAffiliates: 0 // سيتم إضافة هذا لاحقاً
-      });
+        setStats({
+          totalProducts,
+          totalOrders,
+          totalRevenue,
+          activeAffiliates: 0 // إخفاء عدد المسوقين لحماية الخصوصية
+        });
 
     } catch (error) {
       console.error('Error fetching merchant data:', error);
@@ -289,12 +313,13 @@ const MerchantDashboard = () => {
         <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              المسوقين النشطين
+              إجمالي المبيعات المعتمدة
             </CardTitle>
-            <Users className="h-6 w-6 text-luxury" />
+            <DollarSign className="h-6 w-6 text-luxury" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.activeAffiliates}</div>
+            <div className="text-2xl font-bold">{stats.totalRevenue.toFixed(2)} ريال</div>
+            <p className="text-xs text-muted-foreground mt-1">المبيعات المكتملة</p>
           </CardContent>
         </Card>
       </div>

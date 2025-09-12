@@ -25,6 +25,7 @@ const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const AdminOrderManagement = lazy(() => import("./pages/AdminOrderManagement"));
 const FastAuth = lazy(() => import("./pages/FastAuth"));
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
 const ProfilePage = lazy(() => import("./pages/Profile"));
@@ -113,6 +114,14 @@ const App = () => {
                         element={
                           <ProtectedRoute requiredRole={["merchant", "admin"]}>
                             <MerchantDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/admin-orders" 
+                        element={
+                          <ProtectedRoute requiredRole="admin" fallback="/dashboard">
+                            <AdminOrderManagement />
                           </ProtectedRoute>
                         } 
                       />
