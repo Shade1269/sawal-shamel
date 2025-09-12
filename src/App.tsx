@@ -66,6 +66,9 @@ const TestingDashboard = lazy(() => import("./components/TestingDashboard"));
 const CategoryManagement = lazy(() => import("./pages/CategoryManagement"));
 const BrandManagement = lazy(() => import("./pages/BrandManagement"));
 
+// Shipping and Tracking Pages
+const ShipmentManagement = lazy(() => import("./pages/ShipmentManagement"));
+
 const queryClient = new QueryClient();
 
 // Force reload to clear any cached AuthProvider references
@@ -121,6 +124,11 @@ const App = () => {
                       <Route path="/order-confirmation-simple/:orderId" element={<OrderConfirmationSimple />} />
                       <Route path="/track-order" element={<OrderTracking />} />
                       <Route path="/track-order/:orderId" element={<OrderTracking />} />
+                      <Route path="/shipment-management" element={
+                        <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                          <ShipmentManagement />
+                        </ProtectedRoute>
+                      } />
                       
                       {/* Analytics Routes */}
                       <Route path="/analytics" element={

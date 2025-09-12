@@ -3439,6 +3439,53 @@ export type Database = {
         }
         Relationships: []
       }
+      shipment_events: {
+        Row: {
+          coordinates: Json | null
+          created_at: string
+          event_description: string
+          event_timestamp: string
+          event_type: string
+          id: string
+          location: string | null
+          metadata: Json | null
+          shipment_id: string
+          source: string
+        }
+        Insert: {
+          coordinates?: Json | null
+          created_at?: string
+          event_description: string
+          event_timestamp?: string
+          event_type: string
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          shipment_id: string
+          source?: string
+        }
+        Update: {
+          coordinates?: Json | null
+          created_at?: string
+          event_description?: string
+          event_timestamp?: string
+          event_type?: string
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          shipment_id?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipment_events_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments_tracking"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shipment_tracking: {
         Row: {
           created_at: string | null
@@ -3597,6 +3644,89 @@ export type Database = {
             columns: ["shop_id"]
             isOneToOne: false
             referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shipments_tracking: {
+        Row: {
+          actual_delivery_date: string | null
+          cod_amount_sar: number | null
+          created_at: string
+          current_location: string | null
+          current_status: string
+          customer_name: string
+          customer_phone: string
+          delivery_address: Json
+          dimensions: Json | null
+          estimated_delivery_date: string | null
+          id: string
+          insurance_amount_sar: number | null
+          notes: string | null
+          order_id: string
+          pickup_address: Json
+          shipment_number: string
+          shipping_cost_sar: number
+          shipping_provider_id: string | null
+          special_instructions: string | null
+          tracking_number: string | null
+          updated_at: string
+          weight_kg: number | null
+        }
+        Insert: {
+          actual_delivery_date?: string | null
+          cod_amount_sar?: number | null
+          created_at?: string
+          current_location?: string | null
+          current_status?: string
+          customer_name: string
+          customer_phone: string
+          delivery_address: Json
+          dimensions?: Json | null
+          estimated_delivery_date?: string | null
+          id?: string
+          insurance_amount_sar?: number | null
+          notes?: string | null
+          order_id: string
+          pickup_address: Json
+          shipment_number: string
+          shipping_cost_sar?: number
+          shipping_provider_id?: string | null
+          special_instructions?: string | null
+          tracking_number?: string | null
+          updated_at?: string
+          weight_kg?: number | null
+        }
+        Update: {
+          actual_delivery_date?: string | null
+          cod_amount_sar?: number | null
+          created_at?: string
+          current_location?: string | null
+          current_status?: string
+          customer_name?: string
+          customer_phone?: string
+          delivery_address?: Json
+          dimensions?: Json | null
+          estimated_delivery_date?: string | null
+          id?: string
+          insurance_amount_sar?: number | null
+          notes?: string | null
+          order_id?: string
+          pickup_address?: Json
+          shipment_number?: string
+          shipping_cost_sar?: number
+          shipping_provider_id?: string | null
+          special_instructions?: string | null
+          tracking_number?: string | null
+          updated_at?: string
+          weight_kg?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipments_tracking_shipping_provider_id_fkey"
+            columns: ["shipping_provider_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_providers"
             referencedColumns: ["id"]
           },
         ]
@@ -4264,6 +4394,60 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      store_shipping_config: {
+        Row: {
+          auto_tracking_enabled: boolean
+          business_hours: Json | null
+          created_at: string
+          default_provider_id: string | null
+          id: string
+          notification_settings: Json | null
+          pickup_address: Json
+          return_address: Json | null
+          shop_id: string
+          updated_at: string
+        }
+        Insert: {
+          auto_tracking_enabled?: boolean
+          business_hours?: Json | null
+          created_at?: string
+          default_provider_id?: string | null
+          id?: string
+          notification_settings?: Json | null
+          pickup_address: Json
+          return_address?: Json | null
+          shop_id: string
+          updated_at?: string
+        }
+        Update: {
+          auto_tracking_enabled?: boolean
+          business_hours?: Json | null
+          created_at?: string
+          default_provider_id?: string | null
+          id?: string
+          notification_settings?: Json | null
+          pickup_address?: Json
+          return_address?: Json | null
+          shop_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_shipping_config_default_provider_id_fkey"
+            columns: ["default_provider_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_shipping_config_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: true
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_activities: {
         Row: {
@@ -4946,6 +5130,10 @@ export type Database = {
         Returns: string
       }
       generate_shipment_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_shipment_tracking_number: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
