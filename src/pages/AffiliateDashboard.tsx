@@ -85,8 +85,19 @@ const AffiliateDashboard = () => {
   
   const [newStore, setNewStore] = useState({
     store_name: '',
-    bio: ''
+    bio: '',
+    store_slug: '',
   });
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+
+  const sanitizeSlug = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .slice(0, 60);
 
   useEffect(() => {
     // تتبع حالة الجلسة وتحديثها فوراً
@@ -306,23 +317,24 @@ const AffiliateDashboard = () => {
         return;
       }
 
-      // توليد slug تلقائي مع معرف فريد لضمان التفرد
-      const baseSlug = newStore.store_name
-        .toLowerCase()
-        .replace(/[^\u0600-\u06FF\w\s-]/g, '') // إزالة الرموز الخاصة مع دعم العربية والإنجليزية
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .trim();
-      
-      const uniqueId = Math.random().toString(36).substring(2, 8);
-      const finalSlug = `${baseSlug}-${uniqueId}`;
+      // تحقق من صحة رابط المتجر (Slug) بالإنجليزية فقط
+      const slugToUse = sanitizeSlug(newStore.store_slug || newStore.store_name);
+      const isValidSlug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slugToUse);
+      if (!isValidSlug) {
+        toast({
+          title: "رابط المتجر غير صالح",
+          description: "استخدم أحرف إنجليزية صغيرة وأرقام و- فقط",
+          variant: "destructive",
+        });
+        return;
+      }
 
       // إنشاء المتجر عبر دالة آمنة في قاعدة البيانات (تتجاوز RLS داخلياً)
       const { data: newStoreId, error: rpcError } = await supabase
         .rpc('create_affiliate_store', {
           p_store_name: newStore.store_name,
-          p_bio: newStore.bio,
-          p_store_slug: null
+          p_bio: newStore.bio || null,
+          p_store_slug: slugToUse
         });
 
       if (rpcError) throw rpcError;
@@ -344,7 +356,7 @@ const AffiliateDashboard = () => {
       });
 
       setIsCreateStoreOpen(false);
-      setNewStore({ store_name: '', bio: '' });
+      setNewStore({ store_name: '', bio: '', store_slug: '' });
       fetchAffiliateData();
     } catch (error: any) {
       console.error('Error creating store:', error);
@@ -444,27 +456,51 @@ const AffiliateDashboard = () => {
                   </DialogHeader>
                   <form onSubmit={handleCreateStore} className="space-y-4">
                     <div className="space-y-2">
-                      <Label>اسم المتجر</Label>
+                      <Label>اسم المتجر (يظهر للعملاء)</Label>
                       <Input
                         value={newStore.store_name}
-                        onChange={(e) => setNewStore({...newStore, store_name: e.target.value})}
+                        onChange={(e) => {
+                          const name = e.target.value;
+                          setNewStore((prev) => ({
+                            ...prev,
+                            store_name: name,
+                            ...(slugManuallyEdited ? {} : { store_slug: sanitizeSlug(name) }),
+                          }));
+                        }}
                         placeholder="اسم متجرك"
                         required
                       />
                     </div>
                     <div className="space-y-2">
+                      <Label>رابط المتجر (بالإنجليزية)</Label>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">{`${window.location.origin}/store/`}</span>
+                        <Input
+                          value={newStore.store_slug}
+                          onChange={(e) => {
+                            setSlugManuallyEdited(true);
+                            setNewStore({ ...newStore, store_slug: sanitizeSlug(e.target.value) });
+                          }}
+                          placeholder="my-store"
+                          pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                          title="استخدم أحرف إنجليزية صغيرة وأرقام وشرطات فقط"
+                          required
+                        />
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        الاسم الظاهر يمكن أن يكون بأي لغة. أما رابط المتجر فيجب أن يكون بالحروف الإنجليزية فقط.
+                      </div>
+                    </div>
+                    <div className="space-y-2">
                       <Label>نبذة عن المتجر</Label>
                       <Input
                         value={newStore.bio}
-                        onChange={(e) => setNewStore({...newStore, bio: e.target.value})}
+                        onChange={(e) => setNewStore({ ...newStore, bio: e.target.value })}
                         placeholder="وصف قصير لمتجرك"
                       />
-                      <div className="text-xs text-muted-foreground">
-                        سيتم إنشاء رابط المتجر تلقائياً بناءً على اسم المتجر
-                      </div>
                     </div>
                       <div className="flex gap-2 items-center">
-                        <Button type="submit" className="flex-1" disabled={!hasSession || !newStore.store_name.trim()}>
+                        <Button type="submit" className="flex-1" disabled={!hasSession || !newStore.store_name.trim() || !newStore.store_slug.trim()}>
                           إنشاء المتجر
                         </Button>
                         <Button type="button" variant="outline" onClick={() => setIsCreateStoreOpen(false)} className="flex-1">
