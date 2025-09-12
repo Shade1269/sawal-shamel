@@ -284,7 +284,7 @@ const AffiliateDashboard = () => {
           description: "يرجى تسجيل الدخول أولاً لإتمام إنشاء المتجر",
           variant: "destructive",
         });
-        navigate('/fast-auth');
+        navigate('/auth');
         return;
       }
 

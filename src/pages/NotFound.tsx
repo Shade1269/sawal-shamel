@@ -80,7 +80,7 @@ const NotFound = () => {
           </Link>
 
           <Link 
-            to="/fast-auth" 
+            to="/auth" 
             className="p-3 bg-card/30 rounded-lg hover:bg-card/50 transition-colors border border-border/20"
           >
             <div className="flex items-center gap-2 text-premium">

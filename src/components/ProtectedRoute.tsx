@@ -13,7 +13,7 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ 
   children, 
   requiredRole, 
-  fallback = "/fast-auth", 
+  fallback = "/auth", 
   allowInactive = false 
 }: ProtectedRouteProps) => {
   const { 

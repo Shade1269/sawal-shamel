@@ -31,7 +31,7 @@ import StoreCheckout from "./pages/StoreCheckout";
 import StoreOrderConfirmation from "./pages/StoreOrderConfirmation";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AdminOrderManagement = lazy(() => import("./pages/AdminOrderManagement"));
-import FastAuth from "./pages/FastAuth";
+// FastAuth removed
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
 const ProfilePage = lazy(() => import("./pages/Profile"));
 const AboutPage = lazy(() => import("./pages/About"));
@@ -103,7 +103,7 @@ const App = () => {
                       <Route path="/home" element={<FastIndex />} />
                       <Route path="/index" element={<Index />} />
                       <Route path="/auth" element={<AuthForm />} />
-                      <Route path="/fast-auth" element={<FastAuth />} />
+                      {/* FastAuth removed */}
                       <Route path="/login" element={<AuthForm />} />
                       <Route path="/signup" element={<AuthForm />} />
                       <Route path="/products" element={<ProductsPage />} />

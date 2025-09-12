@@ -56,7 +56,7 @@ const About = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/fast-auth">
+            <Link to="/auth">
               <Button size="lg" className="bg-gradient-primary">
                 انضم إلينا الآن
                 <ArrowRight className="w-5 h-5 ml-2" />
@@ -324,7 +324,7 @@ const About = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <Link to="/fast-auth">
+                  <Link to="/auth">
                     <Button size="lg" className="bg-gradient-primary">
                       <Heart className="w-5 h-5 mr-2" />
                       ابدأ مجاناً الآن

@@ -41,7 +41,7 @@ const FastIndex = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link to="/fast-auth">
+              <Link to="/auth">
                 <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-lg px-8 py-4 rounded-xl">
                   <Zap className="w-5 h-5 mr-2" />
                   تسجيل دخول سريع
@@ -287,7 +287,7 @@ const FastIndex = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <Link to="/fast-auth">
+                  <Link to="/auth">
                     <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 text-lg px-8 py-4 rounded-xl">
                       <Zap className="w-5 h-5 mr-2" />
                       ابدأ التجربة الآن
