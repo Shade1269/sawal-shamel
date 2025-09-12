@@ -21,6 +21,9 @@ import { lazy, Suspense } from "react";
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
+const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
+const AdminPermissions = lazy(() => import("./pages/admin/AdminPermissions"));
+const AdminActivity = lazy(() => import("./pages/admin/AdminActivity"));
 const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
@@ -109,6 +112,9 @@ const App = () => {
                         <Route path="dashboard" element={<AdminDashboard />} />
                         <Route path="users" element={<AdminUsers />} />
                         <Route path="analytics" element={<AdminAnalytics />} />
+                        <Route path="reports" element={<AdminReports />} />
+                        <Route path="permissions" element={<AdminPermissions />} />
+                        <Route path="activity" element={<AdminActivity />} />
                         <Route path="payments" element={<PaymentDashboard />} />
                         <Route path="invoices" element={<InvoiceManagement />} />
                         <Route path="payment-gateways" element={<PaymentGateways />} />
