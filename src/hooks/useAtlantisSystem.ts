@@ -130,12 +130,12 @@ export const useAtlantisSystem = () => {
     const profileId = await getCurrentUserProfile();
     if (!profileId) return;
 
-    // Check if user level exists
-    const { data: existingLevel, error } = await supabase
-      .from('user_levels')
-      .select('*')
-      .eq('user_id', profileId)
-      .single();
+  // Check if user level exists
+  const { data: existingLevel, error } = await supabase
+    .from('user_levels')
+    .select('*')
+    .eq('user_id', profileId)
+    .maybeSingle();
 
     if (error && error.code !== 'PGRST116') {
       console.error('Error checking user level:', error);
@@ -180,7 +180,7 @@ export const useAtlantisSystem = () => {
       `)
       .eq('user_id', profileId)
       .eq('is_active', true)
-      .single();
+      .maybeSingle();
 
     if (error && error.code !== 'PGRST116') {
       console.error('Error fetching user alliance:', error);
@@ -271,7 +271,7 @@ export const useAtlantisSystem = () => {
       .from('weekly_challenges')
       .select('*')
       .eq('status', 'active')
-      .single();
+      .maybeSingle();
 
     if (error && error.code !== 'PGRST116') {
       console.error('Error fetching current challenge:', error);
@@ -290,7 +290,7 @@ export const useAtlantisSystem = () => {
         alliances (*)
       `)
       .eq('is_current', true)
-      .single();
+      .maybeSingle();
 
     if (error && error.code !== 'PGRST116') {
       console.error('Error fetching castle controller:', error);

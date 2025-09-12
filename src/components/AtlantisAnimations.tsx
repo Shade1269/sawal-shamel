@@ -1,196 +1,275 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Crown, 
-  Star, 
-  Trophy, 
-  Sparkles, 
-  Zap,
-  Award,
-  Target
-} from 'lucide-react';
-
-interface AnimationTrigger {
-  type: 'level_up' | 'achievement' | 'rank_change' | 'challenge_complete';
-  data: any;
-}
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Crown, Star, Trophy, Zap, Sparkles } from 'lucide-react';
 
 interface AtlantisAnimationsProps {
-  trigger?: AnimationTrigger;
-  onAnimationComplete?: () => void;
+  type: 'levelUp' | 'pointsEarned' | 'challengeComplete' | 'castleCapture';
+  level?: string;
+  points?: number;
+  onComplete?: () => void;
 }
 
-export const AtlantisAnimations = ({ trigger, onAnimationComplete }: AtlantisAnimationsProps) => {
-  const [showAnimation, setShowAnimation] = useState(false);
-  const [animationType, setAnimationType] = useState<string>('');
-
-  useEffect(() => {
-    if (trigger) {
-      setAnimationType(trigger.type);
-      setShowAnimation(true);
-      
-      // Auto hide after animation duration
-      const timer = setTimeout(() => {
-        setShowAnimation(false);
-        onAnimationComplete?.();
-      }, 4000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [trigger, onAnimationComplete]);
-
-  const levelUpAnimation = "animate-scale-in animate-fade-in";
-  const achievementAnimation = "animate-fade-in";
-  const rankChangeAnimation = "animate-slide-in-right";
-
-  const renderLevelUpAnimation = () => (
-    <div className="relative animate-scale-in">
-      <div className="bg-gradient-to-r from-purple-500 to-blue-600 rounded-full p-8 shadow-2xl">
-        <Crown className="h-16 w-16 text-white mx-auto" />
-      </div>
-      
-      {/* Sparkles around the crown */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute animate-pulse"
-            style={{
-              left: `${20 + (i * 10)}%`,
-              top: `${20 + (i % 2) * 60}%`,
-              animationDelay: `${i * 200}ms`
-            }}
-          >
-            <Sparkles className="h-4 w-4 text-yellow-400" />
-          </div>
-        ))}
-      </div>
-
-      <div className="text-center mt-6 animate-fade-in" style={{ animationDelay: '500ms' }}>
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-          🎉 ترقية مستوى!
-        </h2>
-        <p className="text-lg text-muted-foreground mt-2">
-          وصلت للمستوى {trigger?.data?.newLevel || 'الجديد'}
-        </p>
-        <Badge className="mt-3 bg-gradient-to-r from-purple-500 to-blue-600 text-white px-6 py-2">
-          +{trigger?.data?.bonusPoints || 100} نقطة مكافأة
-        </Badge>
-      </div>
-    </div>
-  );
-
-  const renderAchievementAnimation = () => (
-    <div className="text-center animate-fade-in">
-      <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-6 shadow-2xl mx-auto w-fit hover-scale">
-        <Trophy className="h-12 w-12 text-white" />
-      </div>
-      
-      <div className="mt-4 animate-fade-in" style={{ animationDelay: '300ms' }}>
-        <h2 className="text-2xl font-bold text-yellow-600">
-          🏆 إنجاز جديد!
-        </h2>
-        <p className="text-muted-foreground mt-2">
-          {trigger?.data?.achievementName || 'حققت إنجازاً مميزاً'}
-        </p>
-      </div>
-    </div>
-  );
-
-  const renderRankChangeAnimation = () => (
-    <div className="flex items-center gap-4 animate-slide-in-right">
-      <div className="bg-gradient-to-r from-green-500 to-teal-600 rounded-full p-4 shadow-lg hover-scale">
-        <Target className="h-8 w-8 text-white" />
-      </div>
-      
-      <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
-        <h3 className="text-xl font-semibold text-green-600">
-          📈 تحسن في الترتيب!
-        </h3>
-        <p className="text-muted-foreground">
-          تقدمت للمركز #{trigger?.data?.newRank || 1}
-        </p>
-      </div>
-    </div>
-  );
-
-  const renderAnimationContent = () => {
-    switch (animationType) {
-      case 'level_up':
-        return renderLevelUpAnimation();
-      case 'achievement':
-        return renderAchievementAnimation();
-      case 'rank_change':
-        return renderRankChangeAnimation();
-      default:
-        return renderLevelUpAnimation();
+export const AtlantisAnimations = ({ 
+  type, 
+  level, 
+  points, 
+  onComplete 
+}: AtlantisAnimationsProps) => {
+  const getLevelColor = (level: string) => {
+    switch (level) {
+      case 'legendary': return 'from-purple-500 to-purple-600';
+      case 'gold': return 'from-yellow-400 to-yellow-600';
+      case 'silver': return 'from-gray-300 to-gray-500';
+      default: return 'from-orange-400 to-orange-600';
     }
   };
 
-  return (
-    <>
-      {showAnimation && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm animate-fade-in"
-          onClick={() => setShowAnimation(false)}
+  const getLevelName = (level: string) => {
+    switch (level) {
+      case 'legendary': return 'أسطوري';
+      case 'gold': return 'ذهبي';
+      case 'silver': return 'فضي';
+      default: return 'برونزي';
+    }
+  };
+
+  const animations = {
+    levelUp: (
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onAnimationComplete={onComplete}
+      >
+        <motion.div
+          className="text-center bg-card/95 backdrop-blur-sm p-8 rounded-2xl border shadow-2xl max-w-md mx-4"
+          initial={{ scale: 0.5, y: 50 }}
+          animate={{ scale: 1, y: 0 }}
+          transition={{ type: "spring", duration: 0.6 }}
         >
-          <div
-            className="bg-card rounded-2xl shadow-2xl p-8 max-w-md mx-4 animate-scale-in"
-            onClick={(e) => e.stopPropagation()}
+          <motion.div
+            initial={{ rotate: 0 }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="mb-6"
           >
-            {renderAnimationContent()}
-            
-            <div className="flex justify-center mt-6">
-              <Button
-                variant="outline"
-                onClick={() => setShowAnimation(false)}
-                className="mt-4 hover-scale"
+            <Crown className="h-16 w-16 mx-auto text-yellow-500" />
+          </motion.div>
+          
+          <motion.h2 
+            className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            ترقية المستوى! 🎉
+          </motion.h2>
+          
+          {level && (
+            <motion.div
+              className={`inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r ${getLevelColor(level)} text-white font-bold text-lg mb-4`}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.7, type: "spring" }}
+            >
+              <Star className="h-5 w-5 mr-2" />
+              مستوى {getLevelName(level)}
+            </motion.div>
+          )}
+          
+          <motion.p 
+            className="text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9 }}
+          >
+            تهانينا! لقد وصلت إلى مستوى جديد في أتلانتس
+          </motion.p>
+
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+          >
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute"
+                style={{
+                  left: `${20 + (i % 4) * 20}%`,
+                  top: `${20 + Math.floor(i / 4) * 60}%`,
+                }}
+                initial={{ scale: 0, rotate: 0 }}
+                animate={{ 
+                  scale: [0, 1, 0],
+                  rotate: 360,
+                  y: [0, -20, 0]
+                }}
+                transition={{ 
+                  duration: 2,
+                  delay: 0.8 + i * 0.1,
+                  repeat: 2
+                }}
               >
-                رائع! 🎉
-              </Button>
-            </div>
+                <Sparkles className="h-4 w-4 text-yellow-400" />
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    ),
+
+    pointsEarned: (
+      <motion.div
+        className="fixed top-4 right-4 z-50"
+        initial={{ opacity: 0, x: 100, scale: 0.8 }}
+        animate={{ opacity: 1, x: 0, scale: 1 }}
+        exit={{ opacity: 0, x: 100, scale: 0.8 }}
+        onAnimationComplete={onComplete}
+      >
+        <motion.div
+          className="bg-primary text-primary-foreground px-6 py-4 rounded-lg shadow-lg border flex items-center gap-3"
+          whileHover={{ scale: 1.05 }}
+          initial={{ y: -20 }}
+          animate={{ y: 0 }}
+          transition={{ type: "spring", duration: 0.6 }}
+        >
+          <motion.div
+            initial={{ rotate: 0 }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1 }}
+          >
+            <Star className="h-6 w-6" />
+          </motion.div>
+          <div>
+            <p className="font-semibold">نقاط جديدة!</p>
+            <p className="text-sm">+{points} نقطة</p>
           </div>
-        </div>
-      )}
-    </>
-  );
+        </motion.div>
+      </motion.div>
+    ),
+
+    challengeComplete: (
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onAnimationComplete={onComplete}
+      >
+        <motion.div
+          className="text-center bg-card/95 backdrop-blur-sm p-8 rounded-2xl border shadow-2xl max-w-md mx-4"
+          initial={{ scale: 0.5, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", duration: 0.8 }}
+        >
+          <motion.div
+            className="mb-6"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.3, type: "spring" }}
+          >
+            <Trophy className="h-16 w-16 mx-auto text-yellow-500" />
+          </motion.div>
+          
+          <motion.h2 
+            className="text-3xl font-bold mb-4 text-primary"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            تحدي مكتمل! 🏆
+          </motion.h2>
+          
+          <motion.p 
+            className="text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+          >
+            أحسنت! لقد أكملت التحدي بنجاح
+          </motion.p>
+        </motion.div>
+      </motion.div>
+    ),
+
+    castleCapture: (
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onAnimationComplete={onComplete}
+      >
+        <motion.div
+          className="text-center bg-card/95 backdrop-blur-sm p-8 rounded-2xl border shadow-2xl max-w-md mx-4"
+          initial={{ scale: 0.5, y: 100 }}
+          animate={{ scale: 1, y: 0 }}
+          transition={{ type: "spring", duration: 0.7 }}
+        >
+          <motion.div
+            className="mb-6"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.3, type: "spring", duration: 1 }}
+          >
+            <div className="text-6xl">🏰</div>
+          </motion.div>
+          
+          <motion.h2 
+            className="text-3xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            سيطرة على القلعة! 👑
+          </motion.h2>
+          
+          <motion.p 
+            className="text-muted-foreground"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+          >
+            تحالفك يسيطر الآن على قلعة أتلانتس!
+          </motion.p>
+        </motion.div>
+      </motion.div>
+    )
+  };
+
+  return animations[type] || null;
 };
 
-// Hook for triggering animations
+// Hook لإدارة الرسوم المتحركة
 export const useAtlantisAnimations = () => {
-  const [animationTrigger, setAnimationTrigger] = useState<AnimationTrigger | undefined>();
+  const [currentAnimation, setCurrentAnimation] = React.useState<{
+    type: AtlantisAnimationsProps['type'];
+    level?: string;
+    points?: number;
+  } | null>(null);
 
-  const triggerLevelUp = (newLevel: string, bonusPoints: number = 100) => {
-    setAnimationTrigger({
-      type: 'level_up',
-      data: { newLevel, bonusPoints }
-    });
+  const showAnimation = (
+    type: AtlantisAnimationsProps['type'], 
+    props?: { level?: string; points?: number }
+  ) => {
+    setCurrentAnimation({ type, ...props });
+    
+    // إخفاء الرسوم المتحركة تلقائياً بعد 3 ثوان
+    setTimeout(() => {
+      setCurrentAnimation(null);
+    }, 3000);
   };
 
-  const triggerAchievement = (achievementName: string) => {
-    setAnimationTrigger({
-      type: 'achievement',
-      data: { achievementName }
-    });
-  };
-
-  const triggerRankChange = (newRank: number) => {
-    setAnimationTrigger({
-      type: 'rank_change',
-      data: { newRank }
-    });
-  };
-
-  const clearTrigger = () => {
-    setAnimationTrigger(undefined);
+  const hideAnimation = () => {
+    setCurrentAnimation(null);
   };
 
   return {
-    animationTrigger,
-    triggerLevelUp,
-    triggerAchievement,
-    triggerRankChange,
-    clearTrigger
+    currentAnimation,
+    showAnimation,
+    hideAnimation
   };
 };

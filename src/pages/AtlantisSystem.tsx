@@ -7,6 +7,7 @@ import { UserProgressCard } from '@/components/UserProgressCard';
 import { AtlantisNotifications } from '@/components/AtlantisNotifications';
 import { LiveLeaderboardUpdates } from '@/components/LiveLeaderboardUpdates';
 import { AtlantisAnimations, useAtlantisAnimations } from '@/components/AtlantisAnimations';
+import { useAtlantisSystem } from '@/hooks/useAtlantisSystem';
 import { BackButton } from '@/components/ui/back-button';
 import { 
   Crown, 
@@ -18,8 +19,18 @@ import {
   Sparkles
 } from 'lucide-react';
 
-const AtlantisSystem = () => {
-  const { animationTrigger, triggerLevelUp, clearTrigger } = useAtlantisAnimations();
+export const AtlantisSystem = () => {
+  const { 
+    loading, 
+    userLevel, 
+    userAlliance, 
+    weeklyLeaderboard,
+    allianceLeaderboard,
+    currentChallenge,
+    castleController
+  } = useAtlantisSystem();
+  
+  const { currentAnimation, showAnimation, hideAnimation } = useAtlantisAnimations();
 
   return (
     <div className="min-h-screen bg-gradient-persian-bg">
@@ -147,14 +158,18 @@ const AtlantisSystem = () => {
             </CardContent>
           </Card>
         </div>
-        </div>
-
-        {/* Animations */}
-        <AtlantisAnimations 
-          trigger={animationTrigger} 
-          onAnimationComplete={clearTrigger} 
-        />
       </div>
+
+      {/* Animations */}
+      {currentAnimation && (
+        <AtlantisAnimations
+          type={currentAnimation.type}
+          level={currentAnimation.level}
+          points={currentAnimation.points}
+          onComplete={hideAnimation}
+        />
+      )}
+    </div>
   );
 };
 
