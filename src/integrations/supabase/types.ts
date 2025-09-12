@@ -753,6 +753,122 @@ export type Database = {
           },
         ]
       }
+      ecommerce_coupon_usage: {
+        Row: {
+          coupon_id: string
+          discount_applied_sar: number
+          id: string
+          order_id: string
+          used_at: string
+          user_id: string | null
+        }
+        Insert: {
+          coupon_id: string
+          discount_applied_sar: number
+          id?: string
+          order_id: string
+          used_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          coupon_id?: string
+          discount_applied_sar?: number
+          id?: string
+          order_id?: string
+          used_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecommerce_coupon_usage_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ecommerce_coupon_usage_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "ecommerce_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ecommerce_coupon_usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ecommerce_coupon_usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ecommerce_order_items: {
+        Row: {
+          commission_rate: number | null
+          commission_sar: number | null
+          created_at: string
+          id: string
+          order_id: string
+          product_id: string
+          product_image_url: string | null
+          product_sku: string | null
+          product_title: string
+          quantity: number
+          total_price_sar: number | null
+          unit_price_sar: number
+        }
+        Insert: {
+          commission_rate?: number | null
+          commission_sar?: number | null
+          created_at?: string
+          id?: string
+          order_id: string
+          product_id: string
+          product_image_url?: string | null
+          product_sku?: string | null
+          product_title: string
+          quantity: number
+          total_price_sar?: number | null
+          unit_price_sar: number
+        }
+        Update: {
+          commission_rate?: number | null
+          commission_sar?: number | null
+          created_at?: string
+          id?: string
+          order_id?: string
+          product_id?: string
+          product_image_url?: string | null
+          product_sku?: string | null
+          product_title?: string
+          quantity?: number
+          total_price_sar?: number | null
+          unit_price_sar?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecommerce_order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "ecommerce_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ecommerce_order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ecommerce_orders: {
         Row: {
           cancelled_at: string | null
@@ -867,6 +983,77 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ecommerce_payment_transactions: {
+        Row: {
+          amount_sar: number
+          completed_at: string | null
+          created_at: string
+          currency: string
+          external_transaction_id: string | null
+          failed_at: string | null
+          failure_reason: string | null
+          gateway_fee_sar: number | null
+          gateway_name: string | null
+          gateway_response: Json | null
+          id: string
+          initiated_at: string
+          metadata: Json | null
+          order_id: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          transaction_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount_sar: number
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          external_transaction_id?: string | null
+          failed_at?: string | null
+          failure_reason?: string | null
+          gateway_fee_sar?: number | null
+          gateway_name?: string | null
+          gateway_response?: Json | null
+          id?: string
+          initiated_at?: string
+          metadata?: Json | null
+          order_id: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          transaction_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount_sar?: number
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          external_transaction_id?: string | null
+          failed_at?: string | null
+          failure_reason?: string | null
+          gateway_fee_sar?: number | null
+          gateway_name?: string | null
+          gateway_response?: Json | null
+          id?: string
+          initiated_at?: string
+          metadata?: Json | null
+          order_id?: string
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          transaction_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecommerce_payment_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "ecommerce_orders"
             referencedColumns: ["id"]
           },
         ]
@@ -1897,6 +2084,61 @@ export type Database = {
           },
         ]
       }
+      order_status_history: {
+        Row: {
+          change_reason: string | null
+          changed_by: string | null
+          created_at: string
+          id: string
+          new_status: Database["public"]["Enums"]["order_status"]
+          notes: string | null
+          old_status: Database["public"]["Enums"]["order_status"] | null
+          order_id: string
+        }
+        Insert: {
+          change_reason?: string | null
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_status: Database["public"]["Enums"]["order_status"]
+          notes?: string | null
+          old_status?: Database["public"]["Enums"]["order_status"] | null
+          order_id: string
+        }
+        Update: {
+          change_reason?: string | null
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_status?: Database["public"]["Enums"]["order_status"]
+          notes?: string | null
+          old_status?: Database["public"]["Enums"]["order_status"] | null
+          order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_status_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "ecommerce_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           affiliate_store_id: string | null
@@ -2462,6 +2704,86 @@ export type Database = {
             columns: ["shop_id"]
             isOneToOne: false
             referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          images: Json | null
+          is_approved: boolean | null
+          is_featured: boolean | null
+          order_id: string | null
+          product_id: string
+          rating: number
+          store_response: string | null
+          store_response_at: string | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          images?: Json | null
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          order_id?: string | null
+          product_id: string
+          rating: number
+          store_response?: string | null
+          store_response_at?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          images?: Json | null
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          order_id?: string | null
+          product_id?: string
+          rating?: number
+          store_response?: string | null
+          store_response_at?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "ecommerce_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -4161,6 +4483,49 @@ export type Database = {
           verified?: boolean
         }
         Relationships: []
+      }
+      wishlists: {
+        Row: {
+          added_at: string
+          id: string
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          id?: string
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          id?: string
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlists_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wishlists_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wishlists_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       zoho_integration: {
         Row: {
