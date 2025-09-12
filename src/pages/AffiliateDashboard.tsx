@@ -152,7 +152,7 @@ const AffiliateDashboard = () => {
     return () => {
       isMounted = false;
     };
-  }, [user?.id, optimizedDataFetch]);
+  }, [user?.id, optimizedDataFetch.fetchAffiliateData]);
 
   // مُحسّن: دالة جلب البيانات باستخدام Hook محسّن
   const fetchAffiliateData = useCallback(async () => {
@@ -294,6 +294,7 @@ const AffiliateDashboard = () => {
         total_orders: 0
       });
       setHasExistingStore(true);
+      await fetchAffiliateData();
     } catch (error: any) {
       console.error('Error creating store:', error);
       let errorMessage = "تعذر إنشاء المتجر";
