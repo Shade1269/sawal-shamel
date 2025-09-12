@@ -31,7 +31,7 @@ import StoreCheckout from "./pages/StoreCheckout";
 import StoreOrderConfirmation from "./pages/StoreOrderConfirmation";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AdminOrderManagement = lazy(() => import("./pages/AdminOrderManagement"));
-const FastAuth = lazy(() => import("./pages/FastAuth"));
+import FastAuth from "./pages/FastAuth";
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
 const ProfilePage = lazy(() => import("./pages/Profile"));
 const AboutPage = lazy(() => import("./pages/About"));
