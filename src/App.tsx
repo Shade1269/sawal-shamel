@@ -45,6 +45,11 @@ const SecurityCenter = lazy(() => import("./pages/SecurityCenter"));
 const MarketingDashboard = lazy(() => import("./pages/MarketingDashboard"));
 const AdminSettings = lazy(() => import("./pages/AdminSettings"));
 
+// Product Management Pages
+const ProductManagement = lazy(() => import("./pages/ProductManagement"));
+const CategoryManagement = lazy(() => import("./pages/CategoryManagement"));
+const BrandManagement = lazy(() => import("./pages/BrandManagement"));
+
 const queryClient = new QueryClient();
 
 // Force reload to clear any cached AuthProvider references
@@ -123,6 +128,9 @@ const App = () => {
         <Route path="security" element={<SecurityCenter />} />
         <Route path="marketing" element={<MarketingDashboard />} />
         <Route path="settings" element={<AdminSettings />} />
+        <Route path="products" element={<ProductManagement />} />
+        <Route path="categories" element={<CategoryManagement />} />
+        <Route path="brands" element={<BrandManagement />} />
                       </Route>
                       
                       {/* Payment System Routes */}
