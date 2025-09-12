@@ -54,7 +54,7 @@ import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const AffiliateDashboard = () => {
   const { profile, user } = useFastAuth();
-  const { goToUserHome } = useSmartNavigation();
+  const { goToUserHome, navigate } = useSmartNavigation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
   
@@ -263,11 +263,42 @@ const AffiliateDashboard = () => {
     }
 
     try {
-      // توليد slug تلقائي مع معرف فريد
+      // تحقق من جلسة المستخدم في Supabase
+      const { data: authData } = await supabase.auth.getUser();
+      const authUser = authData?.user;
+      if (!authUser) {
+        toast({
+          title: "يتطلب تسجيل الدخول",
+          description: "يرجى تسجيل الدخول أولاً لإتمام إنشاء المتجر",
+          variant: "destructive",
+        });
+        navigate('/fast-auth');
+        return;
+      }
+
+      // جلب ملف المستخدم من جدول profiles باستخدام معرف Supabase
+      const { data: profileRow, error: profileLookupError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', authUser.id)
+        .maybeSingle();
+
+      if (profileLookupError) throw profileLookupError;
+      if (!profileRow?.id) {
+        toast({
+          title: "الملف الشخصي غير موجود",
+          description: "لم يتم العثور على ملفك الشخصي. يرجى إعادة تسجيل الدخول ثم المحاولة",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // توليد slug تلقائي مع معرف فريد لضمان التفرد
       const baseSlug = newStore.store_name
         .toLowerCase()
-        .replace(/[^\u0600-\u06FF\w\s]/g, '') // إزالة الرموز الخاصة والاحتفاظ بالعربي والانجليزي
+        .replace(/[^\u0600-\u06FF\w\s-]/g, '') // إزالة الرموز الخاصة مع دعم العربية والإنجليزية
         .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
         .trim();
       
       const uniqueId = Math.random().toString(36).substring(2, 8);
@@ -276,7 +307,7 @@ const AffiliateDashboard = () => {
       const { data, error } = await supabase
         .from('affiliate_stores')
         .insert({
-          profile_id: profile.id,
+          profile_id: profileRow.id,
           store_name: newStore.store_name,
           store_slug: finalSlug,
           bio: newStore.bio,
@@ -300,10 +331,13 @@ const AffiliateDashboard = () => {
     } catch (error: any) {
       console.error('Error creating store:', error);
       let errorMessage = "تعذر إنشاء المتجر";
-      
-      if (error.message?.includes('duplicate')) {
+      const msg = String(error?.message || '');
+
+      if (msg.includes('duplicate')) {
         errorMessage = "اسم المتجر موجود مسبقاً";
-      } else if (error.message?.includes('profile_id')) {
+      } else if (msg.toLowerCase().includes('row-level security') || msg.toLowerCase().includes('permission denied') || msg.toLowerCase().includes('auth.uid')) {
+        errorMessage = "صلاحيات غير كافية. يرجى تسجيل الدخول ثم المحاولة مرة أخرى";
+      } else if (msg.includes('profile_id')) {
         errorMessage = "خطأ في بيانات المستخدم";
       }
       
