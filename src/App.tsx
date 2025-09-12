@@ -40,6 +40,11 @@ const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
 const OrderTracking = lazy(() => import("./pages/OrderTracking"));
 const OrderManagement = lazy(() => import("./pages/OrderManagement"));
 
+// Analytics Pages
+const AnalyticsDashboard = lazy(() => import("./components/analytics/AnalyticsDashboard"));
+const SalesReports = lazy(() => import("./components/analytics/SalesReports"));
+const UserBehaviorAnalytics = lazy(() => import("./components/analytics/UserBehaviorAnalytics"));
+
 // Payment System Pages
 const PaymentDashboard = lazy(() => import("./pages/PaymentDashboard"));
 const InvoiceManagement = lazy(() => import("./pages/InvoiceManagement"));
@@ -101,6 +106,23 @@ const App = () => {
                       <Route path="/track-order" element={<OrderTracking />} />
                       <Route path="/track-order/:orderId" element={<OrderTracking />} />
                       
+                      {/* Analytics Routes */}
+                      <Route path="/analytics" element={
+                        <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                          <AnalyticsDashboard />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/sales-reports" element={
+                        <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                          <SalesReports />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/user-behavior" element={
+                        <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                          <UserBehaviorAnalytics />
+                        </ProtectedRoute>
+                      } />
+                      
                       {/* Protected Routes */}
                       <Route path="/profile" element={
                         <ProtectedRoute>
@@ -143,6 +165,9 @@ const App = () => {
         <Route path="products" element={<ProductManagement />} />
         <Route path="categories" element={<CategoryManagement />} />
         <Route path="brands" element={<BrandManagement />} />
+        <Route path="analytics-dashboard" element={<AnalyticsDashboard />} />
+        <Route path="sales-reports" element={<SalesReports />} />
+        <Route path="user-behavior" element={<UserBehaviorAnalytics />} />
                       </Route>
                       
                       {/* Payment System Routes */}
