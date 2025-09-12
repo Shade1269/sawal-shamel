@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { LogOut, Settings, User, Crown, Star, Award, Medal } from 'lucide-react';
+import { LogOut, Settings, User, Crown, Star, Award, Medal, CreditCard, FileText, RotateCcw, DollarSign } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 
@@ -142,6 +142,27 @@ const Header = () => {
                   <Award className="ml-2 h-4 w-4" />
                   لوحة التاجر
                 </DropdownMenuItem>
+              )}
+              
+              {(profile?.role === 'admin' || profile?.role === 'merchant') && (
+                <>
+                  <DropdownMenuItem onClick={() => navigate('/payments')}>
+                    <CreditCard className="ml-2 h-4 w-4" />
+                    لوحة المدفوعات
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/invoices')}>
+                    <FileText className="ml-2 h-4 w-4" />
+                    إدارة الفواتير
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/payment-gateways')}>
+                    <DollarSign className="ml-2 h-4 w-4" />
+                    بوابات الدفع
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/refunds')}>
+                    <RotateCcw className="ml-2 h-4 w-4" />
+                    المرتجعات والاسترداد
+                  </DropdownMenuItem>
+                </>
               )}
               
               {profile?.role === 'affiliate' && (

@@ -32,6 +32,12 @@ const ProfilePage = lazy(() => import("./pages/Profile"));
 const AboutPage = lazy(() => import("./pages/About"));
 const CreateAdminPage = lazy(() => import("./pages/CreateAdmin"));
 
+// Payment System Pages
+const PaymentDashboard = lazy(() => import("./pages/PaymentDashboard"));
+const InvoiceManagement = lazy(() => import("./pages/InvoiceManagement"));
+const PaymentGateways = lazy(() => import("./pages/PaymentGateways"));
+const RefundManagement = lazy(() => import("./pages/RefundManagement"));
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -98,7 +104,45 @@ const App = () => {
                         <Route path="dashboard" element={<AdminDashboard />} />
                         <Route path="users" element={<AdminUsers />} />
                         <Route path="analytics" element={<AdminAnalytics />} />
+                        <Route path="payments" element={<PaymentDashboard />} />
+                        <Route path="invoices" element={<InvoiceManagement />} />
+                        <Route path="payment-gateways" element={<PaymentGateways />} />
+                        <Route path="refunds" element={<RefundManagement />} />
                       </Route>
+                      
+                      {/* Payment System Routes */}
+                      <Route 
+                        path="/payments" 
+                        element={
+                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                            <PaymentDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/invoices" 
+                        element={
+                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                            <InvoiceManagement />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/payment-gateways" 
+                        element={
+                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                            <PaymentGateways />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/refunds" 
+                        element={
+                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                            <RefundManagement />
+                          </ProtectedRoute>
+                        } 
+                      />
                       
                       {/* Merchant Routes */}
                       <Route 
