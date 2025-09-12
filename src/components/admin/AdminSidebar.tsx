@@ -89,6 +89,16 @@ const adminNavItems = [
         icon: Package 
       },
       { 
+        title: "فئات المنتجات", 
+        url: "/admin/categories", 
+        icon: Package 
+      },
+      { 
+        title: "العلامات التجارية", 
+        url: "/admin/brands", 
+        icon: Package 
+      },
+      { 
         title: "الطلبات", 
         url: "/admin/orders", 
         icon: ShoppingCart 
