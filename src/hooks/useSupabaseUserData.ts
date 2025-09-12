@@ -341,6 +341,8 @@ export const useSupabaseUserData = () => {
   };
 
   useEffect(() => {
+    let isMounted = true;
+    
     if (user) {
       setLoading(true);
       Promise.all([
@@ -348,7 +350,9 @@ export const useSupabaseUserData = () => {
         fetchUserActivities(),
         fetchUserStatistics()
       ]).finally(() => {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       });
     } else {
       setUserShop(null);
@@ -356,7 +360,11 @@ export const useSupabaseUserData = () => {
       setUserStatistics(null);
       setLoading(false);
     }
-  }, [user]);
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.id]);
 
   // حفظ المنتج داخل مكتبة المتجر لظهوره في قسم المنتجات
   const addProductToLibrary = async (productId: string): Promise<string | undefined> => {

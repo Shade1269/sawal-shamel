@@ -415,16 +415,22 @@ export const useUnifiedUserData = () => {
   };
 
   useEffect(() => {
+    let isMounted = true;
+    
     if (supabaseUser || firebaseUser) {
       setLoading(true);
       unifyUserData().then(() => {
-        Promise.all([
-          fetchUserShop(),
-          fetchUserActivities(),
-          fetchUserStatistics()
-        ]).finally(() => {
-          setLoading(false);
-        });
+        if (isMounted) {
+          Promise.all([
+            fetchUserShop(),
+            fetchUserActivities(),
+            fetchUserStatistics()
+          ]).finally(() => {
+            if (isMounted) {
+              setLoading(false);
+            }
+          });
+        }
       });
     } else {
       setUserShop(null);
@@ -433,6 +439,10 @@ export const useUnifiedUserData = () => {
       setUnifiedProfile(null);
       setLoading(false);
     }
+    
+    return () => {
+      isMounted = false;
+    };
   }, [supabaseUser?.id, firebaseUser?.uid]);
 
   // حفظ المنتج داخل مكتبة المتجر لظهوره في قسم المنتجات

@@ -302,6 +302,8 @@ export const useFirebaseUserData = () => {
 
   // تحديث البيانات عند تغيير المستخدم
   useEffect(() => {
+    let isMounted = true;
+    
     if (user) {
       setLoading(true);
       Promise.all([
@@ -309,7 +311,9 @@ export const useFirebaseUserData = () => {
         fetchUserActivities(),
         fetchUserStatistics()
       ]).finally(() => {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       });
     } else {
       setUserShop(null);
@@ -317,7 +321,11 @@ export const useFirebaseUserData = () => {
       setUserStatistics(null);
       setLoading(false);
     }
-  }, [user]);
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.id]);
 
   return {
     userShop,
