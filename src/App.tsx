@@ -223,14 +223,30 @@ const App = () => {
                           </ProtectedRoute>
                         } 
                       />
-                      <Route 
-                        path="/order-management" 
-                        element={
-                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
-                            <OrderManagement />
-                          </ProtectedRoute>
-                        } 
-                      />
+                       <Route 
+                         path="/order-management" 
+                         element={
+                           <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                             <OrderManagement />
+                           </ProtectedRoute>
+                         } 
+                       />
+                       <Route 
+                         path="/shipping" 
+                         element={
+                           <ProtectedRoute>
+                             <CheckoutPage />
+                           </ProtectedRoute>
+                         } 
+                       />
+                       <Route 
+                         path="/payment" 
+                         element={
+                           <ProtectedRoute>
+                             <CheckoutPage />
+                           </ProtectedRoute>
+                         } 
+                       />
                       <Route 
                         path="/admin-orders" 
                         element={

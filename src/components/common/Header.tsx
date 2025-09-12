@@ -12,6 +12,8 @@ import { useFastAuth } from '@/hooks/useFastAuth';
 import { LogOut, Settings, User, Crown, Star, Award, Medal, CreditCard, FileText, RotateCcw, DollarSign, Share2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
+import ShoppingCartDrawer from '@/components/ShoppingCartDrawer';
+import GlobalSearch from '@/components/GlobalSearch';
 
 const Header = () => {
   const { profile, user, isAuthenticated } = useFastAuth();
@@ -85,6 +87,12 @@ const Header = () => {
         </div>
 
         <div className="flex items-center gap-4">
+          {/* Global Search */}
+          <GlobalSearch />
+          
+          {/* Shopping Cart */}
+          <ShoppingCartDrawer />
+          
           {/* Points Display for Affiliates */}
           {profile?.role === 'affiliate' && (
             <div className="flex items-center gap-2">
