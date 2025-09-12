@@ -2087,6 +2087,174 @@ export type Database = {
           },
         ]
       }
+      product_attributes: {
+        Row: {
+          attribute_name: string
+          attribute_type: string | null
+          attribute_value: string
+          created_at: string
+          id: string
+          is_variant: boolean | null
+          product_id: string
+        }
+        Insert: {
+          attribute_name: string
+          attribute_type?: string | null
+          attribute_value: string
+          created_at?: string
+          id?: string
+          is_variant?: boolean | null
+          product_id: string
+        }
+        Update: {
+          attribute_name?: string
+          attribute_type?: string | null
+          attribute_value?: string
+          created_at?: string
+          id?: string
+          is_variant?: boolean | null
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_attributes_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_brands: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      product_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          name_ar: string | null
+          name_en: string | null
+          parent_id: string | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          name_ar?: string | null
+          name_en?: string | null
+          parent_id?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          name_ar?: string | null
+          name_en?: string | null
+          parent_id?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_images: {
+        Row: {
+          alt_text: string | null
+          created_at: string
+          id: string
+          image_url: string
+          is_primary: boolean | null
+          product_id: string
+          sort_order: number | null
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          is_primary?: boolean | null
+          product_id: string
+          sort_order?: number | null
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          is_primary?: boolean | null
+          product_id?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_images_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_library: {
         Row: {
           commission_amount: number
@@ -2194,68 +2362,118 @@ export type Database = {
       products: {
         Row: {
           attributes_schema: Json | null
+          brand_id: string | null
           category: string | null
+          category_id: string | null
           commission_rate: number | null
           created_at: string
           description: string | null
+          dimensions_cm: string | null
           external_id: string | null
+          featured: boolean | null
           id: string
           image_urls: string[] | null
           images: Json | null
           is_active: boolean
           last_viewed_at: string | null
+          max_order_quantity: number | null
           merchant_id: string
+          meta_keywords: string[] | null
+          min_order_quantity: number | null
           price_sar: number
           sales_count: number | null
+          seo_description: string | null
+          seo_title: string | null
           shop_id: string | null
+          sku: string | null
           stock: number
+          tags: string[] | null
           title: string
           updated_at: string
           view_count: number | null
+          weight_kg: number | null
         }
         Insert: {
           attributes_schema?: Json | null
+          brand_id?: string | null
           category?: string | null
+          category_id?: string | null
           commission_rate?: number | null
           created_at?: string
           description?: string | null
+          dimensions_cm?: string | null
           external_id?: string | null
+          featured?: boolean | null
           id?: string
           image_urls?: string[] | null
           images?: Json | null
           is_active?: boolean
           last_viewed_at?: string | null
+          max_order_quantity?: number | null
           merchant_id: string
+          meta_keywords?: string[] | null
+          min_order_quantity?: number | null
           price_sar: number
           sales_count?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
           shop_id?: string | null
+          sku?: string | null
           stock?: number
+          tags?: string[] | null
           title: string
           updated_at?: string
           view_count?: number | null
+          weight_kg?: number | null
         }
         Update: {
           attributes_schema?: Json | null
+          brand_id?: string | null
           category?: string | null
+          category_id?: string | null
           commission_rate?: number | null
           created_at?: string
           description?: string | null
+          dimensions_cm?: string | null
           external_id?: string | null
+          featured?: boolean | null
           id?: string
           image_urls?: string[] | null
           images?: Json | null
           is_active?: boolean
           last_viewed_at?: string | null
+          max_order_quantity?: number | null
           merchant_id?: string
+          meta_keywords?: string[] | null
+          min_order_quantity?: number | null
           price_sar?: number
           sales_count?: number | null
+          seo_description?: string | null
+          seo_title?: string | null
           shop_id?: string | null
+          sku?: string | null
           stock?: number
+          tags?: string[] | null
           title?: string
           updated_at?: string
           view_count?: number | null
+          weight_kg?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "products_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "product_brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "products_merchant_id_fkey"
             columns: ["merchant_id"]
