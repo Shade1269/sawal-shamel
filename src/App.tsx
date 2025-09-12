@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { DarkModeProvider } from "@/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
+import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
+import { UserDataProvider } from "@/contexts/UserDataContext";
 import Header from "@/components/common/Header";
 import AuthForm from "@/components/auth/AuthForm";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -36,10 +39,13 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <AuthProvider>
+        <SupabaseAuthProvider>
+          <FirebaseAuthProvider>
+            <AuthProvider>
           <LanguageProvider>
             <DarkModeProvider>
-              <BrowserRouter>
+              <UserDataProvider>
+                <BrowserRouter>
                 <div className="min-h-screen bg-gradient-persian-bg">
                   <Header />
                   <Suspense fallback={
@@ -165,9 +171,12 @@ const App = () => {
                   </Suspense>
                 </div>
               </BrowserRouter>
+              </UserDataProvider>
             </DarkModeProvider>
           </LanguageProvider>
         </AuthProvider>
+      </FirebaseAuthProvider>
+    </SupabaseAuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
