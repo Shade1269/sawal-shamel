@@ -5094,6 +5094,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      create_affiliate_store: {
+        Args: { p_bio?: string; p_store_name: string; p_store_slug?: string }
+        Returns: string
+      }
       create_order_from_cart: {
         Args: {
           p_affiliate_store_id?: string

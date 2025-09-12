@@ -316,21 +316,26 @@ const AffiliateDashboard = () => {
       const uniqueId = Math.random().toString(36).substring(2, 8);
       const finalSlug = `${baseSlug}-${uniqueId}`;
 
-      const { data, error } = await supabase
+      // إنشاء المتجر عبر دالة آمنة في قاعدة البيانات (تتجاوز RLS داخلياً)
+      const { data: newStoreId, error: rpcError } = await supabase
+        .rpc('create_affiliate_store', {
+          p_store_name: newStore.store_name,
+          p_bio: newStore.bio,
+          p_store_slug: null
+        });
+
+      if (rpcError) throw rpcError;
+
+      // جلب السجل لمعرفة الـ slug
+      const { data: createdStore, error: fetchError } = await supabase
         .from('affiliate_stores')
-        .insert({
-          profile_id: profileRow.id,
-          store_name: newStore.store_name,
-          store_slug: finalSlug,
-          bio: newStore.bio,
-          is_active: true
-        })
-        .select()
-        .single();
+        .select('store_slug')
+        .eq('id', newStoreId as unknown as string)
+        .maybeSingle();
 
-      if (error) throw error;
+      if (fetchError) throw fetchError;
 
-      const storeUrl = `${window.location.origin}/store/${finalSlug}`;
+      const storeUrl = `${window.location.origin}/store/${createdStore?.store_slug || ''}`;
 
       toast({
         title: "تم إنشاء المتجر",
