@@ -37,6 +37,7 @@ const PaymentDashboard = lazy(() => import("./pages/PaymentDashboard"));
 const InvoiceManagement = lazy(() => import("./pages/InvoiceManagement"));
 const PaymentGateways = lazy(() => import("./pages/PaymentGateways"));
 const RefundManagement = lazy(() => import("./pages/RefundManagement"));
+const Inventory = lazy(() => import("./pages/Inventory"));
 
 const queryClient = new QueryClient();
 
@@ -108,6 +109,7 @@ const App = () => {
                         <Route path="invoices" element={<InvoiceManagement />} />
                         <Route path="payment-gateways" element={<PaymentGateways />} />
                         <Route path="refunds" element={<RefundManagement />} />
+                        <Route path="inventory" element={<Inventory />} />
                       </Route>
                       
                       {/* Payment System Routes */}
