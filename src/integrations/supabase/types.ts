@@ -3974,6 +3974,129 @@ export type Database = {
           },
         ]
       }
+      simple_order_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          order_id: string | null
+          product_id: string
+          product_image_url: string | null
+          product_title: string
+          quantity: number
+          total_price_sar: number
+          unit_price_sar: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          product_id: string
+          product_image_url?: string | null
+          product_title: string
+          quantity?: number
+          total_price_sar: number
+          unit_price_sar: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          product_id?: string
+          product_image_url?: string | null
+          product_title?: string
+          quantity?: number
+          total_price_sar?: number
+          unit_price_sar?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "simple_order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "simple_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      simple_orders: {
+        Row: {
+          affiliate_commission_sar: number | null
+          affiliate_store_id: string | null
+          created_at: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          id: string
+          order_status: string
+          payment_method: string | null
+          payment_status: string
+          session_id: string | null
+          shipping_address: Json
+          stripe_payment_intent_id: string | null
+          total_amount_sar: number
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          affiliate_commission_sar?: number | null
+          affiliate_store_id?: string | null
+          created_at?: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          id?: string
+          order_status?: string
+          payment_method?: string | null
+          payment_status?: string
+          session_id?: string | null
+          shipping_address: Json
+          stripe_payment_intent_id?: string | null
+          total_amount_sar?: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          affiliate_commission_sar?: number | null
+          affiliate_store_id?: string | null
+          created_at?: string | null
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          order_status?: string
+          payment_method?: string | null
+          payment_status?: string
+          session_id?: string | null
+          shipping_address?: Json
+          stripe_payment_intent_id?: string | null
+          total_amount_sar?: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "simple_orders_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "simple_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "simple_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       social_media_accounts: {
         Row: {
           access_token: string | null
@@ -4801,6 +4924,17 @@ export type Database = {
       cleanup_expired_otp: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      create_order_from_cart: {
+        Args: {
+          p_affiliate_store_id?: string
+          p_cart_id: string
+          p_customer_email: string
+          p_customer_name: string
+          p_customer_phone: string
+          p_shipping_address: Json
+        }
+        Returns: string
       }
       create_user_shop: {
         Args: { p_shop_name: string; p_shop_slug?: string; p_user_id: string }
