@@ -533,6 +533,197 @@ export type Database = {
         }
         Relationships: []
       }
+      inventory_items: {
+        Row: {
+          batch_number: string | null
+          created_at: string | null
+          expiry_date: string | null
+          id: string
+          last_counted_at: string | null
+          location_in_warehouse: string | null
+          max_stock_level: number | null
+          product_id: string | null
+          quantity_available: number | null
+          quantity_on_order: number | null
+          quantity_reserved: number | null
+          reorder_level: number | null
+          sku: string
+          unit_cost: number | null
+          updated_at: string | null
+          warehouse_id: string | null
+        }
+        Insert: {
+          batch_number?: string | null
+          created_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          last_counted_at?: string | null
+          location_in_warehouse?: string | null
+          max_stock_level?: number | null
+          product_id?: string | null
+          quantity_available?: number | null
+          quantity_on_order?: number | null
+          quantity_reserved?: number | null
+          reorder_level?: number | null
+          sku: string
+          unit_cost?: number | null
+          updated_at?: string | null
+          warehouse_id?: string | null
+        }
+        Update: {
+          batch_number?: string | null
+          created_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          last_counted_at?: string | null
+          location_in_warehouse?: string | null
+          max_stock_level?: number | null
+          product_id?: string | null
+          quantity_available?: number | null
+          quantity_on_order?: number | null
+          quantity_reserved?: number | null
+          reorder_level?: number | null
+          sku?: string
+          unit_cost?: number | null
+          updated_at?: string | null
+          warehouse_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_items_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_movements: {
+        Row: {
+          created_at: string | null
+          id: string
+          inventory_item_id: string | null
+          movement_type: string
+          notes: string | null
+          performed_by: string | null
+          quantity: number
+          reason: string | null
+          reference_id: string | null
+          reference_type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          inventory_item_id?: string | null
+          movement_type: string
+          notes?: string | null
+          performed_by?: string | null
+          quantity: number
+          reason?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          inventory_item_id?: string | null
+          movement_type?: string
+          notes?: string | null
+          performed_by?: string | null
+          quantity?: number
+          reason?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_movements_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_reservations: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          inventory_item_id: string | null
+          order_id: string | null
+          reserved_quantity: number
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          inventory_item_id?: string | null
+          order_id?: string | null
+          reserved_quantity: number
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          inventory_item_id?: string | null
+          order_id?: string | null
+          reserved_quantity?: number
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_reservations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_reservations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_reservations_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_items: {
         Row: {
           created_at: string
@@ -2222,6 +2413,64 @@ export type Database = {
           },
         ]
       }
+      stock_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string | null
+          id: string
+          inventory_item_id: string | null
+          is_resolved: boolean | null
+          message: string
+          priority: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string | null
+          id?: string
+          inventory_item_id?: string | null
+          is_resolved?: boolean | null
+          message: string
+          priority?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string | null
+          id?: string
+          inventory_item_id?: string | null
+          is_resolved?: boolean | null
+          message?: string
+          priority?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_alerts_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_alerts_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_alerts_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       store_settings: {
         Row: {
           created_at: string
@@ -2549,6 +2798,73 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      warehouses: {
+        Row: {
+          address: Json | null
+          capacity_limit: number | null
+          code: string
+          created_at: string | null
+          current_utilization: number | null
+          id: string
+          is_active: boolean | null
+          location: string | null
+          manager_id: string | null
+          name: string
+          shop_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: Json | null
+          capacity_limit?: number | null
+          code: string
+          created_at?: string | null
+          current_utilization?: number | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          manager_id?: string | null
+          name: string
+          shop_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: Json | null
+          capacity_limit?: number | null
+          code?: string
+          created_at?: string | null
+          current_utilization?: number | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          manager_id?: string | null
+          name?: string
+          shop_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "warehouses_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "warehouses_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "warehouses_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
             referencedColumns: ["id"]
           },
         ]
