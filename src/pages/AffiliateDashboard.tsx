@@ -53,7 +53,7 @@ import { useFastAuth } from '@/hooks/useFastAuth';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const AffiliateDashboard = () => {
-  const { profile } = useFastAuth();
+  const { profile, user } = useFastAuth();
   const { goToUserHome } = useSmartNavigation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
@@ -89,10 +89,54 @@ const AffiliateDashboard = () => {
   });
 
   useEffect(() => {
-    if (profile) {
-      fetchAffiliateData();
-    }
-  }, [profile]);
+    const initializeProfile = async () => {
+      if (!user) return;
+
+      // التحقق من وجود الملف الشخصي وإنشاءه إذا لم يوجد
+      if (!profile) {
+        try {
+          const { data: existingProfile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('auth_user_id', user.id)
+            .maybeSingle();
+
+          if (!existingProfile) {
+            // إنشاء ملف شخصي جديد
+            const { data: newProfile, error } = await supabase
+              .from('profiles')
+              .insert({
+                auth_user_id: user.id,
+                email: user.email || '',
+                full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || '',
+                role: 'affiliate'
+              })
+              .select()
+              .single();
+
+            if (error) throw error;
+            
+            // تحديث الملف الشخصي في السياق
+            window.location.reload(); // إعادة تحميل لضمان تحديث السياق
+            return;
+          }
+        } catch (error) {
+          console.error('Error creating profile:', error);
+          toast({
+            title: "خطأ في الإعداد",
+            description: "تعذر إنشاء الملف الشخصي",
+            variant: "destructive",
+          });
+        }
+      }
+
+      if (profile) {
+        fetchAffiliateData();
+      }
+    };
+
+    initializeProfile();
+  }, [profile, user]);
 
   const fetchAffiliateData = async () => {
     try {
@@ -209,6 +253,16 @@ const AffiliateDashboard = () => {
   const handleCreateStore = async (e: any) => {
     e.preventDefault();
 
+    // التحقق من وجود المستخدم والملف الشخصي
+    if (!profile?.id) {
+      toast({
+        title: "خطأ في المصادقة",
+        description: "يرجى تسجيل الدخول أولاً",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('affiliate_stores')
@@ -232,11 +286,19 @@ const AffiliateDashboard = () => {
       setIsCreateStoreOpen(false);
       setNewStore({ store_name: '', store_slug: '', bio: '' });
       fetchAffiliateData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating store:', error);
+      let errorMessage = "تعذر إنشاء المتجر";
+      
+      if (error.message?.includes('duplicate')) {
+        errorMessage = "اسم المتجر موجود مسبقاً";
+      } else if (error.message?.includes('profile_id')) {
+        errorMessage = "خطأ في بيانات المستخدم";
+      }
+      
       toast({
         title: "خطأ في إنشاء المتجر",
-        description: "تعذر إنشاء المتجر",
+        description: errorMessage,
         variant: "destructive",
       });
     }
