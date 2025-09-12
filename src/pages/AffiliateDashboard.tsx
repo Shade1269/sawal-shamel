@@ -437,6 +437,18 @@ const AffiliateDashboard = () => {
   if (!affiliateStore) {
     return (
       <div className="container mx-auto p-6 space-y-8">
+        {/* زر العودة إلى الداشبورد */}
+        <div className="flex justify-start">
+          <Button 
+            variant="outline" 
+            onClick={() => goToUserHome()}
+            className="flex items-center gap-2"
+          >
+            <Home className="h-4 w-4" />
+            العودة إلى الداشبورد
+          </Button>
+        </div>
+
         <div className="text-center space-y-6">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
