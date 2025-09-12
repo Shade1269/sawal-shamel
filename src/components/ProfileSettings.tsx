@@ -62,7 +62,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
         })
         .eq('auth_user_id', profile.auth_user_id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Profile update error:', error);

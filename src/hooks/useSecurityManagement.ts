@@ -194,7 +194,7 @@ export const useSecurityManagement = () => {
           is_active: true
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -227,7 +227,7 @@ export const useSecurityManagement = () => {
         })
         .eq('id', alertId)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

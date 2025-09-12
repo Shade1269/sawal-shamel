@@ -150,7 +150,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
           attributes:product_attributes(*)
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -200,7 +200,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
         .from('merchants')
         .select('id')
         .eq('profile_id', profile?.id)
-        .single();
+        .maybeSingle();
 
       if (!merchantData) {
         throw new Error('لم يتم العثور على بيانات التاجر');
@@ -224,7 +224,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
           .from('products')
           .insert([productData])
           .select()
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
         productId = newProduct.id;

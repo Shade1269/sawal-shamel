@@ -157,7 +157,7 @@ const InvoiceManagement = () => {
           payment_status: 'PENDING'
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (invoiceError) throw invoiceError;
 

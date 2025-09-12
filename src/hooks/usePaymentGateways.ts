@@ -69,7 +69,7 @@ export const usePaymentGateways = (shopId?: string) => {
         .from('payment_gateways')
         .insert(gatewayData)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -98,7 +98,7 @@ export const usePaymentGateways = (shopId?: string) => {
         .update(updates)
         .eq('id', id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

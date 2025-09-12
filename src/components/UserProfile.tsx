@@ -42,7 +42,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ profile, onProfileUpdate }) =
         })
         .eq('id', profile.id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         throw error;

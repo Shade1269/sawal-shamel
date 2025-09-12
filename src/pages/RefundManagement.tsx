@@ -171,7 +171,7 @@ const RefundManagement = () => {
           status: 'REQUESTED'
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (refundError) throw refundError;
 

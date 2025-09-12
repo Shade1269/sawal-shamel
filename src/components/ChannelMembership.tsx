@@ -122,7 +122,7 @@ const ChannelMembership: React.FC<ChannelMembershipProps> = ({
         .select('id')
         .eq('channel_id', channelId)
         .eq('user_id', currentProfile.id)
-        .single();
+        .maybeSingle();
 
       setIsJoined(!!data && !error);
     } catch (error) {

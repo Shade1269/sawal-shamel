@@ -88,7 +88,7 @@ export const useInvoiceManagement = (shopId?: string) => {
         .from('invoices')
         .insert(invoiceData)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -117,7 +117,7 @@ export const useInvoiceManagement = (shopId?: string) => {
         .update(updates)
         .eq('id', id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

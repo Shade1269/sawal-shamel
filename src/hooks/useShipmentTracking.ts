@@ -81,7 +81,7 @@ export const useShipmentTracking = () => {
         .from('shipments_tracking')
         .select('*')
         .eq('shipment_number', trackingNumber)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return { success: true, data };
@@ -120,7 +120,7 @@ export const useShipmentTracking = () => {
         .from('shipments_tracking')
         .insert([shipmentData])
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -153,7 +153,7 @@ export const useShipmentTracking = () => {
         .update(updates)
         .eq('id', id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -186,7 +186,7 @@ export const useShipmentTracking = () => {
           ...eventData
         }])
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

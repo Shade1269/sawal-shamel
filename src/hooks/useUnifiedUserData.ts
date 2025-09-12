@@ -85,7 +85,7 @@ export const useUnifiedUserData = () => {
               role: 'affiliate'
             })
             .select()
-            .single();
+            .maybeSingle();
             
           if (error) {
             console.error('Error creating Supabase profile:', error);
@@ -116,7 +116,7 @@ export const useUnifiedUserData = () => {
               role: 'affiliate'
             })
             .select()
-            .single();
+            .maybeSingle();
             
           if (insertError) {
             // إذا فشل الإدراج، ربما الملف موجود، نحاول البحث
@@ -220,7 +220,7 @@ export const useUnifiedUserData = () => {
         .from('shops')
         .select('*')
         .eq('owner_id', profile.id)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
         console.error('Error fetching user shop:', error);
@@ -280,7 +280,7 @@ export const useUnifiedUserData = () => {
         .from('shops')
         .select('total_products, total_orders')
         .eq('owner_id', profile.id)
-        .single();
+        .maybeSingle();
 
       setUserStatistics({
         totalProducts: shopData?.total_products || 0,
@@ -303,7 +303,7 @@ export const useUnifiedUserData = () => {
         .from('merchants')
         .select('id')
         .eq('profile_id', profile.id)
-        .single();
+        .maybeSingle();
 
       if (!merchant) {
         const { data: newMerchant, error: merchantError } = await supabase
@@ -313,7 +313,7 @@ export const useUnifiedUserData = () => {
             business_name: userShop.display_name
           })
           .select('id')
-          .single();
+          .maybeSingle();
 
         if (merchantError) throw merchantError;
         merchant = newMerchant;
@@ -327,7 +327,7 @@ export const useUnifiedUserData = () => {
           shop_id: userShop.id
         })
         .select('id')
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -463,7 +463,7 @@ export const useUnifiedUserData = () => {
           commission_amount: 0
         })
         .select('id')
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

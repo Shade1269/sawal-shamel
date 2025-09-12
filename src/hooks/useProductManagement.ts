@@ -121,7 +121,7 @@ export function useProduct(id: string) {
           product_attributes(attribute_name, attribute_value)
         `)
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data as any;

@@ -35,7 +35,7 @@ export const useAutoMigration = () => {
         .from('profiles')
         .select('*')
         .or(`auth_user_id.eq.${user.id},phone.eq.${user.phone || 'null'}`)
-        .single();
+        .maybeSingle();
 
       if (error || !profile) {
         setMigrationStatus('completed');

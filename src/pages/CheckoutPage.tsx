@@ -161,7 +161,7 @@ const CheckoutPage = () => {
         .from('simple_orders')
         .insert(orderData)
         .select()
-        .single();
+        .maybeSingle();
 
       if (orderError) throw orderError;
 

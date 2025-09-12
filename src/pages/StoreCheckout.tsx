@@ -92,7 +92,7 @@ const StoreCheckout = () => {
           session_id: storeSlug // استخدام storeSlug كجلسة مؤقتة
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (orderError) throw orderError;
 

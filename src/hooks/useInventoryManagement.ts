@@ -239,7 +239,7 @@ export const useInventoryManagement = () => {
       .from('warehouses')
       .insert([warehouseData])
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({
@@ -265,7 +265,7 @@ export const useInventoryManagement = () => {
       .update(updates)
       .eq('id', id)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({
@@ -290,7 +290,7 @@ export const useInventoryManagement = () => {
       .from('inventory_items')
       .insert([itemData])
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({
@@ -315,7 +315,7 @@ export const useInventoryManagement = () => {
       .update(updates)
       .eq('id', id)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({
@@ -340,7 +340,7 @@ export const useInventoryManagement = () => {
       .from('inventory_movements')
       .insert([movementData])
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({
@@ -383,7 +383,7 @@ export const useInventoryManagement = () => {
       })
       .eq('id', alertId)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({
@@ -408,7 +408,7 @@ export const useInventoryManagement = () => {
       .from('inventory_reservations')
       .insert([reservationData])
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({
@@ -433,7 +433,7 @@ export const useInventoryManagement = () => {
       .update({ status: 'CANCELLED' })
       .eq('id', reservationId)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({

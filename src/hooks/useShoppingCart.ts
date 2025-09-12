@@ -66,7 +66,7 @@ export const useShoppingCart = () => {
           .from('shopping_carts')
           .insert(cartData)
           .select()
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
 
@@ -143,7 +143,7 @@ export const useShoppingCart = () => {
           .from('cart_items')
           .insert(newItem)
           .select()
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
 

@@ -66,7 +66,7 @@ export const useRealTimeChat = (channelId: string) => {
         .from('profiles')
         .select('*')
         .eq('auth_user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (error && error.code === 'PGRST116') {
         // Profile doesn't exist, create one
@@ -78,7 +78,7 @@ export const useRealTimeChat = (channelId: string) => {
             full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'مستخدم جديد'
           })
           .select()
-          .single();
+          .maybeSingle();
 
         if (createError) {
           console.error('Error creating profile:', createError);
@@ -197,7 +197,7 @@ export const useRealTimeChat = (channelId: string) => {
               .from('profiles')
               .select('id, full_name, email, avatar_url')
               .eq('id', newMessage.sender_id)
-              .single();
+              .maybeSingle();
             senderData = data;
           }
           
@@ -320,7 +320,7 @@ export const useRealTimeChat = (channelId: string) => {
         .select('id')
         .eq('channel_id', channelId)
         .eq('user_id', currentProfile.id)
-        .single();
+        .maybeSingle();
 
       if (!existingMember) {
         const { error } = await supabase

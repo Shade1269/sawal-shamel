@@ -49,7 +49,7 @@ const OrderConfirmation = () => {
         .from("orders")
         .select("*")
         .eq("id", orderId)
-        .single();
+        .maybeSingle();
 
       if (orderError) throw orderError;
       setOrder(orderData);

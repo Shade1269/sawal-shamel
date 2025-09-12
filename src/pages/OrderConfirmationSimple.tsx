@@ -61,7 +61,7 @@ const OrderConfirmationSimple = () => {
         .from('simple_orders')
         .select('*')
         .eq('id', orderId)
-        .single();
+        .maybeSingle();
 
       if (orderError) throw orderError;
 

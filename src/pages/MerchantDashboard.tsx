@@ -77,7 +77,7 @@ const MerchantDashboard = () => {
             business_name: profile.full_name + ' Store'
           })
           .select()
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
         merchantData = newMerchant;
@@ -175,7 +175,7 @@ const MerchantDashboard = () => {
           is_active: true
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

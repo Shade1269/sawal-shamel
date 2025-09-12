@@ -192,7 +192,7 @@ export const SupabaseAuthProvider = ({ children }: { children: React.ReactNode }
               role: 'affiliate'
             })
             .select('*')
-            .single();
+            .maybeSingle();
 
           if (insertError) {
             console.error('Error creating profile:', insertError);

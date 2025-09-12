@@ -186,7 +186,7 @@ export const useShippingManagement = () => {
       .from('shipping_providers')
       .insert([providerData])
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({
@@ -212,7 +212,7 @@ export const useShippingManagement = () => {
       .update(updates)
       .eq('id', id)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({
@@ -236,7 +236,7 @@ export const useShippingManagement = () => {
       .from('shipping_rates')
       .insert([rateData])
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({
@@ -261,7 +261,7 @@ export const useShippingManagement = () => {
       .update(updates)
       .eq('id', id)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({

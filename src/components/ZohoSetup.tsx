@@ -55,7 +55,7 @@ export const ZohoSetup: React.FC = () => {
         .from('profiles')
         .select('id')
         .eq('auth_user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (!profile) return;
 
@@ -78,7 +78,7 @@ export const ZohoSetup: React.FC = () => {
           .from('shops')
           .select('id')
           .eq('id', newShopId)
-          .single();
+          .maybeSingle();
         shop = createdShop;
       }
 
@@ -124,7 +124,7 @@ export const ZohoSetup: React.FC = () => {
         .from('profiles')
         .select('id')
         .eq('auth_user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (!profile) throw new Error('Profile not found');
 
@@ -145,7 +145,7 @@ export const ZohoSetup: React.FC = () => {
           .from('shops')
           .select('id')
           .eq('id', newShopId)
-          .single();
+          .maybeSingle();
         shop = createdShop;
       }
 
@@ -206,14 +206,14 @@ export const ZohoSetup: React.FC = () => {
           .from('profiles')
           .select('id')
           .eq('auth_user_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (profile) {
           const { data: shop } = await supabase
             .from('shops')
             .select('id')
             .eq('owner_id', profile.id)
-            .single();
+            .maybeSingle();
 
           if (shop) {
             await supabase

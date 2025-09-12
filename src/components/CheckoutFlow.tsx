@@ -86,7 +86,7 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
         .from('orders')
         .insert(orderDbData)
         .select()
-        .single();
+        .maybeSingle();
 
       if (orderError) {
         console.error('Error creating order:', orderError);

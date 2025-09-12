@@ -306,7 +306,7 @@ export const useFastAuth = () => {
         .update(updates)
         .eq('auth_user_id', user.id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         return { error };

@@ -52,7 +52,7 @@ const OrderTracking = () => {
         .from('ecommerce_orders')
         .select('*')
         .eq('order_number', orderNumber.trim())
-        .single();
+        .maybeSingle();
 
       if (error) {
         throw error;

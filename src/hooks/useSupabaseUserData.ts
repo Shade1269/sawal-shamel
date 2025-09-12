@@ -223,7 +223,7 @@ export const useSupabaseUserData = () => {
         .from('shops')
         .select('total_products, total_orders')
         .eq('owner_id', profile.id)
-        .single();
+        .maybeSingle();
 
       setUserStatistics({
         totalProducts: shopData?.total_products || 0,
@@ -250,7 +250,7 @@ export const useSupabaseUserData = () => {
         .from('merchants')
         .select('id')
         .eq('profile_id', profile.id)
-        .single();
+        .maybeSingle();
 
       if (!merchant) {
         const { data: newMerchant, error: merchantError } = await supabase
@@ -260,7 +260,7 @@ export const useSupabaseUserData = () => {
             business_name: userShop.display_name
           })
           .select('id')
-          .single();
+        .maybeSingle();
 
         if (merchantError) throw merchantError;
         merchant = newMerchant;
@@ -274,7 +274,7 @@ export const useSupabaseUserData = () => {
           shop_id: userShop.id
         })
         .select('id')
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -384,7 +384,7 @@ export const useSupabaseUserData = () => {
           commission_amount: 0
         })
         .select('id')
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

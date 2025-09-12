@@ -139,7 +139,7 @@ const ProductsPage = () => {
             is_active: true
           })
           .select('id')
-          .single();
+          .maybeSingle();
 
         if (storeError) throw storeError;
         store = newStore;

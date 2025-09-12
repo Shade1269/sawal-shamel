@@ -68,7 +68,7 @@ const RoomsList = () => {
         .from('profiles')
         .select('id')
         .eq('auth_user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (!profile) {
         toast.error('الرجاء تسجيل الدخول أولاً');
@@ -81,7 +81,7 @@ const RoomsList = () => {
         .select('id')
         .eq('channel_id', channelId)
         .eq('user_id', profile.id)
-        .single();
+        .maybeSingle();
 
       if (!existingMember) {
         // Join channel
