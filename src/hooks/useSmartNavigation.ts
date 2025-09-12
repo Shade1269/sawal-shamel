@@ -6,8 +6,9 @@ export const useSmartNavigation = () => {
   const { profile } = useFastAuth();
 
   const goToUserHome = () => {
+    // Default to unified dashboard if profile isn't loaded yet
     if (!profile) {
-      navigate('/auth');
+      navigate('/dashboard');
       return;
     }
 
