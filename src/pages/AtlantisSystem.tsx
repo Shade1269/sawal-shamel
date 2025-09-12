@@ -16,10 +16,13 @@ import {
   Star, 
   Target,
   Gamepad2,
-  Sparkles
+  Sparkles,
+  MessageCircle
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const AtlantisSystem = () => {
+  const navigate = useNavigate();
   const { 
     loading, 
     userLevel, 
@@ -55,8 +58,15 @@ export const AtlantisSystem = () => {
               </div>
             </div>
             
-            {/* Notifications */}
+            {/* Notifications & Chat */}
             <div className="flex items-center gap-2">
+              <button 
+                onClick={() => navigate('/atlantis/chat')}
+                className="flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
+              >
+                <MessageCircle className="h-4 w-4" />
+                دردشة أتلانتس
+              </button>
               <AtlantisNotifications />
             </div>
           </div>

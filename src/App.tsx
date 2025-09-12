@@ -64,6 +64,8 @@ const MarketingDashboard = lazy(() => import("./pages/MarketingDashboard"));
 const AdminSettings = lazy(() => import("./pages/AdminSettings"));
 const AtlantisSystem = lazy(() => import("./pages/AtlantisSystem"));
 const AtlantisGuide = lazy(() => import("./pages/AtlantisGuide"));
+const AtlantisChat = lazy(() => import("./components/AtlantisChat"));
+const AtlantisChatRooms = lazy(() => import("./components/AtlantisChatRooms"));
 
 // Product Management Pages
 const ProductManagement = lazy(() => import("./pages/ProductManagement"));
@@ -242,7 +244,7 @@ const App = () => {
                          } 
                        />
                        
-                       {/* Atlantis System */}
+                        {/* Atlantis System */}
                        <Route 
                          path="/atlantis" 
                          element={
@@ -256,6 +258,24 @@ const App = () => {
                          element={
                            <ProtectedRoute requiredRole={["affiliate", "admin"]}>
                              <AtlantisGuide />
+                           </ProtectedRoute>
+                         } 
+                       />
+                       
+                       {/* Atlantis Chat */}
+                       <Route 
+                         path="/atlantis/chat" 
+                         element={
+                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                             <AtlantisChatRooms />
+                           </ProtectedRoute>
+                         } 
+                       />
+                       <Route 
+                         path="/atlantis/chat/:roomId" 
+                         element={
+                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                             <AtlantisChat />
                            </ProtectedRoute>
                          } 
                        />

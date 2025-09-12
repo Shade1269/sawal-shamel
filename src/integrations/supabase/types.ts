@@ -464,6 +464,58 @@ export type Database = {
           },
         ]
       }
+      atlantis_chat_points: {
+        Row: {
+          action_type: string
+          created_at: string
+          description: string | null
+          id: string
+          points_earned: number
+          room_id: string
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          points_earned?: number
+          room_id: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          points_earned?: number
+          room_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atlantis_chat_points_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "chat_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atlantis_chat_points_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atlantis_chat_points_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       backup_logs: {
         Row: {
           backup_scope: string
@@ -803,6 +855,157 @@ export type Database = {
           },
           {
             foreignKeyName: "channels_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          edited_at: string | null
+          id: string
+          is_deleted: boolean
+          is_edited: boolean
+          is_pinned: boolean
+          mentions: string[] | null
+          message_type: string
+          pinned_at: string | null
+          pinned_by: string | null
+          reactions: Json | null
+          reply_to_id: string | null
+          room_id: string
+          sender_id: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          edited_at?: string | null
+          id?: string
+          is_deleted?: boolean
+          is_edited?: boolean
+          is_pinned?: boolean
+          mentions?: string[] | null
+          message_type?: string
+          pinned_at?: string | null
+          pinned_by?: string | null
+          reactions?: Json | null
+          reply_to_id?: string | null
+          room_id: string
+          sender_id: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          edited_at?: string | null
+          id?: string
+          is_deleted?: boolean
+          is_edited?: boolean
+          is_pinned?: boolean
+          mentions?: string[] | null
+          message_type?: string
+          pinned_at?: string | null
+          pinned_by?: string | null
+          reactions?: Json | null
+          reply_to_id?: string | null
+          room_id?: string
+          sender_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_pinned_by_fkey"
+            columns: ["pinned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_messages_pinned_by_fkey"
+            columns: ["pinned_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_messages_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_messages_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "chat_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_rooms: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          max_members: number | null
+          name: string
+          owner_id: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_members?: number | null
+          name: string
+          owner_id?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_members?: number | null
+          name?: string
+          owner_id?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_rooms_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_rooms_owner_id_fkey"
             columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "safe_profiles"
@@ -2457,6 +2660,52 @@ export type Database = {
           },
         ]
       }
+      message_reactions: {
+        Row: {
+          created_at: string
+          emoji: string
+          id: string
+          message_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          emoji: string
+          id?: string
+          message_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          emoji?: string
+          id?: string
+          message_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_reactions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           channel_id: string | null
@@ -3948,6 +4197,61 @@ export type Database = {
             columns: ["payment_id"]
             isOneToOne: false
             referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      room_members: {
+        Row: {
+          id: string
+          is_banned: boolean
+          is_muted: boolean
+          joined_at: string
+          muted_until: string | null
+          role: string
+          room_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          is_banned?: boolean
+          is_muted?: boolean
+          joined_at?: string
+          muted_until?: string | null
+          role?: string
+          room_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          is_banned?: boolean
+          is_muted?: boolean
+          joined_at?: string
+          muted_until?: string | null
+          role?: string
+          room_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_members_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "chat_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
             referencedColumns: ["id"]
           },
         ]
