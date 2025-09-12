@@ -63,6 +63,7 @@ const SecurityCenter = lazy(() => import("./pages/SecurityCenter"));
 const MarketingDashboard = lazy(() => import("./pages/MarketingDashboard"));
 const AdminSettings = lazy(() => import("./pages/AdminSettings"));
 const AtlantisSystem = lazy(() => import("./pages/AtlantisSystem"));
+const AtlantisGuide = lazy(() => import("./pages/AtlantisGuide"));
 
 // Product Management Pages
 const ProductManagement = lazy(() => import("./pages/ProductManagement"));
@@ -310,6 +311,14 @@ const App = () => {
                          element={
                            <ProtectedRoute requiredRole={["affiliate", "admin"]}>
                              <AtlantisSystem />
+                           </ProtectedRoute>
+                         } 
+                       />
+                       <Route 
+                         path="/atlantis-guide" 
+                         element={
+                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                             <AtlantisGuide />
                            </ProtectedRoute>
                          } 
                        />

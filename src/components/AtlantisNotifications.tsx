@@ -110,11 +110,14 @@ export const AtlantisNotifications = () => {
               duration: 5000
             });
 
-            // Play sound effect (if available)
+            // Play sound effect using TTS
             try {
-              const audio = new Audio('/level-up-sound.mp3');
-              audio.play().catch(() => {});
-            } catch (e) {}
+              import('@/lib/atlantisServices').then(({ AtlantisTTSService }) => {
+                AtlantisTTSService.playLevelUpSound(newLevel as any);
+              });
+            } catch (e) {
+              console.warn('Could not play level up sound:', e);
+            }
           }
         }
       )
@@ -149,6 +152,15 @@ export const AtlantisNotifications = () => {
             description: notification.message,
             duration: 5000
           });
+
+          // Play challenge sound
+          try {
+            import('@/lib/atlantisServices').then(({ AtlantisTTSService }) => {
+              AtlantisTTSService.playNewChallengeSound(challenge.name);
+            });
+          } catch (e) {
+            console.warn('Could not play challenge sound:', e);
+          }
         }
       )
       .subscribe();

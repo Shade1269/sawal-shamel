@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { AtlantisPointsService, AtlantisTTSService } from '@/lib/atlantisServices';
 
 // Types
 export interface UserLevel {
@@ -478,31 +479,40 @@ export const useAtlantisSystem = () => {
     if (!profileId || !userLevel) return false;
 
     try {
-      const newTotalPoints = userLevel.total_points + pointsToAdd;
+      // Use the new points service
+      const result = await AtlantisPointsService.addManualPoints(pointsToAdd, reason || 'تحديث يدوي');
       
-      const { error } = await supabase
-        .from('user_levels')
-        .update({
-          total_points: newTotalPoints,
-          level_points: userLevel.level_points + pointsToAdd
-        })
-        .eq('id', userLevel.id);
-
-      if (error) throw error;
-
-      // Refresh user level
-      await initializeUserLevel();
-      
-      if (reason) {
-        toast({
-          title: "تم إضافة النقاط",
-          description: `تم إضافة ${pointsToAdd} نقطة - ${reason}`,
-        });
+      if (result.success) {
+        // Refresh user level
+        await initializeUserLevel();
+        
+        // Play sound if level changed
+        if (result.level_changed) {
+          try {
+            await AtlantisTTSService.playLevelUpSound(result.new_level);
+          } catch (error) {
+            console.warn('Could not play level up sound:', error);
+          }
+        }
+        
+        if (reason) {
+          toast({
+            title: "تم إضافة النقاط",
+            description: `تم إضافة ${pointsToAdd} نقطة - ${reason}`,
+          });
+        }
+        
+        return true;
       }
       
-      return true;
+      return false;
     } catch (error: any) {
       console.error('Error updating user points:', error);
+      toast({
+        title: "خطأ في تحديث النقاط",
+        description: error.message,
+        variant: "destructive"
+      });
       return false;
     }
   };

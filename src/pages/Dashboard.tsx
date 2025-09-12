@@ -144,31 +144,31 @@ const Dashboard = () => {
   // Affiliate sections
   const affiliateSections = [
     {
-      title: 'متجري',
-      description: 'إنشاء وإدارة متجر الأفيليت الخاص بك',
-      icon: <Store className="h-8 w-8" />,
-      route: '/affiliate',
+      title: 'دليل أتلانتس',
+      description: 'تعلم كيفية استخدام نظام التحفيز والمنافسة',
+      icon: <Crown className="h-8 w-8" />,
+      route: '/atlantis-guide',
       color: 'bg-gradient-primary'
     },
     {
       title: 'نظام أتلانتس',
       description: 'التحديات والمنافسات والتحالفات',
-      icon: <Crown className="h-8 w-8" />,
+      icon: <Star className="h-8 w-8" />,
       route: '/atlantis',
       color: 'bg-gradient-luxury'
+    },
+    {
+      title: 'متجري',
+      description: 'إنشاء وإدارة متجر الأفيليت الخاص بك',
+      icon: <Store className="h-8 w-8" />,
+      route: '/affiliate',
+      color: 'bg-gradient-premium'
     },
     {
       title: 'تصفح المنتجات',
       description: 'اختر منتجات لإضافتها إلى متجرك',
       icon: <Package className="h-8 w-8" />,
       route: '/products-browser',
-      color: 'bg-gradient-premium'
-    },
-    {
-      title: 'العمولات',
-      description: 'تتبع أرباحك والعمولات المستحقة',
-      icon: <DollarSign className="h-8 w-8" />,
-      route: '/affiliate',
       color: 'bg-gradient-heritage'
     },
     {
