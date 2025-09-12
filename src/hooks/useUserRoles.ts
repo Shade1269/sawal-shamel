@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from './useAuth';
+import { useFastAuth } from './useFastAuth';
 
 export type UserRole = 'admin' | 'merchant' | 'affiliate' | 'customer' | 'moderator';
 
@@ -8,7 +8,7 @@ export const useUserRoles = () => {
   const [roles, setRoles] = useState<UserRole[]>([]);
   const [primaryRole, setPrimaryRole] = useState<UserRole>('customer');
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const { user } = useFastAuth();
 
   const fetchUserRoles = async () => {
     if (!user?.id) {

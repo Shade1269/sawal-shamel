@@ -20,13 +20,13 @@ import {
   Home,
   ArrowRight
 } from 'lucide-react';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useFastAuth } from '@/hooks/useFastAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const MerchantDashboard = () => {
-  const { profile } = useAuthContext();
+  const { profile } = useFastAuth();
   const { goToUserHome } = useSmartNavigation();
   const { toast } = useToast();
   

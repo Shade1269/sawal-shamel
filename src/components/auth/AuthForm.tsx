@@ -5,11 +5,11 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useFastAuth } from '@/hooks/useFastAuth';
 import { Loader2, User, Store, Users, ShoppingCart } from 'lucide-react';
 
 const AuthForm = () => {
-  const { signIn, signUp, loading } = useAuthContext();
+  const { signIn, signUp, loading } = useFastAuth();
   const [isLoading, setIsLoading] = useState(false);
   
   // Sign in form state

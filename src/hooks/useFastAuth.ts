@@ -206,6 +206,97 @@ export const useFastAuth = () => {
     localStorage.removeItem(STORAGE_KEYS.LAST_UPDATE);
   }, []);
 
+  // Auth functions
+  const signUp = async (email: string, password: string, fullName: string, role: 'merchant' | 'affiliate' | 'customer' = 'customer') => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: fullName,
+            role: role
+          }
+        }
+      });
+
+      if (error) {
+        return { error };
+      }
+
+      return { data, error: null };
+    } catch (error) {
+      console.error('Signup error:', error);
+      return { error };
+    }
+  };
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        return { error };
+      }
+
+      // التوجيه للداشبورد الموحد بعد تسجيل الدخول
+      window.location.href = '/dashboard';
+
+      return { data, error: null };
+    } catch (error) {
+      console.error('Signin error:', error);
+      return { error };
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        return { error };
+      }
+
+      // Clear local state and cache
+      clearCache();
+      
+      return { error: null };
+    } catch (error) {
+      console.error('Signout error:', error);
+      return { error };
+    }
+  };
+
+  const updateProfile = async (updates: any) => {
+    if (!user) return { error: 'No user found' };
+
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .update(updates)
+        .eq('auth_user_id', user.id)
+        .select()
+        .single();
+
+      if (error) {
+        return { error };
+      }
+
+      // Update cached profile
+      cacheProfile(data);
+      setProfile(data);
+
+      return { data, error: null };
+    } catch (error) {
+      console.error('Profile update error:', error);
+      return { error };
+    }
+  };
+
   return {
     // Auth state
     user,
@@ -223,6 +314,12 @@ export const useFastAuth = () => {
     isAffiliate: hasRole('affiliate'),
     isCustomer: hasRole('customer'),
     isModerator: hasRole('moderator'),
+    
+    // Auth functions
+    signUp,
+    signIn,
+    signOut,
+    updateProfile,
     
     // Helper functions
     hasRole,

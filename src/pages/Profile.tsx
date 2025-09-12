@@ -6,12 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useFastAuth } from '@/hooks/useFastAuth';
 import { User, Mail, Phone, Camera, Save, Crown, Award, Star, Medal, Home, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
-  const { profile, updateProfile } = useAuthContext();
+  const { profile, updateProfile } = useFastAuth();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
