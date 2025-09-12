@@ -53,10 +53,10 @@ export const SupabaseAuthProvider = ({ children }: { children: React.ReactNode }
     try {
       // أولاً، تحقق من وجود المستخدم
       const { data: existingUser } = await supabase
-        .from('profiles')
+        .from('user_profiles')
         .select('email')
         .eq('email', email)
-        .single();
+        .maybeSingle();
 
       if (existingUser) {
         toast({
@@ -172,7 +172,7 @@ export const SupabaseAuthProvider = ({ children }: { children: React.ReactNode }
       // التحقق من وجود البروفايل
       if (data?.user) {
         const { data: profile, error: profileError } = await supabase
-          .from('profiles')
+          .from('user_profiles')
           .select('*')
           .eq('auth_user_id', data.user.id)
           .maybeSingle();
@@ -184,7 +184,7 @@ export const SupabaseAuthProvider = ({ children }: { children: React.ReactNode }
         if (!profile) {
           // إنشاء البروفايل إذا لم يكن موجوداً
           const { data: insertData, error: insertError } = await supabase
-            .from('profiles')
+            .from('user_profiles')
             .insert({
               auth_user_id: data.user.id,
               email: data.user.email,

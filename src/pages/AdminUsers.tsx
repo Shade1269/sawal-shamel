@@ -194,7 +194,7 @@ const AdminUsers = () => {
   const handleUpdateUser = async (userId: string, updates: any) => {
     try {
       const { error } = await supabase
-        .from('profiles')
+        .from('user_profiles')
         .update({ ...updates, updated_at: new Date().toISOString() })
         .eq('id', userId);
 
@@ -253,7 +253,7 @@ const AdminUsers = () => {
 
     try {
       const { error } = await supabase
-        .from('profiles')
+        .from('user_profiles')
         .delete()
         .eq('id', userId);
 
@@ -339,7 +339,7 @@ const AdminUsers = () => {
   const toggleUserStatus = async (userId: string, currentStatus: boolean) => {
     try {
       const { error } = await supabase
-        .from('profiles')
+        .from('user_profiles')
         .update({ is_active: !currentStatus, updated_at: new Date().toISOString() })
         .eq('id', userId);
 
