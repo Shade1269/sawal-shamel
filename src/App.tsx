@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { DarkModeProvider } from "@/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
@@ -103,7 +103,7 @@ const App = () => {
                       <Route path="/home" element={<FastIndex />} />
                       <Route path="/index" element={<Index />} />
                       <Route path="/auth" element={<AuthForm />} />
-                      {/* FastAuth removed */}
+                      <Route path="/fast-auth" element={<Navigate to="/auth" replace />} />
                       <Route path="/login" element={<AuthForm />} />
                       <Route path="/signup" element={<AuthForm />} />
                       <Route path="/products" element={<ProductsPage />} />

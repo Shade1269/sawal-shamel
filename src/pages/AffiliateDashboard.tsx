@@ -263,13 +263,14 @@ const AffiliateDashboard = () => {
   const handleCreateStore = async (e: any) => {
     e.preventDefault();
 
-    // التحقق من وجود المستخدم والملف الشخصي
-    if (!profile?.id) {
+    // التحقق من وجود جلسة
+    if (!hasSession) {
       toast({
-        title: "خطأ في المصادقة",
+        title: "يتطلب تسجيل الدخول",
         description: "يرجى تسجيل الدخول أولاً",
         variant: "destructive",
       });
+      navigate('/auth');
       return;
     }
 
