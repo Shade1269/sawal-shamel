@@ -105,7 +105,7 @@ const AffiliateDashboard = () => {
     let isMounted = true;
     
     const initializeData = async () => {
-      if (!user?.id || !profile?.id) {
+      if (!user?.id) {
         setLoading(false);
         return;
       }
@@ -117,8 +117,18 @@ const AffiliateDashboard = () => {
         
         setHasSession(!!sessionData.session);
         
-        // استخدام الhook المحسّن لجلب البيانات
-        const data = await optimizedDataFetch.fetchAffiliateData(profile.id);
+        // الحصول على profiles.id بدلاً من user_profiles.id
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('auth_user_id', user.id)
+          .maybeSingle();
+
+        if (profileError) throw profileError;
+        if (!profileData?.id) return;
+
+        // استخدام profiles.id لجلب البيانات
+        const data = await optimizedDataFetch.fetchAffiliateData(profileData.id);
         if (!isMounted) return;
         
         if (data) {
@@ -149,14 +159,24 @@ const AffiliateDashboard = () => {
       isMounted = false;
       authListener?.subscription?.unsubscribe?.();
     };
-  }, [user?.id, profile?.id, optimizedDataFetch]);
+  }, [user?.id, optimizedDataFetch]);
 
   // مُحسّن: دالة جلب البيانات باستخدام Hook محسّن
   const fetchAffiliateData = useCallback(async () => {
-    if (!profile?.id) return;
+    if (!user?.id) return;
     
     try {
-      const data = await optimizedDataFetch.fetchAffiliateData(profile.id);
+      // الحصول على profiles.id الصحيح
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .maybeSingle();
+
+      if (profileError) throw profileError;
+      if (!profileData?.id) return;
+
+      const data = await optimizedDataFetch.fetchAffiliateData(profileData.id);
       
       if (data) {
         setAffiliateStore(data.store);
@@ -175,7 +195,7 @@ const AffiliateDashboard = () => {
         variant: "destructive",
       });
     }
-  }, [profile?.id, optimizedDataFetch, toast]);
+  }, [user?.id, optimizedDataFetch, toast]);
 
   const handleCreateStore = async (e: any) => {
     e.preventDefault();
@@ -270,7 +290,20 @@ const AffiliateDashboard = () => {
 
       setIsCreateStoreOpen(false);
       setNewStore({ store_name: '', bio: '', store_slug: '' });
-      fetchAffiliateData();
+      
+      // تحديث الحالة مباشرة
+      setAffiliateStore({
+        id: newStoreId as string,
+        store_name: newStore.store_name,
+        store_slug: createdStore?.store_slug || slugToUse,
+        bio: newStore.bio,
+        total_sales: 0,
+        total_orders: 0
+      });
+      setHasExistingStore(true);
+      
+      // جلب البيانات المحدثة
+      setTimeout(() => fetchAffiliateData(), 1000);
     } catch (error: any) {
       console.error('Error creating store:', error);
       let errorMessage = "تعذر إنشاء المتجر";
@@ -342,7 +375,12 @@ const AffiliateDashboard = () => {
         <div className="flex justify-start">
           <Button 
             variant="outline" 
-            onClick={() => navigate('/dashboard')}
+            onClick={() => {
+              if (profile?.role === 'admin') navigate('/admin/dashboard');
+              else if (profile?.role === 'merchant') navigate('/merchant-dashboard');  
+              else if (profile?.role === 'affiliate') navigate('/affiliate-dashboard');
+              else navigate('/dashboard');
+            }}
             className="flex items-center gap-2"
           >
             <Home className="h-4 w-4" />
