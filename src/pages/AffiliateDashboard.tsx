@@ -47,9 +47,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { useNavigate } from 'react-router-dom';
+import { useFastAuth } from '@/hooks/useFastAuth';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const AffiliateDashboard = () => {
-  const { profile } = useAuthContext();
+  const { profile } = useFastAuth();
+  const { goToUserHome } = useSmartNavigation();
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -362,7 +365,7 @@ const AffiliateDashboard = () => {
           <div className="flex items-center gap-3 mb-4">
             <Button 
               variant="ghost" 
-              onClick={() => navigate('/')}
+              onClick={goToUserHome}
               className="text-primary hover:bg-primary/10 gap-2"
             >
               <Home className="h-4 w-4" />

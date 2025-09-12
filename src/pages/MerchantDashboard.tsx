@@ -23,9 +23,11 @@ import {
 import { useAuthContext } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const MerchantDashboard = () => {
   const { profile } = useAuthContext();
+  const { goToUserHome } = useSmartNavigation();
   const { toast } = useToast();
   
   const [stats, setStats] = useState({
@@ -251,7 +253,7 @@ const MerchantDashboard = () => {
           <div className="flex items-center gap-4 mb-4">
             <Button 
               variant="ghost" 
-              onClick={() => window.location.href = '/'}
+              onClick={goToUserHome}
               className="text-primary hover:bg-primary/10 gap-2"
             >
               <Home className="h-4 w-4" />

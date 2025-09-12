@@ -18,9 +18,11 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const AboutPage = () => {
   const navigate = useNavigate();
+  const { goToUserHome } = useSmartNavigation();
 
   const features = [
     {
@@ -69,7 +71,7 @@ const AboutPage = () => {
         <div className="flex justify-start">
           <Button 
             variant="ghost" 
-            onClick={() => navigate('/')}
+            onClick={goToUserHome}
             className="text-primary hover:bg-primary/10 gap-2"
           >
             <Home className="h-4 w-4" />

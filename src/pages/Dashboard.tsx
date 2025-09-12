@@ -1,4 +1,3 @@
-import { useFastAuth } from '@/hooks/useFastAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -25,9 +24,12 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useFastAuth } from '@/hooks/useFastAuth';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const Dashboard = () => {
   const { profile } = useFastAuth();
+  const { goToUserHome } = useSmartNavigation();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -230,7 +232,7 @@ const Dashboard = () => {
             <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
-                onClick={() => navigate('/')}
+                onClick={goToUserHome}
                 className="text-primary hover:bg-primary/10 gap-2"
               >
                 <Home className="h-4 w-4" />

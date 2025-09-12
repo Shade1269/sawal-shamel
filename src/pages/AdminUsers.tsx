@@ -56,6 +56,8 @@ import { useNavigate } from 'react-router-dom';
 import { UserActivityLog } from '@/components/admin/UserActivityLog';
 import { UserPermissions } from '@/components/admin/UserPermissions';
 import { UserAnalytics } from '@/components/admin/UserAnalytics';
+import { useFastAuth } from '@/hooks/useFastAuth';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 interface User {
   id: string;
@@ -101,6 +103,7 @@ const AdminUsers = () => {
   });
   
   const { toast } = useToast();
+  const { goToUserHome } = useSmartNavigation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -480,7 +483,7 @@ const AdminUsers = () => {
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => navigate('/')}
+              onClick={goToUserHome}
               className="gap-2"
             >
               <Home className="h-4 w-4" />

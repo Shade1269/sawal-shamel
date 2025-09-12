@@ -17,11 +17,13 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 const CreateAdmin = () => {
   const navigate = useNavigate();
+  const { goToUserHome } = useSmartNavigation();
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
@@ -97,7 +99,7 @@ const CreateAdmin = () => {
         <div className="flex justify-center mb-6">
           <Button 
             variant="ghost" 
-            onClick={() => navigate('/')}
+            onClick={goToUserHome}
             className="text-primary hover:bg-primary/10 gap-2 bg-white/80 backdrop-blur-sm"
           >
             <Home className="h-4 w-4" />

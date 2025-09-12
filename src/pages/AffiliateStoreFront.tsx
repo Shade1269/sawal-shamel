@@ -36,6 +36,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 interface AffiliateStore {
   id: string;
@@ -80,6 +81,7 @@ const AffiliateStoreFront = () => {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { goToUserHome } = useSmartNavigation();
   
   const [store, setStore] = useState<AffiliateStore | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -235,7 +237,7 @@ const AffiliateStoreFront = () => {
       <div className="container mx-auto px-6 py-4">
         <Button 
           variant="ghost" 
-          onClick={() => navigate('/')}
+          onClick={goToUserHome}
           className="text-primary hover:bg-primary/10 gap-2"
         >
           <Home className="h-4 w-4" />
