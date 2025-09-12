@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import QuickLinks from '@/components/navigation/QuickLinks';
 import { 
   Crown, 
   Store, 
@@ -86,6 +87,13 @@ const Dashboard = () => {
       icon: <Package className="h-8 w-8" />,
       route: '/products',
       color: 'bg-gradient-premium'
+    },
+    {
+      title: 'نظام التسويق',
+      description: 'إدارة الحملات التسويقية ووسائل التواصل',
+      icon: <Target className="h-8 w-8" />,
+      route: '/admin/marketing',
+      color: 'bg-gradient-persian'
     }
   ];
 
@@ -118,6 +126,13 @@ const Dashboard = () => {
       icon: <Settings className="h-8 w-8" />,
       route: '/merchant',
       color: 'bg-gradient-heritage'
+    },
+    {
+      title: 'التسويق والترويج',
+      description: 'أدوات التسويق والحملات الترويجية',
+      icon: <Target className="h-8 w-8" />,
+      route: '/admin/marketing',
+      color: 'bg-gradient-persian'
     }
   ];
 
@@ -150,6 +165,13 @@ const Dashboard = () => {
       icon: <Target className="h-8 w-8" />,
       route: '/affiliate',
       color: 'bg-gradient-heritage'
+    },
+    {
+      title: 'حملات التسويق',
+      description: 'إنشاء حملات تسويقية فعالة',
+      icon: <Target className="h-8 w-8" />,
+      route: '/admin/marketing',
+      color: 'bg-gradient-persian'
     }
   ];
 
@@ -301,6 +323,11 @@ const Dashboard = () => {
             </Card>
           </div>
         )}
+
+        <Separator className="my-8" />
+
+        {/* Quick Navigation */}
+        <QuickLinks />
 
         <Separator className="my-8" />
 

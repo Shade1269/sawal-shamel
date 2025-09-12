@@ -15,7 +15,8 @@ import {
   Globe,
   Zap,
   Crown,
-  Activity
+  Activity,
+  Share2
 } from "lucide-react"
 import {
   Sidebar,
@@ -102,6 +103,12 @@ const adminNavItems = [
   {
     title: "التسويق والعمولات",
     items: [
+      { 
+        title: "نظام التسويق المتكامل", 
+        url: "/admin/marketing", 
+        icon: Share2,
+        badge: "جديد"
+      },
       { 
         title: "المسوقون", 
         url: "/admin/affiliates", 

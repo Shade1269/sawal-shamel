@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { LogOut, Settings, User, Crown, Star, Award, Medal, CreditCard, FileText, RotateCcw, DollarSign } from 'lucide-react';
+import { LogOut, Settings, User, Crown, Star, Award, Medal, CreditCard, FileText, RotateCcw, DollarSign, Share2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 
@@ -146,6 +146,10 @@ const Header = () => {
               
               {(profile?.role === 'admin' || profile?.role === 'merchant') && (
                 <>
+                  <DropdownMenuItem onClick={() => navigate('/admin/marketing')}>
+                    <Share2 className="ml-2 h-4 w-4" />
+                    نظام التسويق
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/payments')}>
                     <CreditCard className="ml-2 h-4 w-4" />
                     لوحة المدفوعات

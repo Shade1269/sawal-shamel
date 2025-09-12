@@ -41,6 +41,7 @@ const Inventory = lazy(() => import("./pages/Inventory"));
 const ExecutiveDashboard = lazy(() => import("./pages/ExecutiveDashboard"));
 const SecurityCenter = lazy(() => import("./pages/SecurityCenter"));
 const MarketingDashboard = lazy(() => import("./pages/MarketingDashboard"));
+const AdminSettings = lazy(() => import("./pages/AdminSettings"));
 
 const queryClient = new QueryClient();
 
@@ -116,6 +117,7 @@ const App = () => {
         <Route path="executive" element={<ExecutiveDashboard />} />
         <Route path="security" element={<SecurityCenter />} />
         <Route path="marketing" element={<MarketingDashboard />} />
+        <Route path="settings" element={<AdminSettings />} />
                       </Route>
                       
                       {/* Payment System Routes */}
