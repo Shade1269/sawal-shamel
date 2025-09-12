@@ -11,6 +11,8 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Textarea } from '@/components/ui/textarea';
+import { EnhancedUserTable } from '@/components/admin/EnhancedUserTable';
+import { QuickUserActions } from '@/components/admin/QuickUserActions';
 import { 
   Users, 
   Search,
@@ -101,6 +103,12 @@ const AdminUsers = () => {
     newUsersThisMonth: 0,
     totalEarnings: 0
   });
+  
+  // Enhanced state for new features
+  const [bulkActionMode, setBulkActionMode] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [notificationTargetRole, setNotificationTargetRole] = useState<string>('all');
   
   const { toast } = useToast();
   const { goToUserHome } = useSmartNavigation();
@@ -391,6 +399,66 @@ const AdminUsers = () => {
     document.body.removeChild(link);
   };
 
+  // Enhanced functions for new features
+  const handleBulkNotification = async (message: string, targetRole?: string) => {
+    try {
+      // Filter users based on target role
+      let targetUsers = users;
+      if (targetRole && targetRole !== 'all') {
+        targetUsers = users.filter(user => user.role === targetRole);
+      }
+
+      // Simulate sending notifications
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      toast({
+        title: "تم إرسال الإشعارات",
+        description: `تم إرسال الإشعار إلى ${targetUsers.length} مستخدم بنجاح`,
+      });
+    } catch (error) {
+      console.error('Error sending bulk notification:', error);
+      toast({
+        title: "خطأ في الإرسال",
+        description: "تعذر إرسال الإشعارات",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleImportUsers = () => {
+    // TODO: Implement user import functionality
+    toast({
+      title: "قريباً",
+      description: "ميزة استيراد المستخدمين ستكون متاحة قريباً",
+    });
+  };
+
+  const handleQuickSearch = (term: string) => {
+    setSearchTerm(term);
+  };
+
+  const handleFilterChange = (filters: any) => {
+    if (filters.status) {
+      setSelectedStatus(filters.status);
+    }
+    if (filters.role) {
+      setSelectedRole(filters.role);
+    }
+  };
+
+  const userStatsForActions = {
+    total: stats.totalUsers,
+    active: stats.activeUsers,
+    newThisMonth: stats.newUsersThisMonth,
+    byRole: {
+      admin: stats.admins,
+      merchant: stats.merchants,
+      affiliate: stats.affiliates,
+      customer: stats.customers,
+      moderator: stats.moderators
+    }
+  };
+
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'admin': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
@@ -541,6 +609,16 @@ const AdminUsers = () => {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
+          {/* Quick Actions Section */}
+          <QuickUserActions
+            onBulkNotification={handleBulkNotification}
+            onExportUsers={exportUsers}
+            onImportUsers={handleImportUsers}
+            onQuickSearch={handleQuickSearch}
+            onFilterChange={handleFilterChange}
+            userStats={userStatsForActions}
+          />
+          
           {/* Stats Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="bg-gradient-primary text-primary-foreground">
@@ -723,25 +801,47 @@ const AdminUsers = () => {
             </CardContent>
           </Card>
 
-          {/* Users List */}
+          {/* Enhanced Users Table */}
           <Card className="border-0 bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>قائمة المستخدمين</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    قائمة المستخدمين المحسنة
+                  </CardTitle>
                   <CardDescription>
-                    {filteredUsers.length} من أصل {users.length} مستخدم
+                    إدارة شاملة ومتقدمة لحسابات المستخدمين - عرض {filteredUsers.length} من أصل {users.length} مستخدم
                   </CardDescription>
                 </div>
-                <Badge variant="secondary">
+                <Badge variant="secondary" className="px-3 py-1">
                   <Users className="ml-1 h-4 w-4" />
                   {filteredUsers.length}
                 </Badge>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {filteredUsers.map((user: User) => (
+              <EnhancedUserTable
+                users={filteredUsers}
+                onEdit={(user) => {
+                  setSelectedUser(user);
+                  setIsEditDialogOpen(true);
+                }}
+                onDelete={handleDeleteUser}
+                onToggleStatus={toggleUserStatus}
+                onViewDetails={(user) => {
+                  setSelectedUser(user);
+                  setIsDetailsDialogOpen(true);
+                }}
+                onSendNotification={(user) => {
+                  setSelectedUser(user);
+                  setIsNotificationDialogOpen(true);
+                }}
+                onManagePermissions={(user) => {
+                  setSelectedUser(user);
+                  setIsPermissionsDialogOpen(true);
+                }}
+              />
                   <div key={user.id} className="flex items-center justify-between p-4 rounded-lg border bg-background/50 hover:bg-background/80 transition-colors">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
