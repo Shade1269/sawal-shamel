@@ -93,6 +93,7 @@ export type Database = {
         Row: {
           added_at: string | null
           affiliate_store_id: string | null
+          commission_rate: number | null
           id: string
           is_visible: boolean
           product_id: string | null
@@ -101,6 +102,7 @@ export type Database = {
         Insert: {
           added_at?: string | null
           affiliate_store_id?: string | null
+          commission_rate?: number | null
           id?: string
           is_visible?: boolean
           product_id?: string | null
@@ -109,6 +111,7 @@ export type Database = {
         Update: {
           added_at?: string | null
           affiliate_store_id?: string | null
+          commission_rate?: number | null
           id?: string
           is_visible?: boolean
           product_id?: string | null
