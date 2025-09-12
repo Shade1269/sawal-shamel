@@ -6019,6 +6019,10 @@ export type Database = {
         }
         Returns: number
       }
+      calculate_weekly_rankings: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_expired_otp: {
         Args: Record<PropertyKey, never>
         Returns: undefined
