@@ -135,7 +135,11 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
       setOrderCompleted(true);
 
       toast.success('تم إنشاء الطلب بنجاح!');
-      onOrderComplete(generatedOrderNumber);
+      
+      // التوجه لصفحة تأكيد الطلب
+      setTimeout(() => {
+        window.location.href = `/order-confirmation-simple/${order.id}`;
+      }, 2000);
 
     } catch (error) {
       console.error('Error placing order:', error);

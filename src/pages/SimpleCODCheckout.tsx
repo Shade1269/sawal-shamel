@@ -34,8 +34,7 @@ const SimpleCODCheckout = () => {
     // Clear cart after successful order
     localStorage.removeItem(`cart_${slug}`);
     
-    // You can navigate to order confirmation page if needed
-    // navigate(`/store/${slug}/order-confirmation/${orderNumber}`);
+    // سيتم التوجه تلقائياً من مكون SimpleCheckout
   };
 
   const handleCancel = () => {
