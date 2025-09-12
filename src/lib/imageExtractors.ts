@@ -233,7 +233,7 @@ export const extractAllProductImages = (p: AnyObj) => {
   return { mergedImages: merged, variants };
 };
 
-/** Debug helper مشابه للّوغ الحالي */
+/** مساعد لإحصاء الصور - للتطوير فقط */
 export const logImageCounts = (
   productImages: string[],
   variants: AnyObj[],
@@ -241,8 +241,10 @@ export const logImageCounts = (
 ) => {
   const variantImgs = variants.flatMap(extractImagesFromVariant);
   const total = uniqUrls([...(productImages || []), ...variantImgs]).length;
-  // eslint-disable-next-line no-console
-  console.log(
-    `[${where}] counts => productImages:${productImages?.length || 0}, variantImages:${variantImgs.length}, totalImages:${total}, variants:${variants.length}`
-  );
+  // تسجيل للتطوير فقط
+  if (process.env.NODE_ENV === 'development') {
+    console.log(
+      `[${where}] counts => productImages:${productImages?.length || 0}, variantImages:${variantImgs.length}, totalImages:${total}, variants:${variants.length}`
+    );
+  }
 };

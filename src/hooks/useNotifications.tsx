@@ -121,7 +121,7 @@ export const useNotifications = (userId?: string) => {
 
   const saveSubscription = async (subscription: PushSubscription, userId: string) => {
     try {
-      // TODO: Save to database once push_subscriptions table types are available
+      // حفظ الاشتراك محلياً (يمكن تطويره لاحقاً لحفظه في قاعدة البيانات)
       localStorage.setItem('push_subscription', JSON.stringify({
         userId,
         subscription: subscription.toJSON(),

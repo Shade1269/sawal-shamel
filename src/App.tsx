@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
 import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Header from "@/components/common/Header";
 import AuthForm from "@/components/auth/AuthForm";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -77,27 +78,28 @@ const queryClient = new QueryClient();
 // Force reload to clear any cached AuthProvider references
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <SupabaseAuthProvider>
-          <FirebaseAuthProvider>
-          <LanguageProvider>
-            <DarkModeProvider>
-              <UserDataProvider>
-                <BrowserRouter>
-                <div className="min-h-screen bg-gradient-persian-bg">
-                  <Header />
-                  <Suspense fallback={
-                    <div className="min-h-screen flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                        <p className="text-muted-foreground">جاري التحميل...</p>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <SupabaseAuthProvider>
+            <FirebaseAuthProvider>
+            <LanguageProvider>
+              <DarkModeProvider>
+                <UserDataProvider>
+                  <BrowserRouter>
+                  <div className="min-h-screen bg-gradient-persian-bg">
+                    <Header />
+                    <Suspense fallback={
+                      <div className="min-h-screen flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                          <p className="text-muted-foreground">جاري التحميل...</p>
+                        </div>
                       </div>
-                    </div>
-                  }>
-                    <Routes>
+                    }>
+                      <Routes>
                       {/* Public Routes */}
                       <Route path="/" element={<Index />} />
                       <Route path="/home" element={<Navigate to="/" replace />} />
@@ -344,6 +346,7 @@ const App = () => {
     </SupabaseAuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 
