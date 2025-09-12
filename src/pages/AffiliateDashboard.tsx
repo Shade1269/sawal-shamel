@@ -53,9 +53,8 @@ import { useOptimizedAuth } from '@/hooks/useOptimizedAuth';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const AffiliateDashboard = () => {
-  const { profile, user, isLoading } = useOptimizedAuth();
-  const { optimizedDataFetch } = useOptimizedAuth();
-  const { goToUserHome, navigate } = useSmartNavigation();
+  const { profile, user, isLoading, optimizedDataFetch } = useOptimizedAuth();
+  const { navigate } = useSmartNavigation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
   const [hasSession, setHasSession] = useState(false);
@@ -343,7 +342,7 @@ const AffiliateDashboard = () => {
         <div className="flex justify-start">
           <Button 
             variant="outline" 
-            onClick={() => goToUserHome()}
+            onClick={() => navigate('/dashboard')}
             className="flex items-center gap-2"
           >
             <Home className="h-4 w-4" />
