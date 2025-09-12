@@ -48,7 +48,19 @@ export const ProtectedRoute = ({
 
   // If a specific role is required but profile isn't loaded yet, don't block the user
   if (requiredRole && !profile) {
-    return <Navigate to="/dashboard" replace />;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center animate-pulse">
+            <Loader2 className="h-8 w-8 text-primary-foreground animate-spin" />
+          </div>
+          <div>
+            <h3 className="text-lg font-medium text-foreground">جاري التحقق من الصلاحيات</h3>
+            <p className="text-sm text-muted-foreground">الرجاء الانتظار...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Check if user is active (unless explicitly allowed)
