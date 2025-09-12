@@ -236,6 +236,54 @@ export type Database = {
         }
         Relationships: []
       }
+      cart_items: {
+        Row: {
+          added_at: string
+          cart_id: string
+          id: string
+          product_id: string
+          quantity: number
+          total_price_sar: number | null
+          unit_price_sar: number
+          updated_at: string
+        }
+        Insert: {
+          added_at?: string
+          cart_id: string
+          id?: string
+          product_id: string
+          quantity: number
+          total_price_sar?: number | null
+          unit_price_sar: number
+          updated_at?: string
+        }
+        Update: {
+          added_at?: string
+          cart_id?: string
+          id?: string
+          product_id?: string
+          quantity?: number
+          total_price_sar?: number | null
+          unit_price_sar?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_cart_id_fkey"
+            columns: ["cart_id"]
+            isOneToOne: false
+            referencedRelation: "shopping_carts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       channel_locks: {
         Row: {
           channel_id: string
@@ -701,6 +749,124 @@ export type Database = {
             columns: ["current_tier_id"]
             isOneToOne: false
             referencedRelation: "loyalty_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ecommerce_orders: {
+        Row: {
+          cancelled_at: string | null
+          confirmed_at: string | null
+          coupon_code: string | null
+          coupon_discount_sar: number | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          delivered_at: string | null
+          discount_sar: number
+          estimated_delivery_date: string | null
+          id: string
+          internal_notes: string | null
+          notes: string | null
+          order_number: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          shipped_at: string | null
+          shipping_address: Json
+          shipping_method: Database["public"]["Enums"]["shipping_method"]
+          shipping_sar: number
+          shop_id: string
+          status: Database["public"]["Enums"]["order_status"]
+          subtotal_sar: number
+          tax_sar: number
+          total_sar: number
+          tracking_number: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          cancelled_at?: string | null
+          confirmed_at?: string | null
+          coupon_code?: string | null
+          coupon_discount_sar?: number | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          delivered_at?: string | null
+          discount_sar?: number
+          estimated_delivery_date?: string | null
+          id?: string
+          internal_notes?: string | null
+          notes?: string | null
+          order_number: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          shipped_at?: string | null
+          shipping_address: Json
+          shipping_method?: Database["public"]["Enums"]["shipping_method"]
+          shipping_sar?: number
+          shop_id: string
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal_sar: number
+          tax_sar?: number
+          total_sar: number
+          tracking_number?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          cancelled_at?: string | null
+          confirmed_at?: string | null
+          coupon_code?: string | null
+          coupon_discount_sar?: number | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          delivered_at?: string | null
+          discount_sar?: number
+          estimated_delivery_date?: string | null
+          id?: string
+          internal_notes?: string | null
+          notes?: string | null
+          order_number?: string
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          shipped_at?: string | null
+          shipping_address?: Json
+          shipping_method?: Database["public"]["Enums"]["shipping_method"]
+          shipping_sar?: number
+          shop_id?: string
+          status?: Database["public"]["Enums"]["order_status"]
+          subtotal_sar?: number
+          tax_sar?: number
+          total_sar?: number
+          tracking_number?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecommerce_orders_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ecommerce_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ecommerce_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -3036,6 +3202,69 @@ export type Database = {
           },
         ]
       }
+      shipping_addresses: {
+        Row: {
+          address_line_1: string
+          address_line_2: string | null
+          city: string
+          country: string
+          created_at: string
+          full_name: string
+          id: string
+          is_default: boolean
+          phone: string
+          postal_code: string | null
+          state: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address_line_1: string
+          address_line_2?: string | null
+          city: string
+          country?: string
+          created_at?: string
+          full_name: string
+          id?: string
+          is_default?: boolean
+          phone: string
+          postal_code?: string | null
+          state: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address_line_1?: string
+          address_line_2?: string | null
+          city?: string
+          country?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          is_default?: boolean
+          phone?: string
+          postal_code?: string | null
+          state?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipping_addresses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipping_addresses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shipping_providers: {
         Row: {
           api_endpoint: string | null
@@ -3237,6 +3466,48 @@ export type Database = {
             columns: ["shop_id"]
             isOneToOne: true
             referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shopping_carts: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          session_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_carts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shopping_carts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -4192,6 +4463,23 @@ export type Database = {
         | "DELIVERED"
         | "CANCELED"
         | "RETURNED"
+      payment_method:
+        | "CASH_ON_DELIVERY"
+        | "CREDIT_CARD"
+        | "DEBIT_CARD"
+        | "BANK_TRANSFER"
+        | "MADA"
+        | "APPLE_PAY"
+        | "STC_PAY"
+        | "WALLET"
+      payment_status:
+        | "PENDING"
+        | "PROCESSING"
+        | "COMPLETED"
+        | "FAILED"
+        | "CANCELLED"
+        | "REFUNDED"
+      shipping_method: "STANDARD" | "EXPRESS" | "SAME_DAY" | "PICKUP"
       theme_type: "classic" | "feminine" | "damascus"
       user_level: "bronze" | "silver" | "gold" | "legendary"
       user_role: "affiliate" | "merchant" | "admin" | "moderator" | "customer"
@@ -4330,6 +4618,25 @@ export const Constants = {
         "CANCELED",
         "RETURNED",
       ],
+      payment_method: [
+        "CASH_ON_DELIVERY",
+        "CREDIT_CARD",
+        "DEBIT_CARD",
+        "BANK_TRANSFER",
+        "MADA",
+        "APPLE_PAY",
+        "STC_PAY",
+        "WALLET",
+      ],
+      payment_status: [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "FAILED",
+        "CANCELLED",
+        "REFUNDED",
+      ],
+      shipping_method: ["STANDARD", "EXPRESS", "SAME_DAY", "PICKUP"],
       theme_type: ["classic", "feminine", "damascus"],
       user_level: ["bronze", "silver", "gold", "legendary"],
       user_role: ["affiliate", "merchant", "admin", "moderator", "customer"],
