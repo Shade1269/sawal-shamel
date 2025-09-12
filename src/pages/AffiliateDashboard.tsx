@@ -147,17 +147,10 @@ const AffiliateDashboard = () => {
       }
     };
 
-    // إعداد مستمع واحد للحالة
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!isMounted) return;
-      setHasSession(!!session);
-    });
-
     initializeData();
 
     return () => {
       isMounted = false;
-      authListener?.subscription?.unsubscribe?.();
     };
   }, [user?.id, optimizedDataFetch]);
 
@@ -291,7 +284,7 @@ const AffiliateDashboard = () => {
       setIsCreateStoreOpen(false);
       setNewStore({ store_name: '', bio: '', store_slug: '' });
       
-      // تحديث الحالة مباشرة
+      // تحديث الحالة مباشرة دون استخدام setTimeout
       setAffiliateStore({
         id: newStoreId as string,
         store_name: newStore.store_name,
@@ -301,9 +294,6 @@ const AffiliateDashboard = () => {
         total_orders: 0
       });
       setHasExistingStore(true);
-      
-      // جلب البيانات المحدثة
-      setTimeout(() => fetchAffiliateData(), 1000);
     } catch (error: any) {
       console.error('Error creating store:', error);
       let errorMessage = "تعذر إنشاء المتجر";
