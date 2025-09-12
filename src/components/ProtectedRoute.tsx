@@ -42,12 +42,17 @@ export const ProtectedRoute = ({
   }
 
   // Redirect to auth if not authenticated
-  if (!user || !profile) {
+  if (!user) {
     return <Navigate to={fallback} replace />;
   }
 
+  // If a specific role is required but profile isn't loaded yet, don't block the user
+  if (requiredRole && !profile) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   // Check if user is active (unless explicitly allowed)
-  if (!allowInactive && !isActive) {
+  if (!allowInactive && profile && !isActive) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center p-4">
         <div className="max-w-md mx-auto text-center bg-background rounded-2xl shadow-2xl p-8">

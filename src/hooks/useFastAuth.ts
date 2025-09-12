@@ -159,28 +159,30 @@ export const useFastAuth = () => {
     };
 
     // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (!isMounted) return;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!isMounted) return;
 
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          // Force refresh profile on auth change
-          await fetchUserProfile(session.user.id, false);
-        } else {
-          setProfile(null);
-          // Clear cache on logout
-          userCache.profile = null;
-          userCache.timestamp = 0;
-          localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
-          localStorage.removeItem(STORAGE_KEYS.LAST_UPDATE);
-        }
-        
-        setLoading(false);
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        // Defer profile fetch to avoid deadlocks inside auth callback
+        setTimeout(() => {
+          if (session?.user) {
+            fetchUserProfile(session.user.id, false);
+          }
+        }, 0);
+      } else {
+        setProfile(null);
+        // Clear cache on logout
+        userCache.profile = null;
+        userCache.timestamp = 0;
+        localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
+        localStorage.removeItem(STORAGE_KEYS.LAST_UPDATE);
       }
-    );
+
+      setLoading(false);
+    });
 
     initializeAuth();
 
