@@ -194,6 +194,276 @@ export type Database = {
           },
         ]
       }
+      alliance_members: {
+        Row: {
+          alliance_id: string
+          contribution_points: number
+          created_at: string
+          id: string
+          is_active: boolean
+          joined_at: string
+          last_activity_at: string | null
+          role: string
+          user_id: string
+        }
+        Insert: {
+          alliance_id: string
+          contribution_points?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          joined_at?: string
+          last_activity_at?: string | null
+          role?: string
+          user_id: string
+        }
+        Update: {
+          alliance_id?: string
+          contribution_points?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          joined_at?: string
+          last_activity_at?: string | null
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alliance_members_alliance_id_fkey"
+            columns: ["alliance_id"]
+            isOneToOne: false
+            referencedRelation: "alliances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alliance_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alliance_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alliance_reports: {
+        Row: {
+          action_taken: string | null
+          created_at: string
+          description: string
+          id: string
+          report_type: string
+          reported_alliance_id: string
+          reporter_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          action_taken?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          report_type: string
+          reported_alliance_id: string
+          reporter_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          action_taken?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          report_type?: string
+          reported_alliance_id?: string
+          reporter_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alliance_reports_reported_alliance_id_fkey"
+            columns: ["reported_alliance_id"]
+            isOneToOne: false
+            referencedRelation: "alliances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alliance_reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alliance_reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alliance_reports_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alliance_reports_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alliance_weekly_leaderboard: {
+        Row: {
+          active_members: number
+          alliance_id: string
+          castle_controlled: boolean | null
+          created_at: string
+          id: string
+          rank: number | null
+          rank_change: number | null
+          rewards_earned: Json | null
+          total_orders: number
+          total_points: number
+          total_sales: number
+          updated_at: string
+          week_number: number
+          year_number: number
+        }
+        Insert: {
+          active_members?: number
+          alliance_id: string
+          castle_controlled?: boolean | null
+          created_at?: string
+          id?: string
+          rank?: number | null
+          rank_change?: number | null
+          rewards_earned?: Json | null
+          total_orders?: number
+          total_points?: number
+          total_sales?: number
+          updated_at?: string
+          week_number: number
+          year_number: number
+        }
+        Update: {
+          active_members?: number
+          alliance_id?: string
+          castle_controlled?: boolean | null
+          created_at?: string
+          id?: string
+          rank?: number | null
+          rank_change?: number | null
+          rewards_earned?: Json | null
+          total_orders?: number
+          total_points?: number
+          total_sales?: number
+          updated_at?: string
+          week_number?: number
+          year_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alliance_weekly_leaderboard_alliance_id_fkey"
+            columns: ["alliance_id"]
+            isOneToOne: false
+            referencedRelation: "alliances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alliances: {
+        Row: {
+          castle_control_duration: number | null
+          castle_controlled_at: string | null
+          created_at: string
+          description: string | null
+          id: string
+          last_logo_change: string | null
+          last_name_change: string | null
+          leader_id: string
+          logo_url: string | null
+          max_members: number
+          member_count: number
+          name: string
+          slug: string
+          status: Database["public"]["Enums"]["alliance_status"]
+          theme: Database["public"]["Enums"]["theme_type"]
+          total_points: number
+          total_sales: number
+          updated_at: string
+        }
+        Insert: {
+          castle_control_duration?: number | null
+          castle_controlled_at?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          last_logo_change?: string | null
+          last_name_change?: string | null
+          leader_id: string
+          logo_url?: string | null
+          max_members?: number
+          member_count?: number
+          name: string
+          slug: string
+          status?: Database["public"]["Enums"]["alliance_status"]
+          theme?: Database["public"]["Enums"]["theme_type"]
+          total_points?: number
+          total_sales?: number
+          updated_at?: string
+        }
+        Update: {
+          castle_control_duration?: number | null
+          castle_controlled_at?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          last_logo_change?: string | null
+          last_name_change?: string | null
+          leader_id?: string
+          logo_url?: string | null
+          max_members?: number
+          member_count?: number
+          name?: string
+          slug?: string
+          status?: Database["public"]["Enums"]["alliance_status"]
+          theme?: Database["public"]["Enums"]["theme_type"]
+          total_points?: number
+          total_sales?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alliances_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alliances_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       backup_logs: {
         Row: {
           backup_scope: string
@@ -283,6 +553,107 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      castle_control: {
+        Row: {
+          alliance_id: string
+          challenge_won: string | null
+          controlled_from: string
+          controlled_until: string
+          created_at: string
+          id: string
+          is_current: boolean
+          points_earned: number
+          week_number: number
+          year_number: number
+        }
+        Insert: {
+          alliance_id: string
+          challenge_won?: string | null
+          controlled_from?: string
+          controlled_until: string
+          created_at?: string
+          id?: string
+          is_current?: boolean
+          points_earned?: number
+          week_number: number
+          year_number: number
+        }
+        Update: {
+          alliance_id?: string
+          challenge_won?: string | null
+          controlled_from?: string
+          controlled_until?: string
+          created_at?: string
+          id?: string
+          is_current?: boolean
+          points_earned?: number
+          week_number?: number
+          year_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "castle_control_alliance_id_fkey"
+            columns: ["alliance_id"]
+            isOneToOne: false
+            referencedRelation: "alliances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenge_participations: {
+        Row: {
+          alliance_id: string
+          bonus_earned: number
+          challenge_id: string
+          completed_at: string | null
+          created_at: string
+          current_progress: number
+          final_score: number
+          id: string
+          rank: number | null
+          updated_at: string
+        }
+        Insert: {
+          alliance_id: string
+          bonus_earned?: number
+          challenge_id: string
+          completed_at?: string | null
+          created_at?: string
+          current_progress?: number
+          final_score?: number
+          id?: string
+          rank?: number | null
+          updated_at?: string
+        }
+        Update: {
+          alliance_id?: string
+          bonus_earned?: number
+          challenge_id?: string
+          completed_at?: string | null
+          created_at?: string
+          current_progress?: number
+          final_score?: number
+          id?: string
+          rank?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_participations_alliance_id_fkey"
+            columns: ["alliance_id"]
+            isOneToOne: false
+            referencedRelation: "alliances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenge_participations_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_challenges"
             referencedColumns: ["id"]
           },
         ]
@@ -2207,6 +2578,69 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_leaderboard: {
+        Row: {
+          created_at: string
+          customers_count: number
+          id: string
+          month_number: number
+          orders_count: number
+          points: number
+          rank: number | null
+          rank_change: number | null
+          rewards_earned: Json | null
+          sales_amount: number
+          updated_at: string
+          user_id: string
+          year_number: number
+        }
+        Insert: {
+          created_at?: string
+          customers_count?: number
+          id?: string
+          month_number: number
+          orders_count?: number
+          points?: number
+          rank?: number | null
+          rank_change?: number | null
+          rewards_earned?: Json | null
+          sales_amount?: number
+          updated_at?: string
+          user_id: string
+          year_number: number
+        }
+        Update: {
+          created_at?: string
+          customers_count?: number
+          id?: string
+          month_number?: number
+          orders_count?: number
+          points?: number
+          rank?: number | null
+          rank_change?: number | null
+          rewards_earned?: Json | null
+          sales_amount?: number
+          updated_at?: string
+          user_id?: string
+          year_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monthly_leaderboard_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monthly_leaderboard_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           commission_rate: number
@@ -3239,16 +3673,21 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           created_shops_count: number | null
+          current_level: Database["public"]["Enums"]["user_level"] | null
           email: string | null
           full_name: string | null
           id: string
           is_active: boolean
           last_activity_at: string | null
           level: Database["public"]["Enums"]["user_level"] | null
+          level_achieved_at: string | null
+          level_points: number | null
+          next_level_threshold: number | null
           phone: string | null
           points: number
           role: Database["public"]["Enums"]["user_role"]
           total_earnings: number | null
+          total_points: number | null
           updated_at: string
           whatsapp: string | null
         }
@@ -3257,16 +3696,21 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           created_shops_count?: number | null
+          current_level?: Database["public"]["Enums"]["user_level"] | null
           email?: string | null
           full_name?: string | null
           id?: string
           is_active?: boolean
           last_activity_at?: string | null
           level?: Database["public"]["Enums"]["user_level"] | null
+          level_achieved_at?: string | null
+          level_points?: number | null
+          next_level_threshold?: number | null
           phone?: string | null
           points?: number
           role?: Database["public"]["Enums"]["user_role"]
           total_earnings?: number | null
+          total_points?: number | null
           updated_at?: string
           whatsapp?: string | null
         }
@@ -3275,16 +3719,21 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           created_shops_count?: number | null
+          current_level?: Database["public"]["Enums"]["user_level"] | null
           email?: string | null
           full_name?: string | null
           id?: string
           is_active?: boolean
           last_activity_at?: string | null
           level?: Database["public"]["Enums"]["user_level"] | null
+          level_achieved_at?: string | null
+          level_points?: number | null
+          next_level_threshold?: number | null
           phone?: string | null
           points?: number
           role?: Database["public"]["Enums"]["user_role"]
           total_earnings?: number | null
+          total_points?: number | null
           updated_at?: string
           whatsapp?: string | null
         }
@@ -5024,6 +5473,54 @@ export type Database = {
           },
         ]
       }
+      user_themes: {
+        Row: {
+          created_at: string
+          earned_at: string
+          earned_reason: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          theme_type: Database["public"]["Enums"]["theme_type"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          earned_at?: string
+          earned_reason?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          theme_type: Database["public"]["Enums"]["theme_type"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          earned_at?: string
+          earned_reason?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          theme_type?: Database["public"]["Enums"]["theme_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_themes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_themes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       warehouses: {
         Row: {
           address: Json | null
@@ -5087,6 +5584,131 @@ export type Database = {
             columns: ["shop_id"]
             isOneToOne: false
             referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_challenges: {
+        Row: {
+          bonus_points: number
+          challenge_type: Database["public"]["Enums"]["challenge_type"]
+          created_at: string
+          description: string
+          difficulty_level: string
+          end_date: string
+          id: string
+          metadata: Json | null
+          name: string
+          start_date: string
+          status: Database["public"]["Enums"]["challenge_status"]
+          target_value: number
+          updated_at: string
+          winner_alliance_id: string | null
+        }
+        Insert: {
+          bonus_points?: number
+          challenge_type: Database["public"]["Enums"]["challenge_type"]
+          created_at?: string
+          description: string
+          difficulty_level?: string
+          end_date: string
+          id?: string
+          metadata?: Json | null
+          name: string
+          start_date: string
+          status?: Database["public"]["Enums"]["challenge_status"]
+          target_value: number
+          updated_at?: string
+          winner_alliance_id?: string | null
+        }
+        Update: {
+          bonus_points?: number
+          challenge_type?: Database["public"]["Enums"]["challenge_type"]
+          created_at?: string
+          description?: string
+          difficulty_level?: string
+          end_date?: string
+          id?: string
+          metadata?: Json | null
+          name?: string
+          start_date?: string
+          status?: Database["public"]["Enums"]["challenge_status"]
+          target_value?: number
+          updated_at?: string
+          winner_alliance_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_challenges_winner_alliance_id_fkey"
+            columns: ["winner_alliance_id"]
+            isOneToOne: false
+            referencedRelation: "alliances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_leaderboard: {
+        Row: {
+          bonus_earned: number | null
+          created_at: string
+          customers_count: number
+          id: string
+          orders_count: number
+          points: number
+          rank: number | null
+          rank_change: number | null
+          sales_amount: number
+          theme_earned: Database["public"]["Enums"]["theme_type"] | null
+          updated_at: string
+          user_id: string
+          week_number: number
+          year_number: number
+        }
+        Insert: {
+          bonus_earned?: number | null
+          created_at?: string
+          customers_count?: number
+          id?: string
+          orders_count?: number
+          points?: number
+          rank?: number | null
+          rank_change?: number | null
+          sales_amount?: number
+          theme_earned?: Database["public"]["Enums"]["theme_type"] | null
+          updated_at?: string
+          user_id: string
+          week_number: number
+          year_number: number
+        }
+        Update: {
+          bonus_earned?: number | null
+          created_at?: string
+          customers_count?: number
+          id?: string
+          orders_count?: number
+          points?: number
+          rank?: number | null
+          rank_change?: number | null
+          sales_amount?: number
+          theme_earned?: Database["public"]["Enums"]["theme_type"] | null
+          updated_at?: string
+          user_id?: string
+          week_number?: number
+          year_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_leaderboard_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_leaderboard_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -5512,6 +6134,9 @@ export type Database = {
       }
     }
     Enums: {
+      alliance_status: "active" | "inactive" | "disbanded"
+      challenge_status: "upcoming" | "active" | "completed" | "cancelled"
+      challenge_type: "sales" | "customers" | "points" | "mixed"
       order_status:
         | "PENDING"
         | "CONFIRMED"
@@ -5666,6 +6291,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      alliance_status: ["active", "inactive", "disbanded"],
+      challenge_status: ["upcoming", "active", "completed", "cancelled"],
+      challenge_type: ["sales", "customers", "points", "mixed"],
       order_status: [
         "PENDING",
         "CONFIRMED",
