@@ -3584,6 +3584,39 @@ export type Database = {
         }
         Relationships: []
       }
+      security_login_attempts: {
+        Row: {
+          attempt_type: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          reason: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          attempt_type: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          reason?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          attempt_type?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          reason?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       security_settings: {
         Row: {
           category: string
@@ -5422,6 +5455,17 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_login_attempt: {
+        Args: {
+          p_attempt_type?: string
+          p_ip_address?: unknown
+          p_metadata?: Json
+          p_reason?: string
+          p_user_agent?: string
+          p_user_id?: string
+        }
+        Returns: string
       }
       log_security_event: {
         Args: {
