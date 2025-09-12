@@ -97,7 +97,7 @@ export const useFastAuth = () => {
     try {
       // Optimized query - select only necessary fields
       const { data, error } = await supabase
-        .from('profiles')
+        .from('user_profiles')
         .select('id, auth_user_id, email, full_name, role, level, is_active, points, total_earnings, avatar_url, phone, created_at')
         .eq('auth_user_id', userId)
         .maybeSingle();

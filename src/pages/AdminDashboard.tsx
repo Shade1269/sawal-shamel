@@ -52,7 +52,7 @@ const AdminDashboard = () => {
     try {
       // إحصائيات المستخدمين
       const { data: usersData, error: usersError } = await supabase
-        .from('profiles')
+        .from('user_profiles')
         .select('role, is_active, created_at')
         .order('created_at', { ascending: false });
 
@@ -98,7 +98,7 @@ const AdminDashboard = () => {
     try {
       if (action === 'activate') {
         await supabase
-          .from('profiles')
+          .from('user_profiles')
           .update({ is_active: true })
           .eq('id', userId);
         
@@ -108,7 +108,7 @@ const AdminDashboard = () => {
         });
       } else if (action === 'deactivate') {
         await supabase
-          .from('profiles')
+          .from('user_profiles')
           .update({ is_active: false })
           .eq('id', userId);
         

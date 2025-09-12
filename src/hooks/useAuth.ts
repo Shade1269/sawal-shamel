@@ -62,7 +62,7 @@ export const useAuth = () => {
 
   const fetchUserProfile = async (userId: string) => {
     try {
-      // Try user_profiles first, then profiles table
+      // Try user_profiles first, then profiles table for backward compatibility
       let { data, error } = await supabase
         .from('user_profiles')
         .select('*')
