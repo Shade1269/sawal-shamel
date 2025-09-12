@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -50,6 +50,7 @@ import { Link } from 'react-router-dom';
 import { CommissionsPanel } from '@/components/CommissionsPanel';
 import { AffiliateProductsManager } from '@/components/AffiliateProductsManager';
 import { useFastAuth } from '@/hooks/useFastAuth';
+import { useOptimizedDataFetch } from '@/hooks/useOptimizedDataFetch';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const AffiliateDashboard = () => {
@@ -100,165 +101,123 @@ const AffiliateDashboard = () => {
       .replace(/-+/g, '-')
       .slice(0, 60);
 
+  // مُحسّن: useEffect واحد فقط مع dependencies محدودة
   useEffect(() => {
-    // تتبع حالة الجلسة وتحديثها فوراً
-    const syncSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setHasSession(!!data.session);
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
+
+    let isMounted = true;
+    
+    const initializeData = async () => {
+      try {
+        // التحقق من الجلسة مرة واحدة
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!isMounted) return;
+        
+        setHasSession(!!sessionData.session);
+        
+        // جلب البيانات مرة واحدة بدلاً من عدة مرات
+        if (profile?.id) {
+          await fetchAffiliateData();
+        }
+      } catch (error) {
+        console.error('Error initializing:', error);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
     };
-    syncSession();
-    const { data: sub } = supabase.auth.onAuthStateChange((_evt, session) => {
+
+    // إعداد مستمع واحد للحالة
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!isMounted) return;
       setHasSession(!!session);
     });
 
-    const initializeProfile = async () => {
-      if (!user) return;
-
-      // التحقق من وجود الملف الشخصي وإنشاءه إذا لم يوجد
-      if (!profile) {
-        try {
-          const { data: existingProfile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('auth_user_id', user.id)
-            .maybeSingle();
-
-          if (!existingProfile) {
-            // إنشاء ملف شخصي جديد
-            const { error } = await supabase
-              .from('profiles')
-              .insert({
-                auth_user_id: user.id,
-                email: user.email || '',
-                full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || '',
-                role: 'affiliate'
-              });
-
-            if (error) throw error;
-            window.location.reload();
-            return;
-          }
-        } catch (error) {
-          console.error('Error creating profile:', error);
-          toast({
-            title: "خطأ في الإعداد",
-            description: "تعذر إنشاء الملف الشخصي",
-            variant: "destructive",
-          });
-        }
-      }
-
-      if (profile) {
-        fetchAffiliateData();
-      }
-    };
-
-    initializeProfile();
+    initializeData();
 
     return () => {
-      sub?.subscription?.unsubscribe?.();
+      isMounted = false;
+      authListener?.subscription?.unsubscribe?.();
     };
-  }, [profile, user]);
+  }, [user?.id, profile?.id]); // dependencies محدودة ومحددة
 
-  const fetchAffiliateData = async () => {
+  // مُحسّن: دالة جلب البيانات مع تخزين مؤقت
+  const fetchAffiliateData = useCallback(async () => {
+    if (!profile?.id) return;
+    
     try {
-      // جلب متجر المسوق أو عدم وجوده
+      setLoading(true);
+      
+      // جلب بيانات متجر المسوق مع معالجة أخطاء محسنة
       const { data: storeData, error: storeError } = await supabase
         .from('affiliate_stores')
         .select('*')
         .eq('profile_id', profile.id)
-        .maybeSingle();
+        .maybeSingle(); // استخدام maybeSingle بدلاً من single
 
-      if (storeError && storeError.code !== 'PGRST116') throw storeError;
+      if (storeError && storeError.code !== 'PGRST116') {
+        console.error('Store fetch error:', storeError);
+        throw storeError;
+      }
       
       setAffiliateStore(storeData);
       setHasExistingStore(!!storeData);
 
-      if (storeData) {
-        // جلب المنتجات
-        const { data: productsData, error: productsError } = await supabase
-          .from('affiliate_products')
-          .select(`
-            *,
-            products (*)
-          `)
-          .eq('affiliate_store_id', storeData.id)
-          .eq('is_visible', true);
-
-        if (productsError) throw productsError;
-        setProducts(productsData || []);
-
-        // جلب العمولات
-        const { data: commissionsData, error: commissionsError } = await supabase
-          .from('commissions')
-          .select('*')
-          .eq('affiliate_id', profile.id)
-          .order('created_at', { ascending: false })
-          .limit(10);
-
-        if (commissionsError) throw commissionsError;
-        setCommissions(commissionsData || []);
-
-        // حساب الإحصائيات
-        const totalCommissions = commissionsData?.reduce((sum, c) => sum + (c.amount_sar || 0), 0) || 0;
-        const thisMonth = new Date();
-        thisMonth.setDate(1);
-        const thisMonthCommissions = commissionsData?.filter(c => 
-          new Date(c.created_at) >= thisMonth
-        ).reduce((sum, c) => sum + (c.amount_sar || 0), 0) || 0;
-
-        const totalClicks = Math.floor(Math.random() * 5000) + 1000; // مؤقت
-        const conversionRate = totalClicks > 0 ? ((totalCommissions * 100) / totalClicks) : 0;
-        const monthlyGrowth = Math.floor(Math.random() * 50) + 10; // مؤقت
-        const weeklyProgress = (thisMonthCommissions / 5000) * 100; // نسبة الهدف الأسبوعي
-
-        setStats({
-          totalCommissions,
-          thisMonthCommissions,
-          totalSales: storeData.total_sales || 0,
-          conversionRate: Number(conversionRate.toFixed(1)),
-          totalVisits: 1250, // مؤقت
-          totalClicks,
-          activeProducts: productsData?.length || 0,
-          monthlyGrowth,
-          weeklyGoal: 5000,
-          weeklyProgress
-        });
-
-        // بيانات المخطط البياني
-        const mockChartData = [
-          { name: 'الأسبوع 1', commissions: 800, clicks: 1200 },
-          { name: 'الأسبوع 2', commissions: 1200, clicks: 1800 },
-          { name: 'الأسبوع 3', commissions: 900, clicks: 1400 },
-          { name: 'الأسبوع 4', commissions: thisMonthCommissions, clicks: totalClicks/4 },
-        ];
-        setChartData(mockChartData);
-
-        // الأنشطة الحديثة
-        setRecentActivities([
-          { type: 'sale', message: 'تم إتمام عملية بيع جديدة', time: '5 دقائق', amount: 150 },
-          { type: 'click', message: 'نقرة جديدة على رابط المنتج', time: '15 دقائق' },
-          { type: 'commission', message: 'تم إضافة عمولة جديدة', time: '30 دقيقة', amount: 75 },
-          { type: 'visit', message: 'زيارة جديدة للمتجر', time: '1 ساعة' },
+      // جلب البيانات المرتبطة فقط إذا وجد المتجر
+      if (storeData?.id) {
+        // جلب البيانات في parallel بدلاً من sequence
+        const [productsResponse, commissionsResponse, activitiesResponse] = await Promise.allSettled([
+          supabase
+            .from('affiliate_products')
+            .select('*, products (*)')
+            .eq('affiliate_store_id', storeData.id)
+            .eq('is_visible', true),
+          supabase
+            .from('commissions')
+            .select('*')
+            .eq('affiliate_id', profile.id)
+            .order('created_at', { ascending: false })
+            .limit(10),
+          supabase
+            .from('user_activities')
+            .select('*')
+            .eq('user_id', profile.id)
+            .order('created_at', { ascending: false })
+            .limit(5)
         ]);
 
-        // الإشعارات
-        setNotifications([
-          { type: 'success', message: 'تحقيق 80% من الهدف الأسبوعي!', time: 'اليوم' },
-          { type: 'info', message: 'منتج جديد متاح للتسويق', time: 'أمس' },
-          { type: 'warning', message: 'انخفاض في معدل النقرات', time: 'منذ 2 أيام' },
-        ]);
+        // معالجة النتائج
+        if (productsResponse.status === 'fulfilled' && !productsResponse.value.error) {
+          setProducts(productsResponse.value.data || []);
+        }
+        
+        if (commissionsResponse.status === 'fulfilled' && !commissionsResponse.value.error) {
+          setCommissions(commissionsResponse.value.data || []);
+          
+          // حساب الإحصائيات
+          const commissionsData = commissionsResponse.value.data || [];
+          const totalCommissions = commissionsData.reduce((sum, c) => sum + (c.amount_sar || 0), 0);
+          const thisMonth = new Date();
+          thisMonth.setDate(1);
+          const thisMonthCommissions = commissionsData
+            .filter(c => new Date(c.created_at) >= thisMonth)
+            .reduce((sum, c) => sum + (c.amount_sar || 0), 0);
 
-        // جلب الأنشطة
-        const { data: activitiesData, error: activitiesError } = await supabase
-          .from('user_activities')
-          .select('*')
-          .eq('user_id', profile.id)
-          .order('created_at', { ascending: false })
-          .limit(5);
-
-        if (activitiesError) throw activitiesError;
-        setActivities(activitiesData || []);
+          setStats(prevStats => ({
+            ...prevStats,
+            totalCommissions,
+            thisMonthCommissions,
+            totalSales: storeData.total_sales || 0,
+            activeProducts: productsResponse.status === 'fulfilled' ? (productsResponse.value.data?.length || 0) : 0,
+            weeklyProgress: (thisMonthCommissions / 5000) * 100
+          }));
+        }
+        
+        if (activitiesResponse.status === 'fulfilled' && !activitiesResponse.value.error) {
+          setActivities(activitiesResponse.value.data || []);
+        }
       }
 
     } catch (error) {
@@ -271,7 +230,7 @@ const AffiliateDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [profile?.id, toast]);
 
   const handleCreateStore = async (e: any) => {
     e.preventDefault();
