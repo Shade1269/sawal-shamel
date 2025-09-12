@@ -57,6 +57,7 @@ const AffiliateDashboard = () => {
   const { goToUserHome, navigate } = useSmartNavigation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
+  const [hasSession, setHasSession] = useState(false);
   
   const [stats, setStats] = useState({
     totalCommissions: 0,
@@ -88,6 +89,16 @@ const AffiliateDashboard = () => {
   });
 
   useEffect(() => {
+    // تتبع حالة الجلسة وتحديثها فوراً
+    const syncSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setHasSession(!!data.session);
+    };
+    syncSession();
+    const { data: sub } = supabase.auth.onAuthStateChange((_evt, session) => {
+      setHasSession(!!session);
+    });
+
     const initializeProfile = async () => {
       if (!user) return;
 
@@ -102,21 +113,17 @@ const AffiliateDashboard = () => {
 
           if (!existingProfile) {
             // إنشاء ملف شخصي جديد
-            const { data: newProfile, error } = await supabase
+            const { error } = await supabase
               .from('profiles')
               .insert({
                 auth_user_id: user.id,
                 email: user.email || '',
                 full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || '',
                 role: 'affiliate'
-              })
-              .select()
-              .single();
+              });
 
             if (error) throw error;
-            
-            // تحديث الملف الشخصي في السياق
-            window.location.reload(); // إعادة تحميل لضمان تحديث السياق
+            window.location.reload();
             return;
           }
         } catch (error) {
@@ -135,6 +142,10 @@ const AffiliateDashboard = () => {
     };
 
     initializeProfile();
+
+    return () => {
+      sub?.subscription?.unsubscribe?.();
+    };
   }, [profile, user]);
 
   const fetchAffiliateData = async () => {
@@ -264,8 +275,9 @@ const AffiliateDashboard = () => {
 
     try {
       // تحقق من جلسة المستخدم في Supabase
-      const { data: authData } = await supabase.auth.getUser();
-      const authUser = authData?.user;
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData?.session;
+      const authUser = session?.user || null;
       if (!authUser) {
         toast({
           title: "يتطلب تسجيل الدخول",
@@ -445,12 +457,17 @@ const AffiliateDashboard = () => {
                         سيتم إنشاء رابط المتجر تلقائياً بناءً على اسم المتجر
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button type="submit" className="flex-1">إنشاء المتجر</Button>
-                      <Button type="button" variant="outline" onClick={() => setIsCreateStoreOpen(false)} className="flex-1">
-                        إلغاء
-                      </Button>
-                    </div>
+                      <div className="flex gap-2 items-center">
+                        <Button type="submit" className="flex-1" disabled={!hasSession || !newStore.store_name.trim()}>
+                          إنشاء المتجر
+                        </Button>
+                        <Button type="button" variant="outline" onClick={() => setIsCreateStoreOpen(false)} className="flex-1">
+                          إلغاء
+                        </Button>
+                      </div>
+                      {!hasSession && (
+                        <p className="text-xs text-destructive mt-2">يجب تسجيل الدخول لإنشاء المتجر</p>
+                      )}
                   </form>
                 </DialogContent>
               </Dialog>
