@@ -51,15 +51,19 @@ export const useOptimizedDataFetch = () => {
     
     try {
       // جلب بيانات المتجر
-      const { data: storeData, error: storeError } = await supabase
+      const { data: stores, error: storesError } = await supabase
         .from('affiliate_stores')
         .select('*')
         .eq('profile_id', profileId)
-        .maybeSingle();
+        .order('created_at', { ascending: false })
+        .limit(1);
 
-      if (storeError && storeError.code !== 'PGRST116') {
-        throw storeError;
+      if (storesError) {
+        throw storesError;
       }
+
+      const storeData = Array.isArray(stores) ? stores[0] : null;
+
 
       const result = {
         store: storeData,

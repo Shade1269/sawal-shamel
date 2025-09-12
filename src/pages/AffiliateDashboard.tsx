@@ -258,6 +258,22 @@ const AffiliateDashboard = () => {
         return;
       }
 
+      // تحقق من وجود متجر فعلياً في قاعدة البيانات لمنع التكرار
+      const { data: existingStores, error: existingError } = await supabase
+        .from('affiliate_stores')
+        .select('id, store_name, store_slug, bio, total_sales, total_orders')
+        .eq('profile_id', profileRow.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (existingError) throw existingError;
+      if (existingStores && existingStores.length > 0) {
+        setAffiliateStore(existingStores[0] as any);
+        setHasExistingStore(true);
+        toast({ title: "متجر موجود مسبقاً", description: "لديك متجر مسجل بالفعل.", variant: "destructive" });
+        return;
+      }
+
       // إنشاء المتجر عبر Hook محسّن
       const newStoreId = await optimizedDataFetch.createAffiliateStore(profileRow.id, {
         store_name: newStore.store_name,
