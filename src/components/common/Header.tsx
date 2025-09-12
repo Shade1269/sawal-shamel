@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import ShoppingCartDrawer from '@/components/ShoppingCartDrawer';
 import GlobalSearch from '@/components/GlobalSearch';
+import GlobalNotifications from '@/components/GlobalNotifications';
 
 const Header = () => {
   const { profile, user, isAuthenticated } = useFastAuth();
@@ -89,6 +90,9 @@ const Header = () => {
         <div className="flex items-center gap-4">
           {/* Global Search */}
           <GlobalSearch />
+          
+          {/* Global Notifications */}
+          <GlobalNotifications />
           
           {/* Shopping Cart */}
           <ShoppingCartDrawer />
