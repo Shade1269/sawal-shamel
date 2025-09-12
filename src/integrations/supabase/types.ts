@@ -527,6 +527,107 @@ export type Database = {
           },
         ]
       }
+      coupon_usage: {
+        Row: {
+          coupon_id: string | null
+          discount_applied: number
+          id: string
+          order_id: string | null
+          used_at: string
+          user_id: string | null
+        }
+        Insert: {
+          coupon_id?: string | null
+          discount_applied: number
+          id?: string
+          order_id?: string | null
+          used_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          coupon_id?: string | null
+          discount_applied?: number
+          id?: string
+          order_id?: string | null
+          used_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_usage_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          applicable_categories: Json | null
+          applicable_products: Json | null
+          coupon_code: string
+          coupon_name: string
+          created_at: string
+          description: string | null
+          discount_type: string
+          discount_value: number
+          id: string
+          is_active: boolean
+          maximum_discount_amount: number | null
+          minimum_order_amount: number | null
+          shop_id: string | null
+          updated_at: string
+          usage_count: number | null
+          usage_limit: number | null
+          usage_limit_per_customer: number | null
+          valid_from: string
+          valid_until: string | null
+        }
+        Insert: {
+          applicable_categories?: Json | null
+          applicable_products?: Json | null
+          coupon_code: string
+          coupon_name: string
+          created_at?: string
+          description?: string | null
+          discount_type: string
+          discount_value: number
+          id?: string
+          is_active?: boolean
+          maximum_discount_amount?: number | null
+          minimum_order_amount?: number | null
+          shop_id?: string | null
+          updated_at?: string
+          usage_count?: number | null
+          usage_limit?: number | null
+          usage_limit_per_customer?: number | null
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Update: {
+          applicable_categories?: Json | null
+          applicable_products?: Json | null
+          coupon_code?: string
+          coupon_name?: string
+          created_at?: string
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          id?: string
+          is_active?: boolean
+          maximum_discount_amount?: number | null
+          minimum_order_amount?: number | null
+          shop_id?: string | null
+          updated_at?: string
+          usage_count?: number | null
+          usage_limit?: number | null
+          usage_limit_per_customer?: number | null
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
       cron_job_logs: {
         Row: {
           created_at: string | null
@@ -551,6 +652,125 @@ export type Database = {
           job_name?: string
           message?: string | null
           status?: string
+        }
+        Relationships: []
+      }
+      customer_loyalty: {
+        Row: {
+          created_at: string
+          current_points: number
+          current_tier_id: string | null
+          customer_id: string
+          id: string
+          last_activity_at: string | null
+          shop_id: string | null
+          tier_progress: number | null
+          total_earned_points: number
+          total_spent_points: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_points?: number
+          current_tier_id?: string | null
+          customer_id: string
+          id?: string
+          last_activity_at?: string | null
+          shop_id?: string | null
+          tier_progress?: number | null
+          total_earned_points?: number
+          total_spent_points?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_points?: number
+          current_tier_id?: string | null
+          customer_id?: string
+          id?: string
+          last_activity_at?: string | null
+          shop_id?: string | null
+          tier_progress?: number | null
+          total_earned_points?: number
+          total_spent_points?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_loyalty_current_tier_id_fkey"
+            columns: ["current_tier_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_campaigns: {
+        Row: {
+          bounce_count: number | null
+          campaign_name: string
+          campaign_type: string
+          clicked_count: number | null
+          created_at: string
+          delivered_count: number | null
+          email_template: string
+          id: string
+          opened_count: number | null
+          scheduled_at: string | null
+          sender_email: string
+          sender_name: string
+          sent_at: string | null
+          shop_id: string | null
+          status: string
+          subject_line: string
+          target_audience: Json | null
+          total_recipients: number | null
+          unsubscribed_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          bounce_count?: number | null
+          campaign_name: string
+          campaign_type?: string
+          clicked_count?: number | null
+          created_at?: string
+          delivered_count?: number | null
+          email_template: string
+          id?: string
+          opened_count?: number | null
+          scheduled_at?: string | null
+          sender_email: string
+          sender_name: string
+          sent_at?: string | null
+          shop_id?: string | null
+          status?: string
+          subject_line: string
+          target_audience?: Json | null
+          total_recipients?: number | null
+          unsubscribed_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          bounce_count?: number | null
+          campaign_name?: string
+          campaign_type?: string
+          clicked_count?: number | null
+          created_at?: string
+          delivered_count?: number | null
+          email_template?: string
+          id?: string
+          opened_count?: number | null
+          scheduled_at?: string | null
+          sender_email?: string
+          sender_name?: string
+          sent_at?: string | null
+          shop_id?: string | null
+          status?: string
+          subject_line?: string
+          target_audience?: Json | null
+          total_recipients?: number | null
+          unsubscribed_count?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1081,6 +1301,208 @@ export type Database = {
             columns: ["affiliate_id"]
             isOneToOne: false
             referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loyalty_redemptions: {
+        Row: {
+          created_at: string
+          customer_loyalty_id: string | null
+          expires_at: string | null
+          id: string
+          order_id: string | null
+          points_used: number
+          redemption_code: string | null
+          reward_id: string | null
+          status: string
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_loyalty_id?: string | null
+          expires_at?: string | null
+          id?: string
+          order_id?: string | null
+          points_used: number
+          redemption_code?: string | null
+          reward_id?: string | null
+          status?: string
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_loyalty_id?: string | null
+          expires_at?: string | null
+          id?: string
+          order_id?: string | null
+          points_used?: number
+          redemption_code?: string | null
+          reward_id?: string | null
+          status?: string
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_redemptions_customer_loyalty_id_fkey"
+            columns: ["customer_loyalty_id"]
+            isOneToOne: false
+            referencedRelation: "customer_loyalty"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loyalty_redemptions_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_rewards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loyalty_rewards: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          minimum_tier_required: string | null
+          points_required: number
+          reward_description: string | null
+          reward_name: string
+          reward_type: string
+          reward_value: number
+          shop_id: string | null
+          stock_quantity: number | null
+          updated_at: string
+          used_quantity: number | null
+          valid_from: string
+          valid_until: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          minimum_tier_required?: string | null
+          points_required: number
+          reward_description?: string | null
+          reward_name: string
+          reward_type: string
+          reward_value: number
+          shop_id?: string | null
+          stock_quantity?: number | null
+          updated_at?: string
+          used_quantity?: number | null
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          minimum_tier_required?: string | null
+          points_required?: number
+          reward_description?: string | null
+          reward_name?: string
+          reward_type?: string
+          reward_value?: number
+          shop_id?: string | null
+          stock_quantity?: number | null
+          updated_at?: string
+          used_quantity?: number | null
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_rewards_minimum_tier_required_fkey"
+            columns: ["minimum_tier_required"]
+            isOneToOne: false
+            referencedRelation: "loyalty_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loyalty_tiers: {
+        Row: {
+          benefits: Json | null
+          created_at: string
+          id: string
+          is_active: boolean
+          minimum_points: number
+          minimum_spent_amount: number | null
+          shop_id: string | null
+          tier_color: string | null
+          tier_description: string | null
+          tier_icon: string | null
+          tier_name: string
+          updated_at: string
+        }
+        Insert: {
+          benefits?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          minimum_points?: number
+          minimum_spent_amount?: number | null
+          shop_id?: string | null
+          tier_color?: string | null
+          tier_description?: string | null
+          tier_icon?: string | null
+          tier_name: string
+          updated_at?: string
+        }
+        Update: {
+          benefits?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          minimum_points?: number
+          minimum_spent_amount?: number | null
+          shop_id?: string | null
+          tier_color?: string | null
+          tier_description?: string | null
+          tier_icon?: string | null
+          tier_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      loyalty_transactions: {
+        Row: {
+          created_at: string
+          customer_loyalty_id: string | null
+          description: string | null
+          expiry_date: string | null
+          id: string
+          order_id: string | null
+          points_amount: number
+          transaction_type: string
+        }
+        Insert: {
+          created_at?: string
+          customer_loyalty_id?: string | null
+          description?: string | null
+          expiry_date?: string | null
+          id?: string
+          order_id?: string | null
+          points_amount: number
+          transaction_type: string
+        }
+        Update: {
+          created_at?: string
+          customer_loyalty_id?: string | null
+          description?: string | null
+          expiry_date?: string | null
+          id?: string
+          order_id?: string | null
+          points_amount?: number
+          transaction_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_transactions_customer_loyalty_id_fkey"
+            columns: ["customer_loyalty_id"]
+            isOneToOne: false
+            referencedRelation: "customer_loyalty"
             referencedColumns: ["id"]
           },
         ]
@@ -2664,6 +3086,104 @@ export type Database = {
           },
         ]
       }
+      social_media_accounts: {
+        Row: {
+          access_token: string | null
+          account_name: string
+          account_settings: Json | null
+          created_at: string
+          id: string
+          is_active: boolean
+          platform: string
+          refresh_token: string | null
+          shop_id: string | null
+          token_expires_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          access_token?: string | null
+          account_name: string
+          account_settings?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          platform: string
+          refresh_token?: string | null
+          shop_id?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string | null
+          account_name?: string
+          account_settings?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          platform?: string
+          refresh_token?: string | null
+          shop_id?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      social_media_posts: {
+        Row: {
+          content: string
+          created_at: string
+          engagement_metrics: Json | null
+          error_message: string | null
+          external_post_id: string | null
+          id: string
+          media_urls: Json | null
+          post_type: string
+          posted_at: string | null
+          scheduled_at: string | null
+          shop_id: string | null
+          social_account_id: string | null
+          status: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          engagement_metrics?: Json | null
+          error_message?: string | null
+          external_post_id?: string | null
+          id?: string
+          media_urls?: Json | null
+          post_type?: string
+          posted_at?: string | null
+          scheduled_at?: string | null
+          shop_id?: string | null
+          social_account_id?: string | null
+          status?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          engagement_metrics?: Json | null
+          error_message?: string | null
+          external_post_id?: string | null
+          id?: string
+          media_urls?: Json | null
+          post_type?: string
+          posted_at?: string | null
+          scheduled_at?: string | null
+          shop_id?: string | null
+          social_account_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_media_posts_social_account_id_fkey"
+            columns: ["social_account_id"]
+            isOneToOne: false
+            referencedRelation: "social_media_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stock_alerts: {
         Row: {
           alert_type: string
@@ -3326,6 +3846,19 @@ export type Database = {
       }
     }
     Functions: {
+      add_loyalty_points: {
+        Args: {
+          customer_user_id: string
+          points_to_add: number
+          shop_uuid: string
+          transaction_description?: string
+        }
+        Returns: string
+      }
+      calculate_loyalty_points: {
+        Args: { order_amount: number; points_per_riyal?: number }
+        Returns: number
+      }
       calculate_risk_score: {
         Args: {
           historical_data?: Json
@@ -3412,10 +3945,23 @@ export type Database = {
         }
         Returns: string
       }
+      update_customer_tier: {
+        Args: { loyalty_record_id: string }
+        Returns: undefined
+      }
       update_user_role: {
         Args: {
           new_role: Database["public"]["Enums"]["user_role"]
           target_email: string
+        }
+        Returns: Json
+      }
+      validate_coupon: {
+        Args: {
+          coupon_code_input: string
+          customer_user_id?: string
+          order_amount?: number
+          shop_uuid: string
         }
         Returns: Json
       }
