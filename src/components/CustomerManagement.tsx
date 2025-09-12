@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { BackButton } from '@/components/ui/back-button';
 import { 
   Users, 
   Search, 
@@ -15,12 +16,14 @@ import {
   Calendar,
   ShoppingBag,
   TrendingUp,
-  MoreVertical
+  MoreVertical,
+  Home
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 interface StoreCustomer {
   id: string;
@@ -58,6 +61,7 @@ interface CustomerManagementProps {
 
 export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId }) => {
   const { toast } = useToast();
+  const { goToUserHome } = useSmartNavigation();
   
   const [customers, setCustomers] = useState<StoreCustomer[]>([]);
   const [stats, setStats] = useState<CustomerStats>({
@@ -207,10 +211,19 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
           </p>
         </div>
         
-        <Button onClick={exportCustomers} variant="outline">
-          <Download className="w-4 h-4 mr-2" />
-          تصدير البيانات
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={goToUserHome} variant="outline">
+            <Home className="w-4 h-4 mr-2" />
+            الرئيسية
+          </Button>
+          
+          <Button onClick={exportCustomers} variant="outline">
+            <Download className="w-4 h-4 mr-2" />
+            تصدير البيانات
+          </Button>
+          
+          <BackButton />
+        </div>
       </div>
 
       {/* إحصائيات العملاء */}

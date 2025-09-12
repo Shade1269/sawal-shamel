@@ -22,12 +22,14 @@ import {
   Calendar,
   ShoppingBag,
   Award,
-  LogOut
+  LogOut,
+  Home
 } from 'lucide-react';
 import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 interface CustomerAddress {
   id: string;
@@ -55,6 +57,7 @@ interface CustomerOrder {
 export const CustomerProfile: React.FC = () => {
   const { customer, updateCustomerProfile, signOut, isLoading } = useCustomerAuth();
   const { toast } = useToast();
+  const { goToUserHome } = useSmartNavigation();
   
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState({
@@ -196,6 +199,16 @@ export const CustomerProfile: React.FC = () => {
             </div>
 
             <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToUserHome}
+                disabled={isLoading}
+              >
+                <Home className="w-4 h-4" />
+                الرئيسية
+              </Button>
+              
               <Button
                 variant="outline"
                 size="sm"

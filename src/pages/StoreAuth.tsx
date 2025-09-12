@@ -5,9 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Store, ArrowRight, Loader2 } from "lucide-react";
+import { Store, ArrowRight, Loader2, Home } from "lucide-react";
 import { CustomerAuth } from '@/components/CustomerAuth';
 import { useCustomerAuth } from '@/hooks/useCustomerAuth';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 interface AffiliateStore {
   id: string;
@@ -28,6 +29,7 @@ const StoreAuth: React.FC = () => {
   const returnUrl = searchParams.get('returnUrl') || `/store/${slug}`;
   
   const { isAuthenticated, checkStoredSession } = useCustomerAuth();
+  const { goToUserHome } = useSmartNavigation();
 
   // التحقق من الجلسة المحفوظة عند تحميل الصفحة
   useEffect(() => {
@@ -127,15 +129,27 @@ const StoreAuth: React.FC = () => {
               </div>
             </div>
 
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={handleBackToStore}
-              className="flex items-center gap-2"
-            >
-              <ArrowRight className="w-4 h-4" />
-              العودة للمتجر
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={goToUserHome}
+                className="flex items-center gap-2"
+              >
+                <Home className="w-4 h-4" />
+                الرئيسية
+              </Button>
+              
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={handleBackToStore}
+                className="flex items-center gap-2"
+              >
+                <ArrowRight className="w-4 h-4" />
+                العودة للمتجر
+              </Button>
+            </div>
           </div>
           
           {store.bio && (
