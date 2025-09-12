@@ -39,6 +39,7 @@ const PaymentGateways = lazy(() => import("./pages/PaymentGateways"));
 const RefundManagement = lazy(() => import("./pages/RefundManagement"));
 const Inventory = lazy(() => import("./pages/Inventory"));
 const ExecutiveDashboard = lazy(() => import("./pages/ExecutiveDashboard"));
+const SecurityCenter = lazy(() => import("./pages/SecurityCenter"));
 
 const queryClient = new QueryClient();
 
@@ -112,6 +113,7 @@ const App = () => {
         <Route path="refunds" element={<RefundManagement />} />
         <Route path="inventory" element={<Inventory />} />
         <Route path="executive" element={<ExecutiveDashboard />} />
+        <Route path="security" element={<SecurityCenter />} />
                       </Route>
                       
                       {/* Payment System Routes */}

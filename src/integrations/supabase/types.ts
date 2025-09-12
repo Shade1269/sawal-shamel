@@ -191,6 +191,51 @@ export type Database = {
           },
         ]
       }
+      backup_logs: {
+        Row: {
+          backup_scope: string
+          backup_status: string
+          backup_type: string
+          checksum: string
+          created_at: string
+          encryption_status: string
+          error_message: string | null
+          file_path: string
+          file_size_bytes: number | null
+          id: string
+          retention_until: string
+          verified_at: string | null
+        }
+        Insert: {
+          backup_scope: string
+          backup_status?: string
+          backup_type: string
+          checksum: string
+          created_at?: string
+          encryption_status?: string
+          error_message?: string | null
+          file_path: string
+          file_size_bytes?: number | null
+          id?: string
+          retention_until: string
+          verified_at?: string | null
+        }
+        Update: {
+          backup_scope?: string
+          backup_status?: string
+          backup_type?: string
+          checksum?: string
+          created_at?: string
+          encryption_status?: string
+          error_message?: string | null
+          file_path?: string
+          file_size_bytes?: number | null
+          id?: string
+          retention_until?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       channel_locks: {
         Row: {
           channel_id: string
@@ -530,6 +575,98 @@ export type Database = {
           data?: Json | null
           event?: string
           id?: string
+        }
+        Relationships: []
+      }
+      fraud_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          order_id: string | null
+          resolution_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          risk_score: number
+          rule_id: string | null
+          status: string
+          transaction_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          order_id?: string | null
+          resolution_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_score: number
+          rule_id?: string | null
+          status?: string
+          transaction_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          order_id?: string | null
+          resolution_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_score?: number
+          rule_id?: string | null
+          status?: string
+          transaction_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fraud_alerts_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "fraud_detection_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fraud_detection_rules: {
+        Row: {
+          action: string
+          conditions: Json
+          created_at: string
+          id: string
+          is_active: boolean
+          rule_name: string
+          rule_type: string
+          severity: string
+          updated_at: string
+        }
+        Insert: {
+          action: string
+          conditions: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          rule_name: string
+          rule_type: string
+          severity?: string
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          conditions?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          rule_name?: string
+          rule_type?: string
+          severity?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1983,6 +2120,120 @@ export type Database = {
           },
         ]
       }
+      secure_transactions: {
+        Row: {
+          audit_trail: Json | null
+          created_at: string
+          encrypted_data: string
+          encryption_key_id: string
+          expires_at: string
+          hash_signature: string
+          id: string
+          order_id: string
+          pci_compliance_level: string
+          security_tokens: Json | null
+        }
+        Insert: {
+          audit_trail?: Json | null
+          created_at?: string
+          encrypted_data: string
+          encryption_key_id: string
+          expires_at?: string
+          hash_signature: string
+          id?: string
+          order_id: string
+          pci_compliance_level?: string
+          security_tokens?: Json | null
+        }
+        Update: {
+          audit_trail?: Json | null
+          created_at?: string
+          encrypted_data?: string
+          encryption_key_id?: string
+          expires_at?: string
+          hash_signature?: string
+          id?: string
+          order_id?: string
+          pci_compliance_level?: string
+          security_tokens?: Json | null
+        }
+        Relationships: []
+      }
+      security_audit_log: {
+        Row: {
+          action_performed: string
+          compliance_flags: Json | null
+          created_at: string
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          resource_accessed: string | null
+          risk_assessment: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_performed: string
+          compliance_flags?: Json | null
+          created_at?: string
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          resource_accessed?: string | null
+          risk_assessment?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_performed?: string
+          compliance_flags?: Json | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          resource_accessed?: string | null
+          risk_assessment?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      security_settings: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          is_active: boolean
+          setting_name: string
+          setting_value: Json
+          shop_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          setting_name: string
+          setting_value: Json
+          shop_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          setting_name?: string
+          setting_value?: Json
+          shop_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       shipment_tracking: {
         Row: {
           created_at: string | null
@@ -3075,6 +3326,14 @@ export type Database = {
       }
     }
     Functions: {
+      calculate_risk_score: {
+        Args: {
+          historical_data?: Json
+          transaction_data: Json
+          user_data: Json
+        }
+        Returns: number
+      }
       cleanup_expired_otp: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -3090,6 +3349,10 @@ export type Database = {
           current_auth_uid: string
           profile_id: string
         }[]
+      }
+      encrypt_sensitive_data: {
+        Args: { data_to_encrypt: Json; encryption_level?: string }
+        Returns: string
       }
       generate_invoice_number: {
         Args: Record<PropertyKey, never>
@@ -3137,6 +3400,17 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_security_event: {
+        Args: {
+          action_performed?: string
+          additional_metadata?: Json
+          event_type: string
+          resource_accessed?: string
+          risk_level?: string
+          user_id?: string
+        }
+        Returns: string
       }
       update_user_role: {
         Args: {
