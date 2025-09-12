@@ -168,7 +168,7 @@ export const PushNotificationManager: React.FC = () => {
         timestamp: Date.now()
       }));
 
-      // TODO: حفظ في قاعدة البيانات عند إضافة جدول push_subscriptions
+      // حفظ محلي مؤقتاً حتى إضافة جدول قاعدة البيانات
       console.log('Subscription saved locally for user:', profile.id);
     } catch (error) {
       console.error('Failed to save subscription:', error);

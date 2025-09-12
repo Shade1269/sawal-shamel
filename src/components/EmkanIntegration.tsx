@@ -150,7 +150,7 @@ const EmkanIntegration: React.FC = () => {
     setLoading(true);
     try {
       const token = session?.access_token;
-      console.log('🔗 Testing Emkan via admin-actions...');
+      // Testing Emkan connection
       const { data, error } = await supabase.functions.invoke('admin-actions', {
         body: {
           action: 'test_emkan_connection',

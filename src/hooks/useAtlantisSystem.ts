@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { AtlantisPointsService, AtlantisTTSService } from '@/lib/atlantisServices';
+import { debounce } from '@/utils/performance';
 
 // Types
 export interface UserLevel {
@@ -111,19 +112,19 @@ export const useAtlantisSystem = () => {
   const [currentChallenge, setCurrentChallenge] = useState<WeeklyChallenge | null>(null);
   const [castleController, setCastleController] = useState<Alliance | null>(null);
 
-  // Get current user profile
-  const getCurrentUserProfile = async () => {
+  // Get current user profile (memoized)
+  const getCurrentUserProfile = useCallback(async () => {
     if (!user) return null;
     
     const { data, error } = await supabase
       .from('profiles')
       .select('id')
       .eq('auth_user_id', user.id)
-      .single();
+      .maybeSingle();
     
     if (error || !data) return null;
     return data.id;
-  };
+  }, [user]);
 
   // Initialize or get user level
   const initializeUserLevel = async () => {
@@ -193,8 +194,8 @@ export const useAtlantisSystem = () => {
     }
   };
 
-  // Fetch weekly leaderboard
-  const fetchWeeklyLeaderboard = async () => {
+  // Fetch weekly leaderboard (debounced)
+  const fetchWeeklyLeaderboard = useCallback(debounce(async () => {
     const currentWeek = new Date().getWeek();
     const currentYear = new Date().getFullYear();
 
@@ -223,10 +224,10 @@ export const useAtlantisSystem = () => {
     })) || [];
 
     setWeeklyLeaderboard(formattedData);
-  };
+  }, 300), []);
 
-  // Fetch alliance leaderboard
-  const fetchAllianceLeaderboard = async () => {
+  // Fetch alliance leaderboard (debounced)
+  const fetchAllianceLeaderboard = useCallback(debounce(async () => {
     const currentWeek = new Date().getWeek();
     const currentYear = new Date().getFullYear();
 
@@ -263,7 +264,7 @@ export const useAtlantisSystem = () => {
     })) || [];
 
     setAllianceLeaderboard(formattedData);
-  };
+  }, 300), []);
 
   // Fetch current challenge
   const fetchCurrentChallenge = async () => {

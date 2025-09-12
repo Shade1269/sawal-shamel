@@ -68,16 +68,21 @@ const AtlantisGuide = lazy(() => import("./pages/AtlantisGuide"));
 // Product Management Pages
 const ProductManagement = lazy(() => import("./pages/ProductManagement"));
 const ProductsBrowser = lazy(() => import("./pages/ProductsBrowser"));
-const TestingDashboard = lazy(() => import("./components/TestingDashboard"));
 const CategoryManagement = lazy(() => import("./pages/CategoryManagement"));
 const BrandManagement = lazy(() => import("./pages/BrandManagement"));
 
 // Shipping and Tracking Pages
 const ShipmentManagement = lazy(() => import("./pages/ShipmentManagement"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
-// Force reload to clear any cached AuthProvider references
 const App = () => {
   return (
     <ErrorBoundary>
@@ -105,32 +110,30 @@ const App = () => {
                       {/* Public Routes */}
                       <Route path="/" element={<Index />} />
                       <Route path="/home" element={<Navigate to="/" replace />} />
-                      <Route path="/index" element={<Index />} />
                       <Route path="/auth" element={<AuthForm />} />
-                      <Route path="/fast-auth" element={<Navigate to="/auth" replace />} />
                       <Route path="/login" element={<AuthForm />} />
                       <Route path="/signup" element={<AuthForm />} />
                       <Route path="/products" element={<ProductsPage />} />
+                      <Route path="/about" element={<AboutPage />} />
+                      <Route path="/create-admin" element={<CreateAdminPage />} />
+          
+                       {/* Store Routes */}
+                       <Route path="/store/:storeSlug" element={<AffiliateStoreFront />} />
+                       <Route path="/store/:storeSlug/checkout" element={<StoreCheckout />} />
+                       <Route path="/store/:storeSlug/order-confirmation/:orderId" element={<StoreOrderConfirmation />} />
+                       
+                       {/* Protected Browser */}
                        <Route path="/products-browser" element={
                          <ProtectedRoute requiredRole={["affiliate"]}>
                            <ProductsBrowser />
                          </ProtectedRoute>
                        } />
-                       <Route path="/testing" element={<TestingDashboard />} />
-                      <Route path="/about" element={<AboutPage />} />
-                      <Route path="/create-admin" element={<CreateAdminPage />} />
-          <Route path="/store/:storeSlug" element={<AffiliateStoreFront />} />
-          <Route path="/store/:storeSlug/checkout" element={<StoreCheckout />} />
-          <Route path="/store/:storeSlug/order-confirmation/:orderId" element={<StoreOrderConfirmation />} />
                       
                       {/* E-commerce Routes */}
                       <Route path="/cart" element={<Cart />} />
                       <Route path="/checkout" element={<CheckoutPage />} />
                       <Route path="/simple-checkout" element={<SimpleCODCheckout />} />
-                      <Route path="/store/:slug/checkout" element={<SimpleCODCheckout />} />
-                      <Route path="/store/:slug/order-confirmation/:orderId" element={<OrderConfirmationSimple />} />
                       <Route path="/order-confirmation/:orderId" element={<OrderConfirmationSimple />} />
-                      <Route path="/order-confirmation-simple/:orderId" element={<OrderConfirmationSimple />} />
                       <Route path="/track-order" element={<OrderTracking />} />
                       <Route path="/track-order/:orderId" element={<OrderTracking />} />
                       <Route path="/shipment-management" element={
@@ -203,51 +206,9 @@ const App = () => {
         <Route path="user-behavior" element={<UserBehaviorAnalytics />} />
                       </Route>
                       
-                      {/* Payment System Routes */}
-                      <Route 
-                        path="/payments" 
-                        element={
-                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
-                            <PaymentDashboard />
-                          </ProtectedRoute>
-                        } 
-                      />
-                      <Route 
-                        path="/invoices" 
-                        element={
-                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
-                            <InvoiceManagement />
-                          </ProtectedRoute>
-                        } 
-                      />
-                      <Route 
-                        path="/payment-gateways" 
-                        element={
-                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
-                            <PaymentGateways />
-                          </ProtectedRoute>
-                        } 
-                      />
-                      <Route 
-                        path="/refunds" 
-                        element={
-                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
-                            <RefundManagement />
-                          </ProtectedRoute>
-                        } 
-                      />
-                      
                       {/* Merchant Routes */}
                       <Route 
                         path="/merchant" 
-                        element={
-                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
-                            <MerchantDashboard />
-                          </ProtectedRoute>
-                        } 
-                      />
-                      <Route 
-                        path="/merchant-dashboard" 
                         element={
                           <ProtectedRoute requiredRole={["merchant", "admin"]}>
                             <MerchantDashboard />
@@ -259,22 +220,6 @@ const App = () => {
                          element={
                            <ProtectedRoute requiredRole={["merchant", "admin"]}>
                              <OrderManagement />
-                           </ProtectedRoute>
-                         } 
-                       />
-                       <Route 
-                         path="/shipping" 
-                         element={
-                           <ProtectedRoute>
-                             <CheckoutPage />
-                           </ProtectedRoute>
-                         } 
-                       />
-                       <Route 
-                         path="/payment" 
-                         element={
-                           <ProtectedRoute>
-                             <CheckoutPage />
                            </ProtectedRoute>
                          } 
                        />
@@ -290,14 +235,6 @@ const App = () => {
                        {/* Affiliate Routes */}
                        <Route 
                          path="/affiliate" 
-                         element={
-                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                             <AffiliateDashboard />
-                           </ProtectedRoute>
-                         } 
-                       />
-                       <Route 
-                         path="/affiliate-dashboard" 
                          element={
                            <ProtectedRoute requiredRole={["affiliate", "admin"]}>
                              <AffiliateDashboard />
@@ -322,36 +259,6 @@ const App = () => {
                            </ProtectedRoute>
                          } 
                        />
-                      
-                      {/* Store Management */}
-                      <Route 
-                        path="/store-management" 
-                        element={
-                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
-                            <MerchantDashboard />
-                          </ProtectedRoute>
-                        } 
-                      />
-                      
-                      {/* Admin Dashboard with different path */}
-                      <Route 
-                        path="/admin-dashboard" 
-                        element={
-                          <ProtectedRoute requiredRole="admin">
-                            <AdminDashboard />
-                          </ProtectedRoute>
-                        } 
-                      />
-                      
-                      {/* Users Management */}
-                      <Route 
-                        path="/admin-users" 
-                        element={
-                          <ProtectedRoute requiredRole="admin">
-                            <AdminUsers />
-                          </ProtectedRoute>
-                        } 
-                      />
                       
                       {/* Catch all */}
                       <Route path="*" element={<Navigate to="/" replace />} />
