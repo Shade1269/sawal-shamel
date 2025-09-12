@@ -61,24 +61,13 @@ const CheckoutPage = () => {
   const taxAmount = (subtotal + shippingCost) * taxRate;
   const total = subtotal + shippingCost + taxAmount;
 
+  // الدفع عند الاستلام فقط حاليا
   const paymentMethods: PaymentMethod[] = [
     {
       id: 'CASH_ON_DELIVERY',
       name: 'الدفع عند الاستلام',
-      description: 'ادفع نقداً عند وصول الطلب',
+      description: 'ادفع نقداً عند وصول الطلب إليك',
       icon: '💵'
-    },
-    {
-      id: 'BANK_TRANSFER',
-      name: 'تحويل بنكي',
-      description: 'تحويل إلى الحساب البنكي',
-      icon: '🏦'
-    },
-    {
-      id: 'CREDIT_CARD',
-      name: 'بطاقة ائتمان',
-      description: 'فيزا أو ماستركارد',
-      icon: '💳'
     }
   ];
 
@@ -148,61 +137,52 @@ const CheckoutPage = () => {
 
     setLoading(true);
     try {
-      // Create order
+      // إنشاء طلب مع الدفع عند الاستلام
       const orderData = {
         user_id: profile?.id || null,
-        shop_id: cart.items[0]?.shop_id || '',
-        order_number: `ORD-${Date.now()}`,
+        session_id: `session_${Date.now()}`,
         customer_name: customerInfo.name,
         customer_email: customerInfo.email || null,
         customer_phone: customerInfo.phone,
-        shipping_address: customerInfo.address,
-        payment_method: paymentMethod as any,
-        shipping_method: shippingMethod as any,
-        subtotal_sar: subtotal,
-        shipping_sar: shippingCost,
-        tax_sar: taxAmount,
-        total_sar: total,
-        notes: notes || null,
-        status: 'PENDING' as any,
-        payment_status: 'PENDING' as any
+        shipping_address: {
+          street: customerInfo.address.street,
+          city: customerInfo.address.city,
+          district: customerInfo.address.district,
+          postal_code: customerInfo.address.postal_code,
+          country: customerInfo.address.country
+        },
+        total_amount_sar: total,
+        payment_status: 'PENDING',
+        payment_method: 'COD',
+        order_status: 'CONFIRMED' // مؤكد مع الدفع عند الاستلام
       };
 
       const { data: order, error: orderError } = await supabase
-        .from('ecommerce_orders')
+        .from('simple_orders')
         .insert(orderData)
         .select()
         .single();
 
       if (orderError) throw orderError;
 
-      // Create order items
+      // إنشاء عناصر الطلب
       const orderItems = cart.items.map(item => ({
         order_id: order.id,
         product_id: item.product_id,
         product_title: item.product_title,
         product_image_url: item.product_image_url,
-        product_sku: null,
         quantity: item.quantity,
         unit_price_sar: item.unit_price_sar,
         total_price_sar: item.total_price_sar
       }));
 
       const { error: itemsError } = await supabase
-        .from('ecommerce_order_items')
+        .from('simple_order_items')
         .insert(orderItems);
 
       if (itemsError) throw itemsError;
 
-      // Create order status history
-      await supabase
-        .from('order_status_history')
-        .insert({
-          order_id: order.id,
-          new_status: 'PENDING' as any,
-          notes: 'تم إنشاء الطلب',
-          changed_by: profile?.id || null
-        });
+      // لا حاجة لسجل حالة الطلب في النظام المبسط حاليا
 
       // Clear cart
       await clearCart();
