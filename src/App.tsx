@@ -36,6 +36,7 @@ const CreateAdminPage = lazy(() => import("./pages/CreateAdmin"));
 
 // E-commerce Pages
 const Cart = lazy(() => import("./pages/Cart"));
+const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
 const OrderTracking = lazy(() => import("./pages/OrderTracking"));
 const OrderManagement = lazy(() => import("./pages/OrderManagement"));
@@ -102,6 +103,7 @@ const App = () => {
                       
                       {/* E-commerce Routes */}
                       <Route path="/cart" element={<Cart />} />
+                      <Route path="/checkout" element={<CheckoutPage />} />
                       <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
                       <Route path="/track-order" element={<OrderTracking />} />
                       <Route path="/track-order/:orderId" element={<OrderTracking />} />
