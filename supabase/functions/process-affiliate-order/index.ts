@@ -1,86 +1,70 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+}
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const supabaseClient = createClient(
+    const { session_id, affiliate_store_id, order_items } = await req.json();
+
+    console.log('Processing affiliate order:', {
+      session_id,
+      affiliate_store_id,
+      order_items_count: order_items?.length
+    });
+
+    // التحقق من وجود البيانات المطلوبة
+    if (!session_id || !affiliate_store_id || !order_items || order_items.length === 0) {
+      throw new Error('بيانات الطلب غير مكتملة');
+    }
+
+    // إنشاء عميل Supabase
+    const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
-    const { orderId, affiliateStoreId, merchantId } = await req.json();
-
-    if (!orderId || !affiliateStoreId || !merchantId) {
-      throw new Error('Missing required parameters');
-    }
-
-    // إنشاء مراجعة ادمن للطلب
-    const { data: reviewData, error: reviewError } = await supabaseClient
-      .from('admin_order_reviews')
-      .insert({
-        order_id: orderId,
-        affiliate_store_id: affiliateStoreId,
-        merchant_id: merchantId,
-        status: 'PENDING'
-      })
-      .select()
-      .single();
-
-    if (reviewError) {
-      console.error('Error creating admin review:', reviewError);
-      throw reviewError;
-    }
-
-    // تحديث حالة الطلب إلى "قيد مراجعة الادمن"
-    const { error: orderUpdateError } = await supabaseClient
-      .from('orders')
-      .update({ 
-        status: 'ADMIN_REVIEW',
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', orderId);
-
-    if (orderUpdateError) {
-      console.error('Error updating order status:', orderUpdateError);
-      throw orderUpdateError;
-    }
-
-    // يمكن إضافة إشعار للادمن هنا
-    console.log(`Order ${orderId} sent for admin review`);
-
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: 'Order sent for admin review',
-        reviewId: reviewData.id
-      }),
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
       }
     );
+
+    // استدعاء function لمعالجة الطلب
+    const { data, error } = await supabase.rpc('process_affiliate_order', {
+      p_session_id: session_id,
+      p_affiliate_store_id: affiliate_store_id,
+      p_order_items: order_items
+    });
+
+    if (error) {
+      console.error('Database function error:', error);
+      throw new Error(`خطأ في قاعدة البيانات: ${error.message}`);
+    }
+
+    console.log('Order processed successfully:', data);
+
+    return new Response(JSON.stringify(data), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
 
   } catch (error) {
-    console.error('Error in process-affiliate-order:', error);
-    
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message 
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
-      }
-    );
+    console.error('Error in process-affiliate-order function:', error);
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: error.message || 'حدث خطأ في معالجة الطلب' 
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });

@@ -46,6 +46,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { useNavigate } from 'react-router-dom';
+import { CommissionsPanel } from '@/components/CommissionsPanel';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
@@ -705,6 +706,7 @@ const AffiliateDashboard = () => {
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="campaigns">الحملات النشطة</TabsTrigger>
               <TabsTrigger value="links">الروابط المخصصة</TabsTrigger>
+              <TabsTrigger value="commissions">العمولات</TabsTrigger>
               <TabsTrigger value="analytics">التحليلات</TabsTrigger>
               <TabsTrigger value="automation">الأتمتة</TabsTrigger>
             </TabsList>
@@ -795,6 +797,10 @@ const AffiliateDashboard = () => {
                   </Button>
                 </div>
               </div>
+            </TabsContent>
+            
+            <TabsContent value="commissions" className="space-y-4 mt-6">
+              <CommissionsPanel />
             </TabsContent>
             
             <TabsContent value="analytics" className="space-y-4 mt-6">

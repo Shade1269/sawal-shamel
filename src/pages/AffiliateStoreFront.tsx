@@ -120,9 +120,16 @@ const AffiliateStoreFront = () => {
         `)
         .eq('store_slug', storeSlug)
         .eq('is_active', true)
-        .single();
+        .maybeSingle();
 
       if (storeError) throw storeError;
+      
+      if (!storeData) {
+        setStore(null);
+        setLoading(false);
+        return;
+      }
+      
       setStore(storeData);
 
       // جلب منتجات المتجر
@@ -190,6 +197,63 @@ const AffiliateStoreFront = () => {
 
   const getCartItemsCount = () => {
     return Object.values(cart).reduce((sum, quantity) => sum + quantity, 0);
+  };
+
+  const processOrder = async () => {
+    if (!store || Object.keys(cart).length === 0) {
+      toast({
+        title: "خطأ",
+        description: "السلة فارغة أو المتجر غير متاح",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // تحضير بيانات المنتجات للطلب
+      const orderItems = Object.entries(cart).map(([productId, quantity]) => {
+        const product = products.find(p => p.product_id === productId);
+        return {
+          product_id: productId,
+          quantity: quantity,
+          unit_price: product?.products.price_sar || 0
+        };
+      });
+
+      // استدعاء Edge Function لمعالجة الطلب
+      const { data, error } = await supabase.functions.invoke('process-affiliate-order', {
+        body: {
+          session_id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          affiliate_store_id: store.id,
+          order_items: orderItems
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.success) {
+        toast({
+          title: "تم إنشاء الطلب بنجاح! 🎉",
+          description: `تم حساب عمولة ${data.commission_amount} ريال للمسوق`,
+        });
+        
+        // إعادة تعيين السلة
+        setCart({});
+        
+        // إعادة تحميل بيانات المتجر لتحديث الإحصائيات
+        fetchStoreData();
+      } else {
+        throw new Error(data.error || 'فشل في معالجة الطلب');
+      }
+
+    } catch (error) {
+      console.error('Error processing order:', error);
+      toast({
+        title: "خطأ في معالجة الطلب",
+        description: error.message || "حدث خطأ أثناء معالجة الطلب",
+        variant: "destructive",
+      });
+    }
   };
 
   const filteredProducts = products.filter(product => {
@@ -348,8 +412,8 @@ const AffiliateStoreFront = () => {
                   <div className="font-medium">{getCartItemsCount()} منتج</div>
                   <div className="text-sm opacity-90">{getCartTotal().toFixed(2)} ريال</div>
                 </div>
-                <Button size="sm" variant="secondary">
-                  عرض السلة
+                <Button size="sm" variant="secondary" onClick={processOrder}>
+                  إتمام الطلب - {getCartTotal().toFixed(2)} ريال
                 </Button>
               </div>
             </CardContent>

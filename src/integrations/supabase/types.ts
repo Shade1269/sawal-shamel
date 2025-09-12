@@ -2139,6 +2139,80 @@ export type Database = {
           },
         ]
       }
+      order_tracking: {
+        Row: {
+          affiliate_profile_id: string | null
+          affiliate_store_id: string | null
+          commission_amount_sar: number
+          commission_rate: number
+          created_at: string
+          id: string
+          product_id: string | null
+          quantity: number
+          session_id: string
+          status: string
+          unit_price_sar: number
+          updated_at: string
+        }
+        Insert: {
+          affiliate_profile_id?: string | null
+          affiliate_store_id?: string | null
+          commission_amount_sar: number
+          commission_rate?: number
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          quantity?: number
+          session_id: string
+          status?: string
+          unit_price_sar: number
+          updated_at?: string
+        }
+        Update: {
+          affiliate_profile_id?: string | null
+          affiliate_store_id?: string | null
+          commission_amount_sar?: number
+          commission_rate?: number
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          quantity?: number
+          session_id?: string
+          status?: string
+          unit_price_sar?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_tracking_affiliate_profile_id_fkey"
+            columns: ["affiliate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_tracking_affiliate_profile_id_fkey"
+            columns: ["affiliate_profile_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_tracking_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_tracking_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           affiliate_store_id: string | null
@@ -4798,6 +4872,14 @@ export type Database = {
           user_id?: string
         }
         Returns: string
+      }
+      process_affiliate_order: {
+        Args: {
+          p_affiliate_store_id: string
+          p_order_items: Json
+          p_session_id: string
+        }
+        Returns: Json
       }
       update_customer_tier: {
         Args: { loyalty_record_id: string }
