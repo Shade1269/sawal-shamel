@@ -15,6 +15,7 @@ import {
   DollarSign,
   Star
 } from 'lucide-react';
+import { BackButton } from '@/components/ui/back-button';
 
 const MarketingDashboard = () => {
   const stats = [
@@ -53,9 +54,12 @@ const MarketingDashboard = () => {
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold bg-gradient-persian bg-clip-text text-transparent">
-            مركز التسويق الذكي
-          </h1>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <BackButton />
+            <h1 className="text-4xl font-bold bg-gradient-persian bg-clip-text text-transparent">
+              مركز التسويق الذكي
+            </h1>
+          </div>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             إدارة شاملة لحملاتك التسويقية ووسائل التواصل الاجتماعي وبرامج الولاء
           </p>

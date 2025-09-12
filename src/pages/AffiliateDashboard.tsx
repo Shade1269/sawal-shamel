@@ -48,6 +48,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
 import { CommissionsPanel } from '@/components/CommissionsPanel';
+import { BackButton } from '@/components/ui/back-button';
 import { AffiliateProductsManager } from '@/components/AffiliateProductsManager';
 import { useOptimizedAuth } from '@/hooks/useOptimizedAuth';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
@@ -546,7 +547,10 @@ const AffiliateDashboard = () => {
     <div className="container mx-auto p-6 space-y-6">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">لوحة تحكم المسوق</h1>
+          <div className="flex items-center gap-4">
+            <BackButton />
+            <h1 className="text-3xl font-bold">لوحة تحكم المسوق</h1>
+          </div>
           <Button asChild>
             <Link to="/affiliate/store">
               <Store className="ml-2 h-4 w-4" />

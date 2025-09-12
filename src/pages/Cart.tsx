@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { BackButton } from '@/components/ui/back-button';
 
 interface CartItem {
   id: string;
@@ -78,14 +79,17 @@ const Cart = () => {
       <div className="border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              onClick={handleBackToStore}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              العودة للمتجر
-            </Button>
+            <div className="flex items-center gap-4">
+              <BackButton />
+              <Button
+                variant="ghost"
+                onClick={handleBackToStore}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                العودة للمتجر
+              </Button>
+            </div>
             <h1 className="text-2xl font-bold">سلة التسوق</h1>
             <div></div>
           </div>

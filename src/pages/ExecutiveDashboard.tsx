@@ -19,6 +19,7 @@ import {
   Filter
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { BackButton } from '@/components/ui/back-button';
 
 export default function ExecutiveDashboard() {
   const { kpis, financial, customer, business, loading, error, refetch } = useExecutiveAnalytics();
@@ -53,13 +54,16 @@ export default function ExecutiveDashboard() {
     <div className="container mx-auto p-6 space-y-8">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            لوحة التحكم التنفيذية
-          </h1>
-          <p className="text-muted-foreground">
-            تحليلات شاملة ومؤشرات الأداء الرئيسية لأعمالك
-          </p>
+        <div className="flex items-center gap-4">
+          <BackButton />
+          <div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              لوحة التحكم التنفيذية
+            </h1>
+            <p className="text-muted-foreground">
+              تحليلات شاملة ومؤشرات الأداء الرئيسية لأعمالك
+            </p>
+          </div>
         </div>
         
         <div className="flex items-center gap-3">

@@ -23,6 +23,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useFastAuth } from '@/hooks/useFastAuth';
+import { BackButton } from '@/components/ui/back-button';
 
 interface Product {
   id: string;
@@ -207,6 +208,7 @@ const ProductManagement = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
+              <BackButton />
               <Link to="/">
                 <Button variant="ghost" className="text-primary hover:bg-primary/10 gap-2">
                   <Home className="h-4 w-4" />

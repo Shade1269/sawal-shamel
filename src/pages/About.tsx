@@ -19,6 +19,7 @@ import {
   Crown
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { BackButton } from '@/components/ui/back-button';
 
 const About = () => {
   return (
@@ -26,16 +27,19 @@ const About = () => {
       {/* Navigation */}
       <div className="border-b bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
-          <Link to="/">
-            <Button 
-              variant="ghost" 
-              className="text-primary hover:bg-primary/10 gap-2"
-            >
-              <Home className="h-4 w-4" />
-              العودة إلى الصفحة الرئيسية
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
+          <div className="flex items-center gap-4">
+            <BackButton />
+            <Link to="/">
+              <Button 
+                variant="ghost" 
+                className="text-primary hover:bg-primary/10 gap-2"
+              >
+                <Home className="h-4 w-4" />
+                العودة إلى الصفحة الرئيسية
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 

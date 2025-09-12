@@ -24,6 +24,7 @@ import { useFastAuth } from '@/hooks/useFastAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
+import { BackButton } from '@/components/ui/back-button';
 
 const MerchantDashboard = () => {
   const { profile } = useFastAuth();
@@ -251,6 +252,7 @@ const MerchantDashboard = () => {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-4 mb-4">
+            <BackButton />
             <Button 
               variant="ghost" 
               onClick={goToUserHome}

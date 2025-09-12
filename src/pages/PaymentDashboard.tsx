@@ -36,6 +36,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { BackButton } from '@/components/ui/back-button';
 
 interface PaymentStats {
   totalRevenue: number;
@@ -248,13 +249,16 @@ const PaymentDashboard = () => {
     <div className="container mx-auto p-6 space-y-6" dir="rtl">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            لوحة إدارة المدفوعات
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            إدارة شاملة للمدفوعات والفواتير الضريبية
-          </p>
+        <div className="flex items-center gap-4">
+          <BackButton />
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              لوحة إدارة المدفوعات
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              إدارة شاملة للمدفوعات والفواتير الضريبية
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" onClick={() => navigate('/invoices')}>

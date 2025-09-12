@@ -19,6 +19,7 @@ import EmkanIntegration from "@/components/EmkanIntegration";
 import { useSupabaseUserData } from "@/hooks/useSupabaseUserData";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from 'react-router-dom';
+import { BackButton } from '@/components/ui/back-button';
 
 
 import { 
@@ -566,6 +567,14 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
 
   return (
     <main className="container mx-auto p-4 space-y-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <BackButton />
+          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            لوحة الإدارة
+          </h1>
+        </div>
+      </div>
       <header className="text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
           <Shield className="h-8 w-8 text-primary" />

@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { User, Mail, Phone, Camera, Save, Crown, Award, Star, Medal, Home, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { BackButton } from '@/components/ui/back-button';
 
 const ProfilePage = () => {
   const { profile, updateProfile } = useFastAuth();
@@ -60,9 +61,7 @@ const ProfilePage = () => {
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" onClick={() => navigate(-1)}>
-            ← العودة
-          </Button>
+          <BackButton />
           <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
             الملف الشخصي
           </h1>

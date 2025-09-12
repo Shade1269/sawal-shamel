@@ -26,6 +26,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
+import { BackButton } from '@/components/ui/back-button';
 
 const Dashboard = () => {
   const { profile } = useFastAuth();
@@ -230,6 +231,7 @@ const Dashboard = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
+              <BackButton fallbackRoute="/" />
               <Button 
                 variant="ghost" 
                 onClick={goToUserHome}
