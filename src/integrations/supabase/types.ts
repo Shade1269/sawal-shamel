@@ -533,6 +533,188 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_items: {
+        Row: {
+          created_at: string
+          discount_sar: number
+          id: string
+          invoice_id: string
+          item_description: string | null
+          item_name: string
+          item_sku: string | null
+          product_id: string | null
+          quantity: number
+          subtotal_sar: number
+          total_sar: number
+          unit_price_sar: number
+          vat_rate: number
+          vat_sar: number
+        }
+        Insert: {
+          created_at?: string
+          discount_sar?: number
+          id?: string
+          invoice_id: string
+          item_description?: string | null
+          item_name: string
+          item_sku?: string | null
+          product_id?: string | null
+          quantity?: number
+          subtotal_sar: number
+          total_sar: number
+          unit_price_sar: number
+          vat_rate?: number
+          vat_sar: number
+        }
+        Update: {
+          created_at?: string
+          discount_sar?: number
+          id?: string
+          invoice_id?: string
+          item_description?: string | null
+          item_name?: string
+          item_sku?: string | null
+          product_id?: string | null
+          quantity?: number
+          subtotal_sar?: number
+          total_sar?: number
+          unit_price_sar?: number
+          vat_rate?: number
+          vat_sar?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          created_at: string
+          customer_address: Json
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          customer_profile_id: string | null
+          discount_sar: number
+          due_date: string | null
+          id: string
+          invoice_number: string
+          issue_date: string
+          metadata: Json | null
+          notes: string | null
+          order_id: string | null
+          paid_at: string | null
+          payment_status: string
+          shipping_sar: number
+          shop_id: string | null
+          status: string
+          subtotal_sar: number
+          tax_registration_number: string | null
+          total_sar: number
+          updated_at: string
+          vat_breakdown: Json | null
+          vat_rate: number
+          vat_sar: number
+        }
+        Insert: {
+          created_at?: string
+          customer_address: Json
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          customer_profile_id?: string | null
+          discount_sar?: number
+          due_date?: string | null
+          id?: string
+          invoice_number: string
+          issue_date?: string
+          metadata?: Json | null
+          notes?: string | null
+          order_id?: string | null
+          paid_at?: string | null
+          payment_status?: string
+          shipping_sar?: number
+          shop_id?: string | null
+          status?: string
+          subtotal_sar?: number
+          tax_registration_number?: string | null
+          total_sar?: number
+          updated_at?: string
+          vat_breakdown?: Json | null
+          vat_rate?: number
+          vat_sar?: number
+        }
+        Update: {
+          created_at?: string
+          customer_address?: Json
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          customer_profile_id?: string | null
+          discount_sar?: number
+          due_date?: string | null
+          id?: string
+          invoice_number?: string
+          issue_date?: string
+          metadata?: Json | null
+          notes?: string | null
+          order_id?: string | null
+          paid_at?: string | null
+          payment_status?: string
+          shipping_sar?: number
+          shop_id?: string | null
+          status?: string
+          subtotal_sar?: number
+          tax_registration_number?: string | null
+          total_sar?: number
+          updated_at?: string
+          vat_breakdown?: Json | null
+          vat_rate?: number
+          vat_sar?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leaderboard_weekly: {
         Row: {
           affiliate_id: string
@@ -890,6 +1072,184 @@ export type Database = {
             columns: ["shop_id"]
             isOneToOne: false
             referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_gateways: {
+        Row: {
+          allowed_currencies: string[] | null
+          api_key: string | null
+          api_url: string | null
+          configuration: Json | null
+          created_at: string
+          display_name: string
+          fixed_fee_sar: number | null
+          gateway_name: string
+          id: string
+          is_enabled: boolean
+          is_test_mode: boolean
+          max_amount_sar: number | null
+          merchant_id: string | null
+          min_amount_sar: number | null
+          percentage_fee: number | null
+          provider: string
+          secret_key: string | null
+          shop_id: string | null
+          updated_at: string
+          webhook_url: string | null
+        }
+        Insert: {
+          allowed_currencies?: string[] | null
+          api_key?: string | null
+          api_url?: string | null
+          configuration?: Json | null
+          created_at?: string
+          display_name: string
+          fixed_fee_sar?: number | null
+          gateway_name: string
+          id?: string
+          is_enabled?: boolean
+          is_test_mode?: boolean
+          max_amount_sar?: number | null
+          merchant_id?: string | null
+          min_amount_sar?: number | null
+          percentage_fee?: number | null
+          provider: string
+          secret_key?: string | null
+          shop_id?: string | null
+          updated_at?: string
+          webhook_url?: string | null
+        }
+        Update: {
+          allowed_currencies?: string[] | null
+          api_key?: string | null
+          api_url?: string | null
+          configuration?: Json | null
+          created_at?: string
+          display_name?: string
+          fixed_fee_sar?: number | null
+          gateway_name?: string
+          id?: string
+          is_enabled?: boolean
+          is_test_mode?: boolean
+          max_amount_sar?: number | null
+          merchant_id?: string | null
+          min_amount_sar?: number | null
+          percentage_fee?: number | null
+          provider?: string
+          secret_key?: string | null
+          shop_id?: string | null
+          updated_at?: string
+          webhook_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_gateways_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_transactions: {
+        Row: {
+          amount_sar: number
+          completed_at: string | null
+          created_at: string
+          currency: string
+          failed_at: string | null
+          failure_reason: string | null
+          gateway_fee_sar: number | null
+          gateway_id: string | null
+          gateway_reference: string | null
+          gateway_response: Json | null
+          gateway_transaction_id: string | null
+          id: string
+          initiated_at: string
+          invoice_id: string | null
+          metadata: Json | null
+          net_amount_sar: number
+          order_id: string | null
+          payment_id: string | null
+          status: string
+          transaction_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount_sar: number
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          failed_at?: string | null
+          failure_reason?: string | null
+          gateway_fee_sar?: number | null
+          gateway_id?: string | null
+          gateway_reference?: string | null
+          gateway_response?: Json | null
+          gateway_transaction_id?: string | null
+          id?: string
+          initiated_at?: string
+          invoice_id?: string | null
+          metadata?: Json | null
+          net_amount_sar: number
+          order_id?: string | null
+          payment_id?: string | null
+          status?: string
+          transaction_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount_sar?: number
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          failed_at?: string | null
+          failure_reason?: string | null
+          gateway_fee_sar?: number | null
+          gateway_id?: string | null
+          gateway_reference?: string | null
+          gateway_response?: Json | null
+          gateway_transaction_id?: string | null
+          id?: string
+          initiated_at?: string
+          invoice_id?: string | null
+          metadata?: Json | null
+          net_amount_sar?: number
+          order_id?: string | null
+          payment_id?: string | null
+          status?: string
+          transaction_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_transactions_gateway_id_fkey"
+            columns: ["gateway_id"]
+            isOneToOne: false
+            referencedRelation: "payment_gateways"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
             referencedColumns: ["id"]
           },
         ]
@@ -1257,6 +1617,177 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      refund_items: {
+        Row: {
+          condition_on_return: string | null
+          created_at: string
+          id: string
+          order_item_id: string
+          quantity_returned: number
+          refund_id: string
+          return_reason: string | null
+          total_refund_sar: number
+          unit_price_sar: number
+        }
+        Insert: {
+          condition_on_return?: string | null
+          created_at?: string
+          id?: string
+          order_item_id: string
+          quantity_returned: number
+          refund_id: string
+          return_reason?: string | null
+          total_refund_sar: number
+          unit_price_sar: number
+        }
+        Update: {
+          condition_on_return?: string | null
+          created_at?: string
+          id?: string
+          order_item_id?: string
+          quantity_returned?: number
+          refund_id?: string
+          return_reason?: string | null
+          total_refund_sar?: number
+          unit_price_sar?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refund_items_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refund_items_refund_id_fkey"
+            columns: ["refund_id"]
+            isOneToOne: false
+            referencedRelation: "refunds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      refunds: {
+        Row: {
+          admin_notes: string | null
+          approved_at: string | null
+          approved_by: string | null
+          completed_at: string | null
+          created_at: string
+          customer_notes: string | null
+          description: string | null
+          gateway_refund_id: string | null
+          gateway_response: Json | null
+          id: string
+          invoice_id: string | null
+          net_refund_sar: number
+          order_id: string
+          original_amount_sar: number
+          payment_id: string | null
+          processed_at: string | null
+          reason: string
+          refund_amount_sar: number
+          refund_fee_sar: number | null
+          refund_method: string | null
+          refund_number: string
+          refund_type: string
+          requested_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          completed_at?: string | null
+          created_at?: string
+          customer_notes?: string | null
+          description?: string | null
+          gateway_refund_id?: string | null
+          gateway_response?: Json | null
+          id?: string
+          invoice_id?: string | null
+          net_refund_sar: number
+          order_id: string
+          original_amount_sar: number
+          payment_id?: string | null
+          processed_at?: string | null
+          reason: string
+          refund_amount_sar: number
+          refund_fee_sar?: number | null
+          refund_method?: string | null
+          refund_number: string
+          refund_type?: string
+          requested_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          completed_at?: string | null
+          created_at?: string
+          customer_notes?: string | null
+          description?: string | null
+          gateway_refund_id?: string | null
+          gateway_response?: Json | null
+          id?: string
+          invoice_id?: string | null
+          net_refund_sar?: number
+          order_id?: string
+          original_amount_sar?: number
+          payment_id?: string | null
+          processed_at?: string | null
+          reason?: string
+          refund_amount_sar?: number
+          refund_fee_sar?: number | null
+          refund_method?: string | null
+          refund_number?: string
+          refund_type?: string
+          requested_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
             referencedColumns: ["id"]
           },
         ]
@@ -1902,6 +2433,14 @@ export type Database = {
           current_auth_uid: string
           profile_id: string
         }[]
+      }
+      generate_invoice_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_refund_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       get_channel_member_count: {
         Args: { channel_uuid: string }
