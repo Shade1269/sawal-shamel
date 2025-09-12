@@ -10,6 +10,11 @@ export interface FastUserProfile {
   role: 'admin' | 'merchant' | 'affiliate' | 'customer' | 'moderator';
   level: 'bronze' | 'silver' | 'gold' | 'legendary';
   is_active: boolean;
+  points?: number;
+  total_earnings?: number;
+  avatar_url?: string;
+  phone?: string;
+  created_at?: string;
 }
 
 // Memory cache for user data
@@ -93,7 +98,7 @@ export const useFastAuth = () => {
       // Optimized query - select only necessary fields
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, auth_user_id, email, full_name, role, level, is_active')
+        .select('id, auth_user_id, email, full_name, role, level, is_active, points, total_earnings, avatar_url, phone, created_at')
         .eq('auth_user_id', userId)
         .maybeSingle();
 

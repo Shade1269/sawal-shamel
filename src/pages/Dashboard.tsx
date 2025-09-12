@@ -1,4 +1,4 @@
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useFastAuth } from '@/hooks/useFastAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -27,11 +27,12 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
-  const { profile, signOut } = useAuthContext();
+  const { profile } = useFastAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    await signOut();
+    const { supabase } = await import('@/integrations/supabase/client');
+    await supabase.auth.signOut();
     navigate('/');
   };
 

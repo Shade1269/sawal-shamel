@@ -8,14 +8,20 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useFastAuth } from '@/hooks/useFastAuth';
 import { LogOut, Settings, User, Crown, Star, Award, Medal, CreditCard, FileText, RotateCcw, DollarSign, Share2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
-  const { profile, signOut, isAuthenticated } = useAuthContext();
+  const { profile, user, isAuthenticated } = useFastAuth();
   const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    const { supabase } = await import('@/integrations/supabase/client');
+    await supabase.auth.signOut();
+    navigate('/');
+  };
 
   const getRoleIcon = (role: string) => {
     switch (role) {
@@ -178,7 +184,7 @@ const Header = () => {
               
               <DropdownMenuSeparator />
               
-              <DropdownMenuItem onClick={signOut} className="text-destructive">
+              <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                 <LogOut className="ml-2 h-4 w-4" />
                 تسجيل الخروج
               </DropdownMenuItem>

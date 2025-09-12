@@ -20,10 +20,10 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useFastAuth } from '@/hooks/useFastAuth';
 
 const ProductsPage = () => {
-  const { profile, isAuthenticated } = useAuthContext();
+  const { profile, isAuthenticated } = useFastAuth();
   const { toast } = useToast();
   
   const [products, setProducts] = useState([]);

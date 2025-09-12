@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useFastAuth } from '@/hooks/useFastAuth';
 import { 
   Share2, 
   Users, 
@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 const QuickLinks = () => {
-  const { profile } = useAuthContext();
+  const { profile } = useFastAuth();
   const navigate = useNavigate();
 
   // Common navigation links based on user role
