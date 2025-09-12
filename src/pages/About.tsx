@@ -1,269 +1,349 @@
+import React from 'react';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { 
   Shield, 
-  Award, 
   Users, 
+  Globe, 
+  Award, 
   TrendingUp,
-  Target,
-  Globe,
   Heart,
-  Crown,
   Star,
-  Gift,
-  Zap,
   CheckCircle,
+  ArrowRight,
   Home,
-  ArrowRight
+  Target,
+  Zap,
+  Crown
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useSmartNavigation } from '@/hooks/useSmartNavigation';
+import { Link } from 'react-router-dom';
 
-const AboutPage = () => {
-  const navigate = useNavigate();
-  const { goToUserHome } = useSmartNavigation();
-
-  const features = [
-    {
-      icon: <Shield className="h-8 w-8 text-primary" />,
-      title: "أمان وثقة",
-      description: "منصة آمنة مع حماية متطورة للبيانات والمعاملات"
-    },
-    {
-      icon: <Award className="h-8 w-8 text-accent" />,
-      title: "جودة عالية",
-      description: "منتجات مختارة بعناية من أفضل التجار"
-    },
-    {
-      icon: <Users className="h-8 w-8 text-premium" />,
-      title: "مجتمع نشط",
-      description: "آلاف المسوقين والتجار الناشطين يومياً"
-    },
-    {
-      icon: <TrendingUp className="h-8 w-8 text-luxury" />,
-      title: "نمو مستمر",
-      description: "نمو سريع ومستدام في الأرباح والعمولات"
-    }
-  ];
-
-  const stats = [
-    { number: "10,000+", label: "مسوق نشط", icon: <Users className="h-6 w-6" /> },
-    { number: "5,000+", label: "تاجر موثوق", icon: <Award className="h-6 w-6" /> },
-    { number: "500,000+", label: "منتج متنوع", icon: <Gift className="h-6 w-6" /> },
-    { number: "50M+", label: "ريال عمولات", icon: <TrendingUp className="h-6 w-6" /> }
-  ];
-
-  const advantages = [
-    "عمولات تنافسية تصل إلى 25%",
-    "دفع سريع وموثوق للعمولات",
-    "أدوات تسويق متطورة",
-    "دعم فني متاح 24/7",
-    "تدريب مجاني للمسوقين الجدد",
-    "نظام نقاط ومكافآت حصري"
-  ];
-
+const About = () => {
   return (
     <div className="min-h-screen bg-gradient-persian-bg">
-      <div className="container mx-auto px-4 py-12 space-y-16">
-        
-        {/* Back to Home Button */}
-        <div className="flex justify-start">
-          <Button 
-            variant="ghost" 
-            onClick={goToUserHome}
-            className="text-primary hover:bg-primary/10 gap-2"
-          >
-            <Home className="h-4 w-4" />
-            العودة إلى الصفحة الرئيسية
-            <ArrowRight className="h-4 w-4" />
-          </Button>
+      {/* Navigation */}
+      <div className="border-b bg-card/80 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-4">
+          <Link to="/">
+            <Button 
+              variant="ghost" 
+              className="text-primary hover:bg-primary/10 gap-2"
+            >
+              <Home className="h-4 w-4" />
+              العودة إلى الصفحة الرئيسية
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
         </div>
-        
-        {/* Header */}
-        <div className="text-center space-y-6">
-          <Badge className="bg-gradient-primary text-primary-foreground px-6 py-2 text-lg">
-            <Crown className="ml-2 h-5 w-5" />
-            منصة الأفيليت الرائدة
+      </div>
+
+      {/* Hero Section */}
+      <section className="py-20 px-4">
+        <div className="container mx-auto max-w-4xl text-center">
+          <Badge variant="secondary" className="mb-6 px-4 py-2">
+            <Crown className="w-4 h-4 mr-2" />
+            منصة التجارة الإلكترونية الرائدة
           </Badge>
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+          
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
             من نحن؟
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            منصة الأفيليت هي المنصة الرائدة في المملكة العربية السعودية للتسويق بالعمولة، 
-            نربط بين التجار والمسوقين لتحقيق أرباح استثنائية للجميع.
+          
+          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+            نحن فريق شغوف بتطوير حلول التجارة الإلكترونية المتقدمة، نسعى لتمكين التجار والمسوقين من تحقيق أهدافهم التجارية بأفضل الطرق المبتكرة.
           </p>
-        </div>
 
-        {/* Mission */}
-        <section className="text-center space-y-8">
-          <div className="bg-gradient-luxury/10 rounded-2xl p-8 backdrop-blur-sm border border-luxury/20">
-            <Target className="h-16 w-16 text-luxury mx-auto mb-6" />
-            <h2 className="text-3xl font-bold mb-4">رسالتنا</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              نسعى لتمكين التجار والمسوقين من تحقيق أقصى إمكاناتهم التجارية من خلال منصة متطورة، 
-              آمنة، وسهلة الاستخدام تضمن النجاح والربحية للجميع.
-            </p>
-          </div>
-        </section>
-
-        {/* Features */}
-        <section className="space-y-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold mb-4 bg-gradient-premium bg-clip-text text-transparent">
-              لماذا نحن الخيار الأمثل؟
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              نقدم مزايا فريدة تجعلنا الخيار الأول للمسوقين والتجار
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <Card key={index} className="text-center border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-                <CardHeader>
-                  <div className="flex justify-center mb-4">
-                    {feature.icon}
-                  </div>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* Stats */}
-        <section className="bg-gradient-heritage rounded-2xl p-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-8">أرقامنا تتحدث</h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-white">
-                <div className="flex justify-center mb-2 text-white/80">
-                  {stat.icon}
-                </div>
-                <div className="text-3xl font-bold">{stat.number}</div>
-                <div className="text-lg opacity-90">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Advantages */}
-        <section className="space-y-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
-              مزايا الانضمام إلينا
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              استفد من مزايا حصرية تضمن نجاحك وتميزك
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {advantages.map((advantage, index) => (
-              <div key={index} className="flex items-center gap-3 p-4 bg-card/50 rounded-lg backdrop-blur-sm border border-border/50">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="text-foreground">{advantage}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Vision */}
-        <section className="text-center space-y-8">
-          <div className="bg-gradient-persian/10 rounded-2xl p-8 backdrop-blur-sm border border-persian/20">
-            <Globe className="h-16 w-16 text-persian mx-auto mb-6" />
-            <h2 className="text-3xl font-bold mb-4">رؤيتنا للمستقبل</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              نطمح لأن نكون المنصة الأولى عربياً للتسويق بالعمولة، ونسعى للتوسع 
-              في الأسواق العربية والعالمية، مع الحفاظ على أعلى معايير الجودة والثقة.
-            </p>
-          </div>
-        </section>
-
-        {/* Values */}
-        <section className="space-y-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold mb-4 bg-gradient-luxury bg-clip-text text-transparent">
-              قيمنا الأساسية
-            </h2>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center border-0 bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <Shield className="h-12 w-12 text-primary mx-auto mb-4" />
-                <CardTitle>الثقة والأمان</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base">
-                  نضع الثقة والأمان في مقدمة أولوياتنا لضمان بيئة آمنة لجميع المستخدمين
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-0 bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <Heart className="h-12 w-12 text-luxury mx-auto mb-4" />
-                <CardTitle>الشفافية</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base">
-                  نلتزم بالشفافية الكاملة في جميع المعاملات والعمولات والسياسات
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-0 bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <Zap className="h-12 w-12 text-accent mx-auto mb-4" />
-                <CardTitle>الابتكار</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base">
-                  نسعى دائماً لتطوير حلول مبتكرة لتحسين تجربة المستخدمين وزيادة أرباحهم
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="text-center space-y-6">
-          <h2 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            ابدأ رحلتك معنا اليوم
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            انضم إلى عائلة منصة الأفيليت وحقق أرباحاً استثنائية
-          </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-gradient-primary hover:opacity-90 text-lg px-8 py-4"
-              onClick={() => navigate('/auth')}
-            >
-              <Star className="ml-2 h-5 w-5" />
-              انضم إلينا الآن
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="border-primary text-primary hover:bg-primary/10 text-lg px-8 py-4"
-              onClick={() => navigate('/products')}
-            >
-              تصفح المنتجات
-            </Button>
+            <Link to="/fast-auth">
+              <Button size="lg" className="bg-gradient-primary">
+                انضم إلينا الآن
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+            <Link to="/products">
+              <Button variant="outline" size="lg">
+                استكشف المنتجات
+              </Button>
+            </Link>
           </div>
-        </section>
-        
-      </div>
+        </div>
+      </section>
+
+      {/* Mission & Vision */}
+      <section className="py-20 px-4 bg-background/50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">رؤيتنا ورسالتنا</h2>
+            <p className="text-lg text-muted-foreground">
+              نؤمن بقوة التجارة الإلكترونية في تغيير حياة الناس
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <Card className="border-0 bg-card/50 backdrop-blur-sm">
+              <CardHeader>
+                <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mb-4">
+                  <Target className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl">رسالتنا</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-base leading-relaxed">
+                  تمكين التجار والمسوقين من خلال منصة تجارة إلكترونية شاملة وآمنة، 
+                  تسهل عليهم إدارة أعمالهم وتحقيق أقصى استفادة من الفرص التجارية المتاحة.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 bg-card/50 backdrop-blur-sm">
+              <CardHeader>
+                <div className="w-16 h-16 bg-gradient-luxury rounded-2xl flex items-center justify-center mb-4">
+                  <Globe className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl">رؤيتنا</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-base leading-relaxed">
+                  أن نكون المنصة الرائدة في الشرق الأوسط للتجارة الإلكترونية والتسويق بالعمولة،
+                  وأن نساهم في بناء اقتصاد رقمي مزدهر ومستدام.
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section className="py-20 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">قيمنا الأساسية</h2>
+            <p className="text-lg text-muted-foreground">
+              المبادئ التي نسير عليها في كل ما نقوم به
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="text-center border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
+              <CardHeader>
+                <div className="mx-auto w-16 h-16 bg-gradient-premium rounded-2xl flex items-center justify-center mb-4">
+                  <Shield className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-lg">الثقة والأمان</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-sm">
+                  نضمن أعلى مستويات الأمان لحماية بيانات عملائنا وشركائنا
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
+              <CardHeader>
+                <div className="mx-auto w-16 h-16 bg-gradient-heritage rounded-2xl flex items-center justify-center mb-4">
+                  <Zap className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-lg">الابتكار</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-sm">
+                  نسعى باستمرار لتطوير حلول مبتكرة تلبي احتياجات السوق المتطورة
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
+              <CardHeader>
+                <div className="mx-auto w-16 h-16 bg-gradient-persian rounded-2xl flex items-center justify-center mb-4">
+                  <Users className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-lg">العمل الجماعي</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-sm">
+                  نؤمن بقوة التعاون والعمل الجماعي لتحقيق النجاح المشترك
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
+              <CardHeader>
+                <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mb-4">
+                  <Award className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-lg">التميز</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-sm">
+                  نسعى للتميز في كل خدمة نقدمها ونلتزم بأعلى معايير الجودة
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-20 px-4 bg-background/50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">لماذا تختارنا؟</h2>
+            <p className="text-lg text-muted-foreground">
+              المميزات التي تجعلنا الخيار الأفضل لأعمالك التجارية
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center flex-shrink-0">
+                <CheckCircle className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-2">منصة شاملة</h3>
+                <p className="text-muted-foreground">
+                  جميع الأدوات التي تحتاجها لإدارة متجرك الإلكتروني في مكان واحد
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-gradient-luxury rounded-xl flex items-center justify-center flex-shrink-0">
+                <CheckCircle className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-2">دعم فني 24/7</h3>
+                <p className="text-muted-foreground">
+                  فريق دعم متخصص متاح على مدار الساعة لمساعدتك في أي وقت
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-gradient-premium rounded-xl flex items-center justify-center flex-shrink-0">
+                <CheckCircle className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-2">أمان عالي</h3>
+                <p className="text-muted-foreground">
+                  تشفير متقدم وحماية شاملة لجميع المعاملات والبيانات الحساسة
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-gradient-heritage rounded-xl flex items-center justify-center flex-shrink-0">
+                <CheckCircle className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-2">سهولة الاستخدام</h3>
+                <p className="text-muted-foreground">
+                  واجهة بديهية وسهلة الاستخدام تناسب المبتدئين والمحترفين
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-gradient-persian rounded-xl flex items-center justify-center flex-shrink-0">
+                <CheckCircle className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-2">نمو مستمر</h3>
+                <p className="text-muted-foreground">
+                  أدوات تحليل متقدمة لمساعدتك على فهم عملائك وتنمية أعمالك
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center flex-shrink-0">
+                <CheckCircle className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-2">تكامل شامل</h3>
+                <p className="text-muted-foreground">
+                  تكامل مع أشهر منصات الدفع وشركات الشحن ومزودي الخدمات
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Statistics */}
+      <section className="py-20 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">أرقامنا تتحدث</h2>
+            <p className="text-lg text-muted-foreground">
+              إنجازاتنا وثقة عملائنا في أرقام
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5">
+              <div className="text-4xl font-bold text-primary mb-2">1000+</div>
+              <div className="text-lg font-medium mb-1">تاجر نشط</div>
+              <div className="text-sm text-muted-foreground">يثقون في منصتنا</div>
+            </div>
+
+            <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-luxury/10 to-luxury/5">
+              <div className="text-4xl font-bold text-luxury mb-2">50K+</div>
+              <div className="text-lg font-medium mb-1">منتج متاح</div>
+              <div className="text-sm text-muted-foreground">في جميع الفئات</div>
+            </div>
+
+            <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-premium/10 to-premium/5">
+              <div className="text-4xl font-bold text-premium mb-2">99.9%</div>
+              <div className="text-lg font-medium mb-1">وقت تشغيل</div>
+              <div className="text-sm text-muted-foreground">خدمة موثوقة</div>
+            </div>
+
+            <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-heritage/10 to-heritage/5">
+              <div className="text-4xl font-bold text-heritage mb-2">24/7</div>
+              <div className="text-lg font-medium mb-1">دعم فني</div>
+              <div className="text-sm text-muted-foreground">في خدمتكم دائماً</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-4 bg-background/50">
+        <div className="container mx-auto max-w-4xl text-center">
+          <Card className="border-0 bg-gradient-to-br from-primary/10 to-secondary/10 backdrop-blur-sm">
+            <CardContent className="p-12">
+              <div className="space-y-6">
+                <h2 className="text-3xl font-bold">
+                  ابدأ رحلتك معنا اليوم
+                </h2>
+                
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  انضم إلى آلاف التجار والمسوقين الناجحين واجعل حلمك التجاري حقيقة
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                  <Link to="/fast-auth">
+                    <Button size="lg" className="bg-gradient-primary">
+                      <Heart className="w-5 h-5 mr-2" />
+                      ابدأ مجاناً الآن
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
+                  </Link>
+                  <Button variant="outline" size="lg" asChild>
+                    <Link to="/products">
+                      استكشف المنتجات
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
     </div>
   );
 };
 
-export default AboutPage;
+export default About;

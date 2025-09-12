@@ -4,22 +4,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { MessageCircle, Users, Hash, Package, LogOut, User, Store, Moon, Sun, Languages } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
-import { useUserDataContext } from '@/contexts/UserDataContext';
+import { useFastAuth } from '@/hooks/useFastAuth';
 import { useDarkMode } from '@/components/DarkModeProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user: supabaseUser, signOut: supabaseSignOut } = useSupabaseAuth();
-  const { user: firebaseUser, signOut: firebaseSignOut } = useFirebaseAuth();
-  const { user, userProfile } = useUserDataContext();
+  const { user, profile, signOut, isAuthenticated } = useFastAuth();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const { language, toggleLanguage, t } = useLanguage();
 
-  // Firebase user takes priority
-  const currentUser = user || firebaseUser || supabaseUser;
+  const currentUser = user;
   
   const handleChatClick = () => {
     if (!currentUser) {
@@ -46,27 +41,13 @@ const Index = () => {
   };
 
   const handleSignOut = async () => {
-    if (firebaseUser) {
-      await firebaseSignOut();
-    }
-    if (supabaseUser) {
-      await supabaseSignOut();
-    }
-    navigate('/auth');
+    await signOut();
+    navigate('/');
   };
 
   const getUserDisplayName = () => {
-    // استخدام البيانات الموحدة أولاً
-    if (userProfile) {
-      return userProfile.full_name || userProfile.username || userProfile.phone || userProfile.email || 'المستخدم';
-    }
-    // الرجوع للبيانات الأصلية
-    if (firebaseUser) {
-      return firebaseUser.displayName || firebaseUser.phoneNumber || 'مستخدم Firebase';
-    }
-    if (supabaseUser) {
-      return supabaseUser.user_metadata?.username || supabaseUser.user_metadata?.full_name || supabaseUser.email || 'مستخدم';
-    }
+    if (profile?.full_name) return profile.full_name;
+    if (user?.email) return user.email;
     return 'ضيف';
   };
 
