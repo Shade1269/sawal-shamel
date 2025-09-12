@@ -336,7 +336,6 @@ const ComprehensiveAdminPanel = () => {
     }
 
     try {
-    try {
       // For now, store moderation action locally until we create the table
       const moderationData = {
         user_id: selectedUser.id,
@@ -412,15 +411,6 @@ const ComprehensiveAdminPanel = () => {
         type: 'info',
         targetAudience: 'all'
       });
-
-    } catch (error) {
-      console.error('Error sending announcement:', error);
-      toast({
-        title: "خطأ",
-        description: "تعذر إرسال الإعلان",
-        variant: "destructive",
-      });
-    }
 
     } catch (error) {
       console.error('Error sending announcement:', error);
@@ -1261,7 +1251,7 @@ const ComprehensiveAdminPanel = () => {
                     onClick={() => handleUserAction(selectedUser.id, 'demote_customer')}
                     disabled={selectedUser.role === 'customer'}
                   >
-                    <User className="mr-2 h-4 w-4" />
+                    <Users className="mr-2 h-4 w-4" />
                     تخفيض لعميل
                   </Button>
                 </div>

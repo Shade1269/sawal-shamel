@@ -62,7 +62,6 @@ const ExecutiveDashboard = lazy(() => import("./pages/ExecutiveDashboard"));
 const SecurityCenter = lazy(() => import("./pages/SecurityCenter"));
 const MarketingDashboard = lazy(() => import("./pages/MarketingDashboard"));
 const ComprehensiveAdminPanel = lazy(() => import("./pages/ComprehensiveAdminPanel"));
-const ComprehensiveAdminPanel = lazy(() => import("./pages/ComprehensiveAdminPanel"));
 const AdminSettings = lazy(() => import("./pages/AdminSettings"));
 const AtlantisSystem = lazy(() => import("./pages/AtlantisSystem"));
 const AtlantisGuide = lazy(() => import("./pages/AtlantisGuide"));
