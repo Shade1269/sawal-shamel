@@ -47,6 +47,7 @@ const AdminSettings = lazy(() => import("./pages/AdminSettings"));
 
 const queryClient = new QueryClient();
 
+// Force reload to clear any cached AuthProvider references
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
