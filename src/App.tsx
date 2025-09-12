@@ -51,13 +51,20 @@ const App = () => {
                     </div>
                   }>
                     <Routes>
+                      {/* Public Routes */}
                       <Route path="/" element={<FastIndex />} />
+                      <Route path="/home" element={<FastIndex />} />
+                      <Route path="/index" element={<Index />} />
                       <Route path="/auth" element={<AuthForm />} />
                       <Route path="/fast-auth" element={<FastAuth />} />
+                      <Route path="/login" element={<AuthForm />} />
+                      <Route path="/signup" element={<AuthForm />} />
                       <Route path="/products" element={<ProductsPage />} />
                       <Route path="/about" element={<AboutPage />} />
                       <Route path="/create-admin" element={<CreateAdminPage />} />
                       <Route path="/store/:storeSlug" element={<AffiliateStoreFront />} />
+                      
+                      {/* Protected Routes */}
                       <Route path="/profile" element={
                         <ProtectedRoute>
                           <ProfilePage />
@@ -81,24 +88,73 @@ const App = () => {
                         </ProtectedRoute>
                       }>
                         <Route index element={<AdminDashboard />} />
+                        <Route path="dashboard" element={<AdminDashboard />} />
                         <Route path="users" element={<AdminUsers />} />
                         <Route path="analytics" element={<AdminAnalytics />} />
                       </Route>
                       
-                      {/* Other Protected Routes */}
+                      {/* Merchant Routes */}
                       <Route 
                         path="/merchant" 
                         element={
-                          <ProtectedRoute requiredRole="merchant">
+                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
                             <MerchantDashboard />
                           </ProtectedRoute>
                         } 
                       />
                       <Route 
+                        path="/merchant-dashboard" 
+                        element={
+                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                            <MerchantDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      
+                      {/* Affiliate Routes */}
+                      <Route 
                         path="/affiliate" 
                         element={
-                          <ProtectedRoute requiredRole="affiliate">
+                          <ProtectedRoute requiredRole={["affiliate", "admin"]}>
                             <AffiliateDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/affiliate-dashboard" 
+                        element={
+                          <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                            <AffiliateDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      
+                      {/* Store Management */}
+                      <Route 
+                        path="/store-management" 
+                        element={
+                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                            <MerchantDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      
+                      {/* Admin Dashboard with different path */}
+                      <Route 
+                        path="/admin-dashboard" 
+                        element={
+                          <ProtectedRoute requiredRole="admin">
+                            <AdminDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      
+                      {/* Users Management */}
+                      <Route 
+                        path="/admin-users" 
+                        element={
+                          <ProtectedRoute requiredRole="admin">
+                            <AdminUsers />
                           </ProtectedRoute>
                         } 
                       />
