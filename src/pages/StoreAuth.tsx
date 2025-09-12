@@ -1,139 +1,175 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Store, ArrowRight, Phone } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import FirebaseSMSAuth from "@/components/FirebaseSMSAuth";
-import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { Store, ArrowRight, Loader2 } from "lucide-react";
+import { CustomerAuth } from '@/components/CustomerAuth';
+import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 
-// Store Auth Component for customer authentication in stores
-
-interface Shop {
+interface AffiliateStore {
   id: string;
-  display_name: string;
-  bio: string;
-  logo_url: string;
-  slug: string;
-  owner_id: string;
+  store_name: string;
+  store_slug: string;
+  bio?: string;
+  logo_url?: string;
+  profile_id: string;
+  profiles?: {
+    full_name: string;
+  };
 }
 
-const StoreAuth = () => {
+const StoreAuth: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const returnUrl = searchParams.get('returnUrl') || `/store/${slug}/shipping`;
-  const { toast } = useToast();
-  const { user: firebaseUser } = useFirebaseAuth();
+  const returnUrl = searchParams.get('returnUrl') || `/store/${slug}`;
+  
+  const { isAuthenticated, checkStoredSession } = useCustomerAuth();
 
-  // إذا كان المستخدم مسجل دخول، إعادة توجيه مباشرة
+  // التحقق من الجلسة المحفوظة عند تحميل الصفحة
   useEffect(() => {
-    if (firebaseUser) {
-      navigate(returnUrl);
-    }
-  }, [firebaseUser, navigate, returnUrl]);
+    checkStoredSession();
+  }, [checkStoredSession]);
 
-  // Fetch shop data
-  const { data: shop, isLoading: shopLoading } = useQuery({
-    queryKey: ["shop", slug],
+  // إعادة التوجيه إذا كان العميل مسجل دخول بالفعل
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(returnUrl, { replace: true });
+    }
+  }, [isAuthenticated, navigate, returnUrl]);
+
+  // جلب بيانات المتجر
+  const { data: store, isLoading: storeLoading, error: storeError } = useQuery({
+    queryKey: ['affiliate-store', slug],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("shops")
-        .select("*")
-        .eq("slug", slug)
+        .from('affiliate_stores')
+        .select(`
+          id,
+          store_name,
+          store_slug,
+          bio,
+          logo_url,
+          profile_id,
+          profiles (
+            full_name
+          )
+        `)
+        .eq('store_slug', slug)
+        .eq('is_active', true)
         .maybeSingle();
 
       if (error) throw error;
-      return data as Shop | null;
+      return data as AffiliateStore;
     },
+    enabled: !!slug
   });
 
-  if (shopLoading) {
+  // معالجة نجاح تسجيل الدخول
+  const handleAuthSuccess = (customer: any) => {
+    navigate(returnUrl, { replace: true });
+  };
+
+  // العودة للمتجر
+  const handleBackToStore = () => {
+    navigate(`/store/${slug}`, { replace: true });
+  };
+
+  if (storeLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري تحميل المتجر...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
-  if (!shop) {
+  if (storeError || !store) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center" dir="rtl">
-        <div className="text-center space-y-4">
-          <Store className="h-16 w-16 text-muted-foreground mx-auto" />
-          <div>
-            <h1 className="text-2xl font-bold mb-2">المتجر غير موجود</h1>
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="w-full max-w-md text-center">
+          <CardContent className="p-6">
+            <Store className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+            <h1 className="text-xl font-bold mb-2">المتجر غير موجود</h1>
             <p className="text-muted-foreground mb-4">
-              لم يتم العثور على متجر بالاسم "{slug}"
+              لم يتم العثور على المتجر المطلوب أو أنه غير متاح حالياً
             </p>
-          </div>
-        </div>
+            <Button onClick={() => navigate('/')} variant="outline">
+              العودة للرئيسية
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5" dir="rtl">
-      {/* Header */}
-      <header className="bg-card/80 backdrop-blur-sm border-b">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+      {/* رأس الصفحة مع معلومات المتجر */}
+      <div className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Avatar className="h-12 w-12 border-2 border-primary/20">
-                <AvatarImage src={shop.logo_url} alt={shop.display_name} />
+              <Avatar className="w-12 h-12">
+                <AvatarImage src={store.logo_url || ''} alt={store.store_name} />
                 <AvatarFallback className="bg-primary/10 text-primary">
-                  <Store className="h-6 w-6" />
+                  {store.store_name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
+              
               <div>
-                <h1 className="text-xl font-bold text-foreground">{shop.display_name}</h1>
-                <p className="text-sm text-muted-foreground">تسجيل الدخول لإتمام الطلب</p>
+                <h1 className="text-xl font-bold">{store.store_name}</h1>
+                <p className="text-sm text-muted-foreground">
+                  {store.profiles?.full_name && `بواسطة ${store.profiles.full_name}`}
+                </p>
               </div>
             </div>
-            
-            <Button
-              variant="ghost"
-              onClick={() => navigate(`/store/${slug}`)}
-              className="gap-2"
+
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={handleBackToStore}
+              className="flex items-center gap-2"
             >
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="w-4 h-4" />
               العودة للمتجر
             </Button>
           </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-12 max-w-md">
-        <Card className="bg-card/50 backdrop-blur-sm border-0 shadow-xl">
-          <CardHeader className="text-center pb-6">
-            <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <Phone className="h-8 w-8 text-primary" />
-            </div>
-            <CardTitle className="text-2xl">تسجيل الدخول</CardTitle>
-            <p className="text-muted-foreground mt-2">
-              أدخل رقم جوالك لتسجيل الدخول أو إنشاء حساب جديد
-            </p>
-          </CardHeader>
           
-          <CardContent>
-            <FirebaseSMSAuth />
-            
-            <div className="mt-6 pt-6 border-t text-center">
-              <p className="text-sm text-muted-foreground">
-                بالمتابعة، أنت توافق على شروط الاستخدام وسياسة الخصوصية
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+          {store.bio && (
+            <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
+              {store.bio}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* نموذج تسجيل الدخول */}
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <CustomerAuth
+            storeId={store.id}
+            storeName={store.store_name}
+            onSuccess={handleAuthSuccess}
+            onCancel={handleBackToStore}
+          />
+          
+          {/* روابط الشروط والأحكام */}
+          <div className="mt-8 text-center text-xs text-muted-foreground space-y-2">
+            <p>
+              بتسجيل الدخول، أنت توافق على{' '}
+              <button className="text-primary hover:underline">
+                الشروط والأحكام
+              </button>
+              {' '}و{' '}
+              <button className="text-primary hover:underline">
+                سياسة الخصوصية
+              </button>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

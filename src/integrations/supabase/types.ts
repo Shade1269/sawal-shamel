@@ -706,6 +706,71 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_addresses: {
+        Row: {
+          additional_info: string | null
+          address_type: string | null
+          apartment_number: string | null
+          building_number: string | null
+          city: string
+          country: string | null
+          created_at: string
+          customer_id: string
+          district: string | null
+          full_name: string
+          id: string
+          is_default: boolean | null
+          phone: string | null
+          postal_code: string | null
+          street_address: string
+          updated_at: string
+        }
+        Insert: {
+          additional_info?: string | null
+          address_type?: string | null
+          apartment_number?: string | null
+          building_number?: string | null
+          city: string
+          country?: string | null
+          created_at?: string
+          customer_id: string
+          district?: string | null
+          full_name: string
+          id?: string
+          is_default?: boolean | null
+          phone?: string | null
+          postal_code?: string | null
+          street_address: string
+          updated_at?: string
+        }
+        Update: {
+          additional_info?: string | null
+          address_type?: string | null
+          apartment_number?: string | null
+          building_number?: string | null
+          city?: string
+          country?: string | null
+          created_at?: string
+          customer_id?: string
+          district?: string | null
+          full_name?: string
+          id?: string
+          is_default?: boolean | null
+          phone?: string | null
+          postal_code?: string | null
+          street_address?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_addresses_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_loyalty: {
         Row: {
           created_at: string
@@ -752,6 +817,119 @@ export type Database = {
             columns: ["current_tier_id"]
             isOneToOne: false
             referencedRelation: "loyalty_tiers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_otp_sessions: {
+        Row: {
+          attempts: number | null
+          created_at: string
+          expires_at: string
+          id: string
+          otp_code: string
+          phone: string
+          session_data: Json | null
+          store_id: string | null
+          verified: boolean | null
+          verified_at: string | null
+        }
+        Insert: {
+          attempts?: number | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          otp_code: string
+          phone: string
+          session_data?: Json | null
+          store_id?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+        }
+        Update: {
+          attempts?: number | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          otp_code?: string
+          phone?: string
+          session_data?: Json | null
+          store_id?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_otp_sessions_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          created_at: string
+          date_of_birth: string | null
+          gender: string | null
+          id: string
+          last_order_at: string | null
+          loyalty_points: number | null
+          marketing_consent: boolean | null
+          notes: string | null
+          preferred_language: string | null
+          preferred_payment_method: string | null
+          profile_id: string
+          total_orders: number | null
+          total_spent_sar: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date_of_birth?: string | null
+          gender?: string | null
+          id?: string
+          last_order_at?: string | null
+          loyalty_points?: number | null
+          marketing_consent?: boolean | null
+          notes?: string | null
+          preferred_language?: string | null
+          preferred_payment_method?: string | null
+          profile_id: string
+          total_orders?: number | null
+          total_spent_sar?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date_of_birth?: string | null
+          gender?: string | null
+          id?: string
+          last_order_at?: string | null
+          loyalty_points?: number | null
+          marketing_consent?: boolean | null
+          notes?: string | null
+          preferred_language?: string | null
+          preferred_payment_method?: string | null
+          profile_id?: string
+          total_orders?: number | null
+          total_spent_sar?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customers_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "safe_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -4368,6 +4546,66 @@ export type Database = {
           },
         ]
       }
+      store_customers: {
+        Row: {
+          created_at: string
+          customer_id: string
+          customer_status: string | null
+          first_purchase_at: string | null
+          id: string
+          last_purchase_at: string | null
+          notes: string | null
+          preferred_contact_method: string | null
+          store_id: string
+          total_orders: number | null
+          total_spent_sar: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          customer_status?: string | null
+          first_purchase_at?: string | null
+          id?: string
+          last_purchase_at?: string | null
+          notes?: string | null
+          preferred_contact_method?: string | null
+          store_id: string
+          total_orders?: number | null
+          total_spent_sar?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          customer_status?: string | null
+          first_purchase_at?: string | null
+          id?: string
+          last_purchase_at?: string | null
+          notes?: string | null
+          preferred_contact_method?: string | null
+          store_id?: string
+          total_orders?: number | null
+          total_spent_sar?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_customers_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_customers_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       store_settings: {
         Row: {
           created_at: string
@@ -5098,6 +5336,15 @@ export type Database = {
         Args: { p_bio?: string; p_store_name: string; p_store_slug?: string }
         Returns: string
       }
+      create_customer_account: {
+        Args: {
+          p_email?: string
+          p_full_name?: string
+          p_phone: string
+          p_store_id?: string
+        }
+        Returns: Json
+      }
       create_order_from_cart: {
         Args: {
           p_affiliate_store_id?: string
@@ -5213,6 +5460,10 @@ export type Database = {
           order_amount?: number
           shop_uuid: string
         }
+        Returns: Json
+      }
+      verify_customer_otp: {
+        Args: { p_otp_code: string; p_phone: string; p_store_id?: string }
         Returns: Json
       }
     }
