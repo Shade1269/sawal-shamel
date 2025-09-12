@@ -12,7 +12,7 @@ import Header from "@/components/common/Header";
 import AuthForm from "@/components/auth/AuthForm";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
-import FastIndex from "./pages/FastIndex";
+
 import AdminLayout from "@/layouts/AdminLayout";
 import { lazy, Suspense } from "react";
 
@@ -99,8 +99,8 @@ const App = () => {
                   }>
                     <Routes>
                       {/* Public Routes */}
-                      <Route path="/" element={<FastIndex />} />
-                      <Route path="/home" element={<FastIndex />} />
+                      <Route path="/" element={<Index />} />
+                      <Route path="/home" element={<Navigate to="/" replace />} />
                       <Route path="/index" element={<Index />} />
                       <Route path="/auth" element={<AuthForm />} />
                       <Route path="/fast-auth" element={<Navigate to="/auth" replace />} />
@@ -332,7 +332,7 @@ const App = () => {
                       />
                       
                       {/* Catch all */}
-                      <Route path="*" element={<FastIndex />} />
+                      <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                   </Suspense>
                 </div>

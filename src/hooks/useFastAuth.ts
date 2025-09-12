@@ -245,8 +245,32 @@ export const useFastAuth = () => {
         return { error };
       }
 
-      // التوجيه للداشبورد الموحد بعد تسجيل الدخول
-      window.location.href = '/dashboard';
+      // توجيه المستخدم مباشرةً لداشبورد دوره
+      const userId = data.user?.id;
+      let redirect = '/dashboard';
+      if (userId) {
+        const { data: prof } = await supabase
+          .from('user_profiles')
+          .select('role')
+          .eq('auth_user_id', userId)
+          .maybeSingle();
+        const role = prof?.role as FastUserProfile['role'] | undefined;
+        switch (role) {
+          case 'admin':
+            redirect = '/admin/dashboard';
+            break;
+          case 'merchant':
+            redirect = '/merchant-dashboard';
+            break;
+          case 'affiliate':
+            redirect = '/affiliate-dashboard';
+            break;
+          default:
+            redirect = '/dashboard';
+        }
+      }
+
+      window.location.href = redirect;
 
       return { data, error: null };
     } catch (error) {

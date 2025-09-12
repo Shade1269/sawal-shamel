@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,9 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { Loader2, User, Store, Users, ShoppingCart } from 'lucide-react';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const AuthForm = () => {
-  const { signIn, signUp, loading } = useFastAuth();
+  const { signIn, signUp, loading, isAuthenticated } = useFastAuth();
   const [isLoading, setIsLoading] = useState(false);
   
   // Sign in form state
@@ -24,7 +25,15 @@ const AuthForm = () => {
     password: '',
     fullName: '',
     role: 'customer' as 'merchant' | 'affiliate' | 'customer'
-  });
+});
+
+  const { goToUserHome } = useSmartNavigation();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      goToUserHome();
+    }
+  }, [isAuthenticated, goToUserHome]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
