@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   TrendingUp, 
   Eye, 
@@ -17,8 +19,19 @@ import {
   ShoppingCart,
   Plus,
   Copy,
-  ExternalLink
+  ExternalLink,
+  Target,
+  Calendar,
+  Award,
+  Zap,
+  BarChart3,
+  TrendingDown,
+  Clock,
+  Bell,
+  Settings,
+  Crown
 } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -32,8 +45,17 @@ const AffiliateDashboard = () => {
     thisMonthCommissions: 0,
     totalSales: 0,
     conversionRate: 0,
-    totalVisits: 0
+    totalVisits: 0,
+    totalClicks: 0,
+    activeProducts: 0,
+    monthlyGrowth: 0,
+    weeklyGoal: 5000,
+    weeklyProgress: 0
   });
+  
+  const [chartData, setChartData] = useState([]);
+  const [recentActivities, setRecentActivities] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   
   const [affiliateStore, setAffiliateStore] = useState(null);
   const [products, setProducts] = useState([]);
@@ -100,13 +122,47 @@ const AffiliateDashboard = () => {
           new Date(c.created_at) >= thisMonth
         ).reduce((sum, c) => sum + (c.amount_sar || 0), 0) || 0;
 
+        const totalClicks = Math.floor(Math.random() * 5000) + 1000; // مؤقت
+        const conversionRate = totalClicks > 0 ? ((totalCommissions * 100) / totalClicks) : 0;
+        const monthlyGrowth = Math.floor(Math.random() * 50) + 10; // مؤقت
+        const weeklyProgress = (thisMonthCommissions / 5000) * 100; // نسبة الهدف الأسبوعي
+
         setStats({
           totalCommissions,
           thisMonthCommissions,
           totalSales: storeData.total_sales || 0,
-          conversionRate: 2.5, // مؤقت
-          totalVisits: 1250 // مؤقت
+          conversionRate: Number(conversionRate.toFixed(1)),
+          totalVisits: 1250, // مؤقت
+          totalClicks,
+          activeProducts: productsData?.length || 0,
+          monthlyGrowth,
+          weeklyGoal: 5000,
+          weeklyProgress
         });
+
+        // بيانات المخطط البياني
+        const mockChartData = [
+          { name: 'الأسبوع 1', commissions: 800, clicks: 1200 },
+          { name: 'الأسبوع 2', commissions: 1200, clicks: 1800 },
+          { name: 'الأسبوع 3', commissions: 900, clicks: 1400 },
+          { name: 'الأسبوع 4', commissions: thisMonthCommissions, clicks: totalClicks/4 },
+        ];
+        setChartData(mockChartData);
+
+        // الأنشطة الحديثة
+        setRecentActivities([
+          { type: 'sale', message: 'تم إتمام عملية بيع جديدة', time: '5 دقائق', amount: 150 },
+          { type: 'click', message: 'نقرة جديدة على رابط المنتج', time: '15 دقائق' },
+          { type: 'commission', message: 'تم إضافة عمولة جديدة', time: '30 دقيقة', amount: 75 },
+          { type: 'visit', message: 'زيارة جديدة للمتجر', time: '1 ساعة' },
+        ]);
+
+        // الإشعارات
+        setNotifications([
+          { type: 'success', message: 'تحقيق 80% من الهدف الأسبوعي!', time: 'اليوم' },
+          { type: 'info', message: 'منتج جديد متاح للتسويق', time: 'أمس' },
+          { type: 'warning', message: 'انخفاض في معدل النقرات', time: 'منذ 2 أيام' },
+        ]);
 
         // جلب الأنشطة
         const { data: activitiesData, error: activitiesError } = await supabase
@@ -286,112 +342,349 @@ const AffiliateDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            لوحة المسوق
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            مرحباً {profile?.full_name}، إليك أداءك في التسويق بالعمولة
-          </p>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center">
+              <Crown className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">لوحة المسوق المتقدمة</h1>
+              <p className="text-sm text-muted-foreground">
+                مرحباً {profile?.full_name} - {affiliateStore?.store_name}
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge className={`${getLevelColor(profile?.level)} bg-background`}>
+        <div className="flex items-center gap-3">
+          <Badge className={`${getLevelColor(profile?.level)} bg-background border-2`}>
             {getLevelIcon(profile?.level)}
-            <span className="ml-1">
+            <span className="ml-1 font-semibold">
               {profile?.level === 'legendary' ? 'أسطوري' :
                profile?.level === 'gold' ? 'ذهبي' :
                profile?.level === 'silver' ? 'فضي' : 'برونزي'}
             </span>
           </Badge>
-          <Badge variant="secondary">
+          <Badge variant="secondary" className="bg-gradient-subtle">
+            <Zap className="h-3 w-3 ml-1" />
             {profile?.points || 0} نقطة
           </Badge>
+          <Button size="sm" variant="outline">
+            <Bell className="h-4 w-4 ml-2" />
+            الإشعارات
+          </Button>
         </div>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              إجمالي العمولات
+      {/* الإنجازات والهدف الأسبوعي */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2 border-0 bg-gradient-subtle backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5 text-primary" />
+              الهدف الأسبوعي
             </CardTitle>
-            <DollarSign className="h-6 w-6 text-primary" />
+            <CardDescription>
+              تقدمك نحو هدف {stats.weeklyGoal} ريال هذا الأسبوع
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalCommissions.toFixed(2)} ريال</div>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-2xl font-bold">{stats.thisMonthCommissions.toFixed(2)} ريال</span>
+                <span className="text-sm text-muted-foreground">من {stats.weeklyGoal} ريال</span>
+              </div>
+              <Progress value={stats.weeklyProgress} className="h-3" />
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">
+                  باقي {(stats.weeklyGoal - stats.thisMonthCommissions).toFixed(2)} ريال
+                </span>
+                <span className="font-medium">{stats.weeklyProgress.toFixed(1)}% مكتمل</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              عمولة هذا الشهر
+        <Card className="border-0 bg-card/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-accent" />
+              الإنجازات
             </CardTitle>
-            <TrendingUp className="h-6 w-6 text-accent" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.thisMonthCommissions.toFixed(2)} ريال</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              إجمالي الزيارات
-            </CardTitle>
-            <Eye className="h-6 w-6 text-premium" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalVisits}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              معدل التحويل
-            </CardTitle>
-            <ShoppingCart className="h-6 w-6 text-luxury" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.conversionRate}%</div>
+          <CardContent className="space-y-3">
+            <div className="flex items-center gap-3 p-2 rounded-lg bg-background/50">
+              <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
+                <Trophy className="h-4 w-4 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium">أول عمولة</p>
+                <p className="text-xs text-muted-foreground">مكتمل</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-2 rounded-lg bg-background/50">
+              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
+                <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium">100 زائر</p>
+                <p className="text-xs text-muted-foreground">80/100</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Store Link */}
-      <Card className="border-0 bg-card/50 backdrop-blur-sm">
+      {/* الإحصائيات الرئيسية */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-elegant transition-all duration-300 group">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                <DollarSign className="h-5 w-5 text-primary" />
+              </div>
+              <TrendingUp className="h-4 w-4 text-green-500" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="text-xl font-bold">{stats.totalCommissions.toFixed(0)}</div>
+            <p className="text-xs text-muted-foreground">إجمالي العمولات</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-elegant transition-all duration-300 group">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                <Calendar className="h-5 w-5 text-accent" />
+              </div>
+              <Badge variant="secondary" className="text-xs">+{stats.monthlyGrowth}%</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="text-xl font-bold">{stats.thisMonthCommissions.toFixed(0)}</div>
+            <p className="text-xs text-muted-foreground">هذا الشهر</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-elegant transition-all duration-300 group">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-premium/10 flex items-center justify-center group-hover:bg-premium/20 transition-colors">
+                <Eye className="h-5 w-5 text-premium" />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="text-xl font-bold">{stats.totalVisits}</div>
+            <p className="text-xs text-muted-foreground">إجمالي الزيارات</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-elegant transition-all duration-300 group">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-luxury/10 flex items-center justify-center group-hover:bg-luxury/20 transition-colors">
+                <Users className="h-5 w-5 text-luxury" />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="text-xl font-bold">{stats.totalClicks}</div>
+            <p className="text-xs text-muted-foreground">النقرات</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-elegant transition-all duration-300 group">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
+                <ShoppingCart className="h-5 w-5 text-secondary" />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="text-xl font-bold">{stats.conversionRate}%</div>
+            <p className="text-xs text-muted-foreground">معدل التحويل</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-elegant transition-all duration-300 group">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center group-hover:bg-orange-500/20 transition-colors">
+                <Star className="h-5 w-5 text-orange-500" />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="text-xl font-bold">{stats.activeProducts}</div>
+            <p className="text-xs text-muted-foreground">المنتجات النشطة</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* التقارير والأدوات */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* مخطط الأداء */}
+        <Card className="border-0 bg-card/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-primary" />
+              أداء العمولات
+            </CardTitle>
+            <CardDescription>تطور عمولاتك خلال الأسابيع الماضية</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value, name) => [
+                      `${value} ${name === 'commissions' ? 'ريال' : 'نقرة'}`,
+                      name === 'commissions' ? 'العمولات' : 'النقرات'
+                    ]}
+                  />
+                  <Area type="monotone" dataKey="commissions" stackId="1" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.6} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* الأنشطة الحديثة */}
+        <Card className="border-0 bg-card/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-accent" />
+              الأنشطة الحديثة
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {recentActivities.map((activity, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-background/50">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    activity.type === 'sale' ? 'bg-green-100 dark:bg-green-900/20' :
+                    activity.type === 'commission' ? 'bg-blue-100 dark:bg-blue-900/20' :
+                    activity.type === 'click' ? 'bg-purple-100 dark:bg-purple-900/20' :
+                    'bg-orange-100 dark:bg-orange-900/20'
+                  }`}>
+                    {activity.type === 'sale' ? <ShoppingCart className="h-4 w-4 text-green-600 dark:text-green-400" /> :
+                     activity.type === 'commission' ? <DollarSign className="h-4 w-4 text-blue-600 dark:text-blue-400" /> :
+                     activity.type === 'click' ? <Eye className="h-4 w-4 text-purple-600 dark:text-purple-400" /> :
+                     <Users className="h-4 w-4 text-orange-600 dark:text-orange-400" />}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{activity.message}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-muted-foreground">منذ {activity.time}</span>
+                      {activity.amount && (
+                        <Badge variant="secondary" className="text-xs">{activity.amount} ريال</Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* أدوات التسويق */}
+      <Card className="border-0 bg-gradient-subtle backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>رابط متجرك</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-primary" />
+            أدوات التسويق المتقدمة
+          </CardTitle>
           <CardDescription>
-            شارك هذا الرابط لجلب العملاء وكسب العمولات
+            إدارة المتجر والروابط التسويقية
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-2">
-            <Input
-              value={`${window.location.origin}/store/${affiliateStore.store_slug}?ref=${profile.id}`}
-              readOnly
-              className="flex-1"
-            />
-            <Button 
-              size="sm"
-              onClick={() => copyAffiliateLink()}
-            >
-              <Copy className="h-4 w-4" />
-            </Button>
-            <Button 
-              size="sm" 
-              variant="outline"
-              onClick={() => window.open(`/store/${affiliateStore.store_slug}?ref=${profile.id}`, '_blank')}
-            >
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-          </div>
+          <Tabs defaultValue="links" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="links">الروابط</TabsTrigger>
+              <TabsTrigger value="products">المنتجات</TabsTrigger>
+              <TabsTrigger value="notifications">الإشعارات</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="links" className="space-y-4 mt-6">
+              <div className="grid gap-4">
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-background/50 border">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Share className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium">رابط المتجر الرئيسي</p>
+                    <Input
+                      value={`${window.location.origin}/store/${affiliateStore.store_slug}?ref=${profile.id}`}
+                      readOnly
+                      className="mt-2 text-xs"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => copyAffiliateLink()}>
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" onClick={() => window.open(`/store/${affiliateStore.store_slug}?ref=${profile.id}`, '_blank')}>
+                      <ExternalLink className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="products" className="space-y-4 mt-6">
+              <div className="grid gap-4">
+                {products.slice(0, 3).map((item: any) => (
+                  <div key={item.id} className="flex items-center gap-3 p-4 rounded-xl bg-background/50 border">
+                    <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
+                      <Star className="h-5 w-5 text-accent" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-medium">{item.products?.title}</h3>
+                      <p className="text-sm text-muted-foreground">{item.products?.price_sar} ريال</p>
+                    </div>
+                    <Button size="sm" variant="outline" onClick={() => copyAffiliateLink(item.product_id)}>
+                      <Share className="h-4 w-4 ml-1" />
+                      نسخ الرابط
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="notifications" className="space-y-4 mt-6">
+              <div className="grid gap-3">
+                {notifications.map((notification, index) => (
+                  <div key={index} className="flex items-start gap-3 p-4 rounded-xl bg-background/50 border">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      notification.type === 'success' ? 'bg-green-100 dark:bg-green-900/20' :
+                      notification.type === 'info' ? 'bg-blue-100 dark:bg-blue-900/20' :
+                      'bg-yellow-100 dark:bg-yellow-900/20'
+                    }`}>
+                      <Bell className={`h-4 w-4 ${
+                        notification.type === 'success' ? 'text-green-600 dark:text-green-400' :
+                        notification.type === 'info' ? 'text-blue-600 dark:text-blue-400' :
+                        'text-yellow-600 dark:text-yellow-400'
+                      }`} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{notification.message}</p>
+                      <span className="text-xs text-muted-foreground">{notification.time}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 
