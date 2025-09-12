@@ -11,10 +11,12 @@ import {
   CheckCircle2, 
   XCircle,
   AlertTriangle,
-  Smartphone
+  Smartphone,
+  Shield,
+  Zap
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { useAtlantisNotifications } from '@/hooks/useAtlantisNotifications';
 import { useFastAuth } from '@/hooks/useFastAuth';
 
 interface NotificationSettings {
@@ -37,6 +39,7 @@ export const PushNotificationManager: React.FC = () => {
   });
 
   const { toast } = useToast();
+  const { notificationTemplates } = useAtlantisNotifications();
   const { profile } = useFastAuth();
 
   useEffect(() => {
@@ -209,13 +212,19 @@ export const PushNotificationManager: React.FC = () => {
 
   const sendTestNotification = () => {
     if (permission === 'granted') {
-      new Notification('إشعار تجريبي', {
-        body: 'هذا إشعار تجريبي للتأكد من عمل النظام',
+      // Test regular notification
+      new Notification('🎉 إشعار تجريبي', {
+        body: 'هذا إشعار تجريبي للتأكد من عمل النظام بشكل صحيح',
         icon: '/favicon.ico',
         badge: '/favicon.ico',
         tag: 'test-notification',
         requireInteraction: false
       });
+
+      // Test Atlantis notification after 2 seconds
+      setTimeout(() => {
+        notificationTemplates.pointsEarned(25, 'اختبار النظام');
+      }, 2000);
     }
   };
 
@@ -288,13 +297,21 @@ export const PushNotificationManager: React.FC = () => {
 
       <CardContent className="space-y-6">
         {/* حالة الإشعارات */}
-        <div className="flex items-center justify-between p-4 bg-card/50 rounded-lg border">
+        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg border interactive-glow">
           <div className="flex items-center gap-3">
-            <Smartphone className="h-8 w-8 text-primary" />
+            <div className="relative">
+              <Smartphone className="h-8 w-8 text-primary animate-pulse-slow" />
+              {isSubscribed && (
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-bounce-gentle" />
+              )}
+            </div>
             <div>
-              <h3 className="font-semibold">حالة الإشعارات</h3>
+              <h3 className="font-semibold flex items-center gap-2">
+                حالة الإشعارات
+                {isSubscribed && <Shield className="h-4 w-4 text-green-600" />}
+              </h3>
               <p className="text-sm text-muted-foreground">
-                {isSubscribed ? 'مُفعَّل ويعمل بشكل طبيعي' : 'غير مُفعَّل'}
+                {isSubscribed ? '🟢 مُفعَّل ويعمل بشكل ممتاز' : '🔴 غير مُفعَّل'}
               </p>
             </div>
           </div>
@@ -316,7 +333,9 @@ export const PushNotificationManager: React.FC = () => {
                   onClick={sendTestNotification}
                   variant="outline"
                   size="sm"
+                  className="hover-glow flex items-center gap-2"
                 >
+                  <Zap className="h-4 w-4" />
                   إشعار تجريبي
                 </Button>
                 <Button
@@ -324,6 +343,7 @@ export const PushNotificationManager: React.FC = () => {
                   disabled={isLoading}
                   variant="destructive"
                   size="sm"
+                  className="hover-lift"
                 >
                   إلغاء التفعيل
                 </Button>
@@ -335,8 +355,9 @@ export const PushNotificationManager: React.FC = () => {
                 onClick={requestPermission}
                 disabled={isLoading}
                 size="sm"
+                className="btn-atlantis animate-glow"
               >
-                طلب الإذن
+                {isLoading ? 'جاري المعالجة...' : 'تفعيل الإشعارات'}
               </Button>
             )}
           </div>
