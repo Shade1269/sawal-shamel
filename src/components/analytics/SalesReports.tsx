@@ -17,7 +17,7 @@ import {
   Package, Users, Calendar, FileText, Printer
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { format, startOfMonth, endOfMonth, subDays, eachDayOfInterval } from 'date-fns';
+import { format as formatDate, startOfMonth, endOfMonth, subDays, eachDayOfInterval } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 
 interface SalesReport {
@@ -89,8 +89,8 @@ const SalesReports = () => {
 
     setLoading(true);
     try {
-      const fromDate = format(dateRange.from, 'yyyy-MM-dd');
-      const toDate = format(dateRange.to, 'yyyy-MM-dd');
+      const fromDate = formatDate(dateRange.from, 'yyyy-MM-dd');
+      const toDate = formatDate(dateRange.to, 'yyyy-MM-dd');
 
       // Build shop filter
       let shopFilter = '';
@@ -131,13 +131,13 @@ const SalesReports = () => {
         start: dateRange.from,
         end: dateRange.to
       }).map(date => {
-        const dateStr = format(date, 'yyyy-MM-dd');
+        const dateStr = formatDate(date, 'yyyy-MM-dd');
         const dayOrders = ordersData?.filter(order => 
           order.created_at.startsWith(dateStr)
         ) || [];
 
         return {
-          date: format(date, 'MMM dd'),
+          date: formatDate(date, 'MMM dd'),
           sales: dayOrders.reduce((sum, order) => sum + (order.total_sar || 0), 0),
           orders: dayOrders.length
         };
@@ -208,7 +208,7 @@ const SalesReports = () => {
       ];
 
       setReport({
-        period: `${format(dateRange.from, 'dd/MM/yyyy')} - ${format(dateRange.to, 'dd/MM/yyyy')}`,
+        period: `${formatDate(dateRange.from, 'dd/MM/yyyy')} - ${formatDate(dateRange.to, 'dd/MM/yyyy')}`,
         totalSales,
         totalOrders,
         totalCustomers: uniqueCustomers,
@@ -258,7 +258,7 @@ const SalesReports = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `sales-report-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+      a.download = `sales-report-${formatDate(new Date(), 'yyyy-MM-dd')}.csv`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
