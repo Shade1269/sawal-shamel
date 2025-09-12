@@ -13,7 +13,9 @@ import {
   Star,
   Gift,
   Zap,
-  CheckCircle
+  CheckCircle,
+  Home,
+  ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -62,6 +64,19 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-gradient-persian-bg">
       <div className="container mx-auto px-4 py-12 space-y-16">
+        
+        {/* Back to Home Button */}
+        <div className="flex justify-start">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/')}
+            className="text-primary hover:bg-primary/10 gap-2"
+          >
+            <Home className="h-4 w-4" />
+            العودة إلى الصفحة الرئيسية
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
         
         {/* Header */}
         <div className="text-center space-y-6">

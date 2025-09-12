@@ -5,10 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Crown, Shield, UserCheck } from 'lucide-react';
+import { Crown, Shield, UserCheck, Home, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const CreateAdminPage = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [adminData, setAdminData] = useState({
     email: '',
@@ -63,7 +65,21 @@ const CreateAdminPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-persian-bg flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-luxury border-0 bg-card/50 backdrop-blur-sm">
+      <div className="w-full max-w-md">
+        {/* Back to Home Button */}
+        <div className="flex justify-center mb-6">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/')}
+            className="text-primary hover:bg-primary/10 gap-2 bg-white/80 backdrop-blur-sm"
+          >
+            <Home className="h-4 w-4" />
+            العودة إلى الصفحة الرئيسية
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
+        
+        <Card className="w-full shadow-luxury border-0 bg-card/50 backdrop-blur-sm">
         <CardHeader className="text-center">
           <div className="w-16 h-16 bg-gradient-luxury rounded-full flex items-center justify-center mx-auto mb-4">
             <Crown className="h-8 w-8 text-white" />
@@ -144,6 +160,7 @@ const CreateAdminPage = () => {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

@@ -29,10 +29,13 @@ import {
   Crown,
   Verified,
   Award,
-  TrendingUp
+  TrendingUp,
+  Home,
+  ArrowRight
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface AffiliateStore {
   id: string;
@@ -76,6 +79,7 @@ const AffiliateStoreFront = () => {
   const { storeSlug } = useParams();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const [store, setStore] = useState<AffiliateStore | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -227,6 +231,19 @@ const AffiliateStoreFront = () => {
 
   return (
     <div className="min-h-screen bg-gradient-persian-bg">
+      {/* Back to Home Button */}
+      <div className="container mx-auto px-6 py-4">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/')}
+          className="text-primary hover:bg-primary/10 gap-2"
+        >
+          <Home className="h-4 w-4" />
+          العودة إلى الصفحة الرئيسية
+          <ArrowRight className="h-4 w-4" />
+        </Button>
+      </div>
+      
       {/* Header المتجر */}
       <div className="relative">
         {/* خلفية المتجر */}

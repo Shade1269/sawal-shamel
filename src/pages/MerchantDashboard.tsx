@@ -16,7 +16,9 @@ import {
   Edit,
   Trash2,
   Users,
-  DollarSign
+  DollarSign,
+  Home,
+  ArrowRight
 } from 'lucide-react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -222,6 +224,17 @@ const MerchantDashboard = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
+          <div className="flex items-center gap-4 mb-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => window.location.href = '/'}
+              className="text-primary hover:bg-primary/10 gap-2"
+            >
+              <Home className="h-4 w-4" />
+              الصفحة الرئيسية
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
           <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
             لوحة التاجر
           </h1>

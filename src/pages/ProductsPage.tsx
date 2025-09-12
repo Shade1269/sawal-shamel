@@ -14,7 +14,9 @@ import {
   Eye,
   Heart,
   Share,
-  Plus
+  Plus,
+  Home,
+  ArrowRight
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -195,6 +197,19 @@ const ProductsPage = () => {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {/* Back to Home Button */}
+      <div className="flex justify-start">
+        <Button 
+          variant="ghost" 
+          onClick={() => window.location.href = '/'}
+          className="text-primary hover:bg-primary/10 gap-2"
+        >
+          <Home className="h-4 w-4" />
+          العودة إلى الصفحة الرئيسية
+          <ArrowRight className="h-4 w-4" />
+        </Button>
+      </div>
+      
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
           متجر المنتجات

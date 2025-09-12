@@ -37,17 +37,21 @@ import {
   Headphones,
   FileText,
   Download,
-  Filter
+  Filter,
+  Home,
+  ArrowRight
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import { useNavigate } from 'react-router-dom';
 
 const AffiliateDashboard = () => {
   const { profile } = useAuthContext();
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const [stats, setStats] = useState({
     totalCommissions: 0,
@@ -355,6 +359,18 @@ const AffiliateDashboard = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
+          <div className="flex items-center gap-3 mb-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/')}
+              className="text-primary hover:bg-primary/10 gap-2"
+            >
+              <Home className="h-4 w-4" />
+              الصفحة الرئيسية
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+          
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center">
               <Crown className="h-6 w-6 text-white" />

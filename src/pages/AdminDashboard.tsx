@@ -22,7 +22,8 @@ import {
   MessageSquare,
   Bell,
   Zap,
-  ArrowRight
+  ArrowRight,
+  Home
 } from 'lucide-react';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -164,6 +165,17 @@ const AdminDashboard = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
+          <div className="flex items-center gap-4 mb-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate('/')}
+              className="text-primary hover:bg-primary/10 gap-2"
+            >
+              <Home className="h-4 w-4" />
+              الصفحة الرئيسية
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             مرحباً، {profile?.full_name || 'مدير النظام'}
           </h1>

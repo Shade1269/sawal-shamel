@@ -19,7 +19,9 @@ import {
   DollarSign,
   Target,
   Zap,
-  Shield
+  Shield,
+  Home,
+  ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -203,6 +205,16 @@ const Dashboard = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/')}
+                className="text-primary hover:bg-primary/10 gap-2"
+              >
+                <Home className="h-4 w-4" />
+                الصفحة الرئيسية
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+              
               <div className="flex items-center gap-3">
                 {getRoleIcon()}
                 <div>

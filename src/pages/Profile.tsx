@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { User, Mail, Phone, Camera, Save, Crown, Award, Star, Medal } from 'lucide-react';
+import { User, Mail, Phone, Camera, Save, Crown, Award, Star, Medal, Home, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
@@ -58,13 +58,25 @@ const ProfilePage = () => {
 
   return (
     <div className="container mx-auto p-6 max-w-4xl">
-      <div className="flex items-center gap-3 mb-8">
-        <Button variant="ghost" onClick={() => navigate(-1)}>
-          ← العودة
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" onClick={() => navigate(-1)}>
+            ← العودة
+          </Button>
+          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            الملف الشخصي
+          </h1>
+        </div>
+        
+        <Button 
+          variant="outline" 
+          onClick={() => navigate('/')}
+          className="gap-2"
+        >
+          <Home className="h-4 w-4" />
+          الصفحة الرئيسية
+          <ArrowRight className="h-4 w-4" />
         </Button>
-        <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-          الملف الشخصي
-        </h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -46,7 +46,9 @@ import {
   Key,
   MessageSquare,
   Send,
-  History
+  History,
+  Home,
+  ArrowRight
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -466,14 +468,26 @@ const AdminUsers = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => navigate('/admin')}
-          >
-            <ArrowLeft className="h-4 w-4 ml-2" />
-            العودة للوحة التحكم
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/admin')}
+            >
+              <ArrowLeft className="h-4 w-4 ml-2" />
+              العودة للوحة التحكم
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => navigate('/')}
+              className="gap-2"
+            >
+              <Home className="h-4 w-4" />
+              الصفحة الرئيسية
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
           <div>
             <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               إدارة المستخدمين
