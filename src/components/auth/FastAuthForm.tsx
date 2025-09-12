@@ -5,8 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useFastAuth } from '@/hooks/useFastAuth';
 import { Loader2, User, Store, Users, ShoppingCart, Mail, Lock, UserPlus, LogIn, Zap } from 'lucide-react';
 
 interface AuthFormData {
@@ -18,6 +18,7 @@ interface AuthFormData {
 
 const FastAuthForm = () => {
   const { toast } = useToast();
+  const { signIn, signUp, loading: authLoading } = useFastAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<AuthFormData>({
     email: '',
@@ -54,19 +55,16 @@ const FastAuthForm = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email.trim(),
-        password: formData.password
-      });
+      const result = await signIn(formData.email.trim(), formData.password);
 
-      if (error) {
+      if (result?.error) {
         let message = 'خطأ في تسجيل الدخول';
         
-        if (error.message === 'Invalid login credentials') {
+        if (result.error.message === 'Invalid login credentials') {
           message = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
-        } else if (error.message.includes('Email not confirmed')) {
+        } else if (result.error.message.includes('Email not confirmed')) {
           message = 'يجب تأكيد البريد الإلكتروني أولاً';
-        } else if (error.message.includes('too many requests')) {
+        } else if (result.error.message.includes('too many requests')) {
           message = 'محاولات كثيرة. انتظر قليلاً ثم حاول مرة أخرى';
         }
 
@@ -78,7 +76,7 @@ const FastAuthForm = () => {
         return;
       }
 
-      if (data.user) {
+      if (result?.data?.user) {
         toast({
           title: "مرحباً بعودتك! 🎉",
           description: "تم تسجيل الدخول بنجاح",
@@ -100,7 +98,7 @@ const FastAuthForm = () => {
     } finally {
       setLoading(false);
     }
-  }, [formData.email, formData.password, toast]);
+  }, [formData.email, formData.password, signIn, toast]);
 
   // Fast sign up
   const handleSignUp = useCallback(async (e: React.FormEvent) => {
@@ -127,26 +125,21 @@ const FastAuthForm = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email.trim(),
-        password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
-          data: {
-            full_name: formData.fullName.trim(),
-            role: formData.role || 'customer'
-          }
-        }
-      });
+      const result = await signUp(
+        formData.email.trim(),
+        formData.password,
+        formData.fullName.trim(),
+        formData.role || 'customer'
+      );
 
-      if (error) {
+      if (result?.error) {
         let message = 'خطأ في إنشاء الحساب';
         
-        if (error.message.includes('already registered')) {
+        if (result.error.message.includes('already registered')) {
           message = 'هذا البريد مستخدم بالفعل. جرب تسجيل الدخول بدلاً من ذلك';
-        } else if (error.message.includes('Password should be at least')) {
+        } else if (result.error.message.includes('Password should be at least')) {
           message = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
-        } else if (error.message.includes('Invalid email')) {
+        } else if (result.error.message.includes('Invalid email')) {
           message = 'البريد الإلكتروني غير صالح';
         }
 
@@ -158,7 +151,7 @@ const FastAuthForm = () => {
         return;
       }
 
-      if (data.user) {
+      if (result?.data?.user) {
         toast({
           title: "مرحباً بك! 🎊",
           description: "تم إنشاء حسابك بنجاح. يمكنك الآن تسجيل الدخول",
