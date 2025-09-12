@@ -26,11 +26,11 @@ const FastAuthForm = () => {
     role: 'customer'
   });
 
-  // Memoized role options
+  // Simple role options
   const roleOptions = useMemo(() => [
-    { value: 'customer', label: 'عميل', icon: ShoppingCart, description: 'للتسوق والشراء' },
-    { value: 'affiliate', label: 'مسوق', icon: Users, description: 'للتسويق بالعمولة' },
-    { value: 'merchant', label: 'تاجر', icon: Store, description: 'لبيع المنتجات' }
+    { value: 'customer', label: 'عميل', icon: ShoppingCart },
+    { value: 'affiliate', label: 'مسوق', icon: Users },
+    { value: 'merchant', label: 'تاجر', icon: Store }
   ], []);
 
   // Update form data efficiently
@@ -187,16 +187,10 @@ const FastAuthForm = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-2xl border-0 bg-background/95 backdrop-blur-sm">
-        <CardHeader className="text-center space-y-4 pb-2">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center mb-2">
-            <Zap className="h-8 w-8 text-primary-foreground" />
-          </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-l from-primary to-primary/70 bg-clip-text text-transparent">
-            تسجيل دخول سريع ⚡
+        <CardHeader className="text-center pb-2">
+          <CardTitle className="text-xl font-semibold">
+            تسجيل الدخول
           </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            ادخل بسرعة للوصول لحسابك
-          </CardDescription>
         </CardHeader>
         
         <CardContent className="px-6 pb-6">
@@ -250,9 +244,9 @@ const FastAuthForm = () => {
                   />
                 </div>
                 
-                <Button 
+                 <Button 
                   type="submit" 
-                  className="w-full h-11 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full"
                   disabled={loading}
                 >
                   {loading ? (
@@ -261,10 +255,7 @@ const FastAuthForm = () => {
                       جاري الدخول...
                     </>
                   ) : (
-                    <>
-                      <LogIn className="ml-2 h-4 w-4" />
-                      دخول سريع
-                    </>
+                    'دخول'
                   )}
                 </Button>
               </form>
@@ -342,14 +333,9 @@ const FastAuthForm = () => {
                         const Icon = option.icon;
                         return (
                           <SelectItem key={option.value} value={option.value}>
-                            <div className="flex items-center gap-3">
-                              <Icon className="h-4 w-4 text-primary" />
-                              <div className="text-right">
-                                <div className="font-medium">{option.label}</div>
-                                <div className="text-xs text-muted-foreground">
-                                  {option.description}
-                                </div>
-                              </div>
+                            <div className="flex items-center gap-2">
+                              <Icon className="h-4 w-4" />
+                              <span>{option.label}</span>
                             </div>
                           </SelectItem>
                         );
@@ -358,9 +344,9 @@ const FastAuthForm = () => {
                   </Select>
                 </div>
                 
-                <Button 
+                 <Button 
                   type="submit" 
-                  className="w-full h-11 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full"
                   disabled={loading}
                 >
                   {loading ? (
@@ -369,10 +355,7 @@ const FastAuthForm = () => {
                       جاري الإنشاء...
                     </>
                   ) : (
-                    <>
-                      <UserPlus className="ml-2 h-4 w-4" />
-                      إنشاء حساب سريع
-                    </>
+                    'إنشاء حساب'
                   )}
                 </Button>
               </form>
