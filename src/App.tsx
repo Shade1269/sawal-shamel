@@ -20,6 +20,7 @@ const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
+const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const FastAuth = lazy(() => import("./pages/FastAuth"));
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
@@ -56,6 +57,7 @@ const App = () => {
                       <Route path="/products" element={<ProductsPage />} />
                       <Route path="/about" element={<AboutPage />} />
                       <Route path="/create-admin" element={<CreateAdminPage />} />
+                      <Route path="/store/:storeSlug" element={<AffiliateStoreFront />} />
                       <Route path="/profile" element={
                         <ProtectedRoute>
                           <ProfilePage />
