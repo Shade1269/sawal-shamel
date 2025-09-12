@@ -77,6 +77,7 @@ const AffiliateDashboard = () => {
   const [notifications, setNotifications] = useState([]);
   
   const [affiliateStore, setAffiliateStore] = useState(null);
+  const [hasExistingStore, setHasExistingStore] = useState(false);
   const [products, setProducts] = useState([]);
   const [commissions, setCommissions] = useState([]);
   const [activities, setActivities] = useState([]);
@@ -171,6 +172,7 @@ const AffiliateDashboard = () => {
       if (storeError && storeError.code !== 'PGRST116') throw storeError;
       
       setAffiliateStore(storeData);
+      setHasExistingStore(!!storeData);
 
       if (storeData) {
         // جلب المنتجات
@@ -273,6 +275,16 @@ const AffiliateDashboard = () => {
 
   const handleCreateStore = async (e: any) => {
     e.preventDefault();
+
+    // التحقق من وجود متجر سابق أولاً
+    if (hasExistingStore) {
+      toast({
+        title: "متجر موجود مسبقاً",
+        description: "لديك متجر تسويق موجود بالفعل. لا يُسمح بأكثر من متجر واحد",
+        variant: "destructive",
+      });
+      return;
+    }
 
     // التحقق من وجود جلسة
     if (!hasSession) {
@@ -443,76 +455,128 @@ const AffiliateDashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Dialog open={isCreateStoreOpen} onOpenChange={setIsCreateStoreOpen}>
-                <DialogTrigger asChild>
-                  <Button className="w-full">
-                    <Plus className="ml-2 h-4 w-4" />
-                    إنشاء متجر جديد
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>إنشاء متجر التسويق</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleCreateStore} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>اسم المتجر (يظهر للعملاء)</Label>
-                      <Input
-                        value={newStore.store_name}
-                        onChange={(e) => {
-                          const name = e.target.value;
-                          setNewStore((prev) => ({
-                            ...prev,
-                            store_name: name,
-                            ...(slugManuallyEdited ? {} : { store_slug: sanitizeSlug(name) }),
-                          }));
-                        }}
-                        placeholder="اسم متجرك"
-                        required
+              {hasExistingStore ? (
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <Store className="h-12 w-12 mx-auto mb-4 text-primary" />
+                    <p className="text-muted-foreground">لديك متجر موجود بالفعل</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>رابط متجرك:</Label>
+                    <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+                      <Input 
+                        value={`${window.location.origin}/store/${affiliateStore?.store_slug}`} 
+                        disabled 
+                        className="flex-1 bg-background"
                       />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => copyAffiliateLink()}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => window.open(`${window.location.origin}/store/${affiliateStore?.store_slug}`, '_blank')}
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <div className="space-y-2">
-                      <Label>رابط المتجر (بالإنجليزية)</Label>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground">{`${window.location.origin}/store/`}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-center">
+                    <div className="p-3 bg-primary/5 rounded-lg">
+                      <div className="text-2xl font-bold text-primary">{affiliateStore?.total_sales || 0}</div>
+                      <div className="text-xs text-muted-foreground">إجمالي المبيعات</div>
+                    </div>
+                    <div className="p-3 bg-accent/5 rounded-lg">
+                      <div className="text-2xl font-bold text-accent">{affiliateStore?.total_orders || 0}</div>
+                      <div className="text-xs text-muted-foreground">إجمالي الطلبات</div>
+                    </div>
+                  </div>
+                  <Button 
+                    className="w-full" 
+                    onClick={() => navigate('/affiliate-dashboard')}
+                  >
+                    الذهاب إلى لوحة التحكم
+                  </Button>
+                </div>
+              ) : (
+                <Dialog open={isCreateStoreOpen} onOpenChange={setIsCreateStoreOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="w-full" disabled={hasExistingStore}>
+                      <Plus className="ml-2 h-4 w-4" />
+                      إنشاء متجر جديد
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>إنشاء متجر التسويق</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleCreateStore} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>اسم المتجر (يظهر للعملاء)</Label>
                         <Input
-                          value={newStore.store_slug}
+                          value={newStore.store_name}
                           onChange={(e) => {
-                            setSlugManuallyEdited(true);
-                            setNewStore({ ...newStore, store_slug: sanitizeSlug(e.target.value) });
+                            const name = e.target.value;
+                            setNewStore((prev) => ({
+                              ...prev,
+                              store_name: name,
+                              ...(slugManuallyEdited ? {} : { store_slug: sanitizeSlug(name) }),
+                            }));
                           }}
-                          placeholder="my-store"
-                          pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
-                          title="استخدم أحرف إنجليزية صغيرة وأرقام وشرطات فقط"
+                          placeholder="اسم متجرك"
                           required
                         />
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        الاسم الظاهر يمكن أن يكون بأي لغة. أما رابط المتجر فيجب أن يكون بالحروف الإنجليزية فقط.
+                      <div className="space-y-2">
+                        <Label>رابط المتجر (بالإنجليزية)</Label>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">{`${window.location.origin}/store/`}</span>
+                          <Input
+                            value={newStore.store_slug}
+                            onChange={(e) => {
+                              setSlugManuallyEdited(true);
+                              setNewStore({ ...newStore, store_slug: sanitizeSlug(e.target.value) });
+                            }}
+                            placeholder="my-store"
+                            pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                            title="استخدم أحرف إنجليزية صغيرة وأرقام وشرطات فقط"
+                            required
+                          />
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          الاسم الظاهر يمكن أن يكون بأي لغة. أما رابط المتجر فيجب أن يكون بالحروف الإنجليزية فقط.
+                        </div>
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>نبذة عن المتجر</Label>
-                      <Input
-                        value={newStore.bio}
-                        onChange={(e) => setNewStore({ ...newStore, bio: e.target.value })}
-                        placeholder="وصف قصير لمتجرك"
-                      />
-                    </div>
-                      <div className="flex gap-2 items-center">
-                        <Button type="submit" className="flex-1" disabled={!hasSession || !newStore.store_name.trim() || !newStore.store_slug.trim()}>
-                          إنشاء المتجر
-                        </Button>
-                        <Button type="button" variant="outline" onClick={() => setIsCreateStoreOpen(false)} className="flex-1">
-                          إلغاء
-                        </Button>
+                      <div className="space-y-2">
+                        <Label>نبذة عن المتجر</Label>
+                        <Input
+                          value={newStore.bio}
+                          onChange={(e) => setNewStore({ ...newStore, bio: e.target.value })}
+                          placeholder="وصف قصير لمتجرك"
+                        />
                       </div>
-                      {!hasSession && (
-                        <p className="text-xs text-destructive mt-2">يجب تسجيل الدخول لإنشاء المتجر</p>
-                      )}
-                  </form>
-                </DialogContent>
-              </Dialog>
+                        <div className="flex gap-2 items-center">
+                          <Button type="submit" className="flex-1" disabled={!hasSession || !newStore.store_name.trim() || !newStore.store_slug.trim() || hasExistingStore}>
+                            إنشاء المتجر
+                          </Button>
+                          <Button type="button" variant="outline" onClick={() => setIsCreateStoreOpen(false)} className="flex-1">
+                            إلغاء
+                          </Button>
+                        </div>
+                        {!hasSession && (
+                          <p className="text-xs text-destructive mt-2">يجب تسجيل الدخول لإنشاء المتجر</p>
+                        )}
+                        {hasExistingStore && (
+                          <p className="text-xs text-destructive mt-2">لديك متجر موجود بالفعل. لا يُسمح بأكثر من متجر واحد</p>
+                        )}
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              )}
             </CardContent>
           </Card>
         </div>
