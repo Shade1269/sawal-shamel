@@ -1048,14 +1048,17 @@ const AffiliateDashboard = () => {
             <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
               <ShoppingCart className="h-8 w-8 text-white" />
             </div>
-            <CardTitle>إدارة المنتجات</CardTitle>
+            <CardTitle>تصفح المنتجات</CardTitle>
             <CardDescription>
-              أضف منتجات جديدة لمتجرك
+              اختر منتجات جديدة لإضافتها إلى متجرك
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-gradient-primary hover:opacity-90">
-              إدارة المنتجات
+            <Button 
+              className="w-full bg-gradient-primary hover:opacity-90"
+              onClick={() => navigate('/products-browser')}
+            >
+              تصفح المنتجات
             </Button>
           </CardContent>
         </Card>

@@ -1,0 +1,650 @@
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { 
+  Package, 
+  Search, 
+  Filter, 
+  Grid, 
+  List, 
+  Plus,
+  Check,
+  Eye,
+  Star,
+  ShoppingCart,
+  Store,
+  Users,
+  Heart,
+  Share2,
+  Home,
+  ArrowRight,
+  AlertCircle,
+  CheckCircle
+} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useFastAuth } from '@/hooks/useFastAuth';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation';
+
+interface Product {
+  id: string;
+  title: string;
+  description: string;
+  price_sar: number;
+  images: any;
+  image_urls: string[];
+  category: string;
+  is_active: boolean;
+  stock: number;
+  view_count: number;
+  merchant_id: string;
+  merchants: {
+    id: string;
+    business_name: string;
+    default_commission_rate: number;
+  };
+}
+
+const ProductsBrowser = () => {
+  const { profile } = useFastAuth();
+  const { goToUserHome } = useSmartNavigation();
+  const { toast } = useToast();
+  
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [affiliateStore, setAffiliateStore] = useState(null);
+  const [myProducts, setMyProducts] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(true);
+  const [addingProducts, setAddingProducts] = useState<Set<string>>(new Set());
+  
+  // Filters and search
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  
+  useEffect(() => {
+    if (profile) {
+      fetchData();
+    }
+  }, [profile]);
+
+  useEffect(() => {
+    filterProducts();
+  }, [products, searchQuery, selectedCategory, priceRange]);
+
+  const fetchData = async () => {
+    try {
+      // جلب متجر المسوق
+      const { data: storeData } = await supabase
+        .from('affiliate_stores')
+        .select('*')
+        .eq('profile_id', profile.id)
+        .maybeSingle();
+
+      setAffiliateStore(storeData);
+
+      // جلب منتجات المسوق الحالية
+      if (storeData) {
+        const { data: myProductsData } = await supabase
+          .from('affiliate_products')
+          .select('product_id')
+          .eq('affiliate_store_id', storeData.id);
+
+        setMyProducts(new Set(myProductsData?.map(p => p.product_id) || []));
+      }
+
+      // جلب جميع المنتجات النشطة مع معلومات التجار
+      const { data: productsData, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          merchants (
+            id,
+            business_name,
+            default_commission_rate
+          )
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setProducts(productsData || []);
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      toast({
+        title: "خطأ في تحميل البيانات",
+        description: "تعذر تحميل المنتجات",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterProducts = () => {
+    let filtered = products;
+
+    // البحث النصي
+    if (searchQuery) {
+      filtered = filtered.filter(product => 
+        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.merchants?.business_name?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // فلتر الفئة
+    if (selectedCategory && selectedCategory !== 'all') {
+      filtered = filtered.filter(product => product.category === selectedCategory);
+    }
+
+    // فلتر السعر
+    if (priceRange.min || priceRange.max) {
+      filtered = filtered.filter(product => {
+        const price = product.price_sar;
+        const min = priceRange.min ? parseFloat(priceRange.min) : 0;
+        const max = priceRange.max ? parseFloat(priceRange.max) : Infinity;
+        return price >= min && price <= max;
+      });
+    }
+
+    setFilteredProducts(filtered);
+  };
+
+  const addToMyStore = async (productId: string) => {
+    if (!affiliateStore) {
+      toast({
+        title: "خطأ",
+        description: "يجب إنشاء متجر أولاً",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setAddingProducts(prev => new Set(prev).add(productId));
+
+    try {
+      const { error } = await supabase
+        .from('affiliate_products')
+        .insert({
+          affiliate_store_id: affiliateStore.id,
+          product_id: productId,
+          is_visible: true,
+          sort_order: 0
+        });
+
+      if (error) throw error;
+
+      setMyProducts(prev => new Set(prev).add(productId));
+      toast({
+        title: "تم بنجاح",
+        description: "تم إضافة المنتج إلى متجرك",
+      });
+
+    } catch (error: any) {
+      console.error('Error adding product:', error);
+      toast({
+        title: "خطأ",
+        description: error.message === 'duplicate key value violates unique constraint "affiliate_products_affiliate_store_id_product_id_key"' 
+          ? "المنتج موجود بالفعل في متجرك"
+          : "تعذر إضافة المنتج",
+        variant: "destructive",
+      });
+    } finally {
+      setAddingProducts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
+    }
+  };
+
+  const removeFromMyStore = async (productId: string) => {
+    if (!affiliateStore) return;
+
+    setAddingProducts(prev => new Set(prev).add(productId));
+
+    try {
+      const { error } = await supabase
+        .from('affiliate_products')
+        .delete()
+        .eq('affiliate_store_id', affiliateStore.id)
+        .eq('product_id', productId);
+
+      if (error) throw error;
+
+      setMyProducts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
+
+      toast({
+        title: "تم الحذف",
+        description: "تم حذف المنتج من متجرك",
+      });
+
+    } catch (error) {
+      console.error('Error removing product:', error);
+      toast({
+        title: "خطأ",
+        description: "تعذر حذف المنتج",
+        variant: "destructive",
+      });
+    } finally {
+      setAddingProducts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
+    }
+  };
+
+  // الحصول على الفئات المتاحة
+  const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
+
+  if (loading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">جاري تحميل المنتجات...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-persian-bg">
+      <div className="container mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <div className="flex items-center gap-4 mb-4">
+              <Button 
+                variant="ghost" 
+                onClick={goToUserHome}
+                className="text-primary hover:bg-primary/10 gap-2"
+              >
+                <Home className="h-4 w-4" />
+                الصفحة الرئيسية
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center">
+                <Package className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                  مخزن المنتجات
+                </h1>
+                <p className="text-muted-foreground">
+                  تصفح واختر المنتجات لإضافتها إلى متجرك
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* إحصائيات سريعة */}
+          <div className="flex items-center gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-primary">{products.length}</div>
+              <div className="text-sm text-muted-foreground">منتج متاح</div>
+            </div>
+            <Separator orientation="vertical" className="h-12" />
+            <div className="text-center">
+              <div className="text-2xl font-bold text-accent">{myProducts.size}</div>
+              <div className="text-sm text-muted-foreground">في متجري</div>
+            </div>
+          </div>
+        </div>
+
+        {/* تنبيه في حالة عدم وجود متجر */}
+        {!affiliateStore && (
+          <Card className="border-orange-200 bg-orange-50 dark:bg-orange-900/10 mb-6">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="h-5 w-5 text-orange-600" />
+                <div>
+                  <p className="font-medium text-orange-800 dark:text-orange-200">
+                    لم يتم إنشاء متجرك بعد
+                  </p>
+                  <p className="text-sm text-orange-600 dark:text-orange-300">
+                    يمكنك تصفح المنتجات، لكن لإضافتها لمتجرك يجب إنشاء المتجر أولاً من لوحة المسوق
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* أدوات البحث والفلترة */}
+        <Card className="border-0 bg-card/50 backdrop-blur-sm mb-8">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* البحث */}
+              <div className="relative">
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="ابحث في المنتجات..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pr-10"
+                />
+              </div>
+
+              {/* فلتر الفئات */}
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="px-4 py-2 rounded-md border border-border bg-background text-sm"
+              >
+                <option value="all">جميع الفئات</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+
+              {/* نطاق السعر */}
+              <div className="flex gap-2">
+                <Input
+                  placeholder="من"
+                  type="number"
+                  value={priceRange.min}
+                  onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                  className="flex-1"
+                />
+                <Input
+                  placeholder="إلى"
+                  type="number"
+                  value={priceRange.max}
+                  onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                  className="flex-1"
+                />
+              </div>
+
+              {/* تبديل العرض */}
+              <div className="flex gap-2">
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  className="flex-1"
+                >
+                  <Grid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className="flex-1"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* عرض المنتجات */}
+        {filteredProducts.length === 0 ? (
+          <Card className="border-0 bg-card/50 backdrop-blur-sm">
+            <CardContent className="p-12 text-center">
+              <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">لا توجد منتجات</h3>
+              <p className="text-muted-foreground">
+                {searchQuery || selectedCategory !== 'all' || priceRange.min || priceRange.max
+                  ? 'لا توجد منتجات تطابق معايير البحث'
+                  : 'لا توجد منتجات متاحة حالياً'
+                }
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className={
+            viewMode === 'grid' 
+              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
+              : 'space-y-4'
+          }>
+            {filteredProducts.map((product) => {
+              const isInMyStore = myProducts.has(product.id);
+              const isProcessing = addingProducts.has(product.id);
+              
+              return (
+                <Card key={product.id} className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300 group overflow-hidden">
+                  {viewMode === 'grid' ? (
+                    <>
+                      {/* صورة المنتج */}
+                      <div className="relative aspect-square overflow-hidden">
+                        <img
+                          src={Array.isArray(product.images) && product.images[0]?.url || 
+                               Array.isArray(product.image_urls) && product.image_urls[0] || 
+                               '/placeholder.svg'}
+                          alt={product.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        
+                        {/* شارة التاجر */}
+                        <div className="absolute top-3 right-3">
+                          <Badge variant="secondary" className="bg-background/80 backdrop-blur-sm">
+                            <Store className="h-3 w-3 ml-1" />
+                            {product.merchants?.business_name}
+                          </Badge>
+                        </div>
+
+                        {/* حالة المنتج في متجري */}
+                        {isInMyStore && (
+                          <div className="absolute top-3 left-3">
+                            <Badge className="bg-green-500/90 text-white backdrop-blur-sm">
+                              <CheckCircle className="h-3 w-3 ml-1" />
+                              في متجري
+                            </Badge>
+                          </div>
+                        )}
+
+                        {/* تنبيه المخزون */}
+                        {product.stock <= 10 && (
+                          <div className="absolute bottom-3 right-3">
+                            <Badge variant="destructive" className="bg-red-500/90 backdrop-blur-sm">
+                              باقي {product.stock}
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* تفاصيل المنتج */}
+                      <CardContent className="p-4">
+                        <div className="space-y-3">
+                          <div>
+                            <h3 className="font-semibold mb-1 line-clamp-1">{product.title}</h3>
+                            <p className="text-sm text-muted-foreground line-clamp-2">
+                              {product.description}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="text-xl font-bold text-primary">
+                                {product.price_sar} ريال
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                العمولة: {product.merchants?.default_commission_rate || 10}%
+                              </div>
+                            </div>
+                            <Badge variant="outline" className="text-xs">
+                              {product.category}
+                            </Badge>
+                          </div>
+
+                          {/* أزرار الإجراءات */}
+                          <div className="flex gap-2 pt-2">
+                            {affiliateStore && (
+                              <>
+                                {isInMyStore ? (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => removeFromMyStore(product.id)}
+                                    disabled={isProcessing}
+                                    className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
+                                  >
+                                    {isProcessing ? (
+                                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-red-600" />
+                                    ) : (
+                                      <>
+                                        <Check className="h-3 w-3 ml-1" />
+                                        حذف من متجري
+                                      </>
+                                    )}
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    size="sm"
+                                    onClick={() => addToMyStore(product.id)}
+                                    disabled={isProcessing}
+                                    className="flex-1 bg-gradient-primary"
+                                  >
+                                    {isProcessing ? (
+                                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" />
+                                    ) : (
+                                      <>
+                                        <Plus className="h-3 w-3 ml-1" />
+                                        إضافة لمتجري
+                                      </>
+                                    )}
+                                  </Button>
+                                )}
+                              </>
+                            )}
+                            
+                            <Button variant="outline" size="sm">
+                              <Eye className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </>
+                  ) : (
+                    // List View
+                    <CardContent className="p-4">
+                      <div className="flex gap-4">
+                        {/* صورة مصغرة */}
+                        <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                          <img
+                            src={Array.isArray(product.images) && product.images[0]?.url || 
+                                 Array.isArray(product.image_urls) && product.image_urls[0] || 
+                                 '/placeholder.svg'}
+                            alt={product.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+
+                        {/* تفاصيل المنتج */}
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <h3 className="font-semibold">{product.title}</h3>
+                              <p className="text-sm text-muted-foreground mb-1">
+                                {product.merchants?.business_name}
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="text-xs">
+                                  {product.category}
+                                </Badge>
+                                {isInMyStore && (
+                                  <Badge className="bg-green-100 text-green-800 text-xs">
+                                    في متجري
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            
+                            <div className="text-right">
+                              <div className="text-lg font-bold text-primary">
+                                {product.price_sar} ريال
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                العمولة: {product.merchants?.default_commission_rate || 10}%
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex justify-between items-end">
+                            <p className="text-sm text-muted-foreground line-clamp-2 flex-1 ml-4">
+                              {product.description}
+                            </p>
+                            
+                            {affiliateStore && (
+                              <div className="flex gap-2">
+                                {isInMyStore ? (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => removeFromMyStore(product.id)}
+                                    disabled={isProcessing}
+                                    className="border-red-200 text-red-600 hover:bg-red-50"
+                                  >
+                                    {isProcessing ? (
+                                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-red-600" />
+                                    ) : (
+                                      <>
+                                        <Check className="h-3 w-3 ml-1" />
+                                        حذف من متجري
+                                      </>
+                                    )}
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    size="sm"
+                                    onClick={() => addToMyStore(product.id)}
+                                    disabled={isProcessing}
+                                    className="bg-gradient-primary"
+                                  >
+                                    {isProcessing ? (
+                                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white" />
+                                    ) : (
+                                      <>
+                                        <Plus className="h-3 w-3 ml-1" />
+                                        إضافة لمتجري
+                                      </>
+                                    )}
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  )}
+                </Card>
+              );
+            })}
+          </div>
+        )}
+
+        {/* إحصائيات في أسفل الصفحة */}
+        <div className="mt-8 text-center text-sm text-muted-foreground">
+          عرض {filteredProducts.length} من أصل {products.length} منتج
+          {myProducts.size > 0 && (
+            <span className="mx-2">•</span>
+          )}
+          {myProducts.size > 0 && (
+            <span>{myProducts.size} منتج في متجرك</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProductsBrowser;

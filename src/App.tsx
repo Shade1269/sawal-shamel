@@ -59,6 +59,7 @@ const AdminSettings = lazy(() => import("./pages/AdminSettings"));
 
 // Product Management Pages
 const ProductManagement = lazy(() => import("./pages/ProductManagement"));
+const ProductsBrowser = lazy(() => import("./pages/ProductsBrowser"));
 const CategoryManagement = lazy(() => import("./pages/CategoryManagement"));
 const BrandManagement = lazy(() => import("./pages/BrandManagement"));
 
@@ -97,6 +98,11 @@ const App = () => {
                       <Route path="/login" element={<AuthForm />} />
                       <Route path="/signup" element={<AuthForm />} />
                       <Route path="/products" element={<ProductsPage />} />
+                      <Route path="/products-browser" element={
+                        <ProtectedRoute requiredRole={["affiliate"]}>
+                          <ProductsBrowser />
+                        </ProtectedRoute>
+                      } />
                       <Route path="/about" element={<AboutPage />} />
                       <Route path="/create-admin" element={<CreateAdminPage />} />
                       <Route path="/store/:storeSlug" element={<AffiliateStoreFront />} />

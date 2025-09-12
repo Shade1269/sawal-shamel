@@ -156,10 +156,10 @@ const Dashboard = () => {
       color: 'bg-gradient-luxury'
     },
     {
-      title: 'كتالوج المنتجات',
-      description: 'استعرض المنتجات المتاحة للتسويق',
+      title: 'تصفح المنتجات',
+      description: 'اختر منتجات لإضافتها إلى متجرك',
       icon: <Package className="h-8 w-8" />,
-      route: '/products',
+      route: '/products-browser',
       color: 'bg-gradient-premium'
     },
     {

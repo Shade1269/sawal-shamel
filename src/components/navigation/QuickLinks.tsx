@@ -44,8 +44,8 @@ const QuickLinks = () => {
       
       case 'affiliate':
         return [
-          { title: 'متجري', route: '/affiliate', icon: Star, description: 'متجر الأفيليت الخاص بك' },
-          { title: 'المنتجات', route: '/products', icon: Package, description: 'تصفح المنتجات للتسويق' },
+          { title: 'لوحة المسوق', route: '/affiliate-dashboard', icon: Star, description: 'متجر الأفيليت الخاص بك' },
+          { title: 'تصفح المنتجات', route: '/products-browser', icon: Package, description: 'اختر منتجات لإضافتها لمتجرك' },
           { title: 'أدوات التسويق', route: '/admin/marketing', icon: Share2, description: 'حملات ووسائل التواصل' },
           { title: 'العمولات', route: '/affiliate', icon: Award, description: 'تتبع أرباحك' }
         ];
