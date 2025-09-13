@@ -49,7 +49,9 @@ interface Product {
 }
 
 const ProductsBrowser = () => {
+  console.log('ProductsBrowser component mounted');
   const { profile } = useFastAuth();
+  console.log('ProductsBrowser - profile from useFastAuth:', profile);
   const { goToUserHome } = useSmartNavigation();
   const { toast } = useToast();
   
@@ -67,8 +69,12 @@ const ProductsBrowser = () => {
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   
   useEffect(() => {
+    console.log('useEffect triggered - profile check:', { profile });
     if (profile) {
+      console.log('Profile exists, calling fetchData...');
       fetchData();
+    } else {
+      console.log('No profile found, skipping fetchData');
     }
   }, [profile]);
 
@@ -77,7 +83,18 @@ const ProductsBrowser = () => {
   }, [products, searchQuery, selectedCategory, priceRange]);
 
   const fetchData = async () => {
+    console.log('fetchData started...', { profile });
+    setLoading(true);
     try {
+      // تجربة جلب المنتجات بشكل مبسط أولاً
+      const { data: simpleProductsData, error: simpleError } = await supabase
+        .from('products')
+        .select('id, title, price_sar, is_active')
+        .eq('is_active', true)
+        .limit(5);
+
+      console.log('Simple products query:', { simpleProductsData, simpleError });
+
       // جلب متجر المسوق - التحقق من الجدولين
       let storeData = null;
       
@@ -134,11 +151,11 @@ const ProductsBrowser = () => {
       }
 
       // جلب جميع المنتجات النشطة مع معلومات التجار
-      const { data: productsData } = await supabase
+      const { data: productsData, error: productsError } = await supabase
         .from('products')
         .select(`
           *,
-          merchants!inner (
+          merchants (
             id,
             business_name,
             default_commission_rate
@@ -146,6 +163,9 @@ const ProductsBrowser = () => {
         `)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
+
+      console.log('Products query result:', { productsData, productsError });
+      console.log('Products count:', productsData?.length || 0);
 
       setProducts(productsData || []);
       
