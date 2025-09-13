@@ -2068,6 +2068,78 @@ export type Database = {
           },
         ]
       }
+      inventory_items: {
+        Row: {
+          batch_number: string | null
+          created_at: string
+          expiry_date: string | null
+          id: string
+          last_counted_at: string | null
+          location: string | null
+          max_stock_level: number | null
+          product_variant_id: string | null
+          quantity_available: number | null
+          quantity_on_order: number | null
+          quantity_reserved: number | null
+          reorder_level: number | null
+          sku: string
+          unit_cost: number | null
+          updated_at: string
+          warehouse_id: string | null
+        }
+        Insert: {
+          batch_number?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          last_counted_at?: string | null
+          location?: string | null
+          max_stock_level?: number | null
+          product_variant_id?: string | null
+          quantity_available?: number | null
+          quantity_on_order?: number | null
+          quantity_reserved?: number | null
+          reorder_level?: number | null
+          sku: string
+          unit_cost?: number | null
+          updated_at?: string
+          warehouse_id?: string | null
+        }
+        Update: {
+          batch_number?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          last_counted_at?: string | null
+          location?: string | null
+          max_stock_level?: number | null
+          product_variant_id?: string | null
+          quantity_available?: number | null
+          quantity_on_order?: number | null
+          quantity_reserved?: number | null
+          reorder_level?: number | null
+          sku?: string
+          unit_cost?: number | null
+          updated_at?: string
+          warehouse_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_items_product_variant_id_fkey"
+            columns: ["product_variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_items_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_movements: {
         Row: {
           created_at: string
@@ -2137,6 +2209,66 @@ export type Database = {
             columns: ["warehouse_product_id"]
             isOneToOne: false
             referencedRelation: "warehouse_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_reservations: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          inventory_item_id: string | null
+          notes: string | null
+          quantity_reserved: number
+          reservation_type: string | null
+          reserved_for: string
+          status: string | null
+          updated_at: string
+          warehouse_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          inventory_item_id?: string | null
+          notes?: string | null
+          quantity_reserved: number
+          reservation_type?: string | null
+          reserved_for: string
+          status?: string | null
+          updated_at?: string
+          warehouse_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          inventory_item_id?: string | null
+          notes?: string | null
+          quantity_reserved?: number
+          reservation_type?: string | null
+          reserved_for?: string
+          status?: string | null
+          updated_at?: string
+          warehouse_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_reservations_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_reservations_warehouse_id_fkey"
+            columns: ["warehouse_id"]
+            isOneToOne: false
+            referencedRelation: "warehouses"
             referencedColumns: ["id"]
           },
         ]
@@ -5996,6 +6128,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      warehouses: {
+        Row: {
+          address: string | null
+          city: string | null
+          code: string
+          country: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean | null
+          manager_name: string | null
+          name: string
+          phone: string | null
+          storage_capacity: number | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          code: string
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          manager_name?: string | null
+          name: string
+          phone?: string | null
+          storage_capacity?: number | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          code?: string
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          manager_name?: string | null
+          name?: string
+          phone?: string | null
+          storage_capacity?: number | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       weekly_challenges: {
         Row: {
