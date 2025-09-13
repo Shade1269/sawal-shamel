@@ -57,7 +57,7 @@ export const ProductsManagement: React.FC = () => {
   });
 
   const [productVariantsForm, setProductVariantsForm] = useState([
-    { type: 'size', value: '', stock: 0 }
+    { color: '', size: '', stock: 0 }
   ]);
 
   const [variantFormData, setVariantFormData] = useState({
@@ -99,7 +99,7 @@ export const ProductsManagement: React.FC = () => {
         tags: [],
         meta_keywords: [],
         featured: false,
-        variants: productVariantsForm.filter(v => v.value.trim() !== '')
+        variants: productVariantsForm.filter(v => v.color.trim() !== '' || v.size.trim() !== '')
       };
 
       if (editingProduct) {
@@ -149,7 +149,7 @@ export const ProductsManagement: React.FC = () => {
       sku: '',
       is_active: true
     });
-    setProductVariantsForm([{ type: 'size', value: '', stock: 0 }]);
+    setProductVariantsForm([{ color: '', size: '', stock: 0 }]);
     setEditingProduct(null);
   };
 
@@ -366,79 +366,69 @@ export const ProductsManagement: React.FC = () => {
                 {/* Product Variants Section */}
                 <div className="space-y-4 border-t pt-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-semibold text-sm">تخصيص المنتج (مقاسات، ألوان، إلخ)</h4>
-                    <div className="flex gap-2">
-                      <Button type="button" size="sm" variant="outline" onClick={() => {
-                        setProductVariantsForm([...productVariantsForm, { type: 'size', value: '', stock: 0 }]);
-                      }}>
-                        + مقاس
-                      </Button>
-                      <Button type="button" size="sm" variant="outline" onClick={() => {
-                        setProductVariantsForm([...productVariantsForm, { type: 'color', value: '', stock: 0 }]);
-                      }}>
-                        + لون
-                      </Button>
-                    </div>
+                    <h4 className="font-semibold text-sm">متغيرات المنتج (ألوان ومقاسات)</h4>
+                    <Button type="button" size="sm" variant="outline" onClick={() => {
+                      setProductVariantsForm([...productVariantsForm, { color: '', size: '', stock: 0 }]);
+                    }}>
+                      + إضافة متغير
+                    </Button>
                   </div>
                   
-                  <div className="space-y-3 max-h-48 overflow-y-auto">
-                    {productVariantsForm.map((variant, index) => (
-                      <div key={index} className="flex items-center gap-2 p-3 bg-muted/20 rounded-lg">
-                        <Select 
-                          value={variant.type} 
-                          onValueChange={(value) => {
-                            const updated = [...productVariantsForm];
-                            updated[index] = { ...updated[index], type: value };
-                            setProductVariantsForm(updated);
-                          }}
-                        >
-                          <SelectTrigger className="w-24">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="z-50 bg-popover shadow-lg border border-border">
-                            <SelectItem value="size">مقاس</SelectItem>
-                            <SelectItem value="color">لون</SelectItem>
-                            <SelectItem value="style">نمط</SelectItem>
-                            <SelectItem value="material">مادة</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Input
-                          placeholder={variant.type === 'size' ? 'M, L, XL' : variant.type === 'color' ? 'أحمر, أزرق' : 'القيمة'}
-                          value={variant.value}
-                          onChange={(e) => {
-                            const updated = [...productVariantsForm];
-                            updated[index] = { ...updated[index], value: e.target.value };
-                            setProductVariantsForm(updated);
-                          }}
-                          className="flex-1"
-                        />
-                        <Input
-                          type="number"
-                          placeholder="العدد"
-                          value={variant.stock}
-                          onChange={(e) => {
-                            const updated = [...productVariantsForm];
-                            updated[index] = { ...updated[index], stock: parseInt(e.target.value) || 0 };
-                            setProductVariantsForm(updated);
-                          }}
-                          className="w-20"
-                        />
-                        {productVariantsForm.length > 1 && (
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => {
-                              setProductVariantsForm(productVariantsForm.filter((_, i) => i !== index));
-                            }}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        )}
+                  {productVariantsForm.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-4 gap-2 text-xs font-medium text-muted-foreground px-2">
+                        <div>اللون</div>
+                        <div>المقاس</div>
+                        <div>العدد</div>
+                        <div></div>
                       </div>
-                    ))}
-                  </div>
+                      <div className="space-y-2 max-h-48 overflow-y-auto">
+                        {productVariantsForm.map((variant, index) => (
+                          <div key={index} className="grid grid-cols-4 gap-2 p-3 bg-muted/20 rounded-lg">
+                            <Input
+                              placeholder="أحمر, أزرق, أخضر..."
+                              value={variant.color}
+                              onChange={(e) => {
+                                const updated = [...productVariantsForm];
+                                updated[index] = { ...updated[index], color: e.target.value };
+                                setProductVariantsForm(updated);
+                              }}
+                            />
+                            <Input
+                              placeholder="S, M, L, XL..."
+                              value={variant.size}
+                              onChange={(e) => {
+                                const updated = [...productVariantsForm];
+                                updated[index] = { ...updated[index], size: e.target.value };
+                                setProductVariantsForm(updated);
+                              }}
+                            />
+                            <Input
+                              type="number"
+                              placeholder="العدد"
+                              value={variant.stock}
+                              onChange={(e) => {
+                                const updated = [...productVariantsForm];
+                                updated[index] = { ...updated[index], stock: parseInt(e.target.value) || 0 };
+                                setProductVariantsForm(updated);
+                              }}
+                            />
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => {
+                                setProductVariantsForm(productVariantsForm.filter((_, i) => i !== index));
+                              }}
+                              className="text-destructive hover:text-destructive w-8 h-8 p-0"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="flex items-center space-x-2">
