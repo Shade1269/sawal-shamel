@@ -1998,193 +1998,145 @@ export type Database = {
         }
         Relationships: []
       }
-      inventory_items: {
+      inventory_alerts: {
         Row: {
-          batch_number: string | null
-          created_at: string | null
-          expiry_date: string | null
+          alert_type: string
+          created_at: string
+          created_for_role: string[] | null
           id: string
-          last_counted_at: string | null
-          location_in_warehouse: string | null
-          max_stock_level: number | null
-          product_id: string | null
-          quantity_available: number | null
-          quantity_on_order: number | null
-          quantity_reserved: number | null
-          reorder_level: number | null
-          sku: string
-          unit_cost: number | null
-          updated_at: string | null
-          warehouse_id: string | null
+          is_read: boolean
+          message: string
+          metadata: Json | null
+          priority: string
+          product_variant_id: string | null
+          read_at: string | null
+          return_id: string | null
+          title: string
+          warehouse_product_id: string | null
         }
         Insert: {
-          batch_number?: string | null
-          created_at?: string | null
-          expiry_date?: string | null
+          alert_type: string
+          created_at?: string
+          created_for_role?: string[] | null
           id?: string
-          last_counted_at?: string | null
-          location_in_warehouse?: string | null
-          max_stock_level?: number | null
-          product_id?: string | null
-          quantity_available?: number | null
-          quantity_on_order?: number | null
-          quantity_reserved?: number | null
-          reorder_level?: number | null
-          sku: string
-          unit_cost?: number | null
-          updated_at?: string | null
-          warehouse_id?: string | null
+          is_read?: boolean
+          message: string
+          metadata?: Json | null
+          priority?: string
+          product_variant_id?: string | null
+          read_at?: string | null
+          return_id?: string | null
+          title: string
+          warehouse_product_id?: string | null
         }
         Update: {
-          batch_number?: string | null
-          created_at?: string | null
-          expiry_date?: string | null
+          alert_type?: string
+          created_at?: string
+          created_for_role?: string[] | null
           id?: string
-          last_counted_at?: string | null
-          location_in_warehouse?: string | null
-          max_stock_level?: number | null
-          product_id?: string | null
-          quantity_available?: number | null
-          quantity_on_order?: number | null
-          quantity_reserved?: number | null
-          reorder_level?: number | null
-          sku?: string
-          unit_cost?: number | null
-          updated_at?: string | null
-          warehouse_id?: string | null
+          is_read?: boolean
+          message?: string
+          metadata?: Json | null
+          priority?: string
+          product_variant_id?: string | null
+          read_at?: string | null
+          return_id?: string | null
+          title?: string
+          warehouse_product_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "inventory_items_product_id_fkey"
-            columns: ["product_id"]
+            foreignKeyName: "inventory_alerts_product_variant_id_fkey"
+            columns: ["product_variant_id"]
             isOneToOne: false
-            referencedRelation: "products"
+            referencedRelation: "product_variants"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "inventory_items_warehouse_id_fkey"
-            columns: ["warehouse_id"]
+            foreignKeyName: "inventory_alerts_return_id_fkey"
+            columns: ["return_id"]
             isOneToOne: false
-            referencedRelation: "warehouses"
+            referencedRelation: "product_returns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_alerts_warehouse_product_id_fkey"
+            columns: ["warehouse_product_id"]
+            isOneToOne: false
+            referencedRelation: "warehouse_products"
             referencedColumns: ["id"]
           },
         ]
       }
       inventory_movements: {
         Row: {
-          created_at: string | null
+          created_at: string
+          created_by: string
           id: string
-          inventory_item_id: string | null
+          movement_number: string
           movement_type: string
           notes: string | null
-          performed_by: string | null
+          product_variant_id: string | null
           quantity: number
-          reason: string | null
           reference_id: string | null
           reference_type: string | null
+          supplier_id: string | null
+          total_cost: number | null
+          unit_cost: number | null
+          warehouse_product_id: string | null
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
+          created_by: string
           id?: string
-          inventory_item_id?: string | null
+          movement_number: string
           movement_type: string
           notes?: string | null
-          performed_by?: string | null
+          product_variant_id?: string | null
           quantity: number
-          reason?: string | null
           reference_id?: string | null
           reference_type?: string | null
+          supplier_id?: string | null
+          total_cost?: number | null
+          unit_cost?: number | null
+          warehouse_product_id?: string | null
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
+          created_by?: string
           id?: string
-          inventory_item_id?: string | null
+          movement_number?: string
           movement_type?: string
           notes?: string | null
-          performed_by?: string | null
+          product_variant_id?: string | null
           quantity?: number
-          reason?: string | null
           reference_id?: string | null
           reference_type?: string | null
+          supplier_id?: string | null
+          total_cost?: number | null
+          unit_cost?: number | null
+          warehouse_product_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "inventory_movements_inventory_item_id_fkey"
-            columns: ["inventory_item_id"]
+            foreignKeyName: "inventory_movements_product_variant_id_fkey"
+            columns: ["product_variant_id"]
             isOneToOne: false
-            referencedRelation: "inventory_items"
+            referencedRelation: "product_variants"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "inventory_movements_performed_by_fkey"
-            columns: ["performed_by"]
+            foreignKeyName: "inventory_movements_supplier_id_fkey"
+            columns: ["supplier_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "inventory_movements_performed_by_fkey"
-            columns: ["performed_by"]
+            foreignKeyName: "inventory_movements_warehouse_product_id_fkey"
+            columns: ["warehouse_product_id"]
             isOneToOne: false
-            referencedRelation: "safe_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      inventory_reservations: {
-        Row: {
-          created_at: string | null
-          created_by: string | null
-          expires_at: string | null
-          id: string
-          inventory_item_id: string | null
-          order_id: string | null
-          reserved_quantity: number
-          status: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          created_by?: string | null
-          expires_at?: string | null
-          id?: string
-          inventory_item_id?: string | null
-          order_id?: string | null
-          reserved_quantity: number
-          status?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          created_by?: string | null
-          expires_at?: string | null
-          id?: string
-          inventory_item_id?: string | null
-          order_id?: string | null
-          reserved_quantity?: number
-          status?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "inventory_reservations_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "inventory_reservations_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "safe_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "inventory_reservations_inventory_item_id_fkey"
-            columns: ["inventory_item_id"]
-            isOneToOne: false
-            referencedRelation: "inventory_items"
+            referencedRelation: "warehouse_products"
             referencedColumns: ["id"]
           },
         ]
@@ -3646,6 +3598,57 @@ export type Database = {
           },
         ]
       }
+      product_returns: {
+        Row: {
+          affiliate_id: string | null
+          commission_deducted: number
+          created_at: string
+          id: string
+          notes: string | null
+          order_id: string
+          order_number: string
+          processed_by: string
+          return_date: string
+          return_number: string
+          return_reason: string | null
+          return_type: string
+          status: string
+          total_returned_amount: number
+        }
+        Insert: {
+          affiliate_id?: string | null
+          commission_deducted?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_id: string
+          order_number: string
+          processed_by: string
+          return_date?: string
+          return_number: string
+          return_reason?: string | null
+          return_type: string
+          status?: string
+          total_returned_amount?: number
+        }
+        Update: {
+          affiliate_id?: string | null
+          commission_deducted?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_id?: string
+          order_number?: string
+          processed_by?: string
+          return_date?: string
+          return_number?: string
+          return_reason?: string | null
+          return_type?: string
+          status?: string
+          total_returned_amount?: number
+        }
+        Relationships: []
+      }
       product_reviews: {
         Row: {
           comment: string | null
@@ -3728,59 +3731,74 @@ export type Database = {
       }
       product_variants: {
         Row: {
+          available_stock: number | null
+          color: string | null
+          cost_price: number | null
           created_at: string
-          external_id: string | null
+          current_stock: number
           id: string
-          option1_name: string | null
-          option1_value: string | null
-          option2_name: string | null
-          option2_value: string | null
-          price_modifier: number | null
-          product_id: string
-          sku: string | null
-          stock: number
+          image_urls: Json | null
+          is_active: boolean
+          material: string | null
+          min_stock_level: number | null
+          other_attributes: Json | null
+          reserved_stock: number
+          selling_price: number | null
+          size: string | null
           updated_at: string
-          variant_type: string
-          variant_value: string
+          variant_barcode: string | null
+          variant_name: string
+          variant_sku: string | null
+          warehouse_product_id: string
         }
         Insert: {
+          available_stock?: number | null
+          color?: string | null
+          cost_price?: number | null
           created_at?: string
-          external_id?: string | null
+          current_stock?: number
           id?: string
-          option1_name?: string | null
-          option1_value?: string | null
-          option2_name?: string | null
-          option2_value?: string | null
-          price_modifier?: number | null
-          product_id: string
-          sku?: string | null
-          stock?: number
+          image_urls?: Json | null
+          is_active?: boolean
+          material?: string | null
+          min_stock_level?: number | null
+          other_attributes?: Json | null
+          reserved_stock?: number
+          selling_price?: number | null
+          size?: string | null
           updated_at?: string
-          variant_type: string
-          variant_value: string
+          variant_barcode?: string | null
+          variant_name: string
+          variant_sku?: string | null
+          warehouse_product_id: string
         }
         Update: {
+          available_stock?: number | null
+          color?: string | null
+          cost_price?: number | null
           created_at?: string
-          external_id?: string | null
+          current_stock?: number
           id?: string
-          option1_name?: string | null
-          option1_value?: string | null
-          option2_name?: string | null
-          option2_value?: string | null
-          price_modifier?: number | null
-          product_id?: string
-          sku?: string | null
-          stock?: number
+          image_urls?: Json | null
+          is_active?: boolean
+          material?: string | null
+          min_stock_level?: number | null
+          other_attributes?: Json | null
+          reserved_stock?: number
+          selling_price?: number | null
+          size?: string | null
           updated_at?: string
-          variant_type?: string
-          variant_value?: string
+          variant_barcode?: string | null
+          variant_name?: string
+          variant_sku?: string | null
+          warehouse_product_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "fk_product_variants_product_id"
-            columns: ["product_id"]
+            foreignKeyName: "product_variants_warehouse_product_id_fkey"
+            columns: ["warehouse_product_id"]
             isOneToOne: false
-            referencedRelation: "products"
+            referencedRelation: "warehouse_products"
             referencedColumns: ["id"]
           },
         ]
@@ -4197,6 +4215,63 @@ export type Database = {
             columns: ["payment_id"]
             isOneToOne: false
             referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      return_items: {
+        Row: {
+          commission_amount: number | null
+          commission_rate: number | null
+          created_at: string
+          id: string
+          product_name: string
+          product_variant_id: string
+          quantity_returned: number
+          return_id: string
+          total_price: number
+          unit_price: number
+          variant_name: string
+        }
+        Insert: {
+          commission_amount?: number | null
+          commission_rate?: number | null
+          created_at?: string
+          id?: string
+          product_name: string
+          product_variant_id: string
+          quantity_returned: number
+          return_id: string
+          total_price: number
+          unit_price: number
+          variant_name: string
+        }
+        Update: {
+          commission_amount?: number | null
+          commission_rate?: number | null
+          created_at?: string
+          id?: string
+          product_name?: string
+          product_variant_id?: string
+          quantity_returned?: number
+          return_id?: string
+          total_price?: number
+          unit_price?: number
+          variant_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "return_items_product_variant_id_fkey"
+            columns: ["product_variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "return_items_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "product_returns"
             referencedColumns: ["id"]
           },
         ]
@@ -5274,64 +5349,6 @@ export type Database = {
           },
         ]
       }
-      stock_alerts: {
-        Row: {
-          alert_type: string
-          created_at: string | null
-          id: string
-          inventory_item_id: string | null
-          is_resolved: boolean | null
-          message: string
-          priority: string | null
-          resolved_at: string | null
-          resolved_by: string | null
-        }
-        Insert: {
-          alert_type: string
-          created_at?: string | null
-          id?: string
-          inventory_item_id?: string | null
-          is_resolved?: boolean | null
-          message: string
-          priority?: string | null
-          resolved_at?: string | null
-          resolved_by?: string | null
-        }
-        Update: {
-          alert_type?: string
-          created_at?: string | null
-          id?: string
-          inventory_item_id?: string | null
-          is_resolved?: boolean | null
-          message?: string
-          priority?: string | null
-          resolved_at?: string | null
-          resolved_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "stock_alerts_inventory_item_id_fkey"
-            columns: ["inventory_item_id"]
-            isOneToOne: false
-            referencedRelation: "inventory_items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "stock_alerts_resolved_by_fkey"
-            columns: ["resolved_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "stock_alerts_resolved_by_fkey"
-            columns: ["resolved_by"]
-            isOneToOne: false
-            referencedRelation: "safe_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       store_customers: {
         Row: {
           created_at: string
@@ -5472,6 +5489,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      suppliers: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean
+          notes: string | null
+          payment_terms: string | null
+          phone: string | null
+          supplier_name: string
+          supplier_number: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          payment_terms?: string | null
+          phone?: string | null
+          supplier_name: string
+          supplier_number: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          payment_terms?: string | null
+          phone?: string | null
+          supplier_name?: string
+          supplier_number?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       user_activities: {
         Row: {
@@ -5861,69 +5920,79 @@ export type Database = {
           },
         ]
       }
-      warehouses: {
+      warehouse_products: {
         Row: {
-          address: Json | null
-          capacity_limit: number | null
-          code: string
-          created_at: string | null
-          current_utilization: number | null
+          barcode: string | null
+          category: string | null
+          cost_price: number
+          created_at: string
+          created_by: string | null
+          description: string | null
+          dimensions: Json | null
+          has_variants: boolean | null
           id: string
-          is_active: boolean | null
-          location: string | null
-          manager_id: string | null
-          name: string
-          shop_id: string | null
-          updated_at: string | null
+          is_active: boolean
+          max_stock_level: number | null
+          min_stock_level: number | null
+          product_name: string
+          product_number: string
+          profit_margin: number | null
+          selling_price: number
+          sku: string | null
+          supplier_id: string | null
+          updated_at: string
+          weight: number | null
         }
         Insert: {
-          address?: Json | null
-          capacity_limit?: number | null
-          code: string
-          created_at?: string | null
-          current_utilization?: number | null
+          barcode?: string | null
+          category?: string | null
+          cost_price?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          dimensions?: Json | null
+          has_variants?: boolean | null
           id?: string
-          is_active?: boolean | null
-          location?: string | null
-          manager_id?: string | null
-          name: string
-          shop_id?: string | null
-          updated_at?: string | null
+          is_active?: boolean
+          max_stock_level?: number | null
+          min_stock_level?: number | null
+          product_name: string
+          product_number: string
+          profit_margin?: number | null
+          selling_price?: number
+          sku?: string | null
+          supplier_id?: string | null
+          updated_at?: string
+          weight?: number | null
         }
         Update: {
-          address?: Json | null
-          capacity_limit?: number | null
-          code?: string
-          created_at?: string | null
-          current_utilization?: number | null
+          barcode?: string | null
+          category?: string | null
+          cost_price?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          dimensions?: Json | null
+          has_variants?: boolean | null
           id?: string
-          is_active?: boolean | null
-          location?: string | null
-          manager_id?: string | null
-          name?: string
-          shop_id?: string | null
-          updated_at?: string | null
+          is_active?: boolean
+          max_stock_level?: number | null
+          min_stock_level?: number | null
+          product_name?: string
+          product_number?: string
+          profit_margin?: number | null
+          selling_price?: number
+          sku?: string | null
+          supplier_id?: string | null
+          updated_at?: string
+          weight?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "warehouses_manager_id_fkey"
-            columns: ["manager_id"]
+            foreignKeyName: "warehouse_products_supplier_id_fkey"
+            columns: ["supplier_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "warehouses_manager_id_fkey"
-            columns: ["manager_id"]
-            isOneToOne: false
-            referencedRelation: "safe_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "warehouses_shop_id_fkey"
-            columns: ["shop_id"]
-            isOneToOne: false
-            referencedRelation: "shops"
+            referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
         ]
