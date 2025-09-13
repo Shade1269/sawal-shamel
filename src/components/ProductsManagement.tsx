@@ -306,13 +306,13 @@ export const ProductsManagement: React.FC = () => {
                   <div>
                     <Label htmlFor="category_id">الفئة</Label>
                     <Select value={productFormData.category_id} onValueChange={(value) => 
-                      setProductFormData({...productFormData, category_id: value})
+                      setProductFormData({...productFormData, category_id: value === 'none' ? '' : value})
                     }>
                       <SelectTrigger className="border-border/50 focus:border-primary">
                         <SelectValue placeholder="اختر الفئة" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">بدون فئة</SelectItem>
+                      <SelectContent className="z-50 bg-popover shadow-lg border border-border">
+                        <SelectItem value="none">بدون فئة</SelectItem>
                         {categories.map((category) => (
                           <SelectItem key={category.id} value={category.id}>
                             {category.name}
@@ -325,13 +325,13 @@ export const ProductsManagement: React.FC = () => {
                   <div>
                     <Label htmlFor="brand_id">العلامة التجارية</Label>
                     <Select value={productFormData.brand_id} onValueChange={(value) => 
-                      setProductFormData({...productFormData, brand_id: value})
+                      setProductFormData({...productFormData, brand_id: value === 'none' ? '' : value})
                     }>
                       <SelectTrigger className="border-border/50 focus:border-primary">
                         <SelectValue placeholder="اختر العلامة التجارية" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">بدون علامة تجارية</SelectItem>
+                      <SelectContent className="z-50 bg-popover shadow-lg border border-border">
+                        <SelectItem value="none">بدون علامة تجارية</SelectItem>
                         {brands.map((brand) => (
                           <SelectItem key={brand.id} value={brand.id}>
                             {brand.name}
