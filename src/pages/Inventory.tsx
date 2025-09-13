@@ -4,6 +4,11 @@ import { InventoryDashboard } from '@/components/InventoryDashboard';
 import { WarehouseManagement } from '@/components/WarehouseManagement';
 import { StockAlertsPanel } from '@/components/StockAlertsPanel';
 import { InventoryReservations } from '@/components/InventoryReservations';
+import { SuppliersManagement } from '@/components/SuppliersManagement';
+import { ProductsManagement } from '@/components/ProductsManagement';
+import { InventoryMovements } from '@/components/InventoryMovements';
+import { ReturnsManagement } from '@/components/ReturnsManagement';
+import { InventoryReports } from '@/components/InventoryReports';
 import { 
   Package, 
   Warehouse, 
@@ -12,7 +17,11 @@ import {
   BarChart3,
   Activity,
   Store,
-  ArrowLeft
+  ArrowLeft,
+  Users,
+  Boxes,
+  ArrowUpDown,
+  RotateCcw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -60,26 +69,38 @@ const Inventory: React.FC = () => {
         </Card>
 
         <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="dashboard" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
+            <TabsTrigger value="dashboard" className="flex items-center gap-1">
               <BarChart3 className="h-4 w-4" />
-              لوحة التحكم
+              <span className="hidden sm:inline">لوحة التحكم</span>
             </TabsTrigger>
-            <TabsTrigger value="warehouses" className="flex items-center gap-2">
-              <Warehouse className="h-4 w-4" />
-              المخازن
+            <TabsTrigger value="suppliers" className="flex items-center gap-1">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">الموردين</span>
             </TabsTrigger>
-            <TabsTrigger value="alerts" className="flex items-center gap-2">
+            <TabsTrigger value="products" className="flex items-center gap-1">
+              <Boxes className="h-4 w-4" />
+              <span className="hidden sm:inline">المنتجات</span>
+            </TabsTrigger>
+            <TabsTrigger value="movements" className="flex items-center gap-1">
+              <ArrowUpDown className="h-4 w-4" />
+              <span className="hidden sm:inline">الحركات</span>
+            </TabsTrigger>
+            <TabsTrigger value="alerts" className="flex items-center gap-1">
               <AlertTriangle className="h-4 w-4" />
-              التنبيهات
+              <span className="hidden sm:inline">التنبيهات</span>
             </TabsTrigger>
-            <TabsTrigger value="reservations" className="flex items-center gap-2">
+            <TabsTrigger value="returns" className="flex items-center gap-1">
+              <RotateCcw className="h-4 w-4" />
+              <span className="hidden sm:inline">المرتجعات</span>
+            </TabsTrigger>
+            <TabsTrigger value="reservations" className="flex items-center gap-1">
               <Lock className="h-4 w-4" />
-              الحجوزات
+              <span className="hidden sm:inline">الحجوزات</span>
             </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center gap-2">
+            <TabsTrigger value="reports" className="flex items-center gap-1">
               <Activity className="h-4 w-4" />
-              التقارير
+              <span className="hidden sm:inline">التقارير</span>
             </TabsTrigger>
           </TabsList>
 
@@ -87,12 +108,24 @@ const Inventory: React.FC = () => {
             <InventoryDashboard />
           </TabsContent>
 
-          <TabsContent value="warehouses" className="mt-6">
-            <WarehouseManagement />
+          <TabsContent value="suppliers" className="mt-6">
+            <SuppliersManagement />
+          </TabsContent>
+
+          <TabsContent value="products" className="mt-6">
+            <ProductsManagement />
+          </TabsContent>
+
+          <TabsContent value="movements" className="mt-6">
+            <InventoryMovements />
           </TabsContent>
 
           <TabsContent value="alerts" className="mt-6">
             <StockAlertsPanel />
+          </TabsContent>
+
+          <TabsContent value="returns" className="mt-6">
+            <ReturnsManagement />
           </TabsContent>
 
           <TabsContent value="reservations" className="mt-6">
@@ -100,13 +133,7 @@ const Inventory: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="reports" className="mt-6">
-            <div className="text-center py-12">
-              <Activity className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">تقارير المخزون</h3>
-              <p className="text-muted-foreground">
-                ستكون متاحة قريباً - تقارير تفصيلية عن حركة المخزون والأداء
-              </p>
-            </div>
+            <InventoryReports />
           </TabsContent>
         </Tabs>
       </div>
