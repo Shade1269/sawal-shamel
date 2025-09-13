@@ -1,23 +1,5 @@
-import { NavLink, useLocation } from "react-router-dom"
-import { 
-  LayoutDashboard,
-  Users,
-  Store,
-  ShoppingCart,
-  BarChart3,
-  Settings,
-  Shield,
-  Package,
-  MessageSquare,
-  Bell,
-  FileText,
-  CreditCard,
-  Globe,
-  Zap,
-  Crown,
-  Activity,
-  Share2
-} from "lucide-react"
+import { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -27,209 +9,269 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { Badge } from "@/components/ui/badge"
+} from "@/components/ui/sidebar";
+import {
+  BarChart3,
+  Users,
+  Settings,
+  Package,
+  ShoppingCart,
+  CreditCard,
+  Shield,
+  Activity,
+  Globe,
+  MessageSquare,
+  Crown,
+  Zap,
+  Target,
+  Truck,
+  FileText,
+  Store,
+  TrendingUp,
+  DollarSign,
+  UserCheck,
+  Bell,
+  Database,
+  Lock,
+  Home
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
-const adminNavItems = [
+const mainMenuItems = [
   {
-    title: "نظرة عامة",
-    items: [
-      { 
-        title: "لوحة التحكم", 
-        url: "/admin", 
-        icon: LayoutDashboard,
-        description: "الصفحة الرئيسية للإدارة"
-      },
-      { 
-        title: "الإحصائيات", 
-        url: "/admin/analytics", 
-        icon: BarChart3,
-        badge: "جديد"
-      },
-      { 
-        title: "التقارير", 
-        url: "/admin/reports", 
-        icon: FileText 
-      }
-    ]
+    title: "لوحة التحكم",
+    url: "/admin",
+    icon: BarChart3,
+    exact: true
   },
   {
+    title: "نظرة عامة",
+    url: "/admin/dashboard", 
+    icon: Home,
+    badge: "جديد"
+  }
+];
+
+const managementItems = [
+  {
     title: "إدارة المستخدمين",
-    items: [
-      { 
-        title: "المستخدمون", 
-        url: "/admin/users", 
-        icon: Users 
-      },
-      { 
-        title: "الصلاحيات", 
-        url: "/admin/permissions", 
-        icon: Shield 
-      },
-      { 
-        title: "سجل النشاط", 
-        url: "/admin/activity", 
-        icon: Activity 
-      }
-    ]
+    url: "/admin/users",
+    icon: Users,
+    badge: "12"
+  },
+  {
+    title: "إدارة المنتجات",
+    url: "/admin/products",
+    icon: Package
+  },
+  {
+    title: "إدارة الطلبات",
+    url: "/admin-orders",
+    icon: ShoppingCart,
+    badge: "5"
   },
   {
     title: "إدارة المتاجر",
-    items: [
-      { 
-        title: "المتاجر", 
-        url: "/admin/stores", 
-        icon: Store 
-      },
-      { 
-        title: "المنتجات", 
-        url: "/admin/products", 
-        icon: Package 
-      },
-      { 
-        title: "فئات المنتجات", 
-        url: "/admin/categories", 
-        icon: Package 
-      },
-      { 
-        title: "العلامات التجارية", 
-        url: "/admin/brands", 
-        icon: Package 
-      },
-      { 
-        title: "الطلبات", 
-        url: "/admin/orders", 
-        icon: ShoppingCart 
-      },
-      { 
-        title: "المدفوعات", 
-        url: "/admin/payments", 
-        icon: CreditCard 
-      }
-    ]
+    url: "/admin/stores",
+    icon: Store
+  }
+];
+
+const analyticsItems = [
+  {
+    title: "التحليلات",
+    url: "/admin/analytics",
+    icon: TrendingUp
   },
   {
-    title: "التسويق والعمولات",
-    items: [
-      { 
-        title: "نظام التسويق المتكامل", 
-        url: "/admin/marketing", 
-        icon: Share2,
-        badge: "جديد"
-      },
-      { 
-        title: "المسوقون", 
-        url: "/admin/affiliates", 
-        icon: Users 
-      },
-      { 
-        title: "العمولات", 
-        url: "/admin/commissions", 
-        icon: Crown 
-      }
-    ]
+    title: "التقارير",
+    url: "/admin/reports",
+    icon: FileText
   },
   {
-    title: "التواصل",
-    items: [
-      { 
-        title: "الرسائل", 
-        url: "/admin/messages", 
-        icon: MessageSquare 
-      },
-      { 
-        title: "الإشعارات", 
-        url: "/admin/notifications", 
-        icon: Bell 
-      }
-    ]
+    title: "المبيعات",
+    url: "/sales-reports",
+    icon: DollarSign
   },
+  {
+    title: "سلوك المستخدمين",
+    url: "/user-behavior",
+    icon: Activity
+  }
+];
+
+const systemItems = [
+  {
+    title: "المدفوعات",
+    url: "/admin/payments",
+    icon: CreditCard
+  },
+  {
+    title: "بوابات الدفع",
+    url: "/admin/payment-gateways",
+    icon: Globe
+  },
+  {
+    title: "الشحن",
+    url: "/shipment-management",
+    icon: Truck
+  },
+  {
+    title: "المخزون",
+    url: "/admin/inventory",
+    icon: Database
+  }
+];
+
+const securityItems = [
+  {
+    title: "الأمان",
+    url: "/admin/security",
+    icon: Shield
+  },
+  {
+    title: "الصلاحيات",
+    url: "/admin/permissions",
+    icon: Lock
+  },
+  {
+    title: "سجل النشاط",
+    url: "/admin/activity",
+    icon: Activity
+  }
+];
+
+const configItems = [
   {
     title: "الإعدادات",
-    items: [
-      { 
-        title: "إعدادات عامة", 
-        url: "/admin/settings", 
-        icon: Settings 
-      },
-      { 
-        title: "إعدادات الموقع", 
-        url: "/admin/site-settings", 
-        icon: Globe 
-      }
-    ]
+    url: "/admin/settings",
+    icon: Settings
+  },
+  {
+    title: "التسويق",
+    url: "/admin/marketing",
+    icon: Target
+  },
+  {
+    title: "الإشعارات",
+    url: "/admin/notifications", 
+    icon: Bell
   }
-]
+];
 
 export function AdminSidebar() {
-  const location = useLocation()
-  
-  const isActive = (path: string) => {
-    if (path === "/admin") {
-      return location.pathname === "/admin"
-    }
-    return location.pathname.startsWith(path)
-  }
-  
-  const getNavCls = (path: string) =>
-    isActive(path) ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/50"
+  const { state } = useSidebar();
+  const location = useLocation();
+  const isCollapsed = state === "collapsed";
+
+  const getNavClassName = (url: string, exact?: boolean) => {
+    const isActive = exact 
+      ? location.pathname === url 
+      : location.pathname.startsWith(url);
+    
+    return `flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200 ${
+      isActive 
+        ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 font-medium shadow-sm" 
+        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+    }`;
+  };
+
+  const MenuSection = ({ 
+    title, 
+    items
+  }: { 
+    title: string; 
+    items: any[];
+  }) => (
+    <SidebarGroup>
+      <SidebarGroupLabel className={`text-xs font-semibold text-muted-foreground uppercase tracking-wider ${isCollapsed ? "sr-only" : ""}`}>
+        {title}
+      </SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu className="space-y-1">
+          {items.map((item) => (
+            <SidebarMenuItem key={item.url}>
+              <SidebarMenuButton asChild className="p-0">
+                <NavLink 
+                  to={item.url} 
+                  end={item.exact}
+                  className={getNavClassName(item.url, item.exact)}
+                >
+                  <item.icon className={`h-5 w-5 ${isCollapsed ? "mx-auto" : ""}`} />
+                  {!isCollapsed && (
+                    <>
+                      <span className="flex-1">{item.title}</span>
+                      {item.badge && (
+                        <Badge 
+                          variant="secondary" 
+                          className="text-xs bg-accent/50 text-accent-foreground"
+                        >
+                          {item.badge}
+                        </Badge>
+                      )}
+                    </>
+                  )}
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
 
   return (
-    <Sidebar collapsible="icon">
-      {/* Sidebar Header */}
-      <div className="p-4 border-b">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/70 rounded-lg flex items-center justify-center">
-            <Zap className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h2 className="text-lg font-bold">لوحة الإدارة</h2>
-            <p className="text-xs text-muted-foreground">نظام الإدارة المتقدم</p>
-          </div>
+    <Sidebar className="border-r border-border/40 bg-card/30 backdrop-blur-xl">
+      <SidebarContent className="px-2 py-4">
+        {/* Logo/Header */}
+        <div className={`px-3 mb-6 ${isCollapsed ? "text-center" : ""}`}>
+          {!isCollapsed ? (
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                <Crown className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                  لوحة الإدارة
+                </h2>
+                <p className="text-xs text-muted-foreground">نظام إدارة شامل</p>
+              </div>
+            </div>
+          ) : (
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center mx-auto">
+              <Crown className="h-5 w-5 text-white" />
+            </div>
+          )}
         </div>
-      </div>
 
-      <SidebarContent>
-        {adminNavItems.map((section) => (
-          <SidebarGroup key={section.title}>
-            <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground px-3 py-2">
-              {section.title}
-            </SidebarGroupLabel>
-            
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {section.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink 
-                        to={item.url} 
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${getNavCls(item.url)}`}
-                      >
-                        <item.icon className="h-5 w-5 flex-shrink-0" />
-                        <div className="flex items-center justify-between w-full">
-                          <span className="text-sm">{item.title}</span>
-                          {item.badge && (
-                            <Badge variant="secondary" className="text-xs">
-                              {item.badge}
-                            </Badge>
-                          )}
-                        </div>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        {/* Menu Sections */}
+        <div className="space-y-4">
+          <MenuSection title="الرئيسية" items={mainMenuItems} />
+          <MenuSection title="الإدارة" items={managementItems} />
+          <MenuSection title="التحليلات" items={analyticsItems} />
+          <MenuSection title="النظام" items={systemItems} />
+          <MenuSection title="الأمان" items={securityItems} />
+          <MenuSection title="الإعدادات" items={configItems} />
+        </div>
+
+        {/* Status Indicator */}
+        {!isCollapsed && (
+          <div className="mt-8 px-3">
+            <div className="p-3 rounded-lg bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-200/20">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                <span className="text-xs font-medium text-green-700 dark:text-green-400">
+                  النظام يعمل بطلاقة
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                جميع الخدمات متاحة
+              </p>
+            </div>
+          </div>
+        )}
       </SidebarContent>
-
-      {/* Sidebar Footer */}
-      <div className="mt-auto p-4 border-t">
-        <SidebarTrigger className="w-full" />
-      </div>
     </Sidebar>
-  )
+  );
 }
