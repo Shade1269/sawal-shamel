@@ -22,7 +22,8 @@ import {
   Tag,
   Star,
   Users,
-  Calendar
+  Calendar,
+  X
 } from 'lucide-react';
 import { useInventoryManagement } from '@/hooks/useInventoryManagement';
 import { useCreateProduct, useUpdateProduct, useProducts, useCategories, useBrands } from '@/hooks/useProductManagement';
@@ -55,6 +56,10 @@ export const ProductsManagement: React.FC = () => {
     is_active: true
   });
 
+  const [productVariantsForm, setProductVariantsForm] = useState([
+    { type: 'size', value: '', stock: 0 }
+  ]);
+
   const [variantFormData, setVariantFormData] = useState({
     warehouse_product_id: '',
     variant_name: '',
@@ -76,7 +81,7 @@ export const ProductsManagement: React.FC = () => {
     e.preventDefault();
     
     if (!userShop?.id) {
-      toast.error('يجب تسجيل الدخول كتاجر أولاً');
+      toast.error('يجب أن تكون تاجراً لإضافة منتجات');
       return;
     }
 
@@ -93,19 +98,23 @@ export const ProductsManagement: React.FC = () => {
         merchant_id: userShop.id,
         tags: [],
         meta_keywords: [],
-        featured: false
+        featured: false,
+        variants: productVariantsForm.filter(v => v.value.trim() !== '')
       };
 
       if (editingProduct) {
         await updateProduct.mutateAsync({ id: editingProduct.id, data });
+        toast.success('تم تحديث المنتج بنجاح');
       } else {
         await createProduct.mutateAsync(data);
+        toast.success('تم إضافة المنتج بنجاح');
       }
       
       setShowProductDialog(false);
       resetProductForm();
     } catch (error) {
       console.error('Error saving product:', error);
+      toast.error('حدث خطأ في حفظ المنتج');
     }
   };
 
@@ -140,6 +149,7 @@ export const ProductsManagement: React.FC = () => {
       sku: '',
       is_active: true
     });
+    setProductVariantsForm([{ type: 'size', value: '', stock: 0 }]);
     setEditingProduct(null);
   };
 
@@ -351,6 +361,84 @@ export const ProductsManagement: React.FC = () => {
                     placeholder="PROD-001"
                     className="border-border/50 focus:border-primary"
                   />
+                </div>
+
+                {/* Product Variants Section */}
+                <div className="space-y-4 border-t pt-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-sm">تخصيص المنتج (مقاسات، ألوان، إلخ)</h4>
+                    <div className="flex gap-2">
+                      <Button type="button" size="sm" variant="outline" onClick={() => {
+                        setProductVariantsForm([...productVariantsForm, { type: 'size', value: '', stock: 0 }]);
+                      }}>
+                        + مقاس
+                      </Button>
+                      <Button type="button" size="sm" variant="outline" onClick={() => {
+                        setProductVariantsForm([...productVariantsForm, { type: 'color', value: '', stock: 0 }]);
+                      }}>
+                        + لون
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3 max-h-48 overflow-y-auto">
+                    {productVariantsForm.map((variant, index) => (
+                      <div key={index} className="flex items-center gap-2 p-3 bg-muted/20 rounded-lg">
+                        <Select 
+                          value={variant.type} 
+                          onValueChange={(value) => {
+                            const updated = [...productVariantsForm];
+                            updated[index] = { ...updated[index], type: value };
+                            setProductVariantsForm(updated);
+                          }}
+                        >
+                          <SelectTrigger className="w-24">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="z-50 bg-popover shadow-lg border border-border">
+                            <SelectItem value="size">مقاس</SelectItem>
+                            <SelectItem value="color">لون</SelectItem>
+                            <SelectItem value="style">نمط</SelectItem>
+                            <SelectItem value="material">مادة</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Input
+                          placeholder={variant.type === 'size' ? 'M, L, XL' : variant.type === 'color' ? 'أحمر, أزرق' : 'القيمة'}
+                          value={variant.value}
+                          onChange={(e) => {
+                            const updated = [...productVariantsForm];
+                            updated[index] = { ...updated[index], value: e.target.value };
+                            setProductVariantsForm(updated);
+                          }}
+                          className="flex-1"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="العدد"
+                          value={variant.stock}
+                          onChange={(e) => {
+                            const updated = [...productVariantsForm];
+                            updated[index] = { ...updated[index], stock: parseInt(e.target.value) || 0 };
+                            setProductVariantsForm(updated);
+                          }}
+                          className="w-20"
+                        />
+                        {productVariantsForm.length > 1 && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setProductVariantsForm(productVariantsForm.filter((_, i) => i !== index));
+                            }}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 
                 <div className="flex items-center space-x-2">
