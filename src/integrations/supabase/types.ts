@@ -6444,7 +6444,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      generate_movement_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       generate_refund_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_return_number: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
