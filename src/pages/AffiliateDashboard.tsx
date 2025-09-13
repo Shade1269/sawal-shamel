@@ -552,11 +552,16 @@ const AffiliateDashboard = () => {
             <BackButton />
             <h1 className="text-3xl font-bold">لوحة تحكم المسوق</h1>
           </div>
-          <Button asChild>
-            <Link to="/affiliate/store">
-              <Store className="ml-2 h-4 w-4" />
-              عرض المتجر
-            </Link>
+          <Button 
+            variant="outline"
+            onClick={() => {
+              if (affiliateStore?.store_slug) {
+                window.open(`${window.location.origin}/store/${affiliateStore.store_slug}`, '_blank');
+              }
+            }}
+          >
+            <Store className="ml-2 h-4 w-4" />
+            عرض المتجر
           </Button>
         </div>
 
