@@ -385,8 +385,8 @@ const AffiliateDashboard = () => {
             variant="outline" 
             onClick={() => {
               if (profile?.role === 'admin') navigate('/admin/dashboard');
-              else if (profile?.role === 'merchant') navigate('/merchant-dashboard');  
-              else if (profile?.role === 'affiliate') navigate('/affiliate-dashboard');
+              else if (profile?.role === 'merchant') navigate('/merchant');  
+              else if (profile?.role === 'affiliate') navigate('/affiliate');
               else navigate('/dashboard');
             }}
             className="flex items-center gap-2"
@@ -457,7 +457,7 @@ const AffiliateDashboard = () => {
                   </div>
                   <Button 
                     className="w-full" 
-                    onClick={() => navigate('/affiliate-dashboard')}
+                    onClick={() => navigate('/affiliate')}
                   >
                     الذهاب إلى لوحة التحكم
                   </Button>

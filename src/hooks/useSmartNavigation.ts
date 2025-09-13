@@ -17,10 +17,10 @@ export const useSmartNavigation = () => {
         navigate('/admin/dashboard');
         break;
       case 'merchant':
-        navigate('/merchant-dashboard');
+        navigate('/merchant');
         break;
       case 'affiliate':
-        navigate('/affiliate-dashboard');
+        navigate('/affiliate');
         break;
       default:
         navigate('/dashboard');

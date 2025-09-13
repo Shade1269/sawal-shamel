@@ -209,15 +209,57 @@ const App = () => {
         <Route path="user-behavior" element={<UserBehaviorAnalytics />} />
                       </Route>
                       
-                      {/* Merchant Routes */}
-                      <Route 
-                        path="/merchant" 
-                        element={
-                          <ProtectedRoute requiredRole={["merchant", "admin"]}>
-                            <MerchantDashboard />
-                          </ProtectedRoute>
-                        } 
-                      />
+                       {/* Merchant Routes */}
+                       <Route 
+                         path="/merchant" 
+                         element={
+                           <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                             <MerchantDashboard />
+                           </ProtectedRoute>
+                         } 
+                       />
+                       <Route 
+                         path="/merchant-dashboard" 
+                         element={
+                           <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                             <MerchantDashboard />
+                           </ProtectedRoute>
+                         } 
+                       />
+                       
+                       {/* Payment Routes for Merchants */}
+                       <Route 
+                         path="/payments" 
+                         element={
+                           <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                             <PaymentDashboard />
+                           </ProtectedRoute>
+                         } 
+                       />
+                       <Route 
+                         path="/invoices" 
+                         element={
+                           <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                             <InvoiceManagement />
+                           </ProtectedRoute>
+                         } 
+                       />
+                       <Route 
+                         path="/payment-gateways" 
+                         element={
+                           <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                             <PaymentGateways />
+                           </ProtectedRoute>
+                         } 
+                       />
+                       <Route 
+                         path="/refunds" 
+                         element={
+                           <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                             <RefundManagement />
+                           </ProtectedRoute>
+                         } 
+                       />
                        <Route 
                          path="/order-management" 
                          element={
@@ -235,15 +277,23 @@ const App = () => {
                         } 
                       />
                       
-                       {/* Affiliate Routes */}
-                       <Route 
-                         path="/affiliate" 
-                         element={
-                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                             <AffiliateDashboard />
-                           </ProtectedRoute>
-                         } 
-                       />
+                        {/* Affiliate Routes */}
+                        <Route 
+                          path="/affiliate" 
+                          element={
+                            <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                              <AffiliateDashboard />
+                            </ProtectedRoute>
+                          } 
+                        />
+                        <Route 
+                          path="/affiliate-dashboard" 
+                          element={
+                            <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                              <AffiliateDashboard />
+                            </ProtectedRoute>
+                          } 
+                        />
                        
                         {/* Atlantis System */}
                        <Route 
