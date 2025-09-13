@@ -82,11 +82,17 @@ const ProductsBrowser = () => {
       let storeData = null;
       
       // أولاً، جرب user_profiles.id
-      const { data: userProfileStore } = await supabase
+      const { data: storesByProfile, error: storesByProfileError } = await supabase
         .from('affiliate_stores')
         .select('*')
         .eq('profile_id', profile.id)
-        .maybeSingle();
+        .order('created_at', { ascending: false })
+        .limit(1);
+      
+      if (storesByProfileError) {
+        console.error('Error fetching affiliate store (by profile_id):', storesByProfileError);
+      }
+      const userProfileStore = Array.isArray(storesByProfile) && storesByProfile.length > 0 ? storesByProfile[0] : null;
       
       if (userProfileStore) {
         storeData = userProfileStore;
@@ -99,11 +105,17 @@ const ProductsBrowser = () => {
           .maybeSingle();
           
         if (profileData) {
-          const { data: profileStore } = await supabase
+          const { data: storesByProfile2, error: storesByProfileError2 } = await supabase
             .from('affiliate_stores')
             .select('*')
             .eq('profile_id', profileData.id)
-            .maybeSingle();
+            .order('created_at', { ascending: false })
+            .limit(1);
+            
+          if (storesByProfileError2) {
+            console.error('Error fetching affiliate store (by auth_user_id):', storesByProfileError2);
+          }
+          const profileStore = Array.isArray(storesByProfile2) && storesByProfile2.length > 0 ? storesByProfile2[0] : null;
             
           storeData = profileStore;
         }
