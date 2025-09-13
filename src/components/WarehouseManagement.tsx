@@ -16,7 +16,7 @@ import {
   Users, 
   Package 
 } from 'lucide-react';
-import { useInventoryManagement, type Warehouse } from '@/hooks/useInventoryManagement';
+import { useInventoryManagement } from '@/hooks/useInventoryManagement';
 
 export const WarehouseManagement: React.FC = () => {
   const {
@@ -28,7 +28,7 @@ export const WarehouseManagement: React.FC = () => {
   } = useInventoryManagement();
 
   const [showDialog, setShowDialog] = useState(false);
-  const [editingWarehouse, setEditingWarehouse] = useState<Warehouse | null>(null);
+  const [editingWarehouse, setEditingWarehouse] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
     code: '',
@@ -69,7 +69,7 @@ export const WarehouseManagement: React.FC = () => {
     setEditingWarehouse(null);
   };
 
-  const startEdit = (warehouse: Warehouse) => {
+  const startEdit = (warehouse: any) => {
     setEditingWarehouse(warehouse);
     setFormData({
       name: warehouse.name,
