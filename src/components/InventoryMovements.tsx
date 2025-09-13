@@ -65,27 +65,30 @@ export const InventoryMovements: React.FC = () => {
 
   const getMovementIcon = (type: string) => {
     switch (type) {
-      case 'inbound': return <ArrowDown className="h-4 w-4 text-green-600" />;
-      case 'outbound': return <ArrowUp className="h-4 w-4 text-red-600" />;
-      case 'adjustment': return <RotateCcw className="h-4 w-4 text-blue-600" />;
+      case 'IN': return <ArrowDown className="h-4 w-4 text-green-600" />;
+      case 'OUT': return <ArrowUp className="h-4 w-4 text-red-600" />;
+      case 'ADJUSTMENT': return <RotateCcw className="h-4 w-4 text-blue-600" />;
+      case 'TRANSFER': return <Package className="h-4 w-4 text-purple-600" />;
       default: return <Package className="h-4 w-4" />;
     }
   };
 
   const getMovementTypeLabel = (type: string) => {
     switch (type) {
-      case 'inbound': return 'وارد';
-      case 'outbound': return 'صادر';
-      case 'adjustment': return 'تعديل';
+      case 'IN': return 'وارد';
+      case 'OUT': return 'صادر';
+      case 'ADJUSTMENT': return 'تعديل';
+      case 'TRANSFER': return 'نقل';
       default: return type;
     }
   };
 
   const getMovementTypeVariant = (type: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (type) {
-      case 'inbound': return 'default';
-      case 'outbound': return 'destructive';
-      case 'adjustment': return 'secondary';
+      case 'IN': return 'default';
+      case 'OUT': return 'destructive';
+      case 'ADJUSTMENT': return 'secondary';
+      case 'TRANSFER': return 'outline';
       default: return 'outline';
     }
   };
@@ -180,9 +183,10 @@ export const InventoryMovements: React.FC = () => {
                       <SelectValue placeholder="اختر النوع" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="inbound">وارد</SelectItem>
-                      <SelectItem value="outbound">صادر</SelectItem>
-                      <SelectItem value="adjustment">تعديل</SelectItem>
+                      <SelectItem value="IN">وارد</SelectItem>
+                      <SelectItem value="OUT">صادر</SelectItem>
+                      <SelectItem value="ADJUSTMENT">تعديل</SelectItem>
+                      <SelectItem value="TRANSFER">نقل</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -276,9 +280,10 @@ export const InventoryMovements: React.FC = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">جميع الحركات</SelectItem>
-                <SelectItem value="inbound">وارد</SelectItem>
-                <SelectItem value="outbound">صادر</SelectItem>
-                <SelectItem value="adjustment">تعديل</SelectItem>
+                <SelectItem value="IN">وارد</SelectItem>
+                <SelectItem value="OUT">صادر</SelectItem>
+                <SelectItem value="ADJUSTMENT">تعديل</SelectItem>
+                <SelectItem value="TRANSFER">نقل</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -304,8 +309,8 @@ export const InventoryMovements: React.FC = () => {
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3 flex-1">
                     <div className={`p-2 rounded-full ${
-                      movement.movement_type === 'inbound' ? 'bg-green-100' :
-                      movement.movement_type === 'outbound' ? 'bg-red-100' :
+                      movement.movement_type === 'IN' ? 'bg-green-100' :
+                      movement.movement_type === 'OUT' ? 'bg-red-100' :
                       'bg-blue-100'
                     }`}>
                       {getMovementIcon(movement.movement_type)}
@@ -339,12 +344,12 @@ export const InventoryMovements: React.FC = () => {
                   
                   <div className="text-left">
                     <div className={`text-lg font-bold ${
-                      movement.movement_type === 'inbound' ? 'text-green-600' :
-                      movement.movement_type === 'outbound' ? 'text-red-600' :
+                      movement.movement_type === 'IN' ? 'text-green-600' :
+                      movement.movement_type === 'OUT' ? 'text-red-600' :
                       'text-blue-600'
                     }`}>
-                      {movement.movement_type === 'inbound' ? '+' : 
-                       movement.movement_type === 'outbound' ? '-' : '±'}{movement.quantity}
+                      {movement.movement_type === 'IN' ? '+' : 
+                       movement.movement_type === 'OUT' ? '-' : '±'}{movement.quantity}
                     </div>
                   </div>
                 </div>
