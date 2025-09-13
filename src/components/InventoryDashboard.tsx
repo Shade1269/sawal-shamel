@@ -58,10 +58,10 @@ export const InventoryDashboard: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">مخزون منخفض</CardTitle>
-            <TrendingDown className="h-4 w-4 text-orange-500" />
+            <TrendingDown className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-500">{analytics.lowStockItems}</div>
+            <div className="text-2xl font-bold text-destructive">{analytics.lowStockItems}</div>
             <p className="text-xs text-muted-foreground">
               يحتاج إعادة طلب
             </p>
@@ -71,10 +71,10 @@ export const InventoryDashboard: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">نفد من المخزون</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-red-500" />
+            <AlertTriangle className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-500">{analytics.outOfStockItems}</div>
+            <div className="text-2xl font-bold text-destructive">{analytics.outOfStockItems}</div>
             <p className="text-xs text-muted-foreground">
               غير متوفر
             </p>
@@ -84,10 +84,10 @@ export const InventoryDashboard: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">قيمة المخزون</CardTitle>
-            <DollarSign className="h-4 w-4 text-green-500" />
+            <DollarSign className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{analytics.totalValue.toFixed(2)} ر.س</div>
+            <div className="text-2xl font-bold text-foreground">{analytics.totalValue.toFixed(2)} ر.س</div>
             <p className="text-xs text-muted-foreground">
               إجمالي القيمة
             </p>
