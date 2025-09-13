@@ -25,9 +25,18 @@ import {
   Calendar
 } from 'lucide-react';
 import { useInventoryManagement } from '@/hooks/useInventoryManagement';
+import { useCreateProduct, useUpdateProduct, useProducts, useCategories, useBrands } from '@/hooks/useProductManagement';
+import { toast } from 'sonner';
+import { useUserData } from '@/hooks/useUserData';
 
 export const ProductsManagement: React.FC = () => {
-  const { warehouseProducts, productVariants, suppliers, loading } = useInventoryManagement();
+  const { warehouseProducts, productVariants, suppliers, loading: inventoryLoading } = useInventoryManagement();
+  const { userShop } = useUserData();
+  const { data: products = [], isLoading: productsLoading } = useProducts();
+  const { data: categories = [] } = useCategories();
+  const { data: brands = [] } = useBrands();
+  const createProduct = useCreateProduct();
+  const updateProduct = useUpdateProduct();
 
   const [showProductDialog, setShowProductDialog] = useState(false);
   const [showVariantDialog, setShowVariantDialog] = useState(false);
@@ -36,12 +45,13 @@ export const ProductsManagement: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   
   const [productFormData, setProductFormData] = useState({
-    product_name: '',
-    product_description: '',
-    category: '',
-    brand: '',
-    supplier_id: '',
-    sku_prefix: '',
+    title: '',
+    description: '',
+    price_sar: '',
+    stock: '',
+    category_id: '',
+    brand_id: '',
+    sku: '',
     is_active: true
   });
 
@@ -65,16 +75,38 @@ export const ProductsManagement: React.FC = () => {
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const data = {
-      ...productFormData,
-      supplier_id: productFormData.supplier_id || null
-    };
+    if (!userShop?.id) {
+      toast.error('يجب تسجيل الدخول كتاجر أولاً');
+      return;
+    }
 
-    // TODO: Implement actual create/update product functionality
-    console.log('Product data:', data);
-    
-    setShowProductDialog(false);
-    resetProductForm();
+    try {
+      const data = {
+        title: productFormData.title,
+        description: productFormData.description,
+        price_sar: parseFloat(productFormData.price_sar) || 0,
+        stock: parseInt(productFormData.stock) || 0,
+        category_id: productFormData.category_id || null,
+        brand_id: productFormData.brand_id || null,
+        sku: productFormData.sku || null,
+        is_active: productFormData.is_active,
+        merchant_id: userShop.id,
+        tags: [],
+        meta_keywords: [],
+        featured: false
+      };
+
+      if (editingProduct) {
+        await updateProduct.mutateAsync({ id: editingProduct.id, data });
+      } else {
+        await createProduct.mutateAsync(data);
+      }
+      
+      setShowProductDialog(false);
+      resetProductForm();
+    } catch (error) {
+      console.error('Error saving product:', error);
+    }
   };
 
   const handleVariantSubmit = async (e: React.FormEvent) => {
@@ -99,12 +131,13 @@ export const ProductsManagement: React.FC = () => {
 
   const resetProductForm = () => {
     setProductFormData({
-      product_name: '',
-      product_description: '',
-      category: '',
-      brand: '',
-      supplier_id: '',
-      sku_prefix: '',
+      title: '',
+      description: '',
+      price_sar: '',
+      stock: '',
+      category_id: '',
+      brand_id: '',
+      sku: '',
       is_active: true
     });
     setEditingProduct(null);
@@ -133,12 +166,13 @@ export const ProductsManagement: React.FC = () => {
   const startEditProduct = (product: any) => {
     setEditingProduct(product);
     setProductFormData({
-      product_name: product.product_name || '',
-      product_description: product.product_description || '',
-      category: product.category || '',
-      brand: product.brand || '',
-      supplier_id: product.supplier_id || '',
-      sku_prefix: product.sku_prefix || '',
+      title: product.title || '',
+      description: product.description || '',
+      price_sar: product.price_sar?.toString() || '',
+      stock: product.stock?.toString() || '',
+      category_id: product.category_id || '',
+      brand_id: product.brand_id || '',
+      sku: product.sku || '',
       is_active: product.is_active
     });
     setShowProductDialog(true);
@@ -173,6 +207,8 @@ export const ProductsManagement: React.FC = () => {
     const supplier = suppliers.find(s => s.id === supplierId);
     return supplier?.supplier_name || 'مورد غير محدد';
   };
+
+  const loading = inventoryLoading || productsLoading;
 
   if (loading) {
     return (
@@ -215,11 +251,11 @@ export const ProductsManagement: React.FC = () => {
               </DialogHeader>
               <form onSubmit={handleProductSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="product_name">اسم المنتج</Label>
+                  <Label htmlFor="title">اسم المنتج</Label>
                   <Input
-                    id="product_name"
-                    value={productFormData.product_name}
-                    onChange={(e) => setProductFormData({...productFormData, product_name: e.target.value})}
+                    id="title"
+                    value={productFormData.title}
+                    onChange={(e) => setProductFormData({...productFormData, title: e.target.value})}
                     required
                     placeholder="اسم المنتج"
                     className="border-border/50 focus:border-primary"
@@ -227,11 +263,11 @@ export const ProductsManagement: React.FC = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="product_description">وصف المنتج</Label>
+                  <Label htmlFor="description">وصف المنتج</Label>
                   <Textarea
-                    id="product_description"
-                    value={productFormData.product_description}
-                    onChange={(e) => setProductFormData({...productFormData, product_description: e.target.value})}
+                    id="description"
+                    value={productFormData.description}
+                    onChange={(e) => setProductFormData({...productFormData, description: e.target.value})}
                     placeholder="وصف تفصيلي للمنتج"
                     rows={3}
                     className="border-border/50 focus:border-primary"
@@ -240,23 +276,27 @@ export const ProductsManagement: React.FC = () => {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="category">الفئة</Label>
+                    <Label htmlFor="price_sar">السعر (ريال سعودي)</Label>
                     <Input
-                      id="category"
-                      value={productFormData.category}
-                      onChange={(e) => setProductFormData({...productFormData, category: e.target.value})}
-                      placeholder="إلكترونيات"
+                      id="price_sar"
+                      type="number"
+                      step="0.01"
+                      value={productFormData.price_sar}
+                      onChange={(e) => setProductFormData({...productFormData, price_sar: e.target.value})}
+                      required
+                      placeholder="100.00"
                       className="border-border/50 focus:border-primary"
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor="brand">العلامة التجارية</Label>
+                    <Label htmlFor="stock">الكمية المتاحة</Label>
                     <Input
-                      id="brand"
-                      value={productFormData.brand}
-                      onChange={(e) => setProductFormData({...productFormData, brand: e.target.value})}
-                      placeholder="سامسونج"
+                      id="stock"
+                      type="number"
+                      value={productFormData.stock}
+                      onChange={(e) => setProductFormData({...productFormData, stock: e.target.value})}
+                      placeholder="100"
                       className="border-border/50 focus:border-primary"
                     />
                   </div>
@@ -264,18 +304,18 @@ export const ProductsManagement: React.FC = () => {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="supplier_id">المورد</Label>
-                    <Select value={productFormData.supplier_id} onValueChange={(value) => 
-                      setProductFormData({...productFormData, supplier_id: value})
+                    <Label htmlFor="category_id">الفئة</Label>
+                    <Select value={productFormData.category_id} onValueChange={(value) => 
+                      setProductFormData({...productFormData, category_id: value})
                     }>
                       <SelectTrigger className="border-border/50 focus:border-primary">
-                        <SelectValue placeholder="اختر المورد" />
+                        <SelectValue placeholder="اختر الفئة" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">بدون مورد</SelectItem>
-                        {suppliers.map((supplier) => (
-                          <SelectItem key={supplier.id} value={supplier.id}>
-                            {supplier.supplier_name}
+                        <SelectItem value="">بدون فئة</SelectItem>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -283,15 +323,34 @@ export const ProductsManagement: React.FC = () => {
                   </div>
                   
                   <div>
-                    <Label htmlFor="sku_prefix">بادئة رمز المنتج</Label>
-                    <Input
-                      id="sku_prefix"
-                      value={productFormData.sku_prefix}
-                      onChange={(e) => setProductFormData({...productFormData, sku_prefix: e.target.value})}
-                      placeholder="PROD"
-                      className="border-border/50 focus:border-primary"
-                    />
+                    <Label htmlFor="brand_id">العلامة التجارية</Label>
+                    <Select value={productFormData.brand_id} onValueChange={(value) => 
+                      setProductFormData({...productFormData, brand_id: value})
+                    }>
+                      <SelectTrigger className="border-border/50 focus:border-primary">
+                        <SelectValue placeholder="اختر العلامة التجارية" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">بدون علامة تجارية</SelectItem>
+                        {brands.map((brand) => (
+                          <SelectItem key={brand.id} value={brand.id}>
+                            {brand.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="sku">رمز المنتج (SKU)</Label>
+                  <Input
+                    id="sku"
+                    value={productFormData.sku}
+                    onChange={(e) => setProductFormData({...productFormData, sku: e.target.value})}
+                    placeholder="PROD-001"
+                    className="border-border/50 focus:border-primary"
+                  />
                 </div>
                 
                 <div className="flex items-center space-x-2">
@@ -307,8 +366,12 @@ export const ProductsManagement: React.FC = () => {
                   <Button type="button" variant="outline" onClick={() => setShowProductDialog(false)}>
                     إلغاء
                   </Button>
-                  <Button type="submit" className="bg-gradient-primary hover:opacity-90">
-                    {editingProduct ? 'تحديث' : 'إضافة'}
+                  <Button 
+                    type="submit" 
+                    className="bg-gradient-primary hover:opacity-90"
+                    disabled={createProduct.isPending || updateProduct.isPending}
+                  >
+                    {createProduct.isPending || updateProduct.isPending ? 'جاري الحفظ...' : (editingProduct ? 'تحديث' : 'إضافة')}
                   </Button>
                 </div>
               </form>
