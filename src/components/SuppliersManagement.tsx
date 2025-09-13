@@ -16,7 +16,9 @@ import {
   Mail, 
   MapPin,
   Building2,
-  Star
+  CreditCard,
+  Calendar,
+  FileText
 } from 'lucide-react';
 import { useInventoryManagement } from '@/hooks/useInventoryManagement';
 
@@ -88,31 +90,39 @@ export const SuppliersManagement: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="p-6 text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+      <div className="flex flex-col items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
         <p className="text-muted-foreground">جاري تحميل الموردين...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6" dir="rtl">
+    <div className="space-y-8" dir="rtl">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Users className="h-6 w-6" />
-          إدارة الموردين
-        </h1>
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-xl bg-gradient-primary shadow-glow">
+            <Users className="h-6 w-6 text-primary-foreground" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-foreground">إدارة الموردين</h2>
+            <p className="text-muted-foreground">إضافة وإدارة موردي المنتجات</p>
+          </div>
+        </div>
         
         <Dialog open={showDialog} onOpenChange={setShowDialog}>
           <DialogTrigger asChild>
-            <Button onClick={resetForm}>
+            <Button 
+              onClick={resetForm}
+              className="bg-gradient-primary hover:opacity-90 text-primary-foreground shadow-glow transition-all duration-300"
+            >
               <Plus className="h-4 w-4 ml-2" />
               إضافة مورد
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>
+              <DialogTitle className="text-xl font-bold">
                 {editingSupplier ? 'تعديل المورد' : 'إضافة مورد جديد'}
               </DialogTitle>
             </DialogHeader>
@@ -126,6 +136,7 @@ export const SuppliersManagement: React.FC = () => {
                     onChange={(e) => setFormData({...formData, supplier_name: e.target.value})}
                     required
                     placeholder="شركة الموردين المتحدة"
+                    className="border-border/50 focus:border-primary"
                   />
                 </div>
                 
@@ -137,6 +148,7 @@ export const SuppliersManagement: React.FC = () => {
                     onChange={(e) => setFormData({...formData, supplier_code: e.target.value})}
                     required
                     placeholder="SUP001"
+                    className="border-border/50 focus:border-primary"
                   />
                 </div>
               </div>
@@ -148,6 +160,7 @@ export const SuppliersManagement: React.FC = () => {
                   value={formData.contact_person}
                   onChange={(e) => setFormData({...formData, contact_person: e.target.value})}
                   placeholder="أحمد محمد"
+                  className="border-border/50 focus:border-primary"
                 />
               </div>
               
@@ -159,6 +172,7 @@ export const SuppliersManagement: React.FC = () => {
                     value={formData.contact_phone}
                     onChange={(e) => setFormData({...formData, contact_phone: e.target.value})}
                     placeholder="+966501234567"
+                    className="border-border/50 focus:border-primary"
                   />
                 </div>
                 
@@ -170,6 +184,7 @@ export const SuppliersManagement: React.FC = () => {
                     value={formData.contact_email}
                     onChange={(e) => setFormData({...formData, contact_email: e.target.value})}
                     placeholder="contact@supplier.com"
+                    className="border-border/50 focus:border-primary"
                   />
                 </div>
               </div>
@@ -182,6 +197,7 @@ export const SuppliersManagement: React.FC = () => {
                   onChange={(e) => setFormData({...formData, contact_address: e.target.value})}
                   placeholder="الرياض، المملكة العربية السعودية"
                   rows={2}
+                  className="border-border/50 focus:border-primary"
                 />
               </div>
               
@@ -193,6 +209,7 @@ export const SuppliersManagement: React.FC = () => {
                     value={formData.payment_terms}
                     onChange={(e) => setFormData({...formData, payment_terms: e.target.value})}
                     placeholder="30 يوم"
+                    className="border-border/50 focus:border-primary"
                   />
                 </div>
                 
@@ -204,6 +221,7 @@ export const SuppliersManagement: React.FC = () => {
                     value={formData.credit_limit}
                     onChange={(e) => setFormData({...formData, credit_limit: e.target.value})}
                     placeholder="100000"
+                    className="border-border/50 focus:border-primary"
                   />
                 </div>
               </div>
@@ -215,6 +233,7 @@ export const SuppliersManagement: React.FC = () => {
                   value={formData.tax_id}
                   onChange={(e) => setFormData({...formData, tax_id: e.target.value})}
                   placeholder="123456789012345"
+                  className="border-border/50 focus:border-primary"
                 />
               </div>
               
@@ -231,7 +250,7 @@ export const SuppliersManagement: React.FC = () => {
                 <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
                   إلغاء
                 </Button>
-                <Button type="submit">
+                <Button type="submit" className="bg-gradient-primary hover:opacity-90">
                   {editingSupplier ? 'تحديث' : 'إضافة'}
                 </Button>
               </div>
@@ -241,33 +260,38 @@ export const SuppliersManagement: React.FC = () => {
       </div>
 
       {suppliers.length === 0 ? (
-        <Card>
+        <Card className="border-dashed border-2 border-muted-foreground/30 bg-muted/20">
           <CardContent className="text-center py-12">
-            <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">لا توجد موردين مضافين</h3>
+            <div className="p-4 rounded-full bg-muted mb-4 mx-auto w-fit">
+              <Users className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">لا توجد موردين مضافين</h3>
             <p className="text-muted-foreground mb-4">
               ابدأ بإضافة أول مورد لإدارة المخزون
             </p>
+            <Button onClick={resetForm} variant="outline" className="border-primary hover:bg-primary hover:text-primary-foreground">
+              إضافة مورد جديد
+            </Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-6">
           {suppliers.map((supplier) => (
-            <Card key={supplier.id} className="overflow-hidden">
-              <CardHeader>
+            <Card key={supplier.id} className="relative overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm shadow-soft hover:shadow-luxury transition-all duration-300 hover:-translate-y-1">
+              <CardHeader className="relative">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <Building2 className="h-6 w-6 text-primary" />
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-xl bg-gradient-primary shadow-glow">
+                      <Building2 className="h-6 w-6 text-primary-foreground" />
                     </div>
                     <div>
-                      <CardTitle className="flex items-center gap-2">
+                      <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2 mb-1">
                         {supplier.supplier_name}
-                        <Badge variant={supplier.is_active ? 'default' : 'secondary'}>
+                        <Badge variant={supplier.is_active ? 'default' : 'secondary'} className="text-xs">
                           {supplier.is_active ? 'نشط' : 'غير نشط'}
                         </Badge>
                       </CardTitle>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground font-mono">
                         رمز المورد: {supplier.supplier_code}
                       </p>
                     </div>
@@ -276,76 +300,107 @@ export const SuppliersManagement: React.FC = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => startEdit(supplier)}
+                    className="hover:bg-primary/10 hover:text-primary"
                   >
                     <Edit2 className="h-4 w-4" />
                   </Button>
                 </div>
               </CardHeader>
               
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6">
                 {/* معلومات الاتصال */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {supplier.contact_person && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span>{supplier.contact_person}</span>
-                    </div>
-                  )}
-                  
-                  {supplier.contact_phone && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Phone className="h-4 w-4 text-muted-foreground" />
-                      <span>{supplier.contact_phone}</span>
-                    </div>
-                  )}
-                  
-                  {supplier.contact_email && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      <span>{supplier.contact_email}</span>
-                    </div>
-                  )}
-                  
-                  {supplier.contact_address && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span>{supplier.contact_address}</span>
-                    </div>
-                  )}
+                <div>
+                  <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-accent" />
+                    معلومات الاتصال
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {supplier.contact_person && (
+                      <div className="flex items-center gap-3 p-3 bg-card/30 rounded-lg border border-border/30">
+                        <Users className="h-4 w-4 text-accent" />
+                        <div>
+                          <div className="text-xs text-muted-foreground">الشخص المسؤول</div>
+                          <div className="font-medium">{supplier.contact_person}</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {supplier.contact_phone && (
+                      <div className="flex items-center gap-3 p-3 bg-card/30 rounded-lg border border-border/30">
+                        <Phone className="h-4 w-4 text-accent" />
+                        <div>
+                          <div className="text-xs text-muted-foreground">رقم الهاتف</div>
+                          <div className="font-medium font-mono">{supplier.contact_phone}</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {supplier.contact_email && (
+                      <div className="flex items-center gap-3 p-3 bg-card/30 rounded-lg border border-border/30">
+                        <Mail className="h-4 w-4 text-accent" />
+                        <div>
+                          <div className="text-xs text-muted-foreground">البريد الإلكتروني</div>
+                          <div className="font-medium">{supplier.contact_email}</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {supplier.contact_address && (
+                      <div className="flex items-center gap-3 p-3 bg-card/30 rounded-lg border border-border/30">
+                        <MapPin className="h-4 w-4 text-accent" />
+                        <div>
+                          <div className="text-xs text-muted-foreground">العنوان</div>
+                          <div className="font-medium">{supplier.contact_address}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <Separator />
+                <Separator className="bg-border/50" />
 
                 {/* معلومات مالية */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {supplier.payment_terms && (
-                    <div className="text-center p-3 bg-blue-50 rounded-lg">
-                      <div className="text-sm font-medium text-blue-900">شروط الدفع</div>
-                      <div className="text-lg font-bold text-blue-600">{supplier.payment_terms}</div>
-                    </div>
-                  )}
-                  
-                  {supplier.credit_limit && (
-                    <div className="text-center p-3 bg-green-50 rounded-lg">
-                      <div className="text-sm font-medium text-green-900">حد الائتمان</div>
-                      <div className="text-lg font-bold text-green-600">
-                        {supplier.credit_limit.toLocaleString()} ر.س
+                <div>
+                  <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <CreditCard className="h-4 w-4 text-accent" />
+                    المعلومات المالية
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {supplier.payment_terms && (
+                      <div className="text-center p-4 bg-gradient-to-br from-accent/10 to-accent/5 rounded-lg border border-accent/20">
+                        <div className="text-sm font-medium text-accent mb-1">شروط الدفع</div>
+                        <div className="text-lg font-bold text-foreground">{supplier.payment_terms}</div>
                       </div>
-                    </div>
-                  )}
-                  
-                  {supplier.tax_id && (
-                    <div className="text-center p-3 bg-gray-50 rounded-lg">
-                      <div className="text-sm font-medium text-gray-900">الرقم الضريبي</div>
-                      <div className="text-sm font-mono text-gray-600">{supplier.tax_id}</div>
-                    </div>
-                  )}
+                    )}
+                    
+                    {supplier.credit_limit && (
+                      <div className="text-center p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg border border-primary/20">
+                        <div className="text-sm font-medium text-primary mb-1">حد الائتمان</div>
+                        <div className="text-lg font-bold text-foreground">
+                          {supplier.credit_limit.toLocaleString('ar')} ريال
+                        </div>
+                      </div>
+                    )}
+                    
+                    {supplier.tax_id && (
+                      <div className="text-center p-4 bg-gradient-to-br from-muted/50 to-muted/20 rounded-lg border border-muted-foreground/20">
+                        <div className="text-sm font-medium text-muted-foreground mb-1">الرقم الضريبي</div>
+                        <div className="text-sm font-mono text-foreground">{supplier.tax_id}</div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* تواريخ */}
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>تم الإنشاء: {new Date(supplier.created_at).toLocaleDateString('ar-SA')}</span>
-                  <span>آخر تحديث: {new Date(supplier.updated_at).toLocaleDateString('ar-SA')}</span>
+                <div className="flex justify-between items-center text-xs text-muted-foreground border-t border-border/30 pt-4">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    <span>تم الإنشاء: {new Date(supplier.created_at).toLocaleDateString('ar-SA')}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <FileText className="h-3 w-3" />
+                    <span>آخر تحديث: {new Date(supplier.updated_at).toLocaleDateString('ar-SA')}</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>

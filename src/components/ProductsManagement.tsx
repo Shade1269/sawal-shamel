@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
 import { 
   Plus, 
   Edit2, 
@@ -16,7 +17,12 @@ import {
   Palette,
   Barcode,
   DollarSign,
-  AlertCircle
+  AlertCircle,
+  Box,
+  Tag,
+  Star,
+  Users,
+  Calendar
 } from 'lucide-react';
 import { useInventoryManagement } from '@/hooks/useInventoryManagement';
 
@@ -163,34 +169,47 @@ export const ProductsManagement: React.FC = () => {
     return productVariants.filter(variant => variant.warehouse_product_id === productId);
   };
 
+  const getSupplierName = (supplierId: string) => {
+    const supplier = suppliers.find(s => s.id === supplierId);
+    return supplier?.supplier_name || 'مورد غير محدد';
+  };
+
   if (loading) {
     return (
-      <div className="p-6 text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+      <div className="flex flex-col items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
         <p className="text-muted-foreground">جاري تحميل المنتجات...</p>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6" dir="rtl">
+    <div className="space-y-8" dir="rtl">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Package className="h-6 w-6" />
-          إدارة المنتجات والمتغيرات
-        </h1>
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-xl bg-gradient-primary shadow-glow">
+            <Package className="h-6 w-6 text-primary-foreground" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-foreground">إدارة المنتجات والمتغيرات</h2>
+            <p className="text-muted-foreground">إضافة وإدارة المنتجات ومتغيراتها في المخزن</p>
+          </div>
+        </div>
         
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Dialog open={showProductDialog} onOpenChange={setShowProductDialog}>
             <DialogTrigger asChild>
-              <Button onClick={resetProductForm}>
+              <Button 
+                onClick={resetProductForm}
+                className="bg-gradient-primary hover:opacity-90 text-primary-foreground shadow-glow transition-all duration-300"
+              >
                 <Plus className="h-4 w-4 ml-2" />
                 منتج جديد
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-lg">
               <DialogHeader>
-                <DialogTitle>
+                <DialogTitle className="text-xl font-bold">
                   {editingProduct ? 'تعديل المنتج' : 'إضافة منتج جديد'}
                 </DialogTitle>
               </DialogHeader>
@@ -203,6 +222,7 @@ export const ProductsManagement: React.FC = () => {
                     onChange={(e) => setProductFormData({...productFormData, product_name: e.target.value})}
                     required
                     placeholder="اسم المنتج"
+                    className="border-border/50 focus:border-primary"
                   />
                 </div>
                 
@@ -214,6 +234,7 @@ export const ProductsManagement: React.FC = () => {
                     onChange={(e) => setProductFormData({...productFormData, product_description: e.target.value})}
                     placeholder="وصف تفصيلي للمنتج"
                     rows={3}
+                    className="border-border/50 focus:border-primary"
                   />
                 </div>
                 
@@ -225,6 +246,7 @@ export const ProductsManagement: React.FC = () => {
                       value={productFormData.category}
                       onChange={(e) => setProductFormData({...productFormData, category: e.target.value})}
                       placeholder="إلكترونيات"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                   
@@ -235,6 +257,7 @@ export const ProductsManagement: React.FC = () => {
                       value={productFormData.brand}
                       onChange={(e) => setProductFormData({...productFormData, brand: e.target.value})}
                       placeholder="سامسونج"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                 </div>
@@ -245,7 +268,7 @@ export const ProductsManagement: React.FC = () => {
                     <Select value={productFormData.supplier_id} onValueChange={(value) => 
                       setProductFormData({...productFormData, supplier_id: value})
                     }>
-                      <SelectTrigger>
+                      <SelectTrigger className="border-border/50 focus:border-primary">
                         <SelectValue placeholder="اختر المورد" />
                       </SelectTrigger>
                       <SelectContent>
@@ -266,6 +289,7 @@ export const ProductsManagement: React.FC = () => {
                       value={productFormData.sku_prefix}
                       onChange={(e) => setProductFormData({...productFormData, sku_prefix: e.target.value})}
                       placeholder="PROD"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                 </div>
@@ -283,7 +307,7 @@ export const ProductsManagement: React.FC = () => {
                   <Button type="button" variant="outline" onClick={() => setShowProductDialog(false)}>
                     إلغاء
                   </Button>
-                  <Button type="submit">
+                  <Button type="submit" className="bg-gradient-primary hover:opacity-90">
                     {editingProduct ? 'تحديث' : 'إضافة'}
                   </Button>
                 </div>
@@ -293,14 +317,14 @@ export const ProductsManagement: React.FC = () => {
 
           <Dialog open={showVariantDialog} onOpenChange={setShowVariantDialog}>
             <DialogTrigger asChild>
-              <Button variant="outline" onClick={resetVariantForm}>
+              <Button variant="outline" onClick={resetVariantForm} className="border-accent hover:bg-accent hover:text-accent-foreground">
                 <Palette className="h-4 w-4 ml-2" />
                 متغير جديد
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>
+                <DialogTitle className="text-xl font-bold">
                   {editingVariant ? 'تعديل المتغير' : 'إضافة متغير جديد'}
                 </DialogTitle>
               </DialogHeader>
@@ -310,7 +334,7 @@ export const ProductsManagement: React.FC = () => {
                   <Select value={variantFormData.warehouse_product_id} onValueChange={(value) => 
                     setVariantFormData({...variantFormData, warehouse_product_id: value})
                   }>
-                    <SelectTrigger>
+                    <SelectTrigger className="border-border/50 focus:border-primary">
                       <SelectValue placeholder="اختر المنتج" />
                     </SelectTrigger>
                     <SelectContent>
@@ -332,6 +356,7 @@ export const ProductsManagement: React.FC = () => {
                       onChange={(e) => setVariantFormData({...variantFormData, variant_name: e.target.value})}
                       required
                       placeholder="مقاس كبير - لون أحمر"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                   
@@ -342,6 +367,7 @@ export const ProductsManagement: React.FC = () => {
                       value={variantFormData.sku}
                       onChange={(e) => setVariantFormData({...variantFormData, sku: e.target.value})}
                       placeholder="PROD-001-L-RED"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                 </div>
@@ -353,6 +379,7 @@ export const ProductsManagement: React.FC = () => {
                     value={variantFormData.barcode}
                     onChange={(e) => setVariantFormData({...variantFormData, barcode: e.target.value})}
                     placeholder="1234567890123"
+                    className="border-border/50 focus:border-primary"
                   />
                 </div>
                 
@@ -366,6 +393,7 @@ export const ProductsManagement: React.FC = () => {
                       value={variantFormData.cost_price}
                       onChange={(e) => setVariantFormData({...variantFormData, cost_price: e.target.value})}
                       placeholder="50.00"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                   
@@ -378,6 +406,7 @@ export const ProductsManagement: React.FC = () => {
                       value={variantFormData.selling_price}
                       onChange={(e) => setVariantFormData({...variantFormData, selling_price: e.target.value})}
                       placeholder="100.00"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                 </div>
@@ -391,6 +420,7 @@ export const ProductsManagement: React.FC = () => {
                       value={variantFormData.available_stock}
                       onChange={(e) => setVariantFormData({...variantFormData, available_stock: e.target.value})}
                       placeholder="100"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                   
@@ -402,6 +432,7 @@ export const ProductsManagement: React.FC = () => {
                       value={variantFormData.reserved_stock}
                       onChange={(e) => setVariantFormData({...variantFormData, reserved_stock: e.target.value})}
                       placeholder="0"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                 </div>
@@ -415,6 +446,7 @@ export const ProductsManagement: React.FC = () => {
                       value={variantFormData.reorder_level}
                       onChange={(e) => setVariantFormData({...variantFormData, reorder_level: e.target.value})}
                       placeholder="10"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                   
@@ -426,11 +458,12 @@ export const ProductsManagement: React.FC = () => {
                       value={variantFormData.max_stock_level}
                       onChange={(e) => setVariantFormData({...variantFormData, max_stock_level: e.target.value})}
                       placeholder="1000"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="shelf_location">موقع الرف</Label>
                     <Input
@@ -438,6 +471,7 @@ export const ProductsManagement: React.FC = () => {
                       value={variantFormData.shelf_location}
                       onChange={(e) => setVariantFormData({...variantFormData, shelf_location: e.target.value})}
                       placeholder="A-01-001"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                   
@@ -447,35 +481,37 @@ export const ProductsManagement: React.FC = () => {
                       id="batch_number"
                       value={variantFormData.batch_number}
                       onChange={(e) => setVariantFormData({...variantFormData, batch_number: e.target.value})}
-                      placeholder="BATCH-001"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="expiry_date">تاريخ الانتهاء</Label>
-                    <Input
-                      id="expiry_date"
-                      type="date"
-                      value={variantFormData.expiry_date}
-                      onChange={(e) => setVariantFormData({...variantFormData, expiry_date: e.target.value})}
+                      placeholder="BATCH001"
+                      className="border-border/50 focus:border-primary"
                     />
                   </div>
                 </div>
                 
+                <div>
+                  <Label htmlFor="expiry_date">تاريخ انتهاء الصلاحية</Label>
+                  <Input
+                    id="expiry_date"
+                    type="date"
+                    value={variantFormData.expiry_date}
+                    onChange={(e) => setVariantFormData({...variantFormData, expiry_date: e.target.value})}
+                    className="border-border/50 focus:border-primary"
+                  />
+                </div>
+                
                 <div className="flex items-center space-x-2">
                   <Switch
-                    id="variant_is_active"
+                    id="is_active"
                     checked={variantFormData.is_active}
                     onCheckedChange={(checked) => setVariantFormData({...variantFormData, is_active: checked})}
                   />
-                  <Label htmlFor="variant_is_active">متغير نشط</Label>
+                  <Label htmlFor="is_active">متغير نشط</Label>
                 </div>
                 
                 <div className="flex justify-end space-x-2 pt-4">
                   <Button type="button" variant="outline" onClick={() => setShowVariantDialog(false)}>
                     إلغاء
                   </Button>
-                  <Button type="submit">
+                  <Button type="submit" className="bg-gradient-primary hover:opacity-90">
                     {editingVariant ? 'تحديث' : 'إضافة'}
                   </Button>
                 </div>
@@ -486,45 +522,54 @@ export const ProductsManagement: React.FC = () => {
       </div>
 
       <Tabs defaultValue="products" className="w-full">
-        <TabsList>
-          <TabsTrigger value="products">المنتجات ({warehouseProducts.length})</TabsTrigger>
-          <TabsTrigger value="variants">المتغيرات ({productVariants.length})</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-1 shadow-soft">
+          <TabsTrigger value="products" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow rounded-lg transition-all duration-300">
+            <Package className="h-4 w-4 ml-2" />
+            المنتجات الأساسية ({warehouseProducts.length})
+          </TabsTrigger>
+          <TabsTrigger value="variants" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow rounded-lg transition-all duration-300">
+            <Palette className="h-4 w-4 ml-2" />
+            المتغيرات ({productVariants.length})
+          </TabsTrigger>
         </TabsList>
-        
-        <TabsContent value="products" className="space-y-4">
+
+        <TabsContent value="products" className="mt-6">
           {warehouseProducts.length === 0 ? (
-            <Card>
+            <Card className="border-dashed border-2 border-muted-foreground/30 bg-muted/20">
               <CardContent className="text-center py-12">
-                <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">لا توجد منتجات مضافة</h3>
+                <div className="p-4 rounded-full bg-muted mb-4 mx-auto w-fit">
+                  <Package className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">لا توجد منتجات</h3>
                 <p className="text-muted-foreground mb-4">
-                  ابدأ بإضافة منتجات للمخزن
+                  ابدأ بإضافة أول منتج لمخزنك
                 </p>
+                <Button onClick={resetProductForm} variant="outline" className="border-primary hover:bg-primary hover:text-primary-foreground">
+                  إضافة منتج جديد
+                </Button>
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4">
+            <div className="grid gap-6">
               {warehouseProducts.map((product) => {
                 const variants = getProductVariants(product.id);
-                const supplier = suppliers.find(s => s.id === product.supplier_id);
-                
                 return (
-                  <Card key={product.id}>
+                  <Card key={product.id} className="relative overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm shadow-soft hover:shadow-luxury transition-all duration-300 hover:-translate-y-1">
                     <CardHeader>
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-primary/10 rounded-lg">
-                            <Package className="h-6 w-6 text-primary" />
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 rounded-xl bg-gradient-primary shadow-glow">
+                            <Box className="h-6 w-6 text-primary-foreground" />
                           </div>
                           <div>
-                            <CardTitle className="flex items-center gap-2">
+                            <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2 mb-1">
                               {product.product_name}
-                              <Badge variant={product.is_active ? 'default' : 'secondary'}>
+                              <Badge variant={product.is_active ? 'default' : 'secondary'} className="text-xs">
                                 {product.is_active ? 'نشط' : 'غير نشط'}
                               </Badge>
                             </CardTitle>
                             <p className="text-sm text-muted-foreground">
-                              {product.category} • {product.brand}
+                              {product.description}
                             </p>
                           </div>
                         </div>
@@ -532,29 +577,114 @@ export const ProductsManagement: React.FC = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => startEditProduct(product)}
+                          className="hover:bg-primary/10 hover:text-primary"
                         >
                           <Edit2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </CardHeader>
                     
-                    <CardContent>
-                      <div className="space-y-4">
-                        {product.product_description && (
-                          <p className="text-sm text-muted-foreground">
-                            {product.product_description}
-                          </p>
+                    <CardContent className="space-y-6">
+                      {/* معلومات المنتج */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {product.category && (
+                          <div className="flex items-center gap-3 p-3 bg-card/30 rounded-lg border border-border/30">
+                            <Tag className="h-4 w-4 text-accent" />
+                            <div>
+                              <div className="text-xs text-muted-foreground">الفئة</div>
+                              <div className="font-medium">{product.category}</div>
+                            </div>
+                          </div>
                         )}
                         
-                        <div className="flex items-center justify-between">
-                          <div className="text-sm">
-                            {supplier && (
-                              <span>المورد: {supplier.supplier_name}</span>
+                        {product.brand && (
+                          <div className="flex items-center gap-3 p-3 bg-card/30 rounded-lg border border-border/30">
+                            <Star className="h-4 w-4 text-accent" />
+                            <div>
+                              <div className="text-xs text-muted-foreground">العلامة التجارية</div>
+                              <div className="font-medium">{product.brand}</div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {product.supplier_id && (
+                          <div className="flex items-center gap-3 p-3 bg-card/30 rounded-lg border border-border/30">
+                            <Users className="h-4 w-4 text-accent" />
+                            <div>
+                              <div className="text-xs text-muted-foreground">المورد</div>
+                              <div className="font-medium">{getSupplierName(product.supplier_id)}</div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <Separator className="bg-border/50" />
+
+                      {/* المتغيرات */}
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                          <Palette className="h-4 w-4 text-accent" />
+                          المتغيرات ({variants.length})
+                        </h4>
+                        
+                        {variants.length === 0 ? (
+                          <div className="text-center py-6 border-2 border-dashed border-muted-foreground/30 rounded-lg bg-muted/10">
+                            <p className="text-muted-foreground text-sm">لا توجد متغيرات لهذا المنتج</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-3">
+                            {variants.slice(0, 3).map((variant) => (
+                              <div key={variant.id} className="flex items-center justify-between p-4 bg-card/50 rounded-lg border border-border/30">
+                                <div className="flex items-center gap-3">
+                                  <div className="p-2 rounded-lg bg-gradient-to-r from-accent/20 to-accent/10">
+                                    <Palette className="h-4 w-4 text-accent" />
+                                  </div>
+                                  <div>
+                                    <div className="font-medium text-foreground">{variant.variant_name}</div>
+                                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                                      <span className="text-xs">المخزون: {variant.available_stock}</span>
+                                      <span>السعر: {variant.selling_price ? `${variant.selling_price} ريال` : 'غير محدد'}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Badge 
+                                    variant={variant.available_stock <= variant.reorder_level ? 'destructive' : 'default'} 
+                                    className="text-xs"
+                                  >
+                                    {variant.available_stock <= variant.reorder_level ? 'مخزون منخفض' : 'متوفر'}
+                                  </Badge>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => startEditVariant(variant)}
+                                    className="hover:bg-accent/10 hover:text-accent"
+                                  >
+                                    <Edit2 className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                            {variants.length > 3 && (
+                              <div className="text-center py-2">
+                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                                  عرض {variants.length - 3} متغيرات أخرى
+                                </Button>
+                              </div>
                             )}
                           </div>
-                          <Badge variant="outline">
-                            {variants.length} متغير
-                          </Badge>
+                        )}
+                      </div>
+
+                      {/* تواريخ */}
+                      <div className="flex justify-between items-center text-xs text-muted-foreground border-t border-border/30 pt-4">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          <span>تم الإنشاء: {new Date(product.created_at).toLocaleDateString('ar-SA')}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          <span>آخر تحديث: {new Date(product.updated_at).toLocaleDateString('ar-SA')}</span>
                         </div>
                       </div>
                     </CardContent>
@@ -564,97 +694,101 @@ export const ProductsManagement: React.FC = () => {
             </div>
           )}
         </TabsContent>
-        
-        <TabsContent value="variants" className="space-y-4">
+
+        <TabsContent value="variants" className="mt-6">
           {productVariants.length === 0 ? (
-            <Card>
+            <Card className="border-dashed border-2 border-muted-foreground/30 bg-muted/20">
               <CardContent className="text-center py-12">
-                <Palette className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">لا توجد متغيرات مضافة</h3>
+                <div className="p-4 rounded-full bg-muted mb-4 mx-auto w-fit">
+                  <Palette className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">لا توجد متغيرات</h3>
                 <p className="text-muted-foreground mb-4">
-                  ابدأ بإضافة متغيرات للمنتجات
+                  ابدأ بإضافة متغيرات للمنتجات الموجودة
                 </p>
+                <Button onClick={resetVariantForm} variant="outline" className="border-accent hover:bg-accent hover:text-accent-foreground">
+                  إضافة متغير جديد
+                </Button>
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {productVariants.map((variant) => {
                 const product = warehouseProducts.find(p => p.id === variant.warehouse_product_id);
-                const stockLevel = variant.available_stock || 0;
-                const reorderLevel = variant.reorder_level || 0;
-                const isLowStock = stockLevel <= reorderLevel && reorderLevel > 0;
-                
                 return (
-                  <Card key={variant.id}>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`p-2 rounded-lg ${
-                            isLowStock ? 'bg-orange-100 text-orange-600' : 'bg-primary/10 text-primary'
-                          }`}>
-                            <Palette className="h-6 w-6" />
+                  <Card key={variant.id} className="relative overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm shadow-soft hover:shadow-luxury transition-all duration-300 hover:-translate-y-1">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 rounded-lg bg-gradient-to-r from-accent/20 to-accent/10">
+                            <Palette className="h-5 w-5 text-accent" />
                           </div>
-                          <div>
-                            <CardTitle className="flex items-center gap-2">
-                              {variant.variant_name}
-                              <Badge variant={variant.is_active ? 'default' : 'secondary'}>
-                                {variant.is_active ? 'نشط' : 'غير نشط'}
-                              </Badge>
-                              {isLowStock && (
-                                <Badge variant="destructive">
-                                  <AlertCircle className="h-3 w-3 ml-1" />
-                                  مخزون منخفض
-                                </Badge>
-                              )}
-                            </CardTitle>
-                            <p className="text-sm text-muted-foreground">
-                              {product?.product_name} • SKU: {variant.sku}
-                            </p>
+                          <div className="flex-1">
+                            <CardTitle className="text-lg font-bold text-foreground mb-1">{variant.variant_name}</CardTitle>
+                            <p className="text-sm text-muted-foreground">{product?.product_name}</p>
                           </div>
                         </div>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => startEditVariant(variant)}
+                          className="hover:bg-accent/10 hover:text-accent"
                         >
                           <Edit2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </CardHeader>
                     
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="text-center p-3 bg-blue-50 rounded-lg">
-                          <div className="text-lg font-bold text-blue-600">{stockLevel}</div>
-                          <div className="text-sm text-blue-600">متوفر</div>
-                        </div>
-                        
-                        <div className="text-center p-3 bg-orange-50 rounded-lg">
-                          <div className="text-lg font-bold text-orange-600">{variant.reserved_stock || 0}</div>
-                          <div className="text-sm text-orange-600">محجوز</div>
-                        </div>
-                        
-                        <div className="text-center p-3 bg-green-50 rounded-lg">
-                          <div className="text-lg font-bold text-green-600">
-                            {variant.cost_price ? `${variant.cost_price} ر.س` : '-'}
+                    <CardContent className="space-y-4">
+                      {/* المعلومات الأساسية */}
+                      <div className="space-y-2">
+                        {variant.sku && (
+                          <div className="flex items-center gap-2 text-sm">
+                            <Barcode className="h-3 w-3 text-muted-foreground" />
+                            <span className="font-mono">{variant.sku}</span>
                           </div>
-                          <div className="text-sm text-green-600">التكلفة</div>
+                        )}
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Package className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-sm">المخزون:</span>
+                          </div>
+                          <Badge 
+                            variant={variant.available_stock <= (variant.reorder_level || 0) ? 'destructive' : 'default'}
+                            className="text-xs"
+                          >
+                            {variant.available_stock} قطعة
+                          </Badge>
                         </div>
                         
-                        <div className="text-center p-3 bg-purple-50 rounded-lg">
-                          <div className="text-lg font-bold text-purple-600">
-                            {variant.selling_price ? `${variant.selling_price} ر.س` : '-'}
+                        {variant.selling_price && (
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <DollarSign className="h-3 w-3 text-muted-foreground" />
+                              <span className="text-sm">السعر:</span>
+                            </div>
+                            <span className="font-bold text-primary">{variant.selling_price} ريال</span>
                           </div>
-                          <div className="text-sm text-purple-600">البيع</div>
-                        </div>
+                        )}
                       </div>
-                      
-                      {variant.shelf_location && (
-                        <div className="mt-4 text-sm text-muted-foreground">
-                          الموقع: {variant.shelf_location}
-                          {variant.batch_number && ` • الدفعة: ${variant.batch_number}`}
+
+                      {variant.available_stock <= (variant.reorder_level || 0) && (
+                        <div className="flex items-center gap-2 p-2 bg-destructive/10 border border-destructive/20 rounded-lg">
+                          <AlertCircle className="h-4 w-4 text-destructive" />
+                          <span className="text-xs text-destructive font-medium">مخزون منخفض</span>
                         </div>
                       )}
+                      
+                      {/* الحالة */}
+                      <div className="flex justify-between items-center pt-2 border-t border-border/30">
+                        <Badge variant={variant.is_active ? 'default' : 'secondary'} className="text-xs">
+                          {variant.is_active ? 'نشط' : 'غير نشط'}
+                        </Badge>
+                        <div className="text-xs text-muted-foreground">
+                          {variant.shelf_location || 'موقع غير محدد'}
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 );
