@@ -78,12 +78,36 @@ const ProductsBrowser = () => {
 
   const fetchData = async () => {
     try {
-      // جلب متجر المسوق
-      const { data: storeData } = await supabase
+      // جلب متجر المسوق - التحقق من الجدولين
+      let storeData = null;
+      
+      // أولاً، جرب user_profiles.id
+      const { data: userProfileStore } = await supabase
         .from('affiliate_stores')
         .select('*')
         .eq('profile_id', profile.id)
         .maybeSingle();
+      
+      if (userProfileStore) {
+        storeData = userProfileStore;
+      } else {
+        // إذا لم نجده، جرب profiles.id
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('auth_user_id', profile.auth_user_id)
+          .maybeSingle();
+          
+        if (profileData) {
+          const { data: profileStore } = await supabase
+            .from('affiliate_stores')
+            .select('*')
+            .eq('profile_id', profileData.id)
+            .maybeSingle();
+            
+          storeData = profileStore;
+        }
+      }
 
       setAffiliateStore(storeData);
 
@@ -98,11 +122,11 @@ const ProductsBrowser = () => {
       }
 
       // جلب جميع المنتجات النشطة مع معلومات التجار
-      const { data: productsData, error } = await supabase
+      const { data: productsData } = await supabase
         .from('products')
         .select(`
           *,
-          merchants (
+          merchants!inner (
             id,
             business_name,
             default_commission_rate
@@ -111,14 +135,13 @@ const ProductsBrowser = () => {
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
       setProducts(productsData || []);
-
+      
     } catch (error) {
       console.error('Error fetching data:', error);
       toast({
-        title: "خطأ في تحميل البيانات",
-        description: "تعذر تحميل المنتجات",
+        title: "خطأ في جلب البيانات",
+        description: "تعذر جلب البيانات المطلوبة",
         variant: "destructive",
       });
     } finally {
@@ -320,6 +343,25 @@ const ProductsBrowser = () => {
                   </p>
                   <p className="text-sm text-orange-600 dark:text-orange-300">
                     يمكنك تصفح المنتجات، لكن لإضافتها لمتجرك يجب إنشاء المتجر أولاً من لوحة المسوق
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        
+        {/* تعليمات للمسوق */}
+        {affiliateStore && (
+          <Card className="border-green-200 bg-green-50 dark:bg-green-900/10 mb-6">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                <div>
+                  <p className="font-medium text-green-800 dark:text-green-200">
+                    مرحباً بك في مخزن المنتجات
+                  </p>
+                  <p className="text-sm text-green-600 dark:text-green-300">
+                    يمكنك الآن تصفح المنتجات والضغط على "إضافة لمتجري" لإضافتها إلى متجرك الخاص
                   </p>
                 </div>
               </div>
