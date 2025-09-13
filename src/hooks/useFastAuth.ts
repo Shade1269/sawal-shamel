@@ -96,25 +96,41 @@ export const useFastAuth = () => {
 
     try {
       // Optimized query - select only necessary fields
-      const { data, error } = await supabase
+      // Try user_profiles first, fallback to profiles if not found
+      const { data: up, error: upErr } = await supabase
         .from('user_profiles')
         .select('id, auth_user_id, email, full_name, role, level, is_active, points, total_earnings, avatar_url, phone, created_at')
         .eq('auth_user_id', userId)
         .maybeSingle();
 
-      if (error) {
-        console.error('Error fetching profile:', error);
+      if (upErr) {
+        console.error('Error fetching user_profiles:', upErr);
+      }
+
+      let data = up as any;
+      if (!data) {
+        const { data: p, error: pErr } = await supabase
+          .from('profiles')
+          .select('id, auth_user_id, email, full_name, role, is_active, points, total_earnings, avatar_url, phone, created_at')
+          .eq('auth_user_id', userId)
+          .maybeSingle();
+
+        if (pErr) {
+          console.error('Error fetching profiles:', pErr);
+        }
+        if (p) {
+          data = { ...p, level: (p as any).level ?? 'bronze' } as any;
+        }
+      }
+
+      if (!data) {
         return null;
       }
 
-      if (data) {
-        const profileData = data as FastUserProfile;
-        setProfile(profileData);
-        cacheProfile(profileData);
-        return profileData;
-      }
-
-      return null;
+      const profileData = data as FastUserProfile;
+      setProfile(profileData);
+      cacheProfile(profileData);
+      return profileData;
     } catch (error) {
       console.error('Error fetching user profile:', error);
       return null;
