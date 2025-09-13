@@ -16,6 +16,16 @@ export const BackButton = ({
   const navigate = useNavigate();
 
   const handleBack = () => {
+    // تحقق من الصفحة الحالية لتجنب التنقل الخاطئ
+    const currentPath = window.location.pathname;
+    
+    // إذا كان في صفحة متجر، ارجع للصفحة الرئيسية
+    if (currentPath.startsWith('/store/')) {
+      navigate('/');
+      return;
+    }
+    
+    // إذا كان التاريخ متوفر، ارجع خطوة
     if (window.history.length > 1) {
       navigate(-1);
     } else {

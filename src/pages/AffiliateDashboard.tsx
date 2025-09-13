@@ -440,7 +440,8 @@ const AffiliateDashboard = () => {
                         variant="outline"
                         onClick={() => window.open(`${window.location.origin}/store/${affiliateStore?.store_slug}`, '_blank')}
                       >
-                        <ExternalLink className="h-4 w-4" />
+                        <ExternalLink className="h-4 w-4 ml-2" />
+                        عرض متجري
                       </Button>
                     </div>
                   </div>
