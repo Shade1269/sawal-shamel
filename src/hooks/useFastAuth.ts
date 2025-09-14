@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export interface FastUserProfile {
   id: string;
@@ -36,6 +37,7 @@ export const useFastAuth = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<FastUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   // Get cached profile from memory or localStorage
   const getCachedProfile = useCallback((userId: string) => {
@@ -238,28 +240,93 @@ export const useFastAuth = () => {
     localStorage.removeItem(STORAGE_KEYS.USER_PROFILE + '_uid');
   }, []);
 
-  // Auth functions
-  const signUp = async (email: string, password: string, fullName: string, role: 'merchant' | 'affiliate' | 'customer' = 'customer') => {
+  // Enhanced Auth functions with better error handling and user feedback
+  const signUp = async (email: string, password: string, fullName?: string, username?: string, role: 'merchant' | 'affiliate' | 'customer' = 'affiliate') => {
     try {
+      // First, check for existing user
+      const { data: existingUser } = await supabase
+        .from('user_profiles')
+        .select('email')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (existingUser) {
+        const errorMsg = 'هذا البريد الإلكتروني مستخدم مسبقاً. الرجاء استخدام بريد آخر أو تسجيل الدخول.';
+        toast({
+          title: "خطأ في التسجيل",
+          description: errorMsg,
+          variant: "destructive"
+        });
+        return { error: new Error('Email already exists') };
+      }
+
+      const redirectUrl = `${window.location.origin}/`;
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: redirectUrl,
           data: {
             full_name: fullName,
+            username: username || fullName,
             role: role
           }
         }
       });
 
       if (error) {
+        let errorMessage = error.message;
+        
+        if (error.message.includes('already registered') || error.message.includes('User already registered')) {
+          errorMessage = 'هذا البريد الإلكتروني مستخدم مسبقاً. الرجاء استخدام بريد آخر أو تسجيل الدخول.';
+        } else if (error.message.includes('Password should be at least')) {
+          errorMessage = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+        } else if (error.message.includes('Invalid email')) {
+          errorMessage = 'البريد الإلكتروني غير صحيح';
+        } else if (error.message.includes('weak password')) {
+          errorMessage = 'كلمة المرور ضعيفة. استخدم أحرف وأرقام ورموز';
+        } else if (error.message.includes('signup disabled')) {
+          errorMessage = 'التسجيل معطل حالياً. تواصل مع الدعم الفني';
+        }
+        
+        toast({
+          title: "خطأ في التسجيل",
+          description: errorMessage,
+          variant: "destructive"
+        });
+        
         return { error };
       }
 
+      // Show success message
+      if (data?.user && !data.user.email_confirmed_at) {
+        toast({
+          title: "تم التسجيل بنجاح!",
+          description: "تم إنشاء حسابك بنجاح. يمكنك الآن تسجيل الدخول.",
+        });
+      } else {
+        toast({
+          title: "تم التسجيل بنجاح!",
+          description: "مرحباً بك! تم إنشاء حسابك وتسجيل دخولك تلقائياً.",
+        });
+      }
+      
       return { data, error: null };
-    } catch (error) {
-      console.error('Signup error:', error);
+    } catch (error: any) {
+      console.error('SignUp error:', error);
+      
+      let errorMessage = 'حدث خطأ أثناء إنشاء الحساب';
+      if (error.message.includes('network')) {
+        errorMessage = 'تحقق من اتصال الإنترنت وحاول مرة أخرى';
+      }
+      
+      toast({
+        title: "خطأ في التسجيل",
+        description: errorMessage,
+        variant: "destructive"
+      });
+      
       return { error };
     }
   };
@@ -268,14 +335,75 @@ export const useFastAuth = () => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        password,
+        password
       });
 
       if (error) {
+        let errorMessage = error.message;
+        
+        if (error.message === 'Invalid login credentials') {
+          errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة. تأكد من البيانات أو أنشئ حساب جديد.';
+        } else if (error.message.includes('Invalid email')) {
+          errorMessage = 'البريد الإلكتروني غير صحيح';
+        } else if (error.message.includes('too many requests')) {
+          errorMessage = 'محاولات كثيرة. انتظر قليلاً ثم حاول مرة أخرى';
+        } else if (error.message.includes('Email not confirmed')) {
+          errorMessage = 'البريد الإلكتروني غير مؤكد. تحقق من بريدك الإلكتروني';
+        }
+        
+        toast({
+          title: "خطأ في تسجيل الدخول",
+          description: errorMessage,
+          variant: "destructive"
+        });
+        
         return { error };
       }
 
-      // توجيه المستخدم مباشرةً لداشبورد دوره
+      // Check and create profile if needed
+      if (data?.user) {
+        const { data: profile, error: profileError } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('auth_user_id', data.user.id)
+          .maybeSingle();
+
+        if (profileError && profileError.code !== 'PGRST116') {
+          console.error('Error checking profile:', profileError);
+        }
+
+        if (!profile) {
+          // Create profile if doesn't exist
+          const { data: insertData, error: insertError } = await supabase
+            .from('user_profiles')
+            .insert({
+              auth_user_id: data.user.id,
+              email: data.user.email,
+              full_name: data.user.user_metadata?.full_name || data.user.email,
+              role: 'affiliate'
+            })
+            .select('*')
+            .maybeSingle();
+
+          if (insertError) {
+            console.error('Error creating profile:', insertError);
+            if (!insertError.message.includes('duplicate')) {
+              toast({
+                title: "تحذير",
+                description: "تم تسجيل الدخول بنجاح لكن حدث خطأ في إنشاء الملف الشخصي",
+                variant: "destructive"
+              });
+            }
+          }
+        }
+      }
+      
+      toast({
+        title: "مرحباً بعودتك!",
+        description: "تم تسجيل الدخول بنجاح"
+      });
+
+      // Smart redirect based on role
       const userId = data.user?.id;
       let redirect = '/dashboard';
       if (userId) {
@@ -301,10 +429,21 @@ export const useFastAuth = () => {
       }
 
       window.location.href = redirect;
-
       return { data, error: null };
-    } catch (error) {
-      console.error('Signin error:', error);
+    } catch (error: any) {
+      console.error('SignIn error:', error);
+      
+      let errorMessage = 'حدث خطأ أثناء تسجيل الدخول';
+      if (error.message.includes('network')) {
+        errorMessage = 'تحقق من اتصال الإنترنت وحاول مرة أخرى';
+      }
+      
+      toast({
+        title: "خطأ في تسجيل الدخول",
+        description: errorMessage,
+        variant: "destructive"
+      });
+      
       return { error };
     }
   };
@@ -320,10 +459,14 @@ export const useFastAuth = () => {
       // Try to sign out from Supabase (but don't fail if session is invalid)
       const { error } = await supabase.auth.signOut();
       
-      // Log the error but don't return it - we already cleared local state
       if (error) {
         console.log('Supabase signOut error (ignored):', error);
       }
+      
+      toast({
+        title: "تم تسجيل الخروج بنجاح",
+        description: "إلى اللقاء!"
+      });
 
       // Force navigation to home page
       setTimeout(() => {
@@ -331,8 +474,14 @@ export const useFastAuth = () => {
       }, 100);
       
       return { error: null };
-    } catch (error) {
-      console.error('Signout error:', error);
+    } catch (error: any) {
+      console.error('SignOut error:', error);
+      
+      toast({
+        title: "خطأ في تسجيل الخروج",
+        description: error.message,
+        variant: "destructive"
+      });
       
       // Even if there's an error, clear local state
       setUser(null);

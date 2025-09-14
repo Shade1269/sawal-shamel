@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { DarkModeProvider } from "@/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
-import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Header from "@/components/common/Header";
@@ -93,8 +92,7 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <SupabaseAuthProvider>
-            <FirebaseAuthProvider>
+              <SupabaseAuthProvider>
             <LanguageProvider>
               <DarkModeProvider>
                 <UserDataProvider>
@@ -340,8 +338,7 @@ const App = () => {
               </UserDataProvider>
             </DarkModeProvider>
           </LanguageProvider>
-      </FirebaseAuthProvider>
-    </SupabaseAuthProvider>
+        </SupabaseAuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
     </ErrorBoundary>
