@@ -171,10 +171,7 @@ export const ProductsManagement: React.FC = () => {
 
         if (error) throw error;
 
-        toast({
-          title: "تم تحديث المتغير بنجاح",
-          description: `تم تحديث متغير: ${data.variant_name}`
-        });
+        toast.success(`تم تحديث متغير: ${data.variant_name}`);
       } else {
         // Create new variant
         const { error } = await supabase
@@ -198,10 +195,7 @@ export const ProductsManagement: React.FC = () => {
 
         if (error) throw error;
 
-        toast({
-          title: "تم إنشاء المتغير بنجاح",
-          description: `تم إنشاء متغير: ${data.variant_name}`
-        });
+        toast.success(`تم إنشاء متغير: ${data.variant_name}`);
       }
       
       setShowVariantDialog(false);
@@ -213,11 +207,7 @@ export const ProductsManagement: React.FC = () => {
       
     } catch (error: any) {
       console.error('Error saving variant:', error);
-      toast({
-        title: "خطأ في حفظ المتغير",
-        description: error.message || "حدث خطأ غير متوقع",
-        variant: "destructive"
-      });
+      toast.error(`خطأ في حفظ المتغير: ${error.message || "حدث خطأ غير متوقع"}`);
     }
   };
 
@@ -283,6 +273,11 @@ export const ProductsManagement: React.FC = () => {
     setVariantFormData({
       warehouse_product_id: variant.warehouse_product_id || '',
       variant_name: variant.variant_name || '',
+      color: variant.color || '',
+      size: variant.size || '',
+      material: variant.material || '',
+      variant_sku: variant.variant_sku || '',
+      variant_barcode: variant.variant_barcode || '',
       sku: variant.sku || '',
       barcode: variant.barcode || '',
       cost_price: variant.cost_price?.toString() || '',
@@ -294,7 +289,7 @@ export const ProductsManagement: React.FC = () => {
       shelf_location: variant.shelf_location || '',
       batch_number: variant.batch_number || '',
       expiry_date: variant.expiry_date || '',
-      is_active: variant.is_active
+      is_active: variant.is_active !== undefined ? variant.is_active : true
     });
     setShowVariantDialog(true);
   };
