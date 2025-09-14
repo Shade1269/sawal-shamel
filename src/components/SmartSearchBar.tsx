@@ -116,7 +116,7 @@ const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
           .from('products')
           .select('id, title, description, image_urls, price_sar')
           .ilike('title', `%${searchQuery}%`)
-          .limit(maxResults / categories.length);
+          .limit(maxResults / allowedCategories.length);
 
         if (products) {
           products.forEach(product => {
@@ -134,12 +134,12 @@ const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
       }
 
       // Search users/profiles if category is enabled
-      if (categories.includes('user')) {
+      if (allowedCategories.includes('user')) {
         const { data: profiles } = await supabase
           .from('profiles')
           .select('id, full_name, avatar_url, role')
           .ilike('full_name', `%${searchQuery}%`)
-          .limit(maxResults / categories.length);
+          .limit(maxResults / allowedCategories.length);
 
         if (profiles) {
           profiles.forEach(profile => {
@@ -157,12 +157,12 @@ const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
       }
 
       // Search alliances if category is enabled
-      if (categories.includes('alliance')) {
+      if (allowedCategories.includes('alliance')) {
         const { data: alliances } = await supabase
           .from('alliances')
           .select('id, name, description, logo_url, member_count')
           .ilike('name', `%${searchQuery}%`)
-          .limit(maxResults / categories.length);
+          .limit(maxResults / allowedCategories.length);
 
         if (alliances) {
           alliances.forEach(alliance => {
@@ -215,7 +215,7 @@ const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, [isAuthenticated, categories, maxResults]);
+  }, [isAuthenticated, allowedCategories, maxResults]);
 
   const saveRecentSearch = (searchTerm: string) => {
     const updated = [searchTerm, ...recentSearches.filter(s => s !== searchTerm)].slice(0, 10);
