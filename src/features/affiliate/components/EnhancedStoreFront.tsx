@@ -38,7 +38,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ProductImageCarousel } from "@/features/commerce/components/ProductImageCarousel";
 import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCustomerAuth } from '@/hooks/useCustomerAuth';
+import { useCustomerAuth } from '@/hooks/useUnifiedAuth';
 
 interface Product {
   id: string;

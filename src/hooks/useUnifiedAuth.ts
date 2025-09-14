@@ -1,4 +1,5 @@
 import { useFastAuth } from './useFastAuth';
+import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
 
 /**
  * Unified Auth Hook - يوحد جميع أنظمة المصادقة في واجهة واحدة
@@ -63,6 +64,14 @@ export const useUnifiedAuth = () => {
     canCreateShops,
     canViewAnalytics
   };
+};
+
+/**
+ * Customer Auth Hook - نظام منفصل لمصادقة العملاء في المتاجر
+ * منفصل تماماً عن نظام المسوقين والإداريين
+ */
+export const useCustomerAuth = () => {
+  return useCustomerAuthContext();
 };
 
 // Legacy compatibility - exports the same interface as SupabaseAuthContext

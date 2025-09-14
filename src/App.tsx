@@ -7,6 +7,7 @@ import { DarkModeProvider } from "@/shared/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
+import { CustomerAuthProvider } from "@/contexts/CustomerAuthContext";
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import Header from "@/components/common/Header";
 import { AuthPage } from "@/features/auth";
@@ -119,11 +120,17 @@ const App = () => {
                       <Route path="/about" element={<AboutPage />} />
                       <Route path="/create-admin" element={<CreateAdminPage />} />
           
-                        {/* Store Routes */}
-                        <Route path="/store/:storeSlug" element={<AffiliateStoreFront />} />
-                        <Route path="/store/:storeSlug/auth" element={<StoreAuth />} />
-                        <Route path="/store/:storeSlug/checkout" element={<StoreCheckout />} />
-                        <Route path="/store/:storeSlug/order-confirmation/:orderId" element={<StoreOrderConfirmation />} />
+                        {/* Store Routes - نظام منفصل للعملاء */}
+                        <Route path="/store/*" element={
+                          <CustomerAuthProvider>
+                            <Routes>
+                              <Route path=":storeSlug" element={<AffiliateStoreFront />} />
+                              <Route path=":storeSlug/auth" element={<StoreAuth />} />
+                              <Route path=":storeSlug/checkout" element={<StoreCheckout />} />
+                              <Route path=":storeSlug/order-confirmation/:orderId" element={<StoreOrderConfirmation />} />
+                            </Routes>
+                          </CustomerAuthProvider>
+                        } />
                        
                        {/* Protected Browser */}
                        <Route path="/products-browser" element={

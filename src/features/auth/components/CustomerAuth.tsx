@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Loader2, Phone, Lock, ArrowRight, ArrowLeft } from 'lucide-react';
-import { useCustomerAuth } from '@/hooks/useCustomerAuth';
+import { useCustomerAuth } from '@/hooks/useUnifiedAuth';
 
 interface CustomerAuthProps {
   storeId?: string;
