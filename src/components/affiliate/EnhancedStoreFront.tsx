@@ -83,7 +83,7 @@ interface CartItem {
 }
 
 const EnhancedStoreFront = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { storeSlug } = useParams<{ storeSlug: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -102,12 +102,12 @@ const EnhancedStoreFront = () => {
 
   // Fetch affiliate store data
   const { data: affiliateStore, isLoading: storeLoading, error: storeError } = useQuery({
-    queryKey: ["affiliate-store", slug],
+    queryKey: ["affiliate-store", storeSlug],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("affiliate_stores")
         .select("*")
-        .eq("store_slug", slug)
+        .eq("store_slug", storeSlug)
         .eq("is_active", true)
         .maybeSingle();
 
@@ -226,28 +226,12 @@ const EnhancedStoreFront = () => {
           <div className="space-y-4">
             <h1 className="text-2xl font-bold text-destructive">المتجر غير موجود</h1>
             <p className="text-muted-foreground">
-              لم يتم العثور على متجر بالرابط: <code className="bg-muted px-2 py-1 rounded text-sm">/{slug}</code>
+              تعذر العثور على هذا المتجر أو أنه غير نشط. تأكد من صحة الرابط أو تواصل مع دعم المتجر.
             </p>
-            <div className="text-sm text-muted-foreground space-y-3">
-              <p className="font-medium">المتاجر المتاحة:</p>
-              <div className="bg-muted p-4 rounded-lg space-y-2 text-right">
-                <div className="text-xs text-primary cursor-pointer hover:underline" onClick={() => navigate('/store/nolici-fashion-store')}>
-                  /store/nolici-fashion-store
-                </div>
-                <div className="text-xs text-primary cursor-pointer hover:underline" onClick={() => navigate('/store/wibax-accessories')}>
-                  /store/wibax-accessories  
-                </div>
-                <div className="text-xs text-primary cursor-pointer hover:underline" onClick={() => navigate('/store/ahmad-zaher-store')}>
-                  /store/ahmad-zaher-store
-                </div>
-                <div className="text-xs text-primary cursor-pointer hover:underline" onClick={() => navigate('/store/maram-store-1')}>
-                  /store/maram-store-1
-                </div>
-              </div>
+            <div className="flex items-center justify-center gap-3">
+              <Button variant="secondary" onClick={() => navigate(-1)}>رجوع</Button>
+              <Button onClick={() => navigate('/dashboard')}>الذهاب للوحة التحكم</Button>
             </div>
-            <Button onClick={() => navigate('/')}>
-              العودة للرئيسية
-            </Button>
           </div>
         </div>
       </div>
