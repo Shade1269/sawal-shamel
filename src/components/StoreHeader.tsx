@@ -17,7 +17,7 @@ import {
   Phone,
   Mail
 } from 'lucide-react';
-import { SimpleCart } from './SimpleCart';
+import { SimpleCart } from '@/features/commerce';
 
 interface StoreHeaderProps {
   store: {

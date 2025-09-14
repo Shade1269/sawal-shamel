@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, ShoppingBag, MapPin, Phone, Mail, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useSimpleCart } from '@/components/SimpleCart';
+import { useSimpleCart } from '@/features/commerce';
 
 interface AffiliateStore {
   id: string;
