@@ -18,6 +18,7 @@ interface CheckoutFlowProps {
   onCancel: () => void;
   shopId: string;
   storeSettings: any;
+  affiliateStoreId?: string; // إضافة معرف متجر المسوق
 }
 
 interface CustomerInfo {
@@ -34,7 +35,8 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
   onOrderComplete,
   onCancel,
   shopId,
-  storeSettings
+  storeSettings,
+  affiliateStoreId
 }) => {
   console.log('CheckoutFlow: Component initialized with:', { 
     cartItems: cart.length, 
@@ -65,6 +67,9 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
       // First, save the order to database
       console.log('Creating order in database...', { orderNumber, shopId, cart });
       
+      // حساب عمولة المسوق إذا كان موجود
+      const affiliateCommission = affiliateStoreId ? totalPrice * 0.1 : 0; // 10% عمولة افتراضية
+
       const orderDbData = {
         shop_id: shopId,
         customer_name: customerInfo.name,
@@ -79,6 +84,8 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
           area: customerInfo.area,
           email: customerInfo.email
         },
+        affiliate_store_id: affiliateStoreId,
+        affiliate_commission_sar: affiliateCommission,
         status: 'PENDING' as const
       };
 

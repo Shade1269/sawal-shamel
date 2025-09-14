@@ -21,26 +21,10 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { UnifiedOrdersService, UnifiedOrderWithItems } from '@/lib/unifiedOrdersService';
 
-interface Order {
-  id: string;
-  customer_name: string;
-  customer_phone: string;
-  customer_email?: string;
-  shipping_address: any;
-  total_amount_sar: number;
-  payment_status: string;
-  payment_method: string;
-  order_status: string;
-  created_at: string;
-  items: Array<{
-    id: string;
-    product_title: string;
-    quantity: number;
-    unit_price_sar: number;
-    total_price_sar: number;
-  }>;
-}
+// استخدام النوع الموحد بدلاً من التعريف المحلي
+type Order = UnifiedOrderWithItems;
 
 interface OrdersManagementProps {
   shopId?: string;
@@ -59,30 +43,13 @@ export const OrdersManagement: React.FC<OrdersManagementProps> = ({ shopId }) =>
 
   const fetchOrders = async () => {
     try {
-      // جلب الطلبات
-      const { data: ordersData, error: ordersError } = await supabase
-        .from('simple_orders')
-        .select('*')
-        .order('created_at', { ascending: false });
+      // استخدام الخدمة الموحدة لجلب الطلبات
+      const ordersData = await UnifiedOrdersService.getOrdersWithItems({
+        shop_id: shopId,
+        limit: 100
+      });
 
-      if (ordersError) throw ordersError;
-
-      // جلب عناصر كل طلب
-      const ordersWithItems = await Promise.all(
-        (ordersData || []).map(async (order) => {
-          const { data: items } = await supabase
-            .from('simple_order_items')
-            .select('*')
-            .eq('order_id', order.id);
-
-          return {
-            ...order,
-            items: items || []
-          };
-        })
-      );
-
-      setOrders(ordersWithItems);
+      setOrders(ordersData);
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast.error('خطأ في جلب الطلبات');
@@ -93,12 +60,12 @@ export const OrdersManagement: React.FC<OrdersManagementProps> = ({ shopId }) =>
 
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
-      const { error } = await supabase
-        .from('simple_orders')
-        .update({ order_status: newStatus })
-        .eq('id', orderId);
-
-      if (error) throw error;
+      // استخدام الخدمة الموحدة لتحديث حالة الطلب
+      const success = await UnifiedOrdersService.updateOrderStatus(orderId, newStatus);
+      
+      if (!success) {
+        throw new Error('فشل في تحديث حالة الطلب');
+      }
 
       toast.success('تم تحديث حالة الطلب');
       fetchOrders();
@@ -136,7 +103,7 @@ export const OrdersManagement: React.FC<OrdersManagementProps> = ({ shopId }) =>
     const matchesSearch = order.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          order.customer_phone.includes(searchQuery) ||
                          order.id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = selectedStatus === 'all' || order.order_status === selectedStatus;
+    const matchesStatus = selectedStatus === 'all' || order.status === selectedStatus;
     return matchesSearch && matchesStatus;
   });
 
@@ -195,7 +162,7 @@ export const OrdersManagement: React.FC<OrdersManagementProps> = ({ shopId }) =>
             <Separator className="my-4" />
             <div className="text-right">
               <p className="text-lg font-bold text-primary">
-                المجموع: {order.total_amount_sar} ريال
+                المجموع: {order.total} ريال
               </p>
             </div>
           </div>
@@ -329,13 +296,13 @@ export const OrdersManagement: React.FC<OrdersManagementProps> = ({ shopId }) =>
                         {new Date(order.created_at).toLocaleDateString('ar-SA')}
                       </p>
                     </div>
-                    <Badge className={getStatusColor(order.order_status)}>
-                      {getStatusText(order.order_status)}
+                    <Badge className={getStatusColor(order.status)}>
+                      {getStatusText(order.status)}
                     </Badge>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-primary">
-                      {order.total_amount_sar} ريال
+                      {order.total} ريال
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {order.items.length} منتج
@@ -373,7 +340,7 @@ export const OrdersManagement: React.FC<OrdersManagementProps> = ({ shopId }) =>
                     عرض التفاصيل
                   </Button>
                   <div className="flex gap-2">
-                    {order.order_status === 'PENDING' && (
+                    {order.status === 'PENDING' && (
                       <Button
                         size="sm"
                         onClick={() => updateOrderStatus(order.id, 'CONFIRMED')}
@@ -381,7 +348,7 @@ export const OrdersManagement: React.FC<OrdersManagementProps> = ({ shopId }) =>
                         تأكيد الطلب
                       </Button>
                     )}
-                    {order.order_status === 'CONFIRMED' && (
+                    {order.status === 'CONFIRMED' && (
                       <Button
                         size="sm"
                         onClick={() => updateOrderStatus(order.id, 'PROCESSING')}

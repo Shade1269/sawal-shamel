@@ -1626,6 +1626,8 @@ export type Database = {
       }
       ecommerce_orders: {
         Row: {
+          affiliate_commission_sar: number | null
+          affiliate_store_id: string | null
           cancelled_at: string | null
           confirmed_at: string | null
           coupon_code: string | null
@@ -1657,6 +1659,8 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          affiliate_commission_sar?: number | null
+          affiliate_store_id?: string | null
           cancelled_at?: string | null
           confirmed_at?: string | null
           coupon_code?: string | null
@@ -1688,6 +1692,8 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          affiliate_commission_sar?: number | null
+          affiliate_store_id?: string | null
           cancelled_at?: string | null
           confirmed_at?: string | null
           coupon_code?: string | null
@@ -2977,6 +2983,7 @@ export type Database = {
       order_items: {
         Row: {
           commission_rate: number
+          created_at: string | null
           id: string
           line_total_sar: number
           merchant_id: string
@@ -2988,6 +2995,7 @@ export type Database = {
         }
         Insert: {
           commission_rate?: number
+          created_at?: string | null
           id?: string
           line_total_sar: number
           merchant_id: string
@@ -2999,6 +3007,7 @@ export type Database = {
         }
         Update: {
           commission_rate?: number
+          created_at?: string | null
           id?: string
           line_total_sar?: number
           merchant_id?: string
@@ -3163,6 +3172,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          affiliate_commission_sar: number | null
           affiliate_store_id: string | null
           created_at: string
           customer_name: string
@@ -3184,6 +3194,7 @@ export type Database = {
           vat_sar: number
         }
         Insert: {
+          affiliate_commission_sar?: number | null
           affiliate_store_id?: string | null
           created_at?: string
           customer_name: string
@@ -3205,6 +3216,7 @@ export type Database = {
           vat_sar?: number
         }
         Update: {
+          affiliate_commission_sar?: number | null
           affiliate_store_id?: string | null
           created_at?: string
           customer_name?: string
@@ -6549,6 +6561,48 @@ export type Database = {
         }
         Relationships: []
       }
+      v_order_items_unified: {
+        Row: {
+          commission_rate: number | null
+          commission_sar: number | null
+          created_at: string | null
+          id: string | null
+          merchant_id: string | null
+          order_id: string | null
+          product_id: string | null
+          product_title: string | null
+          quantity: number | null
+          source_table: string | null
+          total_price_sar: number | null
+          unit_price_sar: number | null
+        }
+        Relationships: []
+      }
+      v_orders_unified: {
+        Row: {
+          affiliate_commission_sar: number | null
+          affiliate_store_id: string | null
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          id: string | null
+          order_number: string | null
+          payment_method: string | null
+          payment_status: string | null
+          shipping: number | null
+          shipping_address: Json | null
+          shop_id: string | null
+          source_table: string | null
+          status: string | null
+          subtotal: number | null
+          tax: number | null
+          total: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       add_loyalty_points: {
@@ -6672,6 +6726,25 @@ export type Database = {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
       }
+      get_unified_orders_with_items: {
+        Args: {
+          p_affiliate_store_id?: string
+          p_limit?: number
+          p_offset?: number
+          p_shop_id?: string
+        }
+        Returns: {
+          created_at: string
+          customer_name: string
+          customer_phone: string
+          items: Json
+          order_id: string
+          order_number: string
+          source_table: string
+          status: string
+          total: number
+        }[]
+      }
       get_user_role_cached: {
         Args: { user_id: string }
         Returns: string
@@ -6724,6 +6797,10 @@ export type Database = {
       update_customer_tier: {
         Args: { loyalty_record_id: string }
         Returns: undefined
+      }
+      update_unified_order_status: {
+        Args: { p_new_status: string; p_order_id: string }
+        Returns: boolean
       }
       update_user_role: {
         Args: {
