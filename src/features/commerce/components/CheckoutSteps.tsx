@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, ArrowLeft, ShoppingCart, Truck, CreditCard, CheckCircle, Package, User, MapPin, Phone } from 'lucide-react';
+import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 
 interface CartItem {
   product: any;
@@ -36,6 +37,7 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
   onCancel,
   shopSettings
 }) => {
+  const { customer } = useCustomerAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: '',
@@ -45,6 +47,18 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
     city: '',
     area: ''
   });
+
+  // ملء بيانات العميل المسجل دخول تلقائياً
+  useEffect(() => {
+    if (customer) {
+      setCustomerInfo(prev => ({
+        ...prev,
+        name: customer.full_name || '',
+        phone: customer.phone || '',
+        email: customer.email || ''
+      }));
+    }
+  }, [customer]);
   const [selectedShipping, setSelectedShipping] = useState('');
   const [selectedPayment, setSelectedPayment] = useState('');
   const [orderNumber, setOrderNumber] = useState('');

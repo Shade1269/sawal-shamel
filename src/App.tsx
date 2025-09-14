@@ -29,6 +29,7 @@ const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
 // Direct imports for store components to avoid lazy loading issues
 import StoreCheckout from "./pages/StoreCheckout";
 import StoreOrderConfirmation from "./pages/StoreOrderConfirmation";
+import StoreAuth from "./pages/StoreAuth";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AdminOrderManagement = lazy(() => import("./pages/AdminOrderManagement"));
 // FastAuth removed
@@ -118,10 +119,11 @@ const App = () => {
                       <Route path="/about" element={<AboutPage />} />
                       <Route path="/create-admin" element={<CreateAdminPage />} />
           
-                       {/* Store Routes */}
-                       <Route path="/store/:storeSlug" element={<AffiliateStoreFront />} />
-                       <Route path="/store/:storeSlug/checkout" element={<StoreCheckout />} />
-                       <Route path="/store/:storeSlug/order-confirmation/:orderId" element={<StoreOrderConfirmation />} />
+                        {/* Store Routes */}
+                        <Route path="/store/:storeSlug" element={<AffiliateStoreFront />} />
+                        <Route path="/store/:storeSlug/auth" element={<StoreAuth />} />
+                        <Route path="/store/:storeSlug/checkout" element={<StoreCheckout />} />
+                        <Route path="/store/:storeSlug/order-confirmation/:orderId" element={<StoreOrderConfirmation />} />
                        
                        {/* Protected Browser */}
                        <Route path="/products-browser" element={

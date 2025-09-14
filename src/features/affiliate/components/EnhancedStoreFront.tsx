@@ -38,6 +38,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ProductImageCarousel } from "@/features/commerce/components/ProductImageCarousel";
 import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 
 interface Product {
   id: string;
@@ -86,6 +87,7 @@ const EnhancedStoreFront = () => {
   const { storeSlug } = useParams<{ storeSlug: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isAuthenticated, customer } = useCustomerAuth();
   
   // States
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -207,6 +209,42 @@ const EnhancedStoreFront = () => {
   const cartTotal = cart.reduce((sum, item) => sum + (item.product.final_price || item.product.price_sar) * item.quantity, 0);
   const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  // التحقق من المصادقة عند الدفع
+  const handleCheckoutClick = () => {
+    if (!isAuthenticated) {
+      // حفظ السلة في localStorage قبل التحويل للمصادقة
+      localStorage.setItem('pending_cart', JSON.stringify(cart));
+      // التحويل لصفحة المصادقة مع العودة للمتجر
+      navigate(`/store/${storeSlug}/auth?returnUrl=/store/${storeSlug}`);
+      return;
+    }
+    
+    // إذا كان مسجل دخول، فتح الـ checkout مباشرة
+    setShowCart(false);
+    setShowCheckout(true);
+  };
+
+  // استرداد السلة المحفوظة عند العودة من المصادقة
+  useEffect(() => {
+    if (isAuthenticated) {
+      const pendingCart = localStorage.getItem('pending_cart');
+      if (pendingCart) {
+        try {
+          const savedCart = JSON.parse(pendingCart);
+          setCart(savedCart);
+          localStorage.removeItem('pending_cart');
+          // فتح الـ checkout مباشرة إذا كان هناك سلة محفوظة
+          if (savedCart.length > 0) {
+            setShowCheckout(true);
+          }
+        } catch (error) {
+          console.error('خطأ في استرداد السلة:', error);
+          localStorage.removeItem('pending_cart');
+        }
+      }
+    }
+  }, [isAuthenticated]);
+
   if (storeLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -268,6 +306,14 @@ const EnhancedStoreFront = () => {
             </div>
             
             <div className="flex items-center gap-2">
+              {/* معلومات العميل المسجل دخول */}
+              {isAuthenticated && customer && (
+                <div className="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-800 rounded-full text-sm border border-green-200">
+                  <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                  <span className="font-medium">{customer.full_name}</span>
+                </div>
+              )}
+              
               <Sheet open={showCart} onOpenChange={setShowCart}>
                 <SheetTrigger asChild>
                   <Button variant="outline" className="relative">
@@ -340,10 +386,7 @@ const EnhancedStoreFront = () => {
                           </div>
                           <Button 
                             className="w-full" 
-                            onClick={() => {
-                              setShowCart(false);
-                              setShowCheckout(true);
-                            }}
+                            onClick={handleCheckoutClick}
                           >
                             <ArrowRight className="h-4 w-4 ml-2" />
                             إتمام الطلب
