@@ -105,7 +105,15 @@ const StoreHeader = () => {
         {/* الأدوات اليمنى */}
         <div className="flex items-center gap-3">
           {/* السلة */}
-          <Button variant="outline" size="sm" className="relative">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="relative"
+            onClick={() => {
+              // فتح صفحة السلة أو استخدم Sheet
+              navigate(`/store/${storeSlug}/cart`);
+            }}
+          >
             <ShoppingCart className="h-4 w-4" />
             {cartItemsCount > 0 && (
               <Badge 
