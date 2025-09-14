@@ -3,36 +3,37 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-// Type definitions matching the database schema
+// Type definitions matching the actual database schema
 export interface Warehouse {
   id: string;
   name: string;
   code: string;
-  location?: string;
-  address?: any;
-  manager_id?: string;
-  shop_id?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  phone?: string;
+  email?: string;
+  manager_name?: string;
+  storage_capacity?: number;
   is_active: boolean;
-  capacity_limit?: number;
-  current_utilization: number;
   created_at: string;
   updated_at: string;
 }
 
 export interface InventoryItem {
   id: string;
-  product_id: string;
-  warehouse_id: string;
+  warehouse_id?: string;
+  product_variant_id?: string;
   sku: string;
-  quantity_available: number;
-  quantity_reserved: number;
-  quantity_on_order: number;
-  reorder_level: number;
+  quantity_available?: number;
+  quantity_reserved?: number;
+  quantity_on_order?: number;
+  reorder_level?: number;
   max_stock_level?: number;
   unit_cost?: number;
-  location_in_warehouse?: string;
-  batch_number?: string;
+  location?: string;
   expiry_date?: string;
+  batch_number?: string;
   last_counted_at?: string;
   created_at: string;
   updated_at: string;
@@ -42,58 +43,49 @@ export interface InventoryItem {
 
 export interface InventoryMovement {
   id: string;
-  inventory_item_id: string;
-  movement_type: 'IN' | 'OUT' | 'TRANSFER' | 'ADJUSTMENT';
+  movement_number: string;
+  movement_type: string;
+  product_variant_id?: string;
   quantity: number;
   reference_type?: string;
   reference_id?: string;
-  reference_number?: string;
-  reason?: string;
-  performed_by?: string;
   notes?: string;
+  created_by?: string;
   created_at: string;
-  inventory_item?: {
-    id: string;
-    sku: string;
-    product?: { title: string };
-    warehouse?: { name: string };
-  };
+  inventory_item?: any;
 }
 
 export interface StockAlert {
   id: string;
-  inventory_item_id: string;
-  alert_type: 'LOW_STOCK' | 'OUT_OF_STOCK' | 'OVERSTOCK' | 'EXPIRING_SOON';
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  alert_type: string;
+  priority: string;
   message: string;
-  is_resolved: boolean;
-  resolved_at?: string;
-  resolved_by?: string;
+  title?: string;
+  is_read?: boolean;
+  read_at?: string;
+  product_variant_id?: string;
+  warehouse_product_id?: string;
+  return_id?: string;
+  metadata?: any;
+  created_for_role?: string[];
   created_at: string;
-  inventory_item?: {
-    id: string;
-    sku: string;
-    product?: { title: string };
-    warehouse?: { name: string };
-  };
+  inventory_item?: any;
 }
 
 export interface InventoryReservation {
   id: string;
   inventory_item_id: string;
-  order_id?: string;
-  reserved_quantity: number;
-  status: 'ACTIVE' | 'FULFILLED' | 'CANCELLED' | 'EXPIRED';
+  quantity_reserved: number;
+  reservation_type?: string;
+  reserved_for?: string;
+  status: string;
   expires_at?: string;
   created_by?: string;
+  notes?: string;
+  warehouse_id?: string;
   created_at: string;
   updated_at: string;
-  inventory_item?: {
-    id: string;
-    sku: string;
-    product?: { title: string };
-    warehouse?: { name: string };
-  };
+  inventory_item?: any;
 }
 
 export interface Supplier {
@@ -232,7 +224,7 @@ export function useInventoryManagement() {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as Warehouse[];
+      return data;
     }
   });
 
@@ -241,15 +233,11 @@ export function useInventoryManagement() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('inventory_items')
-        .select(`
-          *,
-          product:products!inventory_items_product_id_fkey(title),
-          warehouse:warehouses!inventory_items_warehouse_id_fkey(name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as InventoryItem[];
+      return data;
     }
   });
 
@@ -258,19 +246,11 @@ export function useInventoryManagement() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('inventory_movements')
-        .select(`
-          *,
-          inventory_item:inventory_items!inventory_movements_inventory_item_id_fkey(
-            id,
-            sku,
-            product:products!inventory_items_product_id_fkey(title),
-            warehouse:warehouses!inventory_items_warehouse_id_fkey(name)
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as InventoryMovement[];
+      return data;
     }
   });
 
@@ -279,20 +259,12 @@ export function useInventoryManagement() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('inventory_alerts')
-        .select(`
-          *,
-          inventory_item:inventory_items!inventory_alerts_inventory_item_id_fkey(
-            id,
-            sku,
-            product:products!inventory_items_product_id_fkey(title),
-            warehouse:warehouses!inventory_items_warehouse_id_fkey(name)
-          )
-        `)
-        .eq('is_resolved', false)
+        .select('*')
+        .eq('is_read', false)
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as StockAlert[];
+      return data;
     }
   });
 
@@ -301,19 +273,11 @@ export function useInventoryManagement() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('inventory_reservations')
-        .select(`
-          *,
-          inventory_item:inventory_items!inventory_reservations_inventory_item_id_fkey(
-            id,
-            sku,
-            product:products!inventory_items_product_id_fkey(title),
-            warehouse:warehouses!inventory_items_warehouse_id_fkey(name)
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as InventoryReservation[];
+      return data;
     }
   });
 
@@ -418,8 +382,8 @@ export function useInventoryManagement() {
       const { data, error } = await supabase
         .from('inventory_alerts')
         .update({ 
-          is_resolved: true, 
-          resolved_at: new Date().toISOString() 
+          is_read: true, 
+          read_at: new Date().toISOString() 
         })
         .eq('id', alertId)
         .select()

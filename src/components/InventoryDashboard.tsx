@@ -2,95 +2,105 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { useInventoryManagement } from '@/hooks/useInventoryManagement';
+import { InventorySetupCard } from './InventorySetupCard';
 import { 
   Package, 
   AlertTriangle, 
-  TrendingDown, 
-  DollarSign,
-  Warehouse,
-  Clock,
-  ShoppingCart,
-  Activity
+  TrendingUp, 
+  Warehouse, 
+  Activity 
 } from 'lucide-react';
-import { useInventoryManagement } from '@/hooks/useInventoryManagement';
 
-export const InventoryDashboard: React.FC = () => {
-  const { loading, getInventoryAnalytics, warehouses, alerts, inventoryItems, movements } = useInventoryManagement();
+export function InventoryDashboard() {
+  const { 
+    warehouses, 
+    inventoryItems, 
+    alerts, 
+    movements, 
+    loading, 
+    getInventoryAnalytics 
+  } = useInventoryManagement();
 
   if (loading) {
-    return (
-      <div className="p-6 space-y-6">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري تحميل بيانات المخزون...</p>
-        </div>
-      </div>
-    );
+    return <div>جاري التحميل...</div>;
+  }
+
+  // إذا لم توجد بيانات، اعرض كارت الإعداد
+  if (warehouses.length === 0 && inventoryItems.length === 0) {
+    return <InventorySetupCard />;
   }
 
   const analytics = getInventoryAnalytics();
-  const recentMovements = movements.slice(0, 5);
-
-  const alertsByPriority = {
-    critical: alerts.filter(a => a.priority === 'CRITICAL').length,
-    high: alerts.filter(a => a.priority === 'HIGH').length,
-    medium: alerts.filter(a => a.priority === 'MEDIUM').length,
-    low: alerts.filter(a => a.priority === 'LOW').length
-  };
 
   return (
-    <div className="p-6 space-y-6" dir="rtl">
-      {/* الإحصائيات الرئيسية */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">لوحة المخزون</h1>
+          <p className="text-muted-foreground">إدارة وتتبع المخزون</p>
+        </div>
+      </div>
+
+      {/* إحصائيات سريعة */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي المنتجات</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analytics.totalItems}</div>
-            <p className="text-xs text-muted-foreground">
-              في {warehouses.length} مخزن
-            </p>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">إجمالي المنتجات</p>
+                <p className="text-2xl font-bold text-primary">{analytics.totalItems}</p>
+              </div>
+              <Package className="h-8 w-8 text-primary" />
+            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">مخزون منخفض</CardTitle>
-            <TrendingDown className="h-4 w-4 text-destructive" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-destructive">{analytics.lowStockItems}</div>
-            <p className="text-xs text-muted-foreground">
-              يحتاج إعادة طلب
-            </p>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">مخزون منخفض</p>
+                <p className="text-2xl font-bold text-orange-600">{analytics.lowStockItems}</p>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-orange-600" />
+            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">نفد من المخزون</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-destructive" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-destructive">{analytics.outOfStockItems}</div>
-            <p className="text-xs text-muted-foreground">
-              غير متوفر
-            </p>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">نفد المخزون</p>
+                <p className="text-2xl font-bold text-red-600">{analytics.outOfStockItems}</p>
+              </div>
+              <Package className="h-8 w-8 text-red-600" />
+            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">قيمة المخزون</CardTitle>
-            <DollarSign className="h-4 w-4 text-accent" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">{analytics.totalValue.toFixed(2)} ر.س</div>
-            <p className="text-xs text-muted-foreground">
-              إجمالي القيمة
-            </p>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">قيمة المخزون</p>
+                <p className="text-2xl font-bold text-green-600">{analytics.totalValue.toFixed(0)} ريال</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">المخازن النشطة</p>
+                <p className="text-2xl font-bold text-blue-600">{warehouses.filter(w => w.is_active).length}</p>
+              </div>
+              <Warehouse className="h-8 w-8 text-blue-600" />
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -101,54 +111,25 @@ export const InventoryDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5" />
-              التنبيهات النشطة
+              التنبيهات الحديثة
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {alerts.length === 0 ? (
-              <div className="text-center text-muted-foreground py-4">
-                لا توجد تنبيهات نشطة
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 bg-red-50 rounded-lg">
-                    <div className="text-2xl font-bold text-red-600">{alertsByPriority.critical}</div>
-                    <div className="text-sm text-red-600">حرجة</div>
+          <CardContent>
+            <div className="space-y-2">
+              {alerts.length > 0 ? alerts.slice(0, 5).map((alert) => (
+                <div key={alert.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{alert.title || alert.message}</p>
+                    <p className="text-xs text-muted-foreground">{alert.alert_type}</p>
                   </div>
-                  <div className="text-center p-3 bg-orange-50 rounded-lg">
-                    <div className="text-2xl font-bold text-orange-600">{alertsByPriority.high}</div>
-                    <div className="text-sm text-orange-600">عالية</div>
-                  </div>
+                  <Badge variant={alert.priority === 'high' ? 'destructive' : 'secondary'}>
+                    {alert.priority}
+                  </Badge>
                 </div>
-                
-                <div className="space-y-2">
-                  {alerts.slice(0, 3).map((alert) => (
-                    <div key={alert.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex-1">
-                        <div className="text-sm font-medium">
-                          {alert.inventory_item?.product?.title}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {alert.message}
-                        </div>
-                      </div>
-                      <Badge 
-                        variant={
-                          alert.priority === 'CRITICAL' ? 'destructive' :
-                          alert.priority === 'HIGH' ? 'default' :
-                          'secondary'
-                        }
-                      >
-                        {alert.priority === 'CRITICAL' ? 'حرج' :
-                         alert.priority === 'HIGH' ? 'عالي' :
-                         alert.priority === 'MEDIUM' ? 'متوسط' : 'منخفض'}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
+              )) : (
+                <p className="text-sm text-muted-foreground text-center py-4">لا توجد تنبيهات</p>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -157,48 +138,40 @@ export const InventoryDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Activity className="h-5 w-5" />
-              آخر حركات المخزون
+              آخر الحركات
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {recentMovements.length === 0 ? (
-              <div className="text-center text-muted-foreground py-4">
-                لا توجد حركات حديثة
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {recentMovements.map((movement) => (
-                  <div key={movement.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-full ${
-                        movement.movement_type === 'IN' ? 'bg-green-100 text-green-600' :
-                        movement.movement_type === 'OUT' ? 'bg-red-100 text-red-600' :
-                        'bg-blue-100 text-blue-600'
-                      }`}>
-                        {movement.movement_type === 'IN' ? '+' :
-                         movement.movement_type === 'OUT' ? '-' : '↔'}
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium">
-                          {movement.inventory_item?.product?.title}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {movement.inventory_item?.warehouse?.name}
-                        </div>
-                      </div>
+          <CardContent>
+            <div className="space-y-2">
+              {movements.length > 0 ? movements.slice(0, 5).map((movement) => (
+                <div key={movement.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                      movement.movement_type === 'IN' ? 'bg-green-100 text-green-600' :
+                      movement.movement_type === 'OUT' ? 'bg-red-100 text-red-600' :
+                      'bg-blue-100 text-blue-600'
+                    }`}>
+                      {movement.movement_type === 'IN' ? '+' :
+                       movement.movement_type === 'OUT' ? '-' : '↔'}
                     </div>
-                    <div className="text-left">
-                      <div className="text-sm font-medium">
-                        {movement.quantity} قطعة
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {new Date(movement.created_at).toLocaleDateString('ar-SA')}
-                      </div>
+                    <div>
+                      <p className="text-sm font-medium">{movement.movement_type}</p>
+                      <p className="text-xs text-muted-foreground">
+                        الكمية: {movement.quantity}
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                  <div className="text-left">
+                    <p className="text-sm font-bold">{movement.quantity}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(movement.created_at).toLocaleDateString('ar-SA')}
+                    </p>
+                  </div>
+                </div>
+              )) : (
+                <p className="text-sm text-muted-foreground text-center py-4">لا توجد حركات</p>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -215,8 +188,6 @@ export const InventoryDashboard: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {warehouses.map((warehouse) => {
               const warehouseItems = inventoryItems.filter(item => item.warehouse_id === warehouse.id);
-              const utilizationPercent = warehouse.capacity_limit ? 
-                (warehouse.current_utilization / warehouse.capacity_limit) * 100 : 0;
 
               return (
                 <div key={warehouse.id} className="p-4 border rounded-lg">
@@ -226,23 +197,16 @@ export const InventoryDashboard: React.FC = () => {
                       {warehouse.is_active ? 'نشط' : 'غير نشط'}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {warehouse.location || 'لا يوجد موقع محدد'}
-                  </p>
-                  <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground">{warehouse.address || warehouse.city}</p>
+                  <div className="space-y-2 mt-3">
                     <div className="flex justify-between text-sm">
                       <span>عدد المنتجات:</span>
                       <span>{warehouseItems.length}</span>
                     </div>
-                    {warehouse.capacity_limit && (
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-sm">
-                          <span>الاستخدام:</span>
-                          <span>{utilizationPercent.toFixed(1)}%</span>
-                        </div>
-                        <Progress value={utilizationPercent} className="h-2" />
-                      </div>
-                    )}
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">السعة:</span>
+                      <p className="text-lg font-bold">{warehouse.storage_capacity || 'غير محدد'}</p>
+                    </div>
                   </div>
                 </div>
               );
@@ -252,4 +216,4 @@ export const InventoryDashboard: React.FC = () => {
       </Card>
     </div>
   );
-};
+}

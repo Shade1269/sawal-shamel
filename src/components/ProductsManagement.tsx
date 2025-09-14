@@ -870,7 +870,7 @@ export const ProductsManagement: React.FC = () => {
                               </Badge>
                             </CardTitle>
                             <p className="text-sm text-muted-foreground">
-                              {product.description}
+                              {product.product_name}
                             </p>
                           </div>
                         </div>
@@ -888,26 +888,6 @@ export const ProductsManagement: React.FC = () => {
                     <CardContent className="space-y-6">
                       {/* معلومات المنتج */}
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {product.category && (
-                          <div className="flex items-center gap-3 p-3 bg-card/30 rounded-lg border border-border/30">
-                            <Tag className="h-4 w-4 text-accent" />
-                            <div>
-                              <div className="text-xs text-muted-foreground">الفئة</div>
-                              <div className="font-medium">{product.category}</div>
-                            </div>
-                          </div>
-                        )}
-                        
-                        {product.brand && (
-                          <div className="flex items-center gap-3 p-3 bg-card/30 rounded-lg border border-border/30">
-                            <Star className="h-4 w-4 text-accent" />
-                            <div>
-                              <div className="text-xs text-muted-foreground">العلامة التجارية</div>
-                              <div className="font-medium">{product.brand}</div>
-                            </div>
-                          </div>
-                        )}
-                        
                         {product.supplier_id && (
                           <div className="flex items-center gap-3 p-3 bg-card/30 rounded-lg border border-border/30">
                             <Users className="h-4 w-4 text-accent" />
