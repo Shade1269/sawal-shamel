@@ -30,6 +30,7 @@ import { useInventoryManagement } from '@/hooks/useInventoryManagement';
 import { useUpdateProduct, useProducts, useCategories, useBrands } from '@/hooks/useProductManagement';
 import { toast } from 'sonner';
 import { useUserData } from '@/hooks/useUserData';
+import { useQueryClient } from '@tanstack/react-query';
 import FileUpload from '@/components/FileUpload';
 
 export const ProductsManagement: React.FC = () => {
@@ -39,6 +40,7 @@ export const ProductsManagement: React.FC = () => {
   const { data: categories = [] } = useCategories();
   const { data: brands = [] } = useBrands();
   const updateProduct = useUpdateProduct();
+  const queryClient = useQueryClient();
 
   const [showProductDialog, setShowProductDialog] = useState(false);
   const [showVariantDialog, setShowVariantDialog] = useState(false);
@@ -110,6 +112,8 @@ export const ProductsManagement: React.FC = () => {
         toast.success('تم تحديث المنتج بنجاح');
       } else {
         await addProduct(data);
+        // تحديث كاش المنتجات لإظهار المنتج الجديد
+        queryClient.invalidateQueries({ queryKey: ["products"] });
         toast.success('تم إضافة المنتج بنجاح');
       }
       
