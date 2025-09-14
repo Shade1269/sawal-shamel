@@ -9,6 +9,9 @@ import { ProductsManagement } from '@/components/ProductsManagement';
 import { InventoryMovements } from '@/components/InventoryMovements';
 import { ReturnsManagement } from '@/components/ReturnsManagement';
 import { InventoryReports } from '@/components/InventoryReports';
+import { InventorySetupCard } from '@/components/InventorySetupCard';
+import { useInventoryManagement } from '@/hooks/useInventoryManagement';
+import { useRealInventoryManagement } from '@/hooks/useRealInventoryManagement';
 import { 
   Package, 
   Warehouse, 
@@ -29,10 +32,22 @@ import { useNavigate } from 'react-router-dom';
 
 const Inventory: React.FC = () => {
   const navigate = useNavigate();
+  const { warehouses: mockWarehouses } = useInventoryManagement();
+  const { warehouses: realWarehouses, initializeSystem } = useRealInventoryManagement();
+  
+  // Use real warehouses if available, otherwise use mock
+  const warehouses = realWarehouses.length > 0 ? realWarehouses : mockWarehouses;
 
   return (
     <div className="min-h-screen bg-background" dir="rtl">
-      <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8">
+        {/* Show setup card if no real warehouses */}
+        {realWarehouses.length === 0 && (
+          <div className="mb-8">
+            <InventorySetupCard />
+          </div>
+        )}
+        
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
             <div className="p-3 rounded-xl bg-gradient-primary shadow-glow">
@@ -58,20 +73,30 @@ const Inventory: React.FC = () => {
                   <Store className="h-6 w-6 text-accent" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-foreground mb-2">هل تريد إضافة منتجات لمتجرك؟</h3>
+                  <h3 className="font-bold text-lg text-foreground mb-2">نظام المخزون الفيزيائي</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    هذه الصفحة لإدارة المخازن الفيزيائية. لإضافة منتجات لمتجرك اذهب إلى إدارة المتجر
+                    هذا النظام لإدارة المخازن الفيزيائية المنفصلة. المنتجات في متجرك موجودة في قسم "إدارة المتجر"
                   </p>
                 </div>
               </div>
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/store-management-firestore')}
-                className="flex items-center gap-2 border-accent hover:bg-accent hover:text-accent-foreground transition-all duration-300"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                إدارة المتجر
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/store-management-firestore')}
+                  className="flex items-center gap-2 border-accent hover:bg-accent hover:text-accent-foreground transition-all duration-300"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  إدارة المتجر
+                </Button>
+                {warehouses.length === 0 && (
+                  <Button 
+                    onClick={() => initializeSystem()}
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                  >
+                    إعداد المخزون
+                  </Button>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
