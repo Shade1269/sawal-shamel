@@ -102,8 +102,7 @@ export const ProductsManagement: React.FC = () => {
         tags: [],
         meta_keywords: [],
         featured: false,
-        image_urls: productFormData.image_urls,
-        variants: productVariantsForm.filter(v => v.color.trim() !== '' || v.size.trim() !== '')
+        image_urls: productFormData.image_urls
       };
 
       if (editingProduct) {
