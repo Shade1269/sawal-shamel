@@ -21,7 +21,7 @@ const Index = () => {
       navigate('/auth');
       return;
     }
-    navigate('/chat');
+    navigate('/atlantis/chat');
   };
 
   const handleInventoryClick = () => {
@@ -29,7 +29,7 @@ const Index = () => {
       navigate('/auth');
       return;
     }
-    navigate('/inventory');
+    navigate('/products');
   };
 
   const handleStoreManagementClick = () => {
@@ -37,7 +37,7 @@ const Index = () => {
       navigate('/auth');
       return;
     }
-    navigate('/store-management');
+    navigate('/dashboard');
   };
 
   const handleSignOut = async () => {
