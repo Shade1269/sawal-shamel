@@ -23,12 +23,14 @@ import {
   Star,
   Users,
   Calendar,
-  X
+  X,
+  Image
 } from 'lucide-react';
 import { useInventoryManagement } from '@/hooks/useInventoryManagement';
 import { useCreateProduct, useUpdateProduct, useProducts, useCategories, useBrands } from '@/hooks/useProductManagement';
 import { toast } from 'sonner';
 import { useUserData } from '@/hooks/useUserData';
+import FileUpload from '@/components/FileUpload';
 
 export const ProductsManagement: React.FC = () => {
   const { warehouseProducts, productVariants, suppliers, loading: inventoryLoading } = useInventoryManagement();
@@ -53,7 +55,8 @@ export const ProductsManagement: React.FC = () => {
     category_id: '',
     brand_id: '',
     sku: '',
-    is_active: true
+    is_active: true,
+    image_urls: [] as string[]
   });
 
   const [productVariantsForm, setProductVariantsForm] = useState([
@@ -99,6 +102,7 @@ export const ProductsManagement: React.FC = () => {
         tags: [],
         meta_keywords: [],
         featured: false,
+        image_urls: productFormData.image_urls,
         variants: productVariantsForm.filter(v => v.color.trim() !== '' || v.size.trim() !== '')
       };
 
@@ -147,7 +151,8 @@ export const ProductsManagement: React.FC = () => {
       category_id: '',
       brand_id: '',
       sku: '',
-      is_active: true
+      is_active: true,
+      image_urls: []
     });
     setProductVariantsForm([{ color: '', size: '', stock: 0 }]);
     setEditingProduct(null);
@@ -183,7 +188,8 @@ export const ProductsManagement: React.FC = () => {
       category_id: product.category_id || '',
       brand_id: product.brand_id || '',
       sku: product.sku || '',
-      is_active: product.is_active
+      is_active: product.is_active,
+      image_urls: product.image_urls || []
     });
     setShowProductDialog(true);
   };
@@ -362,6 +368,58 @@ export const ProductsManagement: React.FC = () => {
                     placeholder="PROD-001"
                     className="border-border/50 focus:border-primary"
                   />
+                </div>
+
+                {/* صور المنتج */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-base font-semibold">صور المنتج</Label>
+                    <FileUpload
+                      accept="image/*"
+                      maxSize={5}
+                      onFileUpload={(url) => {
+                        setProductFormData({
+                          ...productFormData,
+                          image_urls: [...productFormData.image_urls, url]
+                        });
+                      }}
+                    />
+                  </div>
+                  
+                  {productFormData.image_urls.length > 0 && (
+                    <div className="grid grid-cols-4 gap-3 max-h-48 overflow-y-auto border border-border/30 rounded-lg p-3 bg-muted/20">
+                      {productFormData.image_urls.map((imageUrl, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={imageUrl}
+                            alt={`صورة المنتج ${index + 1}`}
+                            className="w-full h-20 object-cover rounded-lg border border-border/50"
+                          />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => {
+                              const newImageUrls = productFormData.image_urls.filter((_, i) => i !== index);
+                              setProductFormData({...productFormData, image_urls: newImageUrls});
+                            }}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {productFormData.image_urls.length === 0 && (
+                    <div className="flex items-center justify-center h-20 border-2 border-dashed border-border/50 rounded-lg bg-muted/10">
+                      <div className="text-center">
+                        <Image className="h-8 w-8 mx-auto text-muted-foreground mb-1" />
+                        <p className="text-sm text-muted-foreground">اضغط على الأيقونة أعلاه لرفع الصور</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Product Variants Section */}
