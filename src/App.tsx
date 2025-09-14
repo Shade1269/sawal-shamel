@@ -9,7 +9,7 @@ import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Header from "@/components/common/Header";
-import { AuthForm } from "@/features/auth";
+import { AuthPage } from "@/features/auth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 
@@ -111,9 +111,9 @@ const App = () => {
                       {/* Public Routes */}
                       <Route path="/" element={<Index />} />
                       <Route path="/home" element={<Navigate to="/" replace />} />
-                      <Route path="/auth" element={<AuthForm />} />
-                      <Route path="/login" element={<AuthForm />} />
-                      <Route path="/signup" element={<AuthForm />} />
+                      <Route path="/auth" element={<AuthPage />} />
+                      <Route path="/login" element={<AuthPage />} />
+                      <Route path="/signup" element={<AuthPage />} />
                       <Route path="/products" element={<ProductsPage />} />
                       <Route path="/about" element={<AboutPage />} />
                       <Route path="/create-admin" element={<CreateAdminPage />} />
