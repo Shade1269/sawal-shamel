@@ -21,12 +21,35 @@ import {
   FileText
 } from 'lucide-react';
 import { useInventoryManagement } from '@/hooks/useInventoryManagement';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export const SuppliersManagement: React.FC = () => {
   const { suppliers, loading } = useInventoryManagement();
+  const { toast } = useToast();
 
   const [showDialog, setShowDialog] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState<any>(null);
+  const [suppliersList, setSuppliersList] = useState<any[]>([]);
+
+  // Function to fetch suppliers from database
+  const fetchSuppliers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('suppliers')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching suppliers:', error);
+        return;
+      }
+
+      setSuppliersList(data || []);
+    } catch (error) {
+      console.error('Error in fetchSuppliers:', error);
+    }
+  };
   const [formData, setFormData] = useState({
     supplier_name: '',
     supplier_code: '',
@@ -48,11 +71,85 @@ export const SuppliersManagement: React.FC = () => {
       credit_limit: formData.credit_limit ? parseFloat(formData.credit_limit) : null
     };
 
-    // TODO: Implement actual create/update supplier functionality
-    console.log('Supplier data:', supplierData);
-    
-    setShowDialog(false);
-    resetForm();
+    try {
+      if (editingSupplier) {
+        // تحديث المورد الموجود
+        const { data, error } = await supabase
+          .from('suppliers')
+          .update({
+            supplier_name: supplierData.supplier_name,
+            email: supplierData.contact_email,
+            phone: supplierData.contact_phone,
+            address: supplierData.contact_address,
+            payment_terms: supplierData.payment_terms,
+            is_active: supplierData.is_active,
+            notes: `Contact: ${supplierData.contact_person}, Tax ID: ${supplierData.tax_id}`
+          })
+          .eq('id', editingSupplier.id)
+          .select('*')
+          .single();
+
+        if (error) {
+          console.error('Error updating supplier:', error);
+          toast({
+            title: "خطأ في تحديث المورد",
+            description: error.message,
+            variant: "destructive"
+          });
+          return;
+        }
+
+        toast({
+          title: "تم تحديث المورد",
+          description: `تم تحديث بيانات المورد ${data.supplier_name} بنجاح`
+        });
+      } else {
+        // إنشاء مورد جديد
+        const { data, error } = await supabase
+          .from('suppliers')
+          .insert({
+            supplier_name: supplierData.supplier_name,
+            supplier_number: supplierData.supplier_code || `SUP-${Date.now()}`,
+            email: supplierData.contact_email,
+            phone: supplierData.contact_phone,
+            address: supplierData.contact_address,
+            payment_terms: supplierData.payment_terms,
+            is_active: supplierData.is_active,
+            notes: `Contact: ${supplierData.contact_person}, Tax ID: ${supplierData.tax_id}`
+          })
+          .select('*')
+          .single();
+
+        if (error) {
+          console.error('Error creating supplier:', error);
+          toast({
+            title: "خطأ في إنشاء المورد",
+            description: error.message,
+            variant: "destructive"
+          });
+          return;
+        }
+
+        toast({
+          title: "تم إنشاء المورد",
+          description: `تم إنشاء المورد ${data.supplier_name} بنجاح`
+        });
+      }
+
+      // تحديث قائمة الموردين
+      fetchSuppliers();
+      
+    } catch (error) {
+      console.error('Error in handleSubmit:', error);
+      toast({
+        title: "خطأ غير متوقع",
+        description: "حدث خطأ أثناء معالجة بيانات المورد",
+        variant: "destructive"
+      });
+    } finally {
+      setShowDialog(false);
+      resetForm();
+    }
   };
 
   const resetForm = () => {

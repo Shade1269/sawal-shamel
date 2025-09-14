@@ -27,6 +27,7 @@ import {
 import { useAtlantisChat } from '@/hooks/useAtlantisChat';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -136,10 +137,53 @@ const AtlantisChat = () => {
   };
 
   const handleVoiceRecording = async (audioBlob: Blob) => {
-    // رفع الملف الصوتي وإرسال الرسالة
-    // TODO: تنفيذ رفع الملفات الصوتية
-    console.log('Voice recorded:', audioBlob);
-    setShowVoiceRecorder(false);
+    try {
+      // إنشاء FormData لرفع الملف الصوتي
+      const formData = new FormData();
+      const fileName = `voice_${Date.now()}.webm`;
+      formData.append('file', audioBlob, fileName);
+
+      // رفع الملف إلى Supabase Storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('chat-files')
+        .upload(`voice/${fileName}`, audioBlob, {
+          contentType: 'audio/webm',
+          upsert: true
+        });
+
+      if (uploadError) {
+        console.error('Error uploading voice:', uploadError);
+        toast({
+          title: "خطأ في رفع الرسالة الصوتية",
+          description: uploadError.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // الحصول على رابط الملف
+      const { data: urlData } = supabase.storage
+        .from('chat-files')
+        .getPublicUrl(uploadData.path);
+
+      // إرسال الرسالة مع رابط الملف الصوتي
+      await sendMessage(`[رسالة صوتية] ${urlData.publicUrl}`, 'voice');
+      
+      toast({
+        title: "تم إرسال الرسالة الصوتية",
+        description: "تم رفع وإرسال الرسالة الصوتية بنجاح"
+      });
+      
+    } catch (error) {
+      console.error('Error handling voice recording:', error);
+      toast({
+        title: "خطأ في معالجة الرسالة الصوتية",
+        description: "حدث خطأ أثناء معالجة الرسالة الصوتية",
+        variant: "destructive"
+      });
+    } finally {
+      setShowVoiceRecorder(false);
+    }
   };
 
   const handleFileUpload = async (url: string, type: 'image' | 'file') => {

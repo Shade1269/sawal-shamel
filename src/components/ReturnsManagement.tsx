@@ -19,11 +19,34 @@ import {
   Clock
 } from 'lucide-react';
 import { useInventoryManagement } from '@/hooks/useInventoryManagement';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export const ReturnsManagement: React.FC = () => {
   const { productVariants, loading } = useInventoryManagement();
+  const { toast } = useToast();
 
   const [showDialog, setShowDialog] = useState(false);
+  const [returns, setReturns] = useState<any[]>([]);
+
+  // Function to fetch returns from database
+  const fetchReturns = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('product_returns')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching returns:', error);
+        return;
+      }
+
+      setReturns(data || []);
+    } catch (error) {
+      console.error('Error in fetchReturns:', error);
+    }
+  };
   
   // Mock data for returns since we don't have full implementation yet
   const productReturns = [
@@ -80,11 +103,53 @@ export const ReturnsManagement: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // TODO: Implement actual create return functionality
-    console.log('Return data:', formData);
-    
-    setShowDialog(false);
-    resetForm();
+    try {
+      // إنشاء طلب الإرجاع في قاعدة البيانات
+      const { data, error } = await supabase
+        .from('product_returns')
+        .insert({
+          order_id: formData.order_id,
+          order_number: formData.order_id,
+          return_number: `RET-${Date.now()}`,
+          return_reason: formData.return_reason,
+          notes: formData.notes,
+          status: 'pending',
+          return_type: 'refund',
+          processed_by: 'customer',
+          created_at: new Date().toISOString()
+        })
+        .select('*')
+        .single();
+
+      if (error) {
+        console.error('Error creating return:', error);
+        toast({
+          title: "خطأ في إنشاء طلب الإرجاع",
+          description: error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "تم إنشاء طلب الإرجاع",
+        description: `تم إنشاء طلب الإرجاع رقم ${data.id} بنجاح`
+      });
+
+      // تحديث قائمة المرتجعات
+      fetchReturns();
+      
+    } catch (error) {
+      console.error('Error in handleSubmit:', error);
+      toast({
+        title: "خطأ غير متوقع",
+        description: "حدث خطأ أثناء إنشاء طلب الإرجاع",
+        variant: "destructive"
+      });
+    } finally {
+      setShowDialog(false);
+      resetForm();
+    }
   };
 
   const resetForm = () => {
