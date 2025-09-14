@@ -23,6 +23,8 @@ import { AffiliateCommissions } from '@/components/affiliate/AffiliateCommission
 import { AffiliateAnalytics } from '@/components/affiliate/AffiliateAnalytics';
 import { AffiliateStoreManager } from '@/components/affiliate/AffiliateStoreManager';
 import { AffiliateProductsManager } from '@/components/AffiliateProductsManager';
+import AffiliateStoreCustomizer from '@/components/affiliate/AffiliateStoreCustomizer';
+import StoreAnalyticsDashboard from '@/components/affiliate/StoreAnalyticsDashboard';
 
 const AffiliateDashboardNew = () => {
   const { profile } = useFastAuth();
@@ -316,16 +318,37 @@ const AffiliateDashboardNew = () => {
         </TabsContent>
 
         <TabsContent value="store">
-          <AffiliateStoreManager 
-            store={affiliateStore}
-            onUpdateStore={handleUpdateStore}
-            onGenerateQR={() => {
-              toast({
-                title: "قريباً",
-                description: "ميزة توليد رمز QR ستكون متاحة قريباً",
-              });
-            }}
-          />
+          <Tabs defaultValue="management" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="management">إدارة المتجر</TabsTrigger>
+              <TabsTrigger value="customization">التخصيص</TabsTrigger>
+              <TabsTrigger value="analytics">التحليلات</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="management">
+              <AffiliateStoreManager 
+                store={affiliateStore}
+                onUpdateStore={handleUpdateStore}
+                onGenerateQR={() => {
+                  toast({
+                    title: "قريباً",
+                    description: "ميزة توليد رمز QR ستكون متاحة قريباً",
+                  });
+                }}
+              />
+            </TabsContent>
+            
+            <TabsContent value="customization">
+              <AffiliateStoreCustomizer 
+                store={affiliateStore}
+                onUpdateStore={handleUpdateStore}
+              />
+            </TabsContent>
+            
+            <TabsContent value="analytics">
+              <StoreAnalyticsDashboard storeId={affiliateStore?.id} />
+            </TabsContent>
+          </Tabs>
         </TabsContent>
       </Tabs>
     </div>
