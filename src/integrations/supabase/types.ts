@@ -6604,6 +6604,14 @@ export type Database = {
         }
         Returns: string
       }
+      create_user_level: {
+        Args: {
+          initial_level?: string
+          initial_points?: number
+          target_user_id: string
+        }
+        Returns: string
+      }
       create_user_shop: {
         Args: { p_shop_name: string; p_shop_slug?: string; p_user_id: string }
         Returns: string

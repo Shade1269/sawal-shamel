@@ -144,21 +144,28 @@ export const useAtlantisSystem = () => {
     }
 
     if (!existingLevel) {
-      // Create initial user level
-      const { data: newLevel, error: insertError } = await supabase
+      // Create initial user level using the safe function
+      const { data: levelId, error: createError } = await supabase
+        .rpc('create_user_level', {
+          target_user_id: profileId,
+          initial_level: 'bronze',
+          initial_points: 0
+        });
+
+      if (createError) {
+        console.error('Error creating user level:', createError);
+        return;
+      }
+
+      // Fetch the created level
+      const { data: newLevel, error: fetchError } = await supabase
         .from('user_levels')
-        .insert({
-          user_id: profileId,
-          current_level: 'bronze',
-          total_points: 0,
-          level_points: 0,
-          next_level_threshold: 500
-        })
-        .select()
+        .select('*')
+        .eq('id', levelId)
         .single();
 
-      if (insertError) {
-        console.error('Error creating user level:', insertError);
+      if (fetchError) {
+        console.error('Error fetching created level:', fetchError);
         return;
       }
 

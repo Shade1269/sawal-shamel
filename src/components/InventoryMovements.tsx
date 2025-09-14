@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Plus, 
   ArrowUp, 
@@ -23,6 +25,7 @@ import { useInventoryManagement } from '@/hooks/useInventoryManagement';
 
 export const InventoryMovements: React.FC = () => {
   const { inventoryMovements, warehouseProducts, productVariants, loading } = useInventoryManagement();
+  const { toast } = useToast();
 
   const [showDialog, setShowDialog] = useState(false);
   const [filterType, setFilterType] = useState('all');
@@ -33,8 +36,11 @@ export const InventoryMovements: React.FC = () => {
     product_variant_id: '',
     movement_type: '',
     quantity: '',
+    unit_cost: '',
     reference_type: '',
     reference_number: '',
+    reference_id: '',
+    supplier_id: '',
     notes: ''
   });
 
@@ -46,11 +52,78 @@ export const InventoryMovements: React.FC = () => {
       quantity: parseInt(formData.quantity) || 0
     };
 
-    // TODO: Implement actual create movement functionality
-    console.log('Movement data:', data);
-    
-    setShowDialog(false);
-    resetForm();
+    try {
+      // Generate movement number
+      const movementNumber = `MOV-${Date.now()}`;
+      
+      // Create inventory movement
+      const { data: movement, error } = await supabase
+        .from('inventory_movements')
+        .insert({
+          movement_number: movementNumber,
+          movement_type: data.movement_type,
+          warehouse_product_id: data.warehouse_product_id || null,
+          product_variant_id: data.product_variant_id || null,
+          quantity: data.quantity,
+          unit_cost: data.unit_cost ? parseFloat(data.unit_cost) : null,
+          total_cost: data.unit_cost ? parseFloat(data.unit_cost) * data.quantity : null,
+          reference_type: data.reference_type || null,
+          reference_id: data.reference_id || null,
+          supplier_id: data.supplier_id || null,
+          notes: data.notes || null,
+          created_by: (await supabase.auth.getUser()).data.user?.id || ''
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Update stock levels based on movement type
+      if (data.product_variant_id && (data.movement_type === 'in' || data.movement_type === 'out')) {
+        // First get current stock
+        const { data: currentVariant, error: getError } = await supabase
+          .from('product_variants')
+          .select('current_stock, available_stock')
+          .eq('id', data.product_variant_id)
+          .single();
+
+        if (getError) throw getError;
+
+        const stockChange = data.movement_type === 'in' ? data.quantity : -data.quantity;
+        const newCurrentStock = (currentVariant.current_stock || 0) + stockChange;
+        const newAvailableStock = (currentVariant.available_stock || 0) + stockChange;
+        
+        const { error: stockError } = await supabase
+          .from('product_variants')
+          .update({
+            current_stock: newCurrentStock,
+            available_stock: newAvailableStock,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', data.product_variant_id);
+
+        if (stockError) throw stockError;
+      }
+
+      toast({
+        title: "تم إنشاء الحركة بنجاح",
+        description: `رقم الحركة: ${movementNumber}`
+      });
+
+      setShowDialog(false);
+      resetForm();
+      
+      // Refresh the movements list if there's a callback
+      window.location.reload();
+      
+    } catch (error: any) {
+      console.error('Error creating movement:', error);
+      toast({
+        title: "خطأ في إنشاء الحركة",
+        description: error.message || "حدث خطأ غير متوقع",
+        variant: "destructive"
+      });
+    }
   };
 
   const resetForm = () => {
@@ -59,8 +132,11 @@ export const InventoryMovements: React.FC = () => {
       product_variant_id: '',
       movement_type: '',
       quantity: '',
+      unit_cost: '',
       reference_type: '',
       reference_number: '',
+      reference_id: '',
+      supplier_id: '',
       notes: ''
     });
   };

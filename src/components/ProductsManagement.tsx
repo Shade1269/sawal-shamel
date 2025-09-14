@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Plus, 
   Edit2, 
@@ -68,6 +70,11 @@ export const ProductsManagement: React.FC = () => {
   const [variantFormData, setVariantFormData] = useState({
     warehouse_product_id: '',
     variant_name: '',
+    color: '',
+    size: '',
+    material: '',
+    variant_sku: '',
+    variant_barcode: '',
     sku: '',
     barcode: '',
     cost_price: '',
@@ -134,17 +141,84 @@ export const ProductsManagement: React.FC = () => {
       ...variantFormData,
       cost_price: variantFormData.cost_price ? parseFloat(variantFormData.cost_price) : null,
       selling_price: variantFormData.selling_price ? parseFloat(variantFormData.selling_price) : null,
-      available_stock: parseInt(variantFormData.available_stock) || 0,
+      current_stock: parseInt(variantFormData.available_stock) || 0,
       reserved_stock: parseInt(variantFormData.reserved_stock) || 0,
-      reorder_level: parseInt(variantFormData.reorder_level) || 0,
-      max_stock_level: variantFormData.max_stock_level ? parseInt(variantFormData.max_stock_level) : null
+      available_stock: parseInt(variantFormData.available_stock) || 0,
+      min_stock_level: parseInt(variantFormData.reorder_level) || 0
     };
 
-    // TODO: Implement actual create/update variant functionality
-    console.log('Variant data:', data);
-    
-    setShowVariantDialog(false);
-    resetVariantForm();
+    try {
+      if (editingVariant?.id) {
+        // Update existing variant
+        const { error } = await supabase
+          .from('product_variants')
+          .update({
+            variant_name: data.variant_name,
+            color: data.color || null,
+            size: data.size || null,
+            material: data.material || null,
+            variant_sku: data.variant_sku || null,
+            variant_barcode: data.variant_barcode || null,
+            cost_price: data.cost_price,
+            selling_price: data.selling_price,
+            current_stock: data.current_stock,
+            reserved_stock: data.reserved_stock,
+            available_stock: data.available_stock,
+            min_stock_level: data.min_stock_level,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', editingVariant.id);
+
+        if (error) throw error;
+
+        toast({
+          title: "تم تحديث المتغير بنجاح",
+          description: `تم تحديث متغير: ${data.variant_name}`
+        });
+      } else {
+        // Create new variant
+        const { error } = await supabase
+          .from('product_variants')
+          .insert({
+            warehouse_product_id: data.warehouse_product_id,
+            variant_name: data.variant_name,
+            color: data.color || null,
+            size: data.size || null,
+            material: data.material || null,
+            variant_sku: data.variant_sku || null,
+            variant_barcode: data.variant_barcode || null,
+            cost_price: data.cost_price,
+            selling_price: data.selling_price,
+            current_stock: data.current_stock,
+            reserved_stock: data.reserved_stock,
+            available_stock: data.available_stock,
+            min_stock_level: data.min_stock_level,
+            is_active: true
+          });
+
+        if (error) throw error;
+
+        toast({
+          title: "تم إنشاء المتغير بنجاح",
+          description: `تم إنشاء متغير: ${data.variant_name}`
+        });
+      }
+      
+      setShowVariantDialog(false);
+      resetVariantForm();
+      setEditingVariant(null);
+      
+      // Refresh the variants list
+      window.location.reload();
+      
+    } catch (error: any) {
+      console.error('Error saving variant:', error);
+      toast({
+        title: "خطأ في حفظ المتغير",
+        description: error.message || "حدث خطأ غير متوقع",
+        variant: "destructive"
+      });
+    }
   };
 
   const resetProductForm = () => {
@@ -167,6 +241,11 @@ export const ProductsManagement: React.FC = () => {
     setVariantFormData({
       warehouse_product_id: '',
       variant_name: '',
+      color: '',
+      size: '',
+      material: '',
+      variant_sku: '',
+      variant_barcode: '',
       sku: '',
       barcode: '',
       cost_price: '',
