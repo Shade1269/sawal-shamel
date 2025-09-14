@@ -96,7 +96,7 @@ export const ProductsManagement: React.FC = () => {
         title: productFormData.title,
         description: productFormData.description,
         price_sar: parseFloat(productFormData.price_sar) || 0,
-        stock: parseInt(productFormData.stock) || 0,
+        stock: (() => { const v = parseInt(productFormData.stock); return Number.isNaN(v) || v < 1 ? 1 : v; })(),
         category_id: productFormData.category_id || null,
         brand_id: productFormData.brand_id || null,
         sku: productFormData.sku || null,
