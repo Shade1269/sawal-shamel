@@ -221,13 +221,30 @@ const EnhancedStoreFront = () => {
   if (storeError || !affiliateStore) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center" dir="rtl">
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-6 max-w-md mx-auto p-6">
           <Store className="h-16 w-16 text-muted-foreground mx-auto" />
-          <div>
-            <h1 className="text-2xl font-bold mb-2">المتجر غير موجود</h1>
-            <p className="text-muted-foreground mb-4">
-              لم يتم العثور على متجر بالاسم "{slug}"
+          <div className="space-y-4">
+            <h1 className="text-2xl font-bold text-destructive">المتجر غير موجود</h1>
+            <p className="text-muted-foreground">
+              لم يتم العثور على متجر بالرابط: <code className="bg-muted px-2 py-1 rounded text-sm">/{slug}</code>
             </p>
+            <div className="text-sm text-muted-foreground space-y-3">
+              <p className="font-medium">المتاجر المتاحة:</p>
+              <div className="bg-muted p-4 rounded-lg space-y-2 text-right">
+                <div className="text-xs text-primary cursor-pointer hover:underline" onClick={() => navigate('/store/nolici-fashion-store')}>
+                  /store/nolici-fashion-store
+                </div>
+                <div className="text-xs text-primary cursor-pointer hover:underline" onClick={() => navigate('/store/wibax-accessories')}>
+                  /store/wibax-accessories  
+                </div>
+                <div className="text-xs text-primary cursor-pointer hover:underline" onClick={() => navigate('/store/ahmad-zaher-store')}>
+                  /store/ahmad-zaher-store
+                </div>
+                <div className="text-xs text-primary cursor-pointer hover:underline" onClick={() => navigate('/store/maram-store-1')}>
+                  /store/maram-store-1
+                </div>
+              </div>
+            </div>
             <Button onClick={() => navigate('/')}>
               العودة للرئيسية
             </Button>
