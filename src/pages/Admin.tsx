@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import UserProfileDialog from "@/components/UserProfileDialog";
+import UserProfileDialog from "@/shared/components/UserProfileDialog";
 import UserSettingsMenu from "@/components/UserSettingsMenu";
 import ZohoSetup from "@/components/ZohoSetup";
 import EmkanIntegration from "@/components/EmkanIntegration";

@@ -44,8 +44,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import FileUpload from '@/shared/components/FileUpload';
-import VoiceRecorder from '@/features/chat/components/VoiceRecorder';
+import VoiceRecorder from './VoiceRecorder';
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
+import ModerationPanel from './ModerationPanel';
+import EnhancedEmojiPicker, { parseEmojiText } from './EnhancedEmojiPicker';
+import EnhancedMessageActions from './EnhancedMessageActions';
+import MessageStatus from './MessageStatus';
+import ThreadReply from './ThreadReply';
+import ProfileSettings from '@/shared/components/ProfileSettings';
+import ChannelMembership from '@/shared/components/ChannelMembership';
+import NotificationSound from './NotificationSound';
+import MessageSearch from './MessageSearch';
+import PinnedMessages from './PinnedMessages';
+import NotificationManager from './NotificationManager';
+import RealtimeNotifications from '@/components/RealtimeNotifications';
+import UserSettingsMenu from '@/components/UserSettingsMenu';
+import NotificationPrompt from './NotificationPrompt';
+import SimpleUserProfile from './SimpleUserProfile';
+import UserProfileMenu from '@/shared/components/UserProfileMenu';
+import UserActionsMenu from '@/shared/components/UserActionsMenu';
+import { useNotifications } from '@/hooks/useNotifications';
 
 const ChatInterface = () => {
   const [message, setMessage] = useState('');
@@ -68,7 +86,7 @@ const ChatInterface = () => {
   const activeRoom = channelId || '';
   const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage, setMessages, typingUsers, startTyping, stopTyping } = useRealTimeChat(activeRoom);
   const { isDarkMode, toggleDarkMode } = useDarkMode();
-  import { useNotifications } from '@/hooks/useNotifications';
+  const notifications = useNotifications(user?.id);
 
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [mentionAlert, setMentionAlert] = useState(false);
