@@ -1,9 +1,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { InventoryDashboard } from '@/components/InventoryDashboard';
-import { WarehouseManagement } from '@/components/WarehouseManagement';
 import { StockAlertsPanel } from '@/components/StockAlertsPanel';
-import { InventoryReservations } from '@/components/InventoryReservations';
 import { SuppliersManagement } from '@/components/SuppliersManagement';
 import { ProductsManagement } from '@/components/ProductsManagement';
 import { InventoryMovements } from '@/components/InventoryMovements';
@@ -127,10 +125,6 @@ const Inventory: React.FC = () => {
               <RotateCcw className="h-4 w-4" />
               <span className="hidden sm:inline font-medium">المرتجعات</span>
             </TabsTrigger>
-            <TabsTrigger value="reservations" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow rounded-lg transition-all duration-300">
-              <Lock className="h-4 w-4" />
-              <span className="hidden sm:inline font-medium">الحجوزات</span>
-            </TabsTrigger>
             <TabsTrigger value="reports" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow rounded-lg transition-all duration-300">
               <Activity className="h-4 w-4" />
               <span className="hidden sm:inline font-medium">التقارير</span>
@@ -159,10 +153,6 @@ const Inventory: React.FC = () => {
 
           <TabsContent value="returns" className="mt-6">
             <ReturnsManagement />
-          </TabsContent>
-
-          <TabsContent value="reservations" className="mt-6">
-            <InventoryReservations />
           </TabsContent>
 
           <TabsContent value="reports" className="mt-6">

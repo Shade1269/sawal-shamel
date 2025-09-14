@@ -108,7 +108,7 @@ export const InventoryMovements: React.FC = () => {
   const filteredMovements = inventoryMovements.filter((movement) => {
     const matchesType = filterType === 'all' || movement.movement_type === filterType;
     const matchesSearch = !searchTerm || 
-      movement.reference_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      movement.movement_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       movement.notes?.toLowerCase().includes(searchTerm.toLowerCase());
     
     return matchesType && matchesSearch;
@@ -348,7 +348,7 @@ export const InventoryMovements: React.FC = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-3">
                         <h3 className="font-bold text-lg text-foreground">
-                          {movement.reference_number || `حركة ${movement.id.slice(0, 8)}`}
+                          {movement.movement_number || `حركة ${movement.id.slice(0, 8)}`}
                         </h3>
                         <Badge variant={getMovementTypeVariant(movement.movement_type)} className="font-medium">
                           {getMovementTypeLabel(movement.movement_type)}
