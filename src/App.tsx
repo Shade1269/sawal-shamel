@@ -7,9 +7,11 @@ import { DarkModeProvider } from "@/shared/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
-import { CustomerAuthProvider, useCustomerAuthContext } from "@/contexts/CustomerAuthContext";
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import Header from "@/components/common/Header";
+import StoreLayout from "@/layouts/StoreLayout";
+import { StoreRouteGuard } from "@/components/guards/StoreRouteGuard";
+import { PlatformRouteGuard } from "@/components/guards/PlatformRouteGuard";
 import { AuthPage } from "@/features/auth";
 import { ProtectedRoute } from "@/shared/components/ProtectedRoute";
 import Index from "./pages/Index";
@@ -31,6 +33,7 @@ const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
 import StoreCheckout from "./pages/StoreCheckout";
 import StoreOrderConfirmation from "./pages/StoreOrderConfirmation";
 import StoreAuth from "./pages/StoreAuth";
+import StoreTestPage from "./components/store/StoreTestPage";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AdminOrderManagement = lazy(() => import("./pages/AdminOrderManagement"));
 // FastAuth removed
@@ -98,9 +101,7 @@ const App = () => {
             <LanguageProvider>
               <DarkModeProvider>
                 <UserDataProvider>
-                  <BrowserRouter>
-                  <div className="min-h-screen bg-gradient-persian-bg">
-                    <Header />
+                   <BrowserRouter>
                     <Suspense fallback={
                       <div className="min-h-screen flex items-center justify-center">
                         <div className="text-center">
@@ -109,28 +110,37 @@ const App = () => {
                         </div>
                       </div>
                     }>
-                      <Routes>
-                      {/* Public Routes */}
-                      <Route path="/" element={<Index />} />
-                      <Route path="/home" element={<Navigate to="/" replace />} />
-                      <Route path="/auth" element={<AuthPage />} />
-                      <Route path="/login" element={<AuthPage />} />
-                      <Route path="/signup" element={<AuthPage />} />
-                      <Route path="/products" element={<ProductsPage />} />
-                      <Route path="/about" element={<AboutPage />} />
-                      <Route path="/create-admin" element={<CreateAdminPage />} />
-          
-                        {/* Store Routes - نظام منفصل للعملاء */}
-                        <Route path="/store/*" element={
-                          <CustomerAuthProvider>
-                            <Routes>
-                              <Route path=":storeSlug" element={<AffiliateStoreFront />} />
-                              <Route path=":storeSlug/auth" element={<StoreAuth />} />
-                              <Route path=":storeSlug/checkout" element={<StoreCheckout />} />
-                              <Route path=":storeSlug/order-confirmation/:orderId" element={<StoreOrderConfirmation />} />
-                            </Routes>
-                          </CustomerAuthProvider>
-                        } />
+                       <Routes>
+                         {/* Store Routes - نظام منفصل 100% للعملاء */}
+                         <Route path="/store/*" element={
+                           <StoreRouteGuard>
+                             <StoreLayout>
+                               <Routes>
+                                 <Route path=":storeSlug" element={<AffiliateStoreFront />} />
+                                 <Route path=":storeSlug/test" element={<StoreTestPage />} />
+                                 <Route path=":storeSlug/auth" element={<StoreAuth />} />
+                                 <Route path=":storeSlug/checkout" element={<StoreCheckout />} />
+                                 <Route path=":storeSlug/order-confirmation/:orderId" element={<StoreOrderConfirmation />} />
+                               </Routes>
+                             </StoreLayout>
+                           </StoreRouteGuard>
+                         } />
+                         
+                         {/* Platform Routes - محمية من عملاء المتجر */}
+                         <Route path="/*" element={
+                           <PlatformRouteGuard>
+                             <div className="min-h-screen bg-gradient-persian-bg">
+                               <Header />
+                               <Routes>
+                                 {/* Public Routes */}
+                                 <Route path="/" element={<Index />} />
+                                 <Route path="/home" element={<Navigate to="/" replace />} />
+                                 <Route path="/auth" element={<AuthPage />} />
+                                 <Route path="/login" element={<AuthPage />} />
+                                 <Route path="/signup" element={<AuthPage />} />
+                                 <Route path="/products" element={<ProductsPage />} />
+                                 <Route path="/about" element={<AboutPage />} />
+                                 <Route path="/create-admin" element={<CreateAdminPage />} />
                        
                        {/* Protected Browser */}
                        <Route path="/products-browser" element={
@@ -338,12 +348,15 @@ const App = () => {
                          } 
                        />
                       
-                      {/* Catch all */}
-                      <Route path="*" element={<Navigate to="/" replace />} />
-                    </Routes>
-                  </Suspense>
-                </div>
-              </BrowserRouter>
+                                  {/* Catch all for Platform */}
+                                  <Route path="*" element={<Navigate to="/" replace />} />
+                                </Routes>
+                              </div>
+                            </PlatformRouteGuard>
+                          } />
+                        </Routes>
+                   </Suspense>
+               </BrowserRouter>
               </UserDataProvider>
             </DarkModeProvider>
           </LanguageProvider>

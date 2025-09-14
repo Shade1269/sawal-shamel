@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Store, ArrowRight, Loader2, Home } from "lucide-react";
 import { CustomerAuth } from '@/features/auth';
-import { useCustomerAuth } from '@/hooks/useUnifiedAuth';
+import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 interface AffiliateStore {
@@ -28,7 +28,7 @@ const StoreAuth: React.FC = () => {
   const [searchParams] = useSearchParams();
   const returnUrl = searchParams.get('returnUrl') || `/store/${slug}`;
   
-  const { isAuthenticated, checkStoredSession } = useCustomerAuth();
+  const { isAuthenticated, checkStoredSession } = useCustomerAuthContext();
   const { goToUserHome } = useSmartNavigation();
 
   // التحقق من الجلسة المحفوظة عند تحميل الصفحة
