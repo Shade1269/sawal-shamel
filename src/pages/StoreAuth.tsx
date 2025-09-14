@@ -23,7 +23,7 @@ interface AffiliateStore {
 }
 
 const StoreAuth: React.FC = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { storeSlug: slug } = useParams<{ storeSlug: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const returnUrl = searchParams.get('returnUrl') || `/store/${slug}`;

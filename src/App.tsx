@@ -15,6 +15,7 @@ import { PlatformRouteGuard } from "@/components/guards/PlatformRouteGuard";
 import { AuthPage } from "@/features/auth";
 import { ProtectedRoute } from "@/shared/components/ProtectedRoute";
 import Index from "./pages/Index";
+import DomainManager from "@/components/store/DomainManager";
 
 import AdminLayout from "@/layouts/AdminLayout";
 import { lazy, Suspense } from "react";
@@ -110,6 +111,7 @@ const App = () => {
                         </div>
                       </div>
                     }>
+                       <DomainManager>
                        <Routes>
                          {/* Store Routes - نظام منفصل 100% للعملاء */}
                          <Route path="/store/*" element={
@@ -354,7 +356,8 @@ const App = () => {
                               </div>
                             </PlatformRouteGuard>
                           } />
-                        </Routes>
+                         </Routes>
+                       </DomainManager>
                    </Suspense>
                </BrowserRouter>
               </UserDataProvider>
