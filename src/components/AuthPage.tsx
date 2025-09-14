@@ -135,15 +135,15 @@ const AuthPage = () => {
         <Card className="backdrop-blur-xl bg-card/60 border border-white/20 shadow-luxury animate-slide-up">
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-8 bg-muted/30 backdrop-blur-sm p-1.5 rounded-2xl border border-border/30">
-              <TabsTrigger value="signin" className="gap-2 data-[state=active]:bg-gradient-persian data-[state=active]:text-white data-[state=active]:shadow-persian transition-all duration-400 rounded-xl py-3.5 font-bold text-sm">
+              <TabsTrigger value="signin" className="gap-2 data-[state=active]:bg-gradient-persian data-[state=active]:text-primary-foreground data-[state=active]:shadow-persian transition-all duration-400 rounded-xl py-3.5 font-bold text-sm">
                 <LogIn className="h-4 w-4" />
                 تسجيل دخول
               </TabsTrigger>
-              <TabsTrigger value="signup" className="gap-2 data-[state=active]:bg-gradient-commerce data-[state=active]:text-white data-[state=active]:shadow-luxury transition-all duration-400 rounded-xl py-3.5 font-bold text-sm">
+              <TabsTrigger value="signup" className="gap-2 data-[state=active]:bg-gradient-commerce data-[state=active]:text-primary-foreground data-[state=active]:shadow-luxury transition-all duration-400 rounded-xl py-3.5 font-bold text-sm">
                 <UserPlus className="h-4 w-4" />
                 حساب جديد
               </TabsTrigger>
-              <TabsTrigger value="sms" className="gap-2 data-[state=active]:bg-gradient-premium data-[state=active]:text-white data-[state=active]:shadow-soft transition-all duration-400 rounded-xl py-3.5 font-bold text-sm">
+              <TabsTrigger value="sms" className="gap-2 data-[state=active]:bg-gradient-premium data-[state=active]:text-primary-foreground data-[state=active]:shadow-soft transition-all duration-400 rounded-xl py-3.5 font-bold text-sm">
                 <MessageSquare className="h-4 w-4" />
                 SMS
               </TabsTrigger>

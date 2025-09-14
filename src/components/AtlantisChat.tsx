@@ -155,9 +155,9 @@ const AtlantisChat = () => {
       case 'owner':
         return <Crown className="h-3 w-3 text-yellow-500" />;
       case 'admin':
-        return <Shield className="h-3 w-3 text-red-500" />;
+        return <Shield className="h-3 w-3 text-destructive" />;
       case 'moderator':
-        return <Shield className="h-3 w-3 text-blue-500" />;
+        return <Shield className="h-3 w-3 text-accent" />;
       default:
         return null;
     }
@@ -173,9 +173,9 @@ const AtlantisChat = () => {
     
     const roleColors = {
       owner: 'bg-yellow-100 text-yellow-800',
-      admin: 'bg-red-100 text-red-800',
-      moderator: 'bg-blue-100 text-blue-800',
-      member: 'bg-gray-100 text-gray-800'
+      admin: 'bg-destructive/10 text-destructive',
+      moderator: 'bg-accent/10 text-accent-foreground',
+      member: 'bg-muted text-muted-foreground'
     };
 
     return (

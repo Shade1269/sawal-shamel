@@ -36,7 +36,7 @@ export const AtlantisAnimations = ({
   const animations = {
     levelUp: (
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -68,7 +68,7 @@ export const AtlantisAnimations = ({
           
           {level && (
             <motion.div
-              className={`inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r ${getLevelColor(level)} text-white font-bold text-lg mb-4`}
+              className={`inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r ${getLevelColor(level)} text-primary-foreground font-bold text-lg mb-4`}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.7, type: "spring" }}
@@ -153,7 +153,7 @@ export const AtlantisAnimations = ({
 
     challengeComplete: (
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -197,7 +197,7 @@ export const AtlantisAnimations = ({
 
     castleCapture: (
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
