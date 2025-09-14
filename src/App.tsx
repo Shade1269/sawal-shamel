@@ -7,7 +7,7 @@ import { DarkModeProvider } from "@/shared/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
-import { CustomerAuthProvider } from "@/contexts/CustomerAuthContext";
+import { CustomerAuthProvider, useCustomerAuthContext } from "@/contexts/CustomerAuthContext";
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import Header from "@/components/common/Header";
 import { AuthPage } from "@/features/auth";

@@ -50,7 +50,7 @@ interface CustomerAuthProviderProps {
   children: ReactNode;
 }
 
-export const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children }) => {
+const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children }) => {
   const { toast } = useToast();
   const [session, setSession] = useState<CustomerSession>({
     customer: null,
@@ -395,10 +395,12 @@ export const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ chil
   );
 };
 
-export const useCustomerAuthContext = () => {
+const useCustomerAuthContext = () => {
   const context = useContext(CustomerAuthContext);
   if (context === undefined) {
     throw new Error('useCustomerAuthContext must be used within a CustomerAuthProvider');
   }
   return context;
 };
+
+export { CustomerAuthProvider, useCustomerAuthContext };
