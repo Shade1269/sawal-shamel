@@ -297,19 +297,41 @@ export const useFastAuth = () => {
 
   const signOut = async () => {
     try {
+      // Always clear local state first
+      setUser(null);
+      setSession(null);
+      setProfile(null);
+      clearCache();
+
+      // Try to sign out from Supabase (but don't fail if session is invalid)
       const { error } = await supabase.auth.signOut();
       
+      // Log the error but don't return it - we already cleared local state
       if (error) {
-        return { error };
+        console.log('Supabase signOut error (ignored):', error);
       }
 
-      // Clear local state and cache
-      clearCache();
+      // Force navigation to home page
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
       
       return { error: null };
     } catch (error) {
       console.error('Signout error:', error);
-      return { error };
+      
+      // Even if there's an error, clear local state
+      setUser(null);
+      setSession(null);
+      setProfile(null);
+      clearCache();
+      
+      // Force navigation anyway
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
+      
+      return { error: null }; // Return success since we cleared local state
     }
   };
 
