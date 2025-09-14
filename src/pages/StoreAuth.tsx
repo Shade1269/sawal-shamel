@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Store, ArrowRight, Loader2, Home } from "lucide-react";
-import { CustomerAuth } from '@/components/CustomerAuth';
+import { CustomerAuth } from '@/features/auth';
 import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 

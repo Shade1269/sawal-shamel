@@ -36,9 +36,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
-import EnhancedEmojiPicker from './EnhancedEmojiPicker';
-import VoiceRecorder from './VoiceRecorder';
-import FileUpload from './FileUpload';
+import { EnhancedEmojiPicker, VoiceRecorder, FileUpload } from '@/shared/components';
 
 const AtlantisChat = () => {
   const { roomId } = useParams<{ roomId: string }>();

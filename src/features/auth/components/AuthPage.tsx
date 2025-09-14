@@ -6,11 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { LogIn, UserPlus, Mail, MessageSquare } from 'lucide-react';
-import FirebaseSMSAuth from '@/components/FirebaseSMSAuth';
+import FirebaseSMSAuth from './FirebaseSMSAuth';
 import { useNavigate } from 'react-router-dom';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import UsernameRegistration from '@/components/UsernameRegistration';
+import UsernameRegistration from './UsernameRegistration';
 
 const AuthPage = () => {
   const [isLoading, setIsLoading] = useState(false);

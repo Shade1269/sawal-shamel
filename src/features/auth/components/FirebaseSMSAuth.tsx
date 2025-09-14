@@ -15,7 +15,7 @@ import {
 } from 'firebase/auth';
 import { getFirebaseAuth } from '@/lib/firebase';
 import { saveUserToFirestore, getUserFromFirestore, updateUserInFirestore } from '@/lib/firestore';
-import UsernameRegistration from '@/components/UsernameRegistration';
+import UsernameRegistration from './UsernameRegistration';
 
 const FirebaseSMSAuth = () => {
   const [step, setStep] = useState<'phone' | 'verify' | 'username'>('phone');

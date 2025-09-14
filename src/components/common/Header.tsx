@@ -12,7 +12,7 @@ import { useFastAuth } from '@/hooks/useFastAuth';
 import { LogOut, Settings, User, Crown, Star, Award, Medal, CreditCard, FileText, RotateCcw, DollarSign, Share2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
-import ShoppingCartDrawer from '@/components/ShoppingCartDrawer';
+import { ShoppingCartDrawer } from '@/features/commerce';
 import GlobalSearch from '@/components/GlobalSearch';
 import GlobalNotifications from '@/components/GlobalNotifications';
 

@@ -9,7 +9,7 @@ import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Header from "@/components/common/Header";
-import AuthForm from "@/components/auth/AuthForm";
+import { AuthForm } from "@/features/auth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 
@@ -64,8 +64,8 @@ const ComprehensiveAdminPanel = lazy(() => import("./pages/ComprehensiveAdminPan
 const AdminSettings = lazy(() => import("./pages/AdminSettings"));
 const AtlantisSystem = lazy(() => import("./pages/AtlantisSystem"));
 const AtlantisGuide = lazy(() => import("./pages/AtlantisGuide"));
-const AtlantisChat = lazy(() => import("./components/AtlantisChat"));
-const AtlantisChatRooms = lazy(() => import("./components/AtlantisChatRooms"));
+const AtlantisChat = lazy(() => import("@/features/chat").then(m => ({ default: m.AtlantisChat })));
+const AtlantisChatRooms = lazy(() => import("@/features/chat").then(m => ({ default: m.AtlantisChatRooms })));
 
 // Product Management Pages
 const ProductManagement = lazy(() => import("./pages/ProductManagement"));
