@@ -253,13 +253,14 @@ export const ProductsManagement: React.FC = () => {
                 منتج جديد
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-lg">
-              <DialogHeader>
+            <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
+              <DialogHeader className="flex-shrink-0">
                 <DialogTitle className="text-xl font-bold">
                   {editingProduct ? 'تعديل المنتج' : 'إضافة منتج جديد'}
                 </DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleProductSubmit} className="space-y-4">
+              <div className="flex-1 overflow-y-auto">
+                <form onSubmit={handleProductSubmit} className="space-y-4 pr-2">
                 <div>
                   <Label htmlFor="title">اسم المنتج</Label>
                   <Input
@@ -440,7 +441,7 @@ export const ProductsManagement: React.FC = () => {
                   <Label htmlFor="is_active">منتج نشط</Label>
                 </div>
                 
-                <div className="flex justify-end space-x-2 pt-4">
+                <div className="flex justify-end space-x-2 pt-4 border-t bg-background sticky bottom-0 -mx-2 px-2 py-4">
                   <Button type="button" variant="outline" onClick={() => setShowProductDialog(false)}>
                     إلغاء
                   </Button>
@@ -453,6 +454,7 @@ export const ProductsManagement: React.FC = () => {
                   </Button>
                 </div>
               </form>
+              </div>
             </DialogContent>
           </Dialog>
 
