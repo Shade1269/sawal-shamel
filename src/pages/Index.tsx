@@ -5,7 +5,7 @@ import { MessageCircle, Users, Hash, Package, LogOut, User, Store, Moon, Sun, La
 import { useNavigate } from 'react-router-dom';
 
 import { useFastAuth } from '@/hooks/useFastAuth';
-import { useDarkMode } from '@/components/DarkModeProvider';
+import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index = () => {

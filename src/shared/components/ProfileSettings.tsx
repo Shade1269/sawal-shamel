@@ -10,9 +10,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Switch } from '@/components/ui/switch';
 import { Camera, Settings, User, Upload, Moon, Sun, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useDarkMode } from './DarkModeProvider';
+import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import { supabase } from '@/integrations/supabase/client';
-import AvatarUpload from './AvatarUpload';
+import AvatarUpload from '@/shared/components/AvatarUpload';
 
 interface ProfileSettingsProps {
   profile: any;

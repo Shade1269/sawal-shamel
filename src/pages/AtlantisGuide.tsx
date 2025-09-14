@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { AtlantisOnboarding } from '@/components/AtlantisOnboarding';
+import { AtlantisOnboarding } from '@/features/chat/components/AtlantisOnboarding';
 import { BackButton } from '@/components/ui/back-button';
 import { 
   BookOpen, 

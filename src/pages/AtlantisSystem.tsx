@@ -1,12 +1,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AtlantisLeaderboard } from '@/components/AtlantisLeaderboard';
-import { AllianceManager } from '@/features/affiliate';
+import { AtlantisLeaderboard } from '@/features/chat/components/AtlantisLeaderboard';
+import { AtlantisStatusWidget } from '@/features/chat/components/AtlantisStatusWidget';
 import { UserProgressCard } from '@/components/UserProgressCard';
-import { AtlantisNotifications } from '@/components/AtlantisNotifications';
-import { LiveLeaderboardUpdates } from '@/components/LiveLeaderboardUpdates';
-import { AtlantisAnimations, useAtlantisAnimations } from '@/components/AtlantisAnimations';
+import { AtlantisNotifications } from '@/features/chat/components/AtlantisNotifications';
+import { LiveLeaderboardUpdates } from '@/features/chat/components/LiveLeaderboardUpdates';
+import { AtlantisAnimations, useAtlantisAnimations } from '@/features/chat/components/AtlantisAnimations';
+import { AllianceManager } from '@/features/affiliate/components/AllianceManager';
 import { useAtlantisSystem } from '@/hooks/useAtlantisSystem';
 import { BackButton } from '@/components/ui/back-button';
 import { 

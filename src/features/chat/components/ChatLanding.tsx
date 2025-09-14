@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Users, Shield, Zap, Globe, Heart, User, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSupabaseAuth } from "@/contexts/SupabaseAuthContext";
-import { useDarkMode } from "@/components/DarkModeProvider";
+import { useDarkMode } from "@/shared/components/DarkModeProvider";
 
 const ChatLanding = () => {
   const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import QuickLinks from '@/components/navigation/QuickLinks';
-import { AtlantisStatusWidget } from '@/components/AtlantisStatusWidget';
+import { AtlantisStatusWidget } from '@/features/chat/components/AtlantisStatusWidget';
 import { 
   Crown, 
   Store, 

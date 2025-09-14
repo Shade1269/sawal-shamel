@@ -8,7 +8,7 @@ import { User, Camera, Save } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/hooks/use-toast';
-import AvatarUpload from './AvatarUpload';
+import AvatarUpload from '@/shared/components/AvatarUpload';
 
 interface UserProfileProps {
   profile: any;

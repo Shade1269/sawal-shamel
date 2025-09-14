@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { MoreVertical, Shield, Flag, Info } from 'lucide-react';
-import ModerationPanel from './ModerationPanel';
+import ModerationPanel from '@/features/chat/components/ModerationPanel';
 
 interface UserActionsMenuProps {
   user: {

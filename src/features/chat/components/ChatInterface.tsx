@@ -43,27 +43,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import FileUpload from '@/components/FileUpload';
-import VoiceRecorder from '@/components/VoiceRecorder';
-import UserProfile from '@/components/UserProfile';
-import UserActionsMenu from '@/components/UserActionsMenu';
-import ModerationPanel from '@/components/ModerationPanel';
-import EnhancedEmojiPicker, { parseEmojiText } from '@/components/EnhancedEmojiPicker';
-import EnhancedMessageActions from '@/components/EnhancedMessageActions';
-import MessageStatus from '@/components/MessageStatus';
-import ThreadReply from '@/components/ThreadReply';
-import ProfileSettings from '@/components/ProfileSettings';
-import ChannelMembership from '@/components/ChannelMembership';
-import NotificationSound from '@/components/NotificationSound';
-import MessageSearch from '@/components/MessageSearch';
-import PinnedMessages from '@/components/PinnedMessages';
-import NotificationManager from '@/components/NotificationManager';
-import UserProfileDialog from '@/components/UserProfileDialog';
-import UserProfileMenu from '@/components/UserProfileMenu';
-import NotificationPrompt from '@/components/NotificationPrompt';
-import SimpleUserProfile from '@/components/SimpleUserProfile';
-import { useNotifications } from '@/hooks/useNotifications';
-import { useDarkMode } from '@/components/DarkModeProvider';
+import FileUpload from '@/shared/components/FileUpload';
+import VoiceRecorder from '@/features/chat/components/VoiceRecorder';
+import { useDarkMode } from '@/shared/components/DarkModeProvider';
 
 const ChatInterface = () => {
   const [message, setMessage] = useState('');
@@ -86,7 +68,7 @@ const ChatInterface = () => {
   const activeRoom = channelId || '';
   const { messages, channels, loading, currentProfile: hookProfile, sendMessage: sendMsg, deleteMessage, setMessages, typingUsers, startTyping, stopTyping } = useRealTimeChat(activeRoom);
   const { isDarkMode, toggleDarkMode } = useDarkMode();
-  const notifications = useNotifications(user?.id);
+  import { useNotifications } from '@/hooks/useNotifications';
 
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [mentionAlert, setMentionAlert] = useState(false);

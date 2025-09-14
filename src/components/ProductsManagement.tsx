@@ -33,7 +33,7 @@ import { useUpdateProduct, useProducts, useCategories, useBrands } from '@/hooks
 import { toast } from 'sonner';
 import { useUserData } from '@/hooks/useUserData';
 import { useQueryClient } from '@tanstack/react-query';
-import FileUpload from '@/components/FileUpload';
+import FileUpload from '@/shared/components/FileUpload';
 
 export const ProductsManagement: React.FC = () => {
   const { warehouseProducts, productVariants, suppliers, loading: inventoryLoading } = useInventoryManagement();

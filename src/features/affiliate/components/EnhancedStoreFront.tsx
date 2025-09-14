@@ -35,8 +35,8 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { ProductImageCarousel } from "@/components/ProductImageCarousel";
-import { CheckoutFlow } from "@/components/CheckoutFlow";
+import { ProductImageCarousel } from "@/features/commerce/components/ProductImageCarousel";
+import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Product {

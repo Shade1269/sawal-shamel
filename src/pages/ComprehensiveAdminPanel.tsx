@@ -80,7 +80,7 @@ import {
   Star
 } from 'lucide-react';
 import { PushNotificationManager } from '@/components/PushNotificationManager';
-import { AtlantisAnimations } from '@/components/AtlantisAnimations';
+import { AtlantisAnimations } from '@/features/chat/components/AtlantisAnimations';
 
 interface AdminStats {
   totalUsers: number;

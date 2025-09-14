@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Moon, Sun, Globe } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useDarkMode } from '@/components/DarkModeProvider';
+import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import {
   DropdownMenu,
   DropdownMenuContent,

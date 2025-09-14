@@ -8,9 +8,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ShoppingCart, Star, Store, Phone, Mail, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { ProductImageCarousel } from "@/components/ProductImageCarousel";
+import { ProductImageCarousel } from "@/features/commerce/components/ProductImageCarousel";
 import { Input } from "@/components/ui/input";
-import { CheckoutFlow } from "@/components/CheckoutFlow";
+import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
 
 interface Product {
   id: string;

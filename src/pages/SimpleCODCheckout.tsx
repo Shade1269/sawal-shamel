@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SimpleCheckout } from '@/components/SimpleCheckout';
+import { SimpleCheckout } from '@/features/commerce/components/SimpleCheckout';
 import { safeJsonParse } from '@/lib/utils';
 
 interface CartItem {

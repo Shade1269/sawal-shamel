@@ -9,7 +9,7 @@ import { useUserDataContext } from '@/contexts/UserDataContext';
 import { Package, Plus, Store, Activity, BarChart3, User, Calendar } from 'lucide-react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { UserDashboard } from '@/components/UserDashboard';
-import { ProductImageCarousel } from '@/components/ProductImageCarousel';
+import { ProductImageCarousel } from '@/features/commerce/components/ProductImageCarousel';
 
 const StoreManagement = () => {
   const { user } = useSupabaseAuth();

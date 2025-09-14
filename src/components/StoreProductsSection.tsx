@@ -10,7 +10,7 @@ import { Package, Trash2, Star, Plus, Eye, EyeOff, DollarSign } from 'lucide-rea
 import { toast } from '@/components/ui/use-toast';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserDataContext } from '@/contexts/UserDataContext';
-import { ProductImageCarousel } from '@/components/ProductImageCarousel';
+import { ProductImageCarousel } from '@/features/commerce/components/ProductImageCarousel';
 
 interface Product {
   id: string;
