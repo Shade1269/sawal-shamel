@@ -6620,6 +6620,10 @@ export type Database = {
         Args: { data_to_encrypt: Json; encryption_level?: string }
         Returns: string
       }
+      gen_random_uuid: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       generate_invoice_number: {
         Args: Record<PropertyKey, never>
         Returns: string
