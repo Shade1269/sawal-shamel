@@ -18,13 +18,15 @@ import { useFastAuth } from '@/hooks/useFastAuth';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 // Import new components
-import { AffiliateOverview } from '@/components/affiliate/AffiliateOverview';
-import { AffiliateCommissions } from '@/components/affiliate/AffiliateCommissions';
-import { AffiliateAnalytics } from '@/components/affiliate/AffiliateAnalytics';
-import { AffiliateStoreManager } from '@/components/affiliate/AffiliateStoreManager';
-import { AffiliateProductsManager } from '@/components/AffiliateProductsManager';
-import AffiliateStoreCustomizer from '@/components/affiliate/AffiliateStoreCustomizer';
-import StoreAnalyticsDashboard from '@/components/affiliate/StoreAnalyticsDashboard';
+import { 
+  AffiliateOverview, 
+  AffiliateCommissions, 
+  AffiliateAnalytics,
+  AffiliateStoreManager,
+  AffiliateProductsManager,
+  AffiliateStoreCustomizer,
+  StoreAnalyticsDashboard
+} from '@/features/affiliate';
 
 const AffiliateDashboardNew = () => {
   const { profile } = useFastAuth();

@@ -1,4 +1,4 @@
-import EnhancedStoreFront from '@/components/affiliate/EnhancedStoreFront';
+import { EnhancedStoreFront } from '@/features/affiliate';
 
 const AffiliateStoreFront = () => {
   return <EnhancedStoreFront />;

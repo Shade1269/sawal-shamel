@@ -31,8 +31,7 @@ import { useFastAuth } from '@/hooks/useFastAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { AdminOverviewCards } from '@/components/admin/AdminOverviewCards';
-import { AdminQuickActions } from '@/components/admin/AdminQuickActions';
+import { AdminOverviewCards, AdminQuickActions } from '@/features/admin';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 const AdminDashboard = () => {

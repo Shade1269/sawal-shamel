@@ -13,8 +13,7 @@ import { LogOut, Settings, User, Crown, Star, Award, Medal, CreditCard, FileText
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCartDrawer } from '@/features/commerce';
-import GlobalSearch from '@/components/GlobalSearch';
-import GlobalNotifications from '@/components/GlobalNotifications';
+import { GlobalSearch, GlobalNotifications } from '@/shared/components';
 
 const Header = () => {
   const { profile, user, isAuthenticated } = useFastAuth();

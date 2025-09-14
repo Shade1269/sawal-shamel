@@ -18,3 +18,14 @@ export { default as UserProfileDialog } from '@/components/UserProfileDialog';
 export { default as UserProfileMenu } from '@/components/UserProfileMenu';
 export { default as NotificationPrompt } from '@/components/NotificationPrompt';
 export { default as SimpleUserProfile } from '@/components/SimpleUserProfile';
+
+// Dashboard and Analytics Components
+export { default as ActivityFeed } from './ActivityFeed';
+export { default as StatsOverview } from './StatsOverview';
+export { default as QuickActionPanel } from './QuickActionPanel';
+export { default as EnhancedDashboard } from './EnhancedDashboard';
+
+// Global Components
+export { default as GlobalHeader } from './GlobalHeader';
+export { default as GlobalSearch } from './GlobalSearch';
+export { default as GlobalNotifications } from './GlobalNotifications';

@@ -67,3 +67,5 @@ export const GlobalHeader: React.FC = () => {
     </header>
   );
 };
+
+export default GlobalHeader;

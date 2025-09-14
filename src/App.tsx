@@ -47,9 +47,9 @@ const OrderTracking = lazy(() => import("./pages/OrderTracking"));
 const OrderManagement = lazy(() => import("./pages/OrderManagement"));
 
 // Analytics Pages
-const AnalyticsDashboard = lazy(() => import("./components/analytics/AnalyticsDashboard"));
-const SalesReports = lazy(() => import("./components/analytics/SalesReports"));
-const UserBehaviorAnalytics = lazy(() => import("./components/analytics/UserBehaviorAnalytics"));
+const AnalyticsDashboard = lazy(() => import("@/features/analytics").then(m => ({ default: m.AnalyticsDashboard })));
+const SalesReports = lazy(() => import("@/features/analytics").then(m => ({ default: m.SalesReports })));
+const UserBehaviorAnalytics = lazy(() => import("@/features/analytics").then(m => ({ default: m.UserBehaviorAnalytics })));
 
 // Payment System Pages
 const PaymentDashboard = lazy(() => import("./pages/PaymentDashboard"));

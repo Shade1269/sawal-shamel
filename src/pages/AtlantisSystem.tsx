@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AtlantisLeaderboard } from '@/components/AtlantisLeaderboard';
-import { AllianceManager } from '@/components/AllianceManager';
+import { AllianceManager } from '@/features/affiliate';
 import { UserProgressCard } from '@/components/UserProgressCard';
 import { AtlantisNotifications } from '@/components/AtlantisNotifications';
 import { LiveLeaderboardUpdates } from '@/components/LiveLeaderboardUpdates';

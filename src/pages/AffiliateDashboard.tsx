@@ -47,9 +47,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
-import { CommissionsPanel } from '@/components/CommissionsPanel';
+import { CommissionsPanel, AffiliateProductsManager } from '@/features/affiliate';
+import { StatsOverview } from '@/shared/components';
 import { BackButton } from '@/components/ui/back-button';
-import { AffiliateProductsManager } from '@/components/AffiliateProductsManager';
 import { useOptimizedAuth } from '@/hooks/useOptimizedAuth';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
