@@ -20,6 +20,7 @@ export interface FastUserProfile {
 // Memory cache for user data
 const userCache = {
   profile: null as FastUserProfile | null,
+  userId: null as string | null, // Track which user the cache belongs to
   timestamp: 0,
   CACHE_DURATION: 5 * 60 * 1000 // 5 minutes
 };
@@ -37,8 +38,13 @@ export const useFastAuth = () => {
   const [loading, setLoading] = useState(true);
 
   // Get cached profile from memory or localStorage
-  const getCachedProfile = useCallback(() => {
+  const getCachedProfile = useCallback((userId: string) => {
     const now = Date.now();
+    
+    // Check if cache is for the same user
+    if (userCache.userId !== userId) {
+      return null;
+    }
     
     // Check memory cache first
     if (userCache.profile && (now - userCache.timestamp) < userCache.CACHE_DURATION) {
@@ -49,13 +55,15 @@ export const useFastAuth = () => {
     try {
       const cached = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
       const lastUpdate = localStorage.getItem(STORAGE_KEYS.LAST_UPDATE);
+      const cachedUserId = localStorage.getItem(STORAGE_KEYS.USER_PROFILE + '_uid');
       
-      if (cached && lastUpdate) {
+      if (cached && lastUpdate && cachedUserId === userId) {
         const timeDiff = now - parseInt(lastUpdate);
         if (timeDiff < userCache.CACHE_DURATION) {
           const profileData = JSON.parse(cached);
           // Update memory cache
           userCache.profile = profileData;
+          userCache.userId = userId;
           userCache.timestamp = now;
           return profileData;
         }
@@ -73,12 +81,14 @@ export const useFastAuth = () => {
     
     // Update memory cache
     userCache.profile = profileData;
+    userCache.userId = profileData.auth_user_id;
     userCache.timestamp = now;
     
     // Update localStorage
     try {
       localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(profileData));
       localStorage.setItem(STORAGE_KEYS.LAST_UPDATE, now.toString());
+      localStorage.setItem(STORAGE_KEYS.USER_PROFILE + '_uid', profileData.auth_user_id);
     } catch (error) {
       console.error('Error caching profile:', error);
     }
@@ -87,7 +97,7 @@ export const useFastAuth = () => {
   // Fetch user profile with optimized query
   const fetchUserProfile = useCallback(async (userId: string, useCache = true) => {
     if (useCache) {
-      const cached = getCachedProfile();
+      const cached = getCachedProfile(userId);
       if (cached) {
         setProfile(cached);
         return cached;
@@ -192,9 +202,11 @@ export const useFastAuth = () => {
         setProfile(null);
         // Clear cache on logout
         userCache.profile = null;
+        userCache.userId = null;
         userCache.timestamp = 0;
         localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
         localStorage.removeItem(STORAGE_KEYS.LAST_UPDATE);
+        localStorage.removeItem(STORAGE_KEYS.USER_PROFILE + '_uid');
       }
 
       setLoading(false);
@@ -219,9 +231,11 @@ export const useFastAuth = () => {
   // Clear cache manually
   const clearCache = useCallback(() => {
     userCache.profile = null;
+    userCache.userId = null;
     userCache.timestamp = 0;
     localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
     localStorage.removeItem(STORAGE_KEYS.LAST_UPDATE);
+    localStorage.removeItem(STORAGE_KEYS.USER_PROFILE + '_uid');
   }, []);
 
   // Auth functions
