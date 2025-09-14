@@ -97,3 +97,5 @@ export const ProductVariantManager: React.FC<ProductVariantManagerProps> = ({
     </div>
   );
 };
+
+export default ProductVariantManager;

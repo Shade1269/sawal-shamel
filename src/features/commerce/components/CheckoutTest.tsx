@@ -84,3 +84,5 @@ export const CheckoutTest = () => {
     </Card>
   );
 };
+
+export default CheckoutTest;

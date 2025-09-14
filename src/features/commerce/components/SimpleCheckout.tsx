@@ -376,3 +376,5 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
     </div>
   );
 };
+
+export default SimpleCheckout;

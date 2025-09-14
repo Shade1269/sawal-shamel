@@ -253,3 +253,5 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
 
   return null;
 };
+
+export default CheckoutFlow;

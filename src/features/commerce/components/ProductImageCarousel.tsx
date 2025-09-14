@@ -204,3 +204,5 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
     </div>
   );
 };
+
+export default ProductImageCarousel;

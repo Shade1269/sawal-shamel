@@ -389,3 +389,5 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
     </div>
   );
 };
+
+export default CheckoutSteps;
