@@ -27,18 +27,17 @@ import {
   Image
 } from 'lucide-react';
 import { useInventoryManagement } from '@/hooks/useInventoryManagement';
-import { useCreateProduct, useUpdateProduct, useProducts, useCategories, useBrands } from '@/hooks/useProductManagement';
+import { useUpdateProduct, useProducts, useCategories, useBrands } from '@/hooks/useProductManagement';
 import { toast } from 'sonner';
 import { useUserData } from '@/hooks/useUserData';
 import FileUpload from '@/components/FileUpload';
 
 export const ProductsManagement: React.FC = () => {
   const { warehouseProducts, productVariants, suppliers, loading: inventoryLoading } = useInventoryManagement();
-  const { userShop } = useUserData();
+  const { userShop, addProduct } = useUserData();
   const { data: products = [], isLoading: productsLoading } = useProducts();
   const { data: categories = [] } = useCategories();
   const { data: brands = [] } = useBrands();
-  const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
 
   const [showProductDialog, setShowProductDialog] = useState(false);
@@ -46,6 +45,7 @@ export const ProductsManagement: React.FC = () => {
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [editingVariant, setEditingVariant] = useState<any>(null);
   const [selectedProduct, setSelectedProduct] = useState<string>('');
+  const [isSaving, setIsSaving] = useState(false);
   
   const [productFormData, setProductFormData] = useState({
     title: '',
@@ -89,6 +89,7 @@ export const ProductsManagement: React.FC = () => {
     }
 
     try {
+      setIsSaving(true);
       const data = {
         title: productFormData.title,
         description: productFormData.description,
@@ -98,7 +99,6 @@ export const ProductsManagement: React.FC = () => {
         brand_id: productFormData.brand_id || null,
         sku: productFormData.sku || null,
         is_active: productFormData.is_active,
-        merchant_id: userShop.id,
         tags: [],
         meta_keywords: [],
         featured: false,
@@ -109,7 +109,7 @@ export const ProductsManagement: React.FC = () => {
         await updateProduct.mutateAsync({ id: editingProduct.id, data });
         toast.success('تم تحديث المنتج بنجاح');
       } else {
-        await createProduct.mutateAsync(data);
+        await addProduct(data);
         toast.success('تم إضافة المنتج بنجاح');
       }
       
@@ -118,6 +118,8 @@ export const ProductsManagement: React.FC = () => {
     } catch (error) {
       console.error('Error saving product:', error);
       toast.error('حدث خطأ في حفظ المنتج');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -505,9 +507,9 @@ export const ProductsManagement: React.FC = () => {
                   <Button 
                     type="submit" 
                     className="bg-gradient-primary hover:opacity-90"
-                    disabled={createProduct.isPending || updateProduct.isPending}
+                    disabled={isSaving || updateProduct.isPending}
                   >
-                    {createProduct.isPending || updateProduct.isPending ? 'جاري الحفظ...' : (editingProduct ? 'تحديث' : 'إضافة')}
+                    {isSaving || updateProduct.isPending ? 'جاري الحفظ...' : (editingProduct ? 'تحديث' : 'إضافة')}
                   </Button>
                 </div>
               </form>
