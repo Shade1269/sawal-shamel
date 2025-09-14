@@ -70,13 +70,7 @@ export function useProducts(filters?: {
     queryFn: async () => {
       let query = supabase
         .from("products")
-        .select(`
-          *,
-          product_categories(name, slug),
-          product_brands(name, slug),
-          product_images(id, image_url, alt_text, sort_order),
-          product_attributes(attribute_name, attribute_value)
-        `)
+        .select("*")
         .order("created_at", { ascending: false });
 
       if (filters?.search) {
@@ -113,13 +107,7 @@ export function useProduct(id: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select(`
-          *,
-          product_categories(name, slug),
-          product_brands(name, slug),
-          product_images(id, image_url, alt_text, sort_order),
-          product_attributes(attribute_name, attribute_value)
-        `)
+        .select("*")
         .eq("id", id)
         .maybeSingle();
 
@@ -200,14 +188,8 @@ export function useCategories() {
   return useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("product_categories")
-        .select("*")
-        .eq("is_active", true)
-        .order("sort_order", { ascending: true });
-
-      if (error) throw error;
-      return data;
+      // إرجاع قائمة فارغة إذا لم يكن هناك جدول فئات
+      return [];
     }
   });
 }
@@ -216,14 +198,8 @@ export function useBrands() {
   return useQuery({
     queryKey: ["brands"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("product_brands")
-        .select("*")
-        .eq("is_active", true)
-        .order("name", { ascending: true });
-
-      if (error) throw error;
-      return data;
+      // إرجاع قائمة فارغة إذا لم يكن هناك جدول العلامات التجارية
+      return [];
     }
   });
 }

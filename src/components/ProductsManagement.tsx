@@ -728,7 +728,11 @@ export const ProductsManagement: React.FC = () => {
       </div>
 
       <Tabs defaultValue="products" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-1 shadow-soft">
+        <TabsList className="grid w-full grid-cols-3 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-1 shadow-soft">
+          <TabsTrigger value="my-products" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow rounded-lg transition-all duration-300">
+            <Package className="h-4 w-4 ml-2" />
+            منتجاتي ({products.length})
+          </TabsTrigger>
           <TabsTrigger value="products" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-glow rounded-lg transition-all duration-300">
             <Package className="h-4 w-4 ml-2" />
             المنتجات الأساسية ({warehouseProducts.length})
@@ -738,6 +742,97 @@ export const ProductsManagement: React.FC = () => {
             المتغيرات ({productVariants.length})
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="my-products" className="mt-6">
+          {products.length === 0 ? (
+            <Card className="border-dashed border-2 border-muted-foreground/30 bg-muted/20">
+              <CardContent className="text-center py-12">
+                <div className="p-4 rounded-full bg-muted mb-4 mx-auto w-fit">
+                  <Package className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">لا توجد منتجات</h3>
+                <p className="text-muted-foreground mb-4">
+                  ابدأ بإضافة أول منتج لمتجرك
+                </p>
+                <Button onClick={resetProductForm} variant="outline" className="border-primary hover:bg-primary hover:text-primary-foreground">
+                  إضافة منتج جديد
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {products.map((product) => (
+                <Card key={product.id} className="relative overflow-hidden border border-border/50 bg-card/50 backdrop-blur-sm shadow-soft hover:shadow-luxury transition-all duration-300 hover:-translate-y-1">
+                  <CardContent className="p-4">
+                    {/* صورة المنتج */}
+                    {product.image_urls && product.image_urls.length > 0 && (
+                      <div className="mb-4 aspect-square overflow-hidden rounded-lg bg-muted">
+                        <img 
+                          src={product.image_urls[0]} 
+                          alt={product.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* معلومات المنتج */}
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between">
+                        <h3 className="font-semibold text-foreground text-lg line-clamp-2">{product.title}</h3>
+                        <Badge variant={product.is_active ? 'default' : 'secondary'} className="text-xs">
+                          {product.is_active ? 'نشط' : 'غير نشط'}
+                        </Badge>
+                      </div>
+                      
+                      {product.description && (
+                        <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
+                      )}
+                      
+                      {/* السعر والمخزون */}
+                      <div className="flex items-center justify-between pt-2">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-green-500" />
+                          <span className="font-bold text-lg text-foreground">{product.price_sar} ر.س</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <Box className="h-4 w-4" />
+                          <span>{product.stock || 0}</span>
+                        </div>
+                      </div>
+                      
+                      {/* SKU */}
+                      {product.sku && (
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Barcode className="h-3 w-3" />
+                          <span>{product.sku}</span>
+                        </div>
+                      )}
+                      
+                      {/* أزرار الإجراءات */}
+                      <div className="flex gap-2 pt-3">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => startEditProduct(product)}
+                          className="flex-1 hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Edit2 className="h-3 w-3 ml-1" />
+                          تعديل
+                        </Button>
+                      </div>
+                      
+                      {/* تاريخ الإنشاء */}
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2 border-t">
+                        <Calendar className="h-3 w-3" />
+                        <span>{new Date(product.created_at).toLocaleDateString('ar-SA')}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </TabsContent>
 
         <TabsContent value="products" className="mt-6">
           {warehouseProducts.length === 0 ? (
