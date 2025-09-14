@@ -26,6 +26,9 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useAtlantisSystem } from '@/hooks/useAtlantisSystem';
+import StatsOverview, { getDashboardStats, getInventoryStats } from './StatsOverview';
+import QuickActionPanel, { getAdminActions, getMerchantActions, getAffiliateActions, getCustomerActions } from './QuickActionPanel';
+import ActivityFeed, { generateSampleActivities } from './ActivityFeed';
 
 interface QuickAction {
   id: string;
@@ -50,17 +53,33 @@ const EnhancedDashboard: React.FC = () => {
   const { userLevel, userAlliance } = useAtlantisSystem();
   
   const [showNotifications, setShowNotifications] = useState(false);
-  const [quickActions, setQuickActions] = useState<QuickAction[]>([]);
+  const [quickActions, setQuickActions] = useState<any[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [dashboardStats, setDashboardStats] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
 
   useEffect(() => {
     if (profile?.role) {
       setQuickActions(getQuickActionsForRole(profile.role));
       setAchievements(getAchievementsForUser());
+      setDashboardStats(getStatsForRole(profile.role));
+      setActivities(generateSampleActivities());
     }
   }, [profile]);
 
-  const getQuickActionsForRole = (role: string): QuickAction[] => {
+  const getStatsForRole = (role: string) => {
+    switch (role) {
+      case 'admin':
+      case 'merchant':
+        return getDashboardStats();
+      case 'affiliate':
+        return getInventoryStats();
+      default:
+        return getDashboardStats();
+    }
+  };
+
+  const getQuickActionsForRole = (role: string) => {
     const baseActions: QuickAction[] = [
       {
         id: 'profile',
@@ -236,7 +255,7 @@ const EnhancedDashboard: React.FC = () => {
         transition={{ delay: 0.1 }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
       >
-        {stats.map((stat, index) => (
+        {dashboardStats.map((stat, index) => (
           <Card key={stat.title} className="relative overflow-hidden">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
