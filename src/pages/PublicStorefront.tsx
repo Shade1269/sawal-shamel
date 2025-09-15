@@ -130,34 +130,41 @@ export default function PublicStorefront() {
   return (
     <div className="min-h-screen bg-background">
       {/* Store Header */}
-      <div className="bg-gradient-to-r from-primary/10 to-primary/20 py-12">
+      <div className="bg-gradient-to-r from-primary/10 to-primary/20 py-12 relative">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-start mb-6">
-            <div className="flex-1"></div>
-            <div className="text-center flex-1">
-              {store.logo_url && (
-                <img 
-                  src={store.logo_url} 
-                  alt={store.store_name}
-                  className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-                />
-              )}
-              <h1 className="text-4xl font-bold mb-2">{store.store_name}</h1>
-              {store.bio && (
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  {store.bio}
-                </p>
-              )}
-            </div>
-            <div className="flex-1 flex justify-end">
-              <Button 
-                variant="outline"
-                onClick={() => window.location.href = `/s/${store_slug}/my-orders`}
-                className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
-              >
-                طلباتي
-              </Button>
-            </div>
+          {/* Navigation Bar */}
+          <div className="flex justify-between items-center mb-6">
+            <Button 
+              variant="outline"
+              onClick={() => window.location.href = `/`}
+              className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
+            >
+              الصفحة الرئيسية
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => window.location.href = `/s/${store_slug}/my-orders`}
+              className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
+            >
+              طلباتي
+            </Button>
+          </div>
+          
+          {/* Store Info */}
+          <div className="text-center">
+            {store.logo_url && (
+              <img 
+                src={store.logo_url} 
+                alt={store.store_name}
+                className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+              />
+            )}
+            <h1 className="text-4xl font-bold mb-2">{store.store_name}</h1>
+            {store.bio && (
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {store.bio}
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -170,12 +170,12 @@ export default function MyOrders() {
 
   const getStatusColor = (status: string) => {
     switch (status?.toUpperCase()) {
-      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
-      case 'CONFIRMED': return 'bg-blue-100 text-blue-800';
-      case 'SHIPPED': return 'bg-purple-100 text-purple-800';
-      case 'DELIVERED': return 'bg-green-100 text-green-800';
-      case 'CANCELLED': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'PENDING': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      case 'CONFIRMED': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'SHIPPED': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+      case 'DELIVERED': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'CANCELLED': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
     }
   };
 
@@ -203,23 +203,22 @@ export default function MyOrders() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-primary/10 to-primary/20 py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-4">
+      {/* Navigation Header */}
+      <div className="bg-card border-b">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex justify-between items-center">
             <Button 
-              variant="outline"
+              variant="ghost"
               onClick={() => window.location.href = `/s/${store_slug}`}
-              className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
+              className="text-primary hover:text-primary/80"
             >
               ← العودة للمتجر
             </Button>
-            <div className="text-center flex-1">
-              <Package className="mx-auto h-12 w-12 text-primary mb-4" />
-              <h1 className="text-3xl font-bold mb-2">طلباتي</h1>
-              <p className="text-muted-foreground">تتبع طلباتك في {store?.store_name}</p>
+            <div className="text-center">
+              <h1 className="font-semibold">طلباتي</h1>
+              <p className="text-sm text-muted-foreground">{store.store_name}</p>
             </div>
-            <div className="w-24"></div> {/* Spacer for center alignment */}
+            <div className="w-24"></div> {/* Spacer for centering */}
           </div>
         </div>
       </div>
@@ -249,9 +248,6 @@ export default function MyOrders() {
                       required
                       dir="ltr"
                     />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      💡 للاختبار: أي رقم جوال صحيح، ستجد رمز التحقق في كونسول المطور
-                    </p>
                   </div>
                   <Button 
                     type="submit" 
@@ -281,9 +277,6 @@ export default function MyOrders() {
                 <p className="text-sm text-muted-foreground">
                   أدخل الرمز المرسل إلى {phone}
                 </p>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
-                  <strong>للتطوير:</strong> تحقق من كونسول المطور لرؤية رمز التحقق
-                </div>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleOtpSubmit} className="space-y-4">
