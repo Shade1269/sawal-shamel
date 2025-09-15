@@ -206,10 +206,20 @@ export default function MyOrders() {
       {/* Header */}
       <div className="bg-gradient-to-r from-primary/10 to-primary/20 py-8">
         <div className="container mx-auto px-4">
-          <div className="text-center">
-            <Package className="mx-auto h-12 w-12 text-primary mb-4" />
-            <h1 className="text-3xl font-bold mb-2">طلباتي</h1>
-            <p className="text-muted-foreground">تتبع طلباتك في {store?.store_name}</p>
+          <div className="flex items-center justify-between mb-4">
+            <Button 
+              variant="outline"
+              onClick={() => window.location.href = `/s/${store_slug}`}
+              className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
+            >
+              ← العودة للمتجر
+            </Button>
+            <div className="text-center flex-1">
+              <Package className="mx-auto h-12 w-12 text-primary mb-4" />
+              <h1 className="text-3xl font-bold mb-2">طلباتي</h1>
+              <p className="text-muted-foreground">تتبع طلباتك في {store?.store_name}</p>
+            </div>
+            <div className="w-24"></div> {/* Spacer for center alignment */}
           </div>
         </div>
       </div>
@@ -239,6 +249,9 @@ export default function MyOrders() {
                       required
                       dir="ltr"
                     />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      💡 للاختبار: أي رقم جوال صحيح، ستجد رمز التحقق في كونسول المطور
+                    </p>
                   </div>
                   <Button 
                     type="submit" 
@@ -268,6 +281,9 @@ export default function MyOrders() {
                 <p className="text-sm text-muted-foreground">
                   أدخل الرمز المرسل إلى {phone}
                 </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
+                  <strong>للتطوير:</strong> تحقق من كونسول المطور لرؤية رمز التحقق
+                </div>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleOtpSubmit} className="space-y-4">
