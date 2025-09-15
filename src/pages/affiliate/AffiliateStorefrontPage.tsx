@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { UnifiedOrdersService } from '@/lib/unifiedOrdersService';
+import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ShoppingCart, Plus, Minus, Store, Package, CheckCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 interface AffiliateStore {
   id: string;
@@ -49,9 +48,16 @@ interface CartItem {
 export default function AffiliateStorefrontPage() {
   const { store_slug } = useParams<{ store_slug: string }>();
   const navigate = useNavigate();
-  const { toast } = useToast();
   
-  const [cart, setCart] = useState<CartItem[]>([]);
+  // Store-specific cart state using localStorage
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window !== 'undefined' && store_slug) {
+      const saved = localStorage.getItem(`cart:${store_slug}`);
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+  
   const [showCheckout, setShowCheckout] = useState(false);
   const [customerData, setCustomerData] = useState({
     name: '',
@@ -60,13 +66,20 @@ export default function AffiliateStorefrontPage() {
     address: ''
   });
 
-  // Fetch store data
+  // Save cart to localStorage whenever it changes
+  React.useEffect(() => {
+    if (store_slug) {
+      localStorage.setItem(`cart:${store_slug}`, JSON.stringify(cart));
+    }
+  }, [cart, store_slug]);
+
+  // Fetch store data using public client
   const { data: store, isLoading: storeLoading } = useQuery({
-    queryKey: ['affiliate-store-public', store_slug],
+    queryKey: ['public-affiliate-store', store_slug],
     queryFn: async () => {
       if (!store_slug) return null;
       
-      const { data, error } = await supabase
+      const { data, error } = await supabasePublic
         .from('affiliate_stores')
         .select('*')
         .eq('store_slug', store_slug)
@@ -79,13 +92,13 @@ export default function AffiliateStorefrontPage() {
     enabled: !!store_slug
   });
 
-  // Fetch store products
+  // Fetch store products using public client
   const { data: products, isLoading: productsLoading } = useQuery({
-    queryKey: ['store-products', store?.id],
+    queryKey: ['public-store-products', store?.id],
     queryFn: async () => {
       if (!store) return [];
       
-      const { data, error } = await supabase
+      const { data, error } = await supabasePublic
         .from('affiliate_products')
         .select(`
           *,
@@ -107,34 +120,43 @@ export default function AffiliateStorefrontPage() {
     enabled: !!store
   });
 
-  // Create order mutation
+  // Create order using public client
   const createOrderMutation = useMutation({
     mutationFn: async () => {
       if (!store || cart.length === 0) return;
 
       const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       
-      const orderId = await UnifiedOrdersService.createOrder({
-        shop_id: store.id, // Using store ID as shop_id for now
-        customer_name: customerData.name,
-        customer_phone: customerData.phone,
-        customer_profile_id: undefined,
-        shipping_address: {
-          address: customerData.address,
-          phone: customerData.phone,
-          name: customerData.name
-        },
-        subtotal_sar: total,
-        tax_sar: 0,
-        shipping_sar: 0,
-        total_sar: total,
-        payment_method: 'COD',
-        affiliate_store_id: store.id,
-        affiliate_commission_sar: total * 0.1 // 10% default commission
-      });
+      // Insert order using public client
+      const { data: orderData, error: orderError } = await supabasePublic
+        .from('orders')
+        .insert({
+          shop_id: store.id,
+          customer_name: customerData.name,
+          customer_phone: customerData.phone,
+          customer_email: customerData.email || null,
+          shipping_address: {
+            address: customerData.address,
+            phone: customerData.phone,
+            name: customerData.name
+          },
+          subtotal_sar: total,
+          tax_sar: 0,
+          shipping_sar: 0,
+          total_sar: total,
+          payment_method: 'COD',
+          affiliate_store_id: store.id,
+          affiliate_commission_sar: total * 0.1,
+          status: 'PENDING'
+        })
+        .select()
+        .single();
 
-      // Add order items
+      if (orderError) throw orderError;
+
+      // Insert order items
       const orderItems = cart.map(item => ({
+        order_id: orderData.id,
         product_id: item.product_id,
         merchant_id: store.id,
         title_snapshot: item.title,
@@ -144,25 +166,30 @@ export default function AffiliateStorefrontPage() {
         commission_rate: 10
       }));
 
-      await UnifiedOrdersService.createOrderItems(orderId, orderItems);
+      const { error: itemsError } = await supabasePublic
+        .from('order_items')
+        .insert(orderItems);
 
-      return orderId;
+      if (itemsError) throw itemsError;
+
+      return orderData.id;
     },
     onSuccess: (orderId) => {
-      toast({
-        title: "تم إنشاء الطلب بنجاح",
-        description: `رقم الطلب: ${orderId}`,
+      toast.success("تم إنشاء الطلب بنجاح", {
+        description: `رقم الطلب: ${orderId}`
       });
       setCart([]);
+      if (store_slug) {
+        localStorage.removeItem(`cart:${store_slug}`);
+      }
       setShowCheckout(false);
       setCustomerData({ name: '', phone: '', email: '', address: '' });
     },
     onError: (error) => {
-      toast({
-        title: "خطأ في إنشاء الطلب",
-        description: "حدث خطأ أثناء إنشاء الطلب، يرجى المحاولة مرة أخرى",
-        variant: "destructive",
+      toast.error("خطأ في إنشاء الطلب", {
+        description: "حدث خطأ أثناء إنشاء الطلب، يرجى المحاولة مرة أخرى"
       });
+      console.error('Order creation error:', error);
     }
   });
 
@@ -185,10 +212,7 @@ export default function AffiliateStorefrontPage() {
       }]);
     }
 
-    toast({
-      title: "تم إضافة المنتج",
-      description: "تم إضافة المنتج إلى السلة بنجاح",
-    });
+    toast.success("تم إضافة المنتج إلى السلة");
   };
 
   const updateQuantity = (productId: string, newQuantity: number) => {
