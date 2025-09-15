@@ -40,6 +40,9 @@ const AffiliateCommissionsPage = lazy(() => import("./pages/affiliate/AffiliateC
 
 // Public Storefront (no auth required)
 const PublicStorefront = lazy(() => import("./pages/PublicStorefront"));
+
+// Layouts
+import { PublicStorefrontLayout } from "./layouts/PublicStorefrontLayout";
 // Direct imports for store components to avoid lazy loading issues
 import StoreCheckout from "./pages/StoreCheckout";
 import StoreOrderConfirmation from "./pages/StoreOrderConfirmation";
@@ -124,7 +127,11 @@ const App = () => {
                        <DomainManager>
                         <Routes>
                           {/* Public Storefront Routes - No Auth Required */}
-                          <Route path="/s/:store_slug" element={<PublicStorefront />} />
+                          <Route path="/s/:store_slug" element={
+                            <PublicStorefrontLayout>
+                              <PublicStorefront />
+                            </PublicStorefrontLayout>
+                          } />
                           
                           {/* Store Routes - نظام منفصل 100% للعملاء */}
                           <Route path="/store/*" element={

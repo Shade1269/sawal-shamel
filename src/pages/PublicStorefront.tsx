@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
+import { usePublicStorefront } from '@/hooks/usePublicStorefront';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,52 +12,22 @@ import { Textarea } from '@/components/ui/textarea';
 import { ShoppingCart, Plus, Minus, Store, Package, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface AffiliateStore {
-  id: string;
-  store_name: string;
-  store_slug: string;
-  bio: string;
-  logo_url: string;
-  theme: string;
-  is_active: boolean;
-}
-
-interface StoreProduct {
-  id: string;
-  affiliate_store_id: string;
-  product_id: string;
-  is_visible: boolean;
-  sort_order: number;
-  commission_rate: number;
-  products: {
-    id: string;
-    title: string;
-    price_sar: number;
-    image_urls: string[];
-    description: string;
-  };
-}
-
-interface CartItem {
-  product_id: string;
-  title: string;
-  price: number;
-  quantity: number;
-  image_url: string;
-}
-
 export default function PublicStorefront() {
   const { store_slug } = useParams<{ store_slug: string }>();
-  
-  // Local cart state with store-specific key
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    if (typeof window !== 'undefined' && store_slug) {
-      const saved = localStorage.getItem(`cart:${store_slug}`);
-      return saved ? JSON.parse(saved) : [];
-    }
-    return [];
-  });
-  
+  const {
+    store,
+    products,
+    cart,
+    storeLoading,
+    productsLoading,
+    storeError,
+    addToCart,
+    updateQuantity,
+    clearCart,
+    totalAmount,
+    totalItems
+  } = usePublicStorefront({ storeSlug: store_slug || '' });
+
   const [showCheckout, setShowCheckout] = useState(false);
   const [customerData, setCustomerData] = useState({
     name: '',
@@ -65,67 +36,11 @@ export default function PublicStorefront() {
     address: ''
   });
 
-  // Save cart to localStorage whenever it changes
-  React.useEffect(() => {
-    if (store_slug) {
-      localStorage.setItem(`cart:${store_slug}`, JSON.stringify(cart));
-    }
-  }, [cart, store_slug]);
-
-  // Fetch store data using public client
-  const { data: store, isLoading: storeLoading } = useQuery({
-    queryKey: ['public-store', store_slug],
-    queryFn: async () => {
-      if (!store_slug) return null;
-      
-      const { data, error } = await supabasePublic
-        .from('affiliate_stores')
-        .select('*')
-        .eq('store_slug', store_slug)
-        .eq('is_active', true)
-        .single();
-
-      if (error) throw error;
-      return data as AffiliateStore;
-    },
-    enabled: !!store_slug
-  });
-
-  // Fetch store products using public client
-  const { data: products, isLoading: productsLoading } = useQuery({
-    queryKey: ['public-products', store?.id],
-    queryFn: async () => {
-      if (!store) return [];
-      
-      const { data, error } = await supabasePublic
-        .from('affiliate_products')
-        .select(`
-          *,
-          products (
-            id,
-            title,
-            price_sar,
-            image_urls,
-            description
-          )
-        `)
-        .eq('affiliate_store_id', store.id)
-        .eq('is_visible', true)
-        .order('sort_order', { ascending: true });
-
-      if (error) throw error;
-      return data as StoreProduct[];
-    },
-    enabled: !!store
-  });
-
   // Create order using public client
   const createOrderMutation = useMutation({
     mutationFn: async () => {
       if (!store || cart.length === 0) return;
 
-      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      
       // Insert order using public client
       const { data: orderData, error: orderError } = await supabasePublic
         .from('orders')
@@ -139,13 +54,13 @@ export default function PublicStorefront() {
             phone: customerData.phone,
             name: customerData.name
           },
-          subtotal_sar: total,
+          subtotal_sar: totalAmount,
           tax_sar: 0,
           shipping_sar: 0,
-          total_sar: total,
+          total_sar: totalAmount,
           payment_method: 'COD',
           affiliate_store_id: store.id,
-          affiliate_commission_sar: total * 0.1,
+          affiliate_commission_sar: totalAmount * 0.1,
           status: 'PENDING'
         })
         .select()
@@ -177,10 +92,7 @@ export default function PublicStorefront() {
       toast.success("تم إنشاء الطلب بنجاح", {
         description: `رقم الطلب: ${orderId}`
       });
-      setCart([]);
-      if (store_slug) {
-        localStorage.removeItem(`cart:${store_slug}`);
-      }
+      clearCart();
       setShowCheckout(false);
       setCustomerData({ name: '', phone: '', email: '', address: '' });
     },
@@ -191,43 +103,6 @@ export default function PublicStorefront() {
       console.error('Order creation error:', error);
     }
   });
-
-  const addToCart = (product: StoreProduct) => {
-    const existingItem = cart.find(item => item.product_id === product.product_id);
-    
-    if (existingItem) {
-      setCart(cart.map(item => 
-        item.product_id === product.product_id 
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      ));
-    } else {
-      setCart([...cart, {
-        product_id: product.product_id,
-        title: product.products.title,
-        price: product.products.price_sar,
-        quantity: 1,
-        image_url: product.products.image_urls?.[0] || '/placeholder.svg'
-      }]);
-    }
-
-    toast.success("تم إضافة المنتج إلى السلة");
-  };
-
-  const updateQuantity = (productId: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      setCart(cart.filter(item => item.product_id !== productId));
-    } else {
-      setCart(cart.map(item => 
-        item.product_id === productId 
-          ? { ...item, quantity: newQuantity }
-          : item
-      ));
-    }
-  };
-
-  const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   if (storeLoading) {
     return (
@@ -240,7 +115,7 @@ export default function PublicStorefront() {
     );
   }
 
-  if (!store) {
+  if (storeError || !store) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -274,7 +149,7 @@ export default function PublicStorefront() {
       </div>
 
       {/* Shopping Cart Button */}
-      {cart.length > 0 && (
+      {totalItems > 0 && (
         <div className="fixed top-4 left-4 z-50">
           <Button 
             onClick={() => setShowCheckout(true)}
