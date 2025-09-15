@@ -113,9 +113,9 @@ export default function MyOrders() {
       return data;
     },
     onSuccess: (data) => {
-      setSessionId(data);
+      setSessionId(String(data));
       if (store_slug && data) {
-        localStorage.setItem(`sf:${store_slug}:cust_sess`, data);
+        localStorage.setItem(`sf:${store_slug}:cust_sess`, String(data));
       }
       toast.success('تم التحقق بنجاح');
       setStep('orders');

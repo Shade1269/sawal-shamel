@@ -66,9 +66,9 @@ export const useStorefrontOtp = ({ storeSlug, storeId }: UseStorefrontOtpProps) 
       return data;
     },
     onSuccess: (data) => {
-      setSessionId(data);
+      setSessionId(String(data));
       if (storeSlug && data) {
-        localStorage.setItem(`sf:${storeSlug}:cust_sess`, data);
+        localStorage.setItem(`sf:${storeSlug}:cust_sess`, String(data));
       }
       toast.success('تم التحقق بنجاح');
       setStep('orders');

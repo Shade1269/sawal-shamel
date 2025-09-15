@@ -18,12 +18,13 @@ export interface ShoppingCartData {
   id: string;
   user_id?: string;
   session_id?: string;
+  affiliate_store_id?: string;
   created_at: string;
   updated_at: string;
   items: CartItem[];
 }
 
-export const useShoppingCart = () => {
+export const useShoppingCart = (storeId?: string) => {
   const { profile } = useFastAuth();
   const [cart, setCart] = useState<ShoppingCartData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -36,15 +37,21 @@ export const useShoppingCart = () => {
       let existingCart = null;
 
       if (profile?.id) {
-        // Get user cart
-        const { data: userCart } = await supabase
+        // Get user cart for specific store
+        let cartQuery = supabase
           .from('shopping_carts')
           .select(`
             *,
             cart_items(*)
           `)
-          .eq('user_id', profile.id)
-          .maybeSingle();
+          .eq('user_id', profile.id);
+        
+        // If storeId provided, filter by store
+        if (storeId) {
+          cartQuery = cartQuery.eq('affiliate_store_id', storeId);
+        }
+        
+        const { data: userCart } = await cartQuery.maybeSingle();
 
         existingCart = userCart;
       }
@@ -60,6 +67,11 @@ export const useShoppingCart = () => {
           cartData.user_id = profile.id;
         } else {
           cartData.session_id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        }
+        
+        // Add store_id if provided
+        if (storeId) {
+          cartData.affiliate_store_id = storeId;
         }
 
         const { data: newCart, error } = await supabase
@@ -88,7 +100,7 @@ export const useShoppingCart = () => {
     } finally {
       setLoading(false);
     }
-  }, [profile]);
+  }, [profile, storeId]);
 
   // Add item to cart
   const addToCart = useCallback(async (productId: string, product: any, quantity: number = 1) => {
