@@ -6647,6 +6647,10 @@ export type Database = {
         }
         Returns: Json
       }
+      create_customer_otp_session: {
+        Args: { p_phone: string; p_store_id: string }
+        Returns: string
+      }
       create_order_from_cart: {
         Args: {
           p_affiliate_store_id?: string
@@ -6725,6 +6729,18 @@ export type Database = {
       get_primary_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
+      }
+      get_store_orders_for_session: {
+        Args: { p_session_id: string; p_store_id: string }
+        Returns: {
+          created_at: string
+          item_count: number
+          order_id: string
+          order_items: Json
+          order_number: string
+          status: string
+          total_sar: number
+        }[]
       }
       get_unified_orders_with_items: {
         Args: {
@@ -6819,8 +6835,10 @@ export type Database = {
         Returns: Json
       }
       verify_customer_otp: {
-        Args: { p_otp_code: string; p_phone: string; p_store_id?: string }
-        Returns: Json
+        Args:
+          | { p_code: string; p_phone: string; p_store_id: string }
+          | { p_otp_code: string; p_phone: string; p_store_id?: string }
+        Returns: string
       }
     }
     Enums: {

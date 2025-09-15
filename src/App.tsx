@@ -40,6 +40,7 @@ const AffiliateCommissionsPage = lazy(() => import("./pages/affiliate/AffiliateC
 
 // Public Storefront (no auth required)
 const PublicStorefront = lazy(() => import("./pages/PublicStorefront"));
+const MyOrders = lazy(() => import("./pages/storefront/MyOrders"));
 
 // Layouts
 import { PublicStorefrontLayout } from "./layouts/PublicStorefrontLayout";
@@ -130,6 +131,11 @@ const App = () => {
                           <Route path="/s/:store_slug" element={
                             <PublicStorefrontLayout>
                               <PublicStorefront />
+                            </PublicStorefrontLayout>
+                          } />
+                          <Route path="/s/:store_slug/my-orders" element={
+                            <PublicStorefrontLayout>
+                              <MyOrders />
                             </PublicStorefrontLayout>
                           } />
                           
