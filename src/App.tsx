@@ -30,6 +30,14 @@ const AdminActivity = lazy(() => import("./pages/admin/AdminActivity"));
 const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
+
+// Affiliate Dashboard Pages
+const AffiliateDashboardLayout = lazy(() => import("./layouts/AffiliateDashboardLayout"));
+const AffiliateDashboardOverview = lazy(() => import("./pages/affiliate/AffiliateDashboardOverview"));
+const AffiliateProductsPage = lazy(() => import("./pages/affiliate/AffiliateProductsPage"));
+const AffiliateOrdersPage = lazy(() => import("./pages/affiliate/AffiliateOrdersPage"));
+const AffiliateCommissionsPage = lazy(() => import("./pages/affiliate/AffiliateCommissionsPage"));
+const AffiliateStorefrontPage = lazy(() => import("./pages/affiliate/AffiliateStorefrontPage"));
 // Direct imports for store components to avoid lazy loading issues
 import StoreCheckout from "./pages/StoreCheckout";
 import StoreOrderConfirmation from "./pages/StoreOrderConfirmation";
@@ -188,9 +196,21 @@ const App = () => {
                         </ProtectedRoute>
                       } />
                       
-                      {/* Unified Dashboard */}
+                      {/* Affiliate Dashboard Routes */}
+                      <Route path="/dashboard" element={
+                        <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                          <AffiliateDashboardLayout />
+                        </ProtectedRoute>
+                      }>
+                        <Route index element={<AffiliateDashboardOverview />} />
+                        <Route path="products" element={<AffiliateProductsPage />} />
+                        <Route path="orders" element={<AffiliateOrdersPage />} />
+                        <Route path="commissions" element={<AffiliateCommissionsPage />} />
+                      </Route>
+                      
+                      {/* Legacy Dashboard Route */}
                       <Route 
-                        path="/dashboard" 
+                        path="/old-dashboard" 
                         element={
                           <ProtectedRoute>
                             <Dashboard />
@@ -349,9 +369,12 @@ const App = () => {
                            </ProtectedRoute>
                          } 
                        />
-                      
-                                  {/* Catch all for Platform */}
-                                  <Route path="*" element={<Navigate to="/" replace />} />
+                       
+                                   {/* Public Storefront Route */}
+                                   <Route path="/:store_slug" element={<AffiliateStorefrontPage />} />
+                                   
+                                   {/* Catch all for Platform */}
+                                   <Route path="*" element={<Navigate to="/" replace />} />
                                 </Routes>
                               </div>
                             </PlatformRouteGuard>
