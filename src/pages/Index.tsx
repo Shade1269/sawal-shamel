@@ -287,6 +287,14 @@ const Index = () => {
                   >
                     بدء رحلة التسوق
                   </Button>
+                  <Button 
+                    variant="outline"
+                    size="lg"
+                    className="w-full h-12 text-lg font-bold rounded-xl"
+                    onClick={() => navigate('/s/demo-store')}
+                  >
+                    جرب المتجر التجريبي
+                  </Button>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div className="text-center p-2 bg-primary/8 rounded-lg border border-primary/15">
                       <p className="font-medium text-primary">تسوق آمن</p>

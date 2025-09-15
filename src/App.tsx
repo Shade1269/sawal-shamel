@@ -37,7 +37,9 @@ const AffiliateDashboardOverview = lazy(() => import("./pages/affiliate/Affiliat
 const AffiliateProductsPage = lazy(() => import("./pages/affiliate/AffiliateProductsPage"));
 const AffiliateOrdersPage = lazy(() => import("./pages/affiliate/AffiliateOrdersPage"));
 const AffiliateCommissionsPage = lazy(() => import("./pages/affiliate/AffiliateCommissionsPage"));
-const AffiliateStorefrontPage = lazy(() => import("./pages/affiliate/AffiliateStorefrontPage"));
+
+// Public Storefront (no auth required)
+const PublicStorefront = lazy(() => import("./pages/PublicStorefront"));
 // Direct imports for store components to avoid lazy loading issues
 import StoreCheckout from "./pages/StoreCheckout";
 import StoreOrderConfirmation from "./pages/StoreOrderConfirmation";
@@ -120,21 +122,24 @@ const App = () => {
                       </div>
                     }>
                        <DomainManager>
-                       <Routes>
-                         {/* Store Routes - نظام منفصل 100% للعملاء */}
-                         <Route path="/store/*" element={
-                           <StoreRouteGuard>
-                             <StoreLayout>
-                               <Routes>
-                                 <Route path=":storeSlug" element={<AffiliateStoreFront />} />
-                                 <Route path=":storeSlug/test" element={<StoreTestPage />} />
-                                 <Route path=":storeSlug/auth" element={<StoreAuth />} />
-                                 <Route path=":storeSlug/checkout" element={<StoreCheckout />} />
-                                 <Route path=":storeSlug/order-confirmation/:orderId" element={<StoreOrderConfirmation />} />
-                               </Routes>
-                             </StoreLayout>
-                           </StoreRouteGuard>
-                         } />
+                        <Routes>
+                          {/* Public Storefront Routes - No Auth Required */}
+                          <Route path="/s/:store_slug" element={<PublicStorefront />} />
+                          
+                          {/* Store Routes - نظام منفصل 100% للعملاء */}
+                          <Route path="/store/*" element={
+                            <StoreRouteGuard>
+                              <StoreLayout>
+                                <Routes>
+                                  <Route path=":storeSlug" element={<AffiliateStoreFront />} />
+                                  <Route path=":storeSlug/test" element={<StoreTestPage />} />
+                                  <Route path=":storeSlug/auth" element={<StoreAuth />} />
+                                  <Route path=":storeSlug/checkout" element={<StoreCheckout />} />
+                                  <Route path=":storeSlug/order-confirmation/:orderId" element={<StoreOrderConfirmation />} />
+                                </Routes>
+                              </StoreLayout>
+                            </StoreRouteGuard>
+                          } />
                          
                          {/* Platform Routes - محمية من عملاء المتجر */}
                          <Route path="/*" element={
@@ -368,13 +373,10 @@ const App = () => {
                              <AtlantisChat />
                            </ProtectedRoute>
                          } 
-                       />
-                       
-                                   {/* Public Storefront Route */}
-                                   <Route path="/:store_slug" element={<AffiliateStorefrontPage />} />
-                                   
-                                   {/* Catch all for Platform */}
-                                   <Route path="*" element={<Navigate to="/" replace />} />
+                        />
+                        
+                                    {/* Catch all for Platform */}
+                                    <Route path="*" element={<Navigate to="/" replace />} />
                                 </Routes>
                               </div>
                             </PlatformRouteGuard>
