@@ -30,15 +30,15 @@ export const useShoppingCart = (storeId?: string) => {
   const [loading, setLoading] = useState(false);
   const [cartId, setCartId] = useState<string | null>(null);
 
-  // Initialize cart
+  // Initialize cart with store support
   const initializeCart = useCallback(async () => {
     setLoading(true);
     try {
       let existingCart = null;
 
       if (profile?.id) {
-        // Get user cart for specific store
-        let cartQuery = supabase
+        // Get user cart for specific store if provided
+        let query = supabase
           .from('shopping_carts')
           .select(`
             *,
@@ -46,18 +46,16 @@ export const useShoppingCart = (storeId?: string) => {
           `)
           .eq('user_id', profile.id);
         
-        // If storeId provided, filter by store
         if (storeId) {
-          cartQuery = cartQuery.eq('affiliate_store_id', storeId);
+          query = query.eq('affiliate_store_id', storeId);
         }
         
-        const { data: userCart } = await cartQuery.maybeSingle();
-
+        const { data: userCart } = await query.maybeSingle();
         existingCart = userCart;
       }
 
       if (!existingCart) {
-        // Create new cart
+        // Create new cart with store support
         const cartData: any = {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
@@ -68,8 +66,8 @@ export const useShoppingCart = (storeId?: string) => {
         } else {
           cartData.session_id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         }
-        
-        // Add store_id if provided
+
+        // Always link to store if provided
         if (storeId) {
           cartData.affiliate_store_id = storeId;
         }
@@ -143,12 +141,9 @@ export const useShoppingCart = (storeId?: string) => {
         const newItem = {
           cart_id: cartId,
           product_id: productId,
-          product_title: product.name || product.title,
-          product_image_url: product.image_url,
-          unit_price_sar: product.price,
           quantity,
+          unit_price_sar: product.price,
           total_price_sar: product.price * quantity,
-          shop_id: product.shop_id || ''
         };
 
         const { data: createdItem, error } = await supabase
@@ -164,9 +159,9 @@ export const useShoppingCart = (storeId?: string) => {
           ...prev,
           items: [...prev.items, {
             ...createdItem,
-            product_title: newItem.product_title,
-            product_image_url: newItem.product_image_url,
-            shop_id: newItem.shop_id
+            product_title: product.name || product.title || 'منتج',
+            product_image_url: product.image_url,
+            shop_id: product.shop_id || storeId || ''
           }]
         } : null);
       }
@@ -178,7 +173,7 @@ export const useShoppingCart = (storeId?: string) => {
     } finally {
       setLoading(false);
     }
-  }, [cartId, cart, initializeCart]);
+  }, [cartId, cart, initializeCart, storeId]);
 
   // Update item quantity
   const updateQuantity = useCallback(async (itemId: string, newQuantity: number) => {

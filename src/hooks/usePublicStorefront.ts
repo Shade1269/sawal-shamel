@@ -1,36 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
-
-interface CartItem {
-  product_id: string;
-  title: string;
-  price: number;
-  quantity: number;
-  image_url: string;
-}
+import { useShoppingCart } from './useShoppingCart';
 
 interface UsePublicStorefrontProps {
   storeSlug: string;
 }
 
 export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => {
-  // Store-specific cart state
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    if (typeof window !== 'undefined' && storeSlug) {
-      const saved = localStorage.getItem(`cart:${storeSlug}`);
-      return saved ? JSON.parse(saved) : [];
-    }
-    return [];
-  });
-
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-    if (storeSlug) {
-      localStorage.setItem(`cart:${storeSlug}`, JSON.stringify(cart));
-    }
-  }, [cart, storeSlug]);
-
   // Fetch store data
   const { data: store, isLoading: storeLoading, error: storeError } = useQuery({
     queryKey: ['public-store', storeSlug],
@@ -49,6 +26,16 @@ export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => 
     },
     enabled: !!storeSlug
   });
+
+  // Use database-backed cart with store ID
+  const {
+    cart: cartData,
+    loading: cartLoading,
+    addToCart: addToCartDB,
+    updateQuantity: updateQuantityDB,
+    clearCart: clearCartDB,
+    getCartTotals
+  } = useShoppingCart(store?.id);
 
   // Fetch store products
   const { data: products, isLoading: productsLoading } = useQuery({
@@ -78,47 +65,40 @@ export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => 
     enabled: !!store
   });
 
+  // Convert DB cart to localStorage-compatible format for compatibility
+  const cart = cartData?.items.map(item => ({
+    product_id: item.product_id,
+    title: item.product_title,
+    price: item.unit_price_sar,
+    quantity: item.quantity,
+    image_url: item.product_image_url || '/placeholder.svg'
+  })) || [];
+
   const addToCart = (product: any) => {
-    const existingItem = cart.find(item => item.product_id === product.product_id);
+    if (!store?.id) return;
     
-    if (existingItem) {
-      setCart(cart.map(item => 
-        item.product_id === product.product_id 
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      ));
-    } else {
-      setCart([...cart, {
-        product_id: product.product_id,
-        title: product.products.title,
-        price: product.products.price_sar,
-        quantity: 1,
-        image_url: product.products.image_urls?.[0] || '/placeholder.svg'
-      }]);
-    }
+    addToCartDB(product.product_id, {
+      name: product.products.title,
+      title: product.products.title,
+      price: product.products.price_sar,
+      image_url: product.products.image_urls?.[0] || '/placeholder.svg',
+      shop_id: store.id
+    });
   };
 
   const updateQuantity = (productId: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      setCart(cart.filter(item => item.product_id !== productId));
-    } else {
-      setCart(cart.map(item => 
-        item.product_id === productId 
-          ? { ...item, quantity: newQuantity }
-          : item
-      ));
+    const item = cartData?.items.find(item => item.product_id === productId);
+    if (item) {
+      updateQuantityDB(item.id, newQuantity);
     }
   };
 
   const clearCart = () => {
-    setCart([]);
-    if (storeSlug) {
-      localStorage.removeItem(`cart:${storeSlug}`);
-    }
+    clearCartDB();
   };
 
-  const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalAmount = getCartTotals.subtotal;
+  const totalItems = getCartTotals.totalItems;
 
   return {
     store,
