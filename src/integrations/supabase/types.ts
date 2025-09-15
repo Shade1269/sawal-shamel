@@ -5184,6 +5184,7 @@ export type Database = {
       }
       shopping_carts: {
         Row: {
+          affiliate_store_id: string | null
           created_at: string
           expires_at: string | null
           id: string
@@ -5192,6 +5193,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          affiliate_store_id?: string | null
           created_at?: string
           expires_at?: string | null
           id?: string
@@ -5200,6 +5202,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          affiliate_store_id?: string | null
           created_at?: string
           expires_at?: string | null
           id?: string
@@ -5207,7 +5210,15 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "shopping_carts_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shops: {
         Row: {
