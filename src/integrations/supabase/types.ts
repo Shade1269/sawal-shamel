@@ -6838,7 +6838,7 @@ export type Database = {
         Args:
           | { p_code: string; p_phone: string; p_store_id: string }
           | { p_otp_code: string; p_phone: string; p_store_id?: string }
-        Returns: string
+        Returns: Json
       }
     }
     Enums: {
