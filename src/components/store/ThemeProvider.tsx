@@ -42,17 +42,67 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
     
     const root = document.documentElement;
     const { colors, typography, layout, effects } = themeConfig;
-    
-    // تطبيق الألوان
-    Object.entries(colors).forEach(([key, value]) => {
-      // تحويل HSL إلى CSS variables
-      if (typeof value === 'string' && value.startsWith('hsl')) {
-        const hslValue = value.replace('hsl(', '').replace(')', '');
-        root.style.setProperty(`--${key}`, hslValue);
-      } else {
-        root.style.setProperty(`--${key}`, value);
+
+    // نحول أي قيمة ألوان (hex/rgb/hsl) إلى صيغة H S% L% المطلوبة من نظام التصميم
+    const hexToHslTriplet = (hex: string): string => {
+      let h = hex.replace('#', '');
+      if (h.length === 3) {
+        h = h.split('').map(c => c + c).join('');
       }
+      const r = parseInt(h.substring(0, 2), 16) / 255;
+      const g = parseInt(h.substring(2, 4), 16) / 255;
+      const b = parseInt(h.substring(4, 6), 16) / 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      let hh = 0, s = 0, l = (max + min) / 2;
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: hh = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: hh = (b - r) / d + 2; break;
+          case b: hh = (r - g) / d + 4; break;
+        }
+        hh /= 6;
+      }
+      return `${Math.round(hh * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+    };
+
+    const rgbToHslTriplet = (rgb: string): string => {
+      const nums = rgb.replace(/rgba?\(/, '').replace(/\)/, '').split(',').slice(0,3).map(n => parseFloat(n.trim()));
+      const [r0, g0, b0] = nums;
+      const r = r0 / 255, g = g0 / 255, b = b0 / 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      let h = 0, s = 0, l = (max + min) / 2;
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+      }
+      return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+    };
+
+    const normalizeColor = (val: string): string => {
+      if (!val) return '';
+      const v = val.trim();
+      if (v.startsWith('hsl(')) return v.slice(4, -1); // "hsl(222 47% 11%)" => "222 47% 11%"
+      if (v.startsWith('#')) return hexToHslTriplet(v);
+      if (v.startsWith('rgb')) return rgbToHslTriplet(v);
+      // إذا كانت بالفعل ثلاثية HSL بدون hsl() نتركها كما هي
+      if (!v.includes('(') && v.includes('%')) return v;
+      return v; // fallback (قد تكون var(--...))
+    };
+    
+    // تطبيق الألوان بصيغة متوافقة مع tailwind (hsl(var(--token)))
+    Object.entries(colors).forEach(([key, value]) => {
+      const normalized = normalizeColor(String(value));
+      root.style.setProperty(`--${key}`, normalized);
     });
+
 
     // تطبيق الخطوط
     if (typography?.fontFamily) {
