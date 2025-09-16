@@ -40,6 +40,8 @@ const AffiliateCommissionsPage = lazy(() => import("./pages/affiliate/AffiliateC
 
 // Public Storefront (no auth required)
 const PublicStorefront = lazy(() => import("./pages/PublicStorefront"));
+const ProductDetailPage = lazy(() => import("./pages/storefront/ProductDetailPage"));
+const OrderTrackingPage = lazy(() => import("./pages/storefront/OrderTrackingPage"));
 const MyOrders = lazy(() => import("./pages/storefront/MyOrders"));
 
 // Layouts
@@ -131,6 +133,16 @@ const App = () => {
                           <Route path="/s/:store_slug" element={
                             <PublicStorefrontLayout>
                               <PublicStorefront />
+                            </PublicStorefrontLayout>
+                          } />
+                          <Route path="/s/:store_slug/product/:product_id" element={
+                            <PublicStorefrontLayout>
+                              <ProductDetailPage />
+                            </PublicStorefrontLayout>
+                          } />
+                          <Route path="/s/:store_slug/track-order" element={
+                            <PublicStorefrontLayout>
+                              <OrderTrackingPage />
                             </PublicStorefrontLayout>
                           } />
                           <Route path="/s/:store_slug/my-orders" element={

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ShoppingCart, Plus, Eye, Star, Package, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
+import ShoppingCartDrawer from '@/components/storefront/ShoppingCartDrawer';
 
 interface StoreData {
   id: string;
@@ -40,6 +41,7 @@ interface CartSession {
 
 const PublicStorefront = () => {
   const { store_slug = '' } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   
   const [store, setStore] = useState<StoreData | null>(null);
@@ -284,26 +286,20 @@ const PublicStorefront = () => {
             </div>
             
             <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                size="sm"
-                className="relative"
-                asChild
-              >
-                <Link to={`/s/${store_slug}/checkout`}>
-                  <ShoppingCart className="h-4 w-4 ml-2" />
-                  السلة
-                  {cartItems > 0 && (
-                    <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs">
-                      {cartItems}
-                    </Badge>
-                  )}
-                </Link>
-              </Button>
+              <ShoppingCartDrawer 
+                storeSlug={store_slug} 
+                onItemsChange={setCartItems}
+              />
               
               <Button variant="ghost" size="sm" asChild>
                 <Link to={`/s/${store_slug}/my-orders`}>
                   طلباتي
+                </Link>
+              </Button>
+
+              <Button variant="ghost" size="sm" asChild>
+                <Link to={`/s/${store_slug}/track-order`}>
+                  تتبع الطلب
                 </Link>
               </Button>
             </div>
@@ -326,8 +322,11 @@ const PublicStorefront = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map((item) => (
-              <Card key={item.id} className="group hover:shadow-lg transition-shadow">
-                <div className="aspect-square relative overflow-hidden rounded-t-lg">
+                <Card key={item.id} className="group hover:shadow-lg transition-shadow cursor-pointer">
+                <div 
+                  className="aspect-square relative overflow-hidden rounded-t-lg"
+                  onClick={() => navigate(`/s/${store_slug}/product/${item.product_id}`)}
+                >
                   {item.products.image_urls && item.products.image_urls.length > 0 ? (
                     <img
                       src={item.products.image_urls[0]}
@@ -345,10 +344,20 @@ const PublicStorefront = () => {
                       {item.products.category}
                     </Badge>
                   )}
+
+                  {/* زر العرض السريع */}
+                  <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
 
                 <CardContent className="p-4">
-                  <h3 className="font-semibold line-clamp-2 mb-2">
+                  <h3 
+                    className="font-semibold line-clamp-2 mb-2 cursor-pointer hover:text-primary transition-colors"
+                    onClick={() => navigate(`/s/${store_slug}/product/${item.product_id}`)}
+                  >
                     {item.products.title}
                   </h3>
                   
@@ -359,18 +368,35 @@ const PublicStorefront = () => {
                   )}
 
                   <div className="flex items-center justify-between">
-                    <div className="text-lg font-bold text-primary">
-                      {item.products.price_sar} ر.س
+                    <div>
+                      <div className="text-lg font-bold text-primary">
+                        {item.products.price_sar} ر.س
+                      </div>
+                      <div className="flex items-center gap-1 mt-1">
+                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                        <span className="text-xs text-muted-foreground">4.5</span>
+                      </div>
                     </div>
                     
-                    <Button
-                      size="sm"
-                      onClick={() => addToCart(item)}
-                      className="gap-1"
-                    >
-                      <Plus className="h-4 w-4" />
-                      إضافة
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => navigate(`/s/${store_slug}/product/${item.product_id}`)}
+                        className="gap-1"
+                      >
+                        <Eye className="h-4 w-4" />
+                        عرض
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => addToCart(item)}
+                        className="gap-1"
+                      >
+                        <Plus className="h-4 w-4" />
+                        إضافة
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
