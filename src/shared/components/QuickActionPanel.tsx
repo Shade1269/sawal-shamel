@@ -2,7 +2,6 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { createStoreUrl } from '@/utils/domains';
 import {
   Plus,
   Edit,
@@ -29,6 +28,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { createStoreUrl } from '@/utils/domains';
 
 interface QuickAction {
   id: string;
