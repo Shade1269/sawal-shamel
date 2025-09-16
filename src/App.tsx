@@ -48,6 +48,11 @@ const MyOrders = lazy(() => import("./pages/storefront/MyOrders"));
 import { PublicStorefrontLayout } from "./layouts/PublicStorefrontLayout";
 // Direct imports for store components to avoid lazy loading issues
 import StoreCheckout from "./pages/StoreCheckout";
+import { IsolatedStoreLayout } from '@/components/store/IsolatedStoreLayout';
+import { IsolatedStorefront } from '@/pages/storefront/IsolatedStorefront';
+import { IsolatedStoreCart } from '@/pages/storefront/IsolatedStoreCart';
+import { IsolatedStoreCheckout } from '@/pages/storefront/IsolatedStoreCheckout';
+import { MyStoreOrders } from '@/pages/storefront/MyStoreOrders';
 import StoreOrderConfirmation from "./pages/StoreOrderConfirmation";
 import StoreAuth from "./pages/StoreAuth";
 import StoreTestPage from "./components/store/StoreTestPage";
