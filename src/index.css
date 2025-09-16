@@ -67,15 +67,15 @@
     --status-offline: 45 15% 50%;
     
     /* Persian Carpet Gradients - Oriental Heritage */
-    --gradient-primary: linear-gradient(135deg, hsl(0 70% 35%), hsl(0 65% 45%));
-    --gradient-hero: linear-gradient(135deg, hsl(0 70% 35%) 0%, hsl(180 60% 35%) 30%, hsl(35 70% 45%) 70%, hsl(0 70% 35%) 100%);
-    --gradient-luxury: linear-gradient(135deg, hsl(0 70% 35%), hsl(35 70% 45%));
-    --gradient-premium: linear-gradient(45deg, hsl(35 70% 45%) 0%, hsl(35 60% 40%) 100%);
-    --gradient-persian: linear-gradient(135deg, hsl(0 75% 30%) 0%, hsl(180 60% 35%) 50%, hsl(35 70% 45%) 100%);
-    --gradient-commerce: linear-gradient(135deg, hsl(0 70% 35%) 0%, hsl(180 60% 35%) 30%, hsl(75 30% 30%) 70%, hsl(0 70% 35%) 100%);
-    --gradient-heritage: linear-gradient(180deg, hsl(45 35% 75%) 0%, hsl(45 30% 70%) 20%, hsl(45 25% 65%) 40%, hsl(45 20% 60%) 100%);
-    --gradient-persian-bg: radial-gradient(ellipse at center, hsl(0 5% 97%) 0%, hsl(45 10% 93%) 25%, hsl(45 15% 89%) 50%, hsl(45 20% 85%) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(139,0,0,0.1), rgba(139,0,0,0.05));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow, var(--primary))));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 30%, hsl(var(--premium)) 70%, hsl(var(--primary)) 100%);
+    --gradient-luxury: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--premium)));
+    --gradient-premium: linear-gradient(45deg, hsl(var(--premium)) 0%, hsl(var(--premium)) 100%);
+    --gradient-persian: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--premium)) 100%);
+    --gradient-commerce: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 30%, hsl(var(--olive, var(--secondary))) 70%, hsl(var(--primary)) 100%);
+    --gradient-heritage: linear-gradient(180deg, hsl(var(--secondary)) 0%, hsl(var(--secondary)) 40%, hsl(var(--muted)) 100%);
+    --gradient-persian-bg: radial-gradient(ellipse at center, hsl(var(--background)) 0%, hsl(var(--muted)) 40%, hsl(var(--background)) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(var(--primary) / 0.10), hsl(var(--primary) / 0.05));
     
     /* Persian Carpet Shadows - Oriental Effects */
     --shadow-soft: 0 8px 32px hsl(0 70% 35% / 0.15);
