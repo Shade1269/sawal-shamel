@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { getBaseUrl } from '@/utils/domains';
 
 export interface FastUserProfile {
   id: string;
@@ -260,7 +261,7 @@ export const useFastAuth = () => {
         return { error: new Error('Email already exists') };
       }
 
-      const redirectUrl = `${window.location.origin}/`;
+      const redirectUrl = `${getBaseUrl()}/`;
       
       const { data, error } = await supabase.auth.signUp({
         email,

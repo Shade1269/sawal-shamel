@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { createStoreUrl } from '@/utils/domains';
 import {
   Plus,
   Edit,
@@ -344,7 +345,7 @@ export const getAffiliateActions = (): QuickAction[] => [
     color: 'warning',
     onClick: () => {
       // Copy store link to clipboard
-      navigator.clipboard.writeText(window.location.origin + '/store/my-store');
+      navigator.clipboard.writeText(createStoreUrl('my-store'));
     }
   }
 ];

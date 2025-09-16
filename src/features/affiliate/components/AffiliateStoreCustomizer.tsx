@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { createStoreUrl } from '@/utils/domains';
 import { 
   Palette, 
   Type, 
@@ -145,7 +146,7 @@ const AffiliateStoreCustomizer = ({ store, onUpdateStore }: StoreCustomizerProps
     });
   };
 
-  const previewUrl = `${window.location.origin}/store/${store.store_slug}`;
+  const previewUrl = createStoreUrl(store.store_slug);
 
   return (
     <div className="space-y-6">

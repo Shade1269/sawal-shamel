@@ -44,6 +44,7 @@ import {
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
+import { createStoreUrl, getBaseUrl } from '@/utils/domains';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
@@ -291,7 +292,7 @@ const AffiliateDashboard = () => {
 
       if (fetchError) throw fetchError;
 
-      const storeUrl = `${window.location.origin}/store/${createdStore?.store_slug || ''}`;
+      const storeUrl = createStoreUrl(createdStore?.store_slug || '');
 
       toast({
         title: "تم إنشاء المتجر",
@@ -424,7 +425,7 @@ const AffiliateDashboard = () => {
                     <Label>رابط متجرك:</Label>
                     <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
                       <Input 
-                        value={`${window.location.origin}/store/${affiliateStore?.store_slug}`} 
+                        value={createStoreUrl(affiliateStore?.store_slug || '')} 
                         disabled 
                         className="flex-1 bg-background"
                       />
@@ -438,7 +439,7 @@ const AffiliateDashboard = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => window.open(`${window.location.origin}/store/${affiliateStore?.store_slug}`, '_blank')}
+                        onClick={() => window.open(createStoreUrl(affiliateStore?.store_slug || ''), '_blank')}
                       >
                         <ExternalLink className="h-4 w-4 ml-2" />
                         عرض متجري
@@ -494,7 +495,7 @@ const AffiliateDashboard = () => {
                       <div className="space-y-2">
                         <Label>رابط المتجر (بالإنجليزية)</Label>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm text-muted-foreground">{`${window.location.origin}/store/`}</span>
+                          <span className="text-sm text-muted-foreground">{`${getBaseUrl()}/store/`}</span>
                           <Input
                             value={newStore.store_slug}
                             onChange={(e) => {
@@ -556,7 +557,7 @@ const AffiliateDashboard = () => {
             variant="outline"
             onClick={() => {
               if (affiliateStore?.store_slug) {
-                window.open(`${window.location.origin}/store/${affiliateStore.store_slug}`, '_blank');
+                window.open(createStoreUrl(affiliateStore.store_slug), '_blank');
               }
             }}
           >
@@ -743,7 +744,7 @@ const AffiliateDashboard = () => {
                   <div>
                     <Label>رابط المتجر</Label>
                     <div className="flex gap-2">
-                      <Input value={`${window.location.origin}/store/${affiliateStore?.store_slug || ''}`} disabled className="flex-1" />
+                      <Input value={createStoreUrl(affiliateStore?.store_slug || '')} disabled className="flex-1" />
                       <Button 
                         variant="outline" 
                         onClick={() => copyAffiliateLink()}

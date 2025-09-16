@@ -18,7 +18,7 @@ const DomainManager = ({ children }: DomainManagerProps) => {
     const currentPath = location.pathname;
     const search = location.search;
 
-    const isCustomDomain = hostname !== 'localhost' && !hostname.includes('lovable.app');
+    const isCustomDomain = hostname !== 'localhost' && !hostname.includes('atlantiss.tech');
 
     if (isCustomDomain) {
       const storeSlug = getStoreSlugFromDomain(hostname);

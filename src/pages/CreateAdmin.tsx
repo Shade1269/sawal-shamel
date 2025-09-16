@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { getBaseUrl } from '@/utils/domains';
 
 const CreateAdmin = () => {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ const CreateAdmin = () => {
         email: formData.email,
         password: formData.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${getBaseUrl()}/`,
           data: {
             full_name: formData.full_name,
             role: 'admin'

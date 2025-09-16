@@ -9,8 +9,12 @@ export const STORE_DOMAINS = {
 } as const;
 
 // فحص إذا كان النطاق الحالي متجر
+import { ATLANTIS_DOMAIN } from '@/utils/domains';
+
+// ... الكود الموجود ...
+
 export const isStoreDomain = (hostname: string): boolean => {
-  return hostname in STORE_DOMAINS || hostname.includes('.lovable.app');
+  return hostname in STORE_DOMAINS || hostname.includes('atlantiss.tech');
 };
 
 // استخراج slug المتجر من النطاق
@@ -20,8 +24,8 @@ export const getStoreSlugFromDomain = (hostname: string): string | null => {
     return STORE_DOMAINS[hostname as keyof typeof STORE_DOMAINS];
   }
   
-  // إذا كان نطاق Lovable
-  if (hostname.includes('.lovable.app')) {
+  // إذا كان نطاق أتلانتس تيش
+  if (hostname.includes('atlantiss.tech')) {
     // استخراج من URL path بدلاً من النطاق
     return null;
   }
