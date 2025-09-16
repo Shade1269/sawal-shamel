@@ -15,6 +15,7 @@ import { ShoppingCart, Plus, Minus, Store, Package, CheckCircle, User, Shield } 
 import { toast } from 'sonner';
 
 function PublicStorefront() {
+  console.log('PublicStorefront component loaded!');
   const { store_slug } = useParams<{ store_slug: string }>();
   const navigate = useNavigate();
   const {

@@ -23,6 +23,11 @@ const DomainManager = ({ children }: DomainManagerProps) => {
       && !hostname.includes('lovableproject.com') 
       && !hostname.includes('lovable.app');
 
+    // Skip redirect logic for atlantiss.tech - let normal routing handle it
+    if (hostname.includes('atlantiss.tech')) {
+      return;
+    }
+
     if (isCustomDomain) {
       const storeSlug = getStoreSlugFromDomain(hostname);
 

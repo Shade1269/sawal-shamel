@@ -162,7 +162,7 @@ const App = () => {
                           } />
                           
                           {/* Store Routes - نظام منفصل 100% للعملاء */}
-                          <Route path="/store/*" element={
+                          <Route path="/store/app/*" element={
                             <StoreRouteGuard>
                               <StoreLayout>
                                 <Routes>
