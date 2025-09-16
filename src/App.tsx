@@ -287,7 +287,7 @@ const App = () => {
                        <Route 
                          path="/merchant" 
                          element={
-                           <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
                              <MerchantDashboard />
                            </ProtectedRoute>
                          } 
@@ -295,7 +295,7 @@ const App = () => {
                        <Route 
                          path="/merchant-dashboard" 
                          element={
-                           <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
                              <MerchantDashboard />
                            </ProtectedRoute>
                          } 

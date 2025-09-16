@@ -192,8 +192,12 @@ const Header = () => {
                     <Star className="ml-2 h-4 w-4" />
                     لوحة المسوق
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/affiliate')}>
+                  <DropdownMenuItem onClick={() => navigate('/merchant')}>
                     <Store className="ml-2 h-4 w-4" />
+                    لوحة تحكم المتجر
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/affiliate')}>
+                    <Award className="ml-2 h-4 w-4" />
                     متجري الشخصي
                   </DropdownMenuItem>
                 </>
