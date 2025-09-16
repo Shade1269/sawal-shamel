@@ -44,7 +44,7 @@ import {
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
-import { createStoreUrl, getBaseUrl } from '@/utils/domains';
+import { createStoreUrl, getBaseUrl, createProductUrl } from '@/utils/domains';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
@@ -335,10 +335,9 @@ const AffiliateDashboard = () => {
   };
 
   const copyAffiliateLink = (productId?: string) => {
-    const baseUrl = window.location.origin;
     const link = productId 
-      ? `${baseUrl}/products/${productId}?ref=${profile.id}`
-      : `${baseUrl}/store/${affiliateStore?.store_slug}?ref=${profile.id}`;
+      ? createProductUrl(productId, profile.id)
+      : createStoreUrl(affiliateStore?.store_slug || '', profile.id);
     
     navigator.clipboard.writeText(link);
     toast({
