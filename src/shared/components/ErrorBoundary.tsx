@@ -60,13 +60,13 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   private handleReload = () => {
-    // Clear error state and reload
+    // Clear error state and reload - keep for error boundary
     this.setState({ hasError: false, error: null, errorInfo: '' });
     window.location.reload();
   };
 
   private handleGoHome = () => {
-    // Clear error state and navigate to home
+    // Clear error state and navigate to home - keep for error boundary
     this.setState({ hasError: false, error: null, errorInfo: '' });
     window.location.href = '/';
   };

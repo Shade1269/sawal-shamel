@@ -404,7 +404,7 @@ export const useFastAuth = () => {
         description: "تم تسجيل الدخول بنجاح"
       });
 
-      // Smart redirect based on role
+      // Smart redirect based on role - using window.location for auth success
       const userId = data.user?.id;
       let redirect = '/dashboard';
       if (userId) {
@@ -429,6 +429,7 @@ export const useFastAuth = () => {
         }
       }
 
+      // Use window.location for auth redirect to clear auth state properly
       window.location.href = redirect;
       return { data, error: null };
     } catch (error: any) {
@@ -469,7 +470,7 @@ export const useFastAuth = () => {
         description: "إلى اللقاء!"
       });
 
-      // Force navigation to home page
+      // Use window.location for signOut to clear all state properly
       setTimeout(() => {
         window.location.href = '/';
       }, 100);
@@ -490,7 +491,7 @@ export const useFastAuth = () => {
       setProfile(null);
       clearCache();
       
-      // Force navigation anyway
+      // Use window.location for failed signOut to ensure state clear
       setTimeout(() => {
         window.location.href = '/';
       }, 100);

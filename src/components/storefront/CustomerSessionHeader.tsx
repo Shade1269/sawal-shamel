@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -25,6 +26,8 @@ export const CustomerSessionHeader: React.FC<CustomerSessionHeaderProps> = ({
   onLogout,
   storeSlug
 }) => {
+  const navigate = useNavigate();
+  
   if (!isAuthenticated || !customerInfo) {
     return (
       <Button
@@ -90,7 +93,7 @@ export const CustomerSessionHeader: React.FC<CustomerSessionHeaderProps> = ({
         <DropdownMenuSeparator />
         
         <DropdownMenuItem
-          onClick={() => window.location.href = `/s/${storeSlug}/my-orders`}
+          onClick={() => navigate(`/s/${storeSlug}/my-orders`)}
         >
           <Clock className="ml-2 h-4 w-4" />
           طلباتي السابقة

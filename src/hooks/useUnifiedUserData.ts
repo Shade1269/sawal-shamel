@@ -419,6 +419,12 @@ export const useUnifiedUserData = () => {
     
     if (supabaseUser || firebaseUser) {
       setLoading(true);
+      // Prevent multiple calls with guard
+      if (unifiedProfile && isMounted) {
+        setLoading(false);
+        return;
+      }
+      
       unifyUserData().then(() => {
         if (isMounted) {
           Promise.all([

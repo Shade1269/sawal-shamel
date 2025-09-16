@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { usePublicStorefront } from '@/hooks/usePublicStorefront';
 import { CustomerOTPModal } from '@/components/storefront/CustomerOTPModal';
@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 
 function PublicStorefront() {
   const { store_slug } = useParams<{ store_slug: string }>();
+  const navigate = useNavigate();
   const {
     store,
     products,
@@ -68,8 +69,9 @@ function PublicStorefront() {
     setCustomerData({ name: '', phone: '', email: '', address: '' });
     clearCart();
     toast.success('تم تسجيل الخروج بنجاح');
-    // Refresh the page to reset all state
-    window.location.reload();
+    // Reset component state instead of full page reload
+    setShowCheckout(false);
+    setShowOTPModal(false);
   };
   // Handle checkout initiation
   const handleCheckoutStart = () => {
@@ -179,7 +181,7 @@ function PublicStorefront() {
             <div className="flex justify-between items-center mb-6">
               <Button 
                 variant="outline"
-                onClick={() => window.location.href = `/`}
+                onClick={() => navigate(`/`)}
                 className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
               >
                 الصفحة الرئيسية
@@ -197,7 +199,7 @@ function PublicStorefront() {
                 
                 <Button 
                   variant="outline"
-                  onClick={() => window.location.href = `/s/${store_slug}/my-orders`}
+                  onClick={() => navigate(`/s/${store_slug}/my-orders`)}
                   className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
                 >
                   طلباتي

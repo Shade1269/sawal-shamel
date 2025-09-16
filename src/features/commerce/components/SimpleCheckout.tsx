@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,6 +41,7 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
   onOrderComplete,
   onCancel
 }) => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
@@ -136,9 +138,9 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
 
       toast.success('تم إنشاء الطلب بنجاح!');
       
-      // التوجه لصفحة تأكيد الطلب
+      // التوجه لصفحة تأكيد الطلب باستخدام navigate
       setTimeout(() => {
-        window.location.href = `/order-confirmation-simple/${order.id}`;
+        navigate(`/order-confirmation-simple/${order.id}`);
       }, 2000);
 
     } catch (error) {

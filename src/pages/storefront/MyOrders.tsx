@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,7 @@ interface Order {
 
 function MyOrders() {
   const { store_slug } = useParams<{ store_slug: string }>();
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -155,7 +156,7 @@ function MyOrders() {
           <Package className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
           <h1 className="text-2xl font-bold mb-2">تسجيل الدخول مطلوب</h1>
           <p className="text-muted-foreground mb-4">يجب تسجيل الدخول لعرض طلباتك</p>
-          <Button onClick={() => window.location.href = `/s/${store_slug}`}>
+          <Button onClick={() => navigate(`/s/${store_slug}`)}>
             <ArrowLeft className="h-4 w-4 ml-2" />
             العودة للمتجر
           </Button>
@@ -172,7 +173,7 @@ function MyOrders() {
           <div className="flex items-center gap-4 mb-4">
             <Button
               variant="outline"
-              onClick={() => window.location.href = `/s/${store_slug}`}
+              onClick={() => navigate(`/s/${store_slug}`)}
               className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
             >
               <ArrowLeft className="h-4 w-4 ml-2" />
