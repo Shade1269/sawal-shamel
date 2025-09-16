@@ -18,3 +18,4 @@ export { default as EnhancedDashboard } from './EnhancedDashboard';
 export { default as GlobalHeader } from './GlobalHeader';
 export { default as GlobalSearch } from './GlobalSearch';
 export { default as GlobalNotifications } from './GlobalNotifications';
+export { default as EnhancedErrorBoundary } from './EnhancedErrorBoundary';

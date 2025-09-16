@@ -1,9 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDesignSystem } from '@/hooks/useDesignSystem';
-import { EnhancedButton } from '@/components/ui/enhanced-button';
-import { EnhancedCard, EnhancedCardHeader, EnhancedCardTitle, EnhancedCardContent } from '@/components/ui/enhanced-card';
-import { LoadingSpinner, Skeleton, LoadingCard } from '@/components/ui/loading-states';
-import { Badge } from '@/components/ui/badge';
+import { 
+  EnhancedButton, 
+  EnhancedCard, 
+  EnhancedCardHeader, 
+  EnhancedCardTitle, 
+  EnhancedCardContent,
+  Badge,
+  Input,
+  Alert,
+  AlertDescription,
+  EnhancedDialog,
+  EnhancedDialogTrigger,
+  EnhancedDialogContent,
+  EnhancedDialogHeader,
+  EnhancedDialogTitle,
+  EnhancedDialogDescription,
+  EnhancedDialogFooter,
+  EnhancedDialogClose,
+  ConfirmationDialog,
+  EnhancedTooltip,
+  QuickTooltip,
+  InfoTooltip,
+  LoadingSpinner, 
+  Skeleton, 
+  LoadingCard 
+} from '@/components/ui';
 import { 
   Palette, 
   Sparkles, 
@@ -12,7 +34,17 @@ import {
   Star, 
   Crown,
   Gem,
-  Wand2
+  Wand2,
+  Search,
+  Mail,
+  User,
+  Lock,
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  Settings,
+  Eye,
+  Download
 } from 'lucide-react';
 
 const DesignSystemDemo: React.FC = () => {
@@ -23,6 +55,9 @@ const DesignSystemDemo: React.FC = () => {
     animations,
     helpers 
   } = useDesignSystem();
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
   return (
     <div className={patterns.container}>
@@ -35,21 +70,24 @@ const DesignSystemDemo: React.FC = () => {
               typography.display['2xl'],
               "bg-gradient-luxury bg-clip-text text-transparent"
             )}>
-              نظام التصميم الفارسي المطور
+              نظام التصميم الفارسي المطور v2.0
             </h1>
           </div>
           <p className={typography.body.lg}>
-            Enhanced Persian Luxury Design System v2.0
+            Enhanced Persian Luxury Design System - Component Library
           </p>
-          <div className="flex justify-center gap-2">
-            <Badge variant="default" className="bg-luxury/10 text-luxury">
+          <div className="flex justify-center gap-2 flex-wrap">
+            <Badge variant="luxury" icon={<Crown className="h-3 w-3" />}>
               ✨ Persian Heritage
             </Badge>
-            <Badge variant="default" className="bg-premium/10 text-premium">
+            <Badge variant="premium" animation="glow">
               🎨 Enhanced UI
             </Badge>
-            <Badge variant="default" className="bg-persian/10 text-persian">
+            <Badge variant="success" size="lg">
               🚀 Performance
+            </Badge>
+            <Badge variant="glass" closeable onClose={() => console.log('Badge closed')}>
+              Interactive
             </Badge>
           </div>
         </div>
@@ -112,47 +150,193 @@ const DesignSystemDemo: React.FC = () => {
           </EnhancedCardContent>
         </EnhancedCard>
 
-        {/* Enhanced Cards Section */}
-        <EnhancedCard variant="heritage" hover="persian" size="lg">
+        {/* Enhanced Inputs & Forms Section */}
+        <EnhancedCard variant="premium" hover="glow" size="lg">
           <EnhancedCardHeader>
             <EnhancedCardTitle className="flex items-center gap-2 text-white">
-              <Palette className="h-5 w-5" />
-              Enhanced Cards - البطاقات المطورة
+              <Mail className="h-5 w-5" />
+              Enhanced Inputs & Forms - النماذج المطورة
             </EnhancedCardTitle>
           </EnhancedCardHeader>
           <EnhancedCardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <EnhancedCard variant="luxury" hover="lift" size="sm" clickable>
-                <div className="text-center text-white">
-                  <Crown className="h-8 w-8 mx-auto mb-2" />
-                  <h4 className="font-bold">Luxury</h4>
-                  <p className="text-sm opacity-90">Premium Experience</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-white">
+              <div className="space-y-4">
+                <h4 className="font-semibold">Input Variants</h4>
+                <div className="space-y-3">
+                  <Input 
+                    placeholder="Default input..." 
+                    leftIcon={<Search className="h-4 w-4" />}
+                  />
+                  <Input 
+                    variant="luxury" 
+                    placeholder="Luxury input..." 
+                    leftIcon={<User className="h-4 w-4" />}
+                    size="lg"
+                  />
+                  <Input 
+                    variant="success" 
+                    placeholder="Success state..." 
+                    rightIcon={<CheckCircle className="h-4 w-4" />}
+                  />
+                  <Input 
+                    variant="error" 
+                    placeholder="Error state..." 
+                    rightIcon={<AlertTriangle className="h-4 w-4" />}
+                  />
                 </div>
-              </EnhancedCard>
+              </div>
 
-              <EnhancedCard variant="glass" hover="glow" size="sm" clickable>
-                <div className="text-center">
-                  <Gem className="h-8 w-8 mx-auto mb-2 text-primary" />
-                  <h4 className="font-bold">Glass</h4>
-                  <p className="text-sm text-muted-foreground">Modern Design</p>
+              <div className="space-y-4">
+                <h4 className="font-semibold">Enhanced Badges</h4>
+                <div className="space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="luxury" size="sm">Luxury</Badge>
+                    <Badge variant="premium" size="default">Premium</Badge>
+                    <Badge variant="persian" size="lg">Persian</Badge>
+                    <Badge variant="glass" animation="float">Glass</Badge>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="success" icon={<CheckCircle className="h-3 w-3" />}>
+                      Success
+                    </Badge>
+                    <Badge variant="warning" closeable onClose={() => {}}>
+                      Closeable
+                    </Badge>
+                    <Badge variant="gradient" animation="glow">
+                      Gradient
+                    </Badge>
+                  </div>
                 </div>
-              </EnhancedCard>
+              </div>
+            </div>
+          </EnhancedCardContent>
+        </EnhancedCard>
 
-              <EnhancedCard variant="success" hover="scale" size="sm" clickable>
-                <div className="text-center">
-                  <Heart className="h-8 w-8 mx-auto mb-2 text-status-online" />
-                  <h4 className="font-bold">Success</h4>
-                  <p className="text-sm text-muted-foreground">Positive State</p>
-                </div>
-              </EnhancedCard>
+        {/* Enhanced Alerts Section */}
+        <EnhancedCard variant="glass" hover="lift" size="lg">
+          <EnhancedCardHeader>
+            <EnhancedCardTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-accent" />
+              Enhanced Alerts - التنبيهات المطورة
+            </EnhancedCardTitle>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
+            <div className="space-y-4">
+              <Alert variant="success" animation="fade" closeable onClose={() => {}}>
+                <CheckCircle className="h-4 w-4" />
+                <AlertDescription>
+                  <strong>Success!</strong> Your changes have been saved successfully.
+                </AlertDescription>
+              </Alert>
 
-              <EnhancedCard variant="persian" hover="luxury" size="sm" clickable>
-                <div className="text-center text-white">
-                  <Star className="h-8 w-8 mx-auto mb-2" />
-                  <h4 className="font-bold">Persian</h4>
-                  <p className="text-sm opacity-90">Heritage Style</p>
+              <Alert variant="warning" size="lg" animation="bounce">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  <strong>Warning:</strong> This action cannot be undone.
+                </AlertDescription>
+              </Alert>
+
+              <Alert variant="luxury" animation="glow">
+                <Crown className="h-4 w-4" />
+                <AlertDescription>
+                  <strong>Premium Feature:</strong> You have access to luxury components.
+                </AlertDescription>
+              </Alert>
+
+              <Alert variant="glass">
+                <Info className="h-4 w-4" />
+                <AlertDescription>
+                  Glass effect alert with backdrop blur for modern UI.
+                </AlertDescription>
+              </Alert>
+            </div>
+          </EnhancedCardContent>
+        </EnhancedCard>
+
+        {/* Enhanced Dialogs & Interactions */}
+        <EnhancedCard variant="heritage" hover="persian" size="lg">
+          <EnhancedCardHeader>
+            <EnhancedCardTitle className="flex items-center gap-2 text-white">
+              <Settings className="h-5 w-5" />
+              Enhanced Dialogs & Tooltips - التفاعلات المطورة
+            </EnhancedCardTitle>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h4 className="font-semibold text-white">Dialog Variants</h4>
+                <div className="space-y-3">
+                  <EnhancedDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                    <EnhancedDialogTrigger asChild>
+                      <EnhancedButton variant="luxury" leftIcon={<Eye className="h-4 w-4" />}>
+                        Open Luxury Dialog
+                      </EnhancedButton>
+                    </EnhancedDialogTrigger>
+                    <EnhancedDialogContent variant="luxury" size="lg">
+                      <EnhancedDialogHeader>
+                        <EnhancedDialogTitle className="text-white">Luxury Dialog</EnhancedDialogTitle>
+                        <EnhancedDialogDescription className="text-white/80">
+                          This is a premium dialog with luxury styling and animations.
+                        </EnhancedDialogDescription>
+                      </EnhancedDialogHeader>
+                      <div className="py-4 text-white">
+                        <p>Premium content goes here with luxury background and styling.</p>
+                      </div>
+                      <EnhancedDialogFooter>
+                        <EnhancedDialogClose asChild>
+                          <EnhancedButton variant="outline">Close</EnhancedButton>
+                        </EnhancedDialogClose>
+                        <EnhancedButton variant="success">Confirm</EnhancedButton>
+                      </EnhancedDialogFooter>
+                    </EnhancedDialogContent>
+                  </EnhancedDialog>
+
+                  <ConfirmationDialog
+                    open={confirmDialogOpen}
+                    onOpenChange={setConfirmDialogOpen}
+                    title="Confirm Action"
+                    description="Are you sure you want to proceed? This action cannot be undone."
+                    variant="warning"
+                    onConfirm={async () => {
+                      await new Promise(resolve => setTimeout(resolve, 1000));
+                      console.log('Action confirmed!');
+                    }}
+                  >
+                    <EnhancedButton variant="warning" leftIcon={<AlertTriangle className="h-4 w-4" />}>
+                      Show Confirmation
+                    </EnhancedButton>
+                  </ConfirmationDialog>
                 </div>
-              </EnhancedCard>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="font-semibold text-white">Enhanced Tooltips</h4>
+                <div className="space-y-3">
+                  <div className="flex flex-wrap gap-3">
+                    <QuickTooltip text="This is a quick tooltip" variant="luxury">
+                      <EnhancedButton variant="glass" size="sm">Hover me</EnhancedButton>
+                    </QuickTooltip>
+
+                    <EnhancedTooltip 
+                      content="Enhanced tooltip with custom styling" 
+                      variant="glass"
+                      side="top"
+                    >
+                      <EnhancedButton variant="outline" size="sm">Glass Tooltip</EnhancedButton>
+                    </EnhancedTooltip>
+
+                    <InfoTooltip 
+                      title="Persian Heritage"
+                      description="This component uses Persian-inspired design patterns with luxury gradients and animations."
+                      variant="persian"
+                    >
+                      <EnhancedButton variant="persian" size="sm" rightIcon={<Info className="h-3 w-3" />}>
+                        Info
+                      </EnhancedButton>
+                    </InfoTooltip>
+                  </div>
+                </div>
+              </div>
             </div>
           </EnhancedCardContent>
         </EnhancedCard>

@@ -12,6 +12,43 @@ export {
   type EnhancedCardProps
 } from './enhanced-card'
 
+// Enhanced Form Components  
+export {
+  useEnhancedFormField,
+  EnhancedForm,
+  EnhancedFormItem,
+  EnhancedFormLabel,
+  EnhancedFormControl,
+  EnhancedFormDescription,
+  EnhancedFormMessage,
+  EnhancedFormField,
+  EnhancedInputField,
+  formItemVariants,
+} from './enhanced-form'
+
+// Enhanced Interactions
+export { 
+  EnhancedTooltip, 
+  QuickTooltip, 
+  InfoTooltip,
+  tooltipVariants 
+} from './enhanced-tooltip'
+
+export {
+  EnhancedDialog,
+  EnhancedDialogPortal,
+  EnhancedDialogOverlay,
+  EnhancedDialogClose,
+  EnhancedDialogTrigger,
+  EnhancedDialogContent,
+  EnhancedDialogHeader,
+  EnhancedDialogFooter,
+  EnhancedDialogTitle,
+  EnhancedDialogDescription,
+  ConfirmationDialog,
+  dialogContentVariants
+} from './enhanced-dialog'
+
 // Loading Components
 export {
   LoadingSpinner,
@@ -25,6 +62,11 @@ export {
   State
 } from './loading-states'
 
+// Enhanced Base Components with new variants
+export { Input, inputVariants, type InputProps } from './input'
+export { Badge, badgeVariants, type BadgeProps } from './badge'
+export { Alert, AlertTitle, AlertDescription } from './alert'
+
 // Original shadcn/ui components
 export { 
   Card,
@@ -34,9 +76,7 @@ export {
   CardDescription,
   CardContent
 } from './card'
-export { Input } from './input'
 export { Label } from './label'
-export { Badge } from './badge'
 export { Switch } from './switch'
 export { Separator } from './separator'
 export { 
@@ -120,11 +160,6 @@ export {
   FormMessage,
   FormField,
 } from './form'
-export { 
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from './alert'
 export {
   AlertDialog,
   AlertDialogPortal,
