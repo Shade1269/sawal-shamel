@@ -568,6 +568,7 @@ export type Database = {
           id: string
           product_id: string
           quantity: number
+          selected_variants: Json | null
           total_price_sar: number | null
           unit_price_sar: number
           updated_at: string
@@ -578,6 +579,7 @@ export type Database = {
           id?: string
           product_id: string
           quantity: number
+          selected_variants?: Json | null
           total_price_sar?: number | null
           unit_price_sar: number
           updated_at?: string
@@ -588,6 +590,7 @@ export type Database = {
           id?: string
           product_id?: string
           quantity?: number
+          selected_variants?: Json | null
           total_price_sar?: number | null
           unit_price_sar?: number
           updated_at?: string
@@ -1576,6 +1579,7 @@ export type Database = {
           product_sku: string | null
           product_title: string
           quantity: number
+          selected_variants: Json | null
           total_price_sar: number | null
           unit_price_sar: number
         }
@@ -1590,6 +1594,7 @@ export type Database = {
           product_sku?: string | null
           product_title: string
           quantity: number
+          selected_variants?: Json | null
           total_price_sar?: number | null
           unit_price_sar: number
         }
@@ -1604,6 +1609,7 @@ export type Database = {
           product_sku?: string | null
           product_title?: string
           quantity?: number
+          selected_variants?: Json | null
           total_price_sar?: number | null
           unit_price_sar?: number
         }
@@ -3873,6 +3879,39 @@ export type Database = {
           },
         ]
       }
+      product_variant_options: {
+        Row: {
+          created_at: string
+          display_name: string
+          id: string
+          is_active: boolean
+          sort_order: number | null
+          type: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          display_name: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number | null
+          type: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number | null
+          type?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       product_variants: {
         Row: {
           available_stock: number | null
@@ -3893,7 +3932,7 @@ export type Database = {
           variant_barcode: string | null
           variant_name: string
           variant_sku: string | null
-          warehouse_product_id: string
+          warehouse_product_id: string | null
         }
         Insert: {
           available_stock?: number | null
@@ -3914,7 +3953,7 @@ export type Database = {
           variant_barcode?: string | null
           variant_name: string
           variant_sku?: string | null
-          warehouse_product_id: string
+          warehouse_product_id?: string | null
         }
         Update: {
           available_stock?: number | null
@@ -3935,7 +3974,7 @@ export type Database = {
           variant_barcode?: string | null
           variant_name?: string
           variant_sku?: string | null
-          warehouse_product_id?: string
+          warehouse_product_id?: string | null
         }
         Relationships: [
           {
