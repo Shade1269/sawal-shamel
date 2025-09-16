@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -49,6 +50,7 @@ interface Achievement {
 }
 
 const EnhancedDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { profile, isAuthenticated } = useFastAuth();
   const { userLevel, userAlliance } = useAtlantisSystem();
   
@@ -86,14 +88,14 @@ const EnhancedDashboard: React.FC = () => {
         title: 'تحديث الملف الشخصي',
         description: 'تحديث بياناتك الشخصية والصورة',
         icon: <Settings className="w-5 h-5" />,
-        onClick: () => window.location.href = '/profile'
+        onClick: () => navigate('/profile')
       },
       {
         id: 'chat',
         title: 'أتلانتس شات',
         description: 'انضم للدردشة التفاعلية',
         icon: <MessageSquare className="w-5 h-5" />,
-        onClick: () => window.location.href = '/chat'
+        onClick: () => navigate('/chat')
       }
     ];
 
@@ -104,7 +106,7 @@ const EnhancedDashboard: React.FC = () => {
           title: 'إدارة المنتجات',
           description: 'إضافة وتعديل منتجاتك',
           icon: <ShoppingBag className="w-5 h-5" />,
-          onClick: () => window.location.href = '/products'
+          onClick: () => navigate('/products')
         }
       ],
       affiliate: [
@@ -113,7 +115,7 @@ const EnhancedDashboard: React.FC = () => {
           title: 'متجري التابع',
           description: 'إدارة متجرك التابع',
           icon: <Award className="w-5 h-5" />,
-          onClick: () => window.location.href = '/affiliate-dashboard'
+          onClick: () => navigate('/affiliate-dashboard')
         }
       ],
       admin: [
@@ -122,7 +124,7 @@ const EnhancedDashboard: React.FC = () => {
           title: 'لوحة الإدارة',
           description: 'إدارة النظام والمستخدمين',
           icon: <Crown className="w-5 h-5" />,
-          onClick: () => window.location.href = '/admin'
+          onClick: () => navigate('/admin')
         }
       ]
     };

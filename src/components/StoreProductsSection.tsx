@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -44,6 +45,7 @@ interface StoreProductsSectionProps {
 }
 
 const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop }) => {
+  const navigate = useNavigate();
   const { user } = useSupabaseAuth();
   const { getProductLibraryItems } = useUserDataContext();
   const [storeProducts, setStoreProducts] = useState<ProductLibraryItem[]>([]);
@@ -295,7 +297,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
             <p className="text-muted-foreground mb-4">
               لإضافة منتجات لمتجرك، اذهب إلى متجر المنتجات واختر المنتجات المناسبة لك
             </p>
-            <Button onClick={() => window.location.href = '/products'} variant="outline">
+            <Button onClick={() => navigate('/products')} variant="outline">
               تصفح المنتجات وإضافتها لمتجرك
             </Button>
           </div>

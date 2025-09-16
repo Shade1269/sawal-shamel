@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -41,6 +42,8 @@ interface StoreHeaderProps {
 }
 
 export const StoreHeader: React.FC<StoreHeaderProps> = ({ store, productsCount }) => {
+  const navigate = useNavigate();
+  
   if (!store) {
     return (
       <div className="animate-pulse">
@@ -177,7 +180,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = ({ store, productsCount }
             <div className="flex flex-col gap-4 items-end">
               <SimpleCart 
                 shopSlug={store.store_slug} 
-                onCheckout={() => window.location.href = `/store/${store.store_slug}/checkout`}
+                onCheckout={() => navigate(`/store/${store.store_slug}/checkout`)}
               />
               
               <div className="text-right">
