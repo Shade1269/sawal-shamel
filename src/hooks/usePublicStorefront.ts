@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
-import { useShoppingCart } from './useShoppingCart';
+import { useIsolatedStoreCart } from './useIsolatedStoreCart';
 import { StorefrontSession } from '@/utils/storefrontSession';
 
 interface UsePublicStorefrontProps {
@@ -31,15 +31,15 @@ export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => 
     enabled: !!storeSlug
   });
 
-  // Use database-backed cart with store ID
+  // Use isolated cart for public storefront
   const {
     cart: cartData,
     loading: cartLoading,
     addToCart: addToCartDB,
     updateQuantity: updateQuantityDB,
     clearCart: clearCartDB,
-    getCartTotals
-  } = useShoppingCart(store?.id);
+    refetch: refetchCart
+  } = useIsolatedStoreCart(store?.id || '');
 
   // Fetch store products
   const { data: products, isLoading: productsLoading } = useQuery({
@@ -69,7 +69,7 @@ export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => 
     enabled: !!store
   });
 
-  // Convert DB cart to localStorage-compatible format for compatibility
+  // Convert isolated cart to localStorage-compatible format for compatibility
   const cart = cartData?.items.map(item => ({
     product_id: item.product_id,
     title: item.product_title,
@@ -81,13 +81,7 @@ export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => 
   const addToCart = (product: any) => {
     if (!store?.id) return;
     
-    addToCartDB(product.product_id, {
-      name: product.products.title,
-      title: product.products.title,
-      price: product.products.price_sar,
-      image_url: product.products.image_urls?.[0] || '/placeholder.svg',
-      shop_id: store.id
-    });
+    addToCartDB(product.product_id);
   };
 
   const updateQuantity = (productId: string, newQuantity: number) => {
@@ -101,8 +95,8 @@ export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => 
     clearCartDB();
   };
 
-  const totalAmount = getCartTotals.subtotal;
-  const totalItems = getCartTotals.totalItems;
+  const totalAmount = cartData?.total || 0;
+  const totalItems = cartData?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   // Initialize guest session if needed
   useEffect(() => {

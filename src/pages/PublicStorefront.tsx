@@ -151,6 +151,7 @@ function PublicStorefront() {
   });
 
   if (storeLoading) {
+    console.log('Store loading...');
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -162,6 +163,7 @@ function PublicStorefront() {
   }
 
   if (storeError || !store) {
+    console.log('Store error or no store:', storeError, store);
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -172,6 +174,10 @@ function PublicStorefront() {
       </div>
     );
   }
+
+  console.log('Store loaded successfully:', store);
+  console.log('Products:', products);
+  console.log('Cart data:', cart);
 
   return (
     <div className="min-h-screen bg-background">
