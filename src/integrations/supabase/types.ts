@@ -134,10 +134,59 @@ export type Database = {
           },
         ]
       }
+      affiliate_store_themes: {
+        Row: {
+          applied_at: string | null
+          created_at: string | null
+          custom_config: Json | null
+          id: string
+          is_active: boolean | null
+          store_id: string | null
+          theme_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          applied_at?: string | null
+          created_at?: string | null
+          custom_config?: Json | null
+          id?: string
+          is_active?: boolean | null
+          store_id?: string | null
+          theme_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          applied_at?: string | null
+          created_at?: string | null
+          custom_config?: Json | null
+          id?: string
+          is_active?: boolean | null
+          store_id?: string | null
+          theme_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_store_themes_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: true
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_store_themes_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "store_themes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliate_stores: {
         Row: {
           bio: string | null
           created_at: string | null
+          current_theme_id: string | null
           id: string
           is_active: boolean
           logo_url: string | null
@@ -152,6 +201,7 @@ export type Database = {
         Insert: {
           bio?: string | null
           created_at?: string | null
+          current_theme_id?: string | null
           id?: string
           is_active?: boolean
           logo_url?: string | null
@@ -166,6 +216,7 @@ export type Database = {
         Update: {
           bio?: string | null
           created_at?: string | null
+          current_theme_id?: string | null
           id?: string
           is_active?: boolean
           logo_url?: string | null
@@ -178,6 +229,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "affiliate_stores_current_theme_id_fkey"
+            columns: ["current_theme_id"]
+            isOneToOne: false
+            referencedRelation: "store_themes"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "affiliate_stores_profile_id_fkey"
             columns: ["profile_id"]
@@ -5690,6 +5748,48 @@ export type Database = {
           },
         ]
       }
+      store_themes: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          description_ar: string | null
+          id: string
+          is_active: boolean | null
+          is_premium: boolean | null
+          name: string
+          name_ar: string
+          preview_image_url: string | null
+          theme_config: Json
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          description_ar?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_premium?: boolean | null
+          name: string
+          name_ar: string
+          preview_image_url?: string | null
+          theme_config?: Json
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          description_ar?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_premium?: boolean | null
+          name?: string
+          name_ar?: string
+          preview_image_url?: string | null
+          theme_config?: Json
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       suppliers: {
         Row: {
           address: string | null
@@ -6670,6 +6770,10 @@ export type Database = {
         }
         Returns: string
       }
+      apply_theme_to_store: {
+        Args: { p_custom_config?: Json; p_store_id: string; p_theme_id: string }
+        Returns: boolean
+      }
       calculate_loyalty_points: {
         Args: { order_amount: number; points_per_riyal?: number }
         Returns: number
@@ -6797,6 +6901,10 @@ export type Database = {
           status: string
           total_sar: number
         }[]
+      }
+      get_store_theme_config: {
+        Args: { p_store_id: string }
+        Returns: Json
       }
       get_unified_orders_with_items: {
         Args: {
