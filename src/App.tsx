@@ -155,6 +155,11 @@ const App = () => {
                               <MyOrders />
                             </PublicStorefrontLayout>
                           } />
+                          <Route path="/store/:store_slug" element={
+                            <PublicStorefrontLayout>
+                              <PublicStorefront />
+                            </PublicStorefrontLayout>
+                          } />
                           
                           {/* Store Routes - نظام منفصل 100% للعملاء */}
                           <Route path="/store/*" element={
