@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { StoreThemeProvider } from "@/components/store/ThemeProvider";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -313,7 +314,8 @@ const EnhancedStoreFront = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+    <StoreThemeProvider storeId={affiliateStore?.id}>
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Enhanced Store Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b shadow-sm">
         <div className="container mx-auto px-4 py-4">
@@ -1123,7 +1125,8 @@ const EnhancedStoreFront = () => {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </StoreThemeProvider>
   );
 };
 

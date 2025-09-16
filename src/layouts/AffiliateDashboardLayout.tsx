@@ -1,16 +1,46 @@
 import React from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
-import { Store, Package, ShoppingBag, DollarSign, BarChart3 } from 'lucide-react';
-
-const navigation = [
-  { name: 'نظرة عامة', href: '/dashboard', icon: BarChart3 },
-  { name: 'المنتجات', href: '/dashboard/products', icon: Package },
-  { name: 'الطلبات', href: '/dashboard/orders', icon: ShoppingBag },
-  { name: 'العمولات', href: '/dashboard/commissions', icon: DollarSign },
-];
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Store, Package, ShoppingBag, DollarSign, BarChart3, Palette } from 'lucide-react';
+import { useFastAuth } from '@/hooks/useFastAuth';
 
 export default function AffiliateDashboardLayout() {
   const location = useLocation();
+  const { profile } = useFastAuth();
+
+  // جلب المتاجر الخاصة بالمسوق
+  const { data: stores } = useQuery({
+    queryKey: ['affiliate-stores', profile?.id],
+    queryFn: async () => {
+      if (!profile?.id) return [];
+      
+      const { data, error } = await supabase
+        .from('affiliate_stores')
+        .select('id, store_name')
+        .eq('profile_id', profile.id)
+        .eq('is_active', true)
+        .limit(1);
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!profile?.id
+  });
+
+  const primaryStore = stores?.[0];
+  
+  const navigation = [
+    { name: 'نظرة عامة', href: '/dashboard', icon: BarChart3 },
+    { name: 'المنتجات', href: '/dashboard/products', icon: Package },
+    { name: 'الطلبات', href: '/dashboard/orders', icon: ShoppingBag },
+    { name: 'العمولات', href: '/dashboard/commissions', icon: DollarSign },
+    ...(primaryStore ? [{
+      name: 'ثيمات المتجر', 
+      href: `/store-themes/${primaryStore.id}`, 
+      icon: Palette 
+    }] : []),
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-persian-bg">
