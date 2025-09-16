@@ -18,22 +18,28 @@ const DomainManager = ({ children }: DomainManagerProps) => {
     const currentPath = location.pathname;
     const search = location.search;
 
-    const isCustomDomain = hostname !== 'localhost' && !hostname.includes('atlantiss.tech');
+    const isCustomDomain = hostname !== 'localhost' 
+      && !hostname.includes('atlantiss.tech') 
+      && !hostname.includes('lovableproject.com') 
+      && !hostname.includes('lovable.app');
 
     if (isCustomDomain) {
       const storeSlug = getStoreSlugFromDomain(hostname);
 
-      // Redirect custom domain root to its mapped store slug
-      if (storeSlug && !currentPath.startsWith(`/store/${storeSlug}`)) {
-        navigate(`/store/${storeSlug}${search}`, { replace: true });
-        return;
-      }
+      // Apply redirects ONLY if this domain is mapped to a store
+      if (storeSlug) {
+        // Redirect custom domain root to its mapped store slug
+        if (!currentPath.startsWith(`/store/${storeSlug}`)) {
+          navigate(`/store/${storeSlug}${search}`, { replace: true });
+          return;
+        }
 
-      // Block platform routes on custom domains
-      const platformPaths = ['/admin', '/affiliate', '/merchant', '/dashboard', '/auth'];
-      if (platformPaths.some(path => currentPath === path || currentPath.startsWith(`${path}/`))) {
-        navigate(storeSlug ? `/store/${storeSlug}` : '/', { replace: true });
-        return;
+        // Block platform routes on mapped custom domains
+        const platformPaths = ['/admin', '/affiliate', '/merchant', '/dashboard', '/auth'];
+        if (platformPaths.some(path => currentPath === path || currentPath.startsWith(`${path}/`))) {
+          navigate(`/store/${storeSlug}`, { replace: true });
+          return;
+        }
       }
     }
 
