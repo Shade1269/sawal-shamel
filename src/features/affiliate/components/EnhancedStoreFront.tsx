@@ -87,8 +87,13 @@ interface CartItem {
   selectedVariants?: { [key: string]: string };
 }
 
-const EnhancedStoreFront = () => {
-  const { storeSlug } = useParams<{ storeSlug: string }>();
+interface EnhancedStoreFrontProps {
+  storeSlug?: string;
+}
+
+const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProps = {}) => {
+  const { storeSlug: paramStoreSlug } = useParams<{ storeSlug: string }>();
+  const storeSlug = propStoreSlug || paramStoreSlug;
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isAuthenticated, customer } = useCustomerAuthContext();
@@ -292,7 +297,28 @@ const EnhancedStoreFront = () => {
   }
 
   // Error state
-  if (storeError || !affiliateStore) {
+  if (storeError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-destructive/5 to-destructive/10">
+        <div className="text-center max-w-md mx-auto p-8">
+          <div className="w-24 h-24 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Store className="h-12 w-12 text-destructive" />
+          </div>
+          <h3 className="text-2xl font-bold mb-3 text-foreground">خطأ في تحميل المتجر</h3>
+          <p className="text-muted-foreground mb-6 leading-relaxed">
+            حدث خطأ أثناء محاولة تحميل المتجر. الرجاء المحاولة مرة أخرى.
+          </p>
+          <Button onClick={() => navigate('/')} className="px-8">
+            <ArrowRight className="h-4 w-4 mr-2" />
+            العودة للصفحة الرئيسية
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // تطبيق الثيم إذا كان المتجر محمل
+  if (!affiliateStore) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-destructive/5 to-destructive/10">
         <div className="text-center max-w-md mx-auto p-8">
@@ -314,7 +340,7 @@ const EnhancedStoreFront = () => {
   }
 
   return (
-    <StoreThemeProvider storeId={affiliateStore?.id}>
+    <StoreThemeProvider storeId={affiliateStore.id}>
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Enhanced Store Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b shadow-sm">
