@@ -6,7 +6,7 @@ import { useAffiliateOrders } from '@/hooks/useAffiliateOrders';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Store, Package, ShoppingBag, DollarSign, Users, TrendingUp, ExternalLink } from 'lucide-react';
+import { Store, Package, ShoppingBag, DollarSign, Users, TrendingUp, ExternalLink, Palette } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createStoreUrl } from '@/utils/domains';
 
@@ -205,7 +205,7 @@ export default function AffiliateDashboardOverview() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -244,24 +244,43 @@ export default function AffiliateDashboardOverview() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5" />
-              تتبع العمولات
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">
-              متابعة عمولاتك وأرباحك
-            </p>
-            <Button asChild className="w-full">
-              <Link to="/dashboard/commissions">
-                عرض العمولات
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
+         <Card>
+           <CardHeader>
+             <CardTitle className="flex items-center gap-2">
+               <Palette className="h-5 w-5" />
+               ثيمات المتجر
+             </CardTitle>
+           </CardHeader>
+           <CardContent>
+             <p className="text-muted-foreground mb-4">
+               اختر الثيم المناسب لطبيعة منتجاتك
+             </p>
+             <Button asChild className="w-full">
+               <Link to={`/store-themes/${affiliateStore.id}`}>
+                 إدارة الثيمات
+               </Link>
+             </Button>
+           </CardContent>
+         </Card>
+
+         <Card>
+           <CardHeader>
+             <CardTitle className="flex items-center gap-2">
+               <DollarSign className="h-5 w-5" />
+               تتبع العمولات
+             </CardTitle>
+           </CardHeader>
+           <CardContent>
+             <p className="text-muted-foreground mb-4">
+               متابعة عمولاتك وأرباحك
+             </p>
+             <Button asChild className="w-full">
+               <Link to="/dashboard/commissions">
+                 عرض العمولات
+               </Link>
+             </Button>
+           </CardContent>
+         </Card>
       </div>
     </div>
   );

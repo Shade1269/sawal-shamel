@@ -37,6 +37,7 @@ const AffiliateDashboardOverview = lazy(() => import("./pages/affiliate/Affiliat
 const AffiliateProductsPage = lazy(() => import("./pages/affiliate/AffiliateProductsPage"));
 const AffiliateOrdersPage = lazy(() => import("./pages/affiliate/AffiliateOrdersPage"));
 const AffiliateCommissionsPage = lazy(() => import("./pages/affiliate/AffiliateCommissionsPage"));
+const StoreThemeSettings = lazy(() => import("./pages/StoreThemeSettings"));
 
 // Public Storefront (no auth required)
 const PublicStorefront = lazy(() => import("./pages/PublicStorefront"));
@@ -242,11 +243,18 @@ const App = () => {
                           <AffiliateDashboardLayout />
                         </ProtectedRoute>
                       }>
-                        <Route index element={<AffiliateDashboardOverview />} />
-                        <Route path="products" element={<AffiliateProductsPage />} />
-                        <Route path="orders" element={<AffiliateOrdersPage />} />
-                        <Route path="commissions" element={<AffiliateCommissionsPage />} />
-                      </Route>
+                         <Route index element={<AffiliateDashboardOverview />} />
+                         <Route path="products" element={<AffiliateProductsPage />} />
+                         <Route path="orders" element={<AffiliateOrdersPage />} />
+                         <Route path="commissions" element={<AffiliateCommissionsPage />} />
+                       </Route>
+                       
+                       {/* Store Theme Settings */}
+                       <Route path="/store-themes/:storeId" element={
+                         <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                           <StoreThemeSettings />
+                         </ProtectedRoute>
+                       } />
                       
                       {/* Legacy Dashboard Route */}
                       <Route 
