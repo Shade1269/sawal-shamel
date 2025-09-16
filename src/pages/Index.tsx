@@ -37,7 +37,16 @@ const Index = () => {
       navigate('/login');
       return;
     }
-    navigate('/dashboard');
+    // Use smart navigation to go to appropriate dashboard based on user role
+    if (profile?.role === 'admin') {
+      navigate('/admin/dashboard');
+    } else if (profile?.role === 'affiliate') {
+      navigate('/dashboard');
+    } else if (profile?.role === 'merchant') {
+      navigate('/merchant');
+    } else {
+      navigate('/old-dashboard'); // For other users, use the legacy dashboard
+    }
   };
 
   const handleSignOut = async () => {
