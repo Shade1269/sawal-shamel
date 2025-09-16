@@ -24,6 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useFastAuth } from '@/hooks/useFastAuth';
 
 const ProductsPage = () => {
+  const navigate = useNavigate();
   const { profile, isAuthenticated } = useFastAuth();
   const { toast } = useToast();
   

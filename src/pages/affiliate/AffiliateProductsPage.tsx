@@ -29,6 +29,7 @@ interface AffiliateProduct {
 }
 
 export default function AffiliateProductsPage() {
+  const navigate = useNavigate();
   const { user } = useSupabaseAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
