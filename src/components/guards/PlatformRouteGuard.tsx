@@ -1,6 +1,7 @@
 import { ReactNode, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
+import { useFastAuth } from '@/hooks/useFastAuth';
 
 interface PlatformRouteGuardProps {
   children: ReactNode;
@@ -12,10 +13,11 @@ interface PlatformRouteGuardProps {
 export const PlatformRouteGuard = ({ children }: PlatformRouteGuardProps) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated, profile } = useFastAuth();
   
   // فحص إذا كان هناك عميل متجر مسجل دخول
   const customerSessionKey = 'customer_session';
-  const customerSession = localStorage.getItem(customerSessionKey);
+  const customerSession = typeof window !== 'undefined' ? localStorage.getItem(customerSessionKey) : null;
   
   const currentPath = location.pathname;
   const isPlatformPath = currentPath.startsWith('/admin') || 
@@ -25,13 +27,20 @@ export const PlatformRouteGuard = ({ children }: PlatformRouteGuardProps) => {
                         (currentPath === '/auth' && !currentPath.includes('/store/'));
 
   useEffect(() => {
-    // إذا عميل متجر يحاول دخول المنصة
+    // إذا كان هناك جلسة عميل متجر ويحاول دخول صفحات المنصة
     if (customerSession && isPlatformPath) {
-      // توجيه للصفحة الرئيسية
+      // إذا كان مستخدم المنصة مصادقًا، نسمح بالدخول ونزيل تعارض جلسة المتجر
+      if (isAuthenticated && profile) {
+        try {
+          localStorage.removeItem(customerSessionKey);
+        } catch {}
+        return;
+      }
+      // غير مصادق كمستخدم منصة → ارجاع للصفحة الرئيسية
       navigate('/', { replace: true });
       return;
     }
-  }, [customerSession, isPlatformPath, navigate]);
+  }, [customerSession, isPlatformPath, isAuthenticated, profile, navigate]);
 
   return <>{children}</>;
 };
