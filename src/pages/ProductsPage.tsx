@@ -123,19 +123,39 @@ const ProductsPage = () => {
     }
 
     try {
+      // احصل على معرف الملف الشخصي الحقيقي من جدول profiles (مطلوب بواسطة RLS)
+      const { data: baseProfile, error: baseProfileError } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .eq('auth_user_id', profile.auth_user_id)
+        .maybeSingle();
+
+      if (baseProfileError || !baseProfile) {
+        throw new Error('تعذر العثور على الملف الشخصي الأساسي');
+      }
+
+      // ابحث عن متجر المسوق المرتبط بهذا الملف الشخصي
       let { data: store } = await supabase
         .from('affiliate_stores')
         .select('id')
-        .eq('profile_id', profile.id)
+        .eq('profile_id', baseProfile.id)
         .maybeSingle();
 
+      // أنشئ المتجر إذا لم يكن موجوداً (سيمر RLS لأن profile_id من جدول profiles)
       if (!store) {
+        const suggestedName = baseProfile.full_name || profile.full_name || 'My Store';
+        const suggestedSlug = (suggestedName || 'store')
+          .toLowerCase()
+          .replace(/[^\p{L}\p{N}\s-]/gu, '')
+          .trim()
+          .replace(/\s+/g, '-') + '-store';
+
         const { data: newStore, error: storeError } = await supabase
           .from('affiliate_stores')
           .insert({
-            profile_id: profile.id,
-            store_name: profile.full_name + ' Store',
-            store_slug: profile.full_name?.toLowerCase().replace(/\s+/g, '-') + '-store',
+            profile_id: baseProfile.id,
+            store_name: suggestedName + ' Store',
+            store_slug: suggestedSlug,
             is_active: true
           })
           .select('id')
@@ -145,6 +165,7 @@ const ProductsPage = () => {
         store = newStore;
       }
 
+      // أضف المنتج إلى مكتبة المتجر
       const { error } = await supabase
         .from('affiliate_products')
         .insert({
@@ -155,14 +176,14 @@ const ProductsPage = () => {
         });
 
       if (error) {
-        if (error.code === '23505') {
+        if ((error as any).code === '23505') {
           toast({
             title: "المنتج موجود بالفعل",
             description: "هذا المنتج مضاف لمتجرك بالفعل",
             variant: "destructive",
           });
         } else {
-          throw error;
+          throw error as any;
         }
         return;
       }
