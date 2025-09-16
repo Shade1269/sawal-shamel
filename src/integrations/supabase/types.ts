@@ -1634,6 +1634,7 @@ export type Database = {
         Row: {
           affiliate_commission_sar: number | null
           affiliate_store_id: string | null
+          buyer_session_id: string | null
           cancelled_at: string | null
           confirmed_at: string | null
           coupon_code: string | null
@@ -1667,6 +1668,7 @@ export type Database = {
         Insert: {
           affiliate_commission_sar?: number | null
           affiliate_store_id?: string | null
+          buyer_session_id?: string | null
           cancelled_at?: string | null
           confirmed_at?: string | null
           coupon_code?: string | null
@@ -1700,6 +1702,7 @@ export type Database = {
         Update: {
           affiliate_commission_sar?: number | null
           affiliate_store_id?: string | null
+          buyer_session_id?: string | null
           cancelled_at?: string | null
           confirmed_at?: string | null
           coupon_code?: string | null
