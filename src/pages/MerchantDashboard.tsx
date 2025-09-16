@@ -239,7 +239,7 @@ const MerchantDashboard = () => {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">جاري تحميل لوحة التاجر...</p>
+            <p className="text-muted-foreground">جاري تحميل لوحة المتجر...</p>
           </div>
         </div>
       </div>
@@ -264,7 +264,7 @@ const MerchantDashboard = () => {
             </Button>
           </div>
           <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            لوحة التاجر
+            لوحة تحكم المتجر
           </h1>
           <p className="text-muted-foreground mt-2">
             مرحباً {profile?.full_name}، إليك نظرة عامة على متجرك
@@ -272,7 +272,7 @@ const MerchantDashboard = () => {
         </div>
         <Badge className="bg-gradient-premium text-premium-foreground">
           <Store className="ml-1 h-4 w-4" />
-          تاجر
+          مسوّق
         </Badge>
       </div>
 
