@@ -283,12 +283,12 @@ const App = () => {
         <Route path="user-behavior" element={<UserBehaviorAnalytics />} />
                       </Route>
                       
-                       {/* Merchant Routes */}
+                       {/* Merchant Routes - Redirect to unified dashboard */}
                        <Route 
                          path="/merchant" 
                          element={
                            <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                             <MerchantDashboard />
+                             <Navigate to="/dashboard" replace />
                            </ProtectedRoute>
                          } 
                        />
@@ -296,7 +296,7 @@ const App = () => {
                          path="/merchant-dashboard" 
                          element={
                            <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                             <MerchantDashboard />
+                             <Navigate to="/dashboard" replace />
                            </ProtectedRoute>
                          } 
                        />
@@ -351,23 +351,23 @@ const App = () => {
                         } 
                       />
                       
-                        {/* Affiliate Routes */}
-                        <Route 
-                          path="/affiliate" 
-                          element={
-                            <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                              <AffiliateDashboard />
-                            </ProtectedRoute>
-                          } 
-                        />
-                        <Route 
-                          path="/affiliate-dashboard" 
-                          element={
-                            <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                              <AffiliateDashboard />
-                            </ProtectedRoute>
-                          } 
-                        />
+                         {/* Affiliate Routes - Redirect to unified dashboard */}
+                         <Route 
+                           path="/affiliate" 
+                           element={
+                             <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                               <Navigate to="/dashboard" replace />
+                             </ProtectedRoute>
+                           } 
+                         />
+                         <Route 
+                           path="/affiliate-dashboard" 
+                           element={
+                             <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                               <Navigate to="/dashboard" replace />
+                             </ProtectedRoute>
+                           } 
+                         />
                        
                         {/* Atlantis System */}
                        <Route 

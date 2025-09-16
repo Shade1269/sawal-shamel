@@ -260,16 +260,6 @@ const Index = () => {
                   >
                     دخول لوحة التحكم
                   </Button>
-                  {profile?.role === 'affiliate' && (
-                    <Button 
-                      variant="outline"
-                      size="lg" 
-                      className="w-full h-12 text-lg font-bold rounded-xl mt-3"
-                      onClick={() => navigate('/affiliate')}
-                    >
-                      لوحة تحكم المسوّق
-                    </Button>
-                  )}
                   <div className="grid grid-cols-2 gap-3 mt-4">
                     <div className="bg-gradient-to-r from-primary/15 to-primary/8 p-3 rounded-xl border border-primary/25">
                       <p className="text-sm font-medium text-primary">إدارة المنتجات</p>
