@@ -27,7 +27,9 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
 
   const loadThemeConfig = async (storeId: string) => {
     try {
+      console.info('ThemeProvider: Loading store theme config', { storeId });
       const config = await getThemeConfig(storeId);
+      console.info('ThemeProvider: Theme config loaded', { hasConfig: !!config, colorKeys: Object.keys(config?.colors || {}) });
       if (config) {
         setCurrentThemeConfig(config);
         applyThemeToDOM(config);
@@ -97,11 +99,28 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
       return v; // fallback (قد تكون var(--...))
     };
     
-    // تطبيق الألوان بصيغة متوافقة مع tailwind (hsl(var(--token)))
-    Object.entries(colors).forEach(([key, value]) => {
+    // تطبيق الألوان بصيغة متوافقة مع tailwind (hsl(var(--token))) + تحويل مفاتيح شائعة
+    const keyAliasMap: Record<string, string> = {
+      primary_color: 'primary', primaryColor: 'primary',
+      secondary_color: 'secondary', secondaryColor: 'secondary',
+      accent_color: 'accent', accentColor: 'accent',
+      background_color: 'background', backgroundColor: 'background', bg: 'background',
+      foreground_color: 'foreground', foregroundColor: 'foreground', fg: 'foreground', text: 'foreground', textColor: 'foreground',
+      muted_color: 'muted', mutedColor: 'muted',
+      card_background: 'card', cardColor: 'card', card_background_color: 'card',
+      border_color: 'border', borderColor: 'border',
+      input_color: 'input', inputColor: 'input',
+      ring_color: 'ring', ringColor: 'ring'
+    };
+
+    const appliedKeys: string[] = [];
+    Object.entries(colors).forEach(([rawKey, value]) => {
+      const key = keyAliasMap[rawKey] || rawKey;
       const normalized = normalizeColor(String(value));
       root.style.setProperty(`--${key}`, normalized);
+      appliedKeys.push(key);
     });
+    console.info('ThemeProvider: Applied color variables', { appliedKeys });
 
 
     // تطبيق الخطوط
