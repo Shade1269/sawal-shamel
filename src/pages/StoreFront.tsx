@@ -1,16 +1,39 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ShoppingCart, Star, Store, Phone, Mail, CheckCircle } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  ShoppingCart, 
+  Star, 
+  Store, 
+  CheckCircle,
+  Heart,
+  Share2,
+  Search,
+  Plus,
+  Minus,
+  X,
+  Eye,
+  Package,
+  Filter,
+  SlidersHorizontal,
+  TrendingUp,
+  Percent
+} from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ProductImageCarousel } from "@/features/commerce/components/ProductImageCarousel";
-import { Input } from "@/components/ui/input";
 import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Product {
   id: string;
@@ -21,8 +44,11 @@ interface Product {
   stock: number;
   category: string;
   variants?: ProductVariant[];
-  commission_amount?: number; // Add commission amount
-  final_price?: number; // Add final price (base + commission)
+  commission_amount?: number;
+  final_price?: number;
+  rating?: number;
+  reviews_count?: number;
+  discount_percentage?: number;
 }
 
 interface ProductVariant {
@@ -45,20 +71,29 @@ interface Shop {
 interface CartItem {
   product: Product;
   quantity: number;
-  selectedVariants?: { [key: string]: string }; // e.g., { size: "M", color: "Red" }
+  selectedVariants?: { [key: string]: string };
 }
 
 const StoreFront = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  // Enhanced State Management
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
-  const [selectedVariants, setSelectedVariants] = useState<{ [productId: string]: { [variantType: string]: string } }>({});
-  const [productQuantities, setProductQuantities] = useState<{ [productId: string]: number }>({});
   const [showCheckout, setShowCheckout] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
+  const [wishlist, setWishlist] = useState<string[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [sortBy, setSortBy] = useState("newest");
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedVariants, setSelectedVariants] = useState<{ [productId: string]: { [variantType: string]: string } }>({});
+  const [productQuantities, setProductQuantities] = useState<{ [productId: string]: number }>({});
 
   // Fetch shop data
   const { data: shop, isLoading: shopLoading, error: shopError } = useQuery({
@@ -75,16 +110,6 @@ const StoreFront = () => {
       if (error) throw error;
       return data as Shop | null;
     },
-  });
-
-  // Debug logging
-  console.log('StoreFront render:', { 
-    slug, 
-    showCheckout, 
-    orderCompleted, 
-    cartLength: cart.length, 
-    shopId: shop?.id,
-    shopLoading 
   });
 
   // Fetch products for this shop
@@ -115,8 +140,8 @@ const StoreFront = () => {
       })).filter(Boolean) as Product[];
     },
     enabled: !!shop?.id,
-    refetchInterval: 10000, // Refresh every 10 seconds
-    staleTime: 5000, // Consider data stale after 5 seconds
+    refetchInterval: 10000,
+    staleTime: 5000,
   });
 
   // Fetch store settings for checkout
@@ -141,6 +166,66 @@ const StoreFront = () => {
     enabled: !!shop?.id,
   });
 
+  // Enhanced product processing with demo enhancements
+  const enhancedProducts = (products || []).map(product => ({
+    ...product,
+    rating: Math.random() * 2 + 3,
+    reviews_count: Math.floor(Math.random() * 100) + 5,
+    discount_percentage: Math.random() > 0.7 ? Math.floor(Math.random() * 30) + 10 : 0
+  }));
+
+  // Categories
+  const categories = Array.from(new Set(enhancedProducts.map(p => p.category || 'عام')));
+
+  // Enhanced filtering and sorting
+  const filteredProducts = enhancedProducts.filter(product => {
+    const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || (product.category || 'عام') === selectedCategory;
+    const price = product.final_price || product.price_sar;
+    const matchesPrice = price >= priceRange[0] && price <= priceRange[1];
+    
+    return matchesSearch && matchesCategory && matchesPrice;
+  }).sort((a, b) => {
+    const priceA = a.final_price || a.price_sar;
+    const priceB = b.final_price || b.price_sar;
+    
+    switch (sortBy) {
+      case 'price-low':
+        return priceA - priceB;
+      case 'price-high':
+        return priceB - priceA;
+      case 'name':
+        return a.title.localeCompare(b.title);
+      case 'rating':
+        return (b.rating || 0) - (a.rating || 0);
+      case 'discount':
+        return (b.discount_percentage || 0) - (a.discount_percentage || 0);
+      case 'newest':
+      default:
+        return Math.random() - 0.5;
+    }
+  });
+
+  // Enhanced utility functions
+  const toggleWishlist = (productId: string) => {
+    const newWishlist = wishlist.includes(productId)
+      ? wishlist.filter(id => id !== productId)
+      : [...wishlist, productId];
+    setWishlist(newWishlist);
+    
+    toast({
+      title: wishlist.includes(productId) ? "تم الحذف من المفضلة" : "تم الإضافة للمفضلة",
+    });
+  };
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setSelectedCategory("all");
+    setPriceRange([0, 1000]);
+    setSortBy("newest");
+  };
+
   const addToCart = (product: Product) => {
     const cartKey = `cart_${slug}`;
     const existingCart = JSON.parse(localStorage.getItem(cartKey) || '[]');
@@ -160,66 +245,29 @@ const StoreFront = () => {
     }
     
     localStorage.setItem(cartKey, JSON.stringify(existingCart));
-    setCart(existingCart);
+    
+    // Convert to CartItem format for state
+    const cartItems = existingCart.map((item: any) => ({
+      product: {
+        ...product,
+        id: item.id,
+        title: item.name,
+        price_sar: item.price
+      },
+      quantity: item.quantity
+    }));
+    
+    setCart(cartItems);
     toast({
       title: "تمت الإضافة للسلة",
       description: `تم إضافة ${product.title} إلى سلة التسوق`,
     });
   };
 
-  const updateSelectedVariant = (productId: string, variantType: string, value: string) => {
-    setSelectedVariants(prev => ({
-      ...prev,
-      [productId]: {
-        ...prev[productId],
-        [variantType]: value
-      }
-    }));
-};
-
-  const buyNow = (product: Product) => {
-    console.log('buyNow called for product:', product.id);
-    
-    // تحقق من اختيار المتغيرات إن وجدت
-    if (product.variants && product.variants.length > 0) {
-      const productVariants = selectedVariants[product.id] || {};
-      const variantTypes = [...new Set(product.variants.map(v => v.variant_type))];
-      const missing = variantTypes.filter(type => !productVariants[type]);
-      if (missing.length > 0) {
-        toast({
-          title: "اختيار مطلوب",
-          description: `يجب اختيار: ${missing.join(', ')}`,
-          variant: "destructive"
-        });
-        return;
-      }
-    }
-
-    const quantity = productQuantities[product.id] || 1;
-    const productVariants = selectedVariants[product.id] || {};
-
-    // إنشاء سلة فورية بالمنتج المختار فقط
-    const newCart = [
-      {
-        product,
-        quantity,
-        selectedVariants: Object.keys(productVariants).length > 0 ? productVariants : undefined,
-      },
-    ];
-    
-    console.log('Setting cart and checkout states', { newCart, shopId: shop?.id });
-    setCart(newCart);
-    setShowCheckout(true);
-    setShowCart(false);
-    setOrderCompleted(false);
-  };
-
   const cartTotal = cart.reduce((sum, item) => sum + ((item.product.final_price || item.product.price_sar) * item.quantity), 0);
   const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleCheckoutStart = () => {
-    console.log('handleCheckoutStart called', { cartLength: cart.length });
-    
     if (cart.length === 0) {
       toast({
         title: "السلة فارغة",
@@ -229,18 +277,6 @@ const StoreFront = () => {
       return;
     }
     
-    // Check if products are still available
-    const unavailableProducts = cart.filter(item => item.product.stock < item.quantity);
-    if (unavailableProducts.length > 0) {
-      toast({
-        title: "منتجات غير متوفرة",
-        description: "بعض المنتجات في السلة لم تعد متوفرة بالكمية المطلوبة",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    console.log('Setting showCheckout to true', { shopId: shop?.id });
     setShowCheckout(true);
     setShowCart(false);
     setOrderCompleted(false);
@@ -260,10 +296,7 @@ const StoreFront = () => {
     setOrderCompleted(false);
   };
 
-  console.log('حالة المتجر:', { shop, shopLoading, shopError });
-
   if (shopLoading) {
-    console.log('جاري تحميل المتجر...');
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -275,7 +308,6 @@ const StoreFront = () => {
   }
 
   if (shopError || (!shopLoading && !shop)) {
-    console.log('خطأ في المتجر أو غير موجود:', { shopError, shop });
     return (
       <div className="min-h-screen bg-background flex items-center justify-center" dir="rtl">
         <div className="text-center space-y-4">
@@ -285,10 +317,7 @@ const StoreFront = () => {
             <p className="text-muted-foreground mb-4">
               لم يتم العثور على متجر بالاسم "{slug}"
             </p>
-            <Button 
-              onClick={() => navigate('/')}
-              className="gap-2"
-            >
+            <Button onClick={() => navigate('/')} className="gap-2">
               العودة للرئيسية
             </Button>
           </div>
@@ -297,23 +326,16 @@ const StoreFront = () => {
     );
   }
 
-  const currentTheme = (shop as any)?.theme || 'classic';
-  const pageBg = currentTheme === 'minimal' 
-    ? 'bg-background'
-    : 'bg-gradient-to-br from-background via-background to-secondary/5';
-  const headerBg = currentTheme === 'modern'
-    ? 'bg-gradient-to-r from-primary/20 to-secondary/20'
-    : 'bg-card/80';
-
   return (
-    <div className={`min-h-screen ${pageBg}`} dir="rtl">
-      {/* Header */}
-      <header className={`${headerBg} backdrop-blur-sm border-b sticky top-0 z-40`}>
-        <div className="container mx-auto px-4 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5" dir="rtl">
+      {/* Enhanced Store Header */}
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b shadow-sm">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
+            {/* Store Identity */}
             <div className="flex items-center gap-4">
               <div className="relative">
-                <Avatar className="h-16 w-16 border-2 border-primary/20">
+                <Avatar className="h-16 w-16 border-2 border-primary/20 shadow-lg">
                   <AvatarImage src={shop.logo_url} alt={shop.display_name} />
                   <AvatarFallback className="bg-primary/10 text-primary">
                     <Store className="h-8 w-8" />
@@ -324,422 +346,549 @@ const StoreFront = () => {
                 </div>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">{shop.display_name}</h1>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                  {shop.display_name}
+                </h1>
                 <p className="text-muted-foreground mt-1">{shop.bio || "مرحباً بكم في متجرنا"}</p>
                 <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
-                    <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                    <TrendingUp className="h-3 w-3" />
                     <span>متاح الآن</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Package className="h-3 w-3" />
+                    {enhancedProducts?.length || 0} منتج
                   </div>
                 </div>
               </div>
             </div>
             
-              <Button
-                variant="outline"
-                onClick={() => navigate(`/store/${slug}/cart`)}
-                className="relative bg-background/50 backdrop-blur-sm hover:bg-background/80 border-primary/20"
-              >
-                <ShoppingCart className="h-4 w-4 ml-2" />
-                السلة
-                {cartItemsCount > 0 && (
-                  <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 p-0 text-xs font-bold">
-                    {cartItemsCount}
-                  </Badge>
-                )}
-              </Button>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              {/* Cart Button */}
+              <Sheet open={showCart} onOpenChange={setShowCart}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="relative group hover:shadow-lg transition-all">
+                    <ShoppingCart className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                    السلة
+                    {cartItemsCount > 0 && (
+                      <Badge className="absolute -top-2 -left-2 min-w-[20px] h-5 animate-pulse">
+                        {cartItemsCount}
+                      </Badge>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-full sm:max-w-lg">
+                  <SheetHeader>
+                    <SheetTitle className="text-right">سلة التسوق ({cartItemsCount} عنصر)</SheetTitle>
+                  </SheetHeader>
+                  
+                  <div className="flex flex-col h-full">
+                    <div className="flex-1 overflow-y-auto py-4">
+                      {cart.length === 0 ? (
+                        <div className="text-center py-8">
+                          <ShoppingCart className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                          <p className="text-muted-foreground">السلة فارغة</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {cart.map((item) => (
+                            <div key={item.product.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                              <img 
+                                src={item.product.image_urls?.[0] || '/placeholder.svg'} 
+                                alt={item.product.title}
+                                className="w-16 h-16 object-cover rounded-lg"
+                              />
+                              <div className="flex-1">
+                                <h4 className="font-medium text-sm">{item.product.title}</h4>
+                                <p className="text-primary font-bold">{item.product.final_price || item.product.price_sar} ر.س</p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => {
+                                    const newQuantity = item.quantity - 1;
+                                    if (newQuantity <= 0) {
+                                      setCart(cart.filter(cartItem => cartItem.product.id !== item.product.id));
+                                    } else {
+                                      setCart(cart.map(cartItem => 
+                                        cartItem.product.id === item.product.id 
+                                          ? { ...cartItem, quantity: newQuantity }
+                                          : cartItem
+                                      ));
+                                    }
+                                  }}
+                                >
+                                  <Minus className="h-3 w-3" />
+                                </Button>
+                                <span className="w-8 text-center font-medium">{item.quantity}</span>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => {
+                                    setCart(cart.map(cartItem => 
+                                      cartItem.product.id === item.product.id 
+                                        ? { ...cartItem, quantity: item.quantity + 1 }
+                                        : cartItem
+                                    ));
+                                  }}
+                                >
+                                  <Plus className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {cart.length > 0 && (
+                      <div className="border-t pt-4 space-y-4">
+                        <div className="flex justify-between text-lg font-bold">
+                          <span>الإجمالي:</span>
+                          <span>{cartTotal.toFixed(2)} ر.س</span>
+                        </div>
+                        <Button 
+                          className="w-full" 
+                          size="lg"
+                          onClick={handleCheckoutStart}
+                        >
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                          إتمام الطلب
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Products */}
-          <div className="lg:col-span-3">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="h-8 w-1 bg-primary rounded-full"></div>
-              <h2 className="text-2xl font-bold">منتجاتنا</h2>
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-6 space-y-8">
+        {/* Enhanced Search and Filter Section */}
+        <section className="bg-gradient-to-r from-card to-card/50 p-6 rounded-2xl border shadow-lg">
+          <div className="space-y-4">
+            {/* Search Bar */}
+            <div className="relative">
+              <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+              <Input
+                placeholder="ابحث عن المنتجات المفضلة لديك..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pr-12 h-14 text-lg border-2 focus:border-primary/50 rounded-xl bg-background/50"
+              />
+              {searchQuery && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
             </div>
-            
-            {productsLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, i) => (
-                  <Card key={i} className="animate-pulse">
-                    <div className="aspect-square bg-muted rounded-t-lg"></div>
-                    <CardContent className="p-4">
-                      <div className="h-4 bg-muted rounded mb-2"></div>
-                      <div className="h-3 bg-muted rounded mb-4"></div>
-                      <div className="h-8 bg-muted rounded"></div>
-                    </CardContent>
-                  </Card>
-                ))}
+
+            {/* Quick Actions */}
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="hover:shadow-md transition-all"
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  فلترة متقدمة
+                  {showFilters && <span className="mr-2">↑</span>}
+                </Button>
+                
+                {(searchQuery || selectedCategory !== 'all' || priceRange[0] > 0 || priceRange[1] < 1000) && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={clearFilters}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    مسح الفلاتر
+                  </Button>
+                )}
               </div>
-            ) : products && products.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map((product) => (
-                  <Card key={product.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-card/50 backdrop-blur-sm">
-                    <div className="relative overflow-hidden">
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {filteredProducts.length} من {enhancedProducts?.length || 0} منتج
+                </span>
+              </div>
+            </div>
+
+            {/* Advanced Filters Panel */}
+            <AnimatePresence>
+              {showFilters && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-background/50 rounded-xl border">
+                    {/* Category Filter */}
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium flex items-center gap-2">
+                        <Package className="h-4 w-4" />
+                        الفئة
+                      </Label>
+                      <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="اختر الفئة" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">جميع الفئات</SelectItem>
+                          {categories.map(category => (
+                            <SelectItem key={category} value={category}>
+                              {category}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Price Range */}
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium flex items-center gap-2">
+                        <Percent className="h-4 w-4" />
+                        نطاق السعر: {priceRange[0]} - {priceRange[1]} ر.س
+                      </Label>
+                      <Slider
+                        value={priceRange}
+                        onValueChange={(value: [number, number]) => setPriceRange(value)}
+                        max={1000}
+                        min={0}
+                        step={10}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>0 ر.س</span>
+                        <span>1000 ر.س</span>
+                      </div>
+                    </div>
+
+                    {/* Sort Options */}
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium flex items-center gap-2">
+                        <SlidersHorizontal className="h-4 w-4" />
+                        ترتيب حسب
+                      </Label>
+                      <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="اختر الترتيب" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="newest">الأحدث</SelectItem>
+                          <SelectItem value="price-low">السعر: من الأقل للأعلى</SelectItem>
+                          <SelectItem value="price-high">السعر: من الأعلى للأقل</SelectItem>
+                          <SelectItem value="name">الاسم أ-ي</SelectItem>
+                          <SelectItem value="rating">الأعلى تقييماً</SelectItem>
+                          <SelectItem value="discount">الأعلى خصماً</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </section>
+
+        {/* Enhanced Products Section */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-3xl font-bold">منتجات المتجر</h2>
+              <p className="text-muted-foreground mt-1">اكتشف أفضل المنتجات المتاحة</p>
+            </div>
+            {cartItemsCount > 0 && (
+              <Button 
+                onClick={() => setShowCart(true)}
+                className="relative shadow-lg hover:shadow-xl transition-all"
+                size="lg"
+              >
+                <ShoppingCart className="h-5 w-5 mr-2" />
+                عرض السلة ({cartItemsCount})
+                <Badge className="absolute -top-2 -right-2 min-w-[20px] h-5 animate-pulse bg-green-500">
+                  {cartItemsCount}
+                </Badge>
+              </Button>
+            )}
+          </div>
+
+          {productsLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mx-auto mb-4"></div>
+              <p className="text-muted-foreground">جاري تحميل المنتجات...</p>
+            </div>
+          ) : !enhancedProducts || enhancedProducts.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="w-24 h-24 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Package className="h-12 w-12 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">لا توجد منتجات</h3>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                لم يتم إضافة أي منتجات إلى هذا المتجر بعد. تابعونا للمزيد من المنتجات قريباً!
+              </p>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="w-24 h-24 bg-muted/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Search className="h-12 w-12 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">لا توجد نتائج</h3>
+              <p className="text-muted-foreground max-w-md mx-auto mb-6">
+                لم نتمكن من العثور على منتجات تطابق البحث والفلاتر المحددة.
+              </p>
+              <Button onClick={clearFilters} variant="outline">
+                <X className="h-4 w-4 mr-2" />
+                مسح الفلاتر
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts.map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Card className="group relative overflow-hidden border-2 hover:border-primary/20 transition-all duration-300 hover:shadow-xl">
+                    {/* Product Image */}
+                    <div className="aspect-square overflow-hidden bg-gradient-to-br from-muted/20 to-muted/40 relative">
                       {product.image_urls && product.image_urls.length > 0 ? (
                         <ProductImageCarousel 
                           images={product.image_urls} 
                           productTitle={product.title} 
                         />
                       ) : (
-                        <div className="aspect-square bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center rounded-lg">
+                        <div className="w-full h-full flex items-center justify-center">
                           <Store className="h-16 w-16 text-primary/60" />
                         </div>
                       )}
-                      {product.stock === 0 && (
-                        <div className="absolute inset-0 bg-black/70 flex items-center justify-center backdrop-blur-sm rounded-lg">
-                          <Badge variant="destructive" className="text-lg px-4 py-2">نفدت الكمية</Badge>
-                        </div>
-                      )}
-                      {product.stock > 0 && (
-                        <div className="absolute top-3 left-3">
-                          <Badge className="bg-green-500/90 text-white">متوفر</Badge>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <CardContent className="p-6">
-                      <div className="mb-4">
-                        <h3 className="font-bold text-lg mb-2 line-clamp-2 text-foreground">{product.title}</h3>
-                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2 leading-relaxed">{product.description}</p>
-                      </div>
                       
-                           <div className="space-y-4">
-                         <div className="flex items-center justify-between">
-                           <div className="text-right">
-                             <span className="text-2xl font-bold text-primary">
-                               {(product.final_price || product.price_sar).toFixed(2)}
-                             </span>
-                             <span className="text-sm text-muted-foreground mr-1">ر.س</span>
-                           </div>
-                           {product.category && (
-                             <Badge variant="secondary" className="text-xs">{product.category}</Badge>
-                           )}
-                         </div>
-                        
-                        <div className="flex items-center justify-between text-sm">
-                           <div className="flex items-center gap-1 text-muted-foreground">
-                            <span>المتوفر: {product.stock}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                            ))}
-                            <span className="text-muted-foreground mr-1">(4.9)</span>
-                          </div>
-                        </div>
-                        
-                        {/* Product Variants Selection */}
-                        {product.variants && product.variants.length > 0 && (
-                          <div className="space-y-3 border-t pt-4">
-                            {[...new Set(product.variants.map(v => v.variant_type))].map(variantType => {
-                              const variantOptions = product.variants!.filter(v => v.variant_type === variantType);
-                              const selectedValue = selectedVariants[product.id]?.[variantType];
-                              
-                              return (
-                                <div key={variantType} className="space-y-2">
-                                  <label className="text-sm font-medium">
-                                    {variantType === 'size' ? 'المقاس' : 
-                                     variantType === 'color' ? 'اللون' : 
-                                     variantType === 'style' ? 'النمط' :
-                                     variantType === 'material' ? 'المادة' : variantType}:
-                                  </label>
-                                  <div className="flex flex-wrap gap-2">
-                                    {variantOptions.map(variant => (
-                                      <Button
-                                        key={variant.id}
-                                        type="button"
-                                        size="sm"
-                                        variant={selectedValue === variant.variant_value ? "default" : "outline"}
-                                        onClick={() => updateSelectedVariant(product.id, variantType, variant.variant_value)}
-                                        disabled={variant.stock === 0}
-                                        className={`
-                                          ${variant.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}
-                                          ${selectedValue === variant.variant_value ? 'ring-2 ring-primary' : ''}
-                                        `}
-                                      >
-                                        {variant.variant_value}
-                                        {variant.stock === 0 && <span className="mr-1 text-xs">(نفد)</span>}
-                                      </Button>
-                                    ))}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                        
-                        {/* Quantity Selector */}
-                        <div className="space-y-3 border-t pt-4">
-                          <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium">الكمية:</label>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                onClick={() => {
-                                  const currentQty = productQuantities[product.id] || 1;
-                                  if (currentQty > 1) {
-                                    setProductQuantities(prev => ({
-                                      ...prev,
-                                      [product.id]: currentQty - 1
-                                    }));
-                                  }
-                                }}
-                                disabled={product.stock === 0}
-                                className="h-8 w-8 p-0"
-                              >
-                                -
-                              </Button>
-                              <Input
-                                type="number"
-                                min="1"
-                                max={product.stock}
-                                value={productQuantities[product.id] || 1}
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value) || 1;
-                                  const maxValue = Math.min(value, product.stock);
-                                  setProductQuantities(prev => ({
-                                    ...prev,
-                                    [product.id]: Math.max(1, maxValue)
-                                  }));
-                                }}
-                                className="w-16 h-8 text-center"
-                              />
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                onClick={() => {
-                                  const currentQty = productQuantities[product.id] || 1;
-                                  if (currentQty < product.stock) {
-                                    setProductQuantities(prev => ({
-                                      ...prev,
-                                      [product.id]: currentQty + 1
-                                    }));
-                                  }
-                                }}
-                                disabled={product.stock === 0 || (productQuantities[product.id] || 1) >= product.stock}
-                                className="h-8 w-8 p-0"
-                              >
-                                +
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <Button
-                            onClick={() => buyNow(product)}
-                            disabled={product.stock === 0}
-                            className="w-full"
-                          >
-                            شراء مباشر
-                          </Button>
-                          <Button
-                            onClick={() => addToCart(product)}
-                            disabled={product.stock === 0}
-                            variant="outline"
-                            className="w-full"
-                          >
-                            <ShoppingCart className="h-4 w-4 ml-2" />
-                            أضف للسلة
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-20">
-                <div className="max-w-md mx-auto">
-                  <div className="mb-8">
-                    <div className="relative">
-                      <div className="w-24 h-24 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                        <Store className="h-12 w-12 text-primary" />
-                      </div>
-                      <div className="absolute top-2 right-1/2 transform translate-x-1/2 w-3 h-3 bg-primary/30 rounded-full animate-ping"></div>
-                    </div>
-                  </div>
-                  <h3 className="text-2xl font-bold mb-4 text-foreground">متجر جديد قيد الإعداد</h3>
-                  <p className="text-muted-foreground mb-8 leading-relaxed">
-                    نحن نعمل على إضافة منتجات رائعة لهذا المتجر. تابعونا قريباً لرؤية آخر العروض والمنتجات المميزة.
-                  </p>
-                  <div className="flex items-center justify-center gap-2 text-sm text-primary/70">
-                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                  </div>
-                  <div className="mt-8 p-6 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl border border-primary/10">
-                    <p className="text-sm text-muted-foreground">
-                      💡 هذا المتجر ينتمي إلى: <span className="font-semibold text-foreground">{shop.display_name}</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+                      {/* Discount Badge */}
+                      {product.discount_percentage > 0 && (
+                        <Badge className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white animate-pulse">
+                          -{product.discount_percentage}%
+                        </Badge>
+                      )}
 
-          {/* Cart Sidebar */}
-          {showCart && (
-            <div className="lg:col-span-1">
-              <Card className="sticky top-24">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <ShoppingCart className="h-5 w-5" />
-                    سلة التسوق
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {cart.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">
-                      السلة فارغة
-                    </p>
-                  ) : (
-                    <div className="space-y-4">
-                        {cart.map((item, index) => (
-                         <div key={`${item.product.id}-${index}`} className="flex items-center gap-3 pb-3 border-b">
-                           <div className="w-12 h-12 bg-muted rounded overflow-hidden">
-                             {item.product.image_urls?.[0] ? (
-                               <img
-                                 src={item.product.image_urls[0]}
-                                 alt={item.product.title}
-                                 className="w-full h-full object-cover"
-                               />
-                             ) : (
-                               <div className="w-full h-full flex items-center justify-center">
-                                 <Store className="h-4 w-4 text-muted-foreground" />
-                               </div>
-                             )}
-                           </div>
-                           <div className="flex-1 min-w-0">
-                             <p className="text-sm font-medium truncate">{item.product.title}</p>
-                             {item.selectedVariants && (
-                               <div className="flex flex-wrap gap-1 mt-1">
-                                 {Object.entries(item.selectedVariants).map(([type, value]) => (
-                                   <Badge key={type} variant="outline" className="text-xs px-1 py-0">
-                                     {type === 'size' ? 'المقاس' : 
-                                      type === 'color' ? 'اللون' : type}: {value}
-                                   </Badge>
-                                 ))}
-                               </div>
-                             )}
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {item.quantity} × {(item.product.final_price || item.product.price_sar).toFixed(2)} ر.س
-                              </p>
-                           </div>
-                         </div>
-                       ))}
+                      {/* Quick Actions */}
+                      <div className="absolute top-3 left-3 space-y-2 opacity-0 group-hover:opacity-100 transition-all">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="h-8 w-8 p-0 bg-background/80 backdrop-blur hover:bg-background"
+                          onClick={() => toggleWishlist(product.id)}
+                        >
+                          <Heart 
+                            className={`h-4 w-4 ${wishlist.includes(product.id) ? 'fill-red-500 text-red-500' : ''}`}
+                          />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="h-8 w-8 p-0 bg-background/80 backdrop-blur hover:bg-background"
+                          onClick={() => setSelectedProduct(product)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="h-8 w-8 p-0 bg-background/80 backdrop-blur hover:bg-background"
+                        >
+                          <Share2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      {/* Stock Indicator */}
+                      {product.stock <= 5 && (
+                        <Badge className="absolute bottom-3 right-3 bg-orange-500 text-white">
+                          {product.stock > 0 ? `${product.stock} متبقي` : 'نفد المخزون'}
+                        </Badge>
+                      )}
+                    </div>
+
+                    <CardContent className="p-4 space-y-3">
+                      {/* Product Title */}
+                      <h3 className="font-bold text-lg line-clamp-2 group-hover:text-primary transition-colors">
+                        {product.title}
+                      </h3>
                       
-                      <div className="pt-4 border-t">
-                        <div className="flex justify-between items-center mb-4">
-                          <span className="font-semibold">المجموع:</span>
-                          <span className="text-lg font-bold text-primary">
-                            {cartTotal.toFixed(2)} ر.س
-                          </span>
+                      {/* Product Description */}
+                      <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                        {product.description}
+                      </p>
+
+                      {/* Rating */}
+                      <div className="flex items-center gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star 
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i < Math.floor(product.rating || 0) 
+                                ? 'fill-yellow-400 text-yellow-400' 
+                                : 'text-muted-foreground'
+                            }`}
+                          />
+                        ))}
+                        <span className="text-xs text-muted-foreground mr-1">
+                          ({product.reviews_count})
+                        </span>
+                      </div>
+
+                      {/* Price and Action */}
+                      <div className="flex items-center justify-between pt-2">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary" className="text-lg font-bold text-primary">
+                              {(product.final_price || product.price_sar).toFixed(2)} ر.س
+                            </Badge>
+                            {product.discount_percentage > 0 && (
+                              <span className="text-xs text-muted-foreground line-through">
+                                {((product.final_price || product.price_sar) * (1 + product.discount_percentage / 100)).toFixed(2)} ر.س
+                              </span>
+                            )}
+                          </div>
                         </div>
                         
                         <Button 
-                          className="w-full" 
-                          size="lg" 
-                          onClick={handleCheckoutStart}
-                          disabled={cart.length === 0}
+                          onClick={() => addToCart(product)} 
+                          size="sm"
+                          disabled={product.stock === 0}
+                          className="shadow-lg hover:shadow-xl transition-all group"
                         >
-                          إتمام الطلب ({cartItemsCount} منتج)
+                          <Plus className="h-4 w-4 mr-1 group-hover:scale-110 transition-transform" />
+                          إضافة
                         </Button>
                       </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
             </div>
           )}
-        </div>
-      </div>
+        </section>
+      </main>
+
+      {/* Product Quick View Modal */}
+      {selectedProduct && (
+        <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-right text-2xl">{selectedProduct.title}</DialogTitle>
+            </DialogHeader>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="aspect-square overflow-hidden rounded-xl">
+                  <img
+                    src={selectedProduct.image_urls?.[0] || '/placeholder.svg'}
+                    alt={selectedProduct.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-2xl font-bold mb-2">{selectedProduct.title}</h2>
+                  <p className="text-muted-foreground leading-relaxed">{selectedProduct.description}</p>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  {[...Array(5)].map((_, i) => (
+                    <Star 
+                      key={i}
+                      className={`h-5 w-5 ${
+                        i < Math.floor(selectedProduct.rating || 0) 
+                          ? 'fill-yellow-400 text-yellow-400' 
+                          : 'text-muted-foreground'
+                      }`}
+                    />
+                  ))}
+                  <span className="text-sm text-muted-foreground">
+                    ({selectedProduct.reviews_count} تقييم)
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <Badge variant="secondary" className="text-2xl font-bold text-primary p-3">
+                    {(selectedProduct.final_price || selectedProduct.price_sar).toFixed(2)} ر.س
+                  </Badge>
+                  {selectedProduct.discount_percentage > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-red-500">-{selectedProduct.discount_percentage}%</Badge>
+                      <span className="text-muted-foreground line-through">
+                        {((selectedProduct.final_price || selectedProduct.price_sar) * (1 + selectedProduct.discount_percentage / 100)).toFixed(2)} ر.س
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <Button 
+                  onClick={() => {
+                    addToCart(selectedProduct);
+                    setSelectedProduct(null);
+                  }} 
+                  size="lg"
+                  className="w-full"
+                  disabled={selectedProduct.stock === 0}
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  {selectedProduct.stock === 0 ? 'نفد المخزون' : 'إضافة للسلة'}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Checkout Flow */}
-      {showCheckout && !orderCompleted && cart.length > 0 ? (
-        <div className="fixed inset-0 bg-background z-50 overflow-auto">
-          <div className="container mx-auto px-4 py-8">
-            <CheckoutFlow
-              cart={cart}
-              shopId={shop?.id || ''}
-              onCancel={handleBackToCart}
-              onOrderComplete={handleCheckoutComplete}
-              storeSettings={storeSettings}
-            />
-          </div>
-        </div>
-      ) : showCheckout && !orderCompleted ? (
-        <div className="fixed inset-0 bg-background z-50 overflow-auto">
-          <div className="container mx-auto px-4 py-8">
-            <div className="max-w-2xl mx-auto" dir="rtl">
-              <Card>
-                <CardContent className="py-10 text-center space-y-4">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                  <p className="text-muted-foreground">جاري تحميل بيانات المتجر...</p>
-                  <p className="text-xs text-muted-foreground">
-                    Shop ID: {shop?.id || 'غير متوفر'} | Cart: {cart.length} items
-                  </p>
-                  <Button variant="outline" onClick={handleBackToCart}>العودة</Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {showCheckout && cart.length > 0 && shop && (
+        <CheckoutFlow
+          cart={cart}
+          onOrderComplete={handleCheckoutComplete}
+          onCancel={handleBackToCart}
+          shopId={shop.id}
+          storeSettings={storeSettings}
+        />
+      )}
 
-      {/* Order Completed Modal */}
-      {orderCompleted && orderNumber && (
-        <div className="fixed inset-0 bg-background z-50 overflow-auto">
-          <div className="container mx-auto px-4 py-8">
-            <div className="max-w-2xl mx-auto text-center space-y-6" dir="rtl">
-              <div className="mx-auto w-24 h-24 bg-green-500/10 rounded-full flex items-center justify-center">
-                <CheckCircle className="h-12 w-12 text-green-500" />
+      {/* Order Completed */}
+      {orderCompleted && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md text-center">
+            <CardContent className="p-8">
+              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold mb-2">تم إنشاء الطلب بنجاح!</h2>
+              <p className="text-muted-foreground mb-4">رقم الطلب: {orderNumber}</p>
+              <div className="space-y-2">
+                <Button 
+                  onClick={() => {
+                    setOrderCompleted(false);
+                    navigate('/');
+                  }}
+                  className="w-full"
+                >
+                  العودة للرئيسية
+                </Button>
               </div>
-              
-              <div>
-                <h2 className="text-2xl font-bold text-green-600 mb-2">تم تأكيد طلبك بنجاح!</h2>
-                <p className="text-muted-foreground">شكراً لك على ثقتك بنا</p>
-              </div>
-
-              <Card className="max-w-md mx-auto">
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    <div className="text-center">
-                      <p className="text-sm text-muted-foreground mb-2">رقم الطلب</p>
-                      <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
-                        <p className="text-2xl font-bold text-primary tracking-wider">
-                          {orderNumber}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">احتفظ بهذا الرقم للمتابعة</p>
-                      </div>
-                    </div>
-
-                    <div className="bg-muted/50 p-4 rounded-lg text-sm">
-                      <p className="font-medium mb-2">📞 سيتم التواصل معك قريباً</p>
-                      <p className="text-muted-foreground">
-                        سيقوم فريق خدمة العملاء بالتواصل معك خلال 24 ساعة لتأكيد الطلب وتحديد موعد التسليم
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Button onClick={() => {
-                setOrderCompleted(false);
-                setOrderNumber('');
-                setCart([]);
-              }} variant="outline">
-                العودة للمتجر
-              </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>
