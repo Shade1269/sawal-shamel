@@ -83,7 +83,7 @@ const StorefrontCheckout = () => {
 
         setStore(storeData);
 
-        // جلب السلة
+        // جلب السلة من الجلسة المحلية
         const sessionData = localStorage.getItem(`ea_session_${store_slug}`);
         if (!sessionData) {
           toast({
@@ -97,6 +97,7 @@ const StorefrontCheckout = () => {
 
         const session = JSON.parse(sessionData);
         
+        // البحث عن السلة المرتبطة بهذه الجلسة والمتجر
         const { data: cart } = await supabasePublic
           .from('shopping_carts')
           .select('id')
