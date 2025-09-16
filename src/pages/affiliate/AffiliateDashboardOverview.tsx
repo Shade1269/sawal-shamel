@@ -1,5 +1,5 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useAffiliateOrders } from '@/hooks/useAffiliateOrders';
@@ -11,6 +11,27 @@ import { Link } from 'react-router-dom';
 
 export default function AffiliateDashboardOverview() {
   const { user } = useSupabaseAuth();
+  const queryClient = useQueryClient();
+  const [creating, setCreating] = useState(false);
+
+  const handleCreateStore = async () => {
+    if (!user) return;
+    setCreating(true);
+    try {
+      const storeName = 'متجر ' + (user.user_metadata?.full_name || user.email || 'المسوّق');
+      const { data: newStoreId, error } = await supabase.rpc('create_affiliate_store', {
+        p_store_name: storeName,
+        p_bio: null,
+        p_store_slug: null
+      });
+      if (error) throw error;
+      await queryClient.invalidateQueries({ queryKey: ['affiliate-store', user.id] });
+    } catch (e) {
+      console.error('Error creating affiliate store:', e);
+    } finally {
+      setCreating(false);
+    }
+  };
 
   // Get affiliate store
   const { data: affiliateStore } = useQuery({
@@ -68,7 +89,7 @@ export default function AffiliateDashboardOverview() {
           <p className="text-muted-foreground mb-4">
             قم بإنشاء متجرك الأول لبدء التسويق بالعمولة
           </p>
-          <Button>إنشاء متجر جديد</Button>
+          <Button onClick={handleCreateStore} disabled={creating}>{creating ? 'جاري الإنشاء...' : 'إنشاء متجر جديد'}</Button>
         </div>
       </div>
     );
