@@ -102,8 +102,8 @@ function PublicStorefront() {
     image_urls: product.products?.image_urls || [],
     title: product.products?.title || '',
     description: product.products?.description || '',
-    stock: product.products?.stock || Math.floor(Math.random() * 50) + 1,
-    category: product.products?.category || 'عام',
+    stock: Math.floor(Math.random() * 50) + 1,
+    category: 'عام',
     id: product.products?.id || product.product_id
   })) || [];
 
@@ -158,7 +158,6 @@ function PublicStorefront() {
 
   const handleCustomerLogout = () => {
     sessionManager.clearSession();
-    setCustomerVerified(false);
     toast.success("تم تسجيل الخروج بنجاح");
   };
 
@@ -892,9 +891,8 @@ function PublicStorefront() {
         isOpen={showOTPModal}
         onClose={() => setShowOTPModal(false)}
         storeId={store?.id || ''}
-        storeSlug={store_slug || ''}
-        onSuccess={(session) => {
-          setCustomerVerified(true);
+        onVerified={(customerData) => {
+          setCustomerVerified(customerData);
           setShowOTPModal(false);
           toast.success("تم تسجيل الدخول بنجاح");
         }}
