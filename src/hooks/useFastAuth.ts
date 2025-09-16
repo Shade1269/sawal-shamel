@@ -404,7 +404,7 @@ export const useFastAuth = () => {
         description: "تم تسجيل الدخول بنجاح"
       });
 
-      // Smart redirect based on role - using window.location for auth success
+      // Determine redirect path based on role (returned to caller; no hard reload)
       const userId = data.user?.id;
       let redirect = '/dashboard';
       if (userId) {
@@ -428,10 +428,8 @@ export const useFastAuth = () => {
             redirect = '/dashboard';
         }
       }
-
-      // Use window.location for auth redirect to clear auth state properly
-      window.location.href = redirect;
-      return { data, error: null };
+      // Don't force reload; let caller navigate
+      return { data, error: null, redirect };
     } catch (error: any) {
       console.error('SignIn error:', error);
       
@@ -470,10 +468,7 @@ export const useFastAuth = () => {
         description: "إلى اللقاء!"
       });
 
-      // Use window.location for signOut to clear all state properly
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 100);
+      // Don't force reload; let caller handle navigation/guards
       
       return { error: null };
     } catch (error: any) {
@@ -491,10 +486,7 @@ export const useFastAuth = () => {
       setProfile(null);
       clearCache();
       
-      // Use window.location for failed signOut to ensure state clear
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 100);
+      // Don't force reload on error; state already cleared
       
       return { error: null }; // Return success since we cleared local state
     }
