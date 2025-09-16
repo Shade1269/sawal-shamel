@@ -84,3 +84,12 @@ verify_jwt = false
 
 [functions.generate-zoho-token]
 verify_jwt = false
+
+[functions.create-customer-otp-session]
+verify_jwt = false
+
+[functions.verify-customer-otp]
+verify_jwt = false
+
+[functions.get-store-orders-for-session]
+verify_jwt = false

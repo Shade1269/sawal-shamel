@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Phone, Package, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { ArrowLeft, Package, Phone, MessageCircle, RefreshCw, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
+import { useCustomerOTP } from '@/hooks/useCustomerOTP';
 
 interface StoreData {
   id: string;
@@ -16,42 +18,49 @@ interface StoreData {
 }
 
 interface OrderData {
-  id: string;
-  order_number?: string;
+  order_id: string;
+  order_number: string;
+  created_at: string;
   status: string;
   total_sar: number;
-  created_at: string;
-  payment_status: string;
-  customer_phone: string;
+  item_count: number;
+  order_items: Array<{
+    id: string;
+    title: string;
+    quantity: number;
+    unit_price: number;
+    total_price: number;
+  }>;
 }
 
 const StorefrontMyOrders = () => {
   const { store_slug = '' } = useParams();
   const { toast } = useToast();
-
+  
   const [store, setStore] = useState<StoreData | null>(null);
   const [phone, setPhone] = useState('');
   const [otpCode, setOtpCode] = useState('');
+  const [showOTPInput, setShowOTPInput] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const [orders, setOrders] = useState<OrderData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [otpSent, setOtpSent] = useState(false);
-  const [verifying, setVerifying] = useState(false);
-  const [authenticated, setAuthenticated] = useState(false);
-  const [customerPhone, setCustomerPhone] = useState('');
+  const [loadingOrders, setLoadingOrders] = useState(false);
 
+  // استخدام hook إدارة OTP
+  const otpManager = useCustomerOTP(store?.id || '');
+
+  // جلب بيانات المتجر
   useEffect(() => {
-    const fetchStoreData = async () => {
+    const fetchStore = async () => {
       try {
-        setLoading(true);
-
-        const { data: storeData, error: storeError } = await supabasePublic
+        const { data: storeData, error } = await supabasePublic
           .from('affiliate_stores')
           .select('id, store_name, store_slug')
           .eq('store_slug', store_slug)
           .eq('is_active', true)
           .maybeSingle();
 
-        if (storeError) throw storeError;
+        if (error) throw error;
         if (!storeData) {
           toast({
             title: "المتجر غير موجود",
@@ -62,23 +71,17 @@ const StorefrontMyOrders = () => {
         }
 
         setStore(storeData);
-
-        // فحص الجلسة المحفوظة
-        const savedSession = localStorage.getItem(`customer_session_${store_slug}`);
-        if (savedSession) {
-          const session = JSON.parse(savedSession);
-          const expiry = new Date(session.expiresAt);
-          if (expiry > new Date()) {
-            setAuthenticated(true);
-            setCustomerPhone(session.phone);
-            await fetchOrders(storeData.id, session.phone);
-          } else {
-            localStorage.removeItem(`customer_session_${store_slug}`);
-          }
+        
+        // التحقق من جلسة عميل موجودة
+        const existingSession = otpManager.getCustomerSession();
+        if (existingSession) {
+          setIsVerified(true);
+          setPhone(existingSession.phone);
+          await fetchOrders(existingSession.sessionId);
         }
 
       } catch (error: any) {
-        console.error('Error fetching store data:', error);
+        console.error('Error fetching store:', error);
         toast({
           title: "خطأ في جلب البيانات",
           description: error.message || "حدث خطأ في تحميل بيانات المتجر",
@@ -89,165 +92,117 @@ const StorefrontMyOrders = () => {
       }
     };
 
-    if (store_slug) {
-      fetchStoreData();
-    }
+    fetchStore();
   }, [store_slug, toast]);
 
-  const fetchOrders = async (storeId: string, customerPhone: string) => {
-    try {
-      const { data: ordersData, error: ordersError } = await supabasePublic
-        .from('ecommerce_orders')
-        .select('id, order_number, status, total_sar, created_at, payment_status, customer_phone')
-        .eq('affiliate_store_id', storeId)
-        .eq('customer_phone', customerPhone)
-        .order('created_at', { ascending: false });
+  // إرسال كود OTP
+  const handleSendOTP = async () => {
+    if (!store || !phone.trim()) {
+      toast({
+        title: "رقم الجوال مطلوب",
+        description: "يرجى إدخال رقم جوالك",
+        variant: "destructive"
+      });
+      return;
+    }
 
-      if (ordersError) throw ordersError;
-      setOrders(ordersData || []);
+    const result = await otpManager.sendOTP(phone);
+    if (result.success) {
+      setShowOTPInput(true);
+    }
+  };
+
+  // التحقق من كود OTP
+  const handleVerifyOTP = async () => {
+    if (!otpCode.trim()) {
+      toast({
+        title: "الكود مطلوب",
+        description: "يرجى إدخال كود التحقق",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const result = await otpManager.verifyOTP(phone, otpCode);
+    if (result.success && result.sessionId) {
+      setIsVerified(true);
+      setShowOTPInput(false);
+      await fetchOrders(result.sessionId);
+    }
+  };
+
+  // جلب الطلبات
+  const fetchOrders = async (sessionId: string) => {
+    if (!store) return;
+
+    try {
+      setLoadingOrders(true);
+      
+      const { data, error } = await supabasePublic.functions.invoke('get-store-orders-for-session', {
+        body: { 
+          store_id: store.id,
+          session_id: sessionId 
+        }
+      });
+
+      if (error) throw error;
+      
+      setOrders(data?.orders || []);
 
     } catch (error: any) {
       console.error('Error fetching orders:', error);
       toast({
         title: "خطأ في جلب الطلبات",
-        description: error.message || "حدث خطأ في جلب الطلبات",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const sendOTP = async () => {
-    if (!phone || !store) return;
-
-    try {
-      setOtpSent(true);
-      
-      // محاكاة إرسال OTP (سنستخدم Edge Function لاحقاً)
-      const { data, error } = await supabasePublic
-        .from('customer_otp_sessions')
-        .insert({
-          store_id: store.id,
-          phone: phone,
-          otp_code: Math.floor(100000 + Math.random() * 900000).toString(),
-          verified: false,
-          expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString()
-        })
-        .select('otp_code')
-        .single();
-
-      if (error) throw error;
-
-      toast({
-        title: "تم إرسال رمز التحقق",
-        description: `تم إرسال رمز التحقق إلى ${phone}`,
-      });
-
-      // في بيئة التطوير، نعرض الرمز في الكونسول
-      console.log('OTP Code:', data.otp_code);
-      
-    } catch (error: any) {
-      console.error('Error sending OTP:', error);
-      toast({
-        title: "خطأ في إرسال الرمز",
-        description: error.message || "حدث خطأ في إرسال رمز التحقق",
-        variant: "destructive"
-      });
-      setOtpSent(false);
-    }
-  };
-
-  const verifyOTP = async () => {
-    if (!otpCode || !phone || !store) return;
-
-    try {
-      setVerifying(true);
-
-      const { data: otpSession, error: otpError } = await supabasePublic
-        .from('customer_otp_sessions')
-        .select('*')
-        .eq('store_id', store.id)
-        .eq('phone', phone)
-        .eq('otp_code', otpCode)
-        .eq('verified', false)
-        .gte('expires_at', new Date().toISOString())
-        .maybeSingle();
-
-      if (otpError) throw otpError;
-      if (!otpSession) {
-        toast({
-          title: "رمز التحقق غير صحيح",
-          description: "الرمز المدخل غير صحيح أو منتهي الصلاحية",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // تحديث حالة التحقق
-      await supabasePublic
-        .from('customer_otp_sessions')
-        .update({ verified: true, verified_at: new Date().toISOString() })
-        .eq('id', otpSession.id);
-
-      // حفظ الجلسة محلياً
-      const session = {
-        phone: phone,
-        storeId: store.id,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 ساعة
-      };
-      localStorage.setItem(`customer_session_${store_slug}`, JSON.stringify(session));
-
-      setAuthenticated(true);
-      setCustomerPhone(phone);
-      
-      // جلب الطلبات
-      await fetchOrders(store.id, phone);
-
-      toast({
-        title: "تم التحقق بنجاح",
-        description: "يمكنك الآن عرض طلباتك",
-      });
-
-    } catch (error: any) {
-      console.error('Error verifying OTP:', error);
-      toast({
-        title: "خطأ في التحقق",
-        description: error.message || "حدث خطأ في التحقق من الرمز",
+        description: error.message || "تعذر جلب طلباتك",
         variant: "destructive"
       });
     } finally {
-      setVerifying(false);
+      setLoadingOrders(false);
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const statusMap = {
-      'PENDING': { label: 'قيد المراجعة', variant: 'secondary', icon: Clock },
-      'CONFIRMED': { label: 'مؤكد', variant: 'default', icon: CheckCircle },
-      'PROCESSING': { label: 'قيد التحضير', variant: 'default', icon: Package },
-      'SHIPPED': { label: 'تم الشحن', variant: 'default', icon: Package },
-      'DELIVERED': { label: 'تم التسليم', variant: 'default', icon: CheckCircle },
-      'CANCELLED': { label: 'ملغي', variant: 'destructive', icon: AlertCircle }
-    } as const;
-
-    const statusInfo = statusMap[status as keyof typeof statusMap] || statusMap.PENDING;
-    const Icon = statusInfo.icon;
-    
-    return (
-      <Badge variant={statusInfo.variant as any} className="gap-1">
-        <Icon className="h-3 w-3" />
-        {statusInfo.label}
-      </Badge>
-    );
+  // تحديث الطلبات
+  const handleRefreshOrders = () => {
+    const session = otpManager.getCustomerSession();
+    if (session) {
+      fetchOrders(session.sessionId);
+    }
   };
 
-  const logout = () => {
-    localStorage.removeItem(`customer_session_${store_slug}`);
-    setAuthenticated(false);
-    setCustomerPhone('');
-    setOrders([]);
+  // تسجيل الخروج
+  const handleLogout = () => {
+    otpManager.clearCustomerSession();
+    setIsVerified(false);
     setPhone('');
     setOtpCode('');
-    setOtpSent(false);
+    setShowOTPInput(false);
+    setOrders([]);
+  };
+
+  // ترجمة حالات الطلب
+  const getStatusLabel = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'PENDING': 'قيد المعالجة',
+      'CONFIRMED': 'مؤكد',
+      'PROCESSING': 'قيد التحضير',
+      'SHIPPED': 'تم الشحن',
+      'DELIVERED': 'تم التسليم',
+      'CANCELLED': 'ملغي'
+    };
+    return statusMap[status] || status;
+  };
+
+  // ألوان حالات الطلب
+  const getStatusColor = (status: string) => {
+    const colorMap: Record<string, string> = {
+      'PENDING': 'bg-yellow-100 text-yellow-800',
+      'CONFIRMED': 'bg-blue-100 text-blue-800',
+      'PROCESSING': 'bg-purple-100 text-purple-800',
+      'SHIPPED': 'bg-indigo-100 text-indigo-800',
+      'DELIVERED': 'bg-green-100 text-green-800',
+      'CANCELLED': 'bg-red-100 text-red-800'
+    };
+    return colorMap[status] || 'bg-gray-100 text-gray-800';
   };
 
   if (loading) {
@@ -256,7 +211,7 @@ const StorefrontMyOrders = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p>جاري تحميل البيانات...</p>
+            <p>جاري التحميل...</p>
           </div>
         </div>
       </div>
@@ -268,20 +223,27 @@ const StorefrontMyOrders = () => {
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to={`/s/${store_slug}`}>
-                <ArrowLeft className="h-4 w-4 ml-2" />
-                العودة للمتجر
-              </Link>
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold">طلباتي</h1>
-              <p className="text-sm text-muted-foreground">{store?.store_name}</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="sm" asChild>
+                <Link to={`/s/${store_slug}`}>
+                  <ArrowLeft className="h-4 w-4 ml-2" />
+                  العودة للمتجر
+                </Link>
+              </Button>
+              <div>
+                <h1 className="text-xl font-bold">طلباتي</h1>
+                <p className="text-sm text-muted-foreground">{store?.store_name}</p>
+              </div>
             </div>
-            {authenticated && (
-              <div className="mr-auto">
-                <Button variant="outline" size="sm" onClick={logout}>
+            
+            {isVerified && (
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm" onClick={handleRefreshOrders}>
+                  <RefreshCw className="h-4 w-4 ml-2" />
+                  تحديث
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleLogout}>
                   تسجيل خروج
                 </Button>
               </div>
@@ -291,123 +253,148 @@ const StorefrontMyOrders = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {!authenticated ? (
+        {!isVerified ? (
           <Card className="max-w-md mx-auto">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Phone className="h-5 w-5" />
-                تسجيل الدخول برقم الجوال
+                تحقق من رقم جوالك
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {!otpSent ? (
-                <>
-                  <div>
-                    <Label htmlFor="phone">رقم الجوال</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="05xxxxxxxx"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                    />
-                  </div>
-                  <Button
-                    onClick={sendOTP}
-                    disabled={!phone}
+              <div>
+                <Label htmlFor="phone">رقم الجوال</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="05xxxxxxxx"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  disabled={showOTPInput}
+                />
+              </div>
+
+              {showOTPInput && (
+                <div>
+                  <Label htmlFor="otp">كود التحقق</Label>
+                  <Input
+                    id="otp"
+                    type="text"
+                    placeholder="123456"
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value)}
+                    maxLength={6}
+                  />
+                  <p className="text-sm text-muted-foreground mt-1">
+                    تم إرسال كود التحقق إلى رقم {phone}
+                  </p>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-2">
+                {!showOTPInput ? (
+                  <Button 
+                    onClick={handleSendOTP} 
+                    disabled={otpManager.loading}
                     className="w-full"
                   >
-                    إرسال رمز التحقق
+                    <MessageCircle className="h-4 w-4 ml-2" />
+                    {otpManager.loading ? 'جاري الإرسال...' : 'إرسال كود التحقق'}
                   </Button>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <Label htmlFor="otp">رمز التحقق</Label>
-                    <Input
-                      id="otp"
-                      type="text"
-                      placeholder="ادخل رمز التحقق"
-                      value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value)}
-                      maxLength={6}
-                    />
-                    <p className="text-sm text-muted-foreground mt-1">
-                      تم إرسال رمز التحقق إلى {phone}
-                    </p>
-                  </div>
+                ) : (
                   <div className="flex gap-2">
-                    <Button
-                      onClick={verifyOTP}
-                      disabled={!otpCode || verifying}
+                    <Button 
+                      onClick={handleVerifyOTP} 
+                      disabled={otpManager.verifying}
                       className="flex-1"
                     >
-                      {verifying ? 'جاري التحقق...' : 'تحقق'}
+                      {otpManager.verifying ? 'جاري التحقق...' : 'تحقق'}
                     </Button>
-                    <Button
-                      variant="outline"
+                    <Button 
+                      variant="outline" 
                       onClick={() => {
-                        setOtpSent(false);
+                        setShowOTPInput(false);
                         setOtpCode('');
                       }}
                     >
-                      تغيير الرقم
+                      إلغاء
                     </Button>
                   </div>
-                </>
-              )}
+                )}
+              </div>
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-6">
-            <div className="text-center">
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-6">
               <h2 className="text-2xl font-bold mb-2">طلباتك</h2>
-              <p className="text-muted-foreground">رقم الجوال: {customerPhone}</p>
+              <p className="text-muted-foreground">رقم الجوال: {phone}</p>
             </div>
 
-            {orders.length === 0 ? (
-              <Card className="max-w-md mx-auto">
+            {loadingOrders ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p>جاري تحميل طلباتك...</p>
+              </div>
+            ) : orders.length === 0 ? (
+              <Card>
                 <CardContent className="text-center py-8">
                   <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">لا توجد طلبات</h3>
                   <p className="text-muted-foreground mb-4">
-                    لم تقم بأي طلبات من هذا المتجر بعد
+                    لم تقم بأي طلبات من هذا المتجر حتى الآن
                   </p>
                   <Button asChild>
-                    <Link to={`/s/${store_slug}`}>تصفح المنتجات</Link>
+                    <Link to={`/s/${store_slug}`}>
+                      ابدأ التسوق الآن
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid gap-4 max-w-4xl mx-auto">
+              <div className="space-y-4">
                 {orders.map((order) => (
-                  <Card key={order.id}>
-                    <CardContent className="p-6">
-                      <div className="flex justify-between items-start mb-4">
+                  <Card key={order.order_id}>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
                         <div>
-                          <h3 className="font-semibold">
-                            طلب رقم: {order.order_number || order.id.slice(0, 8)}
-                          </h3>
+                          <CardTitle className="text-lg">
+                            طلب رقم: {order.order_number}
+                          </CardTitle>
                           <p className="text-sm text-muted-foreground">
-                            {new Date(order.created_at).toLocaleDateString('ar-SA')}
+                            {new Date(order.created_at).toLocaleDateString('ar-SA', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
                           </p>
                         </div>
-                        <div className="text-left">
-                          {getStatusBadge(order.status)}
-                        </div>
+                        <Badge className={getStatusColor(order.status)}>
+                          {getStatusLabel(order.status)}
+                        </Badge>
                       </div>
-                      
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="text-lg font-bold">{order.total_sar} ر.س</p>
-                          <p className="text-sm text-muted-foreground">
-                            حالة الدفع: {order.payment_status === 'PENDING' ? 'عند الاستلام' : 'مدفوع'}
-                          </p>
+                    </CardHeader>
+                    
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span>عدد الأصناف: {order.item_count}</span>
+                          <span className="font-bold text-lg">{order.total_sar} ر.س</span>
                         </div>
                         
-                        <Button variant="outline" size="sm">
-                          عرض التفاصيل
-                        </Button>
+                        <Separator />
+                        
+                        <div className="space-y-2">
+                          <h4 className="font-medium">تفاصيل الطلب:</h4>
+                          {order.order_items.map((item, index) => (
+                            <div key={index} className="flex items-center justify-between text-sm">
+                              <span>{item.title} × {item.quantity}</span>
+                              <span>{item.total_price} ر.س</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

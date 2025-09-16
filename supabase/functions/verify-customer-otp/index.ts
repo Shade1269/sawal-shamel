@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
@@ -9,7 +9,7 @@ const corsHeaders = {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
@@ -18,97 +18,157 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { sessionId, otpCode } = await req.json()
-    
-    if (!sessionId || !otpCode) {
+    const { store_id, phone, code } = await req.json()
+
+    if (!store_id || !phone || !code) {
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'Session ID and OTP code are required' 
+          error: 'جميع البيانات مطلوبة' 
         }),
         { 
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       )
     }
 
-    // Find and validate OTP session
-    const { data: otpSession, error: fetchError } = await supabaseClient
+    // تنظيف البيانات
+    const cleanPhone = phone.replace(/\D/g, '')
+    const cleanCode = code.replace(/\D/g, '')
+
+    if (cleanCode.length !== 6) {
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'كود التحقق يجب أن يكون 6 أرقام' 
+        }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    // البحث عن جلسة OTP صالحة
+    const { data: otpSession, error: otpError } = await supabaseClient
       .from('customer_otp_sessions')
       .select('*')
-      .eq('id', sessionId)
-      .eq('otp_code', otpCode.trim())
+      .eq('store_id', store_id)
+      .eq('phone', cleanPhone)
+      .eq('otp_code', cleanCode)
       .eq('verified', false)
       .gt('expires_at', new Date().toISOString())
       .lt('attempts', 3)
+      .order('created_at', { ascending: false })
+      .limit(1)
       .single()
 
-    if (fetchError || !otpSession) {
-      // Increment attempts for failed verification
-      await supabaseClient
+    if (otpError || !otpSession) {
+      // زيادة عدد المحاولات الفاشلة لجلسات غير محققة
+      const { data: sessionsToUpdate } = await supabaseClient
         .from('customer_otp_sessions')
-        .update({ attempts: 'attempts + 1' })
-        .eq('id', sessionId)
+        .select('id, attempts')
+        .eq('store_id', store_id)
+        .eq('phone', cleanPhone)
+        .eq('verified', false)
+        .gt('expires_at', new Date().toISOString())
+
+      if (sessionsToUpdate && sessionsToUpdate.length > 0) {
+        for (const session of sessionsToUpdate) {
+          await supabaseClient
+            .from('customer_otp_sessions')
+            .update({ attempts: session.attempts + 1 })
+            .eq('id', session.id)
+        }
+      }
 
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'Invalid or expired OTP code' 
+          error: 'كود التحقق غير صحيح أو منتهي الصلاحية' 
         }),
         { 
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       )
     }
 
-    // Mark session as verified
+    // تحديث الجلسة كمُحقّقة وتمديد صلاحيتها
     const { error: updateError } = await supabaseClient
       .from('customer_otp_sessions')
-      .update({ 
-        verified: true, 
+      .update({
+        verified: true,
         verified_at: new Date().toISOString(),
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // Extend to 24 hours
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 ساعة
       })
-      .eq('id', sessionId)
+      .eq('id', otpSession.id)
 
     if (updateError) {
-      console.error('Update error:', updateError)
+      console.error('Error updating OTP session:', updateError)
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'Failed to verify session' 
+          error: 'فشل في التحقق' 
         }),
         { 
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       )
+    }
+
+    // إنشاء أو تحديث ملف العميل إذا لزم الأمر
+    try {
+      // البحث عن ملف موجود
+      const { data: existingProfile } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('phone', cleanPhone)
+        .single()
+
+      if (!existingProfile) {
+        // إنشاء ملف جديد للعميل
+        await supabaseClient
+          .from('profiles')
+          .insert({
+            phone: cleanPhone,
+            role: 'customer',
+            is_active: true,
+            full_name: `عميل ${cleanPhone}`,
+            created_at: new Date().toISOString()
+          })
+      }
+    } catch (profileError) {
+      // تجاهل أخطاء إنشاء الملف الشخصي - ليس حاسماً
+      console.log('Profile creation skipped:', profileError)
     }
 
     return new Response(
       JSON.stringify({ 
         success: true,
-        sessionId: sessionId,
-        phone: otpSession.phone,
-        storeId: otpSession.store_id
+        sessionId: otpSession.id,
+        phone: cleanPhone,
+        message: 'تم التحقق بنجاح'
       }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
     )
 
   } catch (error) {
-    console.error('Verification error:', error)
+    console.error('Error in verify-customer-otp:', error)
+    
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: 'Internal server error' 
+        error: 'خطأ في الخادم' 
       }),
       { 
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
     )
   }
