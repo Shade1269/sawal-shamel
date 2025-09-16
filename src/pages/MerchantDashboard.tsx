@@ -28,7 +28,7 @@ import { BackButton } from '@/components/ui/back-button';
 
 const MerchantDashboard = () => {
   const { profile } = useFastAuth();
-  const { goToUserHome } = useSmartNavigation();
+  const { goToUserHome, navigate } = useSmartNavigation();
   const { toast } = useToast();
   
   const [stats, setStats] = useState({
@@ -270,10 +270,16 @@ const MerchantDashboard = () => {
             مرحباً {profile?.full_name}، إليك نظرة عامة على متجرك
           </p>
         </div>
-        <Badge className="bg-gradient-premium text-premium-foreground">
-          <Store className="ml-1 h-4 w-4" />
-          مسوّق
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => navigate('/affiliate')} className="gap-2">
+            <Store className="h-4 w-4" />
+            لوحة المسوّق
+          </Button>
+          <Badge className="bg-gradient-premium text-premium-foreground">
+            <Store className="ml-1 h-4 w-4" />
+            مسوّق
+          </Badge>
+        </div>
       </div>
 
       {/* Stats Overview */}
