@@ -181,10 +181,10 @@ function PublicStorefront() {
             <div className="flex justify-between items-center mb-6">
               <Button 
                 variant="outline"
-                onClick={() => navigate(`/`)}
+                onClick={() => navigate(`/s/${store_slug}`)}
                 className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
               >
-                الصفحة الرئيسية
+                واجهة المتجر
               </Button>
               
               {/* Customer Status */}
