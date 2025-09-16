@@ -3925,6 +3925,7 @@ export type Database = {
           material: string | null
           min_stock_level: number | null
           other_attributes: Json | null
+          product_id: string | null
           reserved_stock: number
           selling_price: number | null
           size: string | null
@@ -3946,6 +3947,7 @@ export type Database = {
           material?: string | null
           min_stock_level?: number | null
           other_attributes?: Json | null
+          product_id?: string | null
           reserved_stock?: number
           selling_price?: number | null
           size?: string | null
@@ -3967,6 +3969,7 @@ export type Database = {
           material?: string | null
           min_stock_level?: number | null
           other_attributes?: Json | null
+          product_id?: string | null
           reserved_stock?: number
           selling_price?: number | null
           size?: string | null
