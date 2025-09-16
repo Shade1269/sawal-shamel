@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Store, Package, ShoppingBag, DollarSign, Users, TrendingUp, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { createStoreUrl } from '@/utils/domains';
 
 export default function AffiliateDashboardOverview() {
   const { user } = useSupabaseAuth();
@@ -106,15 +107,15 @@ export default function AffiliateDashboardOverview() {
             </p>
           </div>
           <Button asChild variant="outline">
-            <Link 
-              to={`/s/${affiliateStore.store_slug}`}
+            <a 
+              href={createStoreUrl(affiliateStore.store_slug)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2"
             >
               <ExternalLink className="h-4 w-4" />
               عرض المتجر
-            </Link>
+            </a>
           </Button>
         </div>
       </div>
@@ -135,7 +136,7 @@ export default function AffiliateDashboardOverview() {
             </div>
             <div>
               <h4 className="font-medium text-sm text-muted-foreground">رابط المتجر</h4>
-              <p className="text-lg font-semibold">/s/{affiliateStore.store_slug}</p>
+              <p className="text-lg font-semibold">{createStoreUrl(affiliateStore.store_slug)}</p>
             </div>
             <div>
               <h4 className="font-medium text-sm text-muted-foreground">الحالة</h4>
