@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useStoreThemes, type StoreThemeConfig } from '@/hooks/useStoreThemes';
+import { supabasePublic } from '@/integrations/supabase/publicClient';
 
 interface ThemeContextType {
   currentTheme: StoreThemeConfig | null;
@@ -16,7 +17,6 @@ interface ThemeProviderProps {
 
 export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) => {
   const [currentThemeConfig, setCurrentThemeConfig] = useState<StoreThemeConfig | null>(null);
-  const { getThemeConfig } = useStoreThemes();
 
   // تحميل إعدادات الثيم للمتجر
   useEffect(() => {
@@ -25,16 +25,46 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
     }
   }, [storeId]);
 
+  // إجبار إزالة الوضع المظلم في صفحات المتجر
+  useEffect(() => {
+    // حفظ الحالة الحالية لـ dark mode
+    const originalClass = document.body.className;
+    const hasDark = document.body.classList.contains('dark');
+    
+    // إزالة dark class مؤقتاً للمتجر
+    if (hasDark) {
+      document.body.classList.remove('dark');
+    }
+    
+    // إعادة الحالة الأصلية عند إلغاء تحميل المكون
+    return () => {
+      if (hasDark) {
+        document.body.classList.add('dark');
+      }
+    };
+  }, []);
+
   const loadThemeConfig = async (storeId: string) => {
     try {
       console.info('ThemeProvider: Loading store theme config', { storeId });
-      const raw = await getThemeConfig(storeId);
-      // قد تأتي البيانات ملفوفة داخل theme_config
-      const config = (raw as any)?.theme_config ? (raw as any).theme_config : raw;
+      
+      // استخدام supabasePublic مباشرة لجلب إعدادات الثيم
+      const { data, error } = await supabasePublic.rpc('get_store_theme_config', {
+        p_store_id: storeId
+      });
+
+      if (error) {
+        console.warn('Theme config error:', error);
+        return;
+      }
+
+      const rawData = data as any;
+      const config = rawData?.theme_config ? rawData.theme_config : rawData;
       console.info('ThemeProvider: Theme config loaded', {
         hasConfig: !!config,
         colorKeys: Object.keys(((config as any)?.colors ?? (config as any) ?? {})),
       });
+      
       if (config) {
         setCurrentThemeConfig(config as StoreThemeConfig);
         applyThemeToDOM(config as StoreThemeConfig);
@@ -137,7 +167,11 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
       root.style.setProperty(`--${key}`, normalized);
       appliedKeys.push(key);
     });
-    console.info('ThemeProvider: Applied color variables', { appliedKeys });
+    console.info('ThemeProvider: Applied color variables', { 
+      appliedKeys, 
+      originalColors: Object.keys(colorsSource),
+      sampleValues: Object.entries(colorsSource).slice(0, 3).map(([k, v]) => `${k}: ${v}`)
+    });
 
     // الخطوط
     if (typography?.fontFamily) {
@@ -178,6 +212,14 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
     document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
     const themeClass = getThemeClassName(themeConfig as StoreThemeConfig);
     document.body.classList.add(themeClass);
+    
+    console.info('ThemeProvider: Applied theme to DOM', { 
+      appliedKeys, 
+      themeClass,
+      hasTypography: !!typography,
+      hasLayout: !!layout,
+      hasEffects: !!effects
+    });
   };
 
   const getThemeClassName = (config: StoreThemeConfig): string => {
