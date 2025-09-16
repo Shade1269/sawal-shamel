@@ -29,9 +29,12 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
     try {
       console.info('ThemeProvider: Loading store theme config', { storeId });
       const raw = await getThemeConfig(storeId);
-      // Some RPCs return { theme_config: {...} } while others return the config directly
+      // قد تأتي البيانات ملفوفة داخل theme_config
       const config = (raw as any)?.theme_config ? (raw as any).theme_config : raw;
-      console.info('ThemeProvider: Theme config loaded', { hasConfig: !!config, colorKeys: Object.keys((config as any)?.colors || (config as any) || {}) });
+      console.info('ThemeProvider: Theme config loaded', {
+        hasConfig: !!config,
+        colorKeys: Object.keys(((config as any)?.colors ?? (config as any) ?? {})),
+      });
       if (config) {
         setCurrentThemeConfig(config as StoreThemeConfig);
         applyThemeToDOM(config as StoreThemeConfig);
@@ -42,20 +45,18 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
   };
 
   const applyThemeToDOM = (configParam: StoreThemeConfig | any) => {
-    // Support shapes: { theme_config: {...} } OR { colors: {...} } OR flat color map
+    // دعم الأشكال: { theme_config: {...} } أو { colors: {...} } أو خريطة ألوان مسطحة
     const themeConfig: any = (configParam as any)?.theme_config ?? configParam;
     const colorsSource: Record<string, any> = themeConfig?.colors ?? themeConfig;
     if (!colorsSource) return;
-    
+
     const root = document.documentElement;
     const { typography, layout, effects } = themeConfig as any;
 
-    // نحول أي قيمة ألوان (hex/rgb/hsl) إلى صيغة H S% L% المطلوبة من نظام التصميم
+    // تحويل Hex/RGB إلى ثلاثية H S% L%
     const hexToHslTriplet = (hex: string): string => {
       let h = hex.replace('#', '');
-      if (h.length === 3) {
-        h = h.split('').map(c => c + c).join('');
-      }
+      if (h.length === 3) h = h.split('').map(c => c + c).join('');
       const r = parseInt(h.substring(0, 2), 16) / 255;
       const g = parseInt(h.substring(2, 4), 16) / 255;
       const b = parseInt(h.substring(4, 6), 16) / 255;
@@ -96,16 +97,17 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
     const normalizeColor = (val: string): string => {
       if (!val) return '';
       const v = String(val).trim();
-      if (v.startsWith('hsl(')) return v.slice(4, -1); // "hsl(222 47% 11%)" => "222 47% 11%"
+      if (v.startsWith('hsl(')) return v.slice(4, -1);
       if (v.startsWith('#')) return hexToHslTriplet(v);
       if (v.startsWith('rgb')) return rgbToHslTriplet(v);
       // إذا كانت بالفعل ثلاثية HSL بدون hsl() نتركها كما هي
       if (!v.includes('(') && v.includes('%')) return v;
       return v; // fallback (قد تكون var(--...))
     };
-    
-    // تطبيق الألوان بصيغة متوافقة مع tailwind (hsl(var(--token))) + تحويل مفاتيح شائعة
+
+    // مفاتيح شائعة → الرموز القياسية في Tailwind (hsl(var(--token)))
     const keyAliasMap: Record<string, string> = {
+      // الأساسية
       primary_color: 'primary', primaryColor: 'primary',
       secondary_color: 'secondary', secondaryColor: 'secondary',
       accent_color: 'accent', accentColor: 'accent',
@@ -116,12 +118,16 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
       border_color: 'border', borderColor: 'border',
       input_color: 'input', inputColor: 'input',
       ring_color: 'ring', ringColor: 'ring',
-      // common foreground tokens
+      popover_color: 'popover', popover: 'popover',
+      // foregrounds
       primary_foreground: 'primary-foreground', primaryForeground: 'primary-foreground',
       secondary_foreground: 'secondary-foreground', secondaryForeground: 'secondary-foreground',
       accent_foreground: 'accent-foreground', accentForeground: 'accent-foreground',
       muted_foreground: 'muted-foreground', mutedForeground: 'muted-foreground',
-      card_foreground: 'card-foreground', cardForeground: 'card-foreground'
+      card_foreground: 'card-foreground', cardForeground: 'card-foreground',
+      popover_foreground: 'popover-foreground', popoverForeground: 'popover-foreground',
+      destructive_color: 'destructive', destructive: 'destructive',
+      destructive_foreground: 'destructive-foreground', destructiveForeground: 'destructive-foreground',
     };
 
     const appliedKeys: string[] = [];
@@ -132,100 +138,23 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
       appliedKeys.push(key);
     });
     console.info('ThemeProvider: Applied color variables', { appliedKeys });
-      let h = hex.replace('#', '');
-      if (h.length === 3) {
-        h = h.split('').map(c => c + c).join('');
-      }
-      const r = parseInt(h.substring(0, 2), 16) / 255;
-      const g = parseInt(h.substring(2, 4), 16) / 255;
-      const b = parseInt(h.substring(4, 6), 16) / 255;
-      const max = Math.max(r, g, b), min = Math.min(r, g, b);
-      let hh = 0, s = 0, l = (max + min) / 2;
-      if (max !== min) {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-          case r: hh = (g - b) / d + (g < b ? 6 : 0); break;
-          case g: hh = (b - r) / d + 2; break;
-          case b: hh = (r - g) / d + 4; break;
-        }
-        hh /= 6;
-      }
-      return `${Math.round(hh * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
-    };
 
-    const rgbToHslTriplet = (rgb: string): string => {
-      const nums = rgb.replace(/rgba?\(/, '').replace(/\)/, '').split(',').slice(0,3).map(n => parseFloat(n.trim()));
-      const [r0, g0, b0] = nums;
-      const r = r0 / 255, g = g0 / 255, b = b0 / 255;
-      const max = Math.max(r, g, b), min = Math.min(r, g, b);
-      let h = 0, s = 0, l = (max + min) / 2;
-      if (max !== min) {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-          case g: h = (b - r) / d + 2; break;
-          case b: h = (r - g) / d + 4; break;
-        }
-        h /= 6;
-      }
-      return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
-    };
-
-    const normalizeColor = (val: string): string => {
-      if (!val) return '';
-      const v = val.trim();
-      if (v.startsWith('hsl(')) return v.slice(4, -1); // "hsl(222 47% 11%)" => "222 47% 11%"
-      if (v.startsWith('#')) return hexToHslTriplet(v);
-      if (v.startsWith('rgb')) return rgbToHslTriplet(v);
-      // إذا كانت بالفعل ثلاثية HSL بدون hsl() نتركها كما هي
-      if (!v.includes('(') && v.includes('%')) return v;
-      return v; // fallback (قد تكون var(--...))
-    };
-    
-    // تطبيق الألوان بصيغة متوافقة مع tailwind (hsl(var(--token))) + تحويل مفاتيح شائعة
-    const keyAliasMap: Record<string, string> = {
-      primary_color: 'primary', primaryColor: 'primary',
-      secondary_color: 'secondary', secondaryColor: 'secondary',
-      accent_color: 'accent', accentColor: 'accent',
-      background_color: 'background', backgroundColor: 'background', bg: 'background',
-      foreground_color: 'foreground', foregroundColor: 'foreground', fg: 'foreground', text: 'foreground', textColor: 'foreground',
-      muted_color: 'muted', mutedColor: 'muted',
-      card_background: 'card', cardColor: 'card', card_background_color: 'card',
-      border_color: 'border', borderColor: 'border',
-      input_color: 'input', inputColor: 'input',
-      ring_color: 'ring', ringColor: 'ring'
-    };
-
-    const appliedKeys: string[] = [];
-    Object.entries(colors).forEach(([rawKey, value]) => {
-      const key = keyAliasMap[rawKey] || rawKey;
-      const normalized = normalizeColor(String(value));
-      root.style.setProperty(`--${key}`, normalized);
-      appliedKeys.push(key);
-    });
-    console.info('ThemeProvider: Applied color variables', { appliedKeys });
-
-
-    // تطبيق الخطوط
+    // الخطوط
     if (typography?.fontFamily) {
       root.style.setProperty('--font-sans', typography.fontFamily);
       document.body.style.fontFamily = typography.fontFamily;
     }
-    
     if (typography?.headingFont) {
       root.style.setProperty('--font-heading', typography.headingFont);
     }
 
-    // تطبيق التخطيط
+    // التخطيط
     if (layout?.borderRadius) {
-      root.style.setProperty('--radius', layout.borderRadius.replace('px', '').replace('rem', 'rem'));
+      root.style.setProperty('--radius', String(layout.borderRadius).replace('px', '').replace('rem', 'rem'));
     }
 
-    // تطبيق التأثيرات
+    // التأثيرات
     if (effects) {
-      // تطبيق الظلال
       if (effects.shadows === 'luxury') {
         root.style.setProperty('--shadow', '0 25px 50px -12px rgba(0, 0, 0, 0.25)');
       } else if (effects.shadows === 'minimal') {
@@ -236,7 +165,6 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
         root.style.setProperty('--shadow', '0 10px 15px -3px rgba(147, 51, 234, 0.1)');
       }
 
-      // تطبيق الانيميشن
       if (effects.animations === 'elegant') {
         root.style.setProperty('--transition', 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)');
       } else if (effects.animations === 'bouncy') {
@@ -246,23 +174,19 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
       }
     }
 
-    // إضافة class للثيم المحدد
-    document.body.className = document.body.className
-      .replace(/theme-\w+/g, '')
-      .trim();
-    
-    const themeClass = getThemeClassName(themeConfig);
+    // تنظيف classes السابقة وإضافة class للثيم
+    document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
+    const themeClass = getThemeClassName(themeConfig as StoreThemeConfig);
     document.body.classList.add(themeClass);
   };
 
   const getThemeClassName = (config: StoreThemeConfig): string => {
-    // تحديد نوع الثيم بناءً على الألوان
-    const { primary } = config.colors || {};
-    
-    if (primary?.includes('45, 100%, 51%')) return 'theme-luxury';
-    if (primary?.includes('30, 67%, 44%')) return 'theme-traditional';
-    if (primary?.includes('280, 100%, 70%')) return 'theme-colorful';
-    
+    const { primary } = (config as any).colors || (config as any) || {};
+    if (typeof primary === 'string') {
+      if (primary.includes('45, 100%, 51%')) return 'theme-luxury';
+      if (primary.includes('30, 67%, 44%')) return 'theme-traditional';
+      if (primary.includes('280, 100%, 70%')) return 'theme-colorful';
+    }
     return 'theme-modern';
   };
 
@@ -274,30 +198,18 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
   const resetTheme = () => {
     setCurrentThemeConfig(null);
     const root = document.documentElement;
-    
-    // إزالة CSS variables المخصصة
     const cssVariables = [
-      '--primary', '--secondary', '--accent', '--background', 
-      '--foreground', '--muted', '--card', '--border',
+      '--primary', '--secondary', '--accent', '--background', '--foreground',
+      '--muted', '--card', '--border', '--input', '--ring',
+      '--primary-foreground', '--secondary-foreground', '--accent-foreground', '--muted-foreground', '--card-foreground',
       '--font-sans', '--font-heading', '--radius', '--shadow', '--transition'
     ];
-    
-    cssVariables.forEach(variable => {
-      root.style.removeProperty(variable);
-    });
-
-    // إزالة classes الثيم
-    document.body.className = document.body.className
-      .replace(/theme-\w+/g, '')
-      .trim();
+    cssVariables.forEach(variable => root.style.removeProperty(variable));
+    document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
   };
 
   return (
-    <ThemeContext.Provider value={{
-      currentTheme: currentThemeConfig,
-      applyTheme,
-      resetTheme
-    }}>
+    <ThemeContext.Provider value={{ currentTheme: currentThemeConfig, applyTheme, resetTheme }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -305,8 +217,6 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
 
 export const useStoreTheme = () => {
   const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useStoreTheme must be used within a StoreThemeProvider');
-  }
+  if (!context) throw new Error('useStoreTheme must be used within a StoreThemeProvider');
   return context;
 };
