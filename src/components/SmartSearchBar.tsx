@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -68,6 +69,7 @@ const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
   allowedCategories = ['product', 'user', 'message', 'alliance'],
   maxResults = 20
 }) => {
+  const navigate = useNavigate();
   const { profile, isAuthenticated } = useFastAuth();
   
   const [query, setQuery] = useState('');
@@ -229,7 +231,13 @@ const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
     if (onResultClick) {
       onResultClick(result);
     } else {
-      window.location.href = result.url;
+      // Use navigate for internal routes
+      if (result.url.startsWith('/')) {
+        navigate(result.url);
+      } else {
+        // External URL
+        window.location.href = result.url;
+      }
     }
   };
 

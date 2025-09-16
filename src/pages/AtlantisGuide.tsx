@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +12,8 @@ import {
 } from 'lucide-react';
 
 const AtlantisGuide = () => {
+  const navigate = useNavigate();
+  
   return (
     <div className="min-h-screen bg-gradient-persian-bg">
       {/* Header */}
@@ -123,7 +126,7 @@ const AtlantisGuide = () => {
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-4">جاهز للبدء؟</h3>
                 <Button 
-                  onClick={() => window.location.href = '/atlantis'}
+                  onClick={() => navigate('/atlantis')}
                   size="lg"
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                 >

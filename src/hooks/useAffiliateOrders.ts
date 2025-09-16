@@ -93,8 +93,48 @@ export const useAffiliateOrders = (affiliateStoreId?: string) => {
     refresh: () => {
       if (affiliateStoreId) {
         setLoading(true);
-        // Re-trigger the effect
-        window.location.reload();
+        // Re-trigger the useEffect by calling the same logic
+        const fetchData = async () => {
+          try {
+            setLoading(true);
+            setError(null);
+
+            const ordersData = await UnifiedOrdersService.getOrdersWithItems({
+              affiliate_store_id: affiliateStoreId,
+              limit: 100
+            });
+
+            setOrders(ordersData);
+
+            const totalOrders = ordersData.length;
+            const totalRevenue = ordersData.reduce((sum, order) => sum + Number(order.total), 0);
+            
+            const { data: commissions } = await supabase
+              .from('commissions')
+              .select('*')
+              .eq('affiliate_id', affiliateStoreId);
+
+            const pendingCommissions = commissions?.filter(c => c.status === 'PENDING')
+              ?.reduce((sum, c) => sum + Number(c.amount_sar), 0) || 0;
+            
+            const confirmedCommissions = commissions?.filter(c => c.status === 'CONFIRMED')
+              ?.reduce((sum, c) => sum + Number(c.amount_sar), 0) || 0;
+
+            setStats({
+              totalOrders,
+              totalRevenue,
+              totalCommissions: pendingCommissions + confirmedCommissions,
+              pendingCommissions,
+              confirmedCommissions,
+              averageOrderValue: totalOrders > 0 ? totalRevenue / totalOrders : 0
+            });
+          } catch (err: any) {
+            setError(err.message || 'خطأ في جلب البيانات');
+          } finally {
+            setLoading(false);
+          }
+        };
+        fetchData();
       }
     }
   };

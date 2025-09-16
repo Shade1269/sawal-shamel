@@ -286,7 +286,7 @@ const StoreFront = () => {
               لم يتم العثور على متجر بالاسم "{slug}"
             </p>
             <Button 
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
               className="gap-2"
             >
               العودة للرئيسية

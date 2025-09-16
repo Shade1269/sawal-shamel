@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
@@ -158,7 +159,7 @@ export default function AffiliateProductsPage() {
             </p>
             <Button 
               variant="outline" 
-              onClick={() => window.location.href = '/products'}
+              onClick={() => navigate('/products')}
             >
               تصفح المخزون وإضافة منتجات
             </Button>

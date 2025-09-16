@@ -729,7 +729,8 @@ const ChatInterface = () => {
                       // Supabase auth is already available
                       await supabase.auth.signOut();
                       toast({ title: 'تم تسجيل الخروج' });
-                      window.location.href = '/';
+                      // Use navigate for auth signout to main page
+                      navigate('/');
                     } catch (e) {
                       toast({ title: 'خطأ في تسجيل الخروج', description: 'حاول مرة أخرى', variant: 'destructive' });
                     }

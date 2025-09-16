@@ -202,8 +202,8 @@ export const ProductsManagement: React.FC = () => {
       resetVariantForm();
       setEditingVariant(null);
       
-      // Refresh the variants list
-      window.location.reload();
+      // Parent component should refresh its data
+      toast.success('تم حفظ المتغير بنجاح');
       
     } catch (error: any) {
       console.error('Error saving variant:', error);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -68,6 +69,7 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ type, className = "
 };
 
 const RealtimeNotifications: React.FC = () => {
+  const navigate = useNavigate();
   const { profile, isAuthenticated } = useFastAuth();
   
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -240,7 +242,13 @@ const RealtimeNotifications: React.FC = () => {
   const handleNotificationClick = (notification: Notification) => {
     markAsRead(notification.id);
     if (notification.actionUrl) {
-      window.location.href = notification.actionUrl;
+      // Use navigate for internal routes
+      if (notification.actionUrl.startsWith('/')) {
+        navigate(notification.actionUrl);
+      } else {
+        // External URL - use window.location
+        window.location.href = notification.actionUrl;
+      }
     }
     setIsOpen(false);
   };

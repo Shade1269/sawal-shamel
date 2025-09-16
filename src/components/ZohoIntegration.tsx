@@ -330,13 +330,14 @@ export const ZohoIntegration: React.FC = () => {
             
             <Button 
               onClick={() => {
-                window.location.reload();
+                // Refresh integration data instead of reloading page
+                loadZohoIntegration();
               }} 
               variant="ghost"
               className="flex-1 sm:flex-none"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
-              إعادة تحميل الصفحة
+              تحديث البيانات
             </Button>
           </div>
         </CardContent>
