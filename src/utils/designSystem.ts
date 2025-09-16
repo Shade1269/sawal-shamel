@@ -1,6 +1,7 @@
 /**
- * Design System Utilities - نظام التصميم الموحد
- * يوفر ألوان وأنماط متسقة مع نظام التصميم الفارسي
+ * Enhanced Design System Utilities - نظام التصميم الموحد المطور
+ * Version 2.0 - Persian Luxury Heritage Theme
+ * يوفر ألوان وأنماط وحركات متسقة مع نظام التصميم الفارسي المحسن
  */
 
 // Role Colors - ألوان الأدوار 
@@ -125,7 +126,99 @@ export const shadows = {
   heritage: 'shadow-heritage'
 } as const;
 
-// Helper Functions - دوال مساعدة
+// Interactive Elements - العناصر التفاعلية
+export const interactive = {
+  hover: {
+    scale: 'hover:scale-105 transition-transform duration-200',
+    glow: 'hover:shadow-glow transition-shadow duration-300',
+    lift: 'hover:-translate-y-1 transition-transform duration-200',
+    brightness: 'hover:brightness-110 transition-all duration-200'
+  },
+  focus: {
+    ring: 'focus:ring-2 focus:ring-primary focus:ring-offset-2',
+    outline: 'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+    glow: 'focus:shadow-glow transition-shadow duration-200'
+  },
+  active: {
+    scale: 'active:scale-95 transition-transform duration-100',
+    press: 'active:translate-y-0.5 transition-transform duration-100'
+  }
+} as const;
+
+// Spacing System - نظام المسافات
+export const spacing = {
+  none: 'space-y-0',
+  xs: 'space-y-1',
+  sm: 'space-y-2',
+  md: 'space-y-4',
+  lg: 'space-y-6',
+  xl: 'space-y-8',
+  '2xl': 'space-y-12',
+  '3xl': 'space-y-16'
+} as const;
+
+// Layout Patterns - أنماط التخطيط
+export const layout = {
+  container: 'container mx-auto px-4',
+  section: 'py-12 md:py-16 lg:py-20',
+  card: 'bg-card border border-border rounded-lg p-6 shadow-soft',
+  grid: {
+    cols1: 'grid grid-cols-1',
+    cols2: 'grid grid-cols-1 md:grid-cols-2',
+    cols3: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    cols4: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
+    auto: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+  },
+  flex: {
+    center: 'flex items-center justify-center',
+    between: 'flex items-center justify-between',
+    start: 'flex items-center justify-start',
+    end: 'flex items-center justify-end',
+    col: 'flex flex-col',
+    colCenter: 'flex flex-col items-center justify-center'
+  }
+} as const;
+
+// Typography Scale - مقياس الطباعة
+export const typography = {
+  display: {
+    '4xl': 'text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight',
+    '3xl': 'text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight',
+    '2xl': 'text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight',
+    xl: 'text-xl md:text-2xl lg:text-3xl font-bold tracking-tight'
+  },
+  heading: {
+    h1: 'text-3xl md:text-4xl font-bold tracking-tight',
+    h2: 'text-2xl md:text-3xl font-semibold tracking-tight',
+    h3: 'text-xl md:text-2xl font-semibold tracking-tight',
+    h4: 'text-lg md:text-xl font-semibold',
+    h5: 'text-base md:text-lg font-semibold',
+    h6: 'text-sm md:text-base font-semibold'
+  },
+  body: {
+    lg: 'text-lg leading-relaxed',
+    md: 'text-base leading-relaxed',
+    sm: 'text-sm leading-relaxed',
+    xs: 'text-xs leading-relaxed'
+  },
+  special: {
+    lead: 'text-lg md:text-xl leading-relaxed text-muted-foreground',
+    caption: 'text-xs text-muted-foreground',
+    overline: 'text-xs font-medium uppercase tracking-wider',
+    code: 'font-mono text-sm bg-muted px-1.5 py-0.5 rounded'
+  }
+} as const;
+
+// Enhanced Responsive Breakpoints Helper
+export const responsive = {
+  sm: '(min-width: 640px)',
+  md: '(min-width: 768px)', 
+  lg: '(min-width: 1024px)',
+  xl: '(min-width: 1280px)',
+  '2xl': '(min-width: 1536px)'
+} as const;
+
+// Helper Functions - دوال مساعدة محسنة
 
 export const getRoleColor = (role: keyof typeof roleColors) => {
   return roleColors[role] || roleColors.member;
@@ -141,4 +234,25 @@ export const getLevelColor = (level: keyof typeof levelColors) => {
 
 export const getIconColor = (type: keyof typeof iconColors) => {
   return iconColors[type] || iconColors.muted;
+};
+
+// New Helper Functions
+export const getInteractiveClasses = (type: 'hover' | 'focus' | 'active' = 'hover') => {
+  return interactive[type];
+};
+
+export const getLayoutClasses = (pattern: keyof typeof layout) => {
+  return layout[pattern];
+};
+
+export const getTypographyClasses = (variant: string, size: string) => {
+  const variantObj = typography[variant as keyof typeof typography];
+  if (typeof variantObj === 'object') {
+    return (variantObj as any)[size] || '';
+  }
+  return '';
+};
+
+export const combineClasses = (...classes: (string | undefined | null | false)[]) => {
+  return classes.filter(Boolean).join(' ');
 };
