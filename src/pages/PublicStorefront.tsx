@@ -31,7 +31,8 @@ function PublicStorefront() {
     customerSession,
     setCustomerVerified,
     isCustomerAuthenticated,
-    getCustomerInfo
+    getCustomerInfo,
+    sessionManager
   } = usePublicStorefront({ storeSlug: store_slug || '' });
 
   const [showCheckout, setShowCheckout] = useState(false);
@@ -65,11 +66,13 @@ function PublicStorefront() {
   const handleCustomerLogout = () => {
     sessionManager.clearSession();
     setCustomerData({ name: '', phone: '', email: '', address: '' });
-    setCustomerSession(null);
     clearCart();
     toast.success('تم تسجيل الخروج بنجاح');
+    // Refresh the page to reset all state
+    window.location.reload();
   };
   // Handle checkout initiation
+  const handleCheckoutStart = () => {
     if (!isCustomerAuthenticated()) {
       setShowOTPModal(true);
       return;
