@@ -193,7 +193,7 @@ const StorefrontCheckout = () => {
       const { data: order, error: orderError } = await supabasePublic
         .from('ecommerce_orders')
         .insert({
-          shop_id: store.id, // سنحتاج لتحديث هذا ليكون affiliate_store_id
+          shop_id: store.id, // مؤقتاً نستخدم نفس معرف المتجر
           affiliate_store_id: store.id,
           customer_name: customerData.full_name,
           customer_phone: customerData.phone,
@@ -209,7 +209,8 @@ const StorefrontCheckout = () => {
           payment_method: 'CASH_ON_DELIVERY' as any,
           payment_status: 'PENDING',
           status: 'PENDING',
-          notes: customerData.notes || null
+          notes: customerData.notes || null,
+          order_number: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
         })
         .select('id, order_number')
         .single();

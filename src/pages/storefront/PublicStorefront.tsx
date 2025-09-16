@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { ShoppingCart, Plus, Eye, Star, Package, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
-import { createStoreUrl } from '@/utils/domains';
 
 interface StoreData {
   id: string;
@@ -113,6 +112,28 @@ const PublicStorefront = () => {
         if (productsError) throw productsError;
         setProducts(productsData || []);
 
+        // جلب عدد عناصر السلة الحالية
+        const sessionData = localStorage.getItem(`ea_session_${store_slug}`);
+        if (sessionData) {
+          const sessionInfo = JSON.parse(sessionData);
+          const { data: cart } = await supabasePublic
+            .from('shopping_carts')
+            .select('id')
+            .eq('session_id', sessionInfo.sessionId)
+            .eq('affiliate_store_id', storeData.id)
+            .maybeSingle();
+
+          if (cart) {
+            const { data: items } = await supabasePublic
+              .from('cart_items')
+              .select('quantity')
+              .eq('cart_id', cart.id);
+            
+            const totalItems = items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+            setCartItems(totalItems);
+          }
+        }
+
       } catch (error: any) {
         console.error('Error fetching store data:', error);
         toast({
@@ -157,33 +178,39 @@ const PublicStorefront = () => {
         cart = newCart;
       }
 
-      // إضافة المنتج للسلة
-      const { error: itemError } = await supabasePublic
+      // التحقق من وجود المنتج في السلة
+      const { data: existingItem } = await supabasePublic
         .from('cart_items')
-        .insert({
-          cart_id: cart.id,
-          product_id: productData.product_id,
-          quantity: 1,
-          unit_price_sar: productData.products.price_sar,
-          total_price_sar: productData.products.price_sar
-        });
+        .select('id, quantity')
+        .eq('cart_id', cart.id)
+        .eq('product_id', productData.product_id)
+        .maybeSingle();
 
-      if (itemError) {
-        if (itemError.code === '23505') {
-          // المنتج موجود، زيادة الكمية
-          const { error: updateError } = await supabasePublic
-            .from('cart_items')
-            .update({
-              quantity: 1, // سنحتاج لتحسين هذا لاحقاً
-              total_price_sar: productData.products.price_sar
-            })
-            .eq('cart_id', cart.id)
-            .eq('product_id', productData.product_id);
+      if (existingItem) {
+        // زيادة الكمية
+        const newQuantity = existingItem.quantity + 1;
+        const { error: updateError } = await supabasePublic
+          .from('cart_items')
+          .update({
+            quantity: newQuantity,
+            total_price_sar: newQuantity * productData.products.price_sar
+          })
+          .eq('id', existingItem.id);
 
-          if (updateError) throw updateError;
-        } else {
-          throw itemError;
-        }
+        if (updateError) throw updateError;
+      } else {
+        // إضافة منتج جديد
+        const { error: itemError } = await supabasePublic
+          .from('cart_items')
+          .insert({
+            cart_id: cart.id,
+            product_id: productData.product_id,
+            quantity: 1,
+            unit_price_sar: productData.products.price_sar,
+            total_price_sar: productData.products.price_sar
+          });
+
+        if (itemError) throw itemError;
       }
 
       setCartItems(prev => prev + 1);
