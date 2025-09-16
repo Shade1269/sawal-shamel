@@ -180,16 +180,33 @@ function PublicStorefront() {
       <div className="bg-gradient-to-r from-primary/10 to-primary/20 py-12 relative">
         <div className="container mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
-              <Button 
-                variant="outline"
-                onClick={() => navigate(`/s/${store_slug}`)}
-                className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
-              >
-                واجهة المتجر
-              </Button>
-              
-              {/* Customer Status */}
+              {/* Left: Store identity */}
               <div className="flex items-center gap-3">
+                {store.logo_url && (
+                  <img
+                    src={store.logo_url}
+                    alt={`شعار متجر ${store.store_name}`}
+                    className="w-10 h-10 rounded-full object-cover"
+                    loading="lazy"
+                  />
+                )}
+                <h1 className="text-xl font-semibold">{store.store_name}</h1>
+              </div>
+
+              {/* Right: Actions */}
+              <div className="flex items-center gap-3">
+                {/* Cart button in header */}
+                <Button
+                  variant="outline"
+                  onClick={handleCheckoutStart}
+                  className="relative bg-white/10 border-white/20 text-foreground hover:bg-white/20"
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  السلة
+                  <Badge className="ml-2">{totalItems}</Badge>
+                </Button>
+
+                {/* Customer session */}
                 <CustomerSessionHeader
                   isAuthenticated={isCustomerAuthenticated()}
                   customerInfo={getCustomerInfo()}
@@ -197,8 +214,9 @@ function PublicStorefront() {
                   onLogout={handleCustomerLogout}
                   storeSlug={store_slug || ''}
                 />
-                
-                <Button 
+
+                {/* My orders */}
+                <Button
                   variant="outline"
                   onClick={() => navigate(`/s/${store_slug}/my-orders`)}
                   className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
