@@ -2,12 +2,16 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { useShoppingCart } from './useShoppingCart';
+import { StorefrontSession } from '@/utils/storefrontSession';
 
 interface UsePublicStorefrontProps {
   storeSlug: string;
 }
 
 export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => {
+  const [sessionManager] = useState(() => new StorefrontSession(storeSlug));
+  const [customerSession, setCustomerSession] = useState(() => sessionManager.getSession());
+
   // Fetch store data
   const { data: store, isLoading: storeLoading, error: storeError } = useQuery({
     queryKey: ['public-store', storeSlug],
@@ -100,6 +104,38 @@ export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => 
   const totalAmount = getCartTotals.subtotal;
   const totalItems = getCartTotals.totalItems;
 
+  // Initialize guest session if needed
+  useEffect(() => {
+    if (store && !customerSession) {
+      const guestSession = sessionManager.createGuestSession(store.id);
+      setCustomerSession(guestSession);
+    }
+  }, [store, customerSession, sessionManager]);
+
+  // Customer authentication methods
+  const setCustomerVerified = (customerData: { 
+    phone: string; 
+    name?: string; 
+    email?: string; 
+    sessionId: string;
+  }) => {
+    sessionManager.verifySession(customerData.phone, customerData.name, customerData.email);
+    setCustomerSession(sessionManager.getSession());
+  };
+
+  const isCustomerAuthenticated = () => {
+    return customerSession?.isVerified || false;
+  };
+
+  const getCustomerInfo = () => {
+    return customerSession ? {
+      phone: customerSession.phone,
+      name: customerSession.name,
+      email: customerSession.email,
+      sessionId: customerSession.sessionId
+    } : null;
+  };
+
   return {
     store,
     products,
@@ -111,6 +147,12 @@ export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => 
     updateQuantity,
     clearCart,
     totalAmount,
-    totalItems
+    totalItems,
+    // Enhanced session management
+    customerSession,
+    setCustomerVerified,
+    isCustomerAuthenticated,
+    getCustomerInfo,
+    sessionManager
   };
 };

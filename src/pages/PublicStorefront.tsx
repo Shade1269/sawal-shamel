@@ -3,16 +3,18 @@ import { useMutation } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { usePublicStorefront } from '@/hooks/usePublicStorefront';
+import { CustomerOTPModal } from '@/components/storefront/CustomerOTPModal';
+import { CustomerSessionHeader } from '@/components/storefront/CustomerSessionHeader';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ShoppingCart, Plus, Minus, Store, Package, CheckCircle } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Store, Package, CheckCircle, User, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function PublicStorefront() {
+function PublicStorefront() {
   const { store_slug } = useParams<{ store_slug: string }>();
   const {
     store,
@@ -25,16 +27,55 @@ export default function PublicStorefront() {
     updateQuantity,
     clearCart,
     totalAmount,
-    totalItems
+    totalItems,
+    customerSession,
+    setCustomerVerified,
+    isCustomerAuthenticated,
+    getCustomerInfo
   } = usePublicStorefront({ storeSlug: store_slug || '' });
 
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
   const [customerData, setCustomerData] = useState({
     name: '',
     phone: '',
     email: '',
     address: ''
   });
+
+  // Handle customer verification from OTP modal
+  const handleCustomerVerified = (verifiedCustomer: {
+    phone: string;
+    name?: string;
+    email?: string;
+    sessionId: string;
+  }) => {
+    setCustomerVerified(verifiedCustomer);
+    setCustomerData(prev => ({
+      ...prev,
+      phone: verifiedCustomer.phone,
+      name: verifiedCustomer.name || prev.name,
+      email: verifiedCustomer.email || prev.email
+    }));
+    setShowOTPModal(false);
+    toast.success('تم تسجيل الدخول بنجاح!');
+  };
+
+  // Handle customer logout
+  const handleCustomerLogout = () => {
+    sessionManager.clearSession();
+    setCustomerData({ name: '', phone: '', email: '', address: '' });
+    setCustomerSession(null);
+    clearCart();
+    toast.success('تم تسجيل الخروج بنجاح');
+  };
+  // Handle checkout initiation
+    if (!isCustomerAuthenticated()) {
+      setShowOTPModal(true);
+      return;
+    }
+    setShowCheckout(true);
+  };
 
   // Create order using public client
   const createOrderMutation = useMutation({
@@ -132,23 +173,34 @@ export default function PublicStorefront() {
       {/* Store Header */}
       <div className="bg-gradient-to-r from-primary/10 to-primary/20 py-12 relative">
         <div className="container mx-auto px-4">
-          {/* Navigation Bar */}
-          <div className="flex justify-between items-center mb-6">
-            <Button 
-              variant="outline"
-              onClick={() => window.location.href = `/`}
-              className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
-            >
-              الصفحة الرئيسية
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => window.location.href = `/s/${store_slug}/my-orders`}
-              className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
-            >
-              طلباتي
-            </Button>
-          </div>
+            <div className="flex justify-between items-center mb-6">
+              <Button 
+                variant="outline"
+                onClick={() => window.location.href = `/`}
+                className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
+              >
+                الصفحة الرئيسية
+              </Button>
+              
+              {/* Customer Status */}
+              <div className="flex items-center gap-3">
+                <CustomerSessionHeader
+                  isAuthenticated={isCustomerAuthenticated()}
+                  customerInfo={getCustomerInfo()}
+                  onLoginClick={() => setShowOTPModal(true)}
+                  onLogout={handleCustomerLogout}
+                  storeSlug={store_slug || ''}
+                />
+                
+                <Button 
+                  variant="outline"
+                  onClick={() => window.location.href = `/s/${store_slug}/my-orders`}
+                  className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
+                >
+                  طلباتي
+                </Button>
+              </div>
+            </div>
           
           {/* Store Info */}
           <div className="text-center">
@@ -173,7 +225,7 @@ export default function PublicStorefront() {
       {totalItems > 0 && (
         <div className="fixed top-4 left-4 z-50">
           <Button 
-            onClick={() => setShowCheckout(true)}
+            onClick={handleCheckoutStart}
             className="relative"
             size="lg"
           >
@@ -232,6 +284,14 @@ export default function PublicStorefront() {
           </div>
         )}
       </div>
+
+      {/* Customer OTP Modal */}
+      <CustomerOTPModal
+        isOpen={showOTPModal}
+        onClose={() => setShowOTPModal(false)}
+        onVerified={handleCustomerVerified}
+        storeId={store?.id || ''}
+      />
 
       {/* Checkout Modal */}
       {showCheckout && (
@@ -364,3 +424,5 @@ export default function PublicStorefront() {
     </div>
   );
 }
+
+export default PublicStorefront;
