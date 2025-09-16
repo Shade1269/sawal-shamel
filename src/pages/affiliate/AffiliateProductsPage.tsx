@@ -156,7 +156,12 @@ export default function AffiliateProductsPage() {
             <p className="text-muted-foreground mb-4">
               لم تقم بإضافة أي منتجات إلى متجرك بعد
             </p>
-            <Button variant="outline">إضافة منتجات</Button>
+            <Button 
+              variant="outline" 
+              onClick={() => window.location.href = '/products'}
+            >
+              تصفح المخزون وإضافة منتجات
+            </Button>
           </CardContent>
         </Card>
       ) : (

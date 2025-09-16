@@ -293,10 +293,10 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
             <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">متجرك فارغ حالياً</h3>
             <p className="text-muted-foreground mb-4">
-              لإضافة منتجات لمتجرك، اذهب إلى المخزون العام واختر المنتجات واضغط "إضافة إلى متجري"
+              لإضافة منتجات لمتجرك، اذهب إلى متجر المنتجات واختر المنتجات المناسبة لك
             </p>
-            <Button onClick={() => window.location.href = '/inventory'} variant="outline">
-              انتقل إلى المخزون العام
+            <Button onClick={() => window.location.href = '/products'} variant="outline">
+              تصفح المنتجات وإضافتها لمتجرك
             </Button>
           </div>
         ) : (
