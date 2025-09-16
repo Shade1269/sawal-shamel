@@ -280,6 +280,7 @@ function PublicStorefront() {
   });
 
   return (
+    <StoreThemeProvider storeId={store?.id}>
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5" dir="rtl">
       {/* ENHANCED Store Header */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b-2 border-primary/10 shadow-xl">
@@ -989,6 +990,7 @@ function PublicStorefront() {
         </Dialog>
       )}
     </div>
+    </StoreThemeProvider>
   );
 }
 
