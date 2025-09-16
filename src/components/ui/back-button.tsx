@@ -16,17 +16,19 @@ export const BackButton = ({
   const navigate = useNavigate();
 
   const handleBack = () => {
-    // تحقق من الصفحة الحالية لتجنب التنقل الخاطئ
     const currentPath = window.location.pathname;
-    
+
     // إذا كان في صفحة متجر، ارجع للصفحة الرئيسية
     if (currentPath.startsWith('/store/')) {
       navigate('/');
       return;
     }
-    
-    // إذا كان التاريخ متوفر، ارجع خطوة
-    if (window.history.length > 1) {
+
+    // استخدم مؤشر history الخاص بـ React Router v6 إن وُجد
+    const state = (window.history.state || {}) as { idx?: number };
+
+    // إن وُجد سجل تنقل داخل التطبيق ارجع خطوة، وإلا استخدم مسار الـ fallback
+    if (typeof state.idx === 'number' && state.idx > 0) {
       navigate(-1);
     } else {
       navigate(fallbackRoute);
