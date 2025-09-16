@@ -86,8 +86,7 @@ export default function AffiliateDashboardOverview() {
           </div>
           <Button asChild variant="outline">
             <Link 
-              to={`/${affiliateStore.store_slug}`} 
-              target="_blank"
+              to={`/store/${affiliateStore.store_slug}`}
               className="flex items-center gap-2"
             >
               <ExternalLink className="h-4 w-4" />
@@ -113,7 +112,7 @@ export default function AffiliateDashboardOverview() {
             </div>
             <div>
               <h4 className="font-medium text-sm text-muted-foreground">رابط المتجر</h4>
-              <p className="text-lg font-semibold">/{affiliateStore.store_slug}</p>
+              <p className="text-lg font-semibold">/store/{affiliateStore.store_slug}</p>
             </div>
             <div>
               <h4 className="font-medium text-sm text-muted-foreground">الحالة</h4>
