@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { useFastAuth } from '@/hooks/useFastAuth';
-import { LogOut, Settings, User, Crown, Star, Award, Medal, CreditCard, FileText, RotateCcw, DollarSign, Share2 } from 'lucide-react';
+import { LogOut, Settings, User, Crown, Star, Award, Medal, CreditCard, FileText, RotateCcw, DollarSign, Share2, Store } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCartDrawer } from '@/features/commerce';
@@ -187,10 +187,16 @@ const Header = () => {
               )}
               
               {profile?.role === 'affiliate' && (
-                <DropdownMenuItem onClick={() => navigate('/affiliate')}>
-                  <Star className="ml-2 h-4 w-4" />
-                  متجري
-                </DropdownMenuItem>
+                <>
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                    <Star className="ml-2 h-4 w-4" />
+                    لوحة المسوق
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/affiliate')}>
+                    <Store className="ml-2 h-4 w-4" />
+                    متجري الشخصي
+                  </DropdownMenuItem>
+                </>
               )}
               
               <DropdownMenuSeparator />
