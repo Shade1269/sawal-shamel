@@ -438,7 +438,7 @@ const AffiliateDashboard = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => window.open(createStoreUrl(affiliateStore?.store_slug || ''), '_blank')}
+                        onClick={() => navigate(`/store/${affiliateStore?.store_slug || ''}`)}
                       >
                         <ExternalLink className="h-4 w-4 ml-2" />
                         عرض متجري
@@ -556,7 +556,7 @@ const AffiliateDashboard = () => {
             variant="outline"
             onClick={() => {
               if (affiliateStore?.store_slug) {
-                window.open(createStoreUrl(affiliateStore.store_slug), '_blank');
+                navigate(`/store/${affiliateStore.store_slug}`);
               }
             }}
           >
