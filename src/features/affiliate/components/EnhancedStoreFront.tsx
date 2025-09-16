@@ -249,7 +249,83 @@ const EnhancedStoreFront = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-background">
+      {/* Store Header */}
+      <div className="sticky top-0 z-50 bg-gradient-to-r from-primary/10 to-primary/20 backdrop-blur-sm border-b">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            {/* Left: Store Identity */}
+            <div className="flex items-center gap-3">
+              {affiliateStore?.logo_url && (
+                <img
+                  src={affiliateStore.logo_url}
+                  alt={`شعار متجر ${affiliateStore.store_name}`}
+                  className="w-10 h-10 rounded-full object-cover"
+                  loading="lazy"
+                />
+              )}
+              <div>
+                <h1 className="text-xl font-bold">{affiliateStore?.store_name}</h1>
+                {affiliateStore?.bio && (
+                  <p className="text-sm text-muted-foreground">{affiliateStore.bio}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Right: Actions */}
+            <div className="flex items-center gap-3">
+              {/* Cart button */}
+              <Sheet open={showCart} onOpenChange={setShowCart}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="relative">
+                    <ShoppingCart className="h-4 w-4 mr-2" />
+                    السلة
+                    {cart.length > 0 && (
+                      <Badge className="absolute -top-2 -left-2 min-w-[20px] h-5">
+                        {cart.reduce((sum, item) => sum + item.quantity, 0)}
+                      </Badge>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-full sm:max-w-lg">
+                  <SheetHeader>
+                    <SheetTitle className="flex items-center gap-2">
+                      <ShoppingCart className="h-5 w-5" />
+                      سلة التسوق ({cart.reduce((sum, item) => sum + item.quantity, 0)} منتج)
+                    </SheetTitle>
+                  </SheetHeader>
+                  {/* Cart content will be rendered below */}
+                </SheetContent>
+              </Sheet>
+
+              {/* Customer Authentication */}
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  if (isAuthenticated) {
+                    navigate('/customer/profile');
+                  } else {
+                    navigate('/customer/auth');
+                  }
+                }}
+              >
+                {isAuthenticated ? 'حسابي' : 'تسجيل دخول'}
+              </Button>
+
+              {/* My Orders */}
+              <Button 
+                variant="outline"
+                onClick={() => navigate('/customer/orders')}
+              >
+                طلباتي
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-6 space-y-6">
       {/* Search and Filter */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
@@ -554,6 +630,7 @@ const EnhancedStoreFront = () => {
           )}
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   );
 };
