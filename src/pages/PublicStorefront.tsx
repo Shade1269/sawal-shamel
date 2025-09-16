@@ -47,7 +47,8 @@ import { toast } from 'sonner';
 import { motion, AnimatePresence } from "framer-motion";
 
 function PublicStorefront() {
-  console.log('PublicStorefront component loaded!');
+  console.log('🔥🔥🔥 ENHANCED PUBLICSTOREFRONTT LOADING 🔥🔥🔥');
+  console.log('=== ADVANCED FEATURES ARE ACTIVE ===');
   const { store_slug } = useParams<{ store_slug: string }>();
   const navigate = useNavigate();
   const {
@@ -79,7 +80,7 @@ function PublicStorefront() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [sortBy, setSortBy] = useState("newest");
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
   
   const [customerData, setCustomerData] = useState({
     name: '',
