@@ -18,7 +18,7 @@ const Index = () => {
   
   const handleChatClick = () => {
     if (!currentUser) {
-      navigate('/auth');
+      navigate('/login');
       return;
     }
     navigate('/atlantis/chat');
@@ -26,7 +26,7 @@ const Index = () => {
 
   const handleInventoryClick = () => {
     if (!currentUser) {
-      navigate('/auth');
+      navigate('/login');
       return;
     }
     navigate('/products');
@@ -34,7 +34,7 @@ const Index = () => {
 
   const handleStoreManagementClick = () => {
     if (!currentUser) {
-      navigate('/auth');
+      navigate('/login');
       return;
     }
     navigate('/dashboard');
@@ -283,7 +283,7 @@ const Index = () => {
                     variant="persian"
                     size="lg"
                     className="w-full h-12 text-lg font-bold rounded-xl"
-                    onClick={() => navigate('/auth')}
+                    onClick={() => navigate('/login')}
                   >
                     بدء رحلة التسوق
                   </Button>

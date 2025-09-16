@@ -66,7 +66,7 @@ const Header = () => {
           </div>
           
           <Button 
-            onClick={() => navigate('/auth')} 
+            onClick={() => navigate('/login')} 
             className="bg-gradient-primary hover:opacity-90"
           >
             تسجيل الدخول
