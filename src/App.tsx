@@ -283,10 +283,17 @@ const App = () => {
                            </ProtectedRoute>
                          } />
                         
-                        {/* Banner Management Route */}
-                        <Route path="/banner-management/:storeId" element={
+                         {/* Banner Management Route */}
+                         <Route path="/banner-management/:storeId" element={
+                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                             <BannerManagementPage />
+                           </ProtectedRoute>
+                         } />
+                        
+                        {/* Theme Studio Route */}
+                        <Route path="/theme-studio" element={
                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                            <BannerManagementPage />
+                            <ThemeStudioPage />
                           </ProtectedRoute>
                         } />
                        
