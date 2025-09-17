@@ -136,13 +136,23 @@ export const usePromotionalBanners = (storeId?: string, affiliateStoreId?: strin
     try {
       setIsLoading(true);
       
+      const user = await supabase.auth.getUser();
+      
       const { data, error } = await supabase
         .from('promotional_banners')
         .insert({
+          title: bannerData.title || 'بانر جديد',
+          banner_type: bannerData.banner_type || 'hero',
+          position: bannerData.position || 'top',
+          priority: bannerData.priority || 1,
+          background_color: bannerData.background_color || '#000000',
+          text_color: bannerData.text_color || '#ffffff',
+          button_color: bannerData.button_color || '#ffffff',
+          timezone: bannerData.timezone || 'Asia/Riyadh',
+          animation_type: bannerData.animation_type || 'fade',
           ...bannerData,
-          store_id: storeId,
           affiliate_store_id: affiliateStoreId,
-          created_by: (await supabase.auth.getUser()).data.user?.id
+          created_by: user.data.user?.id
         })
         .select()
         .single();
@@ -268,12 +278,16 @@ export const usePromotionalBanners = (storeId?: string, affiliateStoreId?: strin
       if (eventType === 'impression') {
         await supabase
           .from('promotional_banners')
-          .update({ current_impressions: supabase.rpc('increment', { value: 1 }) })
+          .update({ 
+            current_impressions: banners.find(b => b.id === bannerId)?.current_impressions + 1 || 1 
+          })
           .eq('id', bannerId);
       } else if (eventType === 'click') {
         await supabase
           .from('promotional_banners')
-          .update({ current_clicks: supabase.rpc('increment', { value: 1 }) })
+          .update({ 
+            current_clicks: banners.find(b => b.id === bannerId)?.current_clicks + 1 || 1 
+          })
           .eq('id', bannerId);
       }
     } catch (error) {

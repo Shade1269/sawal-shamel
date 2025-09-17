@@ -14,6 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Loader2, ShoppingCart, Star } from 'lucide-react';
 import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
+import { PromotionalBannerDisplay } from '@/components/storefront/PromotionalBannerDisplay';
 import { toast } from 'sonner';
 
 interface Product {
@@ -138,12 +139,33 @@ export const IsolatedStorefront: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Hero Banners */}
+      <PromotionalBannerDisplay 
+        affiliateStoreId={store?.id}
+        bannerType="hero"
+        position="top"
+      />
+      
+      {/* Top Strip Banners */}
+      <PromotionalBannerDisplay 
+        affiliateStoreId={store?.id}
+        bannerType="strip"
+        position="top"
+      />
+      
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">منتجات {store?.store_name}</h2>
         <p className="text-muted-foreground">
           تصفح واطلب المنتجات بسهولة ويسر
         </p>
       </div>
+
+      {/* Middle Strip Banners */}
+      <PromotionalBannerDisplay 
+        affiliateStoreId={store?.id}
+        bannerType="strip"
+        position="middle"
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => (
@@ -216,6 +238,25 @@ export const IsolatedStorefront: React.FC = () => {
           </Card>
         ))}
       </div>
+
+      {/* Bottom Strip Banners */}
+      <PromotionalBannerDisplay 
+        affiliateStoreId={store?.id}
+        bannerType="strip"
+        position="bottom"
+      />
+      
+      {/* Floating and Popup Banners (Global) */}
+      <PromotionalBannerDisplay 
+        affiliateStoreId={store?.id}
+        bannerType="popup"
+      />
+      
+      <PromotionalBannerDisplay 
+        affiliateStoreId={store?.id}
+        bannerType="sidebar"
+        position="floating"
+      />
     </div>
   );
 };
