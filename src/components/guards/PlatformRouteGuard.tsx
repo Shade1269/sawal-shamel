@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
 import { useFastAuth } from '@/hooks/useFastAuth';
@@ -8,39 +8,84 @@ interface PlatformRouteGuardProps {
 }
 
 /**
- * يمنع عملاء المتجر من الوصول لصفحات المنصة
+ * يمنع عملاء المتجر النشطين من الوصول لصفحات المنصة
+ * مع السماح للجميع بالوصول للصفحات العامة وتسجيل الدخول
  */
 export const PlatformRouteGuard = ({ children }: PlatformRouteGuardProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, profile } = useFastAuth();
-  
-  // فحص إذا كان هناك عميل متجر مسجل دخول
-  const customerSessionKey = 'customer_session';
-  const customerSession = typeof window !== 'undefined' ? localStorage.getItem(customerSessionKey) : null;
+  const [hasValidCustomerSession, setHasValidCustomerSession] = useState(false);
   
   const currentPath = location.pathname;
-  const isPlatformPath = currentPath.startsWith('/admin') || 
-                        currentPath.startsWith('/affiliate') || 
-                        currentPath.startsWith('/merchant') ||
-                        currentPath === '/dashboard' ||
-                        (currentPath === '/auth' && !currentPath.includes('/store/'));
+  
+  // الصفحات المحمية من عملاء المتجر (الصفحات الداخلية فقط)
+  const isRestrictedPath = currentPath.startsWith('/admin') || 
+                          currentPath.startsWith('/affiliate') || 
+                          currentPath.startsWith('/merchant') ||
+                          currentPath.startsWith('/dashboard');
+  
+  // الصفحات العامة المسموحة للجميع
+  const isPublicPath = currentPath === '/' || 
+                      currentPath === '/auth' || 
+                      currentPath === '/login' || 
+                      currentPath === '/signup' ||
+                      currentPath === '/about' ||
+                      currentPath === '/products' ||
+                      currentPath === '/create-admin';
 
   useEffect(() => {
-    // إذا كان هناك جلسة عميل متجر ويحاول دخول صفحات المنصة
-    if (customerSession && isPlatformPath) {
-      // إذا كان مستخدم المنصة مصادقًا، نسمح بالدخول ونزيل تعارض جلسة المتجر
+    // التحقق من وجود جلسة عميل متجر صالحة
+    const checkCustomerSession = () => {
+      try {
+        const customerSessionKey = 'customer_session';
+        const customerSession = localStorage.getItem(customerSessionKey);
+        
+        if (customerSession) {
+          const sessionData = JSON.parse(customerSession);
+          const currentTime = Date.now();
+          const sessionExpiry = sessionData.expiresAt || 0;
+          
+          // إذا كانت الجلسة منتهية، احذفها
+          if (currentTime > sessionExpiry) {
+            localStorage.removeItem(customerSessionKey);
+            setHasValidCustomerSession(false);
+            return;
+          }
+          
+          setHasValidCustomerSession(true);
+        } else {
+          setHasValidCustomerSession(false);
+        }
+      } catch (error) {
+        // إذا كانت بيانات الجلسة فاسدة، احذفها
+        localStorage.removeItem('customer_session');
+        setHasValidCustomerSession(false);
+      }
+    };
+
+    checkCustomerSession();
+  }, [currentPath]);
+
+  useEffect(() => {
+    // فقط إذا كان المستخدم يحاول الدخول للصفحات المحمية
+    if (isRestrictedPath && hasValidCustomerSession) {
+      // إذا كان مستخدم المنصة مصادقًا، أزل تعارض جلسة المتجر
       if (isAuthenticated && profile) {
         try {
-          localStorage.removeItem(customerSessionKey);
-        } catch {}
+          localStorage.removeItem('customer_session');
+          setHasValidCustomerSession(false);
+        } catch (error) {
+          console.warn('Could not remove customer session:', error);
+        }
         return;
       }
-      // غير مصادق كمستخدم منصة → ارجاع للصفحة الرئيسية
+      
+      // عميل متجر يحاول دخول صفحات المنصة المحمية → ارجاع للصفحة الرئيسية
       navigate('/', { replace: true });
       return;
     }
-  }, [customerSession, isPlatformPath, isAuthenticated, profile, navigate]);
+  }, [hasValidCustomerSession, isRestrictedPath, isAuthenticated, profile, navigate]);
 
   return <>{children}</>;
 };

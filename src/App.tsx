@@ -16,9 +16,10 @@ import { AuthPage } from "@/features/auth";
 import { ProtectedRoute } from "@/shared/components/ProtectedRoute";
 import Index from "./pages/Index";
 import DomainManager from "@/components/store/DomainManager";
+import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
 
 import AdminLayout from "@/layouts/EnhancedAdminLayout";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 
 // Lazy load dashboard pages
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
@@ -120,6 +121,11 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  // تنظيف الجلسات المنتهية عند تحميل التطبيق
+  useEffect(() => {
+    cleanupExpiredSessions();
+  }, []);
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
