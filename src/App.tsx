@@ -23,7 +23,12 @@ import AdminLayout from "@/layouts/EnhancedAdminLayout";
 import { lazy, Suspense, useEffect } from "react";
 import RedirectToPrimaryStore from "./pages/redirects/RedirectToPrimaryStore";
 
-// Lazy load dashboard pages
+// Unified Pages - المكونات الموحدة الجديدة
+const UnifiedDashboardPage = lazy(() => import("./pages/unified/UnifiedDashboardPage"));
+const UnifiedProductsPage = lazy(() => import("./pages/unified/UnifiedProductsPage"));
+const UnifiedOrdersPage = lazy(() => import("./pages/unified/UnifiedOrdersPage"));
+
+// Legacy Dashboard pages - سيتم إزالتها تدريجياً
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
@@ -36,11 +41,13 @@ const NavigationDemo = lazy(() => import("./components/demos/NavigationDemo"));
 const AdvancedNavigationDemo = lazy(() => import("./components/demos/AdvancedNavigationDemo"));
 const DesignSystemDemo = lazy(() => import("./components/demos/DesignSystemDemo"));
 const InteractiveDemo = lazy(() => import("./components/demos/InteractiveDemo"));
+
+// Legacy - سيتم دمجها في النظام الموحد
 const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
 
-// Affiliate Dashboard Pages
+// Affiliate Dashboard Pages - سيتم دمجها
 const AffiliateDashboardLayout = lazy(() => import("./layouts/AffiliateDashboardLayout"));
 const AffiliateDashboardOverview = lazy(() => import("./pages/affiliate/AffiliateDashboardOverview"));
 const AffiliateProductsPage = lazy(() => import("./pages/affiliate/AffiliateProductsPage"));
@@ -67,15 +74,15 @@ import { MyStoreOrders } from '@/pages/storefront/MyStoreOrders';
 import StoreOrderConfirmation from "./pages/StoreOrderConfirmation";
 import StoreAuth from "./pages/StoreAuth";
 import StoreTestPage from "./components/store/StoreTestPage";
+// Legacy - سيتم دمجها في النظام الموحد
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AdminOrderManagement = lazy(() => import("./pages/AdminOrderManagement"));
-// FastAuth removed
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
 const ProfilePage = lazy(() => import("./pages/Profile"));
 const AboutPage = lazy(() => import("./pages/About"));
 const CreateAdminPage = lazy(() => import("./pages/CreateAdmin"));
 
-// E-commerce Pages
+// E-commerce Pages - سيتم توحيدها
 const Cart = lazy(() => import("./pages/Cart"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const SimpleCODCheckout = lazy(() => import("./pages/SimpleCODCheckout"));
@@ -107,7 +114,7 @@ const AtlantisGuide = lazy(() => import("./pages/AtlantisGuide"));
 const AtlantisChat = lazy(() => import("@/features/chat").then(m => ({ default: m.AtlantisChat })));
 const AtlantisChatRooms = lazy(() => import("@/features/chat").then(m => ({ default: m.AtlantisChatRooms })));
 
-// Product Management Pages
+// Legacy Product Management Pages - سيتم دمجها
 const ProductManagement = lazy(() => import("./pages/ProductManagement"));
 const ProductsBrowser = lazy(() => import("./pages/ProductsBrowser"));
 const CategoryManagement = lazy(() => import("./pages/CategoryManagement"));
@@ -248,62 +255,119 @@ const App = () => {
                     <Route path="/advanced-navigation" element={<AdvancedNavigationDemo />} />
                     <Route path="/design-demo" element={<DesignSystemDemo />} />
                     <Route path="/interactive-demo" element={<InteractiveDemo />} />
+                       {/* الصفحات الموحدة الجديدة */}
                        
-                       {/* Protected Browser */}
+                       {/* Dashboard الموحد - يعمل لجميع الأدوار */}
+                       <Route path="/dashboard" element={
+                         <ProtectedRoute requiredRole={["affiliate", "admin", "merchant"]}>
+                           <UnifiedDashboardPage />
+                         </ProtectedRoute>
+                       } />
+                       <Route path="/admin" element={
+                         <ProtectedRoute requiredRole={["admin"]}>
+                           <UnifiedDashboardPage />
+                         </ProtectedRoute>
+                       } />
+                       <Route path="/merchant" element={
+                         <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                           <UnifiedDashboardPage />
+                         </ProtectedRoute>
+                       } />
+
+                       {/* Products الموحد */}
+                       <Route path="/products" element={<UnifiedProductsPage />} />
                        <Route path="/products-browser" element={
                          <ProtectedRoute requiredRole={["affiliate"]}>
-                           <ProductsBrowser />
+                           <UnifiedProductsPage />
+                         </ProtectedRoute>
+                       } />
+                       <Route path="/admin/products" element={
+                         <ProtectedRoute requiredRole={["admin"]}>
+                           <UnifiedProductsPage />
+                         </ProtectedRoute>
+                       } />
+                       <Route path="/merchant/products" element={
+                         <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                           <UnifiedProductsPage />
+                         </ProtectedRoute>
+                       } />
+
+                       {/* Orders الموحد */}
+                       <Route path="/orders" element={
+                         <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                           <UnifiedOrdersPage />
+                         </ProtectedRoute>
+                       } />
+                       <Route path="/dashboard/orders" element={
+                         <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                           <UnifiedOrdersPage />
+                         </ProtectedRoute>
+                       } />
+                       <Route path="/admin/orders" element={
+                         <ProtectedRoute requiredRole={["admin"]}>
+                           <UnifiedOrdersPage />
+                         </ProtectedRoute>
+                       } />
+                       <Route path="/my-orders" element={<UnifiedOrdersPage />} />
+
+                       {/* Legacy Routes - للتوافق مع الروابط القديمة */}
+                       <Route path="/affiliate-dashboard" element={<Navigate to="/dashboard" replace />} />
+                       <Route path="/admin-dashboard" element={<Navigate to="/admin" replace />} />
+                       <Route path="/merchant-dashboard" element={<Navigate to="/merchant" replace />} />
+                       <Route path="/product-management" element={<Navigate to="/products" replace />} />
+                       <Route path="/order-management" element={<Navigate to="/orders" replace />} />
+
+                       
+                       {/* الصفحات المحددة التي لم يتم دمجها بعد */}
+                       {/* E-commerce Routes - نظام التسوق */}
+                       <Route path="/cart" element={<Cart />} />
+                       <Route path="/checkout" element={<CheckoutPage />} />
+                       <Route path="/simple-checkout" element={<SimpleCODCheckout />} />
+                       <Route path="/order-confirmation/:orderId" element={<OrderConfirmationSimple />} />
+                       <Route path="/track-order" element={<OrderTracking />} />
+                       <Route path="/track-order/:orderId" element={<OrderTracking />} />
+                       {/* الإدارة والأنشطة المتقدمة */}
+                       <Route path="/shipment-management" element={
+                         <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                           <ShipmentManagement />
+                         </ProtectedRoute>
+                       } />
+                       
+                       {/* Analytics Routes - التحليلات */}
+                       <Route path="/analytics" element={
+                         <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                           <AnalyticsDashboard />
+                         </ProtectedRoute>
+                       } />
+                       <Route path="/sales-reports" element={
+                         <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                           <SalesReports />
+                         </ProtectedRoute>
+                       } />
+                       <Route path="/user-behavior" element={
+                         <ProtectedRoute requiredRole={["merchant", "admin"]}>
+                           <UserBehaviorAnalytics />
                          </ProtectedRoute>
                        } />
                       
-                      {/* E-commerce Routes */}
-                      <Route path="/cart" element={<Cart />} />
-                      <Route path="/checkout" element={<CheckoutPage />} />
-                      <Route path="/simple-checkout" element={<SimpleCODCheckout />} />
-                      <Route path="/order-confirmation/:orderId" element={<OrderConfirmationSimple />} />
-                      <Route path="/track-order" element={<OrderTracking />} />
-                      <Route path="/track-order/:orderId" element={<OrderTracking />} />
-                      <Route path="/shipment-management" element={
-                        <ProtectedRoute requiredRole={["merchant", "admin"]}>
-                          <ShipmentManagement />
-                        </ProtectedRoute>
-                      } />
-                      
-                      {/* Analytics Routes */}
-                      <Route path="/analytics" element={
-                        <ProtectedRoute requiredRole={["merchant", "admin"]}>
-                          <AnalyticsDashboard />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="/sales-reports" element={
-                        <ProtectedRoute requiredRole={["merchant", "admin"]}>
-                          <SalesReports />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="/user-behavior" element={
-                        <ProtectedRoute requiredRole={["merchant", "admin"]}>
-                          <UserBehaviorAnalytics />
-                        </ProtectedRoute>
-                      } />
-                      
-                      {/* Protected Routes */}
-                      <Route path="/profile" element={
-                        <ProtectedRoute>
-                          <ProfilePage />
-                        </ProtectedRoute>
-                      } />
-                      
-                      {/* Affiliate Dashboard Routes */}
-                      <Route path="/dashboard" element={
-                        <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                          <AffiliateDashboardLayout />
-                        </ProtectedRoute>
-                      }>
-                         <Route index element={<AffiliateDashboardOverview />} />
-                         <Route path="products" element={<AffiliateProductsPage />} />
-                          <Route path="orders" element={<AffiliateOrdersPage />} />
-                          <Route path="commissions" element={<AffiliateCommissionsPage />} />
-                        </Route>
+                       {/* الأنظمة المحددة والمتقدمة */}
+                       <Route path="/profile" element={
+                         <ProtectedRoute>
+                           <ProfilePage />
+                         </ProtectedRoute>
+                       } />
+                       
+                       {/* Legacy Affiliate Dashboard Routes - إعادة توجيه للنظام الموحد */}
+                       <Route path="/dashboard/*" element={
+                         <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                           <Routes>
+                             <Route index element={<UnifiedDashboardPage />} />
+                             <Route path="products" element={<UnifiedProductsPage />} />
+                             <Route path="orders" element={<UnifiedOrdersPage />} />
+                             <Route path="commissions" element={<AffiliateCommissionsPage />} />
+                           </Routes>
+                         </ProtectedRoute>
+                       } />
                         
                          {/* CMS Management Route */}
                          <Route path="/cms-management" element={
