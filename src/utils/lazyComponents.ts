@@ -32,17 +32,11 @@ export const LazyComponents = {
   MarketingDashboard: createLazyComponent(() => import('@/pages/MarketingDashboard')),
   PaymentDashboard: createLazyComponent(() => import('@/pages/PaymentDashboard')),
   
-  // Store Components
-  StoreFront: createLazyComponent(() => import('@/pages/StoreFront')),
+  // Store Components - updated
   PublicStorefront: createLazyComponent(() => import('@/pages/PublicStorefront')),
   StoreManagementNew: createLazyComponent(() => import('@/pages/StoreManagementNew')),
   
-  // Chat Components
-  AtlantisSystem: createLazyComponent(() => import('@/pages/AtlantisSystem')),
-  Chat: createLazyComponent(() => import('@/pages/Chat')),
-  ChatRoom: createLazyComponent(() => import('@/pages/ChatRoom')),
-  
-  // Advanced Features
+  // Advanced Features - Atlantis replaces old chat
   SecurityCenter: createLazyComponent(() => import('@/pages/SecurityCenter')),
   
   // Heavy Components

@@ -96,7 +96,7 @@ export class BundleOptimizer {
         () => import('@/pages/Inventory'),
       ],
       'customer': [
-        () => import('@/pages/StoreFront'),
+        () => import('@/pages/PublicStorefront'),
         () => import('@/pages/Cart'),
       ],
     };

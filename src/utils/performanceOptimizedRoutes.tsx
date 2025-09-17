@@ -12,7 +12,7 @@ export const OptimizedRoutes = {
   ),
   
   Home: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/Home'),
+    () => import('@/pages/Index'),
     'home',
     'high'
   ),
@@ -74,13 +74,7 @@ export const OptimizedRoutes = {
     'low'
   ),
 
-  // Store routes
-  StoreFront: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/StoreFront'),
-    'store-front',
-    'high'
-  ),
-  
+  // Store routes - updated
   PublicStorefront: BundleOptimizer.createOptimizedLazyComponent(
     () => import('@/pages/PublicStorefront'),
     'public-storefront',
@@ -119,19 +113,7 @@ export const OptimizedRoutes = {
     'medium'
   ),
   
-  Chat: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/Chat'),
-    'chat',
-    'medium'
-  ),
-  
-  ChatRoom: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/ChatRoom'),
-    'chat-room',
-    'medium'
-  ),
-
-  // Security route
+  // Security route - chat moved to Atlantis system
   SecurityCenter: BundleOptimizer.createOptimizedLazyComponent(
     () => import('@/pages/SecurityCenter'),
     'security-center',
@@ -263,13 +245,13 @@ export const RoutePreloader = {
         'AffiliateStoreFront'
       ],
       merchant: [
-        'StoreFront',
+        'PublicStorefront',
         'ProductManagement',
         'OrderManagement',
         'Inventory'
       ],
       customer: [
-        'StoreFront',
+        'PublicStorefront',
         'Cart',
         'CheckoutPage'
       ]
