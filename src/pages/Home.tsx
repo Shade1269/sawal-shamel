@@ -1,4 +1,6 @@
 import { useFastAuth } from '@/hooks/useFastAuth';
+import { useSEO } from '@/hooks/useSEO';
+import { WebsiteStructuredData } from '@/components/seo/StructuredData';
 import { 
   EnhancedButton,
   EnhancedCard,
@@ -34,6 +36,14 @@ import { useNavigate } from 'react-router-dom';
 const HomePage = () => {
   const { isAuthenticated, profile } = useFastAuth();
   const navigate = useNavigate();
+
+  // SEO optimization for home page
+  useSEO({
+    title: 'الصفحة الرئيسية | منصة التسويق الذكية',
+    description: 'ابدأ رحلتك في التسويق بالعمولة مع أقوى منصة في الشرق الأوسط. أدوات ذكية، تحليلات متقدمة، ودعم 24/7',
+    keywords: 'تسويق بالعمولة, منصة تسويق, التجارة الإلكترونية, ربح من الانترنت, متجر إلكتروني',
+    type: 'website'
+  });
 
   const features = [
     {
@@ -97,6 +107,9 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-persian-bg">
+      {/* Add structured data for homepage */}
+      <WebsiteStructuredData />
+      
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-hero opacity-10"></div>
