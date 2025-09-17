@@ -3,9 +3,18 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useAffiliateOrders } from '@/hooks/useAffiliateOrders';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { 
+  EnhancedCard, 
+  EnhancedCardHeader, 
+  EnhancedCardTitle, 
+  EnhancedCardContent,
+  InteractiveWidget,
+  AnimatedCounter,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  EnhancedButton
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Store, Package, ShoppingBag, DollarSign, Users, TrendingUp, ExternalLink, Palette } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createStoreUrl } from '@/utils/domains';
@@ -90,23 +99,25 @@ export default function AffiliateDashboardOverview() {
           <p className="text-muted-foreground mb-4">
             قم بإنشاء متجرك الأول لبدء التسويق بالعمولة
           </p>
-          <Button onClick={handleCreateStore} disabled={creating}>{creating ? 'جاري الإنشاء...' : 'إنشاء متجر جديد'}</Button>
+          <EnhancedButton onClick={handleCreateStore} disabled={creating} variant="persian" animation="glow">
+            {creating ? 'جاري الإنشاء...' : 'إنشاء متجر جديد'}
+          </EnhancedButton>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <ResponsiveLayout variant="glass" maxWidth="2xl" centerContent>
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">نظرة عامة</h1>
+            <h1 className="text-3xl font-bold mb-2 bg-gradient-persian bg-clip-text text-transparent">نظرة عامة</h1>
             <p className="text-muted-foreground">
               مرحباً بك في لوحة تحكم متجر {affiliateStore.store_name}
             </p>
           </div>
-          <Button asChild variant="outline">
+          <EnhancedButton asChild variant="outline">
             <a 
               href={createStoreUrl(affiliateStore.store_slug)}
               target="_blank"
@@ -116,172 +127,169 @@ export default function AffiliateDashboardOverview() {
               <ExternalLink className="h-4 w-4" />
               عرض المتجر
             </a>
-          </Button>
+          </EnhancedButton>
         </div>
       </div>
 
       {/* Store Info Card */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <EnhancedCard variant="persian" className="mb-8" hover="glow">
+        <EnhancedCardHeader>
+          <EnhancedCardTitle className="flex items-center gap-2 text-white">
             <Store className="h-5 w-5" />
             معلومات المتجر
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </EnhancedCardTitle>
+        </EnhancedCardHeader>
+        <EnhancedCardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <h4 className="font-medium text-sm text-muted-foreground">اسم المتجر</h4>
-              <p className="text-lg font-semibold">{affiliateStore.store_name}</p>
+              <h4 className="font-medium text-sm text-white/70">اسم المتجر</h4>
+              <p className="text-lg font-semibold text-white">{affiliateStore.store_name}</p>
             </div>
             <div>
-              <h4 className="font-medium text-sm text-muted-foreground">رابط المتجر</h4>
-              <p className="text-lg font-semibold">{createStoreUrl(affiliateStore.store_slug)}</p>
+              <h4 className="font-medium text-sm text-white/70">رابط المتجر</h4>
+              <p className="text-lg font-semibold text-white">{createStoreUrl(affiliateStore.store_slug)}</p>
             </div>
             <div>
-              <h4 className="font-medium text-sm text-muted-foreground">الحالة</h4>
-              <Badge variant={affiliateStore.is_active ? "default" : "secondary"}>
+              <h4 className="font-medium text-sm text-white/70">الحالة</h4>
+              <Badge variant={affiliateStore.is_active ? "default" : "secondary"} className="bg-white/20 text-white">
                 {affiliateStore.is_active ? "نشط" : "غير نشط"}
               </Badge>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </EnhancedCardContent>
+      </EnhancedCard>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">المنتجات النشطة</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{productsCount || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              منتج متاح للعملاء
-            </p>
-          </CardContent>
-        </Card>
+      <ResponsiveGrid columns={{ mobile: 1, tablet: 2, desktop: 4 }} gap={{ mobile: 4, tablet: 6 }} className="mb-8">
+        <InteractiveWidget
+          title="المنتجات النشطة"
+          description="منتج متاح للعملاء"
+          variant="glass"
+          metric={{
+            value: productsCount || 0,
+            label: "منتج",
+            icon: Package
+          }}
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي الطلبات</CardTitle>
-            <ShoppingBag className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{orderStats.totalOrders}</div>
-            <p className="text-xs text-muted-foreground">
-              {orderStats.averageOrderValue.toFixed(2)} ر.س متوسط قيمة الطلب
-            </p>
-          </CardContent>
-        </Card>
+        <InteractiveWidget
+          title="إجمالي الطلبات"
+          description="متوسط قيمة الطلب"
+          variant="luxury"
+          metric={{
+            value: orderStats.totalOrders,
+            label: "طلب",
+            change: orderStats.averageOrderValue,
+            icon: ShoppingBag
+          }}
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي المبيعات</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{orderStats.totalRevenue.toFixed(2)} ر.س</div>
-            <p className="text-xs text-muted-foreground">
-              {affiliateStore.total_sales?.toFixed(2) || '0.00'} ر.س إجمالي المبيعات المسجلة
-            </p>
-          </CardContent>
-        </Card>
+        <InteractiveWidget
+          title="إجمالي المبيعات"
+          description="إجمالي المبيعات المسجلة"
+          variant="glass"
+          metric={{
+            value: `${orderStats.totalRevenue.toFixed(2)} ر.س`,
+            label: "مبيعات",
+            icon: TrendingUp
+          }}
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">العمولات</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{orderStats.totalCommissions.toFixed(2)} ر.س</div>
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>معلقة: {orderStats.pendingCommissions.toFixed(2)} ر.س</span>
-              <span>مؤكدة: {orderStats.confirmedCommissions.toFixed(2)} ر.س</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        <InteractiveWidget
+          title="العمولات"
+          description="معلقة ومؤكدة"
+          variant="glass"
+          metric={{
+            value: `${orderStats.totalCommissions.toFixed(2)} ر.س`,
+            label: "عمولة",
+            icon: DollarSign
+          }}
+          progress={{
+            value: orderStats.confirmedCommissions,
+            max: orderStats.totalCommissions,
+            label: "مؤكدة"
+          }}
+        />
+      </ResponsiveGrid>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+      <ResponsiveGrid columns={{ mobile: 1, tablet: 2, desktop: 4 }} gap={{ mobile: 4, tablet: 6 }}>
+        <EnhancedCard variant="glass" hover="lift">
+          <EnhancedCardHeader>
+            <EnhancedCardTitle className="flex items-center gap-2">
               <Package className="h-5 w-5" />
               إدارة المنتجات
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </EnhancedCardTitle>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
             <p className="text-muted-foreground mb-4">
               إدارة منتجات متجرك وإعدادات العمولة
             </p>
-            <Button asChild className="w-full">
+            <EnhancedButton asChild className="w-full" variant="default" animation="glow">
               <Link to="/dashboard/products">
                 عرض المنتجات
               </Link>
-            </Button>
-          </CardContent>
-        </Card>
+            </EnhancedButton>
+          </EnhancedCardContent>
+        </EnhancedCard>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <EnhancedCard variant="glass" hover="lift">
+          <EnhancedCardHeader>
+            <EnhancedCardTitle className="flex items-center gap-2">
               <ShoppingBag className="h-5 w-5" />
               متابعة الطلبات
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </EnhancedCardTitle>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
             <p className="text-muted-foreground mb-4">
               متابعة وإدارة طلبات العملاء
             </p>
-            <Button asChild className="w-full">
+            <EnhancedButton asChild className="w-full" variant="luxury" animation="glow">
               <Link to="/dashboard/orders">
                 عرض الطلبات
               </Link>
-            </Button>
-          </CardContent>
-        </Card>
+            </EnhancedButton>
+          </EnhancedCardContent>
+        </EnhancedCard>
 
-         <Card>
-           <CardHeader>
-             <CardTitle className="flex items-center gap-2">
+         <EnhancedCard variant="glass" hover="lift">
+           <EnhancedCardHeader>
+             <EnhancedCardTitle className="flex items-center gap-2">
                <Palette className="h-5 w-5" />
                ثيمات المتجر
-             </CardTitle>
-           </CardHeader>
-           <CardContent>
+             </EnhancedCardTitle>
+           </EnhancedCardHeader>
+           <EnhancedCardContent>
              <p className="text-muted-foreground mb-4">
                اختر الثيم المناسب لطبيعة منتجاتك
              </p>
-             <Button asChild className="w-full">
+             <EnhancedButton asChild className="w-full" variant="persian" animation="glow">
                <Link to={`/store-themes/${affiliateStore.id}`}>
                  إدارة الثيمات
                </Link>
-             </Button>
-           </CardContent>
-         </Card>
+             </EnhancedButton>
+           </EnhancedCardContent>
+         </EnhancedCard>
 
-         <Card>
-           <CardHeader>
-             <CardTitle className="flex items-center gap-2">
+         <EnhancedCard variant="glass" hover="lift">
+           <EnhancedCardHeader>
+             <EnhancedCardTitle className="flex items-center gap-2">
                <DollarSign className="h-5 w-5" />
                تتبع العمولات
-             </CardTitle>
-           </CardHeader>
-           <CardContent>
+             </EnhancedCardTitle>
+           </EnhancedCardHeader>
+           <EnhancedCardContent>
              <p className="text-muted-foreground mb-4">
                متابعة عمولاتك وأرباحك
              </p>
-             <Button asChild className="w-full">
+             <EnhancedButton asChild className="w-full" variant="outline" animation="glow">
                <Link to="/dashboard/commissions">
                  عرض العمولات
                </Link>
-             </Button>
-           </CardContent>
-         </Card>
-      </div>
-    </div>
+             </EnhancedButton>
+           </EnhancedCardContent>
+         </EnhancedCard>
+      </ResponsiveGrid>
+    </ResponsiveLayout>
   );
 }
