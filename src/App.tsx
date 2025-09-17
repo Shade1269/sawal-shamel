@@ -121,6 +121,9 @@ const BannerManagementPage = lazy(() => import("./pages/BannerManagementPage"));
 // Promotions Management
 const PromotionsPage = lazy(() => import("./pages/PromotionsPage"));
 
+// Advanced Marketing
+const AdvancedMarketingPage = lazy(() => import("./pages/AdvancedMarketingPage"));
+
 // Shipping and Tracking Pages
 const ShipmentManagement = lazy(() => import("./pages/ShipmentManagement"));
 
@@ -298,6 +301,13 @@ const App = () => {
                          <Route path="/promotions" element={
                            <ProtectedRoute requiredRole={["affiliate", "merchant", "admin"]}>
                              <PromotionsPage />
+                           </ProtectedRoute>
+                         } />
+                          
+                         {/* Advanced Marketing Route */}
+                         <Route path="/advanced-marketing" element={
+                           <ProtectedRoute requiredRole={["affiliate", "merchant", "admin"]}>
+                             <AdvancedMarketingPage />
                            </ProtectedRoute>
                          } />
                           

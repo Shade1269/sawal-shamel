@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Store, Package, ShoppingBag, DollarSign, BarChart3, Palette, Gift } from 'lucide-react';
+import { Store, Package, ShoppingBag, DollarSign, BarChart3, Palette, Gift, Target } from 'lucide-react';
 import { useFastAuth } from '@/hooks/useFastAuth';
 
 export default function AffiliateDashboardLayout() {
@@ -36,6 +36,7 @@ export default function AffiliateDashboardLayout() {
     { name: 'الطلبات', href: '/dashboard/orders', icon: ShoppingBag },
     { name: 'العمولات', href: '/dashboard/commissions', icon: DollarSign },
     { name: 'الحملات الترويجية', href: '/promotions', icon: Gift },
+    { name: 'التسويق المتقدم', href: '/advanced-marketing', icon: Target },
     ...(primaryStore ? [{
       name: 'ثيمات المتجر', 
       href: `/store-themes/${primaryStore.id}`, 

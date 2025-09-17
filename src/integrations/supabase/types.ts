@@ -89,6 +89,60 @@ export type Database = {
           },
         ]
       }
+      advanced_analytics_events: {
+        Row: {
+          affiliate_store_id: string | null
+          created_at: string
+          device_info: Json | null
+          event_data: Json
+          event_name: string
+          event_type: string
+          geo_location: Json | null
+          id: string
+          ip_address: unknown | null
+          page_url: string | null
+          referrer_url: string | null
+          session_id: string | null
+          store_id: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          created_at?: string
+          device_info?: Json | null
+          event_data?: Json
+          event_name: string
+          event_type: string
+          geo_location?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          page_url?: string | null
+          referrer_url?: string | null
+          session_id?: string | null
+          store_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          created_at?: string
+          device_info?: Json | null
+          event_data?: Json
+          event_name?: string
+          event_type?: string
+          geo_location?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          page_url?: string | null
+          referrer_url?: string | null
+          session_id?: string | null
+          store_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       affiliate_products: {
         Row: {
           added_at: string | null
@@ -680,6 +734,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      behavioral_triggers: {
+        Row: {
+          actions: Json
+          affiliate_store_id: string | null
+          conditions: Json
+          created_at: string
+          id: string
+          is_active: boolean
+          last_triggered_at: string | null
+          store_id: string | null
+          trigger_description: string | null
+          trigger_name: string
+          triggered_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          actions?: Json
+          affiliate_store_id?: string | null
+          conditions?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_triggered_at?: string | null
+          store_id?: string | null
+          trigger_description?: string | null
+          trigger_name: string
+          triggered_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          actions?: Json
+          affiliate_store_id?: string | null
+          conditions?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_triggered_at?: string | null
+          store_id?: string | null
+          trigger_description?: string | null
+          trigger_name?: string
+          triggered_count?: number | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       bundle_offers: {
         Row: {
@@ -1749,6 +1848,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      customer_journey_steps: {
+        Row: {
+          affiliate_store_id: string | null
+          created_at: string
+          customer_id: string
+          id: string
+          step_category: string
+          step_data: Json | null
+          step_name: string
+          store_id: string | null
+          timestamp: string
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          created_at?: string
+          customer_id: string
+          id?: string
+          step_category: string
+          step_data?: Json | null
+          step_name: string
+          store_id?: string | null
+          timestamp?: string
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          created_at?: string
+          customer_id?: string
+          id?: string
+          step_category?: string
+          step_data?: Json | null
+          step_name?: string
+          store_id?: string | null
+          timestamp?: string
+        }
+        Relationships: []
       }
       customer_loyalty: {
         Row: {
@@ -2949,6 +3084,36 @@ export type Database = {
           },
         ]
       }
+      lead_activities: {
+        Row: {
+          activity_data: Json | null
+          activity_description: string
+          activity_type: string
+          created_at: string
+          id: string
+          lead_id: string
+          performed_by: string | null
+        }
+        Insert: {
+          activity_data?: Json | null
+          activity_description: string
+          activity_type: string
+          created_at?: string
+          id?: string
+          lead_id: string
+          performed_by?: string | null
+        }
+        Update: {
+          activity_data?: Json | null
+          activity_description?: string
+          activity_type?: string
+          created_at?: string
+          id?: string
+          lead_id?: string
+          performed_by?: string | null
+        }
+        Relationships: []
+      }
       leaderboard_weekly: {
         Row: {
           affiliate_id: string
@@ -2990,6 +3155,75 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      leads: {
+        Row: {
+          affiliate_store_id: string | null
+          assigned_to: string | null
+          company: string | null
+          conversion_date: string | null
+          conversion_value: number | null
+          created_at: string
+          custom_fields: Json | null
+          email: string
+          full_name: string | null
+          id: string
+          interest_level: string | null
+          last_activity_at: string | null
+          lead_score: number | null
+          lead_source: string
+          lead_status: string
+          notes: string | null
+          phone: string | null
+          store_id: string | null
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          assigned_to?: string | null
+          company?: string | null
+          conversion_date?: string | null
+          conversion_value?: number | null
+          created_at?: string
+          custom_fields?: Json | null
+          email: string
+          full_name?: string | null
+          id?: string
+          interest_level?: string | null
+          last_activity_at?: string | null
+          lead_score?: number | null
+          lead_source: string
+          lead_status?: string
+          notes?: string | null
+          phone?: string | null
+          store_id?: string | null
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          assigned_to?: string | null
+          company?: string | null
+          conversion_date?: string | null
+          conversion_value?: number | null
+          created_at?: string
+          custom_fields?: Json | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          interest_level?: string | null
+          last_activity_at?: string | null
+          lead_score?: number | null
+          lead_source?: string
+          lead_status?: string
+          notes?: string | null
+          phone?: string | null
+          store_id?: string | null
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       loyalty_redemptions: {
         Row: {
@@ -3192,6 +3426,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      marketing_automation_campaigns: {
+        Row: {
+          affiliate_store_id: string | null
+          campaign_steps: Json
+          campaign_type: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          stats: Json | null
+          store_id: string | null
+          target_audience_rules: Json
+          trigger_conditions: Json
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          campaign_steps?: Json
+          campaign_type: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          stats?: Json | null
+          store_id?: string | null
+          target_audience_rules?: Json
+          trigger_conditions?: Json
+          trigger_type: string
+          updated_at?: string
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          campaign_steps?: Json
+          campaign_type?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          stats?: Json | null
+          store_id?: string | null
+          target_audience_rules?: Json
+          trigger_conditions?: Json
+          trigger_type?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       media_library: {
         Row: {
@@ -4105,6 +4393,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      predictive_insights: {
+        Row: {
+          affiliate_store_id: string | null
+          confidence_score: number | null
+          generated_at: string
+          id: string
+          insight_data: Json
+          insight_type: string
+          prediction_period: string | null
+          store_id: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          confidence_score?: number | null
+          generated_at?: string
+          id?: string
+          insight_data?: Json
+          insight_type: string
+          prediction_period?: string | null
+          store_id?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          confidence_score?: number | null
+          generated_at?: string
+          id?: string
+          insight_data?: Json
+          insight_type?: string
+          prediction_period?: string | null
+          store_id?: string | null
+          valid_until?: string | null
+        }
+        Relationships: []
       }
       product_attributes: {
         Row: {
@@ -6260,6 +6584,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      smart_notifications: {
+        Row: {
+          affiliate_store_id: string | null
+          clicked_at: string | null
+          content: string
+          created_at: string
+          delivery_status: string | null
+          id: string
+          metadata: Json | null
+          notification_type: string
+          read_at: string | null
+          recipient_id: string
+          scheduled_for: string | null
+          sender_id: string | null
+          sent_at: string | null
+          store_id: string | null
+          subject: string | null
+          template_id: string | null
+          trigger_event: string | null
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          clicked_at?: string | null
+          content: string
+          created_at?: string
+          delivery_status?: string | null
+          id?: string
+          metadata?: Json | null
+          notification_type: string
+          read_at?: string | null
+          recipient_id: string
+          scheduled_for?: string | null
+          sender_id?: string | null
+          sent_at?: string | null
+          store_id?: string | null
+          subject?: string | null
+          template_id?: string | null
+          trigger_event?: string | null
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          clicked_at?: string | null
+          content?: string
+          created_at?: string
+          delivery_status?: string | null
+          id?: string
+          metadata?: Json | null
+          notification_type?: string
+          read_at?: string | null
+          recipient_id?: string
+          scheduled_for?: string | null
+          sender_id?: string | null
+          sent_at?: string | null
+          store_id?: string | null
+          subject?: string | null
+          template_id?: string | null
+          trigger_event?: string | null
+        }
+        Relationships: []
       }
       social_media_accounts: {
         Row: {
