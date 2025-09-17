@@ -17,6 +17,7 @@ import {
   CardTitle,
   Button
 } from '@/components/ui/index';
+import { PerformanceMonitor } from '@/components/advanced';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
@@ -570,6 +571,16 @@ const AdminAnalytics = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Performance Monitor v3.2 */}
+      <div className="mt-8">
+        <PerformanceMonitor 
+          className="w-full" 
+          showControls={true}
+          autoRefresh={true}
+          refreshInterval={5000}
+        />
+      </div>
     </div>
   );
 };

@@ -1,7 +1,11 @@
 // Advanced Components System v3.2
 // نظام المكونات المتقدمة - النسخة الثالثة المحسّنة
 
-// Performance Monitoring
+// Core Advanced Components
+export { DataVisualization } from './DataVisualization';
+export { SmartForms } from './SmartForms';
+export { AdvancedAnimations } from './AdvancedAnimations';
+export { AIComponents } from './AIComponents';
 export { PerformanceMonitor } from './PerformanceMonitor';
 
 // Version Info
