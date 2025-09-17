@@ -4,6 +4,7 @@ export { EnhancedSection, sectionVariants, type EnhancedSectionProps } from './l
 export { EnhancedGrid, gridVariants, type EnhancedGridProps } from './layout/EnhancedGrid'
 export { EnhancedBreadcrumb, breadcrumbVariants, type EnhancedBreadcrumbProps, type BreadcrumbItem } from './navigation/EnhancedBreadcrumb'
 export { EnhancedStatusIndicator, statusVariants, type EnhancedStatusIndicatorProps } from './feedback/EnhancedStatusIndicator'
+export { EnhancedSidebar, sidebarVariants, type NavigationItem, type NavigationGroup } from './navigation/EnhancedSidebar'
 
 // Enhanced UI Components - نظام المكونات المطور
 export { Button, buttonVariants, type ButtonProps } from './button'

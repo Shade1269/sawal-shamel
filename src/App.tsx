@@ -17,7 +17,7 @@ import { ProtectedRoute } from "@/shared/components/ProtectedRoute";
 import Index from "./pages/Index";
 import DomainManager from "@/components/store/DomainManager";
 
-import AdminLayout from "@/layouts/AdminLayout";
+import AdminLayout from "@/layouts/EnhancedAdminLayout";
 import { lazy, Suspense } from "react";
 
 // Lazy load dashboard pages
