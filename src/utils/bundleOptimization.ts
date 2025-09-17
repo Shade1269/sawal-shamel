@@ -68,7 +68,7 @@ export class BundleOptimizer {
   // Preload critical routes
   static preloadCriticalRoutes() {
     const criticalRoutes = [
-      { path: '/dashboard', import: () => import('@/pages/Dashboard') },
+      { path: '/dashboard', import: () => import('@/pages/unified/UnifiedDashboardPage') },
       { path: '/products', import: () => import('@/pages/ProductsBrowser') },
       { path: '/orders', import: () => import('@/pages/OrderManagement') },
     ];
@@ -82,16 +82,16 @@ export class BundleOptimizer {
   static async loadRoleBasedComponents(userRole: string) {
     const roleComponentMap = {
       'admin': [
-        () => import('@/pages/AdminDashboard'),
+        () => import('@/pages/unified/UnifiedDashboardPage'),
         () => import('@/pages/AdminUsers'),
         () => import('@/pages/ComprehensiveAdminPanel'),
       ],
       'affiliate': [
-        () => import('@/pages/AffiliateDashboard'),
+        () => import('@/pages/unified/UnifiedDashboardPage'),
         () => import('@/pages/AffiliateStoreFront'),
       ],
       'merchant': [
-        () => import('@/pages/MerchantDashboard'),
+        () => import('@/pages/unified/UnifiedDashboardPage'),
         () => import('@/pages/ProductManagement'),
         () => import('@/pages/Inventory'),
       ],

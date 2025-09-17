@@ -4,9 +4,9 @@ import { CodeSplittingProvider } from '@/components/performance/CodeSplittingPro
 
 // Optimized route definitions with intelligent loading
 export const OptimizedRoutes = {
-  // Critical routes (preloaded)
+  // Critical routes (preloaded) - now using unified system
   Dashboard: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/Dashboard'),
+    () => import('@/pages/unified/UnifiedDashboardPage'),
     'dashboard',
     'high'
   ),
@@ -17,9 +17,9 @@ export const OptimizedRoutes = {
     'high'
   ),
 
-  // Admin routes (role-based loading)
+  // Admin routes (role-based loading) - now using unified system
   AdminDashboard: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/AdminDashboard'),
+    () => import('@/pages/unified/UnifiedDashboardPage'),
     'admin-dashboard',
     'medium'
   ),
@@ -42,22 +42,10 @@ export const OptimizedRoutes = {
     'low'
   ),
 
-  // Affiliate routes
-  AffiliateDashboard: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/AffiliateDashboard'),
-    'affiliate-dashboard',
-    'medium'
-  ),
-  
+  // Affiliate routes - using unified dashboard
   AffiliateStoreFront: BundleOptimizer.createOptimizedLazyComponent(
     () => import('@/pages/AffiliateStoreFront'),
     'affiliate-store',
-    'medium'
-  ),
-
-  AffiliateDashboardNew: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/AffiliateDashboardNew'),
-    'affiliate-dashboard-new',
     'medium'
   ),
 
@@ -271,7 +259,7 @@ export const RoutePreloader = {
         'ComprehensiveAdminPanel'
       ],
       affiliate: [
-        'AffiliateDashboard',
+        'Dashboard',
         'AffiliateStoreFront'
       ],
       merchant: [

@@ -35,8 +35,7 @@ const UnifiedDashboardPage = lazy(() => import("./pages/unified/UnifiedDashboard
 const UnifiedProductsPage = lazy(() => import("./pages/unified/UnifiedProductsPage"));
 const UnifiedOrdersPage = lazy(() => import("./pages/unified/UnifiedOrdersPage"));
 
-// Legacy Dashboard pages - سيتم إزالتها تدريجياً
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+// Admin pages - still needed
 const AdminUsers = lazy(() => import("./pages/AdminUsers"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
@@ -49,9 +48,7 @@ const AdvancedNavigationDemo = lazy(() => import("./components/demos/AdvancedNav
 const DesignSystemDemo = lazy(() => import("./components/demos/DesignSystemDemo"));
 const InteractiveDemo = lazy(() => import("./components/demos/InteractiveDemo"));
 
-// Legacy - سيتم دمجها في النظام الموحد
-const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
-const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
+// Legacy - moved to unified system
 const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
 
 // Affiliate Dashboard Pages - سيتم دمجها
@@ -82,7 +79,7 @@ import StoreOrderConfirmation from "./pages/StoreOrderConfirmation";
 import StoreAuth from "./pages/StoreAuth";
 import StoreTestPage from "./components/store/StoreTestPage";
 // Legacy - سيتم دمجها في النظام الموحد
-const Dashboard = lazy(() => import("./pages/Dashboard"));
+// Legacy Dashboard removed - using UnifiedDashboardPage
 const AdminOrderManagement = lazy(() => import("./pages/AdminOrderManagement"));
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
 const ProfilePage = lazy(() => import("./pages/Profile"));
@@ -447,14 +444,11 @@ const App = () => {
                        } />
                       
                       {/* Legacy Dashboard Route */}
-                      <Route 
-                        path="/old-dashboard" 
-                        element={
-                          <ProtectedRoute>
-                            <Dashboard />
-                          </ProtectedRoute>
-                        } 
-                      />
+                        {/* Legacy dashboard route removed - redirects to unified */}
+                        <Route 
+                          path="/old-dashboard" 
+                          element={<Navigate to="/dashboard" replace />}
+                        />
                       
                       {/* Admin Routes with Sidebar Layout */}
                       <Route path="/admin" element={
@@ -462,8 +456,8 @@ const App = () => {
                           <AdminLayout />
                         </ProtectedRoute>
                       }>
-                        <Route index element={<AdminDashboard />} />
-                        <Route path="dashboard" element={<AdminDashboard />} />
+                        <Route index element={<UnifiedDashboardPage />} />
+                        <Route path="dashboard" element={<UnifiedDashboardPage />} />
                         <Route path="users" element={<AdminUsers />} />
                         <Route path="analytics" element={<AdminAnalytics />} />
                         <Route path="reports" element={<AdminReports />} />

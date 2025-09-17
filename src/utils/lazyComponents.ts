@@ -13,16 +13,13 @@ export const createLazyComponent = <T extends ComponentType<any>>(
 
 // Pre-defined lazy components for major sections
 export const LazyComponents = {
-  // Admin Components
-  AdminDashboard: createLazyComponent(() => import('@/pages/AdminDashboard')),
+  // Admin Components - using unified system
   AdminUsers: createLazyComponent(() => import('@/pages/AdminUsers')),
   AdminSettings: createLazyComponent(() => import('@/pages/AdminSettings')),
   ComprehensiveAdminPanel: createLazyComponent(() => import('@/pages/ComprehensiveAdminPanel')),
   
-  // Affiliate Components  
-  AffiliateDashboard: createLazyComponent(() => import('@/pages/AffiliateDashboard')),
+  // Affiliate Components - using unified system
   AffiliateStoreFront: createLazyComponent(() => import('@/pages/AffiliateStoreFront')),
-  AffiliateDashboardNew: createLazyComponent(() => import('@/pages/AffiliateDashboardNew')),
   
   // Commerce Components
   ProductManagement: createLazyComponent(() => import('@/pages/ProductManagement')),
