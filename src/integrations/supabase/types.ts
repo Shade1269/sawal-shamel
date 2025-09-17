@@ -1363,6 +1363,264 @@ export type Database = {
           },
         ]
       }
+      cms_content_blocks_library: {
+        Row: {
+          block_category: string
+          block_description: string | null
+          block_name: string
+          block_template: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          is_premium: boolean
+          preview_image_url: string | null
+          updated_at: string
+          usage_count: number
+        }
+        Insert: {
+          block_category?: string
+          block_description?: string | null
+          block_name: string
+          block_template: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_premium?: boolean
+          preview_image_url?: string | null
+          updated_at?: string
+          usage_count?: number
+        }
+        Update: {
+          block_category?: string
+          block_description?: string | null
+          block_name?: string
+          block_template?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_premium?: boolean
+          preview_image_url?: string | null
+          updated_at?: string
+          usage_count?: number
+        }
+        Relationships: []
+      }
+      cms_content_widgets: {
+        Row: {
+          created_at: string
+          id: string
+          is_visible: boolean
+          page_id: string
+          section_id: string | null
+          sort_order: number
+          updated_at: string
+          widget_config: Json
+          widget_data: Json
+          widget_name: string
+          widget_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          page_id: string
+          section_id?: string | null
+          sort_order?: number
+          updated_at?: string
+          widget_config?: Json
+          widget_data?: Json
+          widget_name: string
+          widget_type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          page_id?: string
+          section_id?: string | null
+          sort_order?: number
+          updated_at?: string
+          widget_config?: Json
+          widget_data?: Json
+          widget_name?: string
+          widget_type?: string
+        }
+        Relationships: []
+      }
+      cms_custom_pages: {
+        Row: {
+          affiliate_store_id: string | null
+          created_at: string
+          id: string
+          is_homepage: boolean
+          is_published: boolean
+          meta_description: string | null
+          meta_keywords: string[] | null
+          page_content: Json
+          page_settings: Json
+          page_slug: string
+          page_title: string
+          published_at: string | null
+          seo_score: number | null
+          store_id: string | null
+          template_id: string | null
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          created_at?: string
+          id?: string
+          is_homepage?: boolean
+          is_published?: boolean
+          meta_description?: string | null
+          meta_keywords?: string[] | null
+          page_content?: Json
+          page_settings?: Json
+          page_slug: string
+          page_title: string
+          published_at?: string | null
+          seo_score?: number | null
+          store_id?: string | null
+          template_id?: string | null
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          created_at?: string
+          id?: string
+          is_homepage?: boolean
+          is_published?: boolean
+          meta_description?: string | null
+          meta_keywords?: string[] | null
+          page_content?: Json
+          page_settings?: Json
+          page_slug?: string
+          page_title?: string
+          published_at?: string | null
+          seo_score?: number | null
+          store_id?: string | null
+          template_id?: string | null
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: []
+      }
+      cms_page_revisions: {
+        Row: {
+          change_description: string | null
+          content_snapshot: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          page_id: string
+          revision_number: number
+        }
+        Insert: {
+          change_description?: string | null
+          content_snapshot: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          page_id: string
+          revision_number: number
+        }
+        Update: {
+          change_description?: string | null
+          content_snapshot?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          page_id?: string
+          revision_number?: number
+        }
+        Relationships: []
+      }
+      cms_page_templates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          is_premium: boolean
+          preview_image_url: string | null
+          template_category: string
+          template_data: Json
+          template_description: string | null
+          template_name: string
+          updated_at: string
+          usage_count: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          is_premium?: boolean
+          preview_image_url?: string | null
+          template_category?: string
+          template_data?: Json
+          template_description?: string | null
+          template_name: string
+          updated_at?: string
+          usage_count?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          is_premium?: boolean
+          preview_image_url?: string | null
+          template_category?: string
+          template_data?: Json
+          template_description?: string | null
+          template_name?: string
+          updated_at?: string
+          usage_count?: number
+        }
+        Relationships: []
+      }
+      cms_seo_analytics: {
+        Row: {
+          click_through_rate: number | null
+          clicks: number
+          created_at: string
+          date_recorded: string
+          id: string
+          impressions: number
+          keyword: string
+          page_id: string
+          ranking_position: number | null
+          search_volume: number | null
+        }
+        Insert: {
+          click_through_rate?: number | null
+          clicks?: number
+          created_at?: string
+          date_recorded?: string
+          id?: string
+          impressions?: number
+          keyword: string
+          page_id: string
+          ranking_position?: number | null
+          search_volume?: number | null
+        }
+        Update: {
+          click_through_rate?: number | null
+          clicks?: number
+          created_at?: string
+          date_recorded?: string
+          id?: string
+          impressions?: number
+          keyword?: string
+          page_id?: string
+          ranking_position?: number | null
+          search_volume?: number | null
+        }
+        Relationships: []
+      }
       commission_payouts: {
         Row: {
           affiliate_id: string
