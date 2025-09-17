@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { AdvancedThemeBuilder } from '@/components/themes/AdvancedThemeBuilder';
 import { RealtimeThemePreview } from '@/components/themes/RealtimeThemePreview';
 import { SmartColorPalette } from '@/components/themes/SmartColorPalette';
+import { useAdvancedThemes } from '@/hooks/useAdvancedThemes';
 import { 
   Palette, 
   Eye, 
@@ -18,14 +19,19 @@ import {
   ArrowLeft,
   Crown,
   Zap,
-  Wand2
+  Wand2,
+  Info
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const ThemeStudioPage: React.FC = () => {
-  const { storeId } = useParams<{ storeId: string }>();
+  const { storeId: paramStoreId } = useParams<{ storeId: string }>();
+  const [searchParams] = useSearchParams();
+  const queryStoreId = searchParams.get('storeId');
+  const storeId = paramStoreId || queryStoreId;
+  
   const navigate = useNavigate();
   const [currentTheme, setCurrentTheme] = useState<any>(null);
   const [previewConfig, setPreviewConfig] = useState<any>({
@@ -37,6 +43,17 @@ const ThemeStudioPage: React.FC = () => {
       foreground: '#1A1D21'
     }
   });
+
+  // استخدام محرك الثيمات المتقدم
+  const {
+    templates,
+    isLoading,
+    previewMode,
+    applyTemplate,
+    previewTheme,
+    exitPreview,
+    generateSmartPalette
+  } = useAdvancedThemes(storeId || undefined);
 
   const handleThemeApplied = (theme: any) => {
     setCurrentTheme(theme);
@@ -51,6 +68,14 @@ const ThemeStudioPage: React.FC = () => {
     setPreviewConfig(newConfig);
   };
 
+  const handleBackToStore = () => {
+    if (storeId) {
+      navigate(`/store-themes/${storeId}`);
+    } else {
+      navigate(-1);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
@@ -61,11 +86,11 @@ const ThemeStudioPage: React.FC = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate(-1)}
+                onClick={handleBackToStore}
                 className="gap-2"
               >
                 <ArrowLeft className="w-4 h-4" />
-                رجوع
+                {storeId ? 'العودة للمتجر' : 'رجوع'}
               </Button>
               
               <div className="flex items-center gap-3">
@@ -77,6 +102,14 @@ const ThemeStudioPage: React.FC = () => {
                     استوديو الثيمات
                   </h1>
                   <p className="text-muted-foreground">صمم متجرك بطريقة احترافية</p>
+                  {storeId && (
+                    <div className="mt-1">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
+                        <Info className="w-3 h-3 mr-1" />
+                        متصل بالمتجر: {storeId.slice(0, 8)}...
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

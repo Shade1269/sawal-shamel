@@ -52,20 +52,50 @@ export const useAdvancedThemes = (storeId?: string) => {
   const fetchTemplates = useCallback(async (category?: string) => {
     try {
       setIsLoading(true);
-      let query = supabase
-        .from('theme_templates')
-        .select('*')
-        .eq('is_active', true)
-        .order('popularity_score', { ascending: false });
-
-      if (category && category !== 'all') {
-        query = query.eq('category', category);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
       
-      setTemplates(data || []);
+      // جلب من الجدولين: القوالب الجديدة والثيمات الموجودة
+      const [templatesRes, storeThemesRes] = await Promise.all([
+        supabase
+          .from('theme_templates')
+          .select('*')
+          .eq('is_active', true)
+          .order('popularity_score', { ascending: false }),
+        supabase
+          .from('store_themes')
+          .select('*')
+          .eq('is_active', true)
+          .order('name')
+      ]);
+
+      if (templatesRes.error) throw templatesRes.error;
+      if (storeThemesRes.error) throw storeThemesRes.error;
+
+      // دمج البيانات من الجدولين
+      const newTemplates = templatesRes.data || [];
+      const existingThemes = (storeThemesRes.data || []).map(theme => ({
+        id: theme.id,
+        name: theme.name || theme.name_ar,
+        name_ar: theme.name_ar,
+        description_ar: theme.description_ar,
+        category: 'existing',
+        difficulty_level: 'beginner',
+        theme_config: theme.theme_config,
+        preview_image_url: theme.preview_image_url,
+        thumbnail_url: theme.preview_image_url,
+        color_palette: (theme.theme_config as any)?.colors || {},
+        is_premium: theme.is_premium || false,
+        is_active: theme.is_active,
+        popularity_score: 0
+      }));
+
+      const allTemplates = [...newTemplates, ...existingThemes];
+      
+      // تطبيق الفلتر حسب الفئة
+      const filteredTemplates = category && category !== 'all' 
+        ? allTemplates.filter(t => t.category === category)
+        : allTemplates;
+      
+      setTemplates(filteredTemplates);
     } catch (error) {
       console.error('خطأ في جلب القوالب:', error);
       toast({
@@ -378,7 +408,7 @@ export const useAdvancedThemes = (storeId?: string) => {
     generateSmartPalette,
 
     // الفئات المتاحة
-    categories: ['all', 'modern', 'luxury', 'nature', 'minimalist', 'classic', 'bold'],
+    categories: ['all', 'existing', 'modern', 'luxury', 'nature', 'minimalist', 'classic', 'bold'],
     
     // مستويات الصعوبة
     difficultyLevels: ['beginner', 'intermediate', 'advanced']

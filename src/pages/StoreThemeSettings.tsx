@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
-import { Palette, ArrowRight, Info } from 'lucide-react';
+import { Palette, ArrowRight, Info, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
@@ -56,6 +56,15 @@ const StoreThemeSettings: React.FC = () => {
               </p>
             </div>
           </div>
+          
+          {/* Advanced Theme Studio Button */}
+          <Button 
+            onClick={() => navigate('/theme-studio')}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            الاستوديو المتقدم
+          </Button>
         </div>
 
         {/* Info Alert */}
