@@ -1,362 +1,212 @@
-import { useState } from "react";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Badge } from "@/components/ui/badge";
-import {
-  Search,
-  Plus,
-  ShoppingCart,
-  Package,
-  Users,
-  BarChart3,
-  FileText,
-  Gift,
-  Settings,
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Search, 
+  Command, 
+  Bell, 
+  Settings, 
+  BarChart3, 
   Zap,
-  Globe,
-  Edit3,
-  TrendingUp,
-  DollarSign,
-  Crown,
-  Store,
-  Star,
-  Target,
-  Layout,
-  Database,
-  Truck,
-  Shield,
-  Eye,
-  HelpCircle
-} from "lucide-react";
-import { useFastAuth } from "@/hooks/useFastAuth";
-
-interface QuickAction {
-  id: string;
-  title: string;
-  description: string;
-  url: string;
-  icon: any;
-  category: string;
-  shortcut?: string;
-  badge?: string;
-  roles?: string[];
-}
-
-const quickActions: QuickAction[] = [
-  // إجراءات سريعة عامة
-  {
-    id: "search-products",
-    title: "البحث عن المنتجات",
-    description: "البحث في جميع المنتجات المتاحة",
-    url: "/products-browser",
-    icon: Search,
-    category: "عام",
-    shortcut: "⌘K",
-    roles: ["affiliate"]
-  },
-  {
-    id: "add-product",
-    title: "إضافة منتج جديد",
-    description: "إضافة منتج جديد للمتجر",
-    url: "/dashboard/products?action=add",
-    icon: Plus,
-    category: "المنتجات",
-    roles: ["affiliate", "merchant", "admin"]
-  },
-  {
-    id: "view-cart",
-    title: "عرض السلة",
-    description: "عرض المنتجات في السلة",
-    url: "/cart",
-    icon: ShoppingCart,
-    category: "التسوق"
-  },
-  {
-    id: "track-orders",
-    title: "تتبع الطلبات",
-    description: "تتبع حالة الطلبات الحالية",
-    url: "/dashboard/orders",
-    icon: Package,
-    category: "الطلبات",
-    roles: ["affiliate", "merchant", "admin"]
-  },
-
-  // إجراءات التسويق
-  {
-    id: "create-campaign",
-    title: "إنشاء حملة ترويجية",
-    description: "إنشاء حملة تسويقية جديدة",
-    url: "/promotions?action=create",
-    icon: Gift,
-    category: "التسويق",
-    roles: ["affiliate", "merchant", "admin"]
-  },
-  {
-    id: "advanced-marketing",
-    title: "التسويق المتقدم",
-    description: "أدوات التسويق المتقدمة والذكية",
-    url: "/advanced-marketing",
-    icon: Target,
-    category: "التسويق",
-    roles: ["affiliate", "merchant", "admin"]
-  },
-  {
-    id: "create-banner",
-    title: "إنشاء بانر إعلاني",
-    description: "تصميم بانر إعلاني جديد",
-    url: "/banner-management",
-    icon: Globe,
-    category: "التسويق",
-    roles: ["affiliate", "merchant", "admin"]
-  },
-
-  // إدارة المحتوى
-  {
-    id: "page-builder",
-    title: "بناء صفحة جديدة",
-    description: "إنشاء صفحة باستخدام منشئ الصفحات المرئي",
-    url: "/page-builder",
-    icon: Layout,
-    category: "المحتوى",
-    roles: ["affiliate", "merchant", "admin"]
-  },
-  {
-    id: "content-management",
-    title: "إدارة المحتوى",
-    description: "إدارة وتحرير محتوى الموقع",
-    url: "/content-management",
-    icon: Edit3,
-    category: "المحتوى",
-    roles: ["affiliate", "merchant", "admin"]
-  },
-  {
-    id: "theme-studio",
-    title: "استوديو الثيمات",
-    description: "تخصيص شكل ومظهر المتجر",
-    url: "/theme-studio",
-    icon: Zap,
-    category: "المحتوى",
-    roles: ["affiliate", "admin"]
-  },
-
-  // التحليلات والتقارير
-  {
-    id: "analytics",
-    title: "التحليلات",
-    description: "عرض تحليلات الأداء والمبيعات",
-    url: "/analytics",
-    icon: BarChart3,
-    category: "التحليلات",
-    roles: ["merchant", "admin"]
-  },
-  {
-    id: "sales-reports",
-    title: "تقارير المبيعات",
-    description: "تقارير مفصلة عن المبيعات",
-    url: "/sales-reports",
-    icon: TrendingUp,
-    category: "التحليلات",
-    roles: ["merchant", "admin"]
-  },
-
-  // المدفوعات
-  {
-    id: "payments",
-    title: "المدفوعات",
-    description: "إدارة المدفوعات والفوترة",
-    url: "/payments",
-    icon: DollarSign,
-    category: "المالية",
-    roles: ["merchant", "admin"]
-  },
-  {
-    id: "invoices",
-    title: "الفواتير",
-    description: "إدارة الفواتير والإيصالات",
-    url: "/invoices",
-    icon: FileText,
-    category: "المالية",
-    roles: ["merchant", "admin"]
-  },
-
-  // الإدارة
-  {
-    id: "admin-panel",
-    title: "لوحة الإدارة",
-    description: "الوصول إلى لوحة التحكم الإدارية",
-    url: "/admin",
-    icon: Crown,
-    category: "الإدارة",
-    roles: ["admin"]
-  },
-  {
-    id: "user-management",
-    title: "إدارة المستخدمين",
-    description: "إدارة حسابات المستخدمين",
-    url: "/admin/users",
-    icon: Users,
-    category: "الإدارة",
-    roles: ["admin"]
-  },
-  {
-    id: "security",
-    title: "الأمان",
-    description: "مراقبة أمان النظام",
-    url: "/security",
-    icon: Shield,
-    category: "الإدارة",
-    roles: ["admin"]
-  },
-
-  // المساعدة والدعم
-  {
-    id: "help-center",
-    title: "مركز المساعدة",
-    description: "الحصول على المساعدة والدعم",
-    url: "/help",
-    icon: HelpCircle,
-    category: "المساعدة"
-  }
-];
+  ChevronDown,
+  User,
+  LogOut,
+  HelpCircle,
+  Plus,
+  Filter
+} from 'lucide-react';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useFastAuth } from '@/hooks/useFastAuth';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { SmartSearch } from '@/components/ux/SmartSearch';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 export function QuickActions() {
-  const [open, setOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [notifications, setNotifications] = useState(3);
+  const { profile, signOut } = useFastAuth();
   const navigate = useNavigate();
-  const { profile } = useFastAuth();
 
-  const filteredActions = quickActions.filter(action => {
-    const matchesSearch = action.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         action.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         action.category.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const hasPermission = !action.roles || action.roles.includes(profile?.role || "");
-    
-    return matchesSearch && hasPermission;
+  const { shortcuts } = useKeyboardShortcuts({
+    onSearchOpen: () => setSearchOpen(true),
+    onNotificationsOpen: () => console.log('Open notifications'),
+    onSettingsOpen: () => navigate('/settings')
   });
 
-  const categories = [...new Set(filteredActions.map(action => action.category))];
-
-  const handleActionClick = (action: QuickAction) => {
-    navigate(action.url);
-    setOpen(false);
-    setSearchQuery("");
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
   };
 
+  const quickCommands = [
+    { 
+      icon: Plus, 
+      label: 'إضافة منتج', 
+      shortcut: 'Ctrl+P',
+      action: () => navigate('/products/new')
+    },
+    { 
+      icon: BarChart3, 
+      label: 'التحليلات', 
+      shortcut: 'Ctrl+A',
+      action: () => navigate('/analytics')
+    },
+    { 
+      icon: Filter, 
+      label: 'الفلاتر المتقدمة', 
+      shortcut: 'Ctrl+F',
+      action: () => console.log('Advanced filters')
+    }
+  ];
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
-          <Zap className="h-4 w-4" />
-          إجراءات سريعة
-          <Badge variant="secondary" className="text-xs">⌘J</Badge>
+    <>
+      <motion.div 
+        className="flex items-center gap-2"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        {/* Smart Search */}
+        <div className="relative">
+          <Button
+            variant="outline"
+            className={cn(
+              "flex items-center gap-2 min-w-[200px] justify-start text-muted-foreground hover:text-foreground transition-all",
+              searchOpen && "ring-2 ring-primary"
+            )}
+            onClick={() => setSearchOpen(true)}
+          >
+            <Search className="h-4 w-4" />
+            <span className="hidden sm:inline">بحث سريع...</span>
+            <kbd className="ml-auto hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+              <span className="text-xs">Ctrl</span>K
+            </kbd>
+          </Button>
+        </div>
+
+        {/* Quick Commands */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon" className="relative">
+              <Command className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-64">
+            <DropdownMenuLabel>الأوامر السريعة</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {quickCommands.map((command, index) => (
+              <DropdownMenuItem
+                key={index}
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={command.action}
+              >
+                <command.icon className="h-4 w-4" />
+                <span className="flex-1">{command.label}</span>
+                <kbd className="text-xs text-muted-foreground">
+                  {command.shortcut}
+                </kbd>
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => console.log('Show all shortcuts')}
+            >
+              <HelpCircle className="h-4 w-4" />
+              <span>عرض جميع الاختصارات</span>
+              <kbd className="text-xs text-muted-foreground ml-auto">/</kbd>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Notifications */}
+        <Button variant="outline" size="icon" className="relative">
+          <Bell className="h-4 w-4" />
+          {notifications > 0 && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+            >
+              {notifications > 9 ? '9+' : notifications}
+            </motion.div>
+          )}
         </Button>
-      </DialogTrigger>
-      
-      <DialogContent className="max-w-2xl p-0">
-        <DialogHeader className="p-4 pb-2">
-          <DialogTitle className="text-xl font-bold">الإجراءات السريعة</DialogTitle>
-          <DialogDescription>
-            ابحث عن الإجراءات أو انتقل بسرعة إلى أي صفحة في النظام
-          </DialogDescription>
-        </DialogHeader>
 
-        <Command className="border-0">
-          <div className="px-4 pb-4">
-            <CommandInput
-              placeholder="ابحث عن إجراء أو صفحة..."
-              value={searchQuery}
-              onValueChange={setSearchQuery}
-              className="h-9"
-            />
-          </div>
-          
-          <CommandList className="max-h-96 overflow-auto">
-            <CommandEmpty>
-              <div className="flex flex-col items-center gap-2 py-4">
-                <Search className="h-8 w-8 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">لم يتم العثور على نتائج</p>
+        {/* User Menu */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="flex items-center gap-2 px-3">
+              <User className="h-4 w-4" />
+              <span className="hidden sm:inline max-w-[100px] truncate">
+                {profile?.full_name || 'المستخدم'}
+              </span>
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium">{profile?.full_name}</p>
+                <p className="text-xs text-muted-foreground">{profile?.email}</p>
+                <Badge variant="secondary" className="w-fit text-xs">
+                  {profile?.role === 'admin' ? 'مدير' : 
+                   profile?.role === 'merchant' ? 'تاجر' : 
+                   profile?.role === 'affiliate' ? 'مسوق' : 'مستخدم'}
+                </Badge>
               </div>
-            </CommandEmpty>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate('/profile')}
+            >
+              <User className="mr-2 h-4 w-4" />
+              الملف الشخصي
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate('/settings')}
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              الإعدادات
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate('/help')}
+            >
+              <HelpCircle className="mr-2 h-4 w-4" />
+              المساعدة
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer text-red-500 focus:text-red-500"
+              onClick={handleSignOut}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              تسجيل الخروج
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </motion.div>
 
-            {categories.map(category => {
-              const categoryActions = filteredActions.filter(action => action.category === category);
-              
-              if (categoryActions.length === 0) return null;
-
-              return (
-                <CommandGroup key={category} heading={category}>
-                  {categoryActions.map(action => (
-                    <CommandItem
-                      key={action.id}
-                      onSelect={() => handleActionClick(action)}
-                      className="flex items-center gap-3 p-3 cursor-pointer hover:bg-accent"
-                    >
-                      <div className="flex items-center justify-center w-8 h-8 rounded-md bg-primary/10">
-                        <action.icon className="h-4 w-4 text-primary" />
-                      </div>
-                      
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{action.title}</span>
-                          {action.badge && (
-                            <Badge variant="secondary" className="text-xs">
-                              {action.badge}
-                            </Badge>
-                          )}
-                          {action.shortcut && (
-                            <Badge variant="outline" className="text-xs">
-                              {action.shortcut}
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {action.description}
-                        </p>
-                      </div>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              );
-            })}
-          </CommandList>
-        </Command>
-      </DialogContent>
-    </Dialog>
+      {/* Smart Search Dialog */}
+      <SmartSearch
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        placeholder="ابحث في المنتجات، الطلبات، العملاء..."
+      />
+    </>
   );
-}
-
-// Hook لاستخدام الإجراءات السريعة عبر لوحة المفاتيح
-export function useQuickActionsShortcuts() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // ⌘J أو Ctrl+J لفتح الإجراءات السريعة
-      if ((event.metaKey || event.ctrlKey) && event.key === 'j') {
-        event.preventDefault();
-        // يمكن تنفيذ فتح modal هنا
-      }
-
-      // ⌘K أو Ctrl+K للبحث السريع
-      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-        event.preventDefault();
-        navigate('/products-browser');
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [navigate]);
 }

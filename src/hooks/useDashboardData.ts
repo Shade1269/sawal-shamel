@@ -130,7 +130,7 @@ export function useDashboardData() {
                calculateChange(stats.totalCustomers, stats.previousPeriodStats.totalCustomers) : undefined,
         changeType: 'positive',
         description: 'العملاء النشطين',
-        icon: require('lucida-react').Users,
+        icon: require('lucide-react').Users,
         color: 'bg-purple-500',
         status: 'success',
         progress: 82,
