@@ -1804,6 +1804,51 @@ export type Database = {
           },
         ]
       }
+      content_editor_drafts: {
+        Row: {
+          created_at: string
+          created_by: string
+          draft_content: Json
+          draft_metadata: Json
+          draft_name: string
+          id: string
+          is_auto_save: boolean
+          page_id: string
+          scheduled_publish_at: string | null
+          status: string
+          updated_at: string
+          version_number: number
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          draft_content: Json
+          draft_metadata?: Json
+          draft_name: string
+          id?: string
+          is_auto_save?: boolean
+          page_id: string
+          scheduled_publish_at?: string | null
+          status?: string
+          updated_at?: string
+          version_number?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          draft_content?: Json
+          draft_metadata?: Json
+          draft_name?: string
+          id?: string
+          is_auto_save?: boolean
+          page_id?: string
+          scheduled_publish_at?: string | null
+          status?: string
+          updated_at?: string
+          version_number?: number
+        }
+        Relationships: []
+      }
       content_sections: {
         Row: {
           content: Json | null
@@ -2881,6 +2926,45 @@ export type Database = {
           rule_name?: string
           rule_type?: string
           severity?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      interactive_elements: {
+        Row: {
+          action_config: Json
+          animation_config: Json
+          conditions: Json
+          created_at: string
+          element_id: string
+          id: string
+          interaction_type: string
+          is_enabled: boolean
+          trigger_event: string
+          updated_at: string
+        }
+        Insert: {
+          action_config?: Json
+          animation_config?: Json
+          conditions?: Json
+          created_at?: string
+          element_id: string
+          id?: string
+          interaction_type: string
+          is_enabled?: boolean
+          trigger_event?: string
+          updated_at?: string
+        }
+        Update: {
+          action_config?: Json
+          animation_config?: Json
+          conditions?: Json
+          created_at?: string
+          element_id?: string
+          id?: string
+          interaction_type?: string
+          is_enabled?: boolean
+          trigger_event?: string
           updated_at?: string
         }
         Relationships: []
@@ -4351,6 +4435,105 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      page_builder_elements: {
+        Row: {
+          created_at: string
+          element_config: Json
+          element_data: Json
+          element_name: string
+          element_styles: Json
+          element_type: string
+          grid_column: number | null
+          grid_row: number | null
+          grid_span_x: number | null
+          grid_span_y: number | null
+          id: string
+          is_locked: boolean
+          is_visible: boolean
+          page_id: string
+          parent_id: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          element_config?: Json
+          element_data?: Json
+          element_name: string
+          element_styles?: Json
+          element_type: string
+          grid_column?: number | null
+          grid_row?: number | null
+          grid_span_x?: number | null
+          grid_span_y?: number | null
+          id?: string
+          is_locked?: boolean
+          is_visible?: boolean
+          page_id: string
+          parent_id?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          element_config?: Json
+          element_data?: Json
+          element_name?: string
+          element_styles?: Json
+          element_type?: string
+          grid_column?: number | null
+          grid_row?: number | null
+          grid_span_x?: number | null
+          grid_span_y?: number | null
+          id?: string
+          is_locked?: boolean
+          is_visible?: boolean
+          page_id?: string
+          parent_id?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      page_builder_sessions: {
+        Row: {
+          auto_save_data: Json
+          browser_info: Json | null
+          created_at: string
+          id: string
+          is_active: boolean
+          last_activity: string
+          page_id: string
+          session_data: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_save_data?: Json
+          browser_info?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_activity?: string
+          page_id: string
+          session_data?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_save_data?: Json
+          browser_info?: Json | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_activity?: string
+          page_id?: string
+          session_data?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       page_templates: {
         Row: {
@@ -5870,6 +6053,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      saved_page_components: {
+        Row: {
+          affiliate_store_id: string | null
+          component_category: string
+          component_data: Json
+          component_description: string | null
+          component_name: string
+          component_preview: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          is_public: boolean
+          store_id: string | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          updated_at: string
+          usage_count: number
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          component_category?: string
+          component_data: Json
+          component_description?: string | null
+          component_name: string
+          component_preview?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_public?: boolean
+          store_id?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          updated_at?: string
+          usage_count?: number
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          component_category?: string
+          component_data?: Json
+          component_description?: string | null
+          component_name?: string
+          component_preview?: Json
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_public?: boolean
+          store_id?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          updated_at?: string
+          usage_count?: number
+        }
+        Relationships: []
       }
       seasonal_campaigns: {
         Row: {
@@ -7814,6 +8051,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      visual_theme_customizations: {
+        Row: {
+          affiliate_store_id: string | null
+          animation_settings: Json | null
+          color_palette: Json | null
+          created_at: string
+          created_by: string | null
+          custom_css: string | null
+          custom_variables: Json
+          customization_name: string
+          customization_type: string
+          id: string
+          is_active: boolean
+          is_global: boolean
+          page_id: string | null
+          spacing_settings: Json | null
+          store_id: string | null
+          typography_settings: Json | null
+          updated_at: string
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          animation_settings?: Json | null
+          color_palette?: Json | null
+          created_at?: string
+          created_by?: string | null
+          custom_css?: string | null
+          custom_variables?: Json
+          customization_name: string
+          customization_type?: string
+          id?: string
+          is_active?: boolean
+          is_global?: boolean
+          page_id?: string | null
+          spacing_settings?: Json | null
+          store_id?: string | null
+          typography_settings?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          animation_settings?: Json | null
+          color_palette?: Json | null
+          created_at?: string
+          created_by?: string | null
+          custom_css?: string | null
+          custom_variables?: Json
+          customization_name?: string
+          customization_type?: string
+          id?: string
+          is_active?: boolean
+          is_global?: boolean
+          page_id?: string | null
+          spacing_settings?: Json | null
+          store_id?: string | null
+          typography_settings?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       warehouse_products: {
         Row: {

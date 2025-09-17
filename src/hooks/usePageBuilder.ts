@@ -1,15 +1,22 @@
 import { useState, useCallback, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export interface PageElement {
   id: string;
   type: string;
-  position: { x: number; y: number };
-  size: { width: number; height: number };
-  properties: Record<string, any>;
+  name: string;
+  gridColumn?: number;
+  gridRow?: number;
+  gridSpanX?: number;
+  gridSpanY?: number;
+  config: Record<string, any>;
   styles: Record<string, any>;
-  content?: string;
-  zIndex: number;
+  data?: Record<string, any>;
+  sortOrder: number;
+  isVisible: boolean;
+  isLocked: boolean;
+  parentId?: string;
 }
 
 export interface PageBuilderState {
@@ -30,32 +37,42 @@ export const usePageBuilder = (pageId?: string) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Load page elements (Mock implementation - will be updated after database migration)
+  // Load page elements
   const loadPage = useCallback(async (id: string) => {
     if (!id) return;
     
     setIsLoading(true);
     try {
-      // Mock data for demonstration
-      const mockElements: PageElement[] = [
-        {
-          id: 'demo-hero-1',
-          type: 'hero',
-          position: { x: 0, y: 0 },
-          size: { width: 800, height: 400 },
-          properties: { title: 'مرحباً بك', subtitle: 'اكتشف منتجاتنا المميزة' },
-          styles: { backgroundColor: '#f0f4f8' },
-          zIndex: 0
-        }
-      ];
+      const { data, error } = await supabase
+        .from('page_builder_elements')
+        .select('*')
+        .eq('page_id', id)
+        .order('z_index', { ascending: true });
+
+      if (error) throw error;
+
+      const elements: PageElement[] = data?.map(item => ({
+        id: item.id,
+        type: item.element_type,
+        name: item.element_name,
+        gridColumn: item.grid_column,
+        gridRow: item.grid_row,
+        gridSpanX: item.grid_span_x,
+        gridSpanY: item.grid_span_y,
+        config: item.element_config,
+        styles: item.element_styles,
+        data: item.element_data,
+        sortOrder: item.sort_order,
+        isVisible: item.is_visible,
+        isLocked: item.is_locked,
+        parentId: item.parent_id
+      })) || [];
 
       setState(prev => ({
         ...prev,
-        elements: mockElements,
+        elements,
         isDirty: false
       }));
-      
-      toast.success('تم تحميل الصفحة التجريبية');
     } catch (error: any) {
       console.error('Error loading page:', error);
       toast.error('فشل في تحميل الصفحة');
@@ -64,23 +81,46 @@ export const usePageBuilder = (pageId?: string) => {
     }
   }, []);
 
-  // Save page elements (Mock implementation - will be updated after database migration)
+  // Save page elements
   const savePage = useCallback(async (id: string) => {
     if (!id || !state.isDirty) return;
 
     setIsSaving(true);
     try {
-      // Mock save - just store in localStorage for demo
-      const pageData = {
-        id,
-        elements: state.elements,
-        lastModified: new Date().toISOString()
-      };
-      
-      localStorage.setItem(`page-builder-${id}`, JSON.stringify(pageData));
-      
+      // Delete existing elements
+      await supabase
+        .from('page_builder_elements')
+        .delete()
+        .eq('page_id', id);
+
+      // Insert new elements
+      const elementsToInsert = state.elements.map(element => ({
+        page_id: id,
+        element_type: element.type,
+        element_name: element.name,
+        element_config: element.config,
+        element_styles: element.styles,
+        element_data: element.data || {},
+        grid_column: element.gridColumn,
+        grid_row: element.gridRow,
+        grid_span_x: element.gridSpanX || 1,
+        grid_span_y: element.gridSpanY || 1,
+        sort_order: element.sortOrder,
+        is_visible: element.isVisible,
+        is_locked: element.isLocked,
+        parent_id: element.parentId
+      }));
+
+      if (elementsToInsert.length > 0) {
+        const { error } = await supabase
+          .from('page_builder_elements')
+          .insert(elementsToInsert);
+
+        if (error) throw error;
+      }
+
       setState(prev => ({ ...prev, isDirty: false }));
-      toast.success('تم حفظ الصفحة محلياً');
+      toast.success('تم حفظ الصفحة بنجاح');
     } catch (error: any) {
       console.error('Error saving page:', error);
       toast.error('فشل في حفظ الصفحة');
@@ -90,15 +130,21 @@ export const usePageBuilder = (pageId?: string) => {
   }, [state.elements, state.isDirty]);
 
   // Add element
-  const addElement = useCallback((elementType: string, position?: { x: number; y: number }) => {
+  const addElement = useCallback((elementType: string, elementName?: string, gridPosition?: { column: number; row: number }) => {
     const newElement: PageElement = {
       id: `element-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type: elementType,
-      position: position || { x: 100, y: 100 },
-      size: { width: 200, height: 100 },
-      properties: {},
+      name: elementName || `عنصر ${elementType}`,
+      gridColumn: gridPosition?.column || 1,
+      gridRow: gridPosition?.row || state.elements.length + 1,
+      gridSpanX: 1,
+      gridSpanY: 1,
+      config: {},
       styles: {},
-      zIndex: state.elements.length
+      data: {},
+      sortOrder: state.elements.length,
+      isVisible: true,
+      isLocked: false
     };
 
     setState(prev => ({
@@ -157,11 +203,10 @@ export const usePageBuilder = (pageId?: string) => {
     const newElement: PageElement = {
       ...element,
       id: `element-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      position: {
-        x: element.position.x + 20,
-        y: element.position.y + 20
-      },
-      zIndex: state.elements.length
+      name: `${element.name} (نسخة)`,
+      gridColumn: (element.gridColumn || 1) + 1,
+      gridRow: element.gridRow || 1,
+      sortOrder: state.elements.length
     };
 
     setState(prev => ({
@@ -174,26 +219,32 @@ export const usePageBuilder = (pageId?: string) => {
     return newElement.id;
   }, [state.elements]);
 
-  // Move element
-  const moveElement = useCallback((id: string, position: { x: number; y: number }) => {
-    updateElement(id, { position });
+  // Move element (update grid position)
+  const moveElement = useCallback((id: string, gridPosition: { column: number; row: number }) => {
+    updateElement(id, { 
+      gridColumn: gridPosition.column, 
+      gridRow: gridPosition.row 
+    });
   }, [updateElement]);
 
-  // Resize element
-  const resizeElement = useCallback((id: string, size: { width: number; height: number }) => {
-    updateElement(id, { size });
+  // Resize element (update grid span)
+  const resizeElement = useCallback((id: string, span: { x: number; y: number }) => {
+    updateElement(id, { 
+      gridSpanX: span.x, 
+      gridSpanY: span.y 
+    });
   }, [updateElement]);
 
-  // Change z-index
-  const changeZIndex = useCallback((id: string, direction: 'up' | 'down') => {
+  // Change sort order
+  const changeSortOrder = useCallback((id: string, direction: 'up' | 'down') => {
     const element = state.elements.find(el => el.id === id);
     if (!element) return;
 
-    const newZIndex = direction === 'up' 
-      ? Math.min(element.zIndex + 1, state.elements.length - 1)
-      : Math.max(element.zIndex - 1, 0);
+    const newSortOrder = direction === 'up' 
+      ? Math.min(element.sortOrder + 1, state.elements.length - 1)
+      : Math.max(element.sortOrder - 1, 0);
 
-    updateElement(id, { zIndex: newZIndex });
+    updateElement(id, { sortOrder: newSortOrder });
   }, [state.elements, updateElement]);
 
   // Initialize with demo data if pageId is provided
@@ -233,6 +284,11 @@ export const usePageBuilder = (pageId?: string) => {
     // Utilities
     getElementsByType: (type: string) => state.elements.filter(el => el.type === type),
     getElementCount: () => state.elements.length,
-    clearSelection: () => selectElement(undefined)
+    clearSelection: () => selectElement(undefined),
+    
+    // Grid utilities
+    moveElementInGrid: (id: string, column: number, row: number) => moveElement(id, { column, row }),
+    resizeElementInGrid: (id: string, spanX: number, spanY: number) => resizeElement(id, { x: spanX, y: spanY }),
+    changeSortOrder
   };
 };
