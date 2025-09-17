@@ -175,8 +175,8 @@ const App = () => {
                 <DarkModeProvider>
                   <UserDataProvider>
                     <AdaptiveLayoutProvider>
-                      <SmartNavigationProvider navigationItems={navigationItems}>
-                        <BrowserRouter>
+                      <BrowserRouter>
+                        <SmartNavigationProvider navigationItems={navigationItems}>
                     <Suspense fallback={
                       <div className="min-h-screen flex items-center justify-center">
                         <div className="text-center">
@@ -614,9 +614,9 @@ const App = () => {
                           } />
                          </Routes>
                        </DomainManager>
-                   </Suspense>
-                        </BrowserRouter>
-                      </SmartNavigationProvider>
+                    </Suspense>
+                        </SmartNavigationProvider>
+                         </BrowserRouter>
                     </AdaptiveLayoutProvider>
                   </UserDataProvider>
                 </DarkModeProvider>
