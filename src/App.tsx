@@ -8,6 +8,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
 import { AdaptiveLayoutProvider, SmartNavigationProvider } from "@/components/layout";
+import { AdaptiveDemo } from './components/adaptive-demo/AdaptiveDemo';
+import EnhancedComponentsDemo from './examples/EnhancedComponentsDemo';
 import { navigationItems } from "@/data/navigationItems";
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import Header from "@/components/common/Header";
@@ -232,7 +234,10 @@ const App = () => {
                               <UnifiedLayout>
                                 <Routes>
                                    {/* Public Routes */}
-                                   <Route path="/" element={<Index />} />
+                                   <Route path="/" element={<EnhancedComponentsDemo />} />
+                                   <Route path="/home" element={<Index />} />
+                                   <Route path="/components" element={<EnhancedComponentsDemo />} />
+                                   <Route path="/adaptive" element={<AdaptiveDemo />} />
                                    <Route path="/home" element={<Navigate to="/" replace />} />
                                    <Route path="/auth" element={<AuthPage />} />
                                    <Route path="/login" element={<AuthPage />} />
