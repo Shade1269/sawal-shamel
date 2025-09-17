@@ -117,6 +117,14 @@ export function SmartNavigationProvider({
     }
   }, [location.pathname, navigationItems, device.isMobile]);
 
+  // Update bottomNavVisible when device type changes
+  useEffect(() => {
+    setState(prev => ({
+      ...prev,
+      bottomNavVisible: device.isMobile
+    }));
+  }, [device.isMobile]);
+
   // Actions
   const handleNavigate = (path: string, options?: { replace?: boolean }) => {
     navigate(path, options);
