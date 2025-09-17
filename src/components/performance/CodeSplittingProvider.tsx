@@ -1,5 +1,5 @@
 import React, { Suspense, ComponentType, ReactNode } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 interface CodeSplittingProviderProps {
   children: ReactNode;
   fallback?: ReactNode;
-  errorFallback?: ComponentType<{ error: Error; resetError: () => void }>;
+  errorFallback?: ComponentType<FallbackProps>;
   chunkName?: string;
 }
 
@@ -44,9 +44,9 @@ const DefaultLoadingFallback: React.FC<{ chunkName?: string }> = ({ chunkName })
 );
 
 // Default error boundary component
-const DefaultErrorFallback: React.FC<{ error: Error; resetError: () => void }> = ({ 
+const DefaultErrorFallback: React.FC<FallbackProps> = ({ 
   error, 
-  resetError 
+  resetErrorBoundary 
 }) => (
   <Card className="w-full border-destructive">
     <CardContent className="p-6">
@@ -76,7 +76,7 @@ const DefaultErrorFallback: React.FC<{ error: Error; resetError: () => void }> =
         </div>
 
         <div className="flex gap-2 justify-center">
-          <Button onClick={resetError} variant="outline" className="gap-2">
+          <Button onClick={resetErrorBoundary} variant="outline" className="gap-2">
             <RefreshCw className="h-4 w-4" />
             إعادة المحاولة
           </Button>
