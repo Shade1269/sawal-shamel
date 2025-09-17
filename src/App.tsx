@@ -28,10 +28,11 @@ const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
 const AdminPermissions = lazy(() => import("./pages/admin/AdminPermissions"));
 const AdminActivity = lazy(() => import("./pages/admin/AdminActivity"));
 
-// Navigation Demo
+// Demo Pages
 const NavigationDemo = lazy(() => import("./components/demos/NavigationDemo"));
-// Advanced Navigation Demo
 const AdvancedNavigationDemo = lazy(() => import("./components/demos/AdvancedNavigationDemo"));
+const DesignSystemDemo = lazy(() => import("./components/demos/DesignSystemDemo"));
+const InteractiveDemo = lazy(() => import("./components/demos/InteractiveDemo"));
 const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
@@ -194,11 +195,15 @@ const App = () => {
                                  <Route path="/auth" element={<AuthPage />} />
                                  <Route path="/login" element={<AuthPage />} />
                                  <Route path="/signup" element={<AuthPage />} />
-                                  <Route path="/products" element={<ProductsPage />} />
-                                  <Route path="/about" element={<AboutPage />} />
-                                  <Route path="/create-admin" element={<CreateAdminPage />} />
-                   <Route path="/navigation-demo" element={<NavigationDemo />} />
-                   <Route path="/advanced-navigation" element={<AdvancedNavigationDemo />} />
+                   <Route path="/products" element={<ProductsPage />} />
+                                   <Route path="/about" element={<AboutPage />} />
+                                   <Route path="/create-admin" element={<CreateAdminPage />} />
+                    
+                    {/* Demo Pages */}
+                    <Route path="/navigation-demo" element={<NavigationDemo />} />
+                    <Route path="/advanced-navigation" element={<AdvancedNavigationDemo />} />
+                    <Route path="/design-demo" element={<DesignSystemDemo />} />
+                    <Route path="/interactive-demo" element={<InteractiveDemo />} />
                        
                        {/* Protected Browser */}
                        <Route path="/products-browser" element={
