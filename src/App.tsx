@@ -28,8 +28,8 @@ const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
 const AdminPermissions = lazy(() => import("./pages/admin/AdminPermissions"));
 const AdminActivity = lazy(() => import("./pages/admin/AdminActivity"));
 
-// Design System Demo
-const DesignSystemDemo = lazy(() => import("./components/demos/DesignSystemDemo"));
+// Navigation Demo
+const NavigationDemo = lazy(() => import("./components/demos/NavigationDemo"));
 const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const AffiliateDashboard = lazy(() => import("./pages/AffiliateDashboard"));
 const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
@@ -195,7 +195,7 @@ const App = () => {
                                   <Route path="/products" element={<ProductsPage />} />
                                   <Route path="/about" element={<AboutPage />} />
                                   <Route path="/create-admin" element={<CreateAdminPage />} />
-                                  <Route path="/design-system" element={<DesignSystemDemo />} />
+                                  <Route path="/navigation-demo" element={<NavigationDemo />} />
                        
                        {/* Protected Browser */}
                        <Route path="/products-browser" element={

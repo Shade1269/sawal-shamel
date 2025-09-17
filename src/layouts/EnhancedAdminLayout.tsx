@@ -4,6 +4,9 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { EnhancedSidebar, type NavigationGroup } from '@/components/ui/navigation/EnhancedSidebar';
 import { EnhancedBreadcrumb } from '@/components/ui/navigation/EnhancedBreadcrumb';
 import { NavigationTransitions } from '@/components/navigation/NavigationTransitions';
+import { QuickCommandPalette } from '@/components/navigation/QuickCommandPalette';
+import { SmartSearch } from '@/components/navigation/SmartSearch';
+import { useNavigationShortcuts } from '@/hooks/useNavigationShortcuts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -45,6 +48,10 @@ const EnhancedAdminLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [commandPaletteOpen, setCommandPaletteOpen] = React.useState(false);
+  
+  // Setup navigation shortcuts
+  useNavigationShortcuts(setCommandPaletteOpen);
 
   // Simple breadcrumb generation
   const generateBreadcrumb = () => {
@@ -289,16 +296,15 @@ const EnhancedAdminLayout: React.FC = () => {
                 />
               </div>
 
-              {/* Search */}
+              {/* Smart Search */}
               <div className="hidden md:flex max-w-md flex-1">
-                <div className="relative w-full">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="البحث في لوحة التحكم..."
-                    className="pl-10 h-10 bg-background/50 border-border/50"
-                  />
-                </div>
+                <SmartSearch 
+                  placeholder="البحث الذكي في لوحة التحكم..."
+                  className="w-full"
+                  showRecentSearches={true}
+                  showSuggestions={true}
+                  showFilters={true}
+                />
               </div>
 
               {/* Right Actions */}
@@ -368,6 +374,12 @@ const EnhancedAdminLayout: React.FC = () => {
             </NavigationTransitions>
           </main>
         </div>
+
+        {/* Command Palette */}
+        <QuickCommandPalette
+          open={commandPaletteOpen}
+          onOpenChange={setCommandPaletteOpen}
+        />
       </div>
     </SidebarProvider>
   );

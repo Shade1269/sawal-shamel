@@ -5,6 +5,13 @@ export { EnhancedGrid, gridVariants, type EnhancedGridProps } from './layout/Enh
 export { EnhancedBreadcrumb, breadcrumbVariants, type EnhancedBreadcrumbProps, type BreadcrumbItem } from './navigation/EnhancedBreadcrumb'
 export { EnhancedStatusIndicator, statusVariants, type EnhancedStatusIndicatorProps } from './feedback/EnhancedStatusIndicator'
 export { EnhancedSidebar, sidebarVariants, type NavigationItem, type NavigationGroup } from './navigation/EnhancedSidebar'
+import { EnhancedTabs, tabsVariants, tabVariants, type TabItem } from '@/components/navigation/EnhancedTabs';
+
+// Enhanced Navigation Components  
+export { QuickCommandPalette } from '../navigation/QuickCommandPalette'
+export { SmartSearch } from '../navigation/SmartSearch'  
+export { EnhancedTabs, tabsVariants, tabVariants, type TabItem } from '../navigation/EnhancedTabs'
+export { Kbd, kbdVariants } from './kbd'
 
 // Enhanced UI Components - نظام المكونات المطور
 export { Button, buttonVariants, type ButtonProps } from './button'
