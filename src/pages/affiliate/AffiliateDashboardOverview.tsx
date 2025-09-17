@@ -15,7 +15,7 @@ import {
   EnhancedButton
 } from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
-import { Store, Package, ShoppingBag, DollarSign, Users, TrendingUp, ExternalLink, Palette } from 'lucide-react';
+import { Store, Package, ShoppingBag, DollarSign, Users, TrendingUp, ExternalLink, Palette, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createStoreUrl } from '@/utils/domains';
 
@@ -213,7 +213,7 @@ export default function AffiliateDashboardOverview() {
       </ResponsiveGrid>
 
       {/* Quick Actions */}
-      <ResponsiveGrid columns={{ mobile: 1, tablet: 2, desktop: 4 }} gap={{ mobile: 4, tablet: 6 }}>
+      <ResponsiveGrid columns={{ mobile: 1, tablet: 2, desktop: 5 }} gap={{ mobile: 4, tablet: 6 }}>
         <EnhancedCard variant="glass" hover="lift">
           <EnhancedCardHeader>
             <EnhancedCardTitle className="flex items-center gap-2">
@@ -247,6 +247,25 @@ export default function AffiliateDashboardOverview() {
             <EnhancedButton asChild className="w-full" variant="luxury" animation="glow">
               <Link to="/dashboard/orders">
                 عرض الطلبات
+              </Link>
+            </EnhancedButton>
+          </EnhancedCardContent>
+        </EnhancedCard>
+
+        <EnhancedCard variant="glass" hover="lift">
+          <EnhancedCardHeader>
+            <EnhancedCardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              إدارة المحتوى
+            </EnhancedCardTitle>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
+            <p className="text-muted-foreground mb-4">
+              إنشاء وإدارة صفحات وموديا المتجر
+            </p>
+            <EnhancedButton asChild className="w-full" variant="secondary" animation="glow">
+              <Link to="/cms-management">
+                نظام CMS
               </Link>
             </EnhancedButton>
           </EnhancedCardContent>

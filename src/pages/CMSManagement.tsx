@@ -19,7 +19,7 @@ import { MediaLibrary } from '@/components/cms/MediaLibrary';
 import { useAffiliateStore } from '@/hooks/useAffiliateStore';
 import { useNavigate } from 'react-router-dom';
 
-export const CMSManagement = () => {
+const CMSManagement = () => {
   const navigate = useNavigate();
   const { store } = useAffiliateStore();
   const [activeTab, setActiveTab] = useState('pages');
@@ -245,3 +245,5 @@ export const CMSManagement = () => {
     </div>
   );
 };
+
+export default CMSManagement;

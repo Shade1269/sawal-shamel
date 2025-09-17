@@ -111,6 +111,9 @@ const ProductsBrowser = lazy(() => import("./pages/ProductsBrowser"));
 const CategoryManagement = lazy(() => import("./pages/CategoryManagement"));
 const BrandManagement = lazy(() => import("./pages/BrandManagement"));
 
+// CMS Management
+const CMSManagement = lazy(() => import("./pages/CMSManagement"));
+
 // Shipping and Tracking Pages
 const ShipmentManagement = lazy(() => import("./pages/ShipmentManagement"));
 
@@ -266,9 +269,16 @@ const App = () => {
                       }>
                          <Route index element={<AffiliateDashboardOverview />} />
                          <Route path="products" element={<AffiliateProductsPage />} />
-                         <Route path="orders" element={<AffiliateOrdersPage />} />
-                         <Route path="commissions" element={<AffiliateCommissionsPage />} />
-                       </Route>
+                          <Route path="orders" element={<AffiliateOrdersPage />} />
+                          <Route path="commissions" element={<AffiliateCommissionsPage />} />
+                        </Route>
+                        
+                        {/* CMS Management Route */}
+                        <Route path="/cms-management" element={
+                          <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                            <CMSManagement />
+                          </ProtectedRoute>
+                        } />
                        
                        {/* Store Theme Settings */}
                        <Route path="/store-themes/:storeId" element={
