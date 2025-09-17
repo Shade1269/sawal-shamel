@@ -13,6 +13,15 @@ export { SmartSearch } from '../navigation/SmartSearch'
 export { EnhancedTabs, tabsVariants, tabVariants, type TabItem } from '../navigation/EnhancedTabs'
 export { Kbd, kbdVariants } from './kbd'
 
+// Enhanced Navigation System v2.3
+export { ResponsiveLayout, ResponsiveGrid, ResponsiveColumn, ShowOnMobile, ShowOnTablet, ShowOnDesktop, HideOnMobile } from '../layout/ResponsiveLayout'
+export { MegaMenu, MegaMenuTrigger, megaMenuVariants } from '../navigation/MegaMenu'
+export { MobileNavigation, BottomNavigation, mobileNavVariants } from '../navigation/MobileNavigation'
+export { EnhancedPagination, PaginationSummary, paginationVariants } from '../navigation/EnhancedPagination'
+export { VirtualizedList } from '../layout/VirtualizedList'
+export { useResponsiveLayout, useResponsiveColumns, useResponsiveSpacing } from '../hooks/useResponsiveLayout'
+export { useVirtualization, useInfiniteVirtualization } from '../hooks/useVirtualization'
+
 // Enhanced UI Components - نظام المكونات المطور
 export { Button, buttonVariants, type ButtonProps } from './button'
 export { EnhancedButton, enhancedButtonVariants, type EnhancedButtonProps } from './enhanced-button'
