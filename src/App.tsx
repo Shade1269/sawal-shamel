@@ -95,6 +95,7 @@ const Inventory = lazy(() => import("./pages/Inventory"));
 const ExecutiveDashboard = lazy(() => import("./pages/ExecutiveDashboard"));
 const SecurityCenter = lazy(() => import("./pages/SecurityCenter"));
 const SEOManagement = lazy(() => import("./pages/SEOManagement"));
+const MonitoringPage = lazy(() => import("./pages/MonitoringPage"));
 const MarketingDashboard = lazy(() => import("./pages/MarketingDashboard"));
 const ComprehensiveAdminPanel = lazy(() => import("./pages/ComprehensiveAdminPanel"));
 const AdminSettings = lazy(() => import("./pages/AdminSettings"));
@@ -306,6 +307,7 @@ const App = () => {
         <Route path="executive" element={<ExecutiveDashboard />} />
         <Route path="security" element={<SecurityCenter />} />
         <Route path="seo" element={<SEOManagement />} />
+        <Route path="monitoring" element={<MonitoringPage />} />
         <Route path="marketing" element={<MarketingDashboard />} />
         <Route path="settings" element={<AdminSettings />} />
         <Route path="products" element={<ProductManagement />} />
