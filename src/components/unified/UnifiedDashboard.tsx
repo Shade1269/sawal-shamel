@@ -1,9 +1,10 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
 import {
   BarChart3,
   DollarSign,
@@ -18,9 +19,19 @@ import {
   Plus,
   Filter,
   Download,
-  RefreshCw
+  RefreshCw,
+  Bell,
+  Zap,
+  Activity,
+  Target,
+  AlertTriangle
 } from "lucide-react";
 import { useFastAuth } from "@/hooks/useFastAuth";
+import { useDashboardData } from "@/hooks/useDashboardData";
+import { SmartWidget } from "@/components/dashboard/SmartWidget";
+import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
+import { SmartNotifications } from "@/components/dashboard/SmartNotifications";
+import { motion } from "framer-motion";
 
 interface DashboardConfig {
   title: string;
@@ -278,6 +289,18 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
 export function UnifiedDashboard() {
   const { profile } = useFastAuth();
   const location = useLocation();
+  const [activeTab, setActiveTab] = useState('overview');
+  
+  const {
+    loading,
+    error,
+    widgets,
+    charts,
+    notifications,
+    period,
+    setPeriod,
+    refreshData
+  } = useDashboardData();
 
   const dashboardType = useMemo(() => {
     const path = location.pathname;
@@ -298,17 +321,78 @@ export function UnifiedDashboard() {
 
   const IconComponent = config.icon;
 
+  const handleNotificationRead = (id: string) => {
+    // في التطبيق الحقيقي، سيتم تحديث قاعدة البيانات
+    console.log('Marking notification as read:', id);
+  };
+
+  const handleNotificationAction = (notification: any) => {
+    // في التطبيق الحقيقي، سيتم التنقل للصفحة المطلوبة
+    console.log('Notification action:', notification);
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-muted rounded w-1/3 mb-2"></div>
+          <div className="h-4 bg-muted rounded w-1/2"></div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-32 bg-muted rounded animate-pulse"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+              <AlertTriangle className="h-6 w-6 text-red-500" />
+            </div>
+            <h3 className="font-medium mb-2">خطأ في تحميل البيانات</h3>
+            <p className="text-sm text-muted-foreground mb-4">{error}</p>
+            <Button onClick={refreshData}>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              إعادة المحاولة
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg bg-primary/10`}>
-            <IconComponent className={`h-6 w-6 ${config.primaryColor}`} />
+      {/* Enhanced Header */}
+      <motion.div 
+        className="flex items-center justify-between"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <div className="flex items-center gap-4">
+          <div className={`p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20`}>
+            <IconComponent className={`h-8 w-8 ${config.primaryColor}`} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">{config.title}</h1>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+              {config.title}
+            </h1>
             <p className="text-muted-foreground">{config.description}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <Badge variant="outline" className="text-xs">
+                <Activity className="h-3 w-3 mr-1" />
+                متصل الآن
+              </Badge>
+              <Badge variant="secondary" className="text-xs">
+                آخر تحديث: منذ دقيقتين
+              </Badge>
+            </div>
           </div>
         </div>
         
@@ -321,109 +405,227 @@ export function UnifiedDashboard() {
             <Download className="h-4 w-4 mr-2" />
             تصدير
           </Button>
-          <Button variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={refreshData}
+            disabled={loading}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             تحديث
           </Button>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Stats Cards */}
+      {/* Smart Widgets Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {config.stats.map((stat, index) => {
-          const StatIcon = stat.icon;
-          return (
-            <Card key={index} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      {stat.title}
-                    </p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                    {stat.change && (
-                      <div className="flex items-center gap-1 mt-1">
-                        <Badge 
-                          variant={stat.changeType === 'positive' ? 'default' : 'destructive'}
-                          className="text-xs"
-                        >
-                          {stat.change}
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">من الشهر الماضي</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className={`p-3 rounded-full ${stat.color}`}>
-                    <StatIcon className="h-5 w-5 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+        {widgets.map((widget, index) => (
+          <motion.div
+            key={widget.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <SmartWidget
+              data={widget}
+              variant="default"
+              showProgress={index < 2}
+              animated={true}
+              refreshable={true}
+              onRefresh={refreshData}
+            />
+          </motion.div>
+        ))}
       </div>
 
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>الإجراءات السريعة</CardTitle>
-          <CardDescription>الأدوات والوظائف الأكثر استخداماً</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {config.quickActions.map((action, index) => {
-              const ActionIcon = action.icon;
-              return (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className="h-auto p-4 flex flex-col items-start gap-2 hover:shadow-md transition-shadow"
-                  asChild
-                >
-                  <a href={action.href}>
-                    <div className="flex items-center gap-3 w-full">
-                      <div className={`p-2 rounded-md ${action.color}`}>
-                        <ActionIcon className="h-4 w-4 text-white" />
-                      </div>
-                      <div className="text-left">
-                        <div className="font-medium">{action.title}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {action.description}
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-                </Button>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Tabs Content */}
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          {config.tabs.map(tab => (
-            <TabsTrigger key={tab.id} value={tab.id}>
-              {tab.title}
+      {/* Enhanced Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <div className="flex items-center justify-between">
+          <TabsList className="grid w-auto grid-cols-4">
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <Eye className="h-4 w-4" />
+              نظرة عامة
             </TabsTrigger>
-          ))}
-        </TabsList>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              التحليلات
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="flex items-center gap-2">
+              <Bell className="h-4 w-4" />
+              الإشعارات
+              {notifications.filter(n => !n.isRead).length > 0 && (
+                <Badge variant="destructive" className="ml-1 text-xs px-1 py-0">
+                  {notifications.filter(n => !n.isRead).length}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="performance" className="flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              الأداء
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-        {config.tabs.map(tab => (
-          <TabsContent key={tab.id} value={tab.id}>
-            <Card>
-              <CardHeader>
-                <CardTitle>{tab.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  المحتوى قيد التطوير - {tab.title}
+        <TabsContent value="overview" className="space-y-6">
+          {/* Quick Actions with Enhanced Design */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-primary" />
+                    الإجراءات السريعة
+                  </CardTitle>
+                  <CardDescription>الأدوات والوظائف الأكثر استخداماً</CardDescription>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        ))}
+                <Badge variant="outline">
+                  {config.quickActions.length} إجراء
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {config.quickActions.map((action, index) => {
+                  const ActionIcon = action.icon;
+                  return (
+                    <motion.div
+                      key={index}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Button
+                        variant="outline"
+                        className="h-auto p-4 flex flex-col items-start gap-3 hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/20"
+                        asChild
+                      >
+                        <a href={action.href}>
+                          <div className="flex items-center gap-3 w-full">
+                            <div className={`p-3 rounded-lg ${action.color} shadow-lg`}>
+                              <ActionIcon className="h-5 w-5 text-white" />
+                            </div>
+                            <div className="text-left flex-1">
+                              <div className="font-semibold text-base">{action.title}</div>
+                              <div className="text-sm text-muted-foreground leading-relaxed">
+                                {action.description}
+                              </div>
+                            </div>
+                          </div>
+                        </a>
+                      </Button>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Performance Overview */}
+          <Card>
+            <CardHeader>
+              <CardTitle>ملخص الأداء</CardTitle>
+              <CardDescription>مؤشرات الأداء الرئيسية</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>تحقيق الهدف الشهري</span>
+                    <span className="font-medium">85%</span>
+                  </div>
+                  <Progress value={85} className="h-2" />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>رضا العملاء</span>
+                    <span className="font-medium">92%</span>
+                  </div>
+                  <Progress value={92} className="h-2" />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>معدل النمو</span>
+                    <span className="font-medium">78%</span>
+                  </div>
+                  <Progress value={78} className="h-2" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="analytics">
+          <DashboardCharts
+            charts={charts}
+            period={period}
+            onPeriodChange={(p) => setPeriod(p as any)}
+            onRefresh={refreshData}
+            onExport={(chartId) => console.log('Exporting chart:', chartId)}
+          />
+        </TabsContent>
+
+        <TabsContent value="notifications">
+          <SmartNotifications
+            notifications={notifications}
+            onNotificationRead={handleNotificationRead}
+            onNotificationAction={handleNotificationAction}
+            onMarkAllRead={() => console.log('Mark all read')}
+            onClearAll={() => console.log('Clear all')}
+          />
+        </TabsContent>
+
+        <TabsContent value="performance">
+          <Card>
+            <CardHeader>
+              <CardTitle>تحليل الأداء المتقدم</CardTitle>
+              <CardDescription>مقاييس مفصلة للأداء والنمو</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {/* Performance Metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {[
+                    { label: 'معدل النمو الشهري', value: '+15.2%', status: 'positive' },
+                    { label: 'متوسط قيمة الطلب', value: '285 ر.س', status: 'positive' },
+                    { label: 'معدل الاحتفاظ', value: '87%', status: 'positive' },
+                    { label: 'وقت الاستجابة', value: '1.2 ثانية', status: 'neutral' }
+                  ].map((metric, index) => (
+                    <Card key={index} className="text-center">
+                      <CardContent className="p-4">
+                        <div className="text-2xl font-bold">{metric.value}</div>
+                        <div className="text-sm text-muted-foreground">{metric.label}</div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {/* Goals Progress */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>تقدم الأهداف</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {[
+                      { goal: 'مبيعات الشهر', current: 125000, target: 150000 },
+                      { goal: 'عملاء جدد', current: 45, target: 60 },
+                      { goal: 'معدل التحويل', current: 3.4, target: 4.0 }
+                    ].map((item, index) => (
+                      <div key={index} className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>{item.goal}</span>
+                          <span>{item.current} / {item.target}</span>
+                        </div>
+                        <Progress 
+                          value={(item.current / item.target) * 100} 
+                          className="h-2" 
+                        />
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );
