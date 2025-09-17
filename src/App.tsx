@@ -14,6 +14,7 @@ import { StoreRouteGuard } from "@/components/guards/StoreRouteGuard";
 import { PlatformRouteGuard } from "@/components/guards/PlatformRouteGuard";
 import { AuthPage } from "@/features/auth";
 import { ProtectedRoute } from "@/shared/components/ProtectedRoute";
+import { UnifiedLayout } from "@/components/layout";
 import Index from "./pages/Index";
 import DomainManager from "@/components/store/DomainManager";
 import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
@@ -211,21 +212,36 @@ const App = () => {
                             </StoreRouteGuard>
                           } />
                          
-                         {/* Platform Routes - محمية من عملاء المتجر */}
-                         <Route path="/*" element={
-                           <PlatformRouteGuard>
-                             <div className="min-h-screen bg-gradient-persian-bg">
-                               <Header />
-                               <Routes>
-                                 {/* Public Routes */}
-                                 <Route path="/" element={<Index />} />
-                                 <Route path="/home" element={<Navigate to="/" replace />} />
-                                 <Route path="/auth" element={<AuthPage />} />
-                                 <Route path="/login" element={<AuthPage />} />
-                                 <Route path="/signup" element={<AuthPage />} />
-                   <Route path="/products" element={<ProductsPage />} />
-                                   <Route path="/about" element={<AboutPage />} />
-                                   <Route path="/create-admin" element={<CreateAdminPage />} />
+                          {/* Platform Routes - محمية من عملاء المتجر */}
+                          <Route path="/*" element={
+                            <PlatformRouteGuard>
+                              <UnifiedLayout>
+                                <Routes>
+                                  {/* Public Routes */}
+                                  <Route path="/" element={
+                                    <UnifiedLayout showSidebar={false} showBreadcrumb={false}>
+                                      <Index />
+                                    </UnifiedLayout>
+                                  } />
+                                  <Route path="/home" element={<Navigate to="/" replace />} />
+                                  <Route path="/auth" element={
+                                    <UnifiedLayout showSidebar={false} showBreadcrumb={false} showFullHeader={false}>
+                                      <AuthPage />
+                                    </UnifiedLayout>
+                                  } />
+                                  <Route path="/login" element={
+                                    <UnifiedLayout showSidebar={false} showBreadcrumb={false} showFullHeader={false}>
+                                      <AuthPage />
+                                    </UnifiedLayout>
+                                  } />
+                                  <Route path="/signup" element={
+                                    <UnifiedLayout showSidebar={false} showBreadcrumb={false} showFullHeader={false}>
+                                      <AuthPage />
+                                    </UnifiedLayout>
+                                  } />
+                    <Route path="/products" element={<ProductsPage />} />
+                                    <Route path="/about" element={<AboutPage />} />
+                                    <Route path="/create-admin" element={<CreateAdminPage />} />
                     
                     {/* Demo Pages */}
                     <Route path="/navigation-demo" element={<NavigationDemo />} />
@@ -524,7 +540,7 @@ const App = () => {
                                     {/* Catch all for Platform */}
                                     <Route path="*" element={<Navigate to="/" replace />} />
                                 </Routes>
-                              </div>
+                              </UnifiedLayout>
                             </PlatformRouteGuard>
                           } />
                          </Routes>
