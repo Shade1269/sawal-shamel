@@ -13,6 +13,13 @@ export { SmartSearch } from '../navigation/SmartSearch'
 export { EnhancedTabs, tabsVariants, tabVariants, type TabItem } from '../navigation/EnhancedTabs'
 export { Kbd, kbdVariants } from './kbd'
 
+// Interactive Components System v3.1
+export { EnhancedChart, chartVariants } from '../interactive/EnhancedChart'
+export { InteractiveWidget, MetricWidget, ProgressWidget, ActivityWidget, widgetVariants } from '../interactive/InteractiveWidget'
+export { AnimatedCounter, CurrencyCounter, PercentageCounter, CompactCounter, TimeCounter, counterVariants } from '../interactive/AnimatedCounter'
+export { LikeButton, StarRating, RippleEffect, FloatingFeedback, HoverCard, microInteractionVariants } from '../interactive/MicroInteractions'
+export { ProgressiveLoader, FileUploadLoader, NetworkStatusLoader, loaderVariants } from '../interactive/ProgressiveLoader'
+
 // Enhanced Navigation System v2.3
 export { ResponsiveLayout, ResponsiveGrid, ResponsiveColumn, ShowOnMobile, ShowOnTablet, ShowOnDesktop, HideOnMobile } from '../layout/ResponsiveLayout'
 export { MegaMenu, MegaMenuTrigger, megaMenuVariants } from '../navigation/MegaMenu'
