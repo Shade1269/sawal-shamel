@@ -274,7 +274,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
         </PopoverTrigger>
         
         <PopoverContent 
-          className="w-[400px] p-0 shadow-luxury" 
+          className="w-[400px] p-0 bg-card/95 backdrop-blur-md border-border/50 shadow-luxury z-[100]" 
           align="start"
           onOpenAutoFocus={(e) => {
             e.preventDefault();
@@ -283,14 +283,14 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
         >
           <Command shouldFilter={false}>
             {/* Search Input */}
-            <div className="flex items-center border-b border-border/50 px-3">
+            <div className="flex items-center border-b border-border/50 px-3 bg-card/50">
               <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
               <CommandInput
                 ref={searchRef}
                 value={query}
                 onValueChange={handleInputChange}
                 placeholder={placeholder}
-                className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
+                className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground text-card-foreground"
               />
               {query && (
                 <Button
