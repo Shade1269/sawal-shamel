@@ -590,6 +590,18 @@ const AdminAnalytics = () => {
         <TabsContent value="notifications" className="space-y-4">
           <NotificationCenter />
         </TabsContent>
+        
+        <TabsContent value="smart-dashboard" className="space-y-4">
+          <SmartDashboard />
+        </TabsContent>
+        
+        <TabsContent value="predictions" className="space-y-4">
+          <PredictiveAnalytics />
+        </TabsContent>
+        
+        <TabsContent value="recommendations" className="space-y-4">
+          <SmartRecommendations />
+        </TabsContent>
       </Tabs>
     </div>
   );
