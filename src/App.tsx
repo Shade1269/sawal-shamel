@@ -7,7 +7,8 @@ import { DarkModeProvider } from "@/shared/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
-import { AdaptiveLayoutProvider } from "@/components/layout";
+import { AdaptiveLayoutProvider, SmartNavigationProvider } from "@/components/layout";
+import { navigationItems } from "@/data/navigationItems";
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import Header from "@/components/common/Header";
 import StoreLayout from "@/layouts/StoreLayout";
@@ -171,7 +172,8 @@ const App = () => {
                 <DarkModeProvider>
                   <UserDataProvider>
                     <AdaptiveLayoutProvider>
-                      <BrowserRouter>
+                      <SmartNavigationProvider navigationItems={navigationItems}>
+                        <BrowserRouter>
                     <Suspense fallback={
                       <div className="min-h-screen flex items-center justify-center">
                         <div className="text-center">
@@ -606,7 +608,8 @@ const App = () => {
                          </Routes>
                        </DomainManager>
                    </Suspense>
-                      </BrowserRouter>
+                        </BrowserRouter>
+                      </SmartNavigationProvider>
                     </AdaptiveLayoutProvider>
                   </UserDataProvider>
                 </DarkModeProvider>

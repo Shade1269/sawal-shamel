@@ -27,7 +27,18 @@ export { AdaptiveButton } from './AdaptiveButton';
 export { AdaptiveForm, AdaptiveInput } from './AdaptiveForm';
 export { AdaptiveLayoutProvider, useAdaptiveLayout, useLayoutDevice } from './AdaptiveLayoutProvider';
 
-// Device-Specific Headers and Navigation
+export { 
+  AdaptiveNavigation,
+  SmartNavigationProvider,
+  useSmartNavigation,
+  MobileBottomNavigation,
+  TabletDrawerNavigation,
+  DesktopSidebarNavigation,
+  NavigationShortcuts,
+  NavigationSearch
+} from '../navigation';
+
+// Device-Specific Headers and Navigation  
 export { MobileHeader } from './MobileHeader';
 export { DesktopHeader } from './DesktopHeader';
 export { MobileBottomNav } from './MobileBottomNav';
