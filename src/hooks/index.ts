@@ -1,6 +1,16 @@
 // Enhanced Hooks System v4.1
 // نظام الـ Hooks المطور - النسخة الرابعة المحسّنة
 
+// Device Detection Hooks - NEW v4.2
+export { 
+  useDeviceDetection, 
+  useIsMobile, 
+  useIsTablet, 
+  useIsDesktop, 
+  useHasTouch,
+  type DeviceInfo 
+} from './useDeviceDetection';
+
 // Core Hooks
 export { useDesignSystem } from './useDesignSystem';
 export { useResponsiveLayout, useResponsiveColumns, useResponsiveSpacing } from './useResponsiveLayout';
