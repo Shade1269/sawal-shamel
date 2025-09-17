@@ -239,7 +239,6 @@ export function PerformanceDemo() {
                     src={image.src}
                     alt={image.alt}
                     className="w-full h-48 object-cover rounded-lg"
-                    priority={index < 6}
                   />
                 ))}
               </div>
@@ -419,7 +418,7 @@ export function PerformanceDemo() {
       {/* Performance Monitor */}
       {showMonitor && (
         <PerformanceMonitor 
-          showDetails={true}
+          showDetailed={true}
         />
       )}
     </div>
