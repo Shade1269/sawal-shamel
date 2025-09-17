@@ -6,6 +6,11 @@ import {
   EnhancedCardHeader, 
   EnhancedCardTitle, 
   EnhancedCardContent,
+  EnhancedContainer,
+  EnhancedSection,
+  EnhancedGrid,
+  EnhancedBreadcrumb,
+  EnhancedStatusIndicator,
   Badge,
   Input,
   Alert,
@@ -252,6 +257,71 @@ const DesignSystemDemo: React.FC = () => {
             </div>
           </EnhancedCardContent>
         </EnhancedCard>
+
+          {/* Enhanced Layout Components Demo */}
+          <EnhancedSection variant="glass" size="lg" animation="fade">
+            <EnhancedContainer size="lg" background="none">
+              <EnhancedCardHeader>
+                <EnhancedCardTitle className="flex items-center gap-2">
+                  <Settings className="h-5 w-5 text-primary" />
+                  Enhanced Layout & Navigation - تخطيط مطور
+                </EnhancedCardTitle>
+              </EnhancedCardHeader>
+              
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <h4 className={typography.heading.h6}>Enhanced Breadcrumb</h4>
+                  <EnhancedBreadcrumb
+                    variant="luxury"
+                    items={[
+                      { label: 'المنتجات', href: '/products' },
+                      { label: 'إدارة المخزن', href: '/inventory' },
+                      { label: 'التقارير' }
+                    ]}
+                  />
+                </div>
+                
+                <div className="space-y-4">
+                  <h4 className={typography.heading.h6}>Status Indicators</h4>
+                  <div className="flex flex-wrap gap-3">
+                    <EnhancedStatusIndicator status="success" variant="filled">
+                      متصل
+                    </EnhancedStatusIndicator>
+                    <EnhancedStatusIndicator status="warning" animation="pulse">
+                      تحذير
+                    </EnhancedStatusIndicator>
+                    <EnhancedStatusIndicator status="error" variant="glass">
+                      خطأ
+                    </EnhancedStatusIndicator>
+                    <EnhancedStatusIndicator status="loading" animation="glow">
+                      جاري التحميل...
+                    </EnhancedStatusIndicator>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <h4 className={typography.heading.h6}>Enhanced Grid Layout</h4>
+                  <EnhancedGrid cols={3} gap="lg">
+                    <EnhancedCard variant="glass" hover="glow">
+                      <EnhancedCardContent className="p-4">
+                        <p className="text-center text-sm">بطاقة 1</p>
+                      </EnhancedCardContent>
+                    </EnhancedCard>
+                    <EnhancedCard variant="luxury" hover="lift">
+                      <EnhancedCardContent className="p-4">
+                        <p className="text-center text-sm text-white">بطاقة 2</p>
+                      </EnhancedCardContent>
+                    </EnhancedCard>
+                    <EnhancedCard variant="persian" hover="persian">
+                      <EnhancedCardContent className="p-4">
+                        <p className="text-center text-sm text-white">بطاقة 3</p>
+                      </EnhancedCardContent>
+                    </EnhancedCard>
+                  </EnhancedGrid>
+                </div>
+              </div>
+            </EnhancedContainer>
+          </EnhancedSection>
 
         {/* Enhanced Dialogs & Interactions */}
         <EnhancedCard variant="heritage" hover="persian" size="lg">
