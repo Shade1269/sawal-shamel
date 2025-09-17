@@ -1317,6 +1317,110 @@ export type Database = {
           },
         ]
       }
+      content_blocks: {
+        Row: {
+          block_type: Database["public"]["Enums"]["content_block_type"]
+          content: Json | null
+          created_at: string | null
+          id: string
+          is_visible: boolean | null
+          section_id: string
+          sort_order: number | null
+          styles: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          block_type: Database["public"]["Enums"]["content_block_type"]
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          section_id: string
+          sort_order?: number | null
+          styles?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          block_type?: Database["public"]["Enums"]["content_block_type"]
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          section_id?: string
+          sort_order?: number | null
+          styles?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_content_blocks_section"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "content_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_sections: {
+        Row: {
+          content: Json | null
+          created_at: string | null
+          id: string
+          is_global: boolean | null
+          is_visible: boolean | null
+          page_id: string | null
+          section_name: string
+          section_type: Database["public"]["Enums"]["content_type"] | null
+          settings: Json | null
+          sort_order: number | null
+          store_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          is_global?: boolean | null
+          is_visible?: boolean | null
+          page_id?: string | null
+          section_name: string
+          section_type?: Database["public"]["Enums"]["content_type"] | null
+          settings?: Json | null
+          sort_order?: number | null
+          store_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          is_global?: boolean | null
+          is_visible?: boolean | null
+          page_id?: string | null
+          section_name?: string
+          section_type?: Database["public"]["Enums"]["content_type"] | null
+          settings?: Json | null
+          sort_order?: number | null
+          store_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_content_sections_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "store_pages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_content_sections_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coupon_usage: {
         Row: {
           coupon_id: string | null
@@ -1444,6 +1548,56 @@ export type Database = {
           status?: string
         }
         Relationships: []
+      }
+      custom_forms: {
+        Row: {
+          created_at: string | null
+          fields: Json
+          form_name: string
+          form_title: string
+          id: string
+          is_active: boolean | null
+          settings: Json | null
+          store_id: string
+          submit_url: string | null
+          success_message: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          fields?: Json
+          form_name: string
+          form_title: string
+          id?: string
+          is_active?: boolean | null
+          settings?: Json | null
+          store_id: string
+          submit_url?: string | null
+          success_message?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          fields?: Json
+          form_name?: string
+          form_title?: string
+          id?: string
+          is_active?: boolean | null
+          settings?: Json | null
+          store_id?: string
+          submit_url?: string | null
+          success_message?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_custom_forms_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       customer_addresses: {
         Row: {
@@ -2082,6 +2236,41 @@ export type Database = {
           id?: string
         }
         Relationships: []
+      }
+      form_submissions: {
+        Row: {
+          data: Json
+          form_id: string
+          id: string
+          ip_address: unknown | null
+          submitted_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          data: Json
+          form_id: string
+          id?: string
+          ip_address?: unknown | null
+          submitted_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          data?: Json
+          form_id?: string
+          id?: string
+          ip_address?: unknown | null
+          submitted_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_form_submissions_form"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "custom_forms"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       fraud_alerts: {
         Row: {
@@ -2876,6 +3065,56 @@ export type Database = {
           },
         ]
       }
+      media_library: {
+        Row: {
+          alt_text: string | null
+          created_at: string | null
+          file_name: string
+          file_size: number | null
+          file_type: string
+          file_url: string
+          folder_path: string | null
+          id: string
+          store_id: string
+          tags: string[] | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string | null
+          file_name: string
+          file_size?: number | null
+          file_type: string
+          file_url: string
+          folder_path?: string | null
+          id?: string
+          store_id: string
+          tags?: string[] | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string | null
+          file_name?: string
+          file_size?: number | null
+          file_type?: string
+          file_url?: string
+          folder_path?: string | null
+          id?: string
+          store_id?: string
+          tags?: string[] | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_media_library_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       merchants: {
         Row: {
           business_name: string | null
@@ -3438,6 +3677,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      page_templates: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_system_template: boolean | null
+          name: string
+          preview_image_url: string | null
+          template_data: Json
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_system_template?: boolean | null
+          name: string
+          preview_image_url?: string | null
+          template_data?: Json
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_system_template?: boolean | null
+          name?: string
+          preview_image_url?: string | null
+          template_data?: Json
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       payment_gateways: {
         Row: {
@@ -5972,6 +6250,78 @@ export type Database = {
           },
         ]
       }
+      store_pages: {
+        Row: {
+          content: Json | null
+          created_at: string | null
+          id: string
+          is_home_page: boolean | null
+          meta_description: string | null
+          meta_keywords: string[] | null
+          meta_title: string | null
+          published_at: string | null
+          scheduled_at: string | null
+          slug: string
+          sort_order: number | null
+          status: Database["public"]["Enums"]["page_status"] | null
+          store_id: string
+          template_id: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          is_home_page?: boolean | null
+          meta_description?: string | null
+          meta_keywords?: string[] | null
+          meta_title?: string | null
+          published_at?: string | null
+          scheduled_at?: string | null
+          slug: string
+          sort_order?: number | null
+          status?: Database["public"]["Enums"]["page_status"] | null
+          store_id: string
+          template_id?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          is_home_page?: boolean | null
+          meta_description?: string | null
+          meta_keywords?: string[] | null
+          meta_title?: string | null
+          published_at?: string | null
+          scheduled_at?: string | null
+          slug?: string
+          sort_order?: number | null
+          status?: Database["public"]["Enums"]["page_status"] | null
+          store_id?: string
+          template_id?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_store_pages_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_store_pages_template"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "page_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       store_settings: {
         Row: {
           created_at: string
@@ -7443,6 +7793,22 @@ export type Database = {
       alliance_status: "active" | "inactive" | "disbanded"
       challenge_status: "upcoming" | "active" | "completed" | "cancelled"
       challenge_type: "sales" | "customers" | "points" | "mixed"
+      content_block_type:
+        | "text"
+        | "image"
+        | "video"
+        | "gallery"
+        | "button"
+        | "form"
+        | "products"
+        | "custom_html"
+      content_type:
+        | "page"
+        | "section"
+        | "widget"
+        | "article"
+        | "faq"
+        | "testimonial"
       order_status:
         | "PENDING"
         | "CONFIRMED"
@@ -7450,6 +7816,7 @@ export type Database = {
         | "DELIVERED"
         | "CANCELED"
         | "RETURNED"
+      page_status: "draft" | "published" | "scheduled" | "archived"
       payment_method:
         | "CASH_ON_DELIVERY"
         | "CREDIT_CARD"
@@ -7608,6 +7975,24 @@ export const Constants = {
       alliance_status: ["active", "inactive", "disbanded"],
       challenge_status: ["upcoming", "active", "completed", "cancelled"],
       challenge_type: ["sales", "customers", "points", "mixed"],
+      content_block_type: [
+        "text",
+        "image",
+        "video",
+        "gallery",
+        "button",
+        "form",
+        "products",
+        "custom_html",
+      ],
+      content_type: [
+        "page",
+        "section",
+        "widget",
+        "article",
+        "faq",
+        "testimonial",
+      ],
       order_status: [
         "PENDING",
         "CONFIRMED",
@@ -7616,6 +8001,7 @@ export const Constants = {
         "CANCELED",
         "RETURNED",
       ],
+      page_status: ["draft", "published", "scheduled", "archived"],
       payment_method: [
         "CASH_ON_DELIVERY",
         "CREDIT_CARD",
