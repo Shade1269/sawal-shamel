@@ -127,6 +127,9 @@ const AdvancedMarketingPage = lazy(() => import("./pages/AdvancedMarketingPage")
 // Content Management
 const ContentManagementPage = lazy(() => import("./pages/ContentManagementPage"));
 
+// Visual Page Builder
+const VisualPageBuilderPage = lazy(() => import("./pages/VisualPageBuilderPage"));
+
 // Shipping and Tracking Pages
 const ShipmentManagement = lazy(() => import("./pages/ShipmentManagement"));
 
@@ -318,6 +321,13 @@ const App = () => {
                           <Route path="/content-management" element={
                             <ProtectedRoute requiredRole={["affiliate", "merchant", "admin"]}>
                               <ContentManagementPage />
+                            </ProtectedRoute>
+                          } />
+                           
+                          {/* Visual Page Builder Route */}
+                          <Route path="/page-builder" element={
+                            <ProtectedRoute requiredRole={["affiliate", "merchant", "admin"]}>
+                              <VisualPageBuilderPage />
                             </ProtectedRoute>
                           } />
                           
