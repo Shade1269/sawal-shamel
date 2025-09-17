@@ -619,6 +619,110 @@ export type Database = {
         }
         Relationships: []
       }
+      banner_analytics: {
+        Row: {
+          banner_id: string
+          browser_type: string | null
+          city: string | null
+          country_code: string | null
+          created_at: string | null
+          device_type: string | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          page_url: string | null
+          referrer_url: string | null
+          session_id: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          banner_id: string
+          browser_type?: string | null
+          city?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          page_url?: string | null
+          referrer_url?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          banner_id?: string
+          browser_type?: string | null
+          city?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          page_url?: string | null
+          referrer_url?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "banner_analytics_banner_id_fkey"
+            columns: ["banner_id"]
+            isOneToOne: false
+            referencedRelation: "promotional_banners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_banners: {
+        Row: {
+          banner_id: string
+          campaign_id: string
+          created_at: string | null
+          display_order: number | null
+          id: string
+          is_primary: boolean | null
+        }
+        Insert: {
+          banner_id: string
+          campaign_id: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_primary?: boolean | null
+        }
+        Update: {
+          banner_id?: string
+          campaign_id?: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_primary?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_banners_banner_id_fkey"
+            columns: ["banner_id"]
+            isOneToOne: false
+            referencedRelation: "promotional_banners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_banners_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "promotion_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cart_items: {
         Row: {
           added_at: string
@@ -4250,6 +4354,207 @@ export type Database = {
           total_points?: number | null
           updated_at?: string
           whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      promotion_campaigns: {
+        Row: {
+          affiliate_store_id: string | null
+          applicable_categories: Json | null
+          applicable_products: Json | null
+          auto_apply: boolean | null
+          campaign_name: string
+          campaign_name_ar: string | null
+          campaign_type: string
+          created_at: string | null
+          created_by: string | null
+          current_usage_count: number | null
+          description: string | null
+          description_ar: string | null
+          discount_type: string | null
+          discount_value: number | null
+          end_date: string
+          excluded_products: Json | null
+          id: string
+          is_active: boolean | null
+          is_featured: boolean | null
+          maximum_discount_amount: number | null
+          minimum_order_amount: number | null
+          start_date: string
+          store_id: string | null
+          timezone: string | null
+          updated_at: string | null
+          usage_limit: number | null
+          usage_limit_per_customer: number | null
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          applicable_categories?: Json | null
+          applicable_products?: Json | null
+          auto_apply?: boolean | null
+          campaign_name: string
+          campaign_name_ar?: string | null
+          campaign_type?: string
+          created_at?: string | null
+          created_by?: string | null
+          current_usage_count?: number | null
+          description?: string | null
+          description_ar?: string | null
+          discount_type?: string | null
+          discount_value?: number | null
+          end_date: string
+          excluded_products?: Json | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          maximum_discount_amount?: number | null
+          minimum_order_amount?: number | null
+          start_date: string
+          store_id?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          usage_limit?: number | null
+          usage_limit_per_customer?: number | null
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          applicable_categories?: Json | null
+          applicable_products?: Json | null
+          auto_apply?: boolean | null
+          campaign_name?: string
+          campaign_name_ar?: string | null
+          campaign_type?: string
+          created_at?: string | null
+          created_by?: string | null
+          current_usage_count?: number | null
+          description?: string | null
+          description_ar?: string | null
+          discount_type?: string | null
+          discount_value?: number | null
+          end_date?: string
+          excluded_products?: Json | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          maximum_discount_amount?: number | null
+          minimum_order_amount?: number | null
+          start_date?: string
+          store_id?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          usage_limit?: number | null
+          usage_limit_per_customer?: number | null
+        }
+        Relationships: []
+      }
+      promotional_banners: {
+        Row: {
+          affiliate_store_id: string | null
+          animation_type: string | null
+          auto_hide_after_interaction: boolean | null
+          background_color: string | null
+          banner_type: string
+          button_color: string | null
+          button_text: string | null
+          button_text_ar: string | null
+          button_url: string | null
+          content_config: Json | null
+          created_at: string | null
+          created_by: string | null
+          current_clicks: number | null
+          current_impressions: number | null
+          description: string | null
+          description_ar: string | null
+          display_conditions: Json | null
+          end_date: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          max_clicks: number | null
+          max_impressions: number | null
+          position: string
+          priority: number | null
+          show_close_button: boolean | null
+          start_date: string | null
+          store_id: string | null
+          target_audience: Json | null
+          text_color: string | null
+          timezone: string | null
+          title: string
+          title_ar: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          animation_type?: string | null
+          auto_hide_after_interaction?: boolean | null
+          background_color?: string | null
+          banner_type?: string
+          button_color?: string | null
+          button_text?: string | null
+          button_text_ar?: string | null
+          button_url?: string | null
+          content_config?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          current_clicks?: number | null
+          current_impressions?: number | null
+          description?: string | null
+          description_ar?: string | null
+          display_conditions?: Json | null
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          max_clicks?: number | null
+          max_impressions?: number | null
+          position?: string
+          priority?: number | null
+          show_close_button?: boolean | null
+          start_date?: string | null
+          store_id?: string | null
+          target_audience?: Json | null
+          text_color?: string | null
+          timezone?: string | null
+          title: string
+          title_ar?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          animation_type?: string | null
+          auto_hide_after_interaction?: boolean | null
+          background_color?: string | null
+          banner_type?: string
+          button_color?: string | null
+          button_text?: string | null
+          button_text_ar?: string | null
+          button_url?: string | null
+          content_config?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          current_clicks?: number | null
+          current_impressions?: number | null
+          description?: string | null
+          description_ar?: string | null
+          display_conditions?: Json | null
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          max_clicks?: number | null
+          max_impressions?: number | null
+          position?: string
+          priority?: number | null
+          show_close_button?: boolean | null
+          start_date?: string | null
+          store_id?: string | null
+          target_audience?: Json | null
+          text_color?: string | null
+          timezone?: string | null
+          title?: string
+          title_ar?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
