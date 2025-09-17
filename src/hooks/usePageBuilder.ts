@@ -55,17 +55,17 @@ export const usePageBuilder = (pageId?: string) => {
         id: item.id,
         type: item.element_type,
         name: item.element_name,
-        gridColumn: item.grid_column,
-        gridRow: item.grid_row,
-        gridSpanX: item.grid_span_x,
-        gridSpanY: item.grid_span_y,
-        config: item.element_config,
-        styles: item.element_styles,
-        data: item.element_data,
-        sortOrder: item.sort_order,
-        isVisible: item.is_visible,
-        isLocked: item.is_locked,
-        parentId: item.parent_id
+        gridColumn: item.grid_column || 1,
+        gridRow: item.grid_row || 1,
+        gridSpanX: item.grid_span_x || 1,
+        gridSpanY: item.grid_span_y || 1,
+        config: (item.element_config as Record<string, any>) || {},
+        styles: (item.element_styles as Record<string, any>) || {},
+        data: (item.element_data as Record<string, any>) || {},
+        sortOrder: item.sort_order || 0,
+        isVisible: item.is_visible ?? true,
+        isLocked: item.is_locked ?? false,
+        parentId: item.parent_id || undefined
       })) || [];
 
       setState(prev => ({
@@ -246,6 +246,25 @@ export const usePageBuilder = (pageId?: string) => {
 
     updateElement(id, { sortOrder: newSortOrder });
   }, [state.elements, updateElement]);
+
+  // Change Z-index (layer order)
+  const changeZIndex = useCallback((id: string, direction: 'up' | 'down') => {
+    const elements = [...state.elements];
+    const elementIndex = elements.findIndex(el => el.id === id);
+    if (elementIndex === -1) return;
+
+    const targetIndex = direction === 'up' ? elementIndex + 1 : elementIndex - 1;
+    if (targetIndex < 0 || targetIndex >= elements.length) return;
+
+    // Swap elements
+    [elements[elementIndex], elements[targetIndex]] = [elements[targetIndex], elements[elementIndex]];
+    
+    setState(prev => ({
+      ...prev,
+      elements,
+      isDirty: true
+    }));
+  }, [state.elements]);
 
   // Initialize with demo data if pageId is provided
   useEffect(() => {
