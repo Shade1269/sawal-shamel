@@ -570,17 +570,27 @@ const AdminAnalytics = () => {
             </CardContent>
           </Card>
         </TabsContent>
+        
+        <TabsContent value="performance" className="space-y-4">
+          <PerformanceMonitor />
+        </TabsContent>
+        
+        <TabsContent value="security" className="space-y-4">
+          <SecurityCenter />
+        </TabsContent>
+        
+        <TabsContent value="ai" className="space-y-4">
+          <AIAnalytics />
+        </TabsContent>
+        
+        <TabsContent value="widgets" className="space-y-4">
+          <InteractiveWidgets />
+        </TabsContent>
+        
+        <TabsContent value="notifications" className="space-y-4">
+          <NotificationCenter />
+        </TabsContent>
       </Tabs>
-
-      {/* Performance Monitor v3.2 */}
-      <div className="mt-8">
-        <PerformanceMonitor 
-          className="w-full" 
-          showControls={true}
-          autoRefresh={true}
-          refreshInterval={5000}
-        />
-      </div>
     </div>
   );
 };
