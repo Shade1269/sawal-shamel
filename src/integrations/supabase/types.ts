@@ -681,6 +681,51 @@ export type Database = {
           },
         ]
       }
+      bundle_offers: {
+        Row: {
+          affiliate_store_id: string | null
+          bundle_price: number
+          bundle_products: Json
+          created_at: string | null
+          description: string | null
+          discount_percentage: number
+          id: string
+          is_active: boolean
+          name: string
+          original_price: number
+          store_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          bundle_price?: number
+          bundle_products?: Json
+          created_at?: string | null
+          description?: string | null
+          discount_percentage?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          original_price?: number
+          store_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          bundle_price?: number
+          bundle_products?: Json
+          created_at?: string | null
+          description?: string | null
+          discount_percentage?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          original_price?: number
+          store_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       campaign_banners: {
         Row: {
           banner_id: string
@@ -716,6 +761,47 @@ export type Database = {
           },
           {
             foreignKeyName: "campaign_banners_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "promotion_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_usage: {
+        Row: {
+          campaign_id: string | null
+          customer_id: string | null
+          discount_applied: number
+          id: string
+          ip_address: unknown | null
+          order_id: string | null
+          used_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          customer_id?: string | null
+          discount_applied?: number
+          id?: string
+          ip_address?: unknown | null
+          order_id?: string | null
+          used_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          customer_id?: string | null
+          discount_applied?: number
+          id?: string
+          ip_address?: unknown | null
+          order_id?: string | null
+          used_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_usage_campaign_id_fkey"
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "promotion_campaigns"
@@ -1760,6 +1846,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      customer_segments: {
+        Row: {
+          affiliate_store_id: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          estimated_count: number | null
+          id: string
+          is_active: boolean
+          name: string
+          rules: Json
+          store_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          estimated_count?: number | null
+          id?: string
+          is_active?: boolean
+          name: string
+          rules?: Json
+          store_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          estimated_count?: number | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          rules?: Json
+          store_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       customers: {
         Row: {
@@ -5157,6 +5285,47 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seasonal_campaigns: {
+        Row: {
+          banner_config: Json | null
+          campaign_id: string | null
+          created_at: string | null
+          id: string
+          season_type: string
+          special_features: Json | null
+          theme_config: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          banner_config?: Json | null
+          campaign_id?: string | null
+          created_at?: string | null
+          id?: string
+          season_type: string
+          special_features?: Json | null
+          theme_config?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          banner_config?: Json | null
+          campaign_id?: string | null
+          created_at?: string | null
+          id?: string
+          season_type?: string
+          special_features?: Json | null
+          theme_config?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seasonal_campaigns_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "promotion_campaigns"
             referencedColumns: ["id"]
           },
         ]

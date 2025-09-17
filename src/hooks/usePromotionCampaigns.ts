@@ -27,11 +27,13 @@ export interface BundleOffer {
   id: string;
   name: string;
   description?: string;
-  bundle_products: string[];
+  bundle_products: any; // jsonb
   bundle_price: number;
   original_price: number;
   discount_percentage: number;
   is_active: boolean;
+  store_id?: string;
+  affiliate_store_id?: string;
   created_at: string;
   updated_at: string;
 }
@@ -106,17 +108,32 @@ export const useBundleOffers = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // For now, return empty data until bundle_offers table is ready
-  const bundles: BundleOffer[] = [];
-  const isLoading = false;
+  const { data: bundles = [], isLoading } = useQuery({
+    queryKey: ['bundle-offers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('bundle_offers')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data as BundleOffer[];
+    },
+  });
 
   const createBundle = useMutation({
     mutationFn: async (bundleData: Omit<BundleOffer, 'id' | 'created_at' | 'updated_at'>) => {
-      // Mock implementation for now
-      console.log('Creating bundle:', bundleData);
-      return { id: 'mock-id', ...bundleData, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
+      const { data, error } = await supabase
+        .from('bundle_offers')
+        .insert(bundleData)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bundle-offers'] });
       toast({
         title: "تم إنشاء العرض",
         description: "تم إنشاء عرض المجموعة بنجاح",
