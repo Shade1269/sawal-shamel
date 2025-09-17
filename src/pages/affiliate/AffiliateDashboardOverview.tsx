@@ -326,63 +326,7 @@ export default function AffiliateDashboardOverview() {
                </Link>
              </EnhancedButton>
            </EnhancedCardContent>
-         </EnhancedCard>
-        <EnhancedCard variant="glass" hover="lift">
-          <EnhancedCardHeader>
-            <EnhancedCardTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5" />
-              إدارة المنتجات
-            </EnhancedCardTitle>
-          </EnhancedCardHeader>
-          <EnhancedCardContent>
-            <p className="text-muted-foreground mb-4">
-              إدارة منتجات متجرك وإعدادات العمولة
-            </p>
-            <EnhancedButton asChild className="w-full" variant="default" animation="glow">
-              <Link to="/dashboard/products">
-                عرض المنتجات
-              </Link>
-            </EnhancedButton>
-          </EnhancedCardContent>
-        </EnhancedCard>
-
-        <EnhancedCard variant="glass" hover="lift">
-          <EnhancedCardHeader>
-            <EnhancedCardTitle className="flex items-center gap-2">
-              <ShoppingBag className="h-5 w-5" />
-              متابعة الطلبات
-            </EnhancedCardTitle>
-          </EnhancedCardHeader>
-          <EnhancedCardContent>
-            <p className="text-muted-foreground mb-4">
-              متابعة وإدارة طلبات العملاء
-            </p>
-            <EnhancedButton asChild className="w-full" variant="luxury" animation="glow">
-              <Link to="/dashboard/orders">
-                عرض الطلبات
-              </Link>
-            </EnhancedButton>
-          </EnhancedCardContent>
-        </EnhancedCard>
-
-        <EnhancedCard variant="glass" hover="lift">
-          <EnhancedCardHeader>
-            <EnhancedCardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              إدارة المحتوى
-            </EnhancedCardTitle>
-          </EnhancedCardHeader>
-          <EnhancedCardContent>
-            <p className="text-muted-foreground mb-4">
-              إنشاء وإدارة صفحات وموديا المتجر
-            </p>
-            <EnhancedButton asChild className="w-full" variant="secondary" animation="glow">
-              <Link to="/cms-management">
-                نظام CMS
-              </Link>
-            </EnhancedButton>
-          </EnhancedCardContent>
-        </EnhancedCard>
+          </EnhancedCard>
 
          <EnhancedCard variant="glass" hover="lift">
            <EnhancedCardHeader>
@@ -398,25 +342,6 @@ export default function AffiliateDashboardOverview() {
              <EnhancedButton asChild className="w-full" variant="persian" animation="glow">
                <Link to={`/store-themes/${affiliateStore.id}`}>
                  إدارة الثيمات
-               </Link>
-             </EnhancedButton>
-           </EnhancedCardContent>
-         </EnhancedCard>
-
-         <EnhancedCard variant="glass" hover="lift">
-           <EnhancedCardHeader>
-             <EnhancedCardTitle className="flex items-center gap-2">
-               <DollarSign className="h-5 w-5" />
-               تتبع العمولات
-             </EnhancedCardTitle>
-           </EnhancedCardHeader>
-           <EnhancedCardContent>
-             <p className="text-muted-foreground mb-4">
-               متابعة عمولاتك وأرباحك
-             </p>
-             <EnhancedButton asChild className="w-full" variant="outline" animation="glow">
-               <Link to="/dashboard/commissions">
-                 عرض العمولات
                </Link>
              </EnhancedButton>
            </EnhancedCardContent>
