@@ -1,7 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { 
+  EnhancedCard, 
+  EnhancedCardContent, 
+  EnhancedCardHeader, 
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  InteractiveWidget,
+  EnhancedButton,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Button
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';

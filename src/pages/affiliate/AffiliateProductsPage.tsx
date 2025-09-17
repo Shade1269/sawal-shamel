@@ -3,9 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { 
+  EnhancedCard, 
+  EnhancedCardHeader, 
+  EnhancedCardTitle, 
+  EnhancedCardContent,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  InteractiveWidget,
+  VirtualizedList,
+  EnhancedButton,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Button
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

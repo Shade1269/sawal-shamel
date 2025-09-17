@@ -1,6 +1,21 @@
 import { useFastAuth } from '@/hooks/useFastAuth';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  EnhancedButton,
+  EnhancedCard,
+  EnhancedCardContent,
+  EnhancedCardDescription,
+  EnhancedCardHeader,
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  InteractiveWidget,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
 import { 
   Store, 

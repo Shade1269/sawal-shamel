@@ -2,8 +2,15 @@ import React, { useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { 
+  EnhancedCard, 
+  EnhancedCardContent,
+  ResponsiveLayout,
+  EnhancedButton,
+  Card,
+  CardContent,
+  Button
+} from '@/components/ui/index';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Store, ArrowRight, Loader2, Home } from "lucide-react";
 import { CustomerAuth } from '@/features/auth';

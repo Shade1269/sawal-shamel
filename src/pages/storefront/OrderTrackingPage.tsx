@@ -1,7 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { 
+  EnhancedCard, 
+  EnhancedCardContent, 
+  EnhancedCardDescription, 
+  EnhancedCardHeader, 
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  InteractiveWidget,
+  EnhancedButton,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';

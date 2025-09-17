@@ -1,5 +1,8 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { 
+  EnhancedButton,
+  Button
+} from '@/components/ui/index';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   Home, 

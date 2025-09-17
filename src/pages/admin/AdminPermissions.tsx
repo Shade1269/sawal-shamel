@@ -1,6 +1,21 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { 
+  EnhancedCard, 
+  EnhancedCardContent, 
+  EnhancedCardDescription, 
+  EnhancedCardHeader, 
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  InteractiveWidget,
+  EnhancedButton,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { 

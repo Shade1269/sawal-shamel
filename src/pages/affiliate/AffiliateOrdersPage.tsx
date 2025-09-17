@@ -3,9 +3,23 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { UnifiedOrdersService, UnifiedOrderWithItems } from '@/lib/unifiedOrdersService';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { 
+  EnhancedCard, 
+  EnhancedCardHeader, 
+  EnhancedCardTitle, 
+  EnhancedCardContent,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  InteractiveWidget,
+  VirtualizedList,
+  EnhancedButton,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Button
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Package, Clock, CheckCircle, XCircle, Truck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';

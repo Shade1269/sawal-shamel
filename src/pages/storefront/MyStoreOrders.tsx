@@ -1,7 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useOutletContext, useSearchParams } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { 
+  EnhancedCard, 
+  EnhancedCardContent, 
+  EnhancedCardHeader, 
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  VirtualizedList,
+  EnhancedButton,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Button
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Package, ShoppingBag, Loader2 } from 'lucide-react';

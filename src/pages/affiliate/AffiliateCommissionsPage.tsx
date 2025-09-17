@@ -2,7 +2,20 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { 
+  EnhancedCard, 
+  EnhancedCardHeader, 
+  EnhancedCardTitle, 
+  EnhancedCardContent,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  InteractiveWidget,
+  AnimatedCounter,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
 import { DollarSign, Clock, CheckCircle, Banknote, TrendingUp } from 'lucide-react';
 import { format } from 'date-fns';
