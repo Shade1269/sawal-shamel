@@ -5,8 +5,16 @@ import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { usePublicStorefront } from '@/hooks/usePublicStorefront';
 import { CustomerOTPModal } from '@/components/storefront/CustomerOTPModal';
 import { CustomerSessionHeader } from '@/components/storefront/CustomerSessionHeader';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { 
+  EnhancedCard, 
+  EnhancedCardContent,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  EnhancedButton,
+  Card,
+  CardContent,
+  Button
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

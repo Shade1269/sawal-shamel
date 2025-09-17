@@ -1,5 +1,19 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  EnhancedCard, 
+  EnhancedCardContent, 
+  EnhancedCardDescription, 
+  EnhancedCardHeader, 
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  InteractiveWidget,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/index';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SocialMediaManager from '@/components/marketing/SocialMediaManager';
 import EmailCampaignManager from '@/components/marketing/EmailCampaignManager';

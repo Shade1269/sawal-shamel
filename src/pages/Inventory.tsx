@@ -24,8 +24,15 @@ import {
   ArrowUpDown,
   RotateCcw
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { 
+  EnhancedButton,
+  EnhancedCard,
+  EnhancedCardContent,
+  ResponsiveLayout,
+  Button,
+  Card,
+  CardContent
+} from '@/components/ui/index';
 import { useNavigate } from 'react-router-dom';
 
 const Inventory: React.FC = () => {

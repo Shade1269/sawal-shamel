@@ -1,7 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { 
+  EnhancedCard, 
+  EnhancedCardContent, 
+  EnhancedCardHeader, 
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  EnhancedButton,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Button
+} from '@/components/ui/index';
 import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { BackButton } from '@/components/ui/back-button';

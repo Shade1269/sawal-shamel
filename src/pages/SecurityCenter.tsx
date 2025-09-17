@@ -1,7 +1,18 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { 
+  EnhancedCard, 
+  EnhancedCardContent, 
+  EnhancedCardHeader, 
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  EnhancedButton,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Button
+} from '@/components/ui/index';
 import { SecurityDashboard } from "@/components/security/SecurityDashboard";
 import { FraudDetectionPanel } from "@/components/security/FraudDetectionPanel";
 import { BackupManagement } from "@/components/security/BackupManagement";

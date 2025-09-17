@@ -1,5 +1,15 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  EnhancedButton,
+  EnhancedCard,
+  EnhancedCardContent,
+  EnhancedCardDescription,
+  EnhancedCardHeader,
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  InteractiveWidget,
+  AnimatedCounter
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import QuickLinks from '@/components/navigation/QuickLinks';
@@ -226,14 +236,14 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-persian-bg">
+    <ResponsiveLayout variant="glass" maxWidth="2xl" centerContent>
       {/* Header */}
       <div className="border-b bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <BackButton fallbackRoute="/" />
-              <Button 
+              <EnhancedButton 
                 variant="ghost" 
                 onClick={goToUserHome}
                 className="text-primary hover:bg-primary/10 gap-2"
@@ -241,7 +251,7 @@ const Dashboard = () => {
                 <Home className="h-4 w-4" />
                 الصفحة الرئيسية
                 <ArrowRight className="h-4 w-4" />
-              </Button>
+              </EnhancedButton>
               
               <div className="flex items-center gap-3">
                 {getRoleIcon()}
@@ -273,13 +283,13 @@ const Dashboard = () => {
                 )}
               </div>
               
-              <Button 
+              <EnhancedButton 
                 variant="outline" 
                 onClick={handleSignOut}
                 className="hover:bg-destructive hover:text-destructive-foreground"
               >
                 تسجيل الخروج
-              </Button>
+              </EnhancedButton>
             </div>
           </div>
         </div>
@@ -296,45 +306,40 @@ const Dashboard = () => {
 
         {/* Stats Cards */}
         {profile?.role !== 'customer' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="bg-gradient-primary text-primary-foreground animate-fade-in">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm opacity-90">إجمالي الأرباح</p>
-                    <p className="text-2xl font-bold">
-                      {profile?.total_earnings || 0} ر.س
-                    </p>
-                  </div>
-                  <DollarSign className="h-8 w-8 opacity-80" />
-                </div>
-              </CardContent>
-            </Card>
+          <ResponsiveGrid columns={{ mobile: 1, tablet: 3 }} gap={{ mobile: 4, tablet: 6 }} className="mb-8">
+            <InteractiveWidget
+              title="إجمالي الأرباح"
+              description="ر.س"
+              variant="luxury"
+              metric={{
+                value: profile?.total_earnings || 0,
+                label: "ر.س",
+                icon: DollarSign
+              }}
+            />
 
-            <Card className="bg-gradient-luxury text-luxury-foreground animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm opacity-90">النقاط المكتسبة</p>
-                    <p className="text-2xl font-bold">{profile?.points || 0}</p>
-                  </div>
-                  <Star className="h-8 w-8 opacity-80" />
-                </div>
-              </CardContent>
-            </Card>
+            <InteractiveWidget
+              title="النقاط المكتسبة"
+              description="نقطة"
+              variant="persian"
+              metric={{
+                value: profile?.points || 0,
+                label: "نقطة",
+                icon: Star
+              }}
+            />
 
-            <Card className="bg-gradient-premium text-premium-foreground animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm opacity-90">المستوى الحالي</p>
-                    <p className="text-2xl font-bold">{profile?.level || 'برونزي'}</p>
-                  </div>
-                  <Award className="h-8 w-8 opacity-80" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+            <InteractiveWidget
+              title="المستوى الحالي"
+              description="مستوى"
+              variant="glass"
+              metric={{
+                value: profile?.level || 'برونزي',
+                label: "مستوى",
+                icon: Award
+              }}
+            />
+          </ResponsiveGrid>
         )}
 
         <Separator className="my-8" />
@@ -350,30 +355,33 @@ const Dashboard = () => {
             الإجراءات السريعة
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <ResponsiveGrid columns={{ mobile: 1, tablet: 2, desktop: 3 }} gap={{ mobile: 4, tablet: 6 }}>
             {getSections().map((section, index) => (
-              <Card 
+              <EnhancedCard 
                 key={index}
-                className="group cursor-pointer hover:shadow-luxury transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm overflow-hidden hover-scale animate-fade-in"
+                variant="glass"
+                hover="lift"
+                clickable
+                className="overflow-hidden animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
                 onClick={() => navigate(section.route)}
               >
-                <CardHeader className="pb-4">
-                  <div className={`w-16 h-16 rounded-2xl ${section.color} flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform duration-300 shadow-glow`}>
+                <EnhancedCardHeader className="pb-4">
+                  <div className={`w-16 h-16 rounded-2xl ${section.color} flex items-center justify-center text-white mb-4 shadow-glow`}>
                     {section.icon}
                   </div>
-                  <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                  <EnhancedCardTitle className="text-xl">
                     {section.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">
+                  </EnhancedCardTitle>
+                </EnhancedCardHeader>
+                <EnhancedCardContent>
+                  <EnhancedCardDescription className="text-base">
                     {section.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
+                  </EnhancedCardDescription>
+                </EnhancedCardContent>
+              </EnhancedCard>
             ))}
-          </div>
+          </ResponsiveGrid>
         </div>
 
         {/* Additional Features Section */}
@@ -384,9 +392,9 @@ const Dashboard = () => {
             ميزات إضافية
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-gradient-to-br from-card/60 to-card backdrop-blur-sm animate-fade-in">
-              <CardContent className="p-6">
+          <ResponsiveGrid columns={{ mobile: 1, tablet: 2 }} gap={{ mobile: 4, tablet: 6 }}>
+            <EnhancedCard variant="glass" className="animate-fade-in">
+              <EnhancedCardContent className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gradient-premium rounded-xl flex items-center justify-center">
                     <Shield className="h-6 w-6 text-white" />
@@ -396,11 +404,11 @@ const Dashboard = () => {
                     <p className="text-muted-foreground">حماية شاملة لبياناتك ومعاملاتك</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </EnhancedCardContent>
+            </EnhancedCard>
 
-            <Card className="bg-gradient-to-br from-card/60 to-card backdrop-blur-sm animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <CardContent className="p-6">
+            <EnhancedCard variant="glass" className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <EnhancedCardContent className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gradient-heritage rounded-xl flex items-center justify-center">
                     <Zap className="h-6 w-6 text-white" />
@@ -410,12 +418,12 @@ const Dashboard = () => {
                     <p className="text-muted-foreground">معالجة فورية للطلبات والمدفوعات</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              </EnhancedCardContent>
+            </EnhancedCard>
+          </ResponsiveGrid>
         </div>
       </div>
-    </div>
+    </ResponsiveLayout>
   );
 };
 
