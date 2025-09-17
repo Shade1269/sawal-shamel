@@ -45,6 +45,7 @@ const AffiliateProductsPage = lazy(() => import("./pages/affiliate/AffiliateProd
 const AffiliateOrdersPage = lazy(() => import("./pages/affiliate/AffiliateOrdersPage"));
 const AffiliateCommissionsPage = lazy(() => import("./pages/affiliate/AffiliateCommissionsPage"));
 const StoreThemeSettings = lazy(() => import("./pages/StoreThemeSettings"));
+const ThemeStudioPage = lazy(() => import("./pages/ThemeStudioPage"));
 
 // Public Storefront (no auth required)
 const PublicStorefront = lazy(() => import("./pages/PublicStorefront"));

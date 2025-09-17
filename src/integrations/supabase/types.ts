@@ -5832,6 +5832,96 @@ export type Database = {
         }
         Relationships: []
       }
+      theme_templates: {
+        Row: {
+          category: string
+          color_palette: Json
+          created_at: string
+          description: string | null
+          description_ar: string | null
+          difficulty_level: string
+          id: string
+          is_active: boolean
+          is_premium: boolean
+          name: string
+          name_ar: string
+          popularity_score: number
+          preview_image_url: string | null
+          theme_config: Json
+          thumbnail_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          color_palette?: Json
+          created_at?: string
+          description?: string | null
+          description_ar?: string | null
+          difficulty_level?: string
+          id?: string
+          is_active?: boolean
+          is_premium?: boolean
+          name: string
+          name_ar: string
+          popularity_score?: number
+          preview_image_url?: string | null
+          theme_config: Json
+          thumbnail_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          color_palette?: Json
+          created_at?: string
+          description?: string | null
+          description_ar?: string | null
+          difficulty_level?: string
+          id?: string
+          is_active?: boolean
+          is_premium?: boolean
+          name?: string
+          name_ar?: string
+          popularity_score?: number
+          preview_image_url?: string | null
+          theme_config?: Json
+          thumbnail_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      theme_usage_analytics: {
+        Row: {
+          action_type: string
+          created_at: string
+          customizations: Json | null
+          id: string
+          store_id: string
+          template_id: string | null
+          theme_id: string | null
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          customizations?: Json | null
+          id?: string
+          store_id: string
+          template_id?: string | null
+          theme_id?: string | null
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          customizations?: Json | null
+          id?: string
+          store_id?: string
+          template_id?: string | null
+          theme_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_activities: {
         Row: {
           activity_type: string
@@ -5952,6 +6042,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_custom_themes: {
+        Row: {
+          color_palette: Json
+          created_at: string
+          id: string
+          is_public: boolean
+          store_id: string | null
+          theme_config: Json
+          theme_name: string
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          color_palette?: Json
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          store_id?: string | null
+          theme_config: Json
+          theme_name: string
+          updated_at?: string
+          user_id: string
+          version?: number
+        }
+        Update: {
+          color_palette?: Json
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          store_id?: string | null
+          theme_config?: Json
+          theme_name?: string
+          updated_at?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: []
       }
       user_levels: {
         Row: {
