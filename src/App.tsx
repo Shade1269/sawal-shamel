@@ -118,6 +118,9 @@ const CMSManagement = lazy(() => import("./pages/CMSManagement"));
 // Banner Management
 const BannerManagementPage = lazy(() => import("./pages/BannerManagementPage"));
 
+// Promotions Management
+const PromotionsPage = lazy(() => import("./pages/PromotionsPage"));
+
 // Shipping and Tracking Pages
 const ShipmentManagement = lazy(() => import("./pages/ShipmentManagement"));
 
@@ -285,13 +288,20 @@ const App = () => {
                          } />
                         
                          {/* Banner Management Route */}
-                          <Route path="/banner-management/:storeId" element={
-                            <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                              <BannerManagementPage />
-                            </ProtectedRoute>
-                          } />
-                         
-                        {/* Theme Studio Route */}
+                           <Route path="/banner-management/:storeId" element={
+                             <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                               <BannerManagementPage />
+                             </ProtectedRoute>
+                           } />
+                          
+                         {/* Promotions Management Route */}
+                         <Route path="/promotions" element={
+                           <ProtectedRoute requiredRole={["affiliate", "merchant", "admin"]}>
+                             <PromotionsPage />
+                           </ProtectedRoute>
+                         } />
+                          
+                         {/* Theme Studio Route */}
                         <Route path="/theme-studio" element={
                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
                             <ThemeStudioPage />
