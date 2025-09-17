@@ -1,0 +1,75 @@
+// Enhanced Hooks System v3.2
+// نظام الـ Hooks المطور - النسخة الثالثة المحسّنة
+
+// Core Hooks
+export { useDesignSystem } from './useDesignSystem';
+export { useResponsiveLayout, useResponsiveColumns, useResponsiveSpacing } from './useResponsiveLayout';
+export { useVirtualization, useInfiniteVirtualization } from './useVirtualization';
+export { useSmartNavigation } from './useSmartNavigation';
+
+// Performance & Optimization Hooks v3.2
+export { usePerformanceMonitoring } from './usePerformanceMonitoring';
+export { useOptimizedAuth } from './useOptimizedAuth';
+export { useOptimizedAtlantis } from './useOptimizedAtlantis';
+
+// Advanced Animation Hooks v3.2
+export { 
+  useCustomAnimation,
+  useSpringAnimation, 
+  useParallax,
+  useScrollAnimation,
+  useMouseAnimation
+} from './useAdvancedAnimations';
+
+// AI-Powered Hooks v3.2
+export { 
+  useSmartSearch,
+  useContentGeneration,
+  useSmartForm
+} from './useAIComponents';
+
+// Existing Business Logic Hooks
+export { useAtlantisChat } from './useAtlantisChat';
+export { useAtlantisNotifications } from './useAtlantisNotifications';
+export { useAtlantisSystem } from './useAtlantisSystem';
+export { useAffiliateCommissions } from './useAffiliateCommissions';
+export { useAffiliateOrders } from './useAffiliateOrders';
+export { useAffiliateStore } from './useAffiliateStore';
+export { useAutoMigration } from './useAutoMigration';
+export { useCustomerAuth } from './useCustomerAuth';
+export { useCustomerOTP } from './useCustomerOTP';
+export { useExecutiveAnalytics } from './useExecutiveAnalytics';
+export { useFastAuth } from './useFastAuth';
+export { useFirebaseUserData } from './useFirebaseUserData';
+export { useFirestoreUserData } from './useFirestoreUserData';
+export { useInventoryManagement } from './useInventoryManagement';
+export { useInvoiceManagement } from './useInvoiceManagement';
+export { useIsolatedStoreCart } from './useIsolatedStoreCart';
+export { useNavigationShortcuts } from './useNavigationShortcuts';
+export { useNotifications } from './useNotifications';
+export { useOptimizedDataFetch } from './useOptimizedDataFetch';
+export { usePaymentGateways } from './usePaymentGateways';
+export { usePerformanceOptimized } from './usePerformanceOptimized';
+export { useProductImages } from './useProductManagement';
+export { usePublicStorefront } from './usePublicStorefront';
+export { useRealInventoryManagement } from './useRealInventoryManagement';
+export { useRealTimeChat } from './useRealTimeChat';
+export { useSecurityManagement } from './useSecurityManagement';
+export { useShipmentTracking } from './useShipmentTracking';
+export { useShippingManagement } from './useShippingManagement';
+export { useShoppingCart } from './useShoppingCart';
+export { useStoreSettings } from './useStoreSettings';
+export { useStoreThemes } from './useStoreThemes';
+export { useStorefrontCart } from './useStorefrontCart';
+export { useStorefrontOtp } from './useStorefrontOtp';
+export { useStorefrontSession } from './useStorefrontSession';
+export { useSupabaseUserData } from './useSupabaseUserData';
+export { useUnifiedAuth } from './useUnifiedAuth';
+export { useUnifiedOrders } from './useUnifiedOrders';
+export { useUnifiedUserData } from './useUnifiedUserData';
+export { useUserData } from './useUserData';
+export { useUserRoles } from './useUserRoles';
+
+// Version Info
+export const HOOKS_SYSTEM_VERSION = '3.2.0';
+export const RELEASE_DATE = '2024-12-17';

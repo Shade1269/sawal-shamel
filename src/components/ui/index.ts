@@ -14,7 +14,7 @@ export { EnhancedTabs, tabsVariants, tabVariants, type TabItem } from '../naviga
 export { Kbd, kbdVariants } from './kbd'
 
 // Interactive Components System v3.1
-export { EnhancedChart, chartVariants } from '../interactive/EnhancedChart'
+export { EnhancedChart } from '../interactive/EnhancedChart'
 export { InteractiveWidget, MetricWidget, ProgressWidget, ActivityWidget, widgetVariants } from '../interactive/InteractiveWidget'
 export { AnimatedCounter, CurrencyCounter, PercentageCounter, CompactCounter, TimeCounter, counterVariants } from '../interactive/AnimatedCounter'
 export { LikeButton, StarRating, RippleEffect, FloatingFeedback, HoverCard, microInteractionVariants } from '../interactive/MicroInteractions'
