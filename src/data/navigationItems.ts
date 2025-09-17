@@ -17,7 +17,8 @@ import {
   Database,
   Globe,
   Zap,
-  HeartHandshake
+  HeartHandshake,
+  Smartphone
 } from 'lucide-react';
 
 export interface NavigationItem {
@@ -47,6 +48,46 @@ export const navigationItems: NavigationItem[] = [
     keywords: ['رئيسية', 'بداية', 'home'],
     group: 'main',
     order: 1
+  },
+  {
+    id: 'components',
+    title: 'المكونات',
+    href: '/components',
+    icon: Package,
+    description: 'مكونات النظام المحسّنة',
+    keywords: ['مكونات', 'components'],
+    group: 'main',
+    order: 2
+  },
+  {
+    id: 'adaptive',
+    title: 'التكيفي',
+    href: '/adaptive',
+    icon: Zap,
+    description: 'النظام التكيفي المتقدم',
+    keywords: ['تكيفي', 'adaptive'],
+    group: 'main',
+    order: 3
+  },
+  {
+    id: 'unified',
+    title: 'النظام الموحد',
+    href: '/unified',
+    icon: Globe,
+    description: 'النظام الموحد المتكامل',
+    keywords: ['موحد', 'unified'],
+    group: 'main',
+    order: 4
+  },
+  {
+    id: 'mobile-test',
+    title: 'اختبار الجوال',
+    href: '/mobile-test',
+    icon: Smartphone,
+    description: 'اختبار نظام التنقل للجوال',
+    keywords: ['جوال', 'اختبار', 'mobile'],
+    group: 'main',
+    order: 5
   },
   {
     id: 'dashboard',

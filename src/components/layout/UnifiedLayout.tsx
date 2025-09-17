@@ -12,6 +12,7 @@ import { QuickActions } from "./QuickActions";
 import { useDeviceDetection } from "@/hooks/useDeviceDetection";
 import { DeviceIndicator } from "@/components/dev/DeviceDebugger";
 import { getTouchFriendlySize, getContainerSpacing } from "@/utils/deviceUtils";
+import { AdaptiveNavigation } from "@/components/navigation";
 
 interface UnifiedLayoutProps {
   children: ReactNode;
@@ -55,9 +56,13 @@ export function UnifiedLayout({
     return (
       <div className="min-h-screen bg-background">
         {showFullHeader && <Header />}
-        <main className="flex-1">
+        <main className={`flex-1 ${device.isMobile ? 'pb-20' : 'pb-6'}`}>
           {children}
         </main>
+        
+        {/* Adaptive Navigation for non-authenticated and mobile users */}
+        <AdaptiveNavigation />
+        
         <DeviceIndicator />
       </div>
     );
@@ -105,11 +110,14 @@ export function UnifiedLayout({
 
           {/* Main Content - Responsive */}
           <main className="flex-1 overflow-auto">
-            <div className={`container mx-auto ${containerSpacing.padding}`}>
+            <div className={`container mx-auto ${containerSpacing.padding} ${device.isMobile ? 'pb-20' : 'pb-6'}`}>
               {children}
             </div>
           </main>
         </div>
+        
+        {/* Adaptive Navigation - Works on all devices */}
+        <AdaptiveNavigation />
         
         <DeviceIndicator />
       </div>

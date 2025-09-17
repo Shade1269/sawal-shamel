@@ -12,6 +12,7 @@ import { AdaptiveDemo } from './components/adaptive-demo/AdaptiveDemo';
 import EnhancedComponentsDemo from './examples/EnhancedComponentsDemo';
 import PerformanceDemo from './examples/PerformanceDemo';
 import UnifiedSystemDemo from './examples/UnifiedSystemDemo';
+import MobileNavigationTest from './examples/MobileNavigationTest';
 import { navigationItems } from "@/data/navigationItems";
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import Header from "@/components/common/Header";
@@ -242,6 +243,7 @@ const App = () => {
                                    <Route path="/adaptive" element={<AdaptiveDemo />} />
                                    <Route path="/performance" element={<PerformanceDemo />} />
                                    <Route path="/unified" element={<UnifiedSystemDemo />} />
+                                   <Route path="/mobile-test" element={<MobileNavigationTest />} />
                                    <Route path="/home" element={<Navigate to="/" replace />} />
                                    <Route path="/auth" element={<AuthPage />} />
                                    <Route path="/login" element={<AuthPage />} />
