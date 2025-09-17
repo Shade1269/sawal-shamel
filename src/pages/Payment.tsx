@@ -1,6 +1,18 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  EnhancedCard,
+  EnhancedCardContent,
+  EnhancedCardHeader,
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  EnhancedButton,
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/index";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -233,11 +245,11 @@ const Payment = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Payment Methods */}
           <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>طريقة الدفع</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <EnhancedCard>
+              <EnhancedCardHeader>
+                <EnhancedCardTitle>طريقة الدفع</EnhancedCardTitle>
+              </EnhancedCardHeader>
+              <EnhancedCardContent>
                 {settingsLoading ? (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
@@ -266,17 +278,17 @@ const Payment = () => {
                     <p className="text-sm text-muted-foreground mt-2">يرجى التواصل مع المتجر</p>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </EnhancedCardContent>
+            </EnhancedCard>
           </div>
 
           {/* Order Summary */}
           <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>ملخص الطلب</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <EnhancedCard>
+              <EnhancedCardHeader>
+                <EnhancedCardTitle>ملخص الطلب</EnhancedCardTitle>
+              </EnhancedCardHeader>
+              <EnhancedCardContent className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span>المجموع الفرعي:</span>
@@ -310,8 +322,8 @@ const Payment = () => {
                 >
                   {loading ? "جاري إنشاء الطلب..." : "تأكيد الطلب"}
                 </Button>
-              </CardContent>
-            </Card>
+              </EnhancedCardContent>
+            </EnhancedCard>
           </div>
         </div>
       </div>

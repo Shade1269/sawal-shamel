@@ -1,5 +1,21 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  EnhancedCard,
+  EnhancedCardContent,
+  EnhancedCardDescription,
+  EnhancedCardHeader,
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  InteractiveWidget,
+  AnimatedCounter,
+  EnhancedButton,
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -278,54 +294,54 @@ const MerchantDashboard = () => {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+        <EnhancedCard>
+          <EnhancedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <EnhancedCardTitle className="text-sm font-medium text-muted-foreground">
               إجمالي المنتجات
-            </CardTitle>
+            </EnhancedCardTitle>
             <Package className="h-6 w-6 text-primary" />
-          </CardHeader>
-          <CardContent>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
             <div className="text-2xl font-bold">{stats.totalProducts}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+          </EnhancedCardContent>
+        </EnhancedCard>
+        
+        <EnhancedCard>
+          <EnhancedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <EnhancedCardTitle className="text-sm font-medium text-muted-foreground">
               الطلبات الجديدة
-            </CardTitle>
+            </EnhancedCardTitle>
             <ShoppingCart className="h-6 w-6 text-accent" />
-          </CardHeader>
-          <CardContent>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
             <div className="text-2xl font-bold">{stats.totalOrders}</div>
-          </CardContent>
-        </Card>
+          </EnhancedCardContent>
+        </EnhancedCard>
 
-        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+        <EnhancedCard>
+          <EnhancedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <EnhancedCardTitle className="text-sm font-medium text-muted-foreground">
               إجمالي المبيعات
-            </CardTitle>
+            </EnhancedCardTitle>
             <TrendingUp className="h-6 w-6 text-premium" />
-          </CardHeader>
-          <CardContent>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
             <div className="text-2xl font-bold">{stats.totalRevenue.toFixed(2)} ريال</div>
-          </CardContent>
-        </Card>
+          </EnhancedCardContent>
+        </EnhancedCard>
 
-        <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+        <EnhancedCard>
+          <EnhancedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <EnhancedCardTitle className="text-sm font-medium text-muted-foreground">
               إجمالي المبيعات المعتمدة
-            </CardTitle>
+            </EnhancedCardTitle>
             <DollarSign className="h-6 w-6 text-luxury" />
-          </CardHeader>
-          <CardContent>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
             <div className="text-2xl font-bold">{stats.totalRevenue.toFixed(2)} ريال</div>
             <p className="text-xs text-muted-foreground mt-1">المبيعات المكتملة</p>
-          </CardContent>
-        </Card>
+          </EnhancedCardContent>
+        </EnhancedCard>
       </div>
 
       {/* Products and Orders */}

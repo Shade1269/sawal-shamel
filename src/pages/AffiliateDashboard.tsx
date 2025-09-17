@@ -1,5 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  EnhancedCard,
+  EnhancedCardContent,
+  EnhancedCardDescription,
+  EnhancedCardHeader,
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  InteractiveWidget,
+  AnimatedCounter,
+  EnhancedButton,
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -406,14 +422,14 @@ const AffiliateDashboard = () => {
             </p>
           </div>
 
-          <Card className="max-w-md mx-auto border-0 bg-card/50 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle>إنشاء متجر التسويق</CardTitle>
-              <CardDescription>
-                أنشئ متجرك الخاص لبدء التسويق بالعمولة
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              <EnhancedCard className="max-w-md mx-auto">
+                <EnhancedCardHeader>
+                  <EnhancedCardTitle>إنشاء متجر التسويق</EnhancedCardTitle>
+                  <EnhancedCardDescription>
+                    أنشئ متجرك الخاص لبدء التسويق بالعمولة
+                  </EnhancedCardDescription>
+                </EnhancedCardHeader>
+            <EnhancedCardContent>
               {hasExistingStore ? (
                 <div className="space-y-4">
                   <div className="text-center">
@@ -537,8 +553,8 @@ const AffiliateDashboard = () => {
                   </DialogContent>
                 </Dialog>
               )}
-            </CardContent>
-          </Card>
+            </EnhancedCardContent>
+          </EnhancedCard>
         </div>
       </div>
     );

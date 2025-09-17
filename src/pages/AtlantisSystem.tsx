@@ -1,5 +1,17 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  EnhancedCard,
+  EnhancedCardContent,
+  EnhancedCardHeader,
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  InteractiveWidget,
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
 import { AtlantisLeaderboard } from '@/features/chat/components/AtlantisLeaderboard';
 import { AtlantisStatusWidget } from '@/features/chat/components/AtlantisStatusWidget';
@@ -110,14 +122,14 @@ export const AtlantisSystem = () => {
 
         {/* Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <Card className="bg-gradient-to-r from-purple-500/10 to-purple-600/5 border-purple-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-purple-800">
+          <EnhancedCard variant="success" className="bg-gradient-to-r from-purple-500/10 to-purple-600/5">
+            <EnhancedCardHeader>
+              <EnhancedCardTitle className="flex items-center gap-2 text-purple-800">
                 <Star className="h-5 w-5" />
                 نظام النقاط
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </EnhancedCardTitle>
+            </EnhancedCardHeader>
+            <EnhancedCardContent>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>مبيعة منتج</span>
@@ -132,42 +144,42 @@ export const AtlantisSystem = () => {
                   <Badge variant="secondary">+100 نقطة</Badge>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </EnhancedCardContent>
+          </EnhancedCard>
 
-          <Card className="bg-gradient-to-r from-blue-500/10 to-blue-600/5 border-blue-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-800">
+          <EnhancedCard variant="info" className="bg-gradient-to-r from-blue-500/10 to-blue-600/5">
+            <EnhancedCardHeader>
+              <EnhancedCardTitle className="flex items-center gap-2 text-blue-800">
                 <Target className="h-5 w-5" />
                 التحديات
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </EnhancedCardTitle>
+            </EnhancedCardHeader>
+            <EnhancedCardContent>
               <div className="space-y-2 text-sm">
                 <p>• تحديات أسبوعية متجددة</p>
                 <p>• مكافآت خاصة للفائزين</p>
                 <p>• منافسة فردية وجماعية</p>
                 <p>• أهداف قابلة للتحقيق</p>
               </div>
-            </CardContent>
-          </Card>
+            </EnhancedCardContent>
+          </EnhancedCard>
 
-          <Card className="bg-gradient-to-r from-green-500/10 to-green-600/5 border-green-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-green-800">
+          <EnhancedCard variant="success" className="bg-gradient-to-r from-green-500/10 to-green-600/5">
+            <EnhancedCardHeader>
+              <EnhancedCardTitle className="flex items-center gap-2 text-green-800">
                 <Sparkles className="h-5 w-5" />
                 المكافآت
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </EnhancedCardTitle>
+            </EnhancedCardHeader>
+            <EnhancedCardContent>
               <div className="space-y-2 text-sm">
                 <p>• ثيمات حصرية</p>
                 <p>• زيادة في نسب العمولة</p>
                 <p>• شارات وألقاب فخرية</p>
                 <p>• مزايا خاصة في المنصة</p>
               </div>
-            </CardContent>
-          </Card>
+            </EnhancedCardContent>
+          </EnhancedCard>
         </div>
       </div>
 

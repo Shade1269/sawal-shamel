@@ -1,6 +1,18 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  EnhancedCard,
+  EnhancedCardContent,
+  EnhancedCardHeader,
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  EnhancedButton,
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/index";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, ArrowLeft, Package } from "lucide-react";
@@ -171,8 +183,8 @@ const OrderConfirmation = () => {
 
       <div className="container mx-auto px-4 py-8">
         {/* Success Message */}
-        <Card className="mb-8">
-          <CardContent className="text-center py-8">
+        <EnhancedCard variant="success" className="mb-8">
+          <EnhancedCardContent className="text-center py-8">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2 text-green-600">
               تم إنشاء طلبك بنجاح!
@@ -184,8 +196,8 @@ const OrderConfirmation = () => {
               <Package className="h-5 w-5" />
               <span className="font-semibold">رقم الطلب: {order.id}</span>
             </div>
-          </CardContent>
-        </Card>
+          </EnhancedCardContent>
+        </EnhancedCard>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Order Details */}

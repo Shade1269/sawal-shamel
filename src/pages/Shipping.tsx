@@ -1,6 +1,18 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  EnhancedCard,
+  EnhancedCardContent,
+  EnhancedCardHeader,
+  EnhancedCardTitle,
+  ResponsiveLayout,
+  ResponsiveGrid,
+  EnhancedButton,
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -189,11 +201,11 @@ const Shipping = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Customer Info Form */}
           <div className="lg:col-span-2 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>معلومات العميل</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <EnhancedCard>
+              <EnhancedCardHeader>
+                <EnhancedCardTitle>معلومات العميل</EnhancedCardTitle>
+              </EnhancedCardHeader>
+              <EnhancedCardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="name">الاسم الكامل *</Label>
@@ -253,14 +265,14 @@ const Shipping = () => {
                     rows={2}
                   />
                 </div>
-              </CardContent>
-            </Card>
+              </EnhancedCardContent>
+            </EnhancedCard>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>طريقة الشحن</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <EnhancedCard>
+              <EnhancedCardHeader>
+                <EnhancedCardTitle>طريقة الشحن</EnhancedCardTitle>
+              </EnhancedCardHeader>
+              <EnhancedCardContent>
                 {settingsLoading ? (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
@@ -291,17 +303,17 @@ const Shipping = () => {
                     <p className="text-sm text-muted-foreground mt-2">يرجى التواصل مع المتجر</p>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </EnhancedCardContent>
+            </EnhancedCard>
           </div>
 
           {/* Order Summary */}
           <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>ملخص الطلب</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <EnhancedCard>
+              <EnhancedCardHeader>
+                <EnhancedCardTitle>ملخص الطلب</EnhancedCardTitle>
+              </EnhancedCardHeader>
+              <EnhancedCardContent className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span>المجموع الفرعي:</span>
@@ -323,8 +335,8 @@ const Shipping = () => {
                 >
                   متابعة للدفع
                 </Button>
-              </CardContent>
-            </Card>
+              </EnhancedCardContent>
+            </EnhancedCard>
           </div>
         </div>
       </div>
