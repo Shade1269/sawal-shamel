@@ -93,3 +93,12 @@ verify_jwt = false
 
 [functions.get-store-orders-for-session]
 verify_jwt = false
+
+[functions.realtime-notifications]
+verify_jwt = false
+
+[functions.live-chat]
+verify_jwt = false
+
+[functions.activity-feed]
+verify_jwt = false

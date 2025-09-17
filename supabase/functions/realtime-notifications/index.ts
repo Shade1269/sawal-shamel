@@ -1,129 +1,142 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.0";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
+
+interface WebSocketConnection {
+  userId: string
+  socket: WebSocket
+  lastSeen: Date
+}
+
+const connections = new Map<string, WebSocketConnection>()
 
 serve(async (req) => {
-  // Handle CORS preflight
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders })
   }
 
-  const { headers } = req;
-  const upgradeHeader = headers.get("upgrade") || "";
+  try {
+    // Handle WebSocket upgrade
+    if (req.headers.get("upgrade") === "websocket") {
+      const { socket, response } = Deno.upgradeWebSocket(req)
+      let userId: string | null = null
 
-  if (upgradeHeader.toLowerCase() !== "websocket") {
-    return new Response("Expected WebSocket connection", { status: 400 });
-  }
+      socket.onopen = () => {
+        console.log("🔗 Real-time notifications WebSocket opened")
+      }
 
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-  );
+      socket.onmessage = async (event) => {
+        try {
+          const data = JSON.parse(event.data)
+          console.log("📨 Received notification message:", data)
 
-  const { socket, response } = Deno.upgradeWebSocket(req);
-  
-  // Store connected users
-  const connectedUsers = new Map();
-
-  socket.onopen = () => {
-    console.log("🔗 WebSocket connection established for real-time notifications");
-  };
-
-  socket.onmessage = async (event) => {
-    try {
-      const message = JSON.parse(event.data);
-      console.log("📨 Received message:", message);
-
-      switch (message.type) {
-        case 'SUBSCRIBE_USER':
-          // Subscribe user to their notifications
-          connectedUsers.set(message.userId, { socket, lastSeen: new Date() });
-          
-          // Send initial notifications
-          const { data: notifications } = await supabase
-            .from('notifications')
-            .select('*')
-            .eq('user_id', message.userId)
-            .eq('read', false)
-            .order('created_at', { ascending: false })
-            .limit(20);
-
-          socket.send(JSON.stringify({
-            type: 'INITIAL_NOTIFICATIONS',
-            notifications: notifications || []
-          }));
-          break;
-
-        case 'MARK_AS_READ':
-          // Mark notification as read
-          await supabase
-            .from('notifications')
-            .update({ read: true })
-            .eq('id', message.notificationId);
-
-          // Broadcast to user
-          socket.send(JSON.stringify({
-            type: 'NOTIFICATION_READ',
-            notificationId: message.notificationId
-          }));
-          break;
-
-        case 'BROADCAST_NOTIFICATION':
-          // Create new notification
-          const { data: newNotification } = await supabase
-            .from('notifications')
-            .insert({
-              user_id: message.targetUserId,
-              title: message.title,
-              message: message.message,
-              type: message.notificationType || 'info',
-              metadata: message.metadata || {}
-            })
-            .select()
-            .single();
-
-          // Send to target user if online
-          const targetUser = connectedUsers.get(message.targetUserId);
-          if (targetUser && newNotification) {
-            targetUser.socket.send(JSON.stringify({
-              type: 'NEW_NOTIFICATION',
-              notification: newNotification
-            }));
+          if (data.type === 'auth') {
+            userId = data.userId
+            if (userId) {
+              connections.set(userId, {
+                userId,
+                socket,
+                lastSeen: new Date()
+              })
+              console.log(`✅ Notification user ${userId} authenticated`)
+              
+              socket.send(JSON.stringify({
+                type: 'auth_success',
+                message: 'Connected to notifications'
+              }))
+            }
+          } else if (data.type === 'ping') {
+            if (userId && connections.has(userId)) {
+              connections.get(userId)!.lastSeen = new Date()
+            }
+            socket.send(JSON.stringify({ type: 'pong' }))
           }
-          break;
-
-        case 'PING':
-          // Keep connection alive
-          socket.send(JSON.stringify({ type: 'PONG' }));
-          break;
+        } catch (error) {
+          console.error("❌ Error processing notification message:", error)
+        }
       }
-    } catch (error) {
-      console.error("❌ Error processing message:", error);
-      socket.send(JSON.stringify({
-        type: 'ERROR',
-        message: 'Failed to process message'
-      }));
-    }
-  };
 
-  socket.onclose = () => {
-    // Remove user from connected users
-    for (const [userId, userData] of connectedUsers.entries()) {
-      if (userData.socket === socket) {
-        connectedUsers.delete(userId);
-        console.log(`👋 User ${userId} disconnected from notifications`);
-        break;
+      socket.onclose = () => {
+        if (userId) {
+          connections.delete(userId)
+          console.log(`👋 Notification user ${userId} disconnected`)
+        }
+      }
+
+      return response
+    }
+
+    // Handle HTTP requests for sending notifications
+    if (req.method === 'POST') {
+      const body = await req.json()
+      const { userId, notification, broadcast = false } = body
+
+      if (broadcast) {
+        // Send to all connected users
+        let sentCount = 0
+        for (const [connUserId, conn] of connections) {
+          try {
+            conn.socket.send(JSON.stringify({
+              type: 'notification',
+              data: notification,
+              timestamp: new Date().toISOString()
+            }))
+            sentCount++
+          } catch (error) {
+            console.error(`❌ Error sending to user ${connUserId}:`, error)
+            connections.delete(connUserId)
+          }
+        }
+
+        return new Response(
+          JSON.stringify({ success: true, sent: sentCount }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      } else {
+        // Send to specific user
+        const connection = connections.get(userId)
+        if (connection) {
+          try {
+            connection.socket.send(JSON.stringify({
+              type: 'notification',
+              data: notification,
+              timestamp: new Date().toISOString()
+            }))
+            return new Response(
+              JSON.stringify({ success: true }),
+              { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            )
+          } catch (error) {
+            connections.delete(userId)
+            return new Response(
+              JSON.stringify({ success: false, error: 'Connection failed' }),
+              { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            )
+          }
+        }
+        
+        return new Response(
+          JSON.stringify({ success: false, error: 'User not connected' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
       }
     }
-  };
 
-  socket.onerror = (error) => {
-    console.error("🚨 WebSocket error:", error);
-  };
+    return new Response(
+      JSON.stringify({ error: 'Method not allowed' }),
+      { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
 
-  return response;
-});
+  } catch (error) {
+    console.error("❌ Server error:", error)
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+})
