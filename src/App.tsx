@@ -11,6 +11,7 @@ import { AdaptiveLayoutProvider, SmartNavigationProvider } from "@/components/la
 import { AdaptiveDemo } from './components/adaptive-demo/AdaptiveDemo';
 import EnhancedComponentsDemo from './examples/EnhancedComponentsDemo';
 import PerformanceDemo from './examples/PerformanceDemo';
+import UnifiedSystemDemo from './examples/UnifiedSystemDemo';
 import { navigationItems } from "@/data/navigationItems";
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import Header from "@/components/common/Header";
@@ -235,11 +236,12 @@ const App = () => {
                               <UnifiedLayout>
                                 <Routes>
                                    {/* Public Routes */}
-                                   <Route path="/" element={<EnhancedComponentsDemo />} />
+                                   <Route path="/" element={<Index />} />
                                    <Route path="/home" element={<Index />} />
                                    <Route path="/components" element={<EnhancedComponentsDemo />} />
                                    <Route path="/adaptive" element={<AdaptiveDemo />} />
                                    <Route path="/performance" element={<PerformanceDemo />} />
+                                   <Route path="/unified" element={<UnifiedSystemDemo />} />
                                    <Route path="/home" element={<Navigate to="/" replace />} />
                                    <Route path="/auth" element={<AuthPage />} />
                                    <Route path="/login" element={<AuthPage />} />
