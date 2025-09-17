@@ -15,7 +15,7 @@ import {
   EnhancedButton
 } from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
-import { Store, Package, ShoppingBag, DollarSign, Users, TrendingUp, ExternalLink, Palette, FileText } from 'lucide-react';
+import { Store, Package, ShoppingBag, DollarSign, Users, TrendingUp, ExternalLink, Palette, FileText, Megaphone, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createStoreUrl } from '@/utils/domains';
 
@@ -213,7 +213,120 @@ export default function AffiliateDashboardOverview() {
       </ResponsiveGrid>
 
       {/* Quick Actions */}
-      <ResponsiveGrid columns={{ mobile: 1, tablet: 2, desktop: 5 }} gap={{ mobile: 4, tablet: 6 }}>
+      <ResponsiveGrid columns={{ mobile: 1, tablet: 2, desktop: 6 }} gap={{ mobile: 4, tablet: 6 }}>
+        <EnhancedCard variant="glass" hover="lift">
+          <EnhancedCardHeader>
+            <EnhancedCardTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              إدارة المنتجات
+            </EnhancedCardTitle>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
+            <p className="text-muted-foreground mb-4">
+              إدارة منتجات متجرك وإعدادات العمولة
+            </p>
+            <EnhancedButton asChild className="w-full" variant="default" animation="glow">
+              <Link to="/dashboard/products">
+                عرض المنتجات
+              </Link>
+            </EnhancedButton>
+          </EnhancedCardContent>
+        </EnhancedCard>
+
+        <EnhancedCard variant="glass" hover="lift">
+          <EnhancedCardHeader>
+            <EnhancedCardTitle className="flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5" />
+              متابعة الطلبات
+            </EnhancedCardTitle>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
+            <p className="text-muted-foreground mb-4">
+              متابعة وإدارة طلبات العملاء
+            </p>
+            <EnhancedButton asChild className="w-full" variant="luxury" animation="glow">
+              <Link to="/dashboard/orders">
+                عرض الطلبات
+              </Link>
+            </EnhancedButton>
+          </EnhancedCardContent>
+        </EnhancedCard>
+
+        <EnhancedCard variant="glass" hover="lift">
+          <EnhancedCardHeader>
+            <EnhancedCardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              إدارة المحتوى
+            </EnhancedCardTitle>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
+            <p className="text-muted-foreground mb-4">
+              إنشاء وإدارة صفحات المتجر
+            </p>
+            <EnhancedButton asChild className="w-full" variant="secondary" animation="glow">
+              <Link to="/cms-management">
+                نظام CMS
+              </Link>
+            </EnhancedButton>
+          </EnhancedCardContent>
+        </EnhancedCard>
+
+        <EnhancedCard variant="glass" hover="lift">
+          <EnhancedCardHeader>
+            <EnhancedCardTitle className="flex items-center gap-2">
+              <Megaphone className="h-5 w-5" />
+              البانرات الترويجية
+            </EnhancedCardTitle>
+          </EnhancedCardHeader>
+          <EnhancedCardContent>
+            <p className="text-muted-foreground mb-4">
+              إنشاء وإدارة الإعلانات الترويجية
+            </p>
+            <EnhancedButton asChild className="w-full" variant="premium" animation="glow">
+              <Link to={`/banner-management/${affiliateStore?.id || ''}`}>
+                إدارة البانرات
+              </Link>
+            </EnhancedButton>
+          </EnhancedCardContent>
+        </EnhancedCard>
+
+         <EnhancedCard variant="glass" hover="lift">
+           <EnhancedCardHeader>
+             <EnhancedCardTitle className="flex items-center gap-2">
+               <Sparkles className="h-5 w-5" />
+               الاستوديو المتقدم
+             </EnhancedCardTitle>
+           </EnhancedCardHeader>
+           <EnhancedCardContent>
+             <p className="text-muted-foreground mb-4">
+               تصميم ثيمات متقدمة بالذكاء الاصطناعي
+             </p>
+             <EnhancedButton asChild className="w-full" variant="persian" animation="glow">
+               <Link to={`/theme-studio?storeId=${affiliateStore?.id || ''}`}>
+                 الاستوديو المتقدم
+               </Link>
+             </EnhancedButton>
+           </EnhancedCardContent>
+         </EnhancedCard>
+
+         <EnhancedCard variant="glass" hover="lift">
+           <EnhancedCardHeader>
+             <EnhancedCardTitle className="flex items-center gap-2">
+               <DollarSign className="h-5 w-5" />
+               تتبع العمولات
+             </EnhancedCardTitle>
+           </EnhancedCardHeader>
+           <EnhancedCardContent>
+             <p className="text-muted-foreground mb-4">
+               متابعة عمولاتك وأرباحك
+             </p>
+             <EnhancedButton asChild className="w-full" variant="outline" animation="glow">
+               <Link to="/dashboard/commissions">
+                 عرض العمولات
+               </Link>
+             </EnhancedButton>
+           </EnhancedCardContent>
+         </EnhancedCard>
         <EnhancedCard variant="glass" hover="lift">
           <EnhancedCardHeader>
             <EnhancedCardTitle className="flex items-center gap-2">
