@@ -17,7 +17,7 @@ import {
   CardTitle,
   Button
 } from '@/components/ui/index';
-import { PerformanceMonitor } from '@/components/advanced';
+import { PerformanceMonitor, SecurityCenter, AIAnalytics, InteractiveWidgets, NotificationCenter } from '@/components/advanced';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 

@@ -1,4 +1,4 @@
-// Enhanced Hooks System v3.2
+// Enhanced Hooks System v3.3
 // نظام الـ Hooks المطور - النسخة الثالثة المحسّنة
 
 // Core Hooks
@@ -27,6 +27,10 @@ export {
   useContentGeneration,
   useSmartForm
 } from './useAIComponents';
+
+// New v3.3 Advanced Hooks
+export { useSecurityMonitoring } from './useSecurityMonitoring';
+export { useAdvancedNotifications } from './useAdvancedNotifications';
 
 // Existing Business Logic Hooks
 export { useAtlantisChat } from './useAtlantisChat';
@@ -71,5 +75,5 @@ export { useUserData } from './useUserData';
 export { useUserRoles } from './useUserRoles';
 
 // Version Info
-export const HOOKS_SYSTEM_VERSION = '3.2.0';
+export const HOOKS_SYSTEM_VERSION = '3.3.0';
 export const RELEASE_DATE = '2024-12-17';
