@@ -130,55 +130,30 @@ const MegaMenu: React.FC<MegaMenuProps> = ({
   }[gridCols] || 'grid-cols-4';
 
   const renderMenuItem = (item: MegaMenuItem, depth: number = 0) => {
-    const ItemComponent = item.href ? Link : 'div';
-    const itemProps = item.href ? { to: item.href } : {};
+    const navLinkClass = cn(
+      "flex items-center gap-2 p-2 rounded-md transition-colors cursor-pointer",
+      "hover:bg-accent/50 group",
+      item.featured && "bg-primary/10 border border-primary/20"
+    );
 
     return (
       <div key={item.id} className={cn("group", depth > 0 && "ml-4")}>
-        <ItemComponent
-          {...itemProps}
-          onClick={handleItemClick}
-          className={cn(
-            "flex items-center gap-2 p-2 rounded-md transition-colors cursor-pointer",
-            "hover:bg-accent/50 group",
-            item.featured && "bg-primary/10 border border-primary/20"
-          )}
-        >
-          {item.icon && (
-            <item.icon className={cn(
-              "h-4 w-4 shrink-0",
-              item.featured && "text-primary"
-            )} />
-          )}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className={cn(
-                "font-medium text-sm truncate",
-                item.featured && "text-primary"
-              )}>
-                {item.title}
-              </span>
-              {item.badge && (
-                <Badge 
-                  variant={item.featured ? "default" : "secondary"} 
-                  size="sm"
-                >
-                  {item.badge}
-                </Badge>
-              )}
-              {item.featured && <Star className="h-3 w-3 text-primary fill-current" />}
-              {item.external && <ExternalLink className="h-3 w-3 text-muted-foreground" />}
-            </div>
-            {showDescription && item.description && (
-              <p className="text-xs text-muted-foreground truncate mt-1">
-                {item.description}
-              </p>
-            )}
+        {item.href ? (
+          <Link
+            to={item.href}
+            onClick={handleItemClick}
+            className={navLinkClass}
+          >
+            <MenuItemContent item={item} />
+          </Link>
+        ) : (
+          <div
+            onClick={handleItemClick}
+            className={navLinkClass}
+          >
+            <MenuItemContent item={item} />
           </div>
-          {item.children && item.children.length > 0 && (
-            <ChevronRight className="h-3 w-3 text-muted-foreground" />
-          )}
-        </ItemComponent>
+        )}
 
         {/* Submenu */}
         {item.children && item.children.length > 0 && (
@@ -189,6 +164,45 @@ const MegaMenu: React.FC<MegaMenuProps> = ({
       </div>
     );
   };
+
+  const MenuItemContent: React.FC<{ item: MegaMenuItem }> = ({ item }) => (
+    <>
+      {item.icon && (
+        <item.icon className={cn(
+          "h-4 w-4 shrink-0",
+          item.featured && "text-primary"
+        )} />
+      )}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className={cn(
+            "font-medium text-sm truncate",
+            item.featured && "text-primary"
+          )}>
+            {item.title}
+          </span>
+          {item.badge && (
+            <Badge 
+              variant={item.featured ? "default" : "secondary"} 
+              size="sm"
+            >
+              {item.badge}
+            </Badge>
+          )}
+          {item.featured && <Star className="h-3 w-3 text-primary fill-current" />}
+          {item.external && <ExternalLink className="h-3 w-3 text-muted-foreground" />}
+        </div>
+        {showDescription && item.description && (
+          <p className="text-xs text-muted-foreground truncate mt-1">
+            {item.description}
+          </p>
+        )}
+      </div>
+      {item.children && item.children.length > 0 && (
+        <ChevronRight className="h-3 w-3 text-muted-foreground" />
+      )}
+    </>
+  );
 
   return (
     <div 

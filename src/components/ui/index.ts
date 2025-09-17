@@ -19,8 +19,9 @@ export { MegaMenu, MegaMenuTrigger, megaMenuVariants } from '../navigation/MegaM
 export { MobileNavigation, BottomNavigation, mobileNavVariants } from '../navigation/MobileNavigation'
 export { EnhancedPagination, PaginationSummary, paginationVariants } from '../navigation/EnhancedPagination'
 export { VirtualizedList } from '../layout/VirtualizedList'
-export { useResponsiveLayout, useResponsiveColumns, useResponsiveSpacing } from '../hooks/useResponsiveLayout'
-export { useVirtualization, useInfiniteVirtualization } from '../hooks/useVirtualization'
+export { FloatingActionButton, ScrollToTopFAB } from '../navigation/FloatingActionButton'
+export { useResponsiveLayout, useResponsiveColumns, useResponsiveSpacing } from '../../hooks/useResponsiveLayout'
+export { useVirtualization, useInfiniteVirtualization } from '../../hooks/useVirtualization'
 
 // Enhanced UI Components - نظام المكونات المطور
 export { Button, buttonVariants, type ButtonProps } from './button'

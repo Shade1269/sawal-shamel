@@ -17,7 +17,7 @@ import {
   Settings
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { useMediaQuery } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const mobileNavVariants = cva(
   "w-full transition-all duration-300",
@@ -85,7 +85,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
   const [currentLevel, setCurrentLevel] = useState<MobileNavItem[]>(items);
   const [breadcrumb, setBreadcrumb] = useState<MobileNavItem[]>([]);
   const location = useLocation();
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
 
   // Auto-determine drawer vs sheet based on device
   const shouldUseDrawer = useDrawer ?? isMobile;
@@ -134,9 +134,12 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
   );
 
   const renderNavItem = (item: MobileNavItem, index: number) => {
-    const ItemComponent = item.href ? Link : 'div';
-    const itemProps = item.href ? { to: item.href } : {};
     const isActive = item.href && location.pathname === item.href;
+    const navItemClass = cn(
+      "flex items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer",
+      "hover:bg-accent/50 active:bg-accent/80",
+      isActive && "bg-primary/10 text-primary border border-primary/20"
+    );
 
     return (
       <React.Fragment key={item.id}>
@@ -144,53 +147,64 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
           <Separator className="my-2" />
         )}
         
-        <ItemComponent
-          {...itemProps}
-          onClick={() => handleItemClick(item)}
-          className={cn(
-            "flex items-center gap-3 p-3 rounded-lg transition-all duration-200 cursor-pointer",
-            "hover:bg-accent/50 active:bg-accent/80",
-            isActive && "bg-primary/10 text-primary border border-primary/20"
-          )}
-        >
-          {item.icon && (
-            <item.icon className={cn(
-              "h-5 w-5 shrink-0",
-              isActive && "text-primary"
-            )} />
-          )}
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className={cn(
-                "font-medium truncate",
-                isActive && "text-primary"
-              )}>
-                {item.title}
-              </span>
-              {item.badge && (
-                <Badge 
-                  variant={isActive ? "default" : "secondary"}
-                  size="sm"
-                >
-                  {item.badge}
-                </Badge>
-              )}
-            </div>
-            {item.description && (
-              <p className="text-xs text-muted-foreground truncate mt-1">
-                {item.description}
-              </p>
-            )}
+        {item.href ? (
+          <Link 
+            to={item.href}
+            onClick={() => handleItemClick(item)}
+            className={navItemClass}
+          >
+            <NavItemContent item={item} isActive={isActive} />
+          </Link>
+        ) : (
+          <div
+            onClick={() => handleItemClick(item)}
+            className={navItemClass}
+          >
+            <NavItemContent item={item} isActive={isActive} />
           </div>
-          
-          {item.children && item.children.length > 0 && (
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          )}
-        </ItemComponent>
+        )}
       </React.Fragment>
     );
   };
+
+  const NavItemContent: React.FC<{ item: MobileNavItem; isActive: boolean }> = ({ item, isActive }) => (
+    <>
+      {item.icon && (
+        <item.icon className={cn(
+          "h-5 w-5 shrink-0",
+          isActive && "text-primary"
+        )} />
+      )}
+      
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className={cn(
+            "font-medium truncate",
+            isActive && "text-primary"
+          )}>
+            {item.title}
+          </span>
+          {item.badge && (
+            <Badge 
+              variant={isActive ? "default" : "secondary"}
+              size="sm"
+            >
+              {item.badge}
+            </Badge>
+          )}
+        </div>
+        {item.description && (
+          <p className="text-xs text-muted-foreground truncate mt-1">
+            {item.description}
+          </p>
+        )}
+      </div>
+      
+      {item.children && item.children.length > 0 && (
+        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      )}
+    </>
+  );
 
   const navigationContent = (
     <div className={cn(mobileNavVariants({ variant }), "h-full flex flex-col")}>

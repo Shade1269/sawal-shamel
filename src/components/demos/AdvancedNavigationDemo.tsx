@@ -22,7 +22,8 @@ import {
 } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useResponsiveLayout, useVirtualization } from '@/hooks/useResponsiveLayout';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
+import { useVirtualization } from '@/hooks/useVirtualization';
 import { 
   Layout,
   Smartphone,
@@ -112,7 +113,7 @@ const AdvancedNavigationDemo: React.FC = () => {
   const mockItems = generateMockItems(500);
   const totalPages = Math.ceil(mockItems.length / itemsPerPage);
 
-  const VirtualListItem: React.FC<{ item: any; index: number }> = ({ item, index }) => (
+  const renderVirtualListItem = (item: any, index: number) => (
     <div className="p-4 border-b border-border/50 hover:bg-accent/30 transition-colors">
       <div className="flex items-center justify-between">
         <div className="flex-1">
@@ -355,7 +356,7 @@ const AdvancedNavigationDemo: React.FC = () => {
               
               <VirtualizedList
                 items={mockItems}
-                renderItem={VirtualListItem}
+                renderItem={renderVirtualListItem}
                 itemHeight={80}
                 containerHeight={300}
                 searchable={true}
