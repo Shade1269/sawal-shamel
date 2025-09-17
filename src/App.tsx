@@ -20,6 +20,7 @@ import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
 
 import AdminLayout from "@/layouts/EnhancedAdminLayout";
 import { lazy, Suspense, useEffect } from "react";
+import RedirectToPrimaryStore from "./pages/redirects/RedirectToPrimaryStore";
 
 // Lazy load dashboard pages
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
@@ -284,16 +285,28 @@ const App = () => {
                          } />
                         
                          {/* Banner Management Route */}
-                         <Route path="/banner-management/:storeId" element={
-                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                             <BannerManagementPage />
-                           </ProtectedRoute>
-                         } />
-                        
+                          <Route path="/banner-management/:storeId" element={
+                            <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                              <BannerManagementPage />
+                            </ProtectedRoute>
+                          } />
+                         
                         {/* Theme Studio Route */}
                         <Route path="/theme-studio" element={
                           <ProtectedRoute requiredRole={["affiliate", "admin"]}>
                             <ThemeStudioPage />
+                          </ProtectedRoute>
+                        } />
+
+                        {/* Convenience Redirects (resolve primary store automatically) */}
+                        <Route path="/store-themes" element={
+                          <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                            <RedirectToPrimaryStore to="store-themes" />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/banner-management" element={
+                          <ProtectedRoute requiredRole={["affiliate", "admin"]}>
+                            <RedirectToPrimaryStore to="banner-management" />
                           </ProtectedRoute>
                         } />
                        
