@@ -25,6 +25,19 @@ export function UnifiedLayout({
 }: UnifiedLayoutProps) {
   const { isAuthenticated } = useFastAuth();
 
+  // For auth pages, don't show header
+  if (window.location.pathname.includes('/auth') || 
+      window.location.pathname.includes('/login') || 
+      window.location.pathname.includes('/signup')) {
+    return (
+      <div className="min-h-screen bg-background">
+        <main className="flex-1">
+          {children}
+        </main>
+      </div>
+    );
+  }
+
   if (!isAuthenticated || !showSidebar) {
     return (
       <div className="min-h-screen bg-background">
