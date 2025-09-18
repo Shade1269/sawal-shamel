@@ -324,13 +324,13 @@ export function UnifiedOrdersManager() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{config.title}</h1>
-          <p className="text-muted-foreground">{config.description}</p>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="w-full sm:w-auto">
+          <h1 className="text-xl sm:text-2xl font-bold">{config.title}</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">{config.description}</p>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
           {config.actions.map((action, index) => {
             const ActionIcon = action.icon;
             return (
@@ -338,9 +338,11 @@ export function UnifiedOrdersManager() {
                 key={index}
                 variant={action.variant}
                 onClick={() => handleAction(action.action)}
+                className="touch-target flex-shrink-0"
+                size="sm"
               >
-                <ActionIcon className="h-4 w-4 mr-2" />
-                {action.label}
+                <ActionIcon className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{action.label}</span>
               </Button>
             );
           })}
@@ -349,44 +351,50 @@ export function UnifiedOrdersManager() {
 
       {/* Filters */}
       <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+            <div className="flex-1 min-w-0">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="البحث في الطلبات..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 touch-target"
                 />
               </div>
             </div>
             
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-3 py-2 border border-input rounded-md bg-background"
-            >
-              <option value="">جميع الحالات</option>
-              {config.statusOptions.map(status => (
-                <option key={status.value} value={status.value}>
-                  {status.label}
-                </option>
-              ))}
-            </select>
+            <div className="w-full sm:w-auto">
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="w-full sm:w-auto px-3 py-2 border border-input rounded-md bg-background touch-target"
+              >
+                <option value="">جميع الحالات</option>
+                {config.statusOptions.map(status => (
+                  <option key={status.value} value={status.value}>
+                    {status.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-1 h-auto p-1">
           {config.tabs.map(tab => (
-            <TabsTrigger key={tab.id} value={tab.id}>
-              {tab.title}
+            <TabsTrigger 
+              key={tab.id} 
+              value={tab.id}
+              className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3"
+            >
+              <span className="truncate">{tab.title}</span>
               {tab.filter && (
-                <Badge variant="secondary" className="ml-2">
+                <Badge variant="secondary" className="text-xs h-5 px-1.5">
                   {orders.filter(tab.filter).length}
                 </Badge>
               )}
@@ -406,110 +414,218 @@ export function UnifiedOrdersManager() {
                   </Badge>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 {filteredOrders.length > 0 ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>رقم الطلب</TableHead>
-                        {config.showCustomerDetails && <TableHead>العميل</TableHead>}
-                        <TableHead>الحالة</TableHead>
-                        <TableHead>المبلغ</TableHead>
-                        {config.showCommissions && <TableHead>العمولة</TableHead>}
-                        <TableHead>العناصر</TableHead>
-                        <TableHead>التاريخ</TableHead>
-                        <TableHead>الإجراءات</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
+                  <div>
+                    {/* Desktop Table View */}
+                    <div className="hidden lg:block">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>رقم الطلب</TableHead>
+                            {config.showCustomerDetails && <TableHead>العميل</TableHead>}
+                            <TableHead>الحالة</TableHead>
+                            <TableHead>المبلغ</TableHead>
+                            {config.showCommissions && <TableHead>العمولة</TableHead>}
+                            <TableHead>العناصر</TableHead>
+                            <TableHead>التاريخ</TableHead>
+                            <TableHead>الإجراءات</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredOrders.map(order => {
+                            const statusInfo = getStatusInfo(order.status);
+                            const StatusIcon = statusInfo.icon;
+                            
+                            return (
+                              <TableRow key={order.id}>
+                                <TableCell className="font-medium">
+                                  {order.order_number}
+                                </TableCell>
+                                
+                                {config.showCustomerDetails && (
+                                  <TableCell>
+                                    <div>
+                                      <div className="font-medium">{order.customer_name}</div>
+                                      <div className="text-sm text-muted-foreground">
+                                        {order.customer_phone}
+                                      </div>
+                                    </div>
+                                  </TableCell>
+                                )}
+                                
+                                <TableCell>
+                                  <Badge className={`${statusInfo.color} text-white`}>
+                                    <StatusIcon className="h-3 w-3 mr-1" />
+                                    {statusInfo.label}
+                                  </Badge>
+                                </TableCell>
+                                
+                                <TableCell className="font-medium">
+                                  {formatCurrency(order.total_amount)}
+                                </TableCell>
+                                
+                                {config.showCommissions && (
+                                  <TableCell>
+                                    {order.commission_amount ? (
+                                      <span className="text-green-600 font-medium">
+                                        {formatCurrency(order.commission_amount)}
+                                      </span>
+                                    ) : (
+                                      <span className="text-muted-foreground">-</span>
+                                    )}
+                                  </TableCell>
+                                )}
+                                
+                                <TableCell>
+                                  {order.items_count} عنصر
+                                </TableCell>
+                                
+                                <TableCell>
+                                  {formatDate(order.created_at)}
+                                </TableCell>
+                                
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    <Button size="sm" variant="outline">
+                                      <Eye className="h-4 w-4" />
+                                    </Button>
+                                    
+                                    {config.allowStatusChange && (
+                                      <select
+                                        value={order.status}
+                                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                        className="text-xs px-2 py-1 border rounded"
+                                      >
+                                        {config.statusOptions.map(status => (
+                                          <option key={status.value} value={status.value}>
+                                            {status.label}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    )}
+                                    
+                                    {config.canCancel && order.status === 'pending' && (
+                                      <Button 
+                                        size="sm" 
+                                        variant="destructive"
+                                        onClick={() => handleStatusChange(order.id, 'cancelled')}
+                                      >
+                                        إلغاء
+                                      </Button>
+                                    )}
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className="block lg:hidden p-4 space-y-4">
                       {filteredOrders.map(order => {
                         const statusInfo = getStatusInfo(order.status);
                         const StatusIcon = statusInfo.icon;
                         
                         return (
-                          <TableRow key={order.id}>
-                            <TableCell className="font-medium">
-                              {order.order_number}
-                            </TableCell>
-                            
-                            {config.showCustomerDetails && (
-                              <TableCell>
-                                <div>
-                                  <div className="font-medium">{order.customer_name}</div>
-                                  <div className="text-sm text-muted-foreground">
-                                    {order.customer_phone}
+                          <Card key={order.id} className="border border-border">
+                            <CardContent className="p-4">
+                              <div className="space-y-3">
+                                {/* Header Row */}
+                                <div className="flex justify-between items-start">
+                                  <div>
+                                    <h3 className="font-semibold text-base">{order.order_number}</h3>
+                                    <p className="text-sm text-muted-foreground">{formatDate(order.created_at)}</p>
                                   </div>
+                                  <Badge className={`${statusInfo.color} text-white flex items-center gap-1`}>
+                                    <StatusIcon className="h-3 w-3" />
+                                    {statusInfo.label}
+                                  </Badge>
                                 </div>
-                              </TableCell>
-                            )}
-                            
-                            <TableCell>
-                              <Badge className={`${statusInfo.color} text-white`}>
-                                <StatusIcon className="h-3 w-3 mr-1" />
-                                {statusInfo.label}
-                              </Badge>
-                            </TableCell>
-                            
-                            <TableCell className="font-medium">
-                              {formatCurrency(order.total_amount)}
-                            </TableCell>
-                            
-                            {config.showCommissions && (
-                              <TableCell>
-                                {order.commission_amount ? (
-                                  <span className="text-green-600 font-medium">
-                                    {formatCurrency(order.commission_amount)}
-                                  </span>
-                                ) : (
-                                  <span className="text-muted-foreground">-</span>
+
+                                {/* Customer Info */}
+                                {config.showCustomerDetails && (
+                                  <div className="bg-muted/50 p-3 rounded-lg">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <User className="h-4 w-4 text-muted-foreground" />
+                                      <span className="font-medium text-sm">{order.customer_name}</span>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">{order.customer_phone}</p>
+                                  </div>
                                 )}
-                              </TableCell>
-                            )}
-                            
-                            <TableCell>
-                              {order.items_count} عنصر
-                            </TableCell>
-                            
-                            <TableCell>
-                              {formatDate(order.created_at)}
-                            </TableCell>
-                            
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Button size="sm" variant="outline">
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                                
-                                {config.allowStatusChange && (
-                                  <select
-                                    value={order.status}
-                                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                                    className="text-xs px-2 py-1 border rounded"
-                                  >
-                                    {config.statusOptions.map(status => (
-                                      <option key={status.value} value={status.value}>
-                                        {status.label}
-                                      </option>
-                                    ))}
-                                  </select>
-                                )}
-                                
-                                {config.canCancel && order.status === 'pending' && (
-                                  <Button 
-                                    size="sm" 
-                                    variant="destructive"
-                                    onClick={() => handleStatusChange(order.id, 'cancelled')}
-                                  >
-                                    إلغاء
+
+                                {/* Order Details */}
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                  <div className="flex items-center gap-2">
+                                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                    <div>
+                                      <p className="text-muted-foreground">المبلغ</p>
+                                      <p className="font-semibold">{formatCurrency(order.total_amount)}</p>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="flex items-center gap-2">
+                                    <Package className="h-4 w-4 text-muted-foreground" />
+                                    <div>
+                                      <p className="text-muted-foreground">العناصر</p>
+                                      <p className="font-medium">{order.items_count} عنصر</p>
+                                    </div>
+                                  </div>
+
+                                  {config.showCommissions && order.commission_amount && (
+                                    <div className="flex items-center gap-2 col-span-2">
+                                      <DollarSign className="h-4 w-4 text-green-600" />
+                                      <div>
+                                        <p className="text-muted-foreground">العمولة</p>
+                                        <p className="font-semibold text-green-600">
+                                          {formatCurrency(order.commission_amount)}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t">
+                                  <Button size="sm" variant="outline" className="flex-1 touch-target">
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    عرض التفاصيل
                                   </Button>
-                                )}
+                                  
+                                  {config.allowStatusChange && (
+                                    <select
+                                      value={order.status}
+                                      onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                      className="px-3 py-2 border rounded-md bg-background text-sm touch-target flex-1"
+                                    >
+                                      {config.statusOptions.map(status => (
+                                        <option key={status.value} value={status.value}>
+                                          {status.label}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  )}
+                                  
+                                  {config.canCancel && order.status === 'pending' && (
+                                    <Button 
+                                      size="sm" 
+                                      variant="destructive"
+                                      onClick={() => handleStatusChange(order.id, 'cancelled')}
+                                      className="touch-target"
+                                    >
+                                      إلغاء الطلب
+                                    </Button>
+                                  )}
+                                </div>
                               </div>
-                            </TableCell>
-                          </TableRow>
+                            </CardContent>
+                          </Card>
                         );
                       })}
-                    </TableBody>
-                  </Table>
+                    </div>
+                  </div>
                 ) : (
                   <div className="text-center py-12">
                     <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
