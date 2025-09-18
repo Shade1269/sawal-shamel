@@ -369,50 +369,52 @@ export function UnifiedDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* Enhanced Header */}
+      {/* Enhanced Header - Mobile Responsive */}
       <motion.div 
-        className="flex items-center justify-between"
+        className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <div className="flex items-center gap-4">
-          <div className={`p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20`}>
-            <IconComponent className={`h-8 w-8 ${config.primaryColor}`} />
+        <div className="flex items-center gap-3 md:gap-4">
+          <div className={`p-2 md:p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20`}>
+            <IconComponent className={`h-6 w-6 md:h-8 md:w-8 ${config.primaryColor}`} />
           </div>
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text truncate">
               {config.title}
             </h1>
-            <p className="text-muted-foreground">{config.description}</p>
-            <div className="flex items-center gap-2 mt-1">
+            <p className="text-sm md:text-base text-muted-foreground truncate">{config.description}</p>
+            <div className="flex items-center gap-1 md:gap-2 mt-1 flex-wrap">
               <Badge variant="outline" className="text-xs">
                 <Activity className="h-3 w-3 mr-1" />
-                متصل الآن
+                <span className="hidden sm:inline">متصل الآن</span>
+                <span className="sm:hidden">متصل</span>
               </Badge>
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs hidden sm:inline-flex">
                 آخر تحديث: منذ دقيقتين
               </Badge>
             </div>
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
-            تصفية
+        <div className="flex items-center gap-2 overflow-x-auto">
+          <Button variant="outline" size="sm" className="flex-shrink-0">
+            <Filter className="h-4 w-4 md:mr-2" />
+            <span className="hidden md:inline">تصفية</span>
           </Button>
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            تصدير
+          <Button variant="outline" size="sm" className="flex-shrink-0">
+            <Download className="h-4 w-4 md:mr-2" />
+            <span className="hidden md:inline">تصدير</span>
           </Button>
           <Button 
             variant="outline" 
             size="sm" 
             onClick={refreshData}
             disabled={loading}
+            className="flex-shrink-0"
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            تحديث
+            <RefreshCw className={`h-4 w-4 md:mr-2 ${loading ? 'animate-spin' : ''}`} />
+            <span className="hidden md:inline">تحديث</span>
           </Button>
         </div>
       </motion.div>
@@ -438,32 +440,43 @@ export function UnifiedDashboard() {
         ))}
       </div>
 
-      {/* Enhanced Tabs */}
+      {/* Enhanced Tabs - Mobile Responsive */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <div className="flex items-center justify-between">
-          <TabsList className="grid w-auto grid-cols-4">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <Eye className="h-4 w-4" />
-              نظرة عامة
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 md:w-auto">
+            <TabsTrigger value="overview" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm">
+              <Eye className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">نظرة عامة</span>
+              <span className="sm:hidden">عامة</span>
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              التحليلات
+            <TabsTrigger value="analytics" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm">
+              <BarChart3 className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">التحليلات</span>
+              <span className="sm:hidden">تحليل</span>
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="flex items-center gap-2">
-              <Bell className="h-4 w-4" />
-              الإشعارات
+            <TabsTrigger value="notifications" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm">
+              <Bell className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">الإشعارات</span>
+              <span className="sm:hidden">تنبيه</span>
               {notifications.filter(n => !n.isRead).length > 0 && (
-                <Badge variant="destructive" className="ml-1 text-xs px-1 py-0">
+                <Badge variant="destructive" className="ml-1 text-xs px-1 py-0 hidden md:inline-flex">
                   {notifications.filter(n => !n.isRead).length}
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="performance" className="flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              الأداء
+            <TabsTrigger value="performance" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm">
+              <Target className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">الأداء</span>
+              <span className="sm:hidden">أداء</span>
             </TabsTrigger>
           </TabsList>
+          
+          {/* Mobile notification badge */}
+          {notifications.filter(n => !n.isRead).length > 0 && (
+            <Badge variant="destructive" className="md:hidden text-xs">
+              {notifications.filter(n => !n.isRead).length}
+            </Badge>
+          )}
         </div>
 
         <TabsContent value="overview" className="space-y-6">
@@ -484,7 +497,7 @@ export function UnifiedDashboard() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                 {config.quickActions.map((action, index) => {
                   const ActionIcon = action.icon;
                   return (
@@ -495,17 +508,17 @@ export function UnifiedDashboard() {
                     >
                       <Button
                         variant="outline"
-                        className="h-auto p-4 flex flex-col items-start gap-3 hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/20"
+                        className="h-auto p-3 md:p-4 flex flex-col sm:flex-row items-start gap-3 hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/20 w-full"
                         asChild
                       >
                         <a href={action.href}>
-                          <div className="flex items-center gap-3 w-full">
-                            <div className={`p-3 rounded-lg ${action.color} shadow-lg`}>
-                              <ActionIcon className="h-5 w-5 text-white" />
+                          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 w-full">
+                            <div className={`p-2 md:p-3 rounded-lg ${action.color} shadow-lg flex-shrink-0`}>
+                              <ActionIcon className="h-4 w-4 md:h-5 md:w-5 text-white" />
                             </div>
-                            <div className="text-left flex-1">
-                              <div className="font-semibold text-base">{action.title}</div>
-                              <div className="text-sm text-muted-foreground leading-relaxed">
+                            <div className="text-center sm:text-left flex-1 min-w-0">
+                              <div className="font-semibold text-sm md:text-base truncate">{action.title}</div>
+                              <div className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-2">
                                 {action.description}
                               </div>
                             </div>
@@ -526,24 +539,24 @@ export function UnifiedDashboard() {
               <CardDescription>مؤشرات الأداء الرئيسية</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>تحقيق الهدف الشهري</span>
+                  <div className="flex items-center justify-between text-xs md:text-sm">
+                    <span className="truncate">تحقيق الهدف الشهري</span>
                     <span className="font-medium">85%</span>
                   </div>
                   <Progress value={85} className="h-2" />
                 </div>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>رضا العملاء</span>
+                  <div className="flex items-center justify-between text-xs md:text-sm">
+                    <span className="truncate">رضا العملاء</span>
                     <span className="font-medium">92%</span>
                   </div>
                   <Progress value={92} className="h-2" />
                 </div>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>معدل النمو</span>
+                  <div className="flex items-center justify-between text-xs md:text-sm">
+                    <span className="truncate">معدل النمو</span>
                     <span className="font-medium">78%</span>
                   </div>
                   <Progress value={78} className="h-2" />

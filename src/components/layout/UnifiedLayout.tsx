@@ -74,28 +74,28 @@ export function UnifiedLayout({
         {shouldShowSidebar && <AppSidebar />}
         
         <div className="flex-1 flex flex-col">
-          {/* Top Header Bar - Responsive */}
+          {/* Top Header Bar - Enhanced Mobile Responsive */}
           <header className={`${headerHeight} border-b bg-card/50 backdrop-blur-sm sticky top-0 z-40`}>
-            <div className={`flex items-center justify-between ${containerSpacing.padding} h-full`}>
-              <div className="flex items-center gap-3">
+            <div className={`flex items-center justify-between ${containerSpacing.padding} h-full min-w-0`}>
+              <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                 {shouldShowSidebar && (
                   <SidebarTrigger asChild>
                     <Button 
                       variant="ghost" 
                       size={device.isMobile ? "default" : "sm"} 
-                      className={device.isMobile ? "p-3" : "p-2"}
+                      className={`${device.isMobile ? "p-2.5" : "p-2"} flex-shrink-0`}
                     >
                       <Menu className={device.isMobile ? "h-5 w-5" : "h-4 w-4"} />
                     </Button>
                   </SidebarTrigger>
                 )}
                 
-                <div className={`${device.isMobile ? 'text-base' : 'text-lg'} font-semibold bg-gradient-primary bg-clip-text text-transparent`}>
-                  منصة الأفيليت
+                <div className={`${device.isMobile ? 'text-sm' : 'text-lg'} font-semibold bg-gradient-primary bg-clip-text text-transparent truncate`}>
+                  {device.isMobile ? 'أفيليت' : 'منصة الأفيليت'}
                 </div>
               </div>
 
-              <div className={`flex items-center ${device.isMobile ? 'gap-1' : 'gap-2'}`}>
+              <div className={`flex items-center ${device.isMobile ? 'gap-1' : 'gap-2'} flex-shrink-0`}>
                 {/* Hide some elements on mobile to save space */}
                 {!device.isMobile && <QuickActions />}
                 <GlobalSearch />
@@ -108,9 +108,9 @@ export function UnifiedLayout({
           {/* Breadcrumb - Hide on mobile for space */}
           {showBreadcrumb && !device.isMobile && <AppBreadcrumb />}
 
-          {/* Main Content - Responsive */}
+          {/* Main Content - Enhanced Mobile Responsive */}
           <main className="flex-1 overflow-auto">
-            <div className={`container mx-auto ${containerSpacing.padding} ${device.isMobile ? 'pb-20' : 'pb-6'}`}>
+            <div className={`container mx-auto ${containerSpacing.padding} ${device.isMobile ? 'pb-20 pt-2' : 'pb-6 pt-4'} max-w-full`}>
               {children}
             </div>
           </main>
