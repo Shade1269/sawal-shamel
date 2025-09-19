@@ -76,10 +76,10 @@ export function SmartWidget({
 
   const getStatusIcon = () => {
     switch (data.status) {
-      case 'success': return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'warning': return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
-      case 'error': return <AlertTriangle className="h-4 w-4 text-red-500" />;
-      case 'info': return <Clock className="h-4 w-4 text-blue-500" />;
+      case 'success': return <CheckCircle className="h-3 w-3 md:h-4 md:w-4 text-green-500" />;
+      case 'warning': return <AlertTriangle className="h-3 w-3 md:h-4 md:w-4 text-yellow-500" />;
+      case 'error': return <AlertTriangle className="h-3 w-3 md:h-4 md:w-4 text-red-500" />;
+      case 'info': return <Clock className="h-3 w-3 md:h-4 md:w-4 text-blue-500" />;
       default: return null;
     }
   };
@@ -87,11 +87,11 @@ export function SmartWidget({
   const getVariantStyles = () => {
     switch (variant) {
       case 'compact':
-        return 'p-4';
+        return 'p-3 md:p-4';
       case 'detailed':
-        return 'p-6';
+        return 'p-4 md:p-6';
       default:
-        return 'p-5';
+        return 'p-4 md:p-5';
     }
   };
 
@@ -101,7 +101,7 @@ export function SmartWidget({
     <MotionCard 
       className={cn(
         "relative overflow-hidden hover:shadow-lg transition-all duration-300",
-        data.onClick && "cursor-pointer hover:scale-[1.02]",
+        data.onClick && "cursor-pointer hover:scale-[1.02] active:scale-[0.98]",
         data.isLoading && "opacity-60"
       )}
       onClick={data.onClick}
@@ -120,17 +120,17 @@ export function SmartWidget({
       
       <CardContent className={getVariantStyles()}>
         <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <div className={cn("p-2 rounded-lg", data.color.replace('bg-', 'bg-') + "/10")}>
-                <IconComponent className={cn("h-4 w-4", data.color.replace('bg-', 'text-'))} />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-2">
+              <div className={cn("p-1.5 md:p-2 rounded-lg", data.color.replace('bg-', 'bg-') + "/10")}>
+                <IconComponent className={cn("h-3 w-3 md:h-4 md:w-4", data.color.replace('bg-', 'text-'))} />
               </div>
               {data.status && getStatusIcon()}
               {refreshable && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 w-6 p-0 ml-auto"
+                  className="h-6 w-6 p-0 ml-auto touch-target"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRefresh();
@@ -142,15 +142,15 @@ export function SmartWidget({
               )}
             </div>
 
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">
+            <div className="space-y-1 md:space-y-1">
+              <p className="text-xs md:text-sm font-medium text-muted-foreground truncate">
                 {data.title}
               </p>
               
-              <div className="flex items-baseline gap-2">
-                <p className="text-2xl font-bold">
+              <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
+                <p className="text-lg md:text-2xl font-bold leading-tight">
                   {data.isLoading ? "..." : data.value}
-                  {data.unit && <span className="text-sm font-normal ml-1">{data.unit}</span>}
+                  {data.unit && <span className="text-xs md:text-sm font-normal mr-1">{data.unit}</span>}
                 </p>
                 
                 {data.change !== undefined && (
@@ -171,18 +171,18 @@ export function SmartWidget({
               </div>
 
               {variant === 'detailed' && data.description && (
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                   {data.description}
                 </p>
               )}
 
               {showProgress && data.progress !== undefined && (
-                <div className="mt-3 space-y-1">
+                <div className="mt-2 md:mt-3 space-y-1">
                   <div className="flex justify-between text-xs">
                     <span>التقدم</span>
                     <span>{data.progress}%</span>
                   </div>
-                  <Progress value={data.progress} className="h-1" />
+                  <Progress value={data.progress} className="h-1 md:h-1" />
                   {data.target && (
                     <p className="text-xs text-muted-foreground">
                       الهدف: {data.target} {data.unit}
@@ -192,8 +192,8 @@ export function SmartWidget({
               )}
 
               {showTrend && data.trend && data.trend.length > 0 && (
-                <div className="mt-3">
-                  <div className="flex items-center gap-1 h-8">
+                <div className="mt-2 md:mt-3">
+                  <div className="flex items-center gap-0.5 h-6 md:h-8">
                     {data.trend.map((value, index) => (
                       <div
                         key={index}
@@ -222,7 +222,7 @@ export function SmartWidget({
           </div>
 
           {data.onClick && (
-            <ChevronRight className="h-4 w-4 text-muted-foreground opacity-60" />
+            <ChevronRight className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground opacity-60 flex-shrink-0" />
           )}
         </div>
 
@@ -230,7 +230,7 @@ export function SmartWidget({
           <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
             <div className="flex items-center gap-2">
               <Zap className="h-4 w-4 animate-pulse" />
-              <span className="text-sm">جاري التحديث...</span>
+              <span className="text-xs md:text-sm">جاري التحديث...</span>
             </div>
           </div>
         )}

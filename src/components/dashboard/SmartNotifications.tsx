@@ -147,20 +147,20 @@ export function SmartNotifications({
 
   return (
     <Card className="w-full">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
+      <CardHeader className="pb-2 md:pb-3">
+        <div className="flex flex-col space-y-3 md:flex-row md:items-center md:justify-between md:space-y-0">
           <div className="flex items-center gap-2">
             <div className="relative">
-              <Bell className="h-5 w-5" />
+              <Bell className="h-4 w-4 md:h-5 md:w-5" />
               {unreadCount > 0 && (
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                <div className="absolute -top-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </div>
               )}
             </div>
             <div>
-              <CardTitle className="text-base">الإشعارات الذكية</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-sm md:text-base">الإشعارات الذكية</CardTitle>
+              <CardDescription className="text-xs md:text-sm">
                 {unreadCount > 0 
                   ? `${unreadCount} إشعار جديد${importantCount > 0 ? ` (${importantCount} مهم)` : ''}`
                   : 'جميع الإشعارات مقروءة'
@@ -171,24 +171,24 @@ export function SmartNotifications({
 
           <div className="flex items-center gap-1">
             {unreadCount > 0 && onMarkAllRead && (
-              <Button variant="ghost" size="sm" onClick={onMarkAllRead}>
-                <Check className="h-4 w-4" />
+              <Button variant="ghost" size="sm" onClick={onMarkAllRead} className="h-8 w-8 p-0 md:h-9 md:w-9 touch-target">
+                <Check className="h-3 w-3 md:h-4 md:w-4" />
               </Button>
             )}
             {notifications.length > 0 && onClearAll && (
-              <Button variant="ghost" size="sm" onClick={onClearAll}>
-                <Archive className="h-4 w-4" />
+              <Button variant="ghost" size="sm" onClick={onClearAll} className="h-8 w-8 p-0 md:h-9 md:w-9 touch-target">
+                <Archive className="h-3 w-3 md:h-4 md:w-4" />
               </Button>
             )}
-            <Button variant="ghost" size="sm">
-              <Settings className="h-4 w-4" />
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 md:h-9 md:w-9 touch-target">
+              <Settings className="h-3 w-3 md:h-4 md:w-4" />
             </Button>
           </div>
         </div>
 
         {showFilters && (
-          <div className="flex items-center gap-2 pt-2">
-            <div className="flex gap-1">
+          <div className="flex flex-col space-y-2 pt-2 md:space-y-0">
+            <div className="flex flex-wrap gap-1 md:gap-2">
               {[
                 { key: 'all', label: 'الكل' },
                 { key: 'unread', label: 'غير مقروء' },
@@ -199,16 +199,16 @@ export function SmartNotifications({
                   variant={filter === option.key ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFilter(option.key)}
-                  className="text-xs"
+                  className="text-xs h-7 px-2 md:h-8 md:px-3 touch-target"
                 >
                   {option.label}
                 </Button>
               ))}
             </div>
             
-            <Separator orientation="vertical" className="h-6" />
+            <Separator className="my-2 md:hidden" />
             
-            <div className="flex gap-1">
+            <div className="flex flex-wrap gap-1 md:gap-2">
               {[
                 { key: 'all', label: 'الكل' },
                 { key: 'success', label: 'نجاح' },
@@ -220,7 +220,7 @@ export function SmartNotifications({
                   variant={typeFilter === option.key ? "secondary" : "ghost"}
                   size="sm"
                   onClick={() => setTypeFilter(option.key)}
-                  className="text-xs"
+                  className="text-xs h-7 px-2 md:h-8 md:px-3 touch-target"
                 >
                   {option.label}
                 </Button>
@@ -231,12 +231,12 @@ export function SmartNotifications({
       </CardHeader>
 
       <CardContent className="p-0">
-        <ScrollArea className="h-96">
-          <div className="p-4 space-y-4">
+        <ScrollArea className="h-80 md:h-96">
+          <div className="p-3 md:p-4 space-y-3 md:space-y-4">
             <AnimatePresence>
               {Object.entries(groupedNotifications).map(([group, groupNotifications]) => (
                 <div key={group}>
-                  <div className="flex items-center gap-2 mb-3">
+                  <div className="flex items-center gap-2 mb-2 md:mb-3">
                     <h4 className="text-xs font-medium text-muted-foreground">{group}</h4>
                     <Separator className="flex-1" />
                   </div>
@@ -254,38 +254,38 @@ export function SmartNotifications({
                           exit={{ opacity: 0, x: 20 }}
                           transition={{ delay: index * 0.05 }}
                           className={cn(
-                            "group relative p-3 rounded-lg border transition-all cursor-pointer hover:shadow-sm",
+                            "group relative p-3 md:p-3 rounded-lg border transition-all cursor-pointer hover:shadow-sm touch-target",
                             !notification.isRead && "bg-muted/30 border-l-4 border-l-primary",
                             notification.isImportant && "ring-1 ring-orange-200",
                             typeColors[notification.type]
                           )}
                           onClick={() => handleNotificationClick(notification)}
                         >
-                          <div className="flex items-start gap-3">
+                          <div className="flex items-start gap-2 md:gap-3">
                             <div className="flex-shrink-0 mt-0.5">
-                              <IconComponent className="h-4 w-4" />
+                              <IconComponent className="h-3 w-3 md:h-4 md:w-4" />
                             </div>
                             
                             <div className="flex-1 min-w-0">
                               <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <p className="text-sm font-medium">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1 md:gap-2 mb-1">
+                                    <p className="text-xs md:text-sm font-medium truncate">
                                       {notification.title}
                                     </p>
                                     {notification.isImportant && (
-                                      <Badge variant="outline" className="text-xs">
+                                      <Badge variant="outline" className="text-xs px-1 py-0 flex-shrink-0">
                                         مهم
                                       </Badge>
                                     )}
-                                    <CategoryIcon className="h-3 w-3 text-muted-foreground" />
+                                    <CategoryIcon className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                                   </div>
                                   
-                                  <p className="text-xs text-muted-foreground mt-1">
+                                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                                     {notification.message}
                                   </p>
                                   
-                                  <div className="flex items-center gap-2 mt-2">
+                                  <div className="flex flex-col space-y-1 md:flex-row md:items-center md:gap-2 md:space-y-0 mt-2">
                                     <div className="flex items-center gap-1">
                                       <Clock className="h-3 w-3 text-muted-foreground" />
                                       <span className="text-xs text-muted-foreground">
@@ -297,7 +297,7 @@ export function SmartNotifications({
                                       <Button 
                                         variant="link" 
                                         size="sm" 
-                                        className="h-auto p-0 text-xs"
+                                        className="h-auto p-0 text-xs touch-target"
                                         onClick={(e) => {
                                           e.stopPropagation();
                                           if (onNotificationAction) {
@@ -311,12 +311,12 @@ export function SmartNotifications({
                                   </div>
                                 </div>
                                 
-                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex-shrink-0">
                                   {!notification.isRead && onNotificationRead && (
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="h-6 w-6 p-0"
+                                      className="h-7 w-7 p-0 touch-target"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         onNotificationRead(notification.id);
@@ -330,7 +330,7 @@ export function SmartNotifications({
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="h-6 w-6 p-0"
+                                      className="h-7 w-7 p-0 touch-target"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         onNotificationDismiss(notification.id);
@@ -352,10 +352,10 @@ export function SmartNotifications({
             </AnimatePresence>
 
             {filteredNotifications.length === 0 && (
-              <div className="text-center py-8">
-                <Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="font-medium mb-2">لا توجد إشعارات</h3>
-                <p className="text-sm text-muted-foreground">
+              <div className="text-center py-6 md:py-8">
+                <Bell className="h-10 w-10 md:h-12 md:w-12 mx-auto text-muted-foreground mb-3 md:mb-4" />
+                <h3 className="font-medium mb-2 text-sm md:text-base">لا توجد إشعارات</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">
                   {filter === 'unread' 
                     ? 'جميع الإشعارات مقروءة'
                     : 'لا توجد إشعارات لعرضها'
