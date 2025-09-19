@@ -99,40 +99,46 @@ export function DashboardCharts({
     
     const commonProps = {
       data: config.data,
-      margin: { top: 5, right: 30, left: 20, bottom: 5 }
+      margin: { top: 5, right: 10, left: 10, bottom: 5 }
     };
+
+    const chartHeight = window.innerWidth < 768 ? 250 : 300;
+    const fontSize = window.innerWidth < 768 ? 10 : 12;
 
     switch (config.type) {
       case 'line':
         return (
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={chartHeight}>
             <LineChart {...commonProps}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis 
                 dataKey="name" 
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize }}
                 axisLine={false}
+                interval="preserveStartEnd"
               />
               <YAxis 
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize }}
                 axisLine={false}
+                width={window.innerWidth < 768 ? 40 : 60}
               />
               <Tooltip 
                 formatter={formatTooltip}
-                labelStyle={{ color: 'var(--foreground)' }}
+                labelStyle={{ color: 'var(--foreground)', fontSize: '12px' }}
                 contentStyle={{ 
                   backgroundColor: 'var(--background)',
                   border: '1px solid var(--border)',
-                  borderRadius: '8px'
+                  borderRadius: '8px',
+                  fontSize: '12px'
                 }}
               />
               <Line 
                 type="monotone" 
                 dataKey="value" 
                 stroke={colors[0]}
-                strokeWidth={3}
-                dot={{ fill: colors[0], strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: colors[0], strokeWidth: 2 }}
+                strokeWidth={window.innerWidth < 768 ? 2 : 3}
+                dot={{ fill: colors[0], strokeWidth: 2, r: window.innerWidth < 768 ? 3 : 4 }}
+                activeDot={{ r: window.innerWidth < 768 ? 4 : 6, stroke: colors[0], strokeWidth: 2 }}
               />
               {config.showTarget && (
                 <ReferenceLine 
@@ -148,12 +154,29 @@ export function DashboardCharts({
 
       case 'area':
         return (
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={chartHeight}>
             <AreaChart {...commonProps}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} axisLine={false} />
-              <YAxis tick={{ fontSize: 12 }} axisLine={false} />
-              <Tooltip formatter={formatTooltip} />
+              <XAxis 
+                dataKey="name" 
+                tick={{ fontSize }} 
+                axisLine={false} 
+                interval="preserveStartEnd"
+              />
+              <YAxis 
+                tick={{ fontSize }} 
+                axisLine={false}
+                width={window.innerWidth < 768 ? 40 : 60}
+              />
+              <Tooltip 
+                formatter={formatTooltip}
+                contentStyle={{ 
+                  backgroundColor: 'var(--background)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '8px',
+                  fontSize: '12px'
+                }}
+              />
               <Area
                 type="monotone"
                 dataKey="value"
@@ -168,12 +191,29 @@ export function DashboardCharts({
 
       case 'bar':
         return (
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={chartHeight}>
             <BarChart {...commonProps}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} axisLine={false} />
-              <YAxis tick={{ fontSize: 12 }} axisLine={false} />
-              <Tooltip formatter={formatTooltip} />
+              <XAxis 
+                dataKey="name" 
+                tick={{ fontSize }} 
+                axisLine={false}
+                interval="preserveStartEnd"
+              />
+              <YAxis 
+                tick={{ fontSize }} 
+                axisLine={false}
+                width={window.innerWidth < 768 ? 40 : 60}
+              />
+              <Tooltip 
+                formatter={formatTooltip}
+                contentStyle={{ 
+                  backgroundColor: 'var(--background)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '8px',
+                  fontSize: '12px'
+                }}
+              />
               <Bar 
                 dataKey="value" 
                 fill={colors[0]}
@@ -185,15 +225,18 @@ export function DashboardCharts({
 
       case 'pie':
         return (
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={chartHeight}>
             <PieChart>
               <Pie
                 data={config.data}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={80}
+                label={window.innerWidth >= 768 ? 
+                  ({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%` : 
+                  false
+                }
+                outerRadius={window.innerWidth < 768 ? 60 : 80}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -204,19 +247,45 @@ export function DashboardCharts({
                   />
                 ))}
               </Pie>
-              <Tooltip formatter={formatTooltip} />
+              <Tooltip 
+                formatter={formatTooltip}
+                contentStyle={{ 
+                  backgroundColor: 'var(--background)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '8px',
+                  fontSize: '12px'
+                }}
+              />
+              {window.innerWidth >= 768 && <Legend />}
             </PieChart>
           </ResponsiveContainer>
         );
 
       case 'combo':
         return (
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={chartHeight}>
             <AreaChart {...commonProps}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} axisLine={false} />
-              <YAxis tick={{ fontSize: 12 }} axisLine={false} />
-              <Tooltip formatter={formatTooltip} />
+              <XAxis 
+                dataKey="name" 
+                tick={{ fontSize }} 
+                axisLine={false}
+                interval="preserveStartEnd"
+              />
+              <YAxis 
+                tick={{ fontSize }} 
+                axisLine={false}
+                width={window.innerWidth < 768 ? 40 : 60}
+              />
+              <Tooltip 
+                formatter={formatTooltip}
+                contentStyle={{ 
+                  backgroundColor: 'var(--background)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '8px',
+                  fontSize: '12px'
+                }}
+              />
               <Area
                 type="monotone"
                 dataKey="value"
@@ -243,41 +312,48 @@ export function DashboardCharts({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header Controls */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
         <div>
-          <h2 className="text-lg font-semibold">التحليلات والرسوم البيانية</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="text-base md:text-lg font-semibold">التحليلات والرسوم البيانية</h2>
+          <p className="text-xs md:text-sm text-muted-foreground">
             تحليل شامل للأداء والاتجاهات
           </p>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col space-y-2 md:flex-row md:items-center md:gap-2 md:space-y-0">
           <Tabs value={period} onValueChange={onPeriodChange}>
-            <TabsList className="grid w-full grid-cols-5">
-              {periodOptions.map(option => (
+            <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 h-8 md:h-10">
+              {periodOptions.map((option, index) => (
                 <TabsTrigger 
                   key={option.value} 
                   value={option.value}
-                  className="text-xs"
+                  className={`text-xs px-2 md:px-3 ${index >= 3 ? 'hidden md:flex' : ''}`}
                 >
-                  {option.label}
+                  <span className="md:hidden">
+                    {option.label === 'اليوم' ? 'يوم' : 
+                     option.label === 'الأسبوع' ? 'أسبوع' : 
+                     option.label === 'الشهر' ? 'شهر' : 
+                     option.label === '3 أشهر' ? '3ش' : 'سنة'}
+                  </span>
+                  <span className="hidden md:inline">{option.label}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
           </Tabs>
           
           {onRefresh && (
-            <Button variant="outline" size="sm" onClick={onRefresh}>
-              <RefreshCw className="h-4 w-4" />
+            <Button variant="outline" size="sm" onClick={onRefresh} className="w-full md:w-auto">
+              <RefreshCw className="h-4 w-4 md:mr-0 ml-2 md:ml-0" />
+              <span className="md:hidden">تحديث</span>
             </Button>
           )}
         </div>
       </div>
 
       {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
         {charts.map((config, index) => (
           <motion.div
             key={config.id}
@@ -286,52 +362,55 @@ export function DashboardCharts({
             transition={{ delay: index * 0.1 }}
           >
             <Card className="h-full">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      {config.title}
+              <CardHeader className="pb-2 md:pb-3">
+                <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="flex flex-col space-y-1 md:flex-row md:items-center md:gap-2 md:space-y-0">
+                      <span className="text-sm md:text-base truncate">{config.title}</span>
                       {config.growth !== undefined && (
                         <Badge 
                           variant={config.status === 'up' ? 'default' : 
                                   config.status === 'down' ? 'destructive' : 'secondary'}
-                          className="text-xs"
+                          className="text-xs w-fit"
                         >
-                          <TrendingUp className="h-3 w-3 mr-1" />
+                          <TrendingUp className="h-3 w-3 ml-1" />
                           {config.growth > 0 ? '+' : ''}{config.growth}%
                         </Badge>
                       )}
                     </CardTitle>
                     {config.description && (
-                      <CardDescription>{config.description}</CardDescription>
+                      <CardDescription className="text-xs md:text-sm line-clamp-2">
+                        {config.description}
+                      </CardDescription>
                     )}
                   </div>
                   
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 flex-shrink-0">
                     {onExport && (
                       <Button 
                         variant="ghost" 
                         size="sm"
                         onClick={() => onExport(config.id)}
+                        className="h-8 w-8 p-0 md:h-9 md:w-9"
                       >
-                        <Download className="h-4 w-4" />
+                        <Download className="h-3 w-3 md:h-4 md:w-4" />
                       </Button>
                     )}
-                    <Button variant="ghost" size="sm">
-                      <Filter className="h-4 w-4" />
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 md:h-9 md:w-9">
+                      <Filter className="h-3 w-3 md:h-4 md:w-4" />
                     </Button>
                   </div>
                 </div>
                 
                 {config.dateRange && (
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground mt-2">
                     <Calendar className="h-3 w-3" />
                     {config.dateRange}
                   </div>
                 )}
               </CardHeader>
               
-              <CardContent>
+              <CardContent className="pt-0">
                 {renderChart(config)}
               </CardContent>
             </Card>
