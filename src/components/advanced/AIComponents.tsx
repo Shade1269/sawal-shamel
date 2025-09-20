@@ -120,23 +120,23 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">المكونات الذكية</h2>
-          <p className="text-muted-foreground">أدوات مدعومة بالذكاء الاصطناعي لتحسين الإنتاجية</p>
+          <h2 className="text-lg sm:text-2xl font-bold text-foreground">المكونات الذكية</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">أدوات مدعومة بالذكاء الاصطناعي لتحسين الإنتاجية</p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-2">
             <Switch
               id="ai-enabled"
               checked={aiEnabled}
               onCheckedChange={setAiEnabled}
             />
-            <Label htmlFor="ai-enabled">تفعيل الذكاء الاصطناعي</Label>
+            <Label htmlFor="ai-enabled" className="text-sm">تفعيل الذكاء الاصطناعي</Label>
           </div>
           
-          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs">
             <Brain className="w-3 h-3 mr-1" />
             AI مدعوم
           </Badge>
@@ -161,42 +161,48 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
       </EnhancedCard>
 
       {/* Tab Navigation */}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {(mode === 'full' || mode === 'search') && (
           <Button
             variant={activeTab === 'search' ? 'default' : 'outline'}
             onClick={() => setActiveTab('search')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-xs sm:text-sm"
+            size="sm"
           >
-            <Search className="w-4 h-4" />
-            البحث الذكي
+            <Search className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">البحث الذكي</span>
+            <span className="sm:hidden">بحث</span>
           </Button>
         )}
         {(mode === 'full' || mode === 'content') && (
           <Button
             variant={activeTab === 'content' ? 'default' : 'outline'}
             onClick={() => setActiveTab('content')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-xs sm:text-sm"
+            size="sm"
           >
-            <FileText className="w-4 h-4" />
-            توليد المحتوى
+            <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">توليد المحتوى</span>
+            <span className="sm:hidden">محتوى</span>
           </Button>
         )}
         {mode === 'full' && (
           <Button
             variant={activeTab === 'chat' ? 'default' : 'outline'}
             onClick={() => setActiveTab('chat')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-xs sm:text-sm"
+            size="sm"
           >
-            <MessageSquare className="w-4 h-4" />
-            المحادثة الذكية
+            <MessageSquare className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">المحادثة الذكية</span>
+            <span className="sm:hidden">محادثة</span>
           </Button>
         )}
       </div>
 
       {/* Smart Search */}
       {activeTab === 'search' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="lg:col-span-2 space-y-4">
             <EnhancedCard variant="glass">
               <CardHeader>
@@ -255,9 +261,10 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
                     size="sm"
                     onClick={clearResults}
                     disabled={!query && results.length === 0}
+                    className="text-xs"
                   >
                     <RefreshCw className="w-3 h-3 mr-1" />
-                    مسح
+                    <span className="hidden sm:inline">مسح</span>
                   </Button>
                 </div>
               </CardContent>
@@ -299,7 +306,7 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
 
       {/* Content Generation */}
       {activeTab === 'content' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-4">
             <EnhancedCard variant="glass">
               <CardHeader>
@@ -324,7 +331,7 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  <Label>نبرة المحتوى</Label>
+                  <Label className="text-sm">نبرة المحتوى</Label>
                   <div className="grid grid-cols-2 gap-2">
                     {[
                       { value: 'formal', label: 'رسمي' },
@@ -337,6 +344,7 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
                         variant={selectedTone === tone.value ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => setSelectedTone(tone.value as any)}
+                        className="text-xs sm:text-sm py-1 px-2"
                       >
                         {tone.label}
                       </Button>

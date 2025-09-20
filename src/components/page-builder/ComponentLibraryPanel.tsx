@@ -115,33 +115,33 @@ export const ComponentLibraryPanel: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <div>
-        <h3 className="text-lg font-semibold mb-3">مكتبة المكونات</h3>
+        <h3 className="text-base sm:text-lg font-semibold mb-3">مكتبة المكونات</h3>
         
         {/* Search */}
-        <div className="relative mb-4">
-          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+        <div className="relative mb-3 sm:mb-4">
+          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-3 h-3 sm:w-4 sm:h-4" />
           <Input
             placeholder="البحث في المكونات..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pr-10"
+            className="pr-8 sm:pr-10 text-sm"
           />
         </div>
 
         {/* Categories */}
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
           {categories.map((category) => (
             <Button
               key={category.id}
               variant={selectedCategory === category.id ? 'default' : 'outline'}
               size="sm"
               onClick={() => setSelectedCategory(category.id)}
-              className="text-xs"
+              className="text-xs py-1 px-2 h-auto"
             >
               {category.name}
-              <Badge variant="secondary" className="mr-1 text-xs">
+              <Badge variant="secondary" className="mr-1 text-xs px-1 py-0 min-w-0">
                 {category.count}
               </Badge>
             </Button>
@@ -150,7 +150,7 @@ export const ComponentLibraryPanel: React.FC = () => {
       </div>
 
       {/* Components Grid */}
-      <div className="space-y-3">
+      <div className="space-y-2 sm:space-y-3">
         {filteredComponents.map((component, index) => (
           <motion.div
             key={component.id}
@@ -163,16 +163,16 @@ export const ComponentLibraryPanel: React.FC = () => {
               draggable
               onDragStart={(e) => handleDragStart(e, component)}
             >
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                    <component.icon className="w-5 h-5" />
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 text-primary flex-shrink-0">
+                    <component.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-medium text-sm">{component.name}</h4>
+                      <h4 className="font-medium text-xs sm:text-sm truncate">{component.name}</h4>
                       {component.isPro && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs px-1 py-0 flex-shrink-0">
                           Pro
                         </Badge>
                       )}
@@ -189,9 +189,9 @@ export const ComponentLibraryPanel: React.FC = () => {
       </div>
 
       {filteredComponents.length === 0 && (
-        <div className="text-center py-8">
-          <Filter className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">لا توجد مكونات مطابقة للبحث</p>
+        <div className="text-center py-6 sm:py-8">
+          <Filter className="w-8 h-8 sm:w-12 sm:h-12 mx-auto text-muted-foreground mb-3 sm:mb-4" />
+          <p className="text-sm text-muted-foreground">لا توجد مكونات مطابقة للبحث</p>
         </div>
       )}
     </div>

@@ -335,12 +335,12 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
   return (
     <Card className={`w-full h-full flex flex-col ${className}`}>
       <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
           <div className="flex items-center gap-3">
-            <Package className="h-6 w-6 text-primary" />
+            <Package className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
             <div>
-              <CardTitle className="text-xl">مكتبة المكونات</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-lg sm:text-xl">مكتبة المكونات</CardTitle>
+              <CardDescription className="text-sm">
                 اختر من مجموعة كبيرة من المكونات الجاهزة
               </CardDescription>
             </div>
@@ -349,9 +349,10 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
           <div className="flex items-center gap-2">
             <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Upload className="h-4 w-4 mr-2" />
-                  رفع مكون
+                <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+                  <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">رفع مكون</span>
+                  <span className="sm:hidden">رفع</span>
                 </Button>
               </DialogTrigger>
               <UploadComponentDialog onSubmit={handleUploadComponent} />
@@ -362,22 +363,24 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
                 variant={viewMode === 'grid' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('grid')}
+                className="p-1.5 sm:p-2"
               >
-                <Grid className="h-4 w-4" />
+                <Grid className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
               <Button
                 variant={viewMode === 'list' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('list')}
+                className="p-1.5 sm:p-2"
               >
-                <List className="h-4 w-4" />
+                <List className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
             </div>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mt-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4">
           <div className="flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -391,7 +394,7 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
           </div>
           
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-full sm:w-48">
               <SelectValue placeholder="اختر الفئة" />
             </SelectTrigger>
             <SelectContent>
@@ -407,18 +410,18 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
 
       <CardContent className="flex-1 overflow-hidden p-0">
         <Tabs defaultValue="browse" className="h-full flex flex-col">
-          <TabsList className="mx-6 mb-4">
-            <TabsTrigger value="browse">تصفح</TabsTrigger>
-            <TabsTrigger value="favorites">المفضلة</TabsTrigger>
-            <TabsTrigger value="my-components">مكوناتي</TabsTrigger>
+          <TabsList className="mx-4 sm:mx-6 mb-4 grid w-full grid-cols-3">
+            <TabsTrigger value="browse" className="text-xs sm:text-sm">تصفح</TabsTrigger>
+            <TabsTrigger value="favorites" className="text-xs sm:text-sm">المفضلة</TabsTrigger>
+            <TabsTrigger value="my-components" className="text-xs sm:text-sm">مكوناتي</TabsTrigger>
           </TabsList>
 
           <TabsContent value="browse" className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full px-6">
+            <ScrollArea className="h-full px-4 sm:px-6">
               <div className={`${
                 viewMode === 'grid'
-                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
-                  : 'space-y-4'
+                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'
+                  : 'space-y-3 sm:space-y-4'
               }`}>
                 <AnimatePresence>
                   {filteredComponents.map((component, index) => (
@@ -456,8 +459,8 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
           </TabsContent>
 
           <TabsContent value="favorites" className="flex-1">
-            <ScrollArea className="h-full px-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <ScrollArea className="h-full px-4 sm:px-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {components
                   .filter(comp => favorites.includes(comp.id))
                   .map(component => (
@@ -477,7 +480,7 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
           </TabsContent>
 
           <TabsContent value="my-components" className="flex-1">
-            <ScrollArea className="h-full px-6">
+            <ScrollArea className="h-full px-4 sm:px-6">
               <div className="text-center py-12">
                 <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
                 <h3 className="font-medium text-lg mb-2">لا توجد مكونات</h3>
