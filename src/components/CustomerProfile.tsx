@@ -169,28 +169,28 @@ export const CustomerProfile: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-4xl">
       {/* رأس الملف الشخصي */}
-      <Card className="mb-8">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Avatar className="w-20 h-20">
-                <AvatarFallback className="bg-primary/10 text-primary text-xl">
+      <Card className="mb-6 sm:mb-8">
+        <CardHeader className="pb-3 sm:pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+              <Avatar className="w-16 h-16 sm:w-20 sm:h-20 mx-auto sm:mx-0">
+                <AvatarFallback className="bg-primary/10 text-primary text-lg sm:text-xl">
                   {customer.full_name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
               
-              <div>
-                <CardTitle className="text-2xl">{customer.full_name}</CardTitle>
-                <CardDescription className="flex items-center gap-4 mt-2">
-                  <span className="flex items-center gap-1">
-                    <Phone className="w-4 h-4" />
+              <div className="text-center sm:text-right">
+                <CardTitle className="text-xl sm:text-2xl">{customer.full_name}</CardTitle>
+                <CardDescription className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2 text-sm">
+                  <span className="flex items-center justify-center sm:justify-start gap-1">
+                    <Phone className="w-3 h-3 sm:w-4 sm:h-4" />
                     {customer.phone}
                   </span>
                   {customer.email && (
-                    <span className="flex items-center gap-1">
-                      <Mail className="w-4 h-4" />
+                    <span className="flex items-center justify-center sm:justify-start gap-1">
+                      <Mail className="w-3 h-3 sm:w-4 sm:h-4" />
                       {customer.email}
                     </span>
                   )}
@@ -198,15 +198,16 @@ export const CustomerProfile: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap justify-center sm:justify-end gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={goToUserHome}
                 disabled={isLoading}
+                className="text-xs sm:text-sm"
               >
-                <Home className="w-4 h-4" />
-                الرئيسية
+                <Home className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline ml-1">الرئيسية</span>
               </Button>
               
               <Button
@@ -214,55 +215,58 @@ export const CustomerProfile: React.FC = () => {
                 size="sm"
                 onClick={() => setIsEditing(!isEditing)}
                 disabled={isLoading}
+                className="text-xs sm:text-sm"
               >
-                {isEditing ? <X className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
-                {isEditing ? 'إلغاء' : 'تعديل'}
+                {isEditing ? <X className="w-3 h-3 sm:w-4 sm:h-4" /> : <Edit3 className="w-3 h-3 sm:w-4 sm:h-4" />}
+                <span className="hidden sm:inline ml-1">{isEditing ? 'إلغاء' : 'تعديل'}</span>
               </Button>
               
               <Button
                 variant="outline"
                 size="sm"
                 onClick={signOut}
-                className="text-red-600 hover:text-red-700"
+                className="text-red-600 hover:text-red-700 text-xs sm:text-sm"
               >
-                <LogOut className="w-4 h-4" />
-                تسجيل الخروج
+                <LogOut className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline ml-1">خروج</span>
               </Button>
             </div>
           </div>
         </CardHeader>
 
         {isEditing && (
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent className="space-y-3 sm:space-y-4">
+            <div className="grid grid-cols-1 gap-3 sm:gap-4">
               <div>
-                <Label htmlFor="fullName">الاسم الكامل</Label>
+                <Label htmlFor="fullName" className="text-sm">الاسم الكامل</Label>
                 <Input
                   id="fullName"
                   value={editedProfile.full_name}
                   onChange={(e) => setEditedProfile(prev => ({ ...prev, full_name: e.target.value }))}
                   disabled={isLoading}
+                  className="text-sm"
                 />
               </div>
               
               <div>
-                <Label htmlFor="email">البريد الإلكتروني</Label>
+                <Label htmlFor="email" className="text-sm">البريد الإلكتروني</Label>
                 <Input
                   id="email"
                   type="email"
                   value={editedProfile.email}
                   onChange={(e) => setEditedProfile(prev => ({ ...prev, email: e.target.value }))}
                   disabled={isLoading}
+                  className="text-sm"
                 />
               </div>
             </div>
 
-            <div className="flex gap-2">
-              <Button onClick={handleSaveProfile} disabled={isLoading}>
-                <Save className="w-4 h-4 mr-2" />
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button onClick={handleSaveProfile} disabled={isLoading} size="sm" className="text-sm">
+                <Save className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                 حفظ التغييرات
               </Button>
-              <Button variant="outline" onClick={handleCancelEdit} disabled={isLoading}>
+              <Button variant="outline" onClick={handleCancelEdit} disabled={isLoading} size="sm" className="text-sm">
                 إلغاء
               </Button>
             </div>
@@ -272,20 +276,20 @@ export const CustomerProfile: React.FC = () => {
 
       {/* إحصائيات العميل */}
       {customer.customer_data && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Card>
-            <CardContent className="p-6 text-center">
-              <ShoppingBag className="w-8 h-8 mx-auto text-primary mb-2" />
-              <div className="text-2xl font-bold">{customer.customer_data.total_orders}</div>
-              <div className="text-sm text-muted-foreground">إجمالي الطلبات</div>
+            <CardContent className="p-4 sm:p-6 text-center">
+              <ShoppingBag className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-primary mb-2" />
+              <div className="text-xl sm:text-2xl font-bold">{customer.customer_data.total_orders}</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">إجمالي الطلبات</div>
             </CardContent>
           </Card>
           
           <Card>
-            <CardContent className="p-6 text-center">
-              <CreditCard className="w-8 h-8 mx-auto text-green-600 mb-2" />
-              <div className="text-2xl font-bold">{customer.customer_data.total_spent_sar.toFixed(2)} ر.س</div>
-              <div className="text-sm text-muted-foreground">إجمالي المشتريات</div>
+            <CardContent className="p-4 sm:p-6 text-center">
+              <CreditCard className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-green-600 mb-2" />
+              <div className="text-lg sm:text-2xl font-bold">{customer.customer_data.total_spent_sar.toFixed(2)} ر.س</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">إجمالي المشتريات</div>
             </CardContent>
           </Card>
           

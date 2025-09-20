@@ -128,29 +128,29 @@ export function AppBreadcrumb() {
   }
 
   return (
-    <div className="flex items-center gap-2 px-4 py-2 bg-muted/30 border-b">
+    <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 bg-muted/30 border-b">
       <Breadcrumb>
-        <BreadcrumbList>
+        <BreadcrumbList className="flex-wrap">
           {breadcrumbItems.map((item, index) => (
             <div key={item.path} className="flex items-center">
               <BreadcrumbItem>
                 {item.isLast ? (
-                  <BreadcrumbPage className="font-medium text-foreground">
+                  <BreadcrumbPage className="font-medium text-foreground text-xs sm:text-sm">
                     {item.title}
                   </BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink asChild>
                     <Link 
                       to={item.path}
-                      className="text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-muted-foreground hover:text-foreground transition-colors text-xs sm:text-sm"
                     >
                       {index === 0 && item.path === "/" ? (
-                        <div className="flex items-center gap-1">
-                          <Home className="h-4 w-4" />
-                          <span>{item.title}</span>
+                        <div className="flex items-center gap-0.5 sm:gap-1">
+                          <Home className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span className="hidden sm:inline">{item.title}</span>
                         </div>
                       ) : (
-                        item.title
+                        <span className="truncate max-w-[100px] sm:max-w-none">{item.title}</span>
                       )}
                     </Link>
                   </BreadcrumbLink>
@@ -158,7 +158,7 @@ export function AppBreadcrumb() {
               </BreadcrumbItem>
               {!item.isLast && index < breadcrumbItems.length - 1 && (
                 <BreadcrumbSeparator>
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
                 </BreadcrumbSeparator>
               )}
             </div>

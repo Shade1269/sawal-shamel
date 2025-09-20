@@ -188,17 +188,17 @@ const GlobalNotifications = () => {
 
       {/* Notifications Panel */}
       {showPanel && (
-        <div className="absolute left-0 top-full mt-2 z-50">
-          <Card className="w-80 max-h-96 bg-card border shadow-luxury">
-            <div className="p-4 border-b flex items-center justify-between">
-              <h3 className="font-semibold text-lg">الإشعارات</h3>
-              <div className="flex items-center gap-2">
+        <div className="absolute left-0 sm:left-0 top-full mt-2 z-50">
+          <Card className="w-[280px] sm:w-80 max-h-[70vh] sm:max-h-96 bg-card border shadow-luxury">
+            <div className="p-3 sm:p-4 border-b flex items-center justify-between">
+              <h3 className="font-semibold text-base sm:text-lg">الإشعارات</h3>
+              <div className="flex items-center gap-1 sm:gap-2">
                 {unreadCount > 0 && (
                   <Button 
                     variant="ghost" 
                     size="sm" 
                     onClick={markAllAsRead}
-                    className="text-xs"
+                    className="text-xs px-2 py-1"
                   >
                     قراءة الكل
                   </Button>
@@ -207,23 +207,24 @@ const GlobalNotifications = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowPanel(false)}
+                  className="h-6 w-6 p-0"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </div>
             </div>
 
-            <div className="max-h-80 overflow-y-auto">
+            <div className="max-h-[50vh] sm:max-h-80 overflow-y-auto">
               {notifications.length === 0 ? (
-                <div className="p-6 text-center text-muted-foreground">
-                  <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p>لا توجد إشعارات</p>
+                <div className="p-4 sm:p-6 text-center text-muted-foreground">
+                  <Bell className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">لا توجد إشعارات</p>
                 </div>
               ) : (
                 notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`p-4 border-b hover:bg-muted/30 transition-colors cursor-pointer ${
+                    className={`p-3 sm:p-4 border-b hover:bg-muted/30 transition-colors cursor-pointer ${
                       !notification.read ? 'bg-primary/5' : ''
                     }`}
                     onClick={() => {
@@ -233,11 +234,11 @@ const GlobalNotifications = () => {
                       }
                     }}
                   >
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-2 sm:gap-3">
                       {getNotificationIcon(notification.type)}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
-                          <h4 className="font-medium text-sm truncate">
+                          <h4 className="font-medium text-xs sm:text-sm truncate">
                             {notification.title}
                           </h4>
                           <Button
@@ -247,7 +248,7 @@ const GlobalNotifications = () => {
                               e.stopPropagation();
                               deleteNotification(notification.id);
                             }}
-                            className="h-6 w-6 p-0 opacity-50 hover:opacity-100"
+                            className="h-5 w-5 sm:h-6 sm:w-6 p-0 opacity-50 hover:opacity-100 flex-shrink-0"
                           >
                             <X className="h-3 w-3" />
                           </Button>
@@ -260,7 +261,7 @@ const GlobalNotifications = () => {
                         </p>
                       </div>
                       {!notification.read && (
-                        <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0 mt-2"></div>
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full flex-shrink-0 mt-2"></div>
                       )}
                     </div>
                   </div>
@@ -269,7 +270,7 @@ const GlobalNotifications = () => {
             </div>
 
             {notifications.length > 0 && (
-              <div className="p-3 text-center border-t">
+              <div className="p-2 sm:p-3 text-center border-t">
                 <Button variant="ghost" size="sm" className="text-xs">
                   عرض جميع الإشعارات
                 </Button>

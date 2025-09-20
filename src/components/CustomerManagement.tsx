@@ -203,23 +203,25 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
   return (
     <div className="space-y-6">
       {/* رأس الصفحة */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold">إدارة العملاء</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl sm:text-2xl font-bold">إدارة العملاء</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             إدارة ومتابعة عملاء المتجر وإحصائياتهم
           </p>
         </div>
         
-        <div className="flex items-center gap-2">
-          <Button onClick={goToUserHome} variant="outline">
-            <Home className="w-4 h-4 mr-2" />
-            الرئيسية
+        <div className="flex flex-wrap items-center gap-2">
+          <Button onClick={goToUserHome} variant="outline" size="sm" className="text-xs sm:text-sm">
+            <Home className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">الرئيسية</span>
+            <span className="sm:hidden">الرئيسية</span>
           </Button>
           
-          <Button onClick={exportCustomers} variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            تصدير البيانات
+          <Button onClick={exportCustomers} variant="outline" size="sm" className="text-xs sm:text-sm">
+            <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">تصدير البيانات</span>
+            <span className="sm:hidden">تصدير</span>
           </Button>
           
           <BackButton />
@@ -227,51 +229,51 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
       </div>
 
       {/* إحصائيات العملاء */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">إجمالي العملاء</p>
-                <p className="text-2xl font-bold">{stats.total_customers}</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">إجمالي العملاء</p>
+                <p className="text-lg sm:text-2xl font-bold">{stats.total_customers}</p>
               </div>
-              <Users className="w-8 h-8 text-blue-600" />
+              <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">العملاء النشطون</p>
-                <p className="text-2xl font-bold">{stats.active_customers}</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">العملاء النشطون</p>
+                <p className="text-lg sm:text-2xl font-bold">{stats.active_customers}</p>
               </div>
-              <TrendingUp className="w-8 h-8 text-green-600" />
+              <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">عملاء جدد هذا الشهر</p>
-                <p className="text-2xl font-bold">{stats.new_customers_this_month}</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground line-clamp-1">عملاء جدد</p>
+                <p className="text-lg sm:text-2xl font-bold">{stats.new_customers_this_month}</p>
               </div>
-              <Calendar className="w-8 h-8 text-orange-600" />
+              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">متوسط الإنفاق</p>
-                <p className="text-2xl font-bold">{stats.average_order_value.toFixed(0)} ر.س</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground line-clamp-1">متوسط الإنفاق</p>
+                <p className="text-sm sm:text-2xl font-bold">{stats.average_order_value.toFixed(0)} ر.س</p>
               </div>
-              <ShoppingBag className="w-8 h-8 text-purple-600" />
+              <ShoppingBag className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
             </div>
           </CardContent>
         </Card>
@@ -279,25 +281,25 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
 
       {/* أدوات البحث والتصفية */}
       <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
+        <CardHeader className="pb-3 sm:pb-4">
+          <div className="flex flex-col gap-3 sm:gap-4">
+            <div className="w-full">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-3 h-3 sm:w-4 sm:h-4" />
                 <Input
-                  placeholder="البحث بالاسم أو الهاتف أو البريد الإلكتروني..."
+                  placeholder="البحث بالاسم أو الهاتف..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-8 sm:pl-10 text-sm"
                 />
               </div>
             </div>
             
-            <div className="flex gap-2">
+            <div className="w-full sm:w-auto">
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-3 py-2 border rounded-md bg-background"
+                className="w-full px-3 py-2 border rounded-md bg-background text-sm"
               >
                 <option value="all">جميع الحالات</option>
                 <option value="active">نشط</option>
