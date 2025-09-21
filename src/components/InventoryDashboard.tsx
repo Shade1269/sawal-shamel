@@ -34,24 +34,24 @@ export function InventoryDashboard() {
   const analytics = getInventoryAnalytics();
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">لوحة المخزون</h1>
-          <p className="text-muted-foreground">إدارة وتتبع المخزون</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">لوحة المخزون</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">إدارة وتتبع المخزون</p>
         </div>
       </div>
 
       {/* إحصائيات سريعة */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">إجمالي المنتجات</p>
-                <p className="text-2xl font-bold text-primary">{analytics.totalItems}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">إجمالي المنتجات</p>
+                <p className="text-lg sm:text-2xl font-bold text-primary">{analytics.totalItems}</p>
               </div>
-              <Package className="h-8 w-8 text-primary" />
+              <Package className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
             </div>
           </CardContent>
         </Card>
