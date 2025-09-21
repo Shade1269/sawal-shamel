@@ -41,17 +41,18 @@ const About = () => {
     <div className="min-h-screen bg-gradient-persian-bg">
       {/* Navigation */}
       <div className="border-b bg-card/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <BackButton />
             <Link to="/">
               <Button 
                 variant="ghost" 
-                className="text-primary hover:bg-primary/10 gap-2"
+                className="text-primary hover:bg-primary/10 gap-1 sm:gap-2 text-sm sm:text-base px-2 sm:px-4"
               >
-                <Home className="h-4 w-4" />
-                العودة إلى الصفحة الرئيسية
-                <ArrowRight className="h-4 w-4" />
+                <Home className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">العودة إلى الصفحة الرئيسية</span>
+                <span className="sm:hidden">الرئيسية</span>
+                <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
             </Link>
           </div>
@@ -59,30 +60,30 @@ const About = () => {
       </div>
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
+      <section className="py-12 sm:py-20 px-3 sm:px-4">
         <div className="container mx-auto max-w-4xl text-center">
-          <Badge variant="secondary" className="mb-6 px-4 py-2">
-            <Crown className="w-4 h-4 mr-2" />
+          <Badge variant="secondary" className="mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm">
+            <Crown className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             منصة التجارة الإلكترونية الرائدة
           </Badge>
           
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4 sm:mb-6">
             من نحن؟
           </h1>
           
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
             نحن فريق شغوف بتطوير حلول التجارة الإلكترونية المتقدمة، نسعى لتمكين التجار والمسوقين من تحقيق أهدافهم التجارية بأفضل الطرق المبتكرة.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/auth">
-              <Button size="lg" className="bg-gradient-primary">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4 sm:px-0">
+            <Link to="/auth" className="w-full sm:w-auto">
+              <Button size="lg" className="bg-gradient-primary w-full sm:w-auto">
                 انضم إلينا الآن
-                <ArrowRight className="w-5 h-5 ml-2" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
               </Button>
             </Link>
-            <Link to="/products">
-              <Button variant="outline" size="lg">
+            <Link to="/products" className="w-full sm:w-auto">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 استكشف المنتجات
               </Button>
             </Link>
@@ -91,25 +92,25 @@ const About = () => {
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-20 px-4 bg-background/50">
+      <section className="py-12 sm:py-20 px-3 sm:px-4 bg-background/50">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">رؤيتنا ورسالتنا</h2>
-            <p className="text-lg text-muted-foreground">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">رؤيتنا ورسالتنا</h2>
+            <p className="text-base sm:text-lg text-muted-foreground px-4 sm:px-0">
               نؤمن بقوة التجارة الإلكترونية في تغيير حياة الناس
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <Card className="border-0 bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mb-4">
-                  <Target className="h-8 w-8 text-white" />
+              <CardHeader className="p-4 sm:p-6">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mb-3 sm:mb-4">
+                  <Target className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                 </div>
-                <CardTitle className="text-2xl">رسالتنا</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl">رسالتنا</CardTitle>
               </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base leading-relaxed">
+              <CardContent className="p-4 sm:p-6 pt-0">
+                <CardDescription className="text-sm sm:text-base leading-relaxed">
                   تمكين التجار والمسوقين من خلال منصة تجارة إلكترونية شاملة وآمنة، 
                   تسهل عليهم إدارة أعمالهم وتحقيق أقصى استفادة من الفرص التجارية المتاحة.
                 </CardDescription>
@@ -117,14 +118,14 @@ const About = () => {
             </Card>
 
             <Card className="border-0 bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <div className="w-16 h-16 bg-gradient-luxury rounded-2xl flex items-center justify-center mb-4">
-                  <Globe className="h-8 w-8 text-white" />
+              <CardHeader className="p-4 sm:p-6">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-luxury rounded-2xl flex items-center justify-center mb-3 sm:mb-4">
+                  <Globe className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                 </div>
-                <CardTitle className="text-2xl">رؤيتنا</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl">رؤيتنا</CardTitle>
               </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base leading-relaxed">
+              <CardContent className="p-4 sm:p-6 pt-0">
+                <CardDescription className="text-sm sm:text-base leading-relaxed">
                   أن نكون المنصة الرائدة في الشرق الأوسط للتجارة الإلكترونية والتسويق بالعمولة،
                   وأن نساهم في بناء اقتصاد رقمي مزدهر ومستدام.
                 </CardDescription>

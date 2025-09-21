@@ -333,30 +333,31 @@ const ProductsBrowser = () => {
 
   return (
     <div className="min-h-screen bg-gradient-persian-bg">
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-3 sm:px-6 py-4 sm:py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
           <div>
-            <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center gap-2 sm:gap-4 mb-4">
               <Button 
                 variant="ghost" 
                 onClick={goToUserHome}
-                className="text-primary hover:bg-primary/10 gap-2"
+                className="text-primary hover:bg-primary/10 gap-1 sm:gap-2 text-sm sm:text-base px-2 sm:px-4"
               >
-                <Home className="h-4 w-4" />
-                الصفحة الرئيسية
-                <ArrowRight className="h-4 w-4" />
+                <Home className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">الصفحة الرئيسية</span>
+                <span className="sm:hidden">الرئيسية</span>
+                <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center">
-                <Package className="h-6 w-6 text-white" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl bg-gradient-primary flex items-center justify-center">
+                <Package className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                <h1 className="text-xl sm:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                   مخزن المنتجات
                 </h1>
-                <p className="text-muted-foreground">
+                <p className="text-xs sm:text-base text-muted-foreground hidden sm:block">
                   تصفح واختر المنتجات لإضافتها إلى متجرك
                 </p>
               </div>
@@ -364,30 +365,30 @@ const ProductsBrowser = () => {
           </div>
 
           {/* إحصائيات سريعة */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-primary">{products.length}</div>
-              <div className="text-sm text-muted-foreground">منتج متاح</div>
+              <div className="text-lg sm:text-2xl font-bold text-primary">{products.length}</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">منتج متاح</div>
             </div>
-            <Separator orientation="vertical" className="h-12" />
+            <Separator orientation="vertical" className="h-8 sm:h-12" />
             <div className="text-center">
-              <div className="text-2xl font-bold text-accent">{myProducts.size}</div>
-              <div className="text-sm text-muted-foreground">في متجري</div>
+              <div className="text-lg sm:text-2xl font-bold text-accent">{myProducts.size}</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">في متجري</div>
             </div>
           </div>
         </div>
 
         {/* تنبيه في حالة عدم وجود متجر */}
         {!affiliateStore && (
-          <Card className="border-orange-200 bg-orange-50 dark:bg-orange-900/10 mb-6">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <AlertCircle className="h-5 w-5 text-orange-600" />
+          <Card className="border-orange-200 bg-orange-50 dark:bg-orange-900/10 mb-4 sm:mb-6">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium text-orange-800 dark:text-orange-200">
+                  <p className="font-medium text-orange-800 dark:text-orange-200 text-sm sm:text-base">
                     لم يتم إنشاء متجرك بعد
                   </p>
-                  <p className="text-sm text-orange-600 dark:text-orange-300">
+                  <p className="text-xs sm:text-sm text-orange-600 dark:text-orange-300 mt-1">
                     يمكنك تصفح المنتجات، لكن لإضافتها لمتجرك يجب إنشاء المتجر أولاً من لوحة المسوق
                   </p>
                 </div>
@@ -398,15 +399,15 @@ const ProductsBrowser = () => {
         
         {/* تعليمات للمسوق */}
         {affiliateStore && (
-          <Card className="border-green-200 bg-green-50 dark:bg-green-900/10 mb-6">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="h-5 w-5 text-green-600" />
+          <Card className="border-green-200 bg-green-50 dark:bg-green-900/10 mb-4 sm:mb-6">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium text-green-800 dark:text-green-200">
+                  <p className="font-medium text-green-800 dark:text-green-200 text-sm sm:text-base">
                     مرحباً بك في مخزن المنتجات
                   </p>
-                  <p className="text-sm text-green-600 dark:text-green-300">
+                  <p className="text-xs sm:text-sm text-green-600 dark:text-green-300 mt-1">
                     يمكنك الآن تصفح المنتجات والضغط على "إضافة لمتجري" لإضافتها إلى متجرك الخاص
                   </p>
                 </div>
@@ -416,17 +417,17 @@ const ProductsBrowser = () => {
         )}
 
         {/* أدوات البحث والفلترة */}
-        <Card className="border-0 bg-card/50 backdrop-blur-sm mb-8">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-0 bg-card/50 backdrop-blur-sm mb-6 sm:mb-8">
+          <CardContent className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {/* البحث */}
-              <div className="relative">
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <div className="relative col-span-1 sm:col-span-2 lg:col-span-1">
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
                 <Input
                   placeholder="ابحث في المنتجات..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pr-10"
+                  className="pr-8 sm:pr-10 text-sm"
                 />
               </div>
 
@@ -434,7 +435,7 @@ const ProductsBrowser = () => {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-2 rounded-md border border-border bg-background text-sm"
+                className="px-3 sm:px-4 py-2 rounded-md border border-border bg-background text-xs sm:text-sm"
               >
                 <option value="all">جميع الفئات</option>
                 {categories.map((category) => (
@@ -449,14 +450,14 @@ const ProductsBrowser = () => {
                   type="number"
                   value={priceRange.min}
                   onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
-                  className="flex-1"
+                  className="flex-1 text-xs sm:text-sm"
                 />
                 <Input
                   placeholder="إلى"
                   type="number"
                   value={priceRange.max}
                   onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
-                  className="flex-1"
+                  className="flex-1 text-xs sm:text-sm"
                 />
               </div>
 
@@ -466,17 +467,17 @@ const ProductsBrowser = () => {
                   variant={viewMode === 'grid' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setViewMode('grid')}
-                  className="flex-1"
+                  className="flex-1 px-2 sm:px-4"
                 >
-                  <Grid className="h-4 w-4" />
+                  <Grid className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
                 <Button
                   variant={viewMode === 'list' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setViewMode('list')}
-                  className="flex-1"
+                  className="flex-1 px-2 sm:px-4"
                 >
-                  <List className="h-4 w-4" />
+                  <List className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </div>
             </div>
@@ -500,8 +501,8 @@ const ProductsBrowser = () => {
         ) : (
           <div className={
             viewMode === 'grid' 
-              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
-              : 'space-y-4'
+              ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6' 
+              : 'space-y-3 sm:space-y-4'
           }>
             {filteredProducts.map((product) => {
               const isInMyStore = myProducts.has(product.id);
