@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { DollarSign, ShoppingCart, Users, TrendingUp, Package } from 'lucide-react';
 import { useFastAuth } from './useFastAuth';
 import type { SmartWidgetData } from '@/components/dashboard/SmartWidget';
 import type { SmartNotification } from '@/components/dashboard/SmartNotifications';
@@ -99,7 +100,7 @@ export function useDashboardData() {
                calculateChange(stats.totalRevenue, stats.previousPeriodStats.totalRevenue) : undefined,
         changeType: stats.previousPeriodStats && stats.totalRevenue > stats.previousPeriodStats.totalRevenue ? 'positive' : 'negative',
         description: `متوسط قيمة الطلب: ${Math.round(stats.averageOrderValue)} ر.س`,
-        icon: require('lucide-react').DollarSign,
+        icon: DollarSign,
         color: 'bg-green-500',
         status: 'success',
         progress: 75,
@@ -115,7 +116,7 @@ export function useDashboardData() {
                calculateChange(stats.totalOrders, stats.previousPeriodStats.totalOrders) : undefined,
         changeType: stats.previousPeriodStats && stats.totalOrders > stats.previousPeriodStats.totalOrders ? 'positive' : 'negative',
         description: 'عدد الطلبات المكتملة',
-        icon: require('lucide-react').ShoppingCart,
+        icon: ShoppingCart,
         color: 'bg-blue-500',
         status: 'info',
         progress: 68,
@@ -130,7 +131,7 @@ export function useDashboardData() {
                calculateChange(stats.totalCustomers, stats.previousPeriodStats.totalCustomers) : undefined,
         changeType: 'positive',
         description: 'العملاء النشطين',
-        icon: require('lucide-react').Users,
+        icon: Users,
         color: 'bg-purple-500',
         status: 'success',
         progress: 82,
@@ -145,7 +146,7 @@ export function useDashboardData() {
                Number((stats.conversionRate - stats.previousPeriodStats.conversionRate).toFixed(1)) : undefined,
         changeType: stats.previousPeriodStats && stats.conversionRate > stats.previousPeriodStats.conversionRate ? 'positive' : 'negative',
         description: 'نسبة تحويل الزوار لعملاء',
-        icon: require('lucide-react').TrendingUp,
+        icon: TrendingUp,
         color: 'bg-orange-500',
         status: 'warning',
         progress: Math.round(stats.conversionRate * 10),
@@ -164,7 +165,7 @@ export function useDashboardData() {
         change: 5,
         changeType: 'positive',
         description: 'المنتجات النشطة في النظام',
-        icon: require('lucide-react').Package,
+        icon: Package,
         color: 'bg-indigo-500',
         status: 'info',
         lastUpdated: new Date()
