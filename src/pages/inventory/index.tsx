@@ -150,7 +150,7 @@ const InventoryOverviewPage = () => {
             <CardTitle className="text-2xl">لوحة المخزون</CardTitle>
           </div>
           <CardDescription>
-            نظرة عامة سريعة على الكميات المتاحة والمحجوزة لكل مستودع بعد إيقاف تكامل Zoho.
+            نظرة عامة سريعة على الكميات المتاحة والمحجوزة لكل مستودع ضمن نظام المخزون الداخلي.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

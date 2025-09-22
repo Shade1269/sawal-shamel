@@ -588,7 +588,8 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
           <CardHeader>
             <CardTitle id="inventory-integration-admin" className="text-2xl">نظام المخزون الداخلي</CardTitle>
             <CardDescription>
-              تم إيقاف تكامل Zoho، وتعمل المنصة الآن على إدارة الحجوزات والحركات عبر الجداول الداخلية والوظائف المخزنة في Supabase.
+              تم إيقاف أي تكاملات خارجية، وتعمل المنصة الآن على إدارة الحجوزات والحركات عبر الجداول الداخلية والوظائف المخزنة في
+              Supabase.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

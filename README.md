@@ -116,7 +116,7 @@ Access is limited to authenticated affiliates (with admins allowed through imper
 
 ## 📦 Internal Inventory
 
-The Zoho integration has been fully deprecated in favor of the internal warehouse tables. Run `sql/05_internal_inventory.sql` to connect order creation and payment events to the new reservation workflow:
+External inventory integrations have been fully deprecated in favor of the internal warehouse tables. Run `sql/05_internal_inventory.sql` to connect order creation and payment events to the new reservation workflow:
 
 ```bash
 supabase db execute --file sql/05_internal_inventory.sql
