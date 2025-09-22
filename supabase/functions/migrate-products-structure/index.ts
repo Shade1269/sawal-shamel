@@ -198,14 +198,6 @@ serve(async (req) => {
       }
     }
 
-    // Update zoho product mappings
-    for (const mapping of mappingsToUpdate) {
-      await supabase
-        .from('zoho_product_mapping')
-        .update({ local_product_id: mapping.newProductId })
-        .eq('local_product_id', mapping.oldProductId);
-    }
-
     // Update product library mappings
     for (const mapping of mappingsToUpdate) {
       await supabase

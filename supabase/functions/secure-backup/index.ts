@@ -58,20 +58,38 @@ serve(async (req) => {
       case 'DATABASE':
         fileName = `full_database_backup_${Date.now()}.sql`;
         estimatedSizeMB = 50; // تقدير أولي
-        
+
         // جلب بيانات قاعدة البيانات (مجموعة محدودة للأمان)
         const { data: orders, error: ordersError } = await supabase
-          .from('orders')
+          .from('ecommerce_orders')
           .select('*')
           .limit(1000);
-        
+
+        const { data: orderItems, error: orderItemsError } = await supabase
+          .from('ecommerce_order_items')
+          .select('*')
+          .limit(1000);
+
         const { data: products, error: productsError } = await supabase
           .from('products')
           .select('*')
           .limit(1000);
 
+        if (ordersError) {
+          console.error('Error fetching ecommerce_orders for backup:', ordersError);
+        }
+
+        if (orderItemsError) {
+          console.error('Error fetching ecommerce_order_items for backup:', orderItemsError);
+        }
+
+        if (productsError) {
+          console.error('Error fetching products for backup:', productsError);
+        }
+
         backupData = {
-          orders: orders || [],
+          ecommerce_orders: orders || [],
+          ecommerce_order_items: orderItems || [],
           products: products || [],
           backup_metadata: {
             type: requestData.backup_type,
@@ -86,7 +104,7 @@ serve(async (req) => {
         estimatedSizeMB = 20;
 
         const { data: transactions, error: transError } = await supabase
-          .from('payment_transactions')
+          .from('ecommerce_payment_transactions')
           .select('*')
           .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
 
@@ -95,8 +113,16 @@ serve(async (req) => {
           .select('*')
           .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
 
+        if (transError) {
+          console.error('Error fetching ecommerce_payment_transactions for backup:', transError);
+        }
+
+        if (paymentsError) {
+          console.error('Error fetching payments for backup:', paymentsError);
+        }
+
         backupData = {
-          transactions: transactions || [],
+          ecommerce_payment_transactions: transactions || [],
           payments: payments || [],
           backup_metadata: {
             type: requestData.backup_type,

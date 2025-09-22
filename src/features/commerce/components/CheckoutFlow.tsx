@@ -64,35 +64,33 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
     setLoading(true);
     
     try {
-      // First, save the order to database
-      console.log('Creating order in database...', { orderNumber, shopId, cart });
-      
-      // حساب عمولة المسوق إذا كان موجود
-      const affiliateCommission = affiliateStoreId ? totalPrice * 0.1 : 0; // 10% عمولة افتراضية
-
-      const orderDbData = {
-        shop_id: shopId,
-        customer_name: customerInfo.name,
-        customer_phone: customerInfo.phone,
-        subtotal_sar: subtotal,
-        vat_sar: 0, // No VAT for now
-        total_sar: totalPrice,
-        payment_method: selectedPayment,
-        shipping_address: {
-          address: customerInfo.address,
-          city: customerInfo.city,
-          area: customerInfo.area,
-          email: customerInfo.email
-        },
-        affiliate_store_id: affiliateStoreId,
-        affiliate_commission_sar: affiliateCommission,
-        status: 'PENDING' as const
-      };
+      const affiliateCommission = affiliateStoreId ? totalPrice * 0.1 : 0;
 
       const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert(orderDbData)
-        .select()
+        .from('ecommerce_orders')
+        .insert({
+          shop_id: shopId,
+          affiliate_store_id: affiliateStoreId,
+          customer_name: customerInfo.name,
+          customer_phone: customerInfo.phone,
+          customer_email: customerInfo.email || null,
+          shipping_address: {
+            address: customerInfo.address,
+            city: customerInfo.city,
+            area: customerInfo.area,
+            email: customerInfo.email,
+          },
+          subtotal_sar: subtotal,
+          shipping_sar: shippingCost,
+          tax_sar: 0,
+          total_sar: totalPrice,
+          payment_method: selectedPayment,
+          payment_status: 'PENDING',
+          status: 'PENDING',
+          order_number: orderNumber,
+          affiliate_commission_sar: affiliateCommission,
+        })
+        .select('id, order_number')
         .maybeSingle();
 
       if (orderError) {
@@ -100,30 +98,35 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
         throw new Error('فشل في إنشاء الطلب');
       }
 
-      console.log('Order created successfully:', order);
-
-      // Create order items
       const orderItems = cart.map(item => ({
         order_id: order.id,
         product_id: item.product.id,
-        merchant_id: shopId, // Will be updated when we have proper merchant linking
-        title_snapshot: item.product.title,
+        product_title: item.product.title,
         quantity: item.quantity,
         unit_price_sar: item.product.final_price || item.product.price_sar,
-        line_total_sar: (item.product.final_price || item.product.price_sar) * item.quantity
+        total_price_sar: (item.product.final_price || item.product.price_sar) * item.quantity,
       }));
 
       const { error: itemsError } = await supabase
-        .from('order_items')
+        .from('ecommerce_order_items')
         .insert(orderItems);
 
       if (itemsError) {
         console.error('Error creating order items:', itemsError);
-        // Don't fail the whole process for this, but log it
-        console.warn('Order items creation failed, but order was saved');
-      } else {
-        console.log('Order items created successfully');
+        throw new Error('فشل في حفظ عناصر الطلب');
       }
+
+      await supabase
+        .from('ecommerce_payment_transactions')
+        .insert({
+          order_id: order.id,
+          transaction_id: `COD-${order.id.slice(-6)}`,
+          payment_method: selectedPayment,
+          payment_status: 'PENDING',
+          amount_sar: totalPrice,
+          currency: 'SAR',
+          gateway_name: 'Cash on Delivery',
+        });
 
       // Handle non-payment gateway orders (COD, etc.)
       console.log('CheckoutFlow: Processing non-Emkan payment');
@@ -134,7 +137,7 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
       
       // For cash on delivery, mark order as confirmed
       const { error: updateError } = await supabase
-        .from('orders')
+        .from('ecommerce_orders')
         .update({ status: 'CONFIRMED' as const })
         .eq('id', order.id);
 
@@ -142,15 +145,8 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
         console.error('Error updating order status:', updateError);
       }
 
-      // Update Zoho inventory
-      try {
-        await supabase.functions.invoke('update-zoho-inventory', {
-          body: { orderId: order.id }
-        });
-      } catch (zohoError) {
-        console.error('CheckoutFlow: Zoho inventory update error:', zohoError);
-        // Don't fail the order if Zoho update fails
-      }
+      // Inventory reservations/fulfillment now run inside the database triggers
+      console.log('CheckoutFlow: inventory updates handled by internal pipeline');
       
       // Simulate payment processing for other methods
       setTimeout(() => {

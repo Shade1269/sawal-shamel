@@ -24,7 +24,7 @@ export const LazyComponents = {
   // Commerce Components
   ProductManagement: createLazyComponent(() => import('@/pages/ProductManagement')),
   OrderManagement: createLazyComponent(() => import('@/pages/OrderManagement')),
-  Inventory: createLazyComponent(() => import('@/pages/Inventory')),
+  Inventory: createLazyComponent(() => import('@/pages/inventory')),
   ShipmentManagement: createLazyComponent(() => import('@/pages/ShipmentManagement')),
   
   // Analytics Components

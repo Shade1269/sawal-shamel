@@ -3,6 +3,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { getBaseUrl } from '@/utils/domains';
+import { performSignUpRuntime } from './performSignUpRuntime';
 
 export interface FastUserProfile {
   id: string;
@@ -18,6 +19,35 @@ export interface FastUserProfile {
   phone?: string;
   created_at?: string;
 }
+
+export type FastAuthRole = 'admin' | 'merchant' | 'affiliate';
+
+export interface FastAuthSignUpArgs {
+  email: string;
+  password: string;
+  fullName: string;
+  username: string;
+  role: FastAuthRole;
+}
+
+export interface SignUpServices {
+  supabase: typeof supabase;
+  toast: (config: { title: string; description?: string; variant?: string }) => void;
+  fetchUserProfile: (userId: string, useCache?: boolean) => Promise<FastUserProfile | null>;
+  getBaseUrlFn?: () => string;
+}
+
+export const performSignUp: (
+  deps: SignUpServices,
+  args: FastAuthSignUpArgs
+) => Promise<{ data?: any; error: any | null }> = (deps, args) => {
+  const enhancedDeps = {
+    ...deps,
+    getBaseUrlFn: deps.getBaseUrlFn ?? getBaseUrl,
+  };
+
+  return performSignUpRuntime(enhancedDeps, args);
+};
 
 // Memory cache for user data
 const userCache = {
@@ -242,95 +272,9 @@ export const useFastAuth = () => {
   }, []);
 
   // Enhanced Auth functions with better error handling and user feedback
-  const signUp = async (email: string, password: string, fullName?: string, username?: string, role: 'merchant' | 'affiliate' | 'customer' = 'affiliate') => {
-    try {
-      // First, check for existing user
-      const { data: existingUser } = await supabase
-        .from('user_profiles')
-        .select('email')
-        .eq('email', email)
-        .maybeSingle();
-
-      if (existingUser) {
-        const errorMsg = 'هذا البريد الإلكتروني مستخدم مسبقاً. الرجاء استخدام بريد آخر أو تسجيل الدخول.';
-        toast({
-          title: "خطأ في التسجيل",
-          description: errorMsg,
-          variant: "destructive"
-        });
-        return { error: new Error('Email already exists') };
-      }
-
-      const redirectUrl = `${getBaseUrl()}/`;
-      
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: redirectUrl,
-          data: {
-            full_name: fullName,
-            username: username || fullName,
-            role: role
-          }
-        }
-      });
-
-      if (error) {
-        let errorMessage = error.message;
-        
-        if (error.message.includes('already registered') || error.message.includes('User already registered')) {
-          errorMessage = 'هذا البريد الإلكتروني مستخدم مسبقاً. الرجاء استخدام بريد آخر أو تسجيل الدخول.';
-        } else if (error.message.includes('Password should be at least')) {
-          errorMessage = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
-        } else if (error.message.includes('Invalid email')) {
-          errorMessage = 'البريد الإلكتروني غير صحيح';
-        } else if (error.message.includes('weak password')) {
-          errorMessage = 'كلمة المرور ضعيفة. استخدم أحرف وأرقام ورموز';
-        } else if (error.message.includes('signup disabled')) {
-          errorMessage = 'التسجيل معطل حالياً. تواصل مع الدعم الفني';
-        }
-        
-        toast({
-          title: "خطأ في التسجيل",
-          description: errorMessage,
-          variant: "destructive"
-        });
-        
-        return { error };
-      }
-
-      // Show success message
-      if (data?.user && !data.user.email_confirmed_at) {
-        toast({
-          title: "تم التسجيل بنجاح!",
-          description: "تم إنشاء حسابك بنجاح. يمكنك الآن تسجيل الدخول.",
-        });
-      } else {
-        toast({
-          title: "تم التسجيل بنجاح!",
-          description: "مرحباً بك! تم إنشاء حسابك وتسجيل دخولك تلقائياً.",
-        });
-      }
-      
-      return { data, error: null };
-    } catch (error: any) {
-      console.error('SignUp error:', error);
-      
-      let errorMessage = 'حدث خطأ أثناء إنشاء الحساب';
-      if (error.message.includes('network')) {
-        errorMessage = 'تحقق من اتصال الإنترنت وحاول مرة أخرى';
-      }
-      
-      toast({
-        title: "خطأ في التسجيل",
-        description: errorMessage,
-        variant: "destructive"
-      });
-      
-      return { error };
-    }
-  };
+  const signUp = useCallback((args: FastAuthSignUpArgs) => {
+    return performSignUp({ supabase, toast, fetchUserProfile }, args);
+  }, [toast, fetchUserProfile]);
 
   const signIn = async (email: string, password: string) => {
     try {
