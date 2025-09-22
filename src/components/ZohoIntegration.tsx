@@ -26,12 +26,9 @@ export const ZohoIntegration: React.FC = () => {
   const { user } = useSupabaseAuth();
 
   useEffect(() => {
-    console.log('ZohoIntegration: useEffect triggered, user:', user);
     if (user?.id) {
-      console.log('ZohoIntegration: User ID found, loading integration');
       loadZohoIntegration();
     } else {
-      console.log('ZohoIntegration: No user ID, setting error state');
       setIntegration({
         organization_id: null,
         last_sync_at: null,
@@ -44,16 +41,11 @@ export const ZohoIntegration: React.FC = () => {
 
   const loadZohoIntegration = async () => {
     if (!user?.id) {
-      console.log('ZohoIntegration: No user ID available');
       return;
     }
     
-    console.log('ZohoIntegration: Loading integration for user:', user.id);
-    
     try {
       const { data, error } = await supabase.functions.invoke('check-zoho-status');
-
-      console.log('ZohoIntegration: Response from check-zoho-status:', { data, error });
 
       if (error) throw error;
 
@@ -66,12 +58,7 @@ export const ZohoIntegration: React.FC = () => {
         });
         
         // عرض معلومات تشخيصية إضافية
-        if (data.debug_info) {
-          console.log('🔍 Debug info:', data.debug_info);
-        }
-        
         if (data.detailed_error) {
-          console.log('❌ Detailed error:', data.detailed_error);
           toast({
             title: "تفاصيل الخطأ",
             description: `Domain: ${data.detailed_error.domain}, Status: ${data.detailed_error.status}, Error: ${data.detailed_error.error.substring(0, 100)}`,
@@ -80,7 +67,6 @@ export const ZohoIntegration: React.FC = () => {
         }
         
         if (data.working_domain) {
-          console.log('✅ Working domain:', data.working_domain);
           toast({
             title: "نجح الاتصال!",
             description: `التوكن يعمل مع نطاق: ${data.working_domain}`
@@ -277,7 +263,6 @@ export const ZohoIntegration: React.FC = () => {
             <Button 
               onClick={() => {
                 alert('تم الضغط على زر اختبار الاتصال!');
-                console.log('Test connection clicked!');
                 setIsLoading(true);
                 loadZohoIntegration();
               }} 
@@ -293,9 +278,7 @@ export const ZohoIntegration: React.FC = () => {
               onClick={async () => {
                 setIsLoading(true);
                 try {
-                  console.log('🧪 Testing Zoho token directly...');
                   const { data, error } = await supabase.functions.invoke('test-zoho-token');
-                  console.log('🧪 Direct test result:', { data, error });
                   
                   if (data?.success && data?.token_works) {
                     toast({
