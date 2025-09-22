@@ -96,16 +96,6 @@ const collectUrlsFromUnknown = (val: any): string[] => {
   return urls;
 };
 
-/** توليد روابط fallback من zoho_item_id ضمن Supabase bucket
- *  نعيد 3 احتمالات امتدادات (jpg/png/webp) — واجهة العرض ستجرّبها
- */
-const zohoFallbackUrls = (zoho_item_id?: string | number) => {
-  if (!zoho_item_id) return [] as string[];
-  const base =
-    "https://uewuiiopkctdtaexmtxu.supabase.co/storage/v1/object/public/product-images/zoho";
-  const id = String(zoho_item_id).trim();
-  return [`${base}/${id}.jpg`, `${base}/${id}.png`, `${base}/${id}.webp`];
-};
 
 /** الحقول المعروفة التي قد تحتوي صورًا بشكل مباشر أو كمصفوفات */
 const DIRECT_STRING_FIELDS = [
@@ -175,9 +165,6 @@ export const extractImagesFromVariant = (variant: AnyObj): string[] => {
     }
   }
 
-  // 5) Zoho fallback
-  out.push(...zohoFallbackUrls(variant?.zoho_item_id));
-
   // فلترة http/https + إزالة التكرار
   return uniqUrls(out.filter(isHttpUrl));
 };
@@ -211,9 +198,6 @@ export const extractAllProductImages = (p: AnyObj) => {
   const srcImages = Array.isArray(src?.image_urls) ? src.image_urls : [];
   collectFrom(p);
   collectFrom(src);
-
-  // Zoho fallback at product level
-  productLevel.push(...zohoFallbackUrls((src as any)?.zoho_item_id || (p as any)?.zoho_item_id));
 
   // 2) Variants
   const variants: AnyObj[] = Array.isArray((src as any)?.variants)

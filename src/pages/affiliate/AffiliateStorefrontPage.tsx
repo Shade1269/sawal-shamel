@@ -128,10 +128,13 @@ export default function AffiliateStorefrontPage() {
       const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       
       // Insert order using public client
+      const orderNumber = `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
+
       const { data: orderData, error: orderError } = await supabasePublic
-        .from('orders')
+        .from('ecommerce_orders')
         .insert({
           shop_id: store.id,
+          affiliate_store_id: store.id,
           customer_name: customerData.name,
           customer_phone: customerData.phone,
           customer_email: customerData.email || null,
@@ -144,12 +147,13 @@ export default function AffiliateStorefrontPage() {
           tax_sar: 0,
           shipping_sar: 0,
           total_sar: total,
-          payment_method: 'COD',
-          affiliate_store_id: store.id,
+          payment_method: 'CASH_ON_DELIVERY',
+          payment_status: 'PENDING',
+          status: 'PENDING',
           affiliate_commission_sar: total * 0.1,
-          status: 'PENDING'
+          order_number: orderNumber
         })
-        .select()
+        .select('id, order_number')
         .single();
 
       if (orderError) throw orderError;
@@ -158,25 +162,36 @@ export default function AffiliateStorefrontPage() {
       const orderItems = cart.map(item => ({
         order_id: orderData.id,
         product_id: item.product_id,
-        merchant_id: store.id,
-        title_snapshot: item.title,
+        product_title: item.title,
         quantity: item.quantity,
         unit_price_sar: item.price,
-        line_total_sar: item.price * item.quantity,
+        total_price_sar: item.price * item.quantity,
         commission_rate: 10
       }));
 
       const { error: itemsError } = await supabasePublic
-        .from('order_items')
+        .from('ecommerce_order_items')
         .insert(orderItems);
 
       if (itemsError) throw itemsError;
 
-      return orderData.id;
+      await supabasePublic
+        .from('ecommerce_payment_transactions')
+        .insert({
+          order_id: orderData.id,
+          transaction_id: `COD-${orderData.id.slice(-6)}`,
+          payment_method: 'CASH_ON_DELIVERY',
+          payment_status: 'PENDING',
+          amount_sar: total,
+          currency: 'SAR',
+          gateway_name: 'Cash on Delivery',
+        });
+
+      return orderData.order_number || orderData.id;
     },
-    onSuccess: (orderId) => {
+    onSuccess: (orderNumber) => {
       toast.success("تم إنشاء الطلب بنجاح", {
-        description: `رقم الطلب: ${orderId}`
+        description: `رقم الطلب: ${orderNumber}`
       });
       setCart([]);
       if (store_slug) {

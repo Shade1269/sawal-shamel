@@ -1,31 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { useFastAuth } from './useFastAuth';
+import { getHomeRouteForRole } from './getHomeRouteForRole';
 
 export const useSmartNavigation = () => {
   const navigate = useNavigate();
-  const { profile } = useFastAuth();
 
-  const goToUserHome = () => {
-    // Default to unified dashboard if profile isn't loaded yet
-    if (!profile) {
-      navigate('/dashboard');
-      return;
-    }
-
-    switch (profile.role) {
-      case 'admin':
-        navigate('/admin/dashboard');
-        break;
-      case 'merchant':
-        navigate('/merchant');
-        break;
-      case 'affiliate':
-        navigate('/affiliate');
-        break;
-      default:
-        navigate('/dashboard');
-        break;
-    }
+  const goToUserHome = (role?: Parameters<typeof getHomeRouteForRole>[0]) => {
+    navigate(getHomeRouteForRole(role));
   };
 
   return {

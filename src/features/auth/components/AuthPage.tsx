@@ -42,6 +42,7 @@ const AuthPage = () => {
     password: '',
     fullName: '',
     username: '',
+    role: 'affiliate' as 'affiliate' | 'merchant' | 'admin',
   });
 
   const [signUpStep, setSignUpStep] = useState<'details' | 'username'>('details');
@@ -108,12 +109,13 @@ const AuthPage = () => {
   const handleUsernameSubmit = async (username: string) => {
     setIsLoading(true);
     
-    const result = await signUp(
-      signUpForm.email, 
-      signUpForm.password, 
-      signUpForm.fullName,
-      username
-    );
+    const result = await signUp({
+      email: signUpForm.email,
+      password: signUpForm.password,
+      fullName: signUpForm.fullName,
+      username,
+      role: signUpForm.role || 'affiliate'
+    });
     
     if (!result.error) {
       toast({

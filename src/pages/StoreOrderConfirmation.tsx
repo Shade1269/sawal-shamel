@@ -19,11 +19,14 @@ import { toast } from 'sonner';
 
 interface Order {
   id: string;
+  order_number: string;
   customer_name: string;
-  customer_email: string;
+  customer_email: string | null;
   customer_phone: string;
   shipping_address: any;
-  total_amount_sar: number;
+  total_sar: number;
+  status: string;
+  payment_status: string;
   created_at: string;
   affiliate_store_id: string;
 }
@@ -31,7 +34,7 @@ interface Order {
 interface OrderItem {
   id: string;
   product_title: string;
-  product_image_url: string;
+  product_image_url?: string | null;
   quantity: number;
   unit_price_sar: number;
   total_price_sar: number;
@@ -64,8 +67,18 @@ const StoreOrderConfirmation = () => {
     try {
       // جلب بيانات الطلب
       const { data: orderData, error: orderError } = await supabase
-        .from('simple_orders')
-        .select('*')
+        .from('ecommerce_orders')
+        .select(`
+          *,
+          ecommerce_order_items (
+            id,
+            product_title,
+            product_image_url,
+            quantity,
+            unit_price_sar,
+            total_price_sar
+          )
+        `)
         .eq('id', orderId)
         .maybeSingle();
 
@@ -76,16 +89,9 @@ const StoreOrderConfirmation = () => {
         return;
       }
 
-      setOrder(orderData);
-
-      // جلب عناصر الطلب
-      const { data: itemsData, error: itemsError } = await supabase
-        .from('simple_order_items')
-        .select('*')
-        .eq('order_id', orderId);
-
-      if (itemsError) throw itemsError;
-      setOrderItems(itemsData || []);
+      const { ecommerce_order_items, ...rest } = orderData as any;
+      setOrder(rest as Order);
+      setOrderItems((ecommerce_order_items as OrderItem[]) || []);
 
       // جلب بيانات المتجر
       const { data: storeData, error: storeError } = await supabase
@@ -151,7 +157,7 @@ const StoreOrderConfirmation = () => {
               تم تأكيد طلبك بنجاح!
             </h1>
             <p className="text-green-700 mb-4">
-              رقم الطلب: <span className="font-mono font-bold">#{order.id.slice(-8)}</span>
+              رقم الطلب: <span className="font-mono font-bold">{order.order_number || `#${order.id.slice(-8)}`}</span>
             </p>
             <div className="flex items-center justify-center gap-2 text-green-600">
               <Clock className="h-4 w-4" />
@@ -227,7 +233,7 @@ const StoreOrderConfirmation = () => {
 
             <div className="flex justify-between text-lg font-bold">
               <span>المجموع الإجمالي</span>
-              <span className="text-primary">{order.total_amount_sar} ريال</span>
+              <span className="text-primary">{order.total_sar} ريال</span>
             </div>
           </CardContent>
         </Card>

@@ -16,6 +16,7 @@ import { Store, ArrowRight, Loader2, Home } from "lucide-react";
 import { CustomerAuth } from '@/features/auth';
 import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
+import { useFastAuth } from '@/hooks/useFastAuth';
 
 interface AffiliateStore {
   id: string;
@@ -37,6 +38,7 @@ const StoreAuth: React.FC = () => {
   
   const { isAuthenticated, checkStoredSession } = useCustomerAuthContext();
   const { goToUserHome } = useSmartNavigation();
+  const { profile } = useFastAuth();
 
   // التحقق من الجلسة المحفوظة عند تحميل الصفحة
   useEffect(() => {
@@ -137,10 +139,10 @@ const StoreAuth: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="sm"
-                onClick={goToUserHome}
+                onClick={() => goToUserHome(profile?.role)}
                 className="flex items-center gap-2"
               >
                 <Home className="w-4 h-4" />

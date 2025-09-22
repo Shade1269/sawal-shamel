@@ -152,35 +152,37 @@ const Payment = () => {
         throw new Error("المتجر غير موجود");
       }
 
-      // إنشاء طلب مع الدفع عند الاستلام
-      const orderData = {
-        user_id: null, // يمكن ربطه بالمستخدم لاحقا
-        session_id: `session_${Date.now()}`,
-        customer_name: customerInfo?.name,
-        customer_email: customerInfo?.email || null,
-        customer_phone: customerInfo?.phone,
-        shipping_address: {
-          address: customerInfo?.address,
-          city: customerInfo?.city,
-          email: customerInfo?.email || null,
-          notes: customerInfo?.notes || null,
-          shipping_method: selectedShipping
-        },
-        total_amount_sar: getTotal(),
-        payment_status: 'PENDING',
-        payment_method: 'COD',
-        order_status: 'CONFIRMED' // الطلب مؤكد مع الدفع عند الاستلام
-      };
+      const orderNumber = `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
 
       const { data: order, error: orderError } = await supabase
-        .from("simple_orders")
-        .insert(orderData)
-        .select()
+        .from("ecommerce_orders")
+        .insert({
+          shop_id: shop.id,
+          affiliate_store_id: shop.id,
+          customer_name: customerInfo?.name || '',
+          customer_email: customerInfo?.email || null,
+          customer_phone: customerInfo?.phone || '',
+          shipping_address: {
+            address: customerInfo?.address,
+            city: customerInfo?.city,
+            email: customerInfo?.email || null,
+            notes: customerInfo?.notes || null,
+            shipping_method: selectedShipping
+          },
+          subtotal_sar: getSubtotal(),
+          shipping_sar: getShippingCost(),
+          tax_sar: taxAmount,
+          total_sar: getTotal(),
+          payment_method: (paymentMethod || 'CASH_ON_DELIVERY') as any,
+          payment_status: 'PENDING',
+          status: 'PENDING',
+          order_number: orderNumber,
+        })
+        .select('id, order_number')
         .maybeSingle();
 
       if (orderError) throw orderError;
 
-      // إنشاء عناصر الطلب
       const orderItems = cartItems.map(item => ({
         order_id: order.id,
         product_id: item.id,
@@ -192,10 +194,22 @@ const Payment = () => {
       }));
 
       const { error: itemsError } = await supabase
-        .from("simple_order_items")
+        .from("ecommerce_order_items")
         .insert(orderItems);
 
       if (itemsError) throw itemsError;
+
+      await supabase
+        .from('ecommerce_payment_transactions')
+        .insert({
+          order_id: order.id,
+          transaction_id: `COD-${order.id.slice(-6)}`,
+          payment_method: (paymentMethod || 'CASH_ON_DELIVERY') as any,
+          payment_status: 'PENDING',
+          amount_sar: getTotal(),
+          currency: 'SAR',
+          gateway_name: 'Cash on Delivery',
+        });
 
       // Clear cart and saved data
       localStorage.removeItem(`cart_${slug}`);

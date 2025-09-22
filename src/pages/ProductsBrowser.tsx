@@ -338,9 +338,9 @@ const ProductsBrowser = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
           <div>
             <div className="flex items-center gap-2 sm:gap-4 mb-4">
-              <Button 
-                variant="ghost" 
-                onClick={goToUserHome}
+              <Button
+                variant="ghost"
+                onClick={() => goToUserHome(profile?.role)}
                 className="text-primary hover:bg-primary/10 gap-1 sm:gap-2 text-sm sm:text-base px-2 sm:px-4"
               >
                 <Home className="h-3 w-3 sm:h-4 sm:w-4" />
