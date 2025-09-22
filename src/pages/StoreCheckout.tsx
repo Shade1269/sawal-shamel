@@ -90,24 +90,32 @@ const StoreCheckout = () => {
     setSubmitting(true);
     
     try {
-      // إنشاء طلب جديد
+      const orderNumber = `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
+
       const { data: order, error: orderError } = await supabase
-        .from('simple_orders')
+        .from('ecommerce_orders')
         .insert({
+          shop_id: store.id,
+          affiliate_store_id: store.id,
+          buyer_session_id: storeSlug || null,
           customer_name: customerData.name,
-          customer_email: customerData.email,
+          customer_email: customerData.email || null,
           customer_phone: customerData.phone,
           shipping_address: customerData.address,
-          total_amount_sar: getTotalPrice(),
-          affiliate_store_id: store.id,
-          session_id: storeSlug // استخدام storeSlug كجلسة مؤقتة
+          subtotal_sar: getTotalPrice(),
+          shipping_sar: 0,
+          tax_sar: 0,
+          total_sar: getTotalPrice(),
+          payment_method: 'CASH_ON_DELIVERY' as any,
+          payment_status: 'PENDING',
+          status: 'PENDING',
+          order_number: orderNumber,
         })
-        .select()
+        .select('id, order_number')
         .maybeSingle();
 
       if (orderError) throw orderError;
 
-      // إضافة عناصر الطلب
       const orderItems = cartItems.map(item => ({
         order_id: order.id,
         product_id: item.id,
@@ -119,10 +127,22 @@ const StoreCheckout = () => {
       }));
 
       const { error: itemsError } = await supabase
-        .from('simple_order_items')
+        .from('ecommerce_order_items')
         .insert(orderItems);
 
       if (itemsError) throw itemsError;
+
+      await supabase
+        .from('ecommerce_payment_transactions')
+        .insert({
+          order_id: order.id,
+          transaction_id: `COD-${order.id.slice(-6)}`,
+          payment_method: 'CASH_ON_DELIVERY' as any,
+          payment_status: 'PENDING',
+          amount_sar: getTotalPrice(),
+          currency: 'SAR',
+          gateway_name: 'Cash on Delivery',
+        });
 
       // مسح السلة
       clearCart();

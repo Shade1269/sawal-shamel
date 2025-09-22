@@ -57,6 +57,7 @@ const AffiliateDashboardOverview = lazy(() => import("./pages/affiliate/Affiliat
 const AffiliateProductsPage = lazy(() => import("./pages/affiliate/AffiliateProductsPage"));
 const AffiliateOrdersPage = lazy(() => import("./pages/affiliate/AffiliateOrdersPage"));
 const AffiliateCommissionsPage = lazy(() => import("./pages/affiliate/AffiliateCommissionsPage"));
+const AffiliateHomePage = lazy(() => import("./pages/affiliate/home"));
 const StoreThemeSettings = lazy(() => import("./pages/StoreThemeSettings"));
 const ThemeStudioPage = lazy(() => import("./pages/ThemeStudioPage"));
 
@@ -83,6 +84,7 @@ import StoreTestPage from "./components/store/StoreTestPage";
 const AdminOrderManagement = lazy(() => import("./pages/AdminOrderManagement"));
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
 const ProfilePage = lazy(() => import("./pages/Profile"));
+const LeaderboardPage = lazy(() => import("./pages/leaderboard"));
 const AboutPage = lazy(() => import("./pages/About"));
 const CreateAdminPage = lazy(() => import("./pages/CreateAdmin"));
 
@@ -105,7 +107,7 @@ const PaymentDashboard = lazy(() => import("./pages/PaymentDashboard"));
 const InvoiceManagement = lazy(() => import("./pages/InvoiceManagement"));
 const PaymentGateways = lazy(() => import("./pages/PaymentGateways"));
 const RefundManagement = lazy(() => import("./pages/RefundManagement"));
-const Inventory = lazy(() => import("./pages/Inventory"));
+const Inventory = lazy(() => import("./pages/inventory"));
 const ExecutiveDashboard = lazy(() => import("./pages/ExecutiveDashboard"));
 const SecurityCenter = lazy(() => import("./pages/SecurityCenter"));
 const SEOManagement = lazy(() => import("./pages/SEOManagement"));
@@ -355,7 +357,12 @@ const App = () => {
                            <ProfilePage />
                          </ProtectedRoute>
                        } />
-                       
+                       <Route path="/leaderboard" element={
+                         <ProtectedRoute>
+                           <LeaderboardPage />
+                         </ProtectedRoute>
+                       } />
+
                        {/* Legacy Affiliate Dashboard Routes - إعادة توجيه للنظام الموحد */}
                        <Route path="/dashboard/*" element={
                          <ProtectedRoute requiredRole={["affiliate", "admin"]}>
@@ -551,21 +558,25 @@ const App = () => {
                       />
                       
                          {/* Affiliate Routes - Redirect to unified dashboard */}
-                         <Route 
-                           path="/affiliate" 
+                         <Route
+                           path="/affiliate"
                            element={
                              <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                               <Navigate to="/dashboard" replace />
+                               <AffiliateHomePage />
                              </ProtectedRoute>
-                           } 
+                           }
                          />
-                         <Route 
-                           path="/affiliate-dashboard" 
+                         <Route
+                           path="/affiliate/home"
                            element={
                              <ProtectedRoute requiredRole={["affiliate", "admin"]}>
-                               <Navigate to="/dashboard" replace />
+                               <AffiliateHomePage />
                              </ProtectedRoute>
-                           } 
+                           }
+                         />
+                         <Route
+                           path="/affiliate-dashboard"
+                           element={<Navigate to="/affiliate" replace />}
                          />
                        
                         {/* Atlantis System */}

@@ -1,12 +1,13 @@
 import React, { createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { useFastAuth } from '@/hooks/useFastAuth';
+import type { FastAuthSignUpArgs } from '@/hooks/useFastAuth';
 
 interface SupabaseAuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName?: string, username?: string) => Promise<{ error: any }>;
+  signUp: (args: FastAuthSignUpArgs) => Promise<{ data?: any; error: any | null }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<{ error: any }>;
 }

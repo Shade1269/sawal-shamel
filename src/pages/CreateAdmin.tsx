@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
+import { useFastAuth } from '@/hooks/useFastAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { getBaseUrl } from '@/utils/domains';
@@ -38,6 +39,7 @@ import { getBaseUrl } from '@/utils/domains';
 const CreateAdmin = () => {
   const navigate = useNavigate();
   const { goToUserHome } = useSmartNavigation();
+  const { profile } = useFastAuth();
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
@@ -111,9 +113,9 @@ const CreateAdmin = () => {
       <div className="w-full max-w-md">
         {/* Back to Home Button */}
         <div className="flex justify-center mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={goToUserHome}
+          <Button
+            variant="ghost"
+            onClick={() => goToUserHome(profile?.role)}
             className="text-primary hover:bg-primary/10 gap-2 bg-white/80 backdrop-blur-sm"
           >
             <Home className="h-4 w-4" />

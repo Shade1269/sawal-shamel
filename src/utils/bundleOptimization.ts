@@ -93,7 +93,7 @@ export class BundleOptimizer {
       'merchant': [
         () => import('@/pages/unified/UnifiedDashboardPage'),
         () => import('@/pages/ProductManagement'),
-        () => import('@/pages/Inventory'),
+        () => import('@/pages/inventory'),
       ],
       'customer': [
         () => import('@/pages/PublicStorefront'),

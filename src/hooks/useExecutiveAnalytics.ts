@@ -46,7 +46,7 @@ export const useExecutiveAnalytics = () => {
     try {
       // Fetch basic metrics
       const [ordersResult, usersResult, productsResult] = await Promise.all([
-        supabase.from('orders').select('total_sar, created_at, customer_phone'),
+        supabase.from('ecommerce_orders').select('total_sar, created_at, customer_phone'),
         supabase.from('profiles').select('id, created_at').eq('is_active', true),
         supabase.from('products').select('id').eq('is_active', true)
       ]);
@@ -115,7 +115,7 @@ export const useExecutiveAnalytics = () => {
   const fetchFinancialMetrics = async () => {
     try {
       const { data: orders, error } = await supabase
-        .from('orders')
+        .from('ecommerce_orders')
         .select('total_sar, created_at, payment_method');
 
       if (error) throw error;
@@ -174,7 +174,7 @@ export const useExecutiveAnalytics = () => {
   const fetchCustomerAnalytics = async () => {
     try {
       const [ordersResult, profilesResult] = await Promise.all([
-        supabase.from('orders').select('customer_phone, customer_name, total_sar, created_at'),
+        supabase.from('ecommerce_orders').select('customer_phone, customer_name, total_sar, created_at'),
         supabase.from('profiles').select('id, created_at, total_earnings')
       ]);
 
@@ -265,7 +265,7 @@ export const useExecutiveAnalytics = () => {
     try {
       const [productsResult, ordersResult, shopsResult] = await Promise.all([
         supabase.from('products').select('id, title, sales_count').eq('is_active', true),
-        supabase.from('orders').select('total_sar, shop_id'),
+        supabase.from('ecommerce_orders').select('total_sar, shop_id'),
         supabase.from('shops').select('id, display_name')
       ]);
 

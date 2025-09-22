@@ -14,7 +14,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import UserProfileDialog from "@/shared/components/UserProfileDialog";
 import UserSettingsMenu from "@/components/UserSettingsMenu";
-import ZohoSetup from "@/components/ZohoSetup";
 import EmkanIntegration from "@/components/EmkanIntegration";
 import { useSupabaseUserData } from "@/hooks/useSupabaseUserData";
 import { supabase } from "@/integrations/supabase/client";
@@ -71,7 +70,7 @@ const Admin = () => {
 const [loading, setLoading] = useState(false);
 const [addingProduct, setAddingProduct] = useState(false);
 
-// Zoho integration admin state
+// Inventory automation admin state
 const [cronLogs, setCronLogs] = useState<any[]>([]);
   
   // Products Management States
@@ -584,13 +583,21 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
       </header>
 
 
-      <section aria-labelledby="zoho-integration-admin">
+      <section aria-labelledby="inventory-integration-admin">
         <Card>
           <CardHeader>
-            <CardTitle id="zoho-integration-admin" className="text-2xl">تكامل Zoho للمنصة</CardTitle>
+            <CardTitle id="inventory-integration-admin" className="text-2xl">نظام المخزون الداخلي</CardTitle>
+            <CardDescription>
+              تم إيقاف تكامل Zoho، وتعمل المنصة الآن على إدارة الحجوزات والحركات عبر الجداول الداخلية والوظائف المخزنة في Supabase.
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <ZohoSetup />
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">
+              تأكد من تطبيق الملف <code className="text-xs bg-muted px-2 py-1 rounded">sql/05_internal_inventory.sql</code> وضبط المتغير <code className="text-xs bg-muted px-2 py-1 rounded">DEFAULT_WAREHOUSE_CODE</code> ليشير إلى المستودع الأساسي.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              بإمكانك مراقبة الحجوزات من جدول <code className="text-xs bg-muted px-2 py-1 rounded">inventory_reservations</code> والحركات الأخيرة من خلال واجهة <code className="text-xs bg-muted px-2 py-1 rounded">/inventory</code> الجديدة.
+            </p>
           </CardContent>
         </Card>
       </section>
@@ -608,7 +615,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <p className="text-sm text-muted-foreground">
-                  آخر 50 عملية تحديث تلقائي لرموز Zoho
+                  آخر 50 عملية تلقائية لنظام المخزون الداخلي
                 </p>
                 <Button 
                   onClick={loadCronLogs} 
@@ -672,7 +679,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
               
               {cronLogs.length > 0 && (
                 <div className="text-sm text-muted-foreground">
-                  عرض {cronLogs.length} من آخر العمليات التلقائية
+                  عرض {cronLogs.length} من آخر العمليات التلقائية لنظام المخزون
                 </div>
               )}
             </div>

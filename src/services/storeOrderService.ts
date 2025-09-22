@@ -1,4 +1,9 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
+
+type PaymentMethod = Database['public']['Enums']['payment_method'];
+type PaymentStatus = Database['public']['Enums']['payment_status'];
+type OrderStatus = Database['public']['Enums']['order_status'];
 
 interface CreateOrderData {
   customerName: string;
@@ -14,23 +19,20 @@ interface CreateOrderData {
   };
 }
 
-interface OrderItem {
-  productId: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-  productTitle: string;
-  productImageUrl?: string;
-}
+const PAYMENT_METHOD_COD: PaymentMethod = 'CASH_ON_DELIVERY';
+const PAYMENT_STATUS_PENDING: PaymentStatus = 'PENDING';
+const ORDER_STATUS_PENDING: OrderStatus = 'PENDING';
+
+const generateOrderNumber = () =>
+  `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
 
 export const storeOrderService = {
   async createOrderFromCart(
-    cartId: string, 
-    storeId: string, 
+    cartId: string,
+    storeId: string,
     orderData: CreateOrderData
   ) {
     try {
-      // Get cart items
       const { data: cartItems, error: cartError } = await supabase
         .from('cart_items')
         .select(`
@@ -52,104 +54,124 @@ export const storeOrderService = {
         throw new Error('السلة فارغة');
       }
 
-      // Calculate total
       const subtotal = cartItems.reduce((sum, item) => sum + item.total_price_sar, 0);
-      const shipping = 25; // Default shipping
-      const total = subtotal + shipping;
+      const shipping = 25;
+      const tax = 0;
+      const total = subtotal + shipping + tax;
 
-      // Get session ID for tracking
       const sessionId = localStorage.getItem(`store_session_${storeId}`);
+      const orderNumber = generateOrderNumber();
 
-      // Create simple order first (simpler structure)
       const { data: order, error: orderError } = await supabase
-        .from('simple_orders')
+        .from('ecommerce_orders')
         .insert({
+          shop_id: storeId,
+          affiliate_store_id: storeId,
+          buyer_session_id: sessionId,
           customer_name: orderData.customerName,
           customer_phone: orderData.customerPhone,
-          customer_email: orderData.customerEmail,
-          shipping_address: orderData.shippingAddress,
-          total_amount_sar: total,
-          affiliate_store_id: storeId,
-          session_id: sessionId,
-          order_status: 'pending'
+          customer_email: orderData.customerEmail || null,
+          shipping_address: {
+            ...orderData.shippingAddress,
+            phone: orderData.customerPhone,
+          },
+          subtotal_sar: subtotal,
+          shipping_sar: shipping,
+          tax_sar: tax,
+          total_sar: total,
+          payment_method: PAYMENT_METHOD_COD,
+          payment_status: PAYMENT_STATUS_PENDING,
+          status: ORDER_STATUS_PENDING,
+          order_number: orderNumber,
         })
-        .select()
+        .select('id, order_number')
         .single();
 
       if (orderError) throw orderError;
 
-      // Create order items
       const orderItems = cartItems.map(item => ({
         order_id: order.id,
         product_id: item.product_id,
         product_title: (item.products as any)?.title || 'منتج',
-        product_image_url: (item.products as any)?.image_urls?.[0],
+        product_image_url: (item.products as any)?.image_urls?.[0] || null,
         quantity: item.quantity,
         unit_price_sar: item.unit_price_sar,
-        total_price_sar: item.total_price_sar
+        total_price_sar: item.total_price_sar,
       }));
 
       const { error: itemsError } = await supabase
-        .from('simple_order_items')
+        .from('ecommerce_order_items')
         .insert(orderItems);
 
       if (itemsError) throw itemsError;
 
-      // Clear cart
+      await supabase
+        .from('ecommerce_payment_transactions')
+        .insert({
+          order_id: order.id,
+          transaction_id: `COD-${order.id.slice(-6)}`,
+          payment_method: PAYMENT_METHOD_COD,
+          payment_status: PAYMENT_STATUS_PENDING,
+          amount_sar: total,
+          currency: 'SAR',
+          gateway_name: 'Cash on Delivery',
+        });
+
       await supabase
         .from('cart_items')
         .delete()
         .eq('cart_id', cartId);
 
-      // Update store customer tracking (simplified)
       await this.updateStoreCustomerSimple(storeId, orderData, total);
 
       return {
         success: true,
         orderId: order.id,
-        orderNumber: `ORD-${order.id.slice(-8)}`
+        orderNumber: order.order_number || orderNumber,
       };
-
     } catch (error) {
       console.error('Error creating order:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'خطأ في إنشاء الطلب'
+        error: error instanceof Error ? error.message : 'خطأ في إنشاء الطلب',
       };
     }
   },
 
   async updateStoreCustomerSimple(
-    storeId: string, 
-    customerData: CreateOrderData, 
+    storeId: string,
+    customerData: CreateOrderData,
     orderTotal: number
   ) {
     try {
-      // This is a simplified version - we'll track customers in a simple way
-      // For now, we'll just log the customer interaction
-      console.log('Customer order:', {
+      console.log('Customer order snapshot:', {
         storeId,
         phone: customerData.customerPhone,
         name: customerData.customerName,
-        total: orderTotal
+        total: orderTotal,
       });
     } catch (error) {
-      console.error('Error updating store customer:', error);
+      console.error('Error updating store customer snapshot:', error);
     }
   },
 
-  async getStoreOrders(storeId: string, sessionId: string) {
+  async getStoreOrders(storeId: string, sessionId: string | null) {
     try {
+      if (!sessionId) {
+        return { success: true, orders: [] };
+      }
+
       const { data: orders, error } = await supabase
-        .from('simple_orders')
+        .from('ecommerce_orders')
         .select(`
           id,
+          order_number,
           customer_name,
           customer_phone,
-          order_status,
-          total_amount_sar,
+          status,
+          total_sar,
           created_at,
-          simple_order_items (
+          ecommerce_order_items (
             id,
             product_title,
             product_image_url,
@@ -159,22 +181,33 @@ export const storeOrderService = {
           )
         `)
         .eq('affiliate_store_id', storeId)
-        .eq('session_id', sessionId)
+        .eq('buyer_session_id', sessionId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
+      const formattedOrders = (orders || []).map(order => ({
+        id: order.id,
+        order_number: order.order_number,
+        customer_name: order.customer_name,
+        customer_phone: order.customer_phone,
+        status: order.status,
+        total_sar: order.total_sar,
+        created_at: order.created_at,
+        items: order.ecommerce_order_items || [],
+      }));
+
       return {
         success: true,
-        orders: orders || []
+        orders: formattedOrders,
       };
     } catch (error) {
       console.error('Error fetching store orders:', error);
       return {
         success: false,
         error: 'خطأ في جلب الطلبات',
-        orders: []
+        orders: [],
       };
     }
-  }
+  },
 };
