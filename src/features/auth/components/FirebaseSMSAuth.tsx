@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +16,8 @@ import {
 import { getFirebaseAuth } from '@/lib/firebase';
 import { saveUserToFirestore, getUserFromFirestore, updateUserInFirestore } from '@/lib/firestore';
 import UsernameRegistration from './UsernameRegistration';
+import { createRecaptchaManager } from '../utils/recaptchaManager';
+import type { RecaptchaManager } from '../utils/recaptchaManager';
 
 const FirebaseSMSAuth = () => {
   const [step, setStep] = useState<'phone' | 'verify' | 'username'>('phone');
@@ -27,46 +29,76 @@ const FirebaseSMSAuth = () => {
   const [firebaseUser, setFirebaseUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
-  const [recaptchaVerifier, setRecaptchaVerifier] = useState<RecaptchaVerifier | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // إعداد reCAPTCHA
-  useEffect(() => {
-    const initRecaptcha = async () => {
-      try {
-        const auth = await getFirebaseAuth();
-        
-        // إنشاء RecaptchaVerifier
-        const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-          'size': 'invisible',
-          'callback': () => {
-            console.log('reCAPTCHA solved');
-          },
-          'expired-callback': () => {
-            console.log('reCAPTCHA expired');
-            toast({
-              title: 'انتهت صلاحية التحقق',
-              description: 'يرجى المحاولة مرة أخرى',
-              variant: 'destructive'
-            });
-          }
-        });
-        
-        setRecaptchaVerifier(verifier);
-      } catch (error) {
-        console.error('Error initializing reCAPTCHA:', error);
-      }
-    };
+  const createVerifier = useCallback(async () => {
+    const auth = await getFirebaseAuth();
 
-    initRecaptcha();
+    return new RecaptchaVerifier(auth, 'recaptcha-container', {
+      'size': 'invisible',
+      'callback': () => {
+        console.log('reCAPTCHA solved');
+      },
+      'expired-callback': () => {
+        console.log('reCAPTCHA expired');
+        toast({
+          title: 'انتهت صلاحية التحقق',
+          description: 'يرجى المحاولة مرة أخرى',
+          variant: 'destructive'
+        });
+      }
+    });
+  }, [toast]);
+
+  const resetRecaptchaContainer = useCallback(async () => {
+    const recaptchaContainer = document.getElementById('recaptcha-container');
+    if (recaptchaContainer) {
+      recaptchaContainer.innerHTML = '';
+    }
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }, []);
+
+  const recaptchaManagerRef = useRef<RecaptchaManager<RecaptchaVerifier> | null>(null);
+
+  const createRecaptchaManagerInstance = useCallback(() => {
+    return createRecaptchaManager<RecaptchaVerifier>({
+      createInstance: createVerifier,
+      resetContainer: resetRecaptchaContainer,
+      onClearError: (error) => console.log('Error clearing reCAPTCHA:', error),
+    });
+  }, [createVerifier, resetRecaptchaContainer]);
+
+  const initializeRecaptcha = useCallback(async (forceReset = false) => {
+    if (!recaptchaManagerRef.current) {
+      recaptchaManagerRef.current = createRecaptchaManagerInstance();
+    }
+
+    try {
+      return await recaptchaManagerRef.current.initialize(forceReset);
+    } catch (error) {
+      console.error('Error initializing reCAPTCHA:', error);
+      throw error;
+    }
+  }, [createRecaptchaManagerInstance]);
+
+  useEffect(() => {
+    const manager = createRecaptchaManagerInstance();
+    recaptchaManagerRef.current = manager;
+
+    manager.initialize().catch(error => {
+      if (error) {
+        console.error('Error during initial reCAPTCHA setup:', error);
+      }
+    });
 
     return () => {
-      if (recaptchaVerifier) {
-        recaptchaVerifier.clear();
+      manager.cleanup();
+      if (recaptchaManagerRef.current === manager) {
+        recaptchaManagerRef.current = null;
       }
     };
-  }, []);
+  }, [createRecaptchaManagerInstance]);
 
   const sanitizePhone = (raw: string) => raw.replace(/\s|-/g, '');
 
@@ -84,16 +116,17 @@ const FirebaseSMSAuth = () => {
       return;
     }
 
-    if (!recaptchaVerifier) {
-      toast({ title: 'خطأ', description: 'لم يتم تهيئة نظام التحقق بعد', variant: 'destructive' });
-      return;
-    }
-
     setIsLoading(true);
     try {
       const auth = await getFirebaseAuth();
-      const phone = fullPhone();
-      
+      const verifier = await initializeRecaptcha();
+
+      if (!verifier) {
+        toast({ title: 'خطأ', description: 'لم يتم تهيئة نظام التحقق بعد', variant: 'destructive' });
+        setIsLoading(false);
+        return;
+      }
+
       // للتسجيل الجديد - التحقق من عدم وجود المستخدم
       if (mode === 'signup') {
         const userExists = await checkUserExists(phone);
@@ -140,7 +173,7 @@ const FirebaseSMSAuth = () => {
         }
       }
 
-      const confirmation = await signInWithPhoneNumber(auth, phone, recaptchaVerifier);
+      const confirmation = await signInWithPhoneNumber(auth, phone, verifier);
       setConfirmationResult(confirmation);
       setStep('verify');
       
@@ -163,14 +196,7 @@ const FirebaseSMSAuth = () => {
       toast({ title: 'خطأ في الإرسال', description: msg, variant: 'destructive' });
       
       // إعادة تعيين reCAPTCHA
-      if (recaptchaVerifier) {
-        recaptchaVerifier.clear();
-        const auth = await getFirebaseAuth();
-        const newVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-          'size': 'invisible'
-        });
-        setRecaptchaVerifier(newVerifier);
-      }
+      await initializeRecaptcha(true);
     } finally {
       setIsLoading(false);
     }
@@ -365,46 +391,18 @@ const FirebaseSMSAuth = () => {
 
   const handleResendOTP = async () => {
     setIsLoading(true);
-    
+
     try {
-      // إعادة تعيين reCAPTCHA تماماً
-      if (recaptchaVerifier) {
-        try {
-          recaptchaVerifier.clear();
-        } catch (error) {
-          console.log('reCAPTCHA already cleared');
-        }
-        setRecaptchaVerifier(null);
-      }
-
-      // إزالة وإعادة إنشاء عنصر reCAPTCHA
-      const recaptchaContainer = document.getElementById('recaptcha-container');
-      if (recaptchaContainer) {
-        recaptchaContainer.innerHTML = '';
-      }
-
-      // انتظار قصير لضمان التنظيف
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // إنشاء reCAPTCHA جديد
+      // إعادة تعيين reCAPTCHA تماماً وإنشاء مثيل جديد
+      const verifier = await initializeRecaptcha(true);
       const auth = await getFirebaseAuth();
-      const newVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        'size': 'invisible',
-        'callback': () => {
-          console.log('reCAPTCHA solved for resend');
-        },
-        'expired-callback': () => {
-          console.log('reCAPTCHA expired for resend');
-          toast({
-            title: 'انتهت صلاحية التحقق',
-            description: 'يرجى المحاولة مرة أخرى',
-            variant: 'destructive'
-          });
-        }
-      });
-      
-      setRecaptchaVerifier(newVerifier);
-      
+
+      if (!verifier) {
+        toast({ title: 'خطأ', description: 'لم يتم تهيئة نظام التحقق بعد', variant: 'destructive' });
+        setIsLoading(false);
+        return;
+      }
+
       // إرسال رمز جديد
       const phone = fullPhone();
       if (!phone || phone.length < 7) {
@@ -412,9 +410,9 @@ const FirebaseSMSAuth = () => {
         return;
       }
 
-      const confirmation = await signInWithPhoneNumber(auth, phone, newVerifier);
+      const confirmation = await signInWithPhoneNumber(auth, phone, verifier);
       setConfirmationResult(confirmation);
-      
+
       toast({
         title: 'تم الإرسال',
         description: `تم إرسال رمز التحقق الجديد إلى ${phone}`,

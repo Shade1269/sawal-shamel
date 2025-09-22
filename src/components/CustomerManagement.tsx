@@ -24,6 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
+import { useFastAuth } from '@/hooks/useFastAuth';
 
 interface StoreCustomer {
   id: string;
@@ -62,6 +63,7 @@ interface CustomerManagementProps {
 export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId }) => {
   const { toast } = useToast();
   const { goToUserHome } = useSmartNavigation();
+  const { profile } = useFastAuth();
   
   const [customers, setCustomers] = useState<StoreCustomer[]>([]);
   const [stats, setStats] = useState<CustomerStats>({
@@ -212,7 +214,7 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
         </div>
         
         <div className="flex flex-wrap items-center gap-2">
-          <Button onClick={goToUserHome} variant="outline" size="sm" className="text-xs sm:text-sm">
+          <Button onClick={() => goToUserHome(profile?.role)} variant="outline" size="sm" className="text-xs sm:text-sm">
             <Home className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             <span className="hidden sm:inline">الرئيسية</span>
             <span className="sm:hidden">الرئيسية</span>

@@ -1,0 +1,21 @@
+{
+  "id": "default",
+  "name": "Default Horizon",
+  "colors": {
+    "bg": "#0d1117",
+    "fg": "#f0f6fc",
+    "primary": "#58a6ff"
+  },
+  "three": {
+    "camera": {
+      "position": [0, 1.25, 4]
+    },
+    "effects": {
+      "bloom": false
+    },
+    "model": {
+      "path": "/assets/three/default-scene.glb"
+    },
+    "toneMapping": "ACESFilmic"
+  }
+}
