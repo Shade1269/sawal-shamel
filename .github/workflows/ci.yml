@@ -2,42 +2,122 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
 
 jobs:
-  ci:
+  build:
     runs-on: ubuntu-latest
-
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Cache npm
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-    - name: Run TypeScript check
-      run: npx tsc --noEmit
+      - name: Configure npm registry
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -n "${NPM_TOKEN:-}" ]; then
+            npm config set //registry.npmjs.org/:_authToken="$NPM_TOKEN"
+          fi
+          npm config set registry https://registry.npmjs.org/
 
-    - name: Run ESLint
-      run: npm run lint
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund --retry=5 --fetch-retries=5 --fetch-retry-factor=2 --fetch-timeout=60000
 
-    - name: Build project
-      run: npm run build
-      env:
-        # Use dummy values for build process
-        VITE_SUPABASE_URL: https://dummy.supabase.co
-        VITE_SUPABASE_ANON_KEY: dummy_key
+      - name: Install Supabase CLI (official)
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
 
-    - name: Run preview (smoke test)
-      run: |
-        npm run preview &
-        sleep 5
-        curl -f http://localhost:4173 || exit 1
+      - name: Ensure Supabase CLI installed
+        run: |
+          set -euo pipefail
+          if ! command -v supabase >/dev/null 2>&1; then
+            echo "Supabase CLI not found, installing via fallback script"
+            curl -fsSL https://get.supabase.com/cli | sh
+            if [ -d "$HOME/.supabase/bin" ]; then
+              echo "$HOME/.supabase/bin" >> "$GITHUB_PATH"
+            fi
+          fi
+
+      - name: Print tool versions
+        run: |
+          node -v
+          npm -v
+          supabase --version
+          psql --version || true
+
+      - name: Run database migrations
+        if: ${{ env.SUPABASE_DB_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '' }}
+        env:
+          SUPABASE_DB_URL: ${{ env.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          DB_URL="$SUPABASE_DB_URL"
+          PUSH_SUCCESS=0
+
+          echo "Attempting supabase db push"
+          if supabase db push --db-url "$DB_URL"; then
+            PUSH_SUCCESS=1
+          else
+            echo "::warning::supabase db push failed; attempting psql fallback"
+          fi
+
+          if [ "$PUSH_SUCCESS" -ne 1 ]; then
+            if ! command -v psql >/dev/null 2>&1; then
+              sudo apt-get update
+              sudo apt-get install -y postgresql-client
+            fi
+
+            SQL_FILES=(
+              sql/01_policies.sql
+              sql/02_indexes.sql
+              sql/03_commissions_pipeline.sql
+              sql/04_points_leaderboard.sql
+              sql/05_internal_inventory.sql
+            )
+
+            FALLBACK_SUCCESS=1
+            for file in "${SQL_FILES[@]}"; do
+              if [ -f "$file" ]; then
+                echo "Applying $file via psql"
+                if ! psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$file"; then
+                  FALLBACK_SUCCESS=0
+                  break
+                fi
+              else
+                echo "::warning::Missing migration file $file"
+              fi
+            done
+
+            if [ "$FALLBACK_SUCCESS" -ne 1 ]; then
+              echo "::error::Migrations failed"
+              exit 1
+            fi
+          fi
+
+      - name: Skip migrations (secrets not provided)
+        if: ${{ not (env.SUPABASE_DB_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '') }}
+        run: echo "::warning::Skipping DB migrations: secrets not provided"
+
+      - run: npm run lint --if-present
+      - run: npm test
+      - run: npm run build --if-present

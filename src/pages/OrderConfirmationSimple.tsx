@@ -23,14 +23,17 @@ import { toast } from 'sonner';
 
 interface OrderDetails {
   id: string;
+  order_number: string;
   customer_name: string;
-  customer_email?: string;
+  customer_email?: string | null;
   customer_phone: string;
   shipping_address: any;
-  total_amount_sar: number;
+  subtotal_sar: number;
+  shipping_sar: number;
+  total_sar: number;
   payment_status: string;
   payment_method: string;
-  order_status: string;
+  status: string;
   created_at: string;
   items: Array<{
     id: string;
@@ -58,24 +61,45 @@ const OrderConfirmationSimple = () => {
     try {
       // جلب تفاصيل الطلب
       const { data: orderData, error: orderError } = await supabase
-        .from('simple_orders')
-        .select('*')
+        .from('ecommerce_orders')
+        .select(`
+          id,
+          order_number,
+          customer_name,
+          customer_email,
+          customer_phone,
+          shipping_address,
+          subtotal_sar,
+          shipping_sar,
+          total_sar,
+          payment_status,
+          payment_method,
+          status,
+          created_at,
+          ecommerce_order_items (
+            id,
+            product_title,
+            product_image_url,
+            quantity,
+            unit_price_sar,
+            total_price_sar
+          )
+        `)
         .eq('id', orderId)
         .maybeSingle();
 
       if (orderError) throw orderError;
 
-      // جلب عناصر الطلب
-      const { data: itemsData, error: itemsError } = await supabase
-        .from('simple_order_items')
-        .select('*')
-        .eq('order_id', orderId);
+      if (!orderData) {
+        setOrder(null);
+        return;
+      }
 
-      if (itemsError) throw itemsError;
+      const { ecommerce_order_items, ...rest } = orderData as any;
 
       setOrder({
-        ...orderData,
-        items: itemsData || []
+        ...(rest as OrderDetails),
+        items: ecommerce_order_items || []
       });
 
     } catch (error) {
@@ -88,7 +112,7 @@ const OrderConfirmationSimple = () => {
 
   const copyOrderNumber = () => {
     if (order) {
-      navigator.clipboard.writeText(order.id);
+      navigator.clipboard.writeText(order.order_number || order.id);
       toast.success('تم نسخ رقم الطلب');
     }
   };
@@ -97,7 +121,7 @@ const OrderConfirmationSimple = () => {
     if (navigator.share) {
       navigator.share({
         title: 'تفاصيل الطلب',
-        text: `رقم الطلب: ${order?.id}`,
+        text: `رقم الطلب: ${order?.order_number || order?.id}`,
         url: window.location.href
       });
     } else {
@@ -229,7 +253,7 @@ const OrderConfirmationSimple = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-muted-foreground">رقم الطلب</p>
-                      <p className="font-mono font-semibold">{order.id.slice(0, 8).toUpperCase()}</p>
+                      <p className="font-mono font-semibold">{order.order_number || order.id.slice(0, 8).toUpperCase()}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">تاريخ الطلب</p>
@@ -243,8 +267,8 @@ const OrderConfirmationSimple = () => {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">حالة الطلب</p>
-                      <Badge className={getStatusColor(order.order_status)}>
-                        {getStatusText(order.order_status)}
+                      <Badge className={getStatusColor(order.status)}>
+                        {getStatusText(order.status)}
                       </Badge>
                     </div>
                     <div>
@@ -341,16 +365,16 @@ const OrderConfirmationSimple = () => {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>المجموع الفرعي:</span>
-                      <span>{(order.total_amount_sar - 15)} ريال</span>
+                      <span>{order.subtotal_sar.toLocaleString()} ريال</span>
                     </div>
                     <div className="flex justify-between">
                       <span>رسوم الشحن:</span>
-                      <span>15 ريال</span>
+                      <span>{order.shipping_sar.toLocaleString()} ريال</span>
                     </div>
                     <Separator />
                     <div className="flex justify-between font-semibold text-lg">
                       <span>المجموع الكلي:</span>
-                      <span className="text-primary">{order.total_amount_sar} ريال</span>
+                      <span className="text-primary">{order.total_sar.toLocaleString()} ريال</span>
                     </div>
                   </div>
 
@@ -363,7 +387,7 @@ const OrderConfirmationSimple = () => {
                       <span className="font-medium text-amber-800">الدفع عند الاستلام</span>
                     </div>
                     <p className="text-sm text-amber-700">
-                      ستدفع <strong>{order.total_amount_sar} ريال</strong> عند وصول الطلب
+                      ستدفع <strong>{order.total_sar.toLocaleString()} ريال</strong> عند وصول الطلب
                     </p>
                   </div>
 

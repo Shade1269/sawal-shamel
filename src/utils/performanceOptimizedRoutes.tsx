@@ -63,7 +63,7 @@ export const OptimizedRoutes = {
   ),
   
   Inventory: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/Inventory'),
+    () => import('@/pages/inventory'),
     'inventory',
     'medium'
   ),

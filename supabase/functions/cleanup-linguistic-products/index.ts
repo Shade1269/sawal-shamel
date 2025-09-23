@@ -125,17 +125,6 @@ serve(async (req) => {
       // Continue anyway as this might not exist for all products
     }
 
-    // Delete Zoho product mappings
-    const { error: mappingDeleteError } = await supabase
-      .from('zoho_product_mapping')
-      .delete()
-      .in('local_product_id', productIdsToDelete);
-
-    if (mappingDeleteError) {
-      console.error('Error deleting Zoho mappings:', mappingDeleteError);
-      // Continue anyway as this might not exist for all products
-    }
-
     // Finally, delete the products themselves
     const { error: productsDeleteError } = await supabase
       .from('products')

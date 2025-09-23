@@ -3,17 +3,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { 
-  CheckCircle2, 
-  XCircle, 
-  AlertTriangle, 
-  RefreshCw, 
-  Database, 
-  MessageSquare, 
-  Settings, 
+import {
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  RefreshCw,
+  Database,
+  MessageSquare,
   Wifi,
   Shield,
-  CreditCard
+  CreditCard,
+  Package
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -89,50 +89,49 @@ export const IntegrationHealthChecker: React.FC = () => {
     }
   };
 
-  const checkZohoIntegration = async (): Promise<IntegrationStatus> => {
+  const checkInternalInventory = async (): Promise<IntegrationStatus> => {
     try {
-      // البحث في جدول zoho_sync_settings بدلاً من zoho_integrations
-      const { data, error } = await supabase
-        .from('zoho_sync_settings')
-        .select('*')
+      const { data: warehouse, error } = await supabase
+        .from('warehouses')
+        .select('id, code')
         .limit(1)
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
         return {
-          name: 'Zoho Integration',
+          name: 'Internal Inventory',
           status: 'error',
-          message: 'خطأ في الاتصال مع Zoho',
+          message: 'خطأ في الاتصال بجداول المستودعات',
           lastChecked: new Date(),
-          icon: <Settings className="h-4 w-4" />,
+          icon: <Package className="h-4 w-4" />,
           details: error.message
         };
       }
 
-      if (!data) {
+      if (!warehouse) {
         return {
-          name: 'Zoho Integration',
+          name: 'Internal Inventory',
           status: 'warning',
-          message: 'لم يتم إعداد تكامل Zoho',
+          message: 'لم يتم إنشاء أي مستودع بعد. استخدم DEFAULT_WAREHOUSE_CODE لإنشاء مستودع افتراضي.',
           lastChecked: new Date(),
-          icon: <Settings className="h-4 w-4" />
+          icon: <Package className="h-4 w-4" />
         };
       }
 
       return {
-        name: 'Zoho Integration',
+        name: 'Internal Inventory',
         status: 'healthy',
-        message: 'متصل ومُعد بشكل صحيح',
+        message: `المستودع الافتراضي (${warehouse.code}) جاهز`,
         lastChecked: new Date(),
-        icon: <Settings className="h-4 w-4" />
+        icon: <Package className="h-4 w-4" />
       };
     } catch (error: any) {
       return {
-        name: 'Zoho Integration',
+        name: 'Internal Inventory',
         status: 'error',
-        message: 'خطأ في فحص Zoho',
+        message: 'خطأ أثناء فحص نظام المخزون الداخلي',
         lastChecked: new Date(),
-        icon: <Settings className="h-4 w-4" />,
+        icon: <Package className="h-4 w-4" />,
         details: error.message
       };
     }
@@ -223,7 +222,7 @@ export const IntegrationHealthChecker: React.FC = () => {
       const checks = await Promise.all([
         checkSupabaseConnection(),
         checkAuthSystem(),
-        checkZohoIntegration(),
+        checkInternalInventory(),
         checkSMSService(),
         checkPaymentSystems()
       ]);

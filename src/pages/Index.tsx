@@ -14,6 +14,15 @@ import { MessageCircle, Users, Hash, Package, LogOut, User, Store, Moon, Sun, La
 import { useNavigate } from 'react-router-dom';
 
 import { useFastAuth } from '@/hooks/useFastAuth';
+import { useTheme } from '@/hooks/useTheme';
+import ThemeSwitcher from '@/components/ThemeSwitcher';
+import { Button as ThemeButton } from '@/ui/Button';
+import { Card as ThemeCard } from '@/ui/Card';
+import { Input as ThemeInput } from '@/ui/Input';
+import { Badge as ThemeBadge } from '@/ui/Badge';
+import { Hero3D as DefaultHero3D } from '@/themes/default/Hero3D';
+import { Hero3D as LuxuryHero3D } from '@/themes/luxury/Hero3D';
+import { Hero3D as DamascusHero3D } from '@/themes/damascus/Hero3D';
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -22,6 +31,15 @@ const Index = () => {
   const { user, profile, signOut, isAuthenticated } = useFastAuth();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const { language, toggleLanguage, t } = useLanguage();
+  const { themeId } = useTheme('default');
+
+  const heroMap = {
+    default: DefaultHero3D,
+    luxury: LuxuryHero3D,
+    damascus: DamascusHero3D,
+  } as const;
+
+  const ActiveHero3D = heroMap[themeId as keyof typeof heroMap] ?? DefaultHero3D;
 
   const currentUser = user;
   
@@ -135,6 +153,45 @@ const Index = () => {
       )}
       
       <div className="container mx-auto px-4 py-16 relative z-10">
+        <div className="mb-12">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">نظام الثيمات</h2>
+              <p className="text-sm text-muted-foreground">
+                جرّب العناصر الأساسية لكل ثيم ولاحظ تأثير تغيير الألوان والهوية البصرية.
+              </p>
+            </div>
+            <ThemeSwitcher />
+          </div>
+          <div className="mt-6 grid gap-6 md:grid-cols-3">
+            <ThemeCard>
+              <h3 className="text-base font-semibold mb-3 text-foreground">الأزرار</h3>
+              <div className="flex flex-wrap gap-3">
+                <ThemeButton size="sm">إجراء سريع</ThemeButton>
+                <ThemeButton variant="outline">إجراء ثانوي</ThemeButton>
+                <ThemeButton variant="ghost">إجراء خفي</ThemeButton>
+              </div>
+            </ThemeCard>
+            <ThemeCard>
+              <h3 className="text-base font-semibold mb-3 text-foreground">حقول الإدخال</h3>
+              <ThemeInput placeholder="أدخل بريدك الإلكتروني" />
+              <ThemeInput placeholder="تنبيه للتحقق" invalid className="mt-3" />
+            </ThemeCard>
+            <ThemeCard>
+              <h3 className="text-base font-semibold mb-3 text-foreground">الشارات</h3>
+              <div className="flex flex-wrap gap-2">
+                <ThemeBadge>أساسي</ThemeBadge>
+                <ThemeBadge variant="success">نجاح</ThemeBadge>
+                <ThemeBadge variant="warning">تحذير</ThemeBadge>
+                <ThemeBadge variant="danger">خطر</ThemeBadge>
+                <ThemeBadge variant="muted">هادئ</ThemeBadge>
+              </div>
+            </ThemeCard>
+          </div>
+        </div>
+        <div className="mb-16">
+          <ActiveHero3D />
+        </div>
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-6">
             <div className="bg-gradient-persian px-4 py-2 rounded-full text-white text-sm font-medium shadow-glow animate-pulse">

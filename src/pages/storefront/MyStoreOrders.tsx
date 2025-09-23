@@ -40,12 +40,13 @@ interface OrderItem {
 
 interface Order {
   id: string;
+  order_number?: string;
   customer_name: string;
   customer_phone: string;
-  order_status: string;
-  total_amount_sar: number;
+  status: string;
+  total_sar: number;
   created_at: string;
-  simple_order_items: OrderItem[];
+  items: OrderItem[];
 }
 
 const getStatusBadgeVariant = (status: string) => {
@@ -187,7 +188,7 @@ export const MyStoreOrders: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-lg">
-                    طلب #{order.id.slice(-8)}
+                    {order.order_number ? `طلب ${order.order_number}` : `طلب #${order.id.slice(-8)}`}
                   </CardTitle>
                   <p className="text-sm text-muted-foreground">
                     {new Date(order.created_at).toLocaleDateString('ar-SA', {
@@ -200,11 +201,11 @@ export const MyStoreOrders: React.FC = () => {
                   </p>
                 </div>
                 <div className="text-right">
-                  <Badge variant={getStatusBadgeVariant(order.order_status)}>
-                    {getStatusText(order.order_status)}
+                  <Badge variant={getStatusBadgeVariant(order.status)}>
+                    {getStatusText(order.status)}
                   </Badge>
                   <p className="text-lg font-semibold mt-1">
-                    {order.total_amount_sar} ر.س
+                    {order.total_sar} ر.س
                   </p>
                 </div>
               </div>
@@ -214,7 +215,7 @@ export const MyStoreOrders: React.FC = () => {
               {/* Order Items */}
               <div className="space-y-3">
                 <h4 className="font-medium text-sm">المنتجات:</h4>
-                {order.simple_order_items.map((item) => (
+                {order.items.map((item) => (
                   <div key={item.id} className="flex gap-3 p-3 bg-muted/50 rounded-lg">
                     {item.product_image_url && (
                       <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
@@ -258,7 +259,7 @@ export const MyStoreOrders: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              {order.order_status.toLowerCase() === 'pending' && (
+              {order.status.toLowerCase() === 'pending' && (
                 <div className="flex gap-2 pt-2">
                   <Button
                     variant="outline"
@@ -273,11 +274,11 @@ export const MyStoreOrders: React.FC = () => {
                 </div>
               )}
 
-              {(order.order_status.toLowerCase() === 'shipped' || 
-                order.order_status.toLowerCase() === 'delivered') && (
+              {(order.status.toLowerCase() === 'shipped' ||
+                order.status.toLowerCase() === 'delivered') && (
                 <div className="bg-green-50 dark:bg-green-950 p-3 rounded-lg">
                   <p className="text-sm text-green-700 dark:text-green-300">
-                    {order.order_status.toLowerCase() === 'delivered' 
+                    {order.status.toLowerCase() === 'delivered'
                       ? '✅ تم تسليم طلبك بنجاح!'
                       : '🚚 طلبك في الطريق إليك'
                     }

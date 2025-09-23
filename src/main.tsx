@@ -4,6 +4,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import App from './App.tsx'
 import './index.css'
 import { initializePerformanceOptimization } from './utils/bundleOptimization'
+import { ThemeProvider } from './components/ThemeProvider'
 
 // Register service worker for performance optimization
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
@@ -24,7 +25,9 @@ initializePerformanceOptimization();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <HelmetProvider>
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </HelmetProvider>
   </StrictMode>
 );

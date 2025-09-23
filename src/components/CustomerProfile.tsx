@@ -30,6 +30,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
+import { useFastAuth } from '@/hooks/useFastAuth';
 
 interface CustomerAddress {
   id: string;
@@ -58,6 +59,7 @@ export const CustomerProfile: React.FC = () => {
   const { customer, updateCustomerProfile, signOut, isLoading } = useCustomerAuth();
   const { toast } = useToast();
   const { goToUserHome } = useSmartNavigation();
+  const { profile } = useFastAuth();
   
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState({
@@ -101,12 +103,13 @@ export const CustomerProfile: React.FC = () => {
 
     const fetchOrders = async () => {
       try {
-        // البحث في جداول الطلبات المختلفة
-        const { data: simpleOrders, error: simpleError } = await supabase
-          .from('simple_orders')
+        const { data: ecommerceOrders, error: ecommerceError } = await supabase
+          .from('ecommerce_orders')
           .select(`
             id,
-            total_amount_sar,
+            order_number,
+            total_sar,
+            status,
             created_at,
             affiliate_stores (
               store_name
@@ -116,13 +119,13 @@ export const CustomerProfile: React.FC = () => {
           .order('created_at', { ascending: false })
           .limit(10);
 
-        if (simpleError) throw simpleError;
+        if (ecommerceError) throw ecommerceError;
 
-        const formattedOrders = simpleOrders?.map(order => ({
+        const formattedOrders = ecommerceOrders?.map(order => ({
           id: order.id,
-          order_number: `ORD-${order.id.slice(-8)}`,
-          status: 'مكتمل',
-          total_sar: order.total_amount_sar,
+          order_number: order.order_number,
+          status: order.status,
+          total_sar: order.total_sar,
           created_at: order.created_at,
           store_name: order.affiliate_stores?.store_name
         })) || [];
@@ -202,7 +205,7 @@ export const CustomerProfile: React.FC = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={goToUserHome}
+                onClick={() => goToUserHome(profile?.role)}
                 disabled={isLoading}
                 className="text-xs sm:text-sm"
               >

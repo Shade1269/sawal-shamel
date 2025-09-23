@@ -121,7 +121,7 @@ const AdminAnalytics = () => {
 
       // Fetch orders data  
       const { data: orders } = await supabase
-        .from('orders')
+        .from('ecommerce_orders')
         .select('total_sar, status, created_at, customer_name');
 
       // Fetch products data
