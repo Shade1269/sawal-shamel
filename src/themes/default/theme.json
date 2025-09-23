@@ -4,7 +4,6 @@
   "colors": {
     "bg": "#0d1117",
     "fg": "#f0f6fc",
-
     "primary": "#58a6ff",
     "primaryFg": "#04121f",
     "secondary": "#1f6feb",
@@ -76,24 +75,7 @@
       "radius": "lg",
       "shadow": "0 8px 24px rgba(0, 0, 0, 0.18)"
     },
-    "input": {
-      "radius": "md"
-    },
-    "badge": {
-      "radius": "sm"
-    }
-    "primary": "#58a6ff"
-  },
-  "three": {
-    "camera": {
-      "position": [0, 1.25, 4]
-    },
-    "effects": {
-      "bloom": false
-    },
-    "model": {
-      "path": "/assets/three/default-scene.glb"
-    },
-    "toneMapping": "ACESFilmic"
+    "input": { "radius": "md" },
+    "badge": { "radius": "sm" }
   }
 }

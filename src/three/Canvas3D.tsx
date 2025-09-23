@@ -1,47 +1,33 @@
-
-import React, { Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
-
-export function Canvas3D(props) {
-  const {
-    children,
-    fallback = null,
-    containerProps = {},
-    CanvasComponent = Canvas,
-    ...canvasProps
-  } = props ?? {};
-  const { className, style, ...restContainerProps } = containerProps;
-
-  return React.createElement(
-    "div",
-    {
-      className,
-      style: {
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        ...(style ?? {}),
-      },
-      ...restContainerProps,
-    },
-    React.createElement(
-      CanvasComponent,
-      canvasProps,
-      children
-        ? React.createElement(Suspense, { fallback }, children)
-        : null
-    )
-import { ReactNode, Suspense } from "react";
+import React, { ReactNode, Suspense } from "react";
 import { Canvas, CanvasProps } from "@react-three/fiber";
 
-type Canvas3DProps = {
+export type Canvas3DProps = Partial<CanvasProps> & {
   children?: ReactNode;
-} & Partial<CanvasProps>;
+  fallback?: ReactNode;
+  containerProps?: React.HTMLAttributes<HTMLDivElement> & {
+    style?: React.CSSProperties;
+  };
+  CanvasComponent?: React.ComponentType<any>;
+};
 
-export function Canvas3D({ children, ...canvasProps }: Canvas3DProps) {
+export function Canvas3D({
+  children,
+  fallback = null,
+  containerProps = {},
+  CanvasComponent = Canvas,
+  ...canvasProps
+}: Canvas3DProps) {
+  const { className, style, ...restContainerProps } = containerProps;
+
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <Canvas {...canvasProps}>{children ? <Suspense fallback={null}>{children}</Suspense> : null}</Canvas>
+    <div
+      className={className}
+      style={{ position: "relative", width: "100%", height: "100%", ...(style ?? {}) }}
+      {...restContainerProps}
+    >
+      <CanvasComponent {...canvasProps}>
+        {children ? <Suspense fallback={fallback}>{children}</Suspense> : null}
+      </CanvasComponent>
     </div>
   );
 }

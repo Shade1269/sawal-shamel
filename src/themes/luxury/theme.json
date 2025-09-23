@@ -75,25 +75,7 @@
       "radius": "xl",
       "shadow": "0 18px 48px rgba(0, 0, 0, 0.35)"
     },
-    "input": {
-      "radius": "md"
-    },
-    "badge": {
-      "radius": "md"
-    }
-    "primary": "#d4af37"
-  },
-  "three": {
-    "camera": {
-      "position": [0, 1.5, 3.5]
-    },
-    "effects": {
-      "bloom": true,
-      "glow": 0.35
-    },
-    "model": {
-      "path": "/assets/three/luxury-showpiece.glb"
-    },
-    "toneMapping": "ACESFilmic"
+    "input": { "radius": "md" },
+    "badge": { "radius": "md" }
   }
 }

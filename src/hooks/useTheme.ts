@@ -2,14 +2,17 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { getTheme } from "@/themes/registry";
 import { getContrastRatio } from "@/utils/color";
 
+export type ThemeContextValue = {
+  themeId: string;
+  setThemeId: (nextThemeId: string) => void;
+};
+
 export const THEME_STORAGE_KEY = "theme:id";
 
-export const ThemeContext = createContext(undefined);
+export const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-export function applyThemeToDocument(themeConfig) {
-  if (typeof document === "undefined" || !themeConfig) {
-    return;
-  }
+export function applyThemeToDocument(themeConfig: any) {
+  if (typeof document === "undefined" || !themeConfig) return;
 
   const root = document.documentElement;
   root.setAttribute("data-theme", themeConfig.id);
@@ -24,48 +27,23 @@ export function applyThemeToDocument(themeConfig) {
   }
 }
 
-function useThemeController(defaultThemeId = "default") {
-  const [themeId, setThemeIdState] = useState(() => {
-    if (typeof window === "undefined") {
-      return defaultThemeId;
-    }
-
-
-export type ThemeContextValue = {
-  themeId: string;
-  setThemeId: (nextThemeId: string) => void;
-};
-
-export const THEME_STORAGE_KEY = "theme:id";
-
-export const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
-
 function useThemeController(defaultThemeId: string = "default"): ThemeContextValue {
   const [themeId, setThemeIdState] = useState<string>(() => {
     if (typeof window === "undefined") {
       return defaultThemeId;
     }
-
-
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
     return stored ?? defaultThemeId;
   });
 
   const themeConfig = useMemo(() => getTheme(themeId), [themeId]);
 
-  const setThemeId = useCallback((nextThemeId) => {
   const setThemeId = useCallback((nextThemeId: string) => {
     setThemeIdState(nextThemeId);
     if (typeof window !== "undefined") {
       window.localStorage.setItem(THEME_STORAGE_KEY, nextThemeId);
     }
   }, []);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(THEME_STORAGE_KEY, themeId);
-    }
-  }, [themeId]);
 
   useEffect(() => {
     applyThemeToDocument(themeConfig);
@@ -75,31 +53,14 @@ function useThemeController(defaultThemeId: string = "default"): ThemeContextVal
     () => ({
       themeId,
       setThemeId,
-      themeConfig,
     }),
-    [themeId, setThemeId, themeConfig]
+    [themeId, setThemeId]
   );
-}
-
-export function useTheme(defaultThemeId) {
-  const context = useContext(ThemeContext);
-  if (context) {
-    return context;
-  }
-  return useThemeController(defaultThemeId);
-}
-
-export function useThemeState(defaultThemeId) {
-  return useMemo(() => ({ themeId, setThemeId }), [themeId, setThemeId]);
 }
 
 export function useTheme(defaultThemeId?: string): ThemeContextValue {
   const context = useContext(ThemeContext);
-
-  if (context) {
-    return context;
-  }
-
+  if (context) return context;
   return useThemeController(defaultThemeId);
 }
 
