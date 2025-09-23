@@ -81,5 +81,19 @@
     "badge": {
       "radius": "md"
     }
+    "primary": "#d4af37"
+  },
+  "three": {
+    "camera": {
+      "position": [0, 1.5, 3.5]
+    },
+    "effects": {
+      "bloom": true,
+      "glow": 0.35
+    },
+    "model": {
+      "path": "/assets/three/luxury-showpiece.glb"
+    },
+    "toneMapping": "ACESFilmic"
   }
 }

@@ -149,7 +149,7 @@ export const PushNotificationManager: React.FC = () => {
       
       setIsSubscribed(true);
       
-      console.log('Push subscription successful:', subscription);
+      // Push subscription successful
     } catch (error) {
       console.error('Push subscription failed:', error);
       toast({
@@ -172,7 +172,7 @@ export const PushNotificationManager: React.FC = () => {
       }));
 
       // حفظ محلي مؤقتاً حتى إضافة جدول قاعدة البيانات
-      console.log('Subscription saved locally for user:', profile.id);
+      // Subscription saved locally
     } catch (error) {
       console.error('Failed to save subscription:', error);
     }

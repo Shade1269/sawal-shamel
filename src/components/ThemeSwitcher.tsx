@@ -1,9 +1,18 @@
+
 import React, { useMemo } from "react";
 import { useTheme } from "../hooks/useTheme";
 import { THEMES } from "@/themes/registry";
+import { ChangeEvent } from "react";
+import { useTheme } from "../hooks/useTheme";
+
+const OPTIONS = [
+  { id: "default", label: "Default" },
+  { id: "luxury", label: "Luxury" },
+];
 
 export function ThemeSwitcher() {
   const { themeId, setThemeId } = useTheme();
+
 
   const options = useMemo(
     () =>
@@ -33,6 +42,21 @@ export function ThemeSwitcher() {
         )
       )
     )
+  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setThemeId(event.target.value);
+  };
+
+  return (
+    <label style={{ display: "inline-flex", flexDirection: "column", gap: "0.25rem" }}>
+      <span>Theme</span>
+      <select value={themeId} onChange={handleChange}>
+        {OPTIONS.map((option) => (
+          <option key={option.id} value={option.id}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 

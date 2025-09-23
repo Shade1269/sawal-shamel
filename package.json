@@ -9,8 +9,11 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "test": "node --loader ./tests/ts-loader.mjs --test",
+
     "preview": "vite preview",
     "postinstall": "node scripts/decodeAssets.mjs"
+    "preview": "vite preview"
+
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
