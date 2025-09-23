@@ -1,53 +1,27 @@
-import { useState, useEffect } from 'react';
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  InteractiveWidget,
-  AnimatedCounter,
-  EnhancedChart,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  Button
-} from '@/components/ui/index';
+import { useEffect, useMemo, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, Button } from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Progress } from '@/components/ui/progress';
-import { 
-  CreditCard, 
-  DollarSign, 
-  Receipt, 
-  RefreshCw, 
-  Search, 
-  Filter,
+import {
+  CreditCard,
+  DollarSign,
+  Receipt,
+  RefreshCw,
+  Search,
   Download,
   TrendingUp,
-  TrendingDown,
   Clock,
   CheckCircle,
   XCircle,
   AlertTriangle,
   Eye,
   Settings,
-  Plus,
   Calendar,
-  ArrowUpRight,
   ArrowDownRight,
   Banknote,
   Smartphone,
   CreditCardIcon,
-  Building
+  Building,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -70,13 +44,13 @@ interface Transaction {
   id: string;
   transaction_id: string;
   amount_sar: number;
-  gateway_fee_sar: number;
-  net_amount_sar: number;
-  status: string;
-  gateway_name: string;
+  gateway_fee_sar: number | null;
+  payment_status: string;
+  gateway_name: string | null;
   created_at: string;
   order_id: string;
   customer_name?: string;
+  net_amount_sar?: number;
 }
 
 interface PaymentGateway {
@@ -138,40 +112,45 @@ const PaymentDashboard = () => {
     try {
       // جلب الإحصائيات العامة
       const { data: transactionsData } = await supabase
-        .from('payment_transactions')
+        .from('ecommerce_payment_transactions')
         .select(`
           *,
-          orders(customer_name),
-          payment_gateways(gateway_name, display_name)
+          ecommerce_orders(customer_name)
         `)
         .order('created_at', { ascending: false })
         .limit(50);
 
       if (transactionsData) {
-        setTransactions(transactionsData as any);
-        
+        const normalizedTransactions: Transaction[] = (transactionsData as any[]).map((transaction) => ({
+          ...transaction,
+          customer_name: transaction.ecommerce_orders?.customer_name || null,
+          net_amount_sar: transaction.amount_sar - (transaction.gateway_fee_sar || 0),
+        }));
+
+        setTransactions(normalizedTransactions);
+
         // حساب الإحصائيات
-        const totalRevenue = transactionsData
-          .filter(t => t.status === 'COMPLETED')
-          .reduce((sum, t) => sum + (t.net_amount_sar || 0), 0);
-        
-        const thisMonth = new Date();
-        thisMonth.setDate(1);
-        const monthlyRevenue = transactionsData
-          .filter(t => t.status === 'COMPLETED' && new Date(t.created_at) >= thisMonth)
+        const totalRevenue = normalizedTransactions
+          .filter(t => t.payment_status === 'PAID')
           .reduce((sum, t) => sum + (t.net_amount_sar || 0), 0);
 
-        const gatewayFees = transactionsData
+        const thisMonth = new Date();
+        thisMonth.setDate(1);
+        const monthlyRevenue = normalizedTransactions
+          .filter(t => t.payment_status === 'PAID' && new Date(t.created_at) >= thisMonth)
+          .reduce((sum, t) => sum + (t.net_amount_sar || 0), 0);
+
+        const gatewayFees = normalizedTransactions
           .reduce((sum, t) => sum + (t.gateway_fee_sar || 0), 0);
 
         setStats({
           totalRevenue,
           monthlyRevenue,
-          pendingPayments: transactionsData.filter(t => t.status === 'PENDING').length,
-          completedPayments: transactionsData.filter(t => t.status === 'COMPLETED').length,
-          failedPayments: transactionsData.filter(t => t.status === 'FAILED').length,
+          pendingPayments: normalizedTransactions.filter(t => t.payment_status === 'PENDING').length,
+          completedPayments: normalizedTransactions.filter(t => t.payment_status === 'PAID').length,
+          failedPayments: normalizedTransactions.filter(t => t.payment_status === 'FAILED').length,
           refundAmount: 0, // سيتم جلبها من جدول المرتجعات
-          avgTransactionValue: totalRevenue / Math.max(transactionsData.length, 1),
+          avgTransactionValue: totalRevenue / Math.max(normalizedTransactions.length, 1),
           gatewayFees
         });
       }
@@ -200,7 +179,7 @@ const PaymentDashboard = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'COMPLETED':
+      case 'PAID':
         return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'PENDING':
         return <Clock className="h-4 w-4 text-yellow-500" />;
@@ -213,7 +192,7 @@ const PaymentDashboard = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'COMPLETED':
+      case 'PAID':
         return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
       case 'PENDING':
         return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
@@ -221,6 +200,19 @@ const PaymentDashboard = () => {
         return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+    }
+  };
+
+  const formatGatewayLabel = (gatewayName: string) => {
+    switch (gatewayName.toLowerCase()) {
+      case 'cash on delivery':
+        return 'الدفع عند الاستلام';
+      case 'stcpay':
+        return 'STC Pay';
+      case 'mada':
+        return 'مدى';
+      default:
+        return gatewayName;
     }
   };
 
@@ -234,18 +226,39 @@ const PaymentDashboard = () => {
       case 'visa':
       case 'mastercard':
         return <CreditCardIcon className="h-4 w-4" />;
+      case 'cash on delivery':
+        return <Banknote className="h-4 w-4" />;
       default:
         return <Building className="h-4 w-4" />;
     }
   };
 
+  const gatewayOptions = useMemo(() => {
+    const optionMap = new Map<string, string>();
+
+    gateways.forEach((gateway) => {
+      if (gateway.gateway_name) {
+        optionMap.set(gateway.gateway_name, gateway.display_name || formatGatewayLabel(gateway.gateway_name));
+      }
+    });
+
+    transactions.forEach((transaction) => {
+      if (transaction.gateway_name && !optionMap.has(transaction.gateway_name)) {
+        optionMap.set(transaction.gateway_name, formatGatewayLabel(transaction.gateway_name));
+      }
+    });
+
+    return Array.from(optionMap.entries()).map(([value, label]) => ({ value, label }));
+  }, [gateways, transactions]);
+
   const filteredTransactions = transactions.filter(transaction => {
+    const customerName = transaction.customer_name?.toLowerCase() || '';
     const matchesSearch = transaction.transaction_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (transaction as any).orders?.customer_name?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = selectedStatus === 'all' || transaction.status === selectedStatus;
-    const matchesGateway = selectedGateway === 'all' || 
-                          (transaction as any).payment_gateways?.gateway_name === selectedGateway;
-    
+                         customerName.includes(searchTerm.toLowerCase());
+    const matchesStatus = selectedStatus === 'all' || transaction.payment_status === selectedStatus;
+    const matchesGateway = selectedGateway === 'all' ||
+                          (transaction.gateway_name || '').toLowerCase() === selectedGateway.toLowerCase();
+
     return matchesSearch && matchesStatus && matchesGateway;
   });
 
@@ -472,9 +485,21 @@ const PaymentDashboard = () => {
                 className="px-3 py-2 border rounded-md text-sm bg-background"
               >
                 <option value="all">جميع الحالات</option>
-                <option value="COMPLETED">مكتملة</option>
+                <option value="PAID">مدفوعة</option>
                 <option value="PENDING">معلقة</option>
                 <option value="FAILED">فاشلة</option>
+              </select>
+              <select
+                value={selectedGateway}
+                onChange={(e) => setSelectedGateway(e.target.value)}
+                className="px-3 py-2 border rounded-md text-sm bg-background"
+              >
+                <option value="all">جميع البوابات</option>
+                {gatewayOptions.map((gateway) => (
+                  <option key={gateway.value} value={gateway.value}>
+                    {gateway.label}
+                  </option>
+                ))}
               </select>
               <Button variant="outline" size="sm">
                 <Download className="h-4 w-4 ml-2" />
@@ -507,7 +532,7 @@ const PaymentDashboard = () => {
                     </td>
                     <td className="p-3">
                       <div className="font-medium">
-                        {(transaction as any).orders?.customer_name || 'غير محدد'}
+                        {transaction.customer_name || 'غير محدد'}
                       </div>
                     </td>
                     <td className="p-3">
@@ -517,7 +542,7 @@ const PaymentDashboard = () => {
                     </td>
                     <td className="p-3">
                       <div className="text-red-600">
-                        -{transaction.gateway_fee_sar.toLocaleString()} ر.س
+                        -{(transaction.gateway_fee_sar || 0).toLocaleString()} ر.س
                       </div>
                     </td>
                     <td className="p-3">
@@ -527,20 +552,20 @@ const PaymentDashboard = () => {
                     </td>
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        {getGatewayIcon((transaction as any).payment_gateways?.gateway_name || '')}
+                        {getGatewayIcon(transaction.gateway_name || '')}
                         <span className="text-sm">
-                          {(transaction as any).payment_gateways?.display_name || 'غير محدد'}
+                          {transaction.gateway_name ? formatGatewayLabel(transaction.gateway_name) : 'غير محدد'}
                         </span>
                       </div>
                     </td>
                     <td className="p-3">
-                      <Badge className={getStatusColor(transaction.status)}>
+                      <Badge className={getStatusColor(transaction.payment_status)}>
                         <div className="flex items-center gap-1">
-                          {getStatusIcon(transaction.status)}
+                          {getStatusIcon(transaction.payment_status)}
                           <span>
-                            {transaction.status === 'COMPLETED' ? 'مكتملة' :
-                             transaction.status === 'PENDING' ? 'معلقة' :
-                             transaction.status === 'FAILED' ? 'فاشلة' : transaction.status}
+                            {transaction.payment_status === 'PAID' ? 'مدفوعة' :
+                             transaction.payment_status === 'PENDING' ? 'معلقة' :
+                             transaction.payment_status === 'FAILED' ? 'فاشلة' : transaction.payment_status}
                           </span>
                         </div>
                       </Badge>

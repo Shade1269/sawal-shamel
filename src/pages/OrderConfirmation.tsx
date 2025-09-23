@@ -20,27 +20,27 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface Order {
   id: string;
+  order_number: string;
   customer_name: string;
   customer_phone: string;
   payment_method: string;
   shipping_address: any;
   subtotal_sar: number;
   total_sar: number;
-  vat_sar: number;
+  tax_sar: number;
+  shipping_sar: number;
   status: string;
+  payment_status: string;
   created_at: string;
 }
 
 interface OrderItem {
   id: string;
+  product_title: string;
+  product_image_url?: string | null;
   quantity: number;
   unit_price_sar: number;
-  line_total_sar: number;
-  title_snapshot: string;
-  products: {
-    title: string;
-    image_urls?: string[];
-  };
+  total_price_sar: number | null;
 }
 
 const OrderConfirmation = () => {
@@ -58,32 +58,43 @@ const OrderConfirmation = () => {
     try {
       // Fetch order details
       const { data: orderData, error: orderError } = await supabase
-        .from("orders")
-        .select("*")
+        .from("ecommerce_orders")
+        .select(`
+          id,
+          order_number,
+          customer_name,
+          customer_phone,
+          payment_method,
+          payment_status,
+          shipping_address,
+          subtotal_sar,
+          total_sar,
+          tax_sar,
+          shipping_sar,
+          status,
+          created_at,
+          ecommerce_order_items (
+            id,
+            product_title,
+            product_image_url,
+            quantity,
+            unit_price_sar,
+            total_price_sar
+          )
+        `)
         .eq("id", orderId)
         .maybeSingle();
 
       if (orderError) throw orderError;
-      setOrder(orderData);
+      if (!orderData) {
+        setOrder(null);
+        setOrderItems([]);
+        return;
+      }
 
-      // Fetch order items with product details
-      const { data: itemsData, error: itemsError } = await supabase
-        .from("order_items")
-        .select(`
-          id,
-          quantity,
-          unit_price_sar,
-          line_total_sar,
-          title_snapshot,
-          products (
-            title,
-            image_urls
-          )
-        `)
-        .eq("order_id", orderId);
-
-      if (itemsError) throw itemsError;
-      setOrderItems(itemsData as OrderItem[]);
+      const { ecommerce_order_items, ...rest } = orderData as any;
+      setOrder(rest as Order);
+      setOrderItems((ecommerce_order_items as OrderItem[]) || []);
 
     } catch (error) {
       console.error("Error fetching order details:", error);
@@ -93,10 +104,12 @@ const OrderConfirmation = () => {
   };
 
   const getPaymentMethodText = (method: string) => {
-    switch (method) {
-      case "online":
+    const normalized = method?.toUpperCase();
+    switch (normalized) {
+      case "ONLINE":
         return "الدفع الإلكتروني";
-      case "cod":
+      case "CASH_ON_DELIVERY":
+      case "COD":
         return "الدفع عند الاستلام";
       default:
         return method;
@@ -104,6 +117,7 @@ const OrderConfirmation = () => {
   };
 
   const getShippingMethodText = (method: string) => {
+    if (!method) return 'غير محدد';
     switch (method) {
       case "standard":
         return "التوصيل العادي";
@@ -194,7 +208,7 @@ const OrderConfirmation = () => {
             </p>
             <div className="flex items-center justify-center gap-2">
               <Package className="h-5 w-5" />
-              <span className="font-semibold">رقم الطلب: {order.id}</span>
+              <span className="font-semibold">رقم الطلب: {order.order_number || order.id}</span>
             </div>
           </EnhancedCardContent>
         </EnhancedCard>
@@ -210,21 +224,21 @@ const OrderConfirmation = () => {
               <CardContent className="space-y-4">
                 {orderItems.map((item) => (
                   <div key={item.id} className="flex items-center gap-4 p-4 border rounded-lg">
-                    {item.products?.image_urls?.[0] && (
+                    {item.product_image_url && (
                       <img
-                        src={item.products.image_urls[0]}
-                        alt={item.products.title || item.title_snapshot}
+                        src={item.product_image_url}
+                        alt={item.product_title}
                         className="w-16 h-16 object-cover rounded-md"
                       />
                     )}
                     <div className="flex-1">
-                      <h3 className="font-semibold">{item.products?.title || item.title_snapshot}</h3>
+                      <h3 className="font-semibold">{item.product_title}</h3>
                       <p className="text-muted-foreground">
                         الكمية: {item.quantity}
                       </p>
                     </div>
                     <div className="text-primary font-bold">
-                      {item.line_total_sar.toFixed(2)} ريال
+                      {(item.total_price_sar ?? item.unit_price_sar * item.quantity).toFixed(2)} ريال
                     </div>
                   </div>
                 ))}
@@ -279,7 +293,11 @@ const OrderConfirmation = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>الضريبة:</span>
-                    <span>{order.vat_sar.toFixed(2)} ريال</span>
+                    <span>{order.tax_sar.toFixed(2)} ريال</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>رسوم الشحن:</span>
+                    <span>{order.shipping_sar.toFixed(2)} ريال</span>
                   </div>
                   <div className="flex justify-between font-bold text-lg border-t pt-2">
                     <span>المجموع الكلي:</span>

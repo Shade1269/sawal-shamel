@@ -35,6 +35,12 @@ interface CustomerInfo {
   notes: string;
 }
 
+const PAYMENT_METHOD_COD = 'CASH_ON_DELIVERY';
+const PAYMENT_STATUS_PENDING = 'PENDING';
+const ORDER_STATUS_PENDING = 'PENDING';
+const generateOrderNumber = () =>
+  `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
+
 export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
   cartItems,
   shopId,
@@ -90,32 +96,40 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
 
     setLoading(true);
     try {
-      const orderData = {
-        user_id: null,
-        session_id: `session_${Date.now()}`,
-        customer_name: customerInfo.name,
-        customer_email: customerInfo.email || null,
-        customer_phone: customerInfo.phone,
-        shipping_address: {
-          address: customerInfo.address,
-          city: customerInfo.city,
-          notes: customerInfo.notes || null
-        },
-        total_amount_sar: total,
-        payment_status: 'PENDING',
-        payment_method: 'COD',
-        order_status: 'CONFIRMED'
-      };
+      if (!shopId) {
+        throw new Error('معرف المتجر غير متوفر');
+      }
+
+      const orderNumber = generateOrderNumber();
 
       const { data: order, error: orderError } = await supabase
-        .from('simple_orders')
-        .insert(orderData)
-        .select()
+        .from('ecommerce_orders')
+        .insert({
+          shop_id: shopId,
+          affiliate_store_id: shopId,
+          customer_name: customerInfo.name,
+          customer_phone: customerInfo.phone,
+          customer_email: customerInfo.email || null,
+          shipping_address: {
+            address: customerInfo.address,
+            city: customerInfo.city,
+            notes: customerInfo.notes || null,
+          },
+          subtotal_sar: subtotal,
+          shipping_sar: shippingCost,
+          tax_sar: 0,
+          total_sar: total,
+          payment_method: PAYMENT_METHOD_COD,
+          payment_status: PAYMENT_STATUS_PENDING,
+          status: ORDER_STATUS_PENDING,
+          order_number: orderNumber,
+          notes: customerInfo.notes || null,
+        })
+        .select('id, order_number')
         .single();
 
       if (orderError) throw orderError;
 
-      // إنشاء عناصر الطلب
       const orderItems = cartItems.map(item => ({
         order_id: order.id,
         product_id: item.id,
@@ -123,22 +137,32 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
         product_image_url: item.image || null,
         quantity: item.quantity,
         unit_price_sar: item.price,
-        total_price_sar: item.price * item.quantity
+        total_price_sar: item.price * item.quantity,
       }));
 
       const { error: itemsError } = await supabase
-        .from('simple_order_items')
+        .from('ecommerce_order_items')
         .insert(orderItems);
 
       if (itemsError) throw itemsError;
 
-      const generatedOrderNumber = `ORD-${order.id.slice(0, 8).toUpperCase()}`;
-      setOrderNumber(generatedOrderNumber);
+      await supabase
+        .from('ecommerce_payment_transactions')
+        .insert({
+          order_id: order.id,
+          transaction_id: `COD-${order.id.slice(-6)}`,
+          payment_method: PAYMENT_METHOD_COD,
+          payment_status: PAYMENT_STATUS_PENDING,
+          amount_sar: total,
+          currency: 'SAR',
+          gateway_name: 'Cash on Delivery',
+        });
+
+      setOrderNumber(order.order_number || orderNumber);
       setOrderCompleted(true);
 
       toast.success('تم إنشاء الطلب بنجاح!');
-      
-      // التوجه لصفحة تأكيد الطلب باستخدام navigate
+
       setTimeout(() => {
         navigate(`/order-confirmation-simple/${order.id}`);
       }, 2000);

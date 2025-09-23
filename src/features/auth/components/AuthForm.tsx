@@ -10,7 +10,7 @@ import { Loader2, User, Store, Users, ShoppingCart } from 'lucide-react';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const AuthForm = () => {
-  const { signIn, signUp, loading, isAuthenticated } = useFastAuth();
+  const { signIn, signUp, loading, isAuthenticated, profile } = useFastAuth();
   const [isLoading, setIsLoading] = useState(false);
   
   // Sign in form state
@@ -24,16 +24,17 @@ const AuthForm = () => {
     email: '',
     password: '',
     fullName: '',
-    role: 'customer' as 'merchant' | 'affiliate' | 'customer'
-});
+    username: '',
+    role: 'affiliate' as 'merchant' | 'affiliate' | 'admin'
+  });
 
   const { goToUserHome } = useSmartNavigation();
 
   useEffect(() => {
-    if (isAuthenticated) {
-      goToUserHome();
+    if (isAuthenticated && profile?.role) {
+      goToUserHome(profile.role);
     }
-  }, [isAuthenticated, goToUserHome]);
+  }, [isAuthenticated, profile?.role, goToUserHome]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,7 +58,13 @@ const AuthForm = () => {
     setIsLoading(true);
     
     try {
-      const result = await signUp(signUpData.email, signUpData.password, signUpData.fullName, signUpData.role);
+      const result = await signUp({
+        email: signUpData.email,
+        password: signUpData.password,
+        fullName: signUpData.fullName,
+        username: signUpData.username || signUpData.fullName,
+        role: signUpData.role
+      });
       if (!result?.error) {
         console.log('تم إنشاء الحساب بنجاح');
       }
@@ -158,6 +165,18 @@ const AuthForm = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="signup-username">اسم المستخدم</Label>
+                  <Input
+                    id="signup-username"
+                    type="text"
+                    placeholder="اسم المستخدم الظاهر"
+                    value={signUpData.username}
+                    onChange={(e) => setSignUpData(prev => ({ ...prev, username: e.target.value }))}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="signup-email">البريد الإلكتروني</Label>
                   <Input
                     id="signup-email"
@@ -187,7 +206,7 @@ const AuthForm = () => {
                   <Label htmlFor="signup-role">نوع الحساب</Label>
                   <Select
                     value={signUpData.role}
-                    onValueChange={(value: 'merchant' | 'affiliate' | 'customer') => 
+                    onValueChange={(value: 'merchant' | 'affiliate' | 'admin') =>
                       setSignUpData(prev => ({ ...prev, role: value }))
                     }
                   >
@@ -195,15 +214,9 @@ const AuthForm = () => {
                       <SelectValue placeholder="اختر نوع حسابك" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="customer">
-                        <div className="flex items-center gap-2">
-                          <ShoppingCart className="h-4 w-4" />
-                          عميل
-                        </div>
-                      </SelectItem>
                       <SelectItem value="affiliate">
                         <div className="flex items-center gap-2">
-                          <Users className="h-4 w-4" />
+                          <ShoppingCart className="h-4 w-4" />
                           مسوق بالعمولة
                         </div>
                       </SelectItem>
@@ -211,6 +224,12 @@ const AuthForm = () => {
                         <div className="flex items-center gap-2">
                           <Store className="h-4 w-4" />
                           تاجر
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="admin">
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4" />
+                          مسؤول
                         </div>
                       </SelectItem>
                     </SelectContent>

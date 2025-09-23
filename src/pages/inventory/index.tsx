@@ -1,0 +1,331 @@
+import { useEffect, useMemo, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, Package, RefreshCw, ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
+
+interface WarehouseRow {
+  id: string;
+  name: string;
+  code: string;
+}
+
+interface InventoryItemRow {
+  id: string;
+  sku: string;
+  quantity_available: number | null;
+  quantity_reserved: number | null;
+  warehouse_id: string | null;
+  product_variants?: {
+    variant_name: string | null;
+    products?: {
+      title: string | null;
+    } | null;
+  } | null;
+}
+
+interface MovementRow {
+  id: string;
+  movement_number: string;
+  movement_type: string;
+  quantity: number;
+  created_at: string;
+  reference_type: string | null;
+  reference_id: string | null;
+  warehouse_product_id: string | null;
+  product_variant_id: string | null;
+}
+
+const formatNumber = (value: number | null | undefined) => {
+  if (value == null || Number.isNaN(value)) {
+    return '0';
+  }
+  return new Intl.NumberFormat('ar-SA', { maximumFractionDigits: 0 }).format(Number(value));
+};
+
+const InventoryOverviewPage = () => {
+  const [warehouses, setWarehouses] = useState<WarehouseRow[]>([]);
+  const [items, setItems] = useState<InventoryItemRow[]>([]);
+  const [movements, setMovements] = useState<MovementRow[]>([]);
+  const [selectedWarehouse, setSelectedWarehouse] = useState<'all' | string>('all');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const warehouseLookup = useMemo(() => {
+    const map = new Map<string, WarehouseRow>();
+    warehouses.forEach((w) => {
+      map.set(w.id, w);
+    });
+    return map;
+  }, [warehouses]);
+
+  const filteredItems = useMemo(() => {
+    if (selectedWarehouse === 'all') {
+      return items;
+    }
+    return items.filter((item) => item.warehouse_id === selectedWarehouse);
+  }, [items, selectedWarehouse]);
+
+  const totals = useMemo(() => {
+    return filteredItems.reduce(
+      (acc, item) => {
+        acc.available += Number(item.quantity_available ?? 0);
+        acc.reserved += Number(item.quantity_reserved ?? 0);
+        return acc;
+      },
+      { available: 0, reserved: 0 }
+    );
+  }, [filteredItems]);
+
+  const loadInventory = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const [warehousesResult, itemsResult, movementsResult] = await Promise.all([
+        supabase
+          .from('warehouses')
+          .select('id, name, code')
+          .order('name', { ascending: true }),
+        supabase
+          .from('inventory_items')
+          .select(
+            `
+            id,
+            sku,
+            quantity_available,
+            quantity_reserved,
+            warehouse_id,
+            product_variants (
+              variant_name,
+              products (
+                title
+              )
+            )
+          `
+          )
+          .limit(200),
+        supabase
+          .from('inventory_movements')
+          .select(
+            `id, movement_number, movement_type, quantity, created_at, reference_type, reference_id, warehouse_product_id, product_variant_id`
+          )
+          .order('created_at', { ascending: false })
+          .limit(50)
+      ]);
+
+      if (warehousesResult.error) {
+        throw warehousesResult.error;
+      }
+      if (itemsResult.error) {
+        throw itemsResult.error;
+      }
+      if (movementsResult.error) {
+        throw movementsResult.error;
+      }
+
+      setWarehouses(warehousesResult.data ?? []);
+      setItems(itemsResult.data ?? []);
+      setMovements(movementsResult.data ?? []);
+    } catch (err: any) {
+      console.error('Failed to load inventory snapshot:', err);
+      setError(err?.message ?? 'تعذر تحميل بيانات المخزون');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadInventory();
+  }, []);
+
+  return (
+    <div className="mx-auto flex max-w-6xl flex-col gap-6 p-6" dir="rtl">
+      <Card>
+        <CardHeader className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Package className="h-5 w-5" />
+            <CardTitle className="text-2xl">لوحة المخزون</CardTitle>
+          </div>
+          <CardDescription>
+            نظرة عامة سريعة على الكميات المتاحة والمحجوزة لكل مستودع ضمن نظام المخزون الداخلي.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <span>تصفية حسب المستودع:</span>
+              <select
+                className="rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none"
+                value={selectedWarehouse}
+                onChange={(event) => setSelectedWarehouse(event.target.value as 'all' | string)}
+              >
+                <option value="all">جميع المستودعات</option>
+                {warehouses.map((warehouse) => (
+                  <option key={warehouse.id} value={warehouse.id}>
+                    {warehouse.name} ({warehouse.code})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <Button onClick={loadInventory} disabled={loading} variant="outline" className="gap-2">
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+              تحديث البيانات
+            </Button>
+          </div>
+
+          {error ? (
+            <div className="rounded-md border border-destructive/40 bg-destructive/10 p-4 text-destructive">
+              {error}
+            </div>
+          ) : null}
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-lg border p-4">
+              <p className="text-sm text-muted-foreground">عدد الأصناف</p>
+              <p className="text-2xl font-bold">{filteredItems.length}</p>
+            </div>
+            <div className="rounded-lg border p-4">
+              <p className="text-sm text-muted-foreground">الكمية المتاحة</p>
+              <p className="text-2xl font-bold text-emerald-600">{formatNumber(totals.available)}</p>
+            </div>
+            <div className="rounded-lg border p-4">
+              <p className="text-sm text-muted-foreground">الكمية المحجوزة</p>
+              <p className="text-2xl font-bold text-amber-600">{formatNumber(totals.reserved)}</p>
+            </div>
+            <div className="rounded-lg border p-4">
+              <p className="text-sm text-muted-foreground">آخر تحديث</p>
+              <p className="text-2xl font-bold">
+                {loading ? 'جاري التحديث...' : new Date().toLocaleTimeString('ar-SA')}
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold">تفاصيل الأصناف</h3>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>المنتج</TableHead>
+                    <TableHead>SKU</TableHead>
+                    <TableHead>المستودع</TableHead>
+                    <TableHead className="text-center">المتاح</TableHead>
+                    <TableHead className="text-center">محجوز</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredItems.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="py-6 text-center text-sm text-muted-foreground">
+                        لا توجد عناصر مطابقة حالياً
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredItems.map((item) => {
+                      const warehouse = item.warehouse_id ? warehouseLookup.get(item.warehouse_id) : null;
+                      const title = item.product_variants?.products?.title ?? 'منتج غير معروف';
+                      const variantName = item.product_variants?.variant_name ?? null;
+                      return (
+                        <TableRow key={item.id}>
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{title}</span>
+                              {variantName ? (
+                                <span className="text-xs text-muted-foreground">{variantName}</span>
+                              ) : null}
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-mono text-sm">{item.sku}</TableCell>
+                          <TableCell className="text-sm">
+                            {warehouse ? `${warehouse.name} (${warehouse.code})` : 'غير محدد'}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant={Number(item.quantity_available ?? 0) > 0 ? 'secondary' : 'outline'}>
+                              {formatNumber(item.quantity_available)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant={Number(item.quantity_reserved ?? 0) > 0 ? 'outline' : 'secondary'}>
+                              {formatNumber(item.quantity_reserved)}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">أحدث الحركات المخزنية</CardTitle>
+          <CardDescription>ملخص آخر 50 حركة ناتجة عن الحجز، التحويل أو التسوية.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>رقم الحركة</TableHead>
+                  <TableHead>النوع</TableHead>
+                  <TableHead className="text-center">الكمية</TableHead>
+                  <TableHead>المرجع</TableHead>
+                  <TableHead>التاريخ</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {movements.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="py-6 text-center text-sm text-muted-foreground">
+                      لا توجد حركات مسجلة بعد
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  movements.map((movement) => (
+                    <TableRow key={movement.id}>
+                      <TableCell className="font-mono text-sm">{movement.movement_number}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {movement.movement_type === 'OUT' ? (
+                            <ArrowUpCircle className="h-4 w-4 text-rose-500" />
+                          ) : (
+                            <ArrowDownCircle className="h-4 w-4 text-emerald-500" />
+                          )}
+                          <span className="text-sm">
+                            {movement.movement_type === 'OUT' ? 'خروج' : 'دخول'}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center font-semibold">
+                        {formatNumber(movement.quantity)}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {movement.reference_type === 'ORDER' && movement.reference_id
+                          ? `طلب ${movement.reference_id}`
+                          : movement.reference_type || 'غير محدد'}
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        {movement.created_at
+                          ? new Date(movement.created_at).toLocaleString('ar-SA')
+                          : 'غير محدد'}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default InventoryOverviewPage;
