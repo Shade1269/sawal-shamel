@@ -22,12 +22,29 @@ import { useInventoryManagement } from '@/hooks/useInventoryManagement';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+interface ReturnItem {
+  id: string;
+  affiliate_id: string;
+  commission_deducted: number;
+  created_at: string;
+  notes: string;
+  order_id: string;
+  order_number: string;
+  processed_by: string;
+  return_date: string;
+  return_number: string;
+  return_reason: string;
+  return_type: string;
+  status: string;
+  total_returned_amount: number;
+}
+
 export const ReturnsManagement: React.FC = () => {
   const { productVariants, loading } = useInventoryManagement();
   const { toast } = useToast();
 
   const [showDialog, setShowDialog] = useState(false);
-  const [returns, setReturns] = useState<any[]>([]);
+  const [returns, setReturns] = useState<ReturnItem[]>([]);
 
   // Function to fetch returns from database
   const fetchReturns = async () => {
