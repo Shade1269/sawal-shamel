@@ -12,7 +12,9 @@
 
     "preview": "vite preview",
     "postinstall": "node scripts/decodeAssets.mjs"
-    "preview": "vite preview"
+    
+
+
 
   },
   "dependencies": {
