@@ -2,9 +2,32 @@ html[data-theme="luxury"] {
   --bg: #1a0f0f;
   --fg: #f8f1e7;
   --primary: #d4af37;
+  --primary-fg: #1f1400;
+  --secondary: #b56c4a;
+  --secondary-fg: #fff3dd;
+  --muted: #2a1a1a;
+  --muted-fg: #d9c8b9;
+  --success: #52d273;
+  --warning: #f2c94c;
+  --danger: #eb5757;
+  --info: #56ccf2;
+  --border: #3b2621;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --space-xs: 4px;
+  --space-sm: 10px;
+  --space-md: 14px;
+  --space-lg: 20px;
+  --space-xl: 28px;
+  --font-family: 'Noto Sans Arabic', 'Playfair Display', 'serif';
+  --font-size: 17px;
+  --line-height: 1.6;
+  --shadow-card: 0 18px 48px rgba(0, 0, 0, 0.35);
 }
 
 html[data-theme="luxury"] body {
   background-color: var(--bg);
   color: var(--fg);
+  font-family: var(--font-family);
 }

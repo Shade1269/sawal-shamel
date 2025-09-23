@@ -81,28 +81,47 @@ export default {
 				'96': '24rem',
 			},
 			colors: {
-				border: 'hsl(var(--border))',
-				input: 'hsl(var(--input))',
-				ring: 'hsl(var(--ring))',
+				bg: 'var(--bg)',
+				fg: 'var(--fg)',
+				border: 'var(--border)',
+				input: 'var(--muted)',
+				ring: 'var(--primary)',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					glow: 'hsl(var(--primary-glow))',
-					dark: 'hsl(var(--primary-dark))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: 'var(--primary)',
+					foreground: 'var(--primary-fg)',
+					fg: 'var(--primary-fg)',
+					glow: 'var(--primary)',
+					dark: 'color-mix(in srgb, var(--primary) 85%, #000 15%)'
 				},
+				'primary-fg': 'var(--primary-fg)',
+				'primary-foreground': 'var(--primary-fg)',
 				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					DEFAULT: 'var(--secondary)',
+					foreground: 'var(--secondary-fg)'
 				},
+				'secondary-fg': 'var(--secondary-fg)',
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
 				},
 				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))'
+					DEFAULT: 'var(--muted)',
+					foreground: 'var(--muted-fg)'
+				},
+				'muted-fg': 'var(--muted-fg)',
+				success: {
+					DEFAULT: 'var(--success)'
+				},
+				warning: {
+					DEFAULT: 'var(--warning)'
+				},
+				danger: {
+					DEFAULT: 'var(--danger)'
+				},
+				info: {
+					DEFAULT: 'var(--info)'
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
@@ -177,6 +196,7 @@ export default {
 				'gradient-glass': 'var(--gradient-glass)',
 			},
 			boxShadow: {
+				'card': 'var(--shadow-card)',
 				'soft': 'var(--shadow-soft)',
 				'glow': 'var(--shadow-glow)',
 				'luxury': 'var(--shadow-luxury)',
@@ -190,9 +210,9 @@ export default {
 				'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
 			},
 			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'var(--radius-sm)',
+				md: 'var(--radius-md)',
+				lg: 'var(--radius-lg)'
 			},
 			keyframes: {
 				// Basic UI Animations

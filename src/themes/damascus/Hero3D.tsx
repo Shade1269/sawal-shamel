@@ -1,13 +1,12 @@
-
 import React, { memo } from "react";
 import { SimpleScene } from "@/three/SimpleScene";
 import theme from "./theme.json" with { type: "json" };
 
 const themeConfig = theme;
 
-export const Hero3D = memo(function LuxuryHero3D() {
-  const borderColor = themeConfig.colors.border ?? "rgba(212, 175, 55, 0.25)";
-  const hasBloom = Boolean(themeConfig.three?.effects?.bloom);
+export const Hero3D = memo(function DamascusHero3D() {
+  const borderColor = themeConfig.colors.border ?? "rgba(92, 196, 184, 0.35)";
+  const modelLabel = themeConfig.three?.model?.example === "model" ? "منحوتة دمشقية" : "نموذج ثلاثي";
   return React.createElement(
     "section",
     {
@@ -17,7 +16,7 @@ export const Hero3D = memo(function LuxuryHero3D() {
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
         gap: "1.5rem",
-        background: "linear-gradient(135deg, rgba(26,15,15,0.85), rgba(50,33,26,0.65))",
+        background: "linear-gradient(140deg, rgba(15,26,28,0.92), rgba(25,38,42,0.72))",
         color: "var(--fg)",
         borderRadius: "var(--radius-lg)",
         border: `1px solid ${borderColor}`,
@@ -31,7 +30,7 @@ export const Hero3D = memo(function LuxuryHero3D() {
       React.createElement(SimpleScene, {
         config: themeConfig.three,
         accentColor: themeConfig.colors.primary,
-        className: "hero-3d__canvas luxury",
+        className: "hero-3d__canvas damascus",
       })
     ),
     React.createElement(
@@ -47,60 +46,39 @@ export const Hero3D = memo(function LuxuryHero3D() {
       },
       React.createElement(
         "p",
-        { style: { fontSize: "1.85rem", fontWeight: 700 } },
-        "تجربة فاخرة ثلاثية الأبعاد"
+        { style: { fontSize: "1.8rem", fontWeight: 700 } },
+        "مشهد دمشق الغامرة"
       ),
       React.createElement(
         "p",
-        { style: { lineHeight: 1.7, fontSize: "1.05rem", opacity: 0.85 } },
-        hasBloom
-          ? "نموذج Sphere متوهج بإضاءة ذهبية وتأثير Bloom لإبراز اللمعان الفاخر."
-          : "نموذج Sphere ديناميكي مع إضاءة ذهبية دافئة."
+        { style: { lineHeight: 1.65, fontSize: "1.02rem", opacity: 0.85 } },
+        `${modelLabel} حقيقي بصيغة GLB يدور بسلاسة مع إضاءة ضبابية وخلفية ضوئية مستوحاة من الأزقة التاريخية.`
       ),
       React.createElement(
         "ul",
         {
           style: {
             margin: 0,
-            paddingInlineStart: "1.2rem",
+            paddingInlineStart: "1.1rem",
             display: "flex",
             flexDirection: "column",
             gap: "0.45rem",
             fontSize: "0.95rem",
-            opacity: 0.88,
           },
         },
         [
-          "مصادر ضوء ثلاثية تعطي تدرجات ذهبية واقعية",
-          "ظلال عالية الدقة مع mapSize أكبر للمشهد",
-          "ضباب بلون النبيذ الداكن لتأكيد العمق",
+          "إضاءة موجهة ومحورية قابلة للظلال الناعمة",
+          "تأثير ضباب اختياري لإبراز العمق",
+          "نماذج GLB حقيقية يمكن تبديلها بين الثيمات",
         ].map((item, index) =>
           React.createElement(
             "li",
-            { key: index },
+            { key: index, style: { opacity: 0.82 } },
             item
           )
         )
       )
     )
-import { memo } from "react";
-
-export const Hero3D = memo(function LuxuryHero3D() {
-  return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        display: "grid",
-        placeItems: "center",
-        background: "var(--bg)",
-        color: "var(--fg)",
-        borderRadius: "1rem",
-        border: "1px solid rgba(212, 175, 55, 0.35)",
-      }}
-    >
-      <span>Luxury 3D hero placeholder</span>
-    </div>
   );
 });
 

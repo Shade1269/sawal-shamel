@@ -1,3 +1,20 @@
+
+import React, { useEffect } from "react";
+import { ThemeContext, useThemeState } from "../hooks/useTheme";
+
+export function ThemeProvider({ children, defaultThemeId = "default" }) {
+  const themeState = useThemeState(defaultThemeId);
+
+  useEffect(() => {
+    return () => {
+      if (typeof document !== "undefined") {
+        document.documentElement.removeAttribute("data-theme");
+      }
+    };
+  }, []);
+
+  return React.createElement(ThemeContext.Provider, { value: themeState }, children);
+
 import { ReactNode, useEffect } from "react";
 import { ThemeContext, useThemeState } from "../hooks/useTheme";
 
@@ -22,6 +39,7 @@ export function ThemeProvider({ children, defaultThemeId = "default" }: ThemePro
   }, [themeState.themeId]);
 
   return <ThemeContext.Provider value={themeState}>{children}</ThemeContext.Provider>;
+
 }
 
 export default ThemeProvider;

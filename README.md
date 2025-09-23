@@ -11,6 +11,7 @@ An integrated e-commerce system with affiliate marketing and multi-store support
 ### Prerequisites
 - Node.js 18+ ([install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
 - npm or yarn
+- Modern browser with WebGL 2 support (Chrome 113+, Edge 113+, Safari 16+)
 
 ### Quick Start
 
@@ -29,6 +30,29 @@ cp .env.example .env
 # 4. Start development server
 npm run dev
 ```
+
+### 🌌 WebGL & 3D Theme Requirements
+
+- The lightweight 3D hero scenes rely on [`three`](https://threejs.org/) and [`@react-three/fiber`](https://github.com/pmndrs/react-three-fiber). These dependencies are installed with the rest of the project (`npm install`).
+- Ensure WebGL is enabled in the browser; headless or server-only environments fall back to a textual placeholder automatically.
+- When embedding the hero elsewhere, wrap your UI with the shared `ThemeProvider` so the correct theme-specific camera and lighting presets are applied.
+
+## 🎨 Theme System
+
+- Theme definitions live in `src/themes/<id>/theme.json`. Each file follows the extended schema (`colors`, `radii`, `spacing`, `typography`, `three`, `components`) described in `src/themes/types.ts`.
+- CSS custom properties for every theme are declared in `src/themes/<id>/tokens.css`. The tokens map directly to Tailwind extensions (`--bg`, `--fg`, `--primary-fg`, `--radius-sm`, `--shadow-card`, etc.).
+- To create a new theme copy the entire `src/themes/default` folder, tweak the JSON values, and adjust the corresponding `tokens.css` file. As soon as the folder exists and the theme is registered in `src/themes/registry.ts`, it becomes available in the runtime switcher.
+- Core primitives in `src/ui` (`Button`, `Card`, `Input`, `Badge`) read CSS variables and the active `ThemeProvider` context to stay in sync with radius, spacing, and color presets.
+- The homepage now exposes `<ThemeSwitcher />` alongside a miniature component gallery so designers can preview variants without diving into code.
+- Heavy 3D assets should be lazy loaded; the default, luxury، وDamascus heroes ship with lightweight GLB examples so WebGL initialises instantly without blocking paint.
+- Shared sample GLB files live in `public/models` (generated automatically during install) and can be referenced through `three.model.path` or by using the `example` keys (`cube`, `sphere`, `model`) that `loadExampleModel` exposes.
+- The “Damascus Twilight” preset demonstrates bloom, fog، وshadow tuning alongside a bespoke GLB artifact.
+
+### 🗃️ Binary-safe assets via Base64
+
+- Lightweight GLB samples are committed as Base64 text under `assets/base64`. The manifest at `assets/models.manifest.json` keeps track of which decoded files should land in `public/models`.
+- A `postinstall` script (`node scripts/decodeAssets.mjs`) runs automatically after `npm install`/`npm ci`, recreating the binary GLB files without storing them directly in git.
+- Need to refresh the assets manually? Re-run `npm install` or execute `node scripts/decodeAssets.mjs` to regenerate the contents of `public/models`.
 
 ### 🔐 Environment Variables
 

@@ -1,0 +1,33 @@
+html[data-theme="damascus"] {
+  --bg: #0f1a1c;
+  --fg: #f3ede0;
+  --primary: #5cc4b8;
+  --primary-fg: #032524;
+  --secondary: #bf7b4a;
+  --secondary-fg: #fff5e6;
+  --muted: #162426;
+  --muted-fg: #a4c5c0;
+  --success: #4ec499;
+  --warning: #e5b755;
+  --danger: #e57373;
+  --info: #5ba8f2;
+  --border: #1f3a3d;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --space-xs: 4px;
+  --space-sm: 9px;
+  --space-md: 14px;
+  --space-lg: 20px;
+  --space-xl: 30px;
+  --font-family: 'Noto Sans Arabic', 'Cairo', 'system-ui', 'sans-serif';
+  --font-size: 16px;
+  --line-height: 1.55;
+  --shadow-card: 0 16px 38px rgba(16, 28, 32, 0.35);
+}
+
+html[data-theme="damascus"] body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-family);
+}
