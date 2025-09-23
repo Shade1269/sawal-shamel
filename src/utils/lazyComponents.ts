@@ -34,7 +34,6 @@ export const LazyComponents = {
   
   // Store Components - updated
   PublicStorefront: createLazyComponent(() => import('@/pages/PublicStorefront')),
-  StoreManagementNew: createLazyComponent(() => import('@/pages/StoreManagementNew')),
   
   // Advanced Features - Atlantis replaces old chat
   SecurityCenter: createLazyComponent(() => import('@/pages/SecurityCenter')),

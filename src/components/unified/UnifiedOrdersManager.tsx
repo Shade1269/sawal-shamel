@@ -195,7 +195,6 @@ export function UnifiedOrdersManager() {
   }, [location.pathname, profile?.role]);
 
   const config = ordersConfigs[managerType];
-  if (!config) return null;
 
   // تحميل الطلبات (مؤقت - بيانات وهمية)
   useEffect(() => {
@@ -254,6 +253,10 @@ export function UnifiedOrdersManager() {
 
   // تصفية الطلبات
   const filteredOrders = useMemo(() => {
+    if (!config) {
+      return [];
+    }
+
     let filtered = orders;
 
     // تصفية حسب التبويب النشط
@@ -278,6 +281,10 @@ export function UnifiedOrdersManager() {
 
     return filtered;
   }, [orders, activeTab, searchQuery, selectedStatus, config.tabs]);
+
+  if (!config) {
+    return null;
+  }
 
   const getStatusInfo = (status: string) => {
     return orderStatuses.find(s => s.value === status) || orderStatuses[0];

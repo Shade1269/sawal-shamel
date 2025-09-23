@@ -43,11 +43,22 @@ function resolveModelPath(modelConfig) {
     try {
       return resolveExampleModel(modelConfig.example);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.warn(`[three] Unknown example model: ${modelConfig.example}`, error);
     }
   }
   return null;
+}
+
+function extractErrorCode(error) {
+  if (!error || typeof error !== "object") {
+    return undefined;
+  }
+  const candidate = error;
+  const code = candidate.code;
+  if (typeof code === "string") {
+    return code;
+  }
+  return undefined;
 }
 
 function parseBloomConfig(bloom) {
@@ -269,6 +280,44 @@ export const SimpleScene = memo(function SimpleScene({
     webglAvailable: detectWebGLSupport(),
   });
 
+  const [modelReady, setModelReady] = useState(false);
+  const [modelError, setModelError] = useState(null);
+
+  useEffect(() => {
+    setModelReady(false);
+    setModelError(null);
+  }, [config?.model]);
+
+  const camera = useMemo(() => {
+    const position = Array.isArray(config?.camera?.position)
+      ? config.camera.position
+      : [0, 1.25, 4];
+    return {
+      position,
+      fov: typeof config?.camera?.fov === "number" ? config.camera.fov : 45,
+      near: 0.1,
+      far: 100,
+    };
+  }, [config]);
+
+  const effects = config?.effects ?? {};
+  const backgroundColor = typeof config?.background === "string" ? config.background : "#050505";
+  const shadowsEnabled = effects?.shadow?.enabled !== false;
+
+  const handleReady = useCallback(() => {
+    setModelReady(true);
+    setModelError(null);
+  }, []);
+
+  const handleError = useCallback((error) => {
+    if (!error || error.name === "AbortError") {
+      return;
+    }
+    console.warn("[three] Failed to load GLB model", error);
+    setModelError(error);
+    setModelReady(false);
+  }, []);
+
   if (surface !== "canvas") {
     return React.createElement(
       "div",
@@ -293,64 +342,93 @@ export const SimpleScene = memo(function SimpleScene({
     );
   }
 
-  const [modelReady, setModelReady] = useState(false);
-
-  useEffect(() => {
-    setModelReady(false);
-  }, [config?.model]);
-
-  const camera = useMemo(() => {
-    const position = Array.isArray(config?.camera?.position)
-      ? config.camera.position
-      : [0, 1.25, 4];
-    return {
-      position,
-      fov: typeof config?.camera?.fov === "number" ? config.camera.fov : 45,
-      near: 0.1,
-      far: 100,
-    };
-  }, [config]);
-
-  const effects = config?.effects ?? {};
-  const backgroundColor = typeof config?.background === "string" ? config.background : "#050505";
-  const shadowsEnabled = effects?.shadow?.enabled !== false;
-
-  const handleReady = useCallback(() => {
-    setModelReady(true);
-  }, []);
-
-  const handleError = useCallback((error) => {
-    if (error && error.name !== "AbortError") {
-      // eslint-disable-next-line no-console
-      console.warn("[three] Failed to load GLB model", error);
-    }
-    setModelReady(false);
-  }, []);
+  const errorCode = extractErrorCode(modelError);
+  const errorTitle =
+    errorCode === "MODEL_NOT_FOUND"
+      ? "ملف النموذج غير متوفر"
+      : "تعذر تحميل النموذج ثلاثي الأبعاد";
+  const errorDescription =
+    errorCode === "MODEL_NOT_FOUND"
+      ? "تحقق من مسار ملف GLB أو استخدم إعدادًا مختلفًا للثيم."
+      : "حدث خطأ أثناء تحميل النموذج. جرّب تحديث الصفحة أو اختيار ثيم آخر.";
 
   return React.createElement(
-    Canvas3D,
+    "div",
     {
-      camera,
-      shadows: shadowsEnabled,
-      dpr: [1, 1.5],
-      containerProps: {
-        className,
-        "data-scene-surface": surface,
-        style: { borderRadius: "var(--radius-lg)" },
+      className,
+      "data-scene-surface": surface,
+      style: {
+        position: "relative",
+        width: "100%",
+        height: "100%",
       },
-      fallback: null,
     },
-    React.createElement("color", { attach: "background", args: [backgroundColor] }),
-    React.createElement(SceneEffects, { effects }),
-    React.createElement(SceneLights, { config, accentColor }),
-    React.createElement(SceneModel, {
-      modelConfig: config?.model,
-      accentColor,
-      effects,
-      onReady: handleReady,
-      onError: handleError,
-    }),
-    !modelReady ? React.createElement(PlaceholderGem, { color: accentColor }) : null
+    React.createElement(
+      Canvas3D,
+      {
+        camera,
+        shadows: shadowsEnabled,
+        dpr: [1, 1.5],
+        containerProps: {
+          className: "h-full w-full",
+          style: { borderRadius: "var(--radius-lg)" },
+        },
+        fallback: null,
+      },
+      React.createElement("color", { attach: "background", args: [backgroundColor] }),
+      React.createElement(SceneEffects, { effects }),
+      React.createElement(SceneLights, { config, accentColor }),
+      React.createElement(SceneModel, {
+        modelConfig: config?.model,
+        accentColor,
+        effects,
+        onReady: handleReady,
+        onError: handleError,
+      }),
+      !modelReady && !modelError
+        ? React.createElement(PlaceholderGem, { color: accentColor })
+        : null
+    ),
+    modelError
+      ? React.createElement(
+          "div",
+          {
+            style: {
+              position: "absolute",
+              inset: 0,
+              display: "grid",
+              placeItems: "center",
+              padding: "1rem",
+              textAlign: "center",
+              color: "var(--foreground)",
+              backgroundColor: "rgba(15, 23, 42, 0.75)",
+              backdropFilter: "blur(6px)",
+            },
+          },
+          React.createElement(
+            "div",
+            {
+              style: {
+                display: "grid",
+                gap: "0.5rem",
+                maxWidth: "18rem",
+              },
+            },
+            React.createElement("strong", null, errorTitle),
+            React.createElement(
+              "span",
+              {
+                style: {
+                  fontSize: "0.75rem",
+                  color: "var(--muted-foreground)",
+                  lineHeight: 1.6,
+                },
+              },
+              errorDescription
+            )
+          )
+        )
+      : null
   );
 });
 

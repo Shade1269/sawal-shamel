@@ -545,7 +545,6 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
       loadLists();
       loadProviders(); // Load saved providers
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAllowed]);
 
   if (!user) {
