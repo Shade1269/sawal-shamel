@@ -2,13 +2,13 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useStoreThemes, type StoreThemeConfig } from '@/hooks/useStoreThemes';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 
-interface ThemeContextType {
+interface StoreThemeContextType {
   currentTheme: StoreThemeConfig | null;
   applyTheme: (config: StoreThemeConfig) => void;
   resetTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | null>(null);
+const StoreThemeContext = createContext<StoreThemeContextType | null>(null);
 
 interface ThemeProviderProps {
   children: React.ReactNode;
@@ -28,18 +28,18 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
   // إجبار إزالة الوضع المظلم في صفحات المتجر
   useEffect(() => {
     // حفظ الحالة الحالية لـ dark mode
-    const originalClass = document.body.className;
-    const hasDark = document.body.classList.contains('dark');
+    const originalClass = document.documentElement.className;
+    const hasDark = document.documentElement.classList.contains('dark');
     
     // إزالة dark class مؤقتاً للمتجر
     if (hasDark) {
-      document.body.classList.remove('dark');
+      document.documentElement.classList.remove('dark');
     }
     
     // إعادة الحالة الأصلية عند إلغاء تحميل المكون
     return () => {
       if (hasDark) {
-        document.body.classList.add('dark');
+        document.documentElement.classList.add('dark');
       }
     };
   }, []);
@@ -251,14 +251,14 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
   };
 
   return (
-    <ThemeContext.Provider value={{ currentTheme: currentThemeConfig, applyTheme, resetTheme }}>
+    <StoreThemeContext.Provider value={{ currentTheme: currentThemeConfig, applyTheme, resetTheme }}>
       {children}
-    </ThemeContext.Provider>
+    </StoreThemeContext.Provider>
   );
 };
 
 export const useStoreTheme = () => {
-  const context = useContext(ThemeContext);
+  const context = useContext(StoreThemeContext);
   if (!context) throw new Error('useStoreTheme must be used within a StoreThemeProvider');
   return context;
 };
