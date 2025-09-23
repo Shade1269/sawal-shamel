@@ -106,14 +106,37 @@ npm run dev
 - Ensure WebGL is enabled in the browser; headless or server-only environments fall back to a textual placeholder automatically.
 - When embedding the hero elsewhere, wrap your UI with the shared `ThemeProvider` so the correct theme-specific camera and lighting presets are applied.
 
-## 🎨 Theme System
-- Theme definitions live in `src/themes/<id>/theme.json`.
-- CSS custom properties for every theme are declared in `src/themes/<id>/tokens.css`.
+## 🎨 3D Theme System *(نظام الثيمات ثلاثية الأبعاد)*
+
+### 📍 **الثيمات المتاحة حالياً:**
+- **Default Horizon** (`src/themes/default/`) - مكعب تفاعلي مع إضاءة متوازنة
+- **Damascus Twilight** (`src/themes/damascus/`) - منحوتة دمشقية مع تأثيرات bloom
+- **Luxury Mirage** (`src/themes/luxury/`) - كرة ذهبية فاخرة مع إضاءة متطورة
+
+### 🛠️ **كيفية إنشاء ثيم جديد:**
+1. انسخ مجلد `src/themes/default` إلى `src/themes/your-theme-name`
+2. عدل `theme.json` لتخصيص الألوان والإعدادات ثلاثية الأبعاد
+3. عدل `Hero3D.tsx` لتخصيص المحتوى والتصميم
+4. عدل `tokens.css` لتخصيص متغيرات CSS
+
+### 📚 **للمزيد من التفاصيل:**
+- **[📖 دليل الثيمات الكامل](THEMES_3D_GUIDE.md)** - شرح شامل للنظام
+- **[🎯 مثال عملي](examples/custom-theme-example/)** - ثيم "نسيم المحيط" كمثال
+
+### 🔧 **مكونات النظام الأساسية:**
+- `src/three/SimpleScene.tsx` - محرك العرض ثلاثي الأبعاد
+- `src/three/loaders.ts` - تحميل نماذج GLB
+- `src/themes/types.d.ts` - تعريفات TypeScript
+- `public/models/` - النماذج ثلاثية الأبعاد (cube.glb, sphere.glb, model.glb)
+
+### 🎛️ **الميزات التقنية:**
+- Theme definitions live in `src/themes/<id>/theme.json`
+- CSS custom properties for every theme are declared in `src/themes/<id>/tokens.css`
 - To create a new theme copy the entire `src/themes/default` folder, tweak the JSON values, and adjust the corresponding `tokens.css` file.
-- Core primitives in `src/ui` (`Button`, `Card`, `Input`, `Badge`) read CSS variables and the active `ThemeProvider` context.
-- Homepage exposes `<ThemeSwitcher />` and component gallery.
-- Heavy 3D assets should be lazy loaded; the default, luxury, Damascus heroes ship with lightweight GLB examples.
-- Shared sample GLB files live in `public/models`.
+- Core primitives in `src/ui` (`Button`, `Card`, `Input`, `Badge`) read CSS variables and the active `ThemeProvider` context
+- Homepage exposes `<ThemeSwitcher />` and component gallery
+- Heavy 3D assets should be lazy loaded; the default, luxury, Damascus heroes ship with lightweight GLB examples
+- Shared sample GLB files live in `public/models`
 - “Damascus Twilight” preset demonstrates bloom, fog, and shadow tuning.
 
 ### 🗃️ Binary-safe assets via Base64
