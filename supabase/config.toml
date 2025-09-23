@@ -67,24 +67,6 @@ verify_jwt = false
 [functions.get-products-with-images]
 verify_jwt = false
 
-[functions.sync-zoho-to-firestore]
-verify_jwt = false
-
-[functions.sync-zoho-products]
-verify_jwt = false
-
-[functions.check-zoho-status]
-verify_jwt = false
-
-[functions.refresh-zoho-token]
-verify_jwt = false
-
-[functions.test-zoho-token]
-verify_jwt = false
-
-[functions.generate-zoho-token]
-verify_jwt = false
-
 [functions.create-customer-otp-session]
 verify_jwt = false
 

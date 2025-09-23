@@ -69,9 +69,9 @@ serve(async (req) => {
 
     // حساب البيانات التاريخية للمستخدم
     const { data: recentTransactions, error: transactionsError } = await supabase
-      .from('orders')
-      .select('total_sar, created_at')
-      .eq('customer_profile_id', requestData.user_id)
+      .from('ecommerce_orders')
+      .select('total_sar, created_at, user_id')
+      .eq('user_id', requestData.user_id)
       .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
 
     if (transactionsError) {

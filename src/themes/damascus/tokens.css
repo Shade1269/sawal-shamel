@@ -1,0 +1,59 @@
+html[data-theme="damascus"] {
+  --bg: #0f1a1c;
+  --fg: #f3ede0;
+  --surface: #182526;
+  --surface-fg: #f3ede0;
+  --surface-muted: #1d2f31;
+  --surface-muted-fg: #b2d3cf;
+  --surface-hover: #223536;
+  --surface-active: #122123;
+  --surface-border: #1f3a3d;
+  --primary: #5cc4b8;
+  --primary-fg: #032524;
+  --primary-hover: #6dd0c2;
+  --primary-active: #3da99d;
+  --secondary: #bf7b4a;
+  --secondary-fg: #fff5e6;
+  --secondary-hover: #c78a58;
+  --secondary-active: #a0643d;
+  --muted: #162426;
+  --muted-fg: #a4c5c0;
+  --success: #4ec499;
+  --success-fg: #041712;
+  --warning: #e5b755;
+  --warning-fg: #241a03;
+  --danger: #e57373;
+  --danger-fg: #2f0f0f;
+  --info: #5ba8f2;
+  --info-fg: #041627;
+  --border: #1f3a3d;
+  --focus-ring: #5cc4b8;
+  --disabled-bg: #152326;
+  --disabled-fg: #8aa4a0;
+  --disabled-border: #213a3d;
+  --shadow-card: 0 16px 38px rgba(16, 28, 32, 0.35);
+  --shadow-soft: 0 18px 48px rgba(10, 22, 26, 0.32);
+  --shadow-elevated: 0 26px 64px rgba(10, 22, 26, 0.36);
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --space-xs: 4px;
+  --space-sm: 9px;
+  --space-md: 14px;
+  --space-lg: 20px;
+  --space-xl: 30px;
+  --font-family: 'Noto Sans Arabic', 'Cairo', 'system-ui', 'sans-serif';
+  --font-size: 16px;
+  --line-height: 1.55;
+  --input-bg: #152627;
+  --input-fg: #f3ede0;
+  --input-border: #264246;
+  --input-placeholder: #94bab5;
+  --input-focus-ring: #5cc4b8;
+}
+
+html[data-theme="damascus"] body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-family);
+}

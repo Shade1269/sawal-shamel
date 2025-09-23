@@ -60,6 +60,5 @@ export const ANIMATION_DURATION = {
 // API Endpoints
 export const API_ENDPOINTS = {
   ATLANTIS_POINTS: 'update-atlantis-points',
-  ATLANTIS_TTS: 'atlantis-tts',
-  ZOHO_SYNC: 'sync-zoho-products'
+  ATLANTIS_TTS: 'atlantis-tts'
 } as const;
