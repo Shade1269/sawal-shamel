@@ -81,12 +81,6 @@ export const OptimizedRoutes = {
     'high'
   ),
 
-  StoreManagementNew: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/StoreManagementNew'),
-    'store-management',
-    'medium'
-  ),
-
   // Analytics routes
   ExecutiveDashboard: BundleOptimizer.createOptimizedLazyComponent(
     () => import('@/pages/ExecutiveDashboard'),

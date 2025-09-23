@@ -13,7 +13,13 @@ const gltfLoaderCache = new Map<string, Promise<GLBResource>>();
 const textureLoaderCache = new Map<string, Promise<TextureResource>>();
 const nodeModelAvailabilityCache = new Map<string, boolean>();
 
-const isNodeEnvironment = typeof window === "undefined" && typeof process !== "undefined";
+type ServerAvailabilityModule = {
+  ensureModelFileAvailable: (path: string) => Promise<boolean>;
+  clearModelAvailabilityCache: () => void;
+};
+
+let serverAvailabilityModule: ServerAvailabilityModule | null = null;
+let serverAvailabilityModulePromise: Promise<ServerAvailabilityModule | null> | null = null;
 
 function normalizeModelPath(path: string) {
   if (typeof path !== "string") {
@@ -22,11 +28,34 @@ function normalizeModelPath(path: string) {
   return path.replace(/^\//, "");
 }
 
-async function ensureModelFileAvailable(path: string): Promise<boolean> {
-  if (!isNodeEnvironment) {
-    return true;
+async function loadServerAvailability(): Promise<ServerAvailabilityModule | null> {
+  if (!import.meta.env?.SSR) {
+    return null;
   }
 
+  if (serverAvailabilityModule) {
+    return serverAvailabilityModule;
+  }
+
+  if (!serverAvailabilityModulePromise) {
+    const modulePath = ["./server", "modelAvailability.ts"].join("/");
+    serverAvailabilityModulePromise = import(/* @vite-ignore */ modulePath).then((module) => {
+      serverAvailabilityModule = {
+        ensureModelFileAvailable: module.ensureModelFileAvailable,
+        clearModelAvailabilityCache: module.clearModelAvailabilityCache,
+      };
+      return serverAvailabilityModule;
+    }).catch((error) => {
+      console.warn("[three] Failed to load server model availability module", error);
+      serverAvailabilityModule = null;
+      return null;
+    });
+  }
+
+  return serverAvailabilityModulePromise;
+}
+
+async function ensureModelFileAvailable(path: string): Promise<boolean> {
   const normalized = normalizeModelPath(path);
   if (
     !normalized ||
@@ -36,20 +65,25 @@ async function ensureModelFileAvailable(path: string): Promise<boolean> {
     return true;
   }
 
+  if (!import.meta.env?.SSR) {
+    return true;
+  }
+
   if (nodeModelAvailabilityCache.has(normalized)) {
     return nodeModelAvailabilityCache.get(normalized) ?? false;
   }
 
-  try {
-    const fs = await import(/* @vite-ignore */ "node:fs/promises");
-    const pathModule = await import(/* @vite-ignore */ "node:path");
-    const absolutePath = pathModule.resolve(process.cwd(), "public", normalized);
-    await fs.access(absolutePath);
-    nodeModelAvailabilityCache.set(normalized, true);
+  const availabilityModule = await loadServerAvailability();
+  if (!availabilityModule) {
     return true;
+  }
+
+  try {
+    const available = await availabilityModule.ensureModelFileAvailable(normalized);
+    nodeModelAvailabilityCache.set(normalized, available);
+    return available;
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.warn(`[three] Missing GLB asset: ${path}`, error);
+    console.warn(`[three] Missing GLB asset: ${normalized}`, error);
     nodeModelAvailabilityCache.set(normalized, false);
     return false;
   }
@@ -190,4 +224,7 @@ export function clearLoaderCaches() {
   gltfLoaderCache.clear();
   textureLoaderCache.clear();
   nodeModelAvailabilityCache.clear();
+  if (serverAvailabilityModule) {
+    serverAvailabilityModule.clearModelAvailabilityCache();
+  }
 }

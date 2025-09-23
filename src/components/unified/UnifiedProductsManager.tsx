@@ -201,7 +201,6 @@ export function UnifiedProductsManager() {
   }, [location.pathname, profile?.role]);
 
   const config = productsConfigs[managerType];
-  if (!config) return null;
 
   // تحميل المنتجات (مؤقت - بيانات وهمية)
   useEffect(() => {
@@ -271,10 +270,14 @@ export function UnifiedProductsManager() {
 
   // فتح dialog الإضافة عند وجود المعامل في URL
   useEffect(() => {
-    if (searchParams.get('action') === 'add' && config.canAdd) {
+    if (config?.canAdd && searchParams.get('action') === 'add') {
       setShowAddDialog(true);
     }
-  }, [searchParams, config.canAdd]);
+  }, [searchParams, config?.canAdd]);
+
+  if (!config) {
+    return null;
+  }
 
   const handleAction = (action: string) => {
     switch (action) {

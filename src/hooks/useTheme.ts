@@ -1,9 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { getTheme } from "@/themes/registry";
+import type { ThemeConfig } from "@/themes/types";
 import { getContrastRatio } from "@/utils/color";
 
 export type ThemeContextValue = {
   themeId: string;
+  themeConfig: ThemeConfig;
   setThemeId: (nextThemeId: string) => void;
 };
 
@@ -19,7 +21,6 @@ export function applyThemeToDocument(themeConfig: any) {
 
   const contrast = getContrastRatio(themeConfig.colors.fg, themeConfig.colors.bg);
   if (Number.isFinite(contrast) && contrast < 4.5) {
-    // eslint-disable-next-line no-console
     console.warn(
       `[theme] Low contrast ratio detected for theme "${themeConfig.id}": ${contrast.toFixed(2)} : 1. ` +
         "Consider adjusting 'colors.fg' or 'colors.bg' for better readability."
@@ -36,7 +37,7 @@ function useThemeController(defaultThemeId: string = "default"): ThemeContextVal
     return stored ?? defaultThemeId;
   });
 
-  const themeConfig = useMemo(() => getTheme(themeId), [themeId]);
+  const themeConfig = useMemo<ThemeConfig>(() => getTheme(themeId), [themeId]);
 
   const setThemeId = useCallback((nextThemeId: string) => {
     setThemeIdState(nextThemeId);
@@ -53,15 +54,20 @@ function useThemeController(defaultThemeId: string = "default"): ThemeContextVal
     () => ({
       themeId,
       setThemeId,
+      themeConfig,
     }),
-    [themeId, setThemeId]
+    [themeId, setThemeId, themeConfig]
   );
 }
 
 export function useTheme(defaultThemeId?: string): ThemeContextValue {
   const context = useContext(ThemeContext);
-  if (context) return context;
-  return useThemeController(defaultThemeId);
+  if (!context) {
+    throw new Error(
+      "useTheme must be used within a ThemeProvider. If you need isolated theme state, use useThemeState instead.",
+    );
+  }
+  return context;
 }
 
 export function useThemeState(defaultThemeId?: string): ThemeContextValue {
