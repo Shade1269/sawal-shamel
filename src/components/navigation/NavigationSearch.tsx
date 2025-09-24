@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSmartNavigation } from './SmartNavigationProvider';
 import { Button } from '@/components/ui/button';
@@ -10,31 +10,83 @@ import { Search, X, Star, Clock, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
+const RECENT_SEARCHES_STORAGE_KEY = 'recent-searches';
+
+const sanitizeRecentSearches = (value: unknown): string[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter((item): item is string => typeof item === 'string');
+};
+
+const readRecentSearchesFromStorage = (): string[] => {
+  if (typeof window === 'undefined') {
+    return [];
+  }
+
+  try {
+    const stored = window.localStorage.getItem(RECENT_SEARCHES_STORAGE_KEY);
+    if (!stored) {
+      return [];
+    }
+
+    const parsed = JSON.parse(stored);
+    return sanitizeRecentSearches(parsed).slice(0, 10);
+  } catch {
+    return [];
+  }
+};
+
+const persistRecentSearches = (searches: string[]) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(
+      RECENT_SEARCHES_STORAGE_KEY,
+      JSON.stringify(searches)
+    );
+  } catch {
+    // Ignore write errors (e.g., storage disabled)
+  }
+};
+
 export function NavigationSearch() {
   const navigate = useNavigate();
   const device = useDeviceDetection();
-  const { 
+  const {
     state, 
     searchNavigation, 
     addToFavorites,
     addToRecent
   } = useSmartNavigation();
-  
+
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setRecentSearches(readRecentSearchesFromStorage());
+  }, []);
 
   const searchResults = searchQuery ? searchNavigation(searchQuery) : [];
   const hasResults = searchResults.length > 0;
-  const recentSearches = JSON.parse(localStorage.getItem('recent-searches') || '[]').slice(0, 5);
+  const recentSearchesToDisplay = recentSearches.slice(0, 5);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     if (query.trim()) {
-      // Save to recent searches
-      const recent = JSON.parse(localStorage.getItem('recent-searches') || '[]');
-      const updated = [query, ...recent.filter((q: string) => q !== query)].slice(0, 10);
-      localStorage.setItem('recent-searches', JSON.stringify(updated));
+      setRecentSearches((previous) => {
+        const updated = [
+          query,
+          ...previous.filter((storedQuery) => storedQuery !== query)
+        ].slice(0, 10);
+        persistRecentSearches(updated);
+        return updated;
+      });
     }
   };
 
@@ -52,8 +104,8 @@ export function NavigationSearch() {
   };
 
   const clearRecentSearches = () => {
-    localStorage.setItem('recent-searches', '[]');
-    window.location.reload(); // Simple reload to update the component
+    setRecentSearches([]);
+    persistRecentSearches([]);
   };
 
   // Mobile-optimized search
@@ -173,7 +225,7 @@ export function NavigationSearch() {
                   )}
 
                   {/* Recent Searches */}
-                  {recentSearches.length > 0 && (
+                  {recentSearchesToDisplay.length > 0 && (
                     <div>
                       <div className="flex items-center justify-between mb-2 px-2">
                         <h3 className="text-xs font-medium text-muted-foreground flex items-center gap-2">
@@ -190,7 +242,7 @@ export function NavigationSearch() {
                         </Button>
                       </div>
                       <div className="space-y-1">
-                        {recentSearches.map((query: string, index: number) => (
+                        {recentSearchesToDisplay.map((query: string, index: number) => (
                           <div
                             key={index}
                             className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent cursor-pointer"
@@ -293,9 +345,9 @@ export function NavigationSearch() {
                   </CommandGroup>
                 )}
                 
-                {recentSearches.length > 0 && (
+                {recentSearchesToDisplay.length > 0 && (
                   <CommandGroup heading="البحث الأخير">
-                    {recentSearches.map((query: string, index: number) => (
+                    {recentSearchesToDisplay.map((query: string, index: number) => (
                       <CommandItem
                         key={index}
                         onSelect={() => handleSearch(query)}
