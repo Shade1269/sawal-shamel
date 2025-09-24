@@ -68,7 +68,7 @@ const Index = () => {
     if (profile?.role === 'admin') {
       navigate('/admin/dashboard');
     } else if (profile?.role === 'affiliate') {
-      navigate('/merchant');
+      navigate('/dashboard');
     } else if (profile?.role === 'merchant') {
       navigate('/merchant');
     } else {
