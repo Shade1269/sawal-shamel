@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,7 @@ export const StoreSettings = ({ storeId, storeData, onUpdate }: StoreSettingsPro
     store_name: storeData?.store_name || '',
     bio: storeData?.bio || '',
     logo_url: storeData?.logo_url || '',
-    is_active: storeData?.is_active || true,
+    is_active: storeData?.is_active ?? true,
     // إعدادات إضافية
     notifications_enabled: true,
     auto_approve_orders: false,
@@ -44,6 +44,16 @@ export const StoreSettings = ({ storeId, storeData, onUpdate }: StoreSettingsPro
   });
   
   const { toast } = useToast();
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      store_name: storeData?.store_name ?? '',
+      bio: storeData?.bio ?? '',
+      logo_url: storeData?.logo_url ?? '',
+      is_active: storeData?.is_active ?? true,
+    }));
+  }, [storeData]);
 
   const handleSave = async () => {
     try {
