@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -36,7 +36,22 @@ import { useFastAuth } from '@/hooks/useFastAuth';
 
 const EnhancedAffiliateDashboardLayout: React.FC = () => {
   const location = useLocation();
-  const { profile } = useFastAuth();
+  const navigate = useNavigate();
+  const { profile, signOut } = useFastAuth();
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await signOut();
+
+      if (error) {
+        console.error('Error signing out:', error);
+      }
+    } catch (error) {
+      console.error('Unexpected error during sign out:', error);
+    } finally {
+      navigate('/auth', { replace: true });
+    }
+  };
 
   // جلب المتاجر الخاصة بالمسوق
   const { data: stores } = useQuery({
@@ -260,7 +275,10 @@ const EnhancedAffiliateDashboardLayout: React.FC = () => {
                       <span>إعدادات المتجر</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive cursor-pointer">
+                    <DropdownMenuItem
+                      className="text-destructive cursor-pointer"
+                      onSelect={handleSignOut}
+                    >
                       <span>تسجيل الخروج</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
