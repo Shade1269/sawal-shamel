@@ -31,11 +31,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useTheme } from '@/hooks/useTheme';
-import ThemeSwitcher from '@/components/ThemeSwitcher';
 import { Button as ThemeButton } from '@/ui/Button';
 import { Card as ThemeCard } from '@/ui/Card';
-import { Input as ThemeInput } from '@/ui/Input';
-import { Badge as ThemeBadge } from '@/ui/Badge';
 const DefaultHero3D = React.lazy(() => import('@/themes/default/Hero3D').then((mod) => ({ default: mod.Hero3D })));
 const LuxuryHero3D = React.lazy(() => import('@/themes/luxury/Hero3D').then((mod) => ({ default: mod.Hero3D })));
 const DamascusHero3D = React.lazy(() => import('@/themes/damascus/Hero3D').then((mod) => ({ default: mod.Hero3D })));
@@ -48,8 +45,14 @@ const Index = () => {
   const { user, profile, signOut, isAuthenticated } = useFastAuth();
   const { userShop, userStatistics } = useUserDataContext();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
-  const { language, toggleLanguage, t } = useLanguage();
+  const { language, toggleLanguage } = useLanguage();
   const { themeId } = useTheme('default');
+
+  React.useEffect(() => {
+    if (isAuthenticated === false) {
+      navigate('/auth', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const heroMap = {
     default: DefaultHero3D,
@@ -116,7 +119,7 @@ const Index = () => {
 
   const handleChatClick = () => {
     if (!currentUser) {
-      navigate('/login');
+      navigate('/auth');
       return;
     }
     navigate('/atlantis/chat');
@@ -124,7 +127,7 @@ const Index = () => {
 
   const handleInventoryClick = () => {
     if (!currentUser) {
-      navigate('/login');
+      navigate('/auth');
       return;
     }
     navigate('/products');
@@ -132,7 +135,7 @@ const Index = () => {
 
   const handleStoreManagementClick = () => {
     if (!currentUser) {
-      navigate('/login');
+      navigate('/auth');
       return;
     }
     // Use smart navigation to go to appropriate dashboard based on user role
@@ -357,42 +360,6 @@ const Index = () => {
           </div>
         )}
 
-        <div className="mb-12">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h2 className="text-2xl font-bold text-foreground">نظام الثيمات</h2>
-              <p className="text-sm text-muted-foreground">
-                جرّب العناصر الأساسية لكل ثيم ولاحظ تأثير تغيير الألوان والهوية البصرية.
-              </p>
-            </div>
-            <ThemeSwitcher />
-          </div>
-          <div className="mt-6 grid gap-6 md:grid-cols-3">
-            <ThemeCard>
-              <h3 className="text-base font-semibold mb-3 text-foreground">الأزرار</h3>
-              <div className="flex flex-wrap gap-3">
-                <ThemeButton size="sm">إجراء سريع</ThemeButton>
-                <ThemeButton variant="outline">إجراء ثانوي</ThemeButton>
-                <ThemeButton variant="ghost">إجراء خفي</ThemeButton>
-              </div>
-            </ThemeCard>
-            <ThemeCard>
-              <h3 className="text-base font-semibold mb-3 text-foreground">حقول الإدخال</h3>
-              <ThemeInput placeholder="أدخل بريدك الإلكتروني" />
-              <ThemeInput placeholder="تنبيه للتحقق" invalid className="mt-3" />
-            </ThemeCard>
-            <ThemeCard>
-              <h3 className="text-base font-semibold mb-3 text-foreground">الشارات</h3>
-              <div className="flex flex-wrap gap-2">
-                <ThemeBadge>أساسي</ThemeBadge>
-                <ThemeBadge variant="success">نجاح</ThemeBadge>
-                <ThemeBadge variant="warning">تحذير</ThemeBadge>
-                <ThemeBadge variant="danger">خطر</ThemeBadge>
-                <ThemeBadge variant="muted">هادئ</ThemeBadge>
-              </div>
-            </ThemeCard>
-          </div>
-        </div>
         <div className="mb-16">
           <Suspense
             fallback={(
@@ -577,7 +544,7 @@ const Index = () => {
                     size="lg"
                     className="w-full h-12 text-lg font-bold rounded-xl"
                     animation="glow"
-                    onClick={() => navigate('/login')}
+                    onClick={() => navigate('/auth')}
                   >
                     بدء رحلة التسوق
                   </EnhancedButton>

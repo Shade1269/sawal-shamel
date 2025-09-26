@@ -6,6 +6,7 @@ import { Palette, ArrowRight, Info, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
+import ThemeSystemPreview from '@/components/theme/ThemeSystemPreview';
 
 const StoreThemeSettings: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>();
@@ -84,12 +85,14 @@ const StoreThemeSettings: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-8">
-            <StoreThemeSelector 
-              storeId={storeId} 
+            <StoreThemeSelector
+              storeId={storeId}
               onThemeApplied={handleThemeApplied}
             />
           </CardContent>
         </Card>
+
+        <ThemeSystemPreview className="mt-8" />
 
         {/* Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">

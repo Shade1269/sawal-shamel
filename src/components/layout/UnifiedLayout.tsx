@@ -39,9 +39,8 @@ export function UnifiedLayout({
   const headerHeight = device.isMobile ? 'h-16' : 'h-14'; // Taller header on mobile
 
   // For auth pages, don't show header
-  if (window.location.pathname.includes('/auth') || 
-      window.location.pathname.includes('/login') || 
-      window.location.pathname.includes('/signup')) {
+  const authPath = window.location.pathname;
+  if (authPath === '/auth' || authPath.startsWith('/auth/')) {
     return (
       <div className="min-h-screen bg-background">
         <main className="flex-1">
