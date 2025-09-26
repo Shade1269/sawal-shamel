@@ -16,8 +16,8 @@ const ChatLanding = () => {
       {/* Olive overlay for hero */}
       <div className="absolute inset-0 -z-10">
         <div className="w-full h-full" style={{
-          background: `radial-gradient(1200px 600px at 80% -200px, hsl(var(--landing-olive) / 0.2), transparent 60%),
-                       radial-gradient(800px 400px at 20% 0px, hsl(var(--landing-olive) / 0.15), transparent 60%)`
+        background: `radial-gradient(1200px 600px at 80% -200px, color-mix(in srgb, var(--olive, var(--accent)) 20%, transparent), transparent 60%),
+                       radial-gradient(800px 400px at 20% 0px, color-mix(in srgb, var(--olive, var(--accent)) 15%, transparent), transparent 60%)`
         }} />
       </div>
       {/* Header */}

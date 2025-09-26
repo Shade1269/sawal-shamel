@@ -62,11 +62,10 @@ export const QuickUserActions: React.FC<QuickUserActionsProps> = ({
 
   const roleNames = {
     admin: 'المديرين',
-    merchant: 'التجار',
     affiliate: 'المسوقين',
     customer: 'العملاء',
     moderator: 'المشرفين'
-  };
+  } as const;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -158,15 +157,8 @@ export const QuickUserActions: React.FC<QuickUserActionsProps> = ({
               >
                 المستخدمين المعطلين
               </Button>
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => onFilterChange({ role: 'merchant' })}
-              >
-                التجار فقط
-              </Button>
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 variant="outline"
                 onClick={() => onFilterChange({ role: 'affiliate' })}
               >
@@ -196,7 +188,6 @@ export const QuickUserActions: React.FC<QuickUserActionsProps> = ({
               <SelectContent>
                 <SelectItem value="all">جميع المستخدمين</SelectItem>
                 <SelectItem value="admin">المديرين</SelectItem>
-                <SelectItem value="merchant">التجار</SelectItem>
                 <SelectItem value="affiliate">المسوقين</SelectItem>
                 <SelectItem value="customer">العملاء</SelectItem>
                 <SelectItem value="moderator">المشرفين</SelectItem>

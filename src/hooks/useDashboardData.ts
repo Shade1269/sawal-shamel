@@ -63,8 +63,8 @@ export function useDashboardData() {
                      period === 'month' ? 1 : 
                      period === 'quarter' ? 3 : 12;
 
-    const roleMultiplier = profile?.role === 'admin' ? 5 : 
-                          profile?.role === 'merchant' ? 2 : 1;
+    const roleMultiplier = profile?.role === 'admin' ? 5 :
+                          profile?.role === 'affiliate' ? 2 : 1;
 
     return {
       totalRevenue: Math.floor(baseRevenue * multiplier * roleMultiplier),

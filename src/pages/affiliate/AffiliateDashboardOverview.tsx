@@ -226,7 +226,7 @@ export default function AffiliateDashboardOverview() {
               إدارة منتجات متجرك وإعدادات العمولة
             </p>
             <EnhancedButton asChild className="w-full" variant="default" animation="glow">
-              <Link to="/dashboard/products">
+              <Link to="/affiliate/storefront">
                 عرض المنتجات
               </Link>
             </EnhancedButton>
@@ -245,7 +245,7 @@ export default function AffiliateDashboardOverview() {
               متابعة وإدارة طلبات العملاء
             </p>
             <EnhancedButton asChild className="w-full" variant="luxury" animation="glow">
-              <Link to="/dashboard/orders">
+              <Link to="/affiliate/orders">
                 عرض الطلبات
               </Link>
             </EnhancedButton>
@@ -321,7 +321,7 @@ export default function AffiliateDashboardOverview() {
                متابعة عمولاتك وأرباحك
              </p>
              <EnhancedButton asChild className="w-full" variant="outline" animation="glow">
-               <Link to="/dashboard/commissions">
+               <Link to="/affiliate/analytics">
                  عرض العمولات
                </Link>
              </EnhancedButton>

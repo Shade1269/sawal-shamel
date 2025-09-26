@@ -1,171 +1,249 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { 
-  CheckCircle, 
-  Package, 
-  Truck, 
-  Phone, 
-  MapPin, 
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
   Calendar,
-  Clock,
+  CheckCircle2,
   Copy,
-  Share2,
   Home,
-  Banknote,
-  Receipt
-} from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+  Package,
+  Receipt,
+  Share2,
+  ShoppingBag,
+} from "lucide-react";
+import { toast } from "sonner";
+
+import Button from "@/ui/Button";
+import Card from "@/ui/Card";
+import Badge from "@/ui/Badge";
+import Skeleton from "@/ui/Skeleton";
+import { supabase } from "@/integrations/supabase/client";
+import { VisuallyHidden } from "@/components/app-shell/VisuallyHidden";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+
+interface OrderItem {
+  id: string;
+  product_title: string;
+  product_image_url?: string | null;
+  quantity: number;
+  unit_price_sar: number;
+  total_price_sar: number;
+}
 
 interface OrderDetails {
   id: string;
   order_number: string;
   customer_name: string;
-  customer_email?: string | null;
   customer_phone: string;
-  shipping_address: any;
+  customer_email?: string | null;
+  shipping_address: {
+    street?: string;
+    city?: string;
+    district?: string;
+    postal_code?: string;
+    country?: string;
+    notes?: string | null;
+  } | null;
   subtotal_sar: number;
   shipping_sar: number;
+  tax_sar: number;
   total_sar: number;
   payment_status: string;
   payment_method: string;
   status: string;
   created_at: string;
-  items: Array<{
-    id: string;
-    product_title: string;
-    product_image_url?: string;
-    quantity: number;
-    unit_price_sar: number;
-    total_price_sar: number;
-  }>;
+  items: OrderItem[];
 }
 
-const OrderConfirmationSimple = () => {
-  const { orderId, slug } = useParams();
-  const navigate = useNavigate();
-  const [order, setOrder] = useState<OrderDetails | null>(null);
-  const [loading, setLoading] = useState(true);
+interface OrderConfirmationProps {
+  navigateOverride?: (path: string) => void;
+  supabaseOverride?: typeof supabase;
+  orderOverride?: OrderDetails | null;
+  errorOverride?: string | null;
+  loadingOverride?: boolean;
+}
+
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("ar-SA", {
+    style: "currency",
+    currency: "SAR",
+    maximumFractionDigits: 0,
+  }).format(Math.max(0, Math.round(value)));
+
+const statusVariantMap: Record<string, "primary" | "success" | "warning" | "danger" | "muted"> = {
+  PENDING: "warning",
+  CONFIRMED: "success",
+  PROCESSING: "primary",
+  SHIPPED: "primary",
+  DELIVERED: "success",
+  CANCELLED: "danger",
+};
+
+const statusTextMap: Record<string, string> = {
+  PENDING: "قيد المعالجة",
+  CONFIRMED: "تم التأكيد",
+  PROCESSING: "يتم تجهيز الطلب",
+  SHIPPED: "تم الشحن",
+  DELIVERED: "تم التسليم",
+  CANCELLED: "ملغي",
+};
+
+const paymentStatusMap: Record<string, string> = {
+  PENDING: "بانتظار السداد",
+  PAID: "مدفوع",
+  FAILED: "فشل الدفع",
+  REFUNDED: "مسترجع",
+};
+
+const formatDate = (timestamp: string) => {
+  try {
+    const date = new Date(timestamp);
+    return new Intl.DateTimeFormat("ar-SA", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(date);
+  } catch (error) {
+    return timestamp;
+  }
+};
+
+const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
+  navigateOverride,
+  supabaseOverride,
+  orderOverride,
+  errorOverride,
+  loadingOverride,
+}) => {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const navigate = navigateOverride ?? useNavigate();
+  const [searchParams] = useSearchParams();
+  const params = useParams<{ orderId?: string; slug?: string }>();
+  const orderId = searchParams.get("orderId") ?? params.orderId ?? "";
+  const storeSlug = searchParams.get("slug") ?? params.slug ?? undefined;
+
+  const overrideProvided = typeof orderOverride !== "undefined";
+  const [order, setOrder] = useState<OrderDetails | null>(orderOverride ?? null);
+  const [loading, setLoading] = useState<boolean>(
+    typeof loadingOverride === "boolean" ? loadingOverride : !overrideProvided,
+  );
+  const [error, setError] = useState<string | null>(
+    typeof errorOverride === "string" ? errorOverride : null,
+  );
+
+  const supabaseClient = supabaseOverride ?? supabase;
 
   useEffect(() => {
-    if (orderId) {
-      fetchOrderDetails();
-    }
-  }, [orderId]);
-
-  const fetchOrderDetails = async () => {
-    try {
-      // جلب تفاصيل الطلب
-      const { data: orderData, error: orderError } = await supabase
-        .from('ecommerce_orders')
-        .select(`
-          id,
-          order_number,
-          customer_name,
-          customer_email,
-          customer_phone,
-          shipping_address,
-          subtotal_sar,
-          shipping_sar,
-          total_sar,
-          payment_status,
-          payment_method,
-          status,
-          created_at,
-          ecommerce_order_items (
-            id,
-            product_title,
-            product_image_url,
-            quantity,
-            unit_price_sar,
-            total_price_sar
-          )
-        `)
-        .eq('id', orderId)
-        .maybeSingle();
-
-      if (orderError) throw orderError;
-
-      if (!orderData) {
-        setOrder(null);
-        return;
+    if (overrideProvided) {
+      setLoading(typeof loadingOverride === "boolean" ? loadingOverride : false);
+      if (typeof orderOverride !== "undefined") {
+        setOrder(orderOverride);
       }
-
-      const { ecommerce_order_items, ...rest } = orderData as any;
-
-      setOrder({
-        ...(rest as OrderDetails),
-        items: ecommerce_order_items || []
-      });
-
-    } catch (error) {
-      console.error('Error fetching order:', error);
-      toast.error('خطأ في جلب تفاصيل الطلب');
-    } finally {
-      setLoading(false);
+      setError(errorOverride ?? null);
+      return;
     }
-  };
+
+    if (!orderId) {
+      setLoading(false);
+      setOrder(null);
+      setError("لم يتم تحديد الطلب");
+      return;
+    }
+
+    const fetchOrder = async () => {
+      try {
+        setLoading(true);
+        const { data, error: fetchError } = await supabaseClient
+          .from("ecommerce_orders")
+          .select(
+            `id, order_number, customer_name, customer_phone, customer_email, shipping_address, subtotal_sar, shipping_sar, tax_sar, total_sar, payment_status, payment_method, status, created_at, ecommerce_order_items ( id, product_title, product_image_url, quantity, unit_price_sar, total_price_sar )`
+          )
+          .eq("id", orderId)
+          .maybeSingle();
+
+        if (fetchError) throw fetchError;
+
+        if (!data) {
+          setOrder(null);
+          setError("لم يتم العثور على الطلب");
+          return;
+        }
+
+        const items = (data as any).ecommerce_order_items ?? [];
+        setOrder({
+          ...(data as any),
+          items,
+        });
+        setError(null);
+      } catch (err) {
+        console.error("failed to load order", err);
+        setError("حدث خطأ أثناء جلب تفاصيل الطلب");
+        setOrder(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void fetchOrder();
+  }, [orderId, supabaseClient, overrideProvided, orderOverride, errorOverride, loadingOverride]);
+
+  const paymentStatusText = order ? paymentStatusMap[order.payment_status] ?? order.payment_status : "";
+  const orderStatusText = order ? statusTextMap[order.status] ?? order.status : "";
+  const orderStatusVariant = order ? statusVariantMap[order.status] ?? "muted" : "muted";
+
+  const totals = useMemo(() => {
+    if (!order) return null;
+    return [
+      { label: "المجموع الفرعي", value: formatCurrency(order.subtotal_sar) },
+      { label: "الشحن", value: formatCurrency(order.shipping_sar) },
+      { label: "الضريبة", value: formatCurrency(order.tax_sar) },
+      { label: "الإجمالي", value: formatCurrency(order.total_sar), emphasize: true },
+    ];
+  }, [order]);
 
   const copyOrderNumber = () => {
-    if (order) {
-      navigator.clipboard.writeText(order.order_number || order.id);
-      toast.success('تم نسخ رقم الطلب');
+    if (!order) return;
+    if (typeof navigator === "undefined" || !navigator.clipboard) {
+      setError("النسخ غير مدعوم في متصفحك");
+      return;
     }
+
+    void navigator.clipboard
+      .writeText(order.order_number || order.id)
+      .then(() => toast.success("تم نسخ رقم الطلب"))
+      .catch(() => setError("تعذر نسخ رقم الطلب"));
   };
 
   const shareOrder = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: 'تفاصيل الطلب',
-        text: `رقم الطلب: ${order?.order_number || order?.id}`,
-        url: window.location.href
-      });
+    if (!order) return;
+    if (typeof navigator !== "undefined" && navigator.share) {
+      void navigator
+        .share({
+          title: "تفاصيل الطلب",
+          text: `رقم الطلب: ${order.order_number}`,
+          url: window?.location?.href,
+        })
+        .catch(() => {
+          /* user cancelled */
+        });
     } else {
       copyOrderNumber();
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'CONFIRMED': return 'bg-green-100 text-green-800 border-green-200';
-      case 'PENDING': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'DELIVERED': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'CANCELLED': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'CONFIRMED': return 'مؤكد';
-      case 'PENDING': return 'في الانتظار';
-      case 'PROCESSING': return 'قيد المعالجة';
-      case 'SHIPPED': return 'تم الشحن';
-      case 'DELIVERED': return 'تم التسليم';
-      case 'CANCELLED': return 'ملغي';
-      default: return status;
-    }
-  };
-
-  const getPaymentStatusText = (status: string) => {
-    switch (status) {
-      case 'PENDING': return 'في الانتظار';
-      case 'PAID': return 'مدفوع';
-      case 'FAILED': return 'فشل';
-      default: return status;
+  const goToStore = () => {
+    if (storeSlug) {
+      navigate(`/${storeSlug}`);
+    } else {
+      navigate("/");
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري تحميل تفاصيل الطلب...</p>
+      <div className="mx-auto flex min-h-screen max-w-4xl items-center justify-center px-4 py-16">
+        <div className="w-full space-y-[var(--spacing-md)]">
+          <Skeleton height={48} radius="lg" />
+          <Skeleton height={220} radius="lg" />
+          <Skeleton height={320} radius="lg" />
         </div>
       </div>
     );
@@ -173,259 +251,151 @@ const OrderConfirmationSimple = () => {
 
   if (!order) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Card className="w-full max-w-md mx-4">
-          <CardContent className="p-8 text-center">
-            <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">الطلب غير موجود</h3>
-            <p className="text-muted-foreground mb-4">لم يتم العثور على الطلب المطلوب</p>
-            <Button onClick={() => navigate('/')}>العودة للصفحة الرئيسية</Button>
-          </CardContent>
+      <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center gap-[var(--spacing-md)] px-4 text-center">
+        <Card className="w-full space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]">
+          <Package className="mx-auto h-12 w-12 text-[color:var(--fg-muted)]" aria-hidden />
+          <h1 className="text-xl font-semibold text-[color:var(--glass-fg)]">لم يتم العثور على الطلب</h1>
+          <p className="text-sm text-[color:var(--fg-muted)]">{error ?? "تحقق من الرابط أو حاول مرة أخرى لاحقاً."}</p>
+          <Button variant="solid" onClick={() => navigate("/")}>العودة للصفحة الرئيسية</Button>
         </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              onClick={() => navigate(slug ? `/store/${slug}` : '/')}
-              className="flex items-center gap-2"
-            >
-              <Home className="h-4 w-4" />
-              {slug ? 'العودة للمتجر' : 'العودة للرئيسية'}
-            </Button>
-            <div className="text-center">
-              <h1 className="text-xl font-semibold">تأكيد الطلب</h1>
-              <p className="text-sm text-muted-foreground">تم إنشاء طلبك بنجاح</p>
-            </div>
-            <div></div>
-          </div>
-        </div>
-      </div>
+    <div
+      className="mx-auto flex min-h-screen max-w-5xl flex-col gap-[var(--spacing-lg)] px-4 py-10"
+      data-reduced-motion={prefersReducedMotion ? "true" : undefined}
+    >
+      <VisuallyHidden aria-live="polite">
+        تم إنشاء الطلب بنجاح. رقم الطلب {order.order_number}. حالة الطلب {orderStatusText}.
+      </VisuallyHidden>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="space-y-6">
-          {/* رسالة النجاح */}
-          <Card className="border-green-200 bg-green-50">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="bg-green-100 rounded-full p-3">
-                  <CheckCircle className="h-8 w-8 text-green-600" />
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-xl font-bold text-green-800 mb-1">
-                    تم إنشاء طلبك بنجاح!
-                  </h2>
-                  <p className="text-green-700">
-                    سنتواصل معك خلال 24 ساعة لتأكيد الطلب وتحديد موعد التوصيل
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <header className="flex flex-col gap-[var(--spacing-sm)] text-center">
+        <CheckCircle2 className="mx-auto h-12 w-12 text-[color:var(--accent)]" aria-hidden />
+        <h1 className="text-2xl font-semibold text-[color:var(--glass-fg)]">شكرًا لطلبك!</h1>
+        <p className="text-sm text-[color:var(--fg-muted)]">
+          تم استلام طلبك بنجاح وسيتم التواصل معك فور التحديث.
+        </p>
+      </header>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* تفاصيل الطلب */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* معلومات الطلب */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Receipt className="h-5 w-5" />
-                    معلومات الطلب
-                  </CardTitle>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={copyOrderNumber}>
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={shareOrder}>
-                      <Share2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">رقم الطلب</p>
-                      <p className="font-mono font-semibold">{order.order_number || order.id.slice(0, 8).toUpperCase()}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">تاريخ الطلب</p>
-                      <p className="font-medium">
-                        {new Date(order.created_at).toLocaleDateString('ar-SA', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">حالة الطلب</p>
-                      <Badge className={getStatusColor(order.status)}>
-                        {getStatusText(order.status)}
-                      </Badge>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">حالة الدفع</p>
-                      <Badge className={getStatusColor(order.payment_status)}>
-                        {getPaymentStatusText(order.payment_status)}
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* عناصر الطلب */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Package className="h-5 w-5" />
-                    عناصر الطلب ({order.items.length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {order.items.map((item) => (
-                      <div key={item.id} className="flex items-center gap-4 p-4 border rounded-lg">
-                        {item.product_image_url && (
-                          <img
-                            src={item.product_image_url}
-                            alt={item.product_title}
-                            className="w-16 h-16 object-cover rounded-md"
-                          />
-                        )}
-                        <div className="flex-1">
-                          <h4 className="font-medium">{item.product_title}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {item.unit_price_sar} ريال × {item.quantity}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-semibold">{item.total_price_sar} ريال</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* معلومات التوصيل */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5" />
-                    معلومات التوصيل
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">اسم المستلم</p>
-                    <p className="font-medium">{order.customer_name}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">رقم الهاتف</p>
-                    <p className="font-medium flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
-                      {order.customer_phone}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">العنوان</p>
-                    <div className="flex items-start gap-2">
-                      <MapPin className="h-4 w-4 mt-1 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium">{order.shipping_address.address}</p>
-                        <p className="text-sm text-muted-foreground">{order.shipping_address.city}</p>
-                        {order.shipping_address.notes && (
-                          <p className="text-sm text-muted-foreground mt-1">
-                            <strong>ملاحظات:</strong> {order.shipping_address.notes}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* ملخص الطلب */}
+      <section className="grid gap-[var(--spacing-lg)] lg:grid-cols-[minmax(0,1fr)_320px]">
+        <Card className="space-y-[var(--spacing-lg)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/95 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-strong)]" aria-labelledby="order-receipt-heading">
+          <div className="flex flex-wrap items-center justify-between gap-[var(--spacing-sm)]">
             <div>
-              <Card className="sticky top-4">
-                <CardHeader>
-                  <CardTitle>ملخص الطلب</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* المجاميع */}
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>المجموع الفرعي:</span>
-                      <span>{order.subtotal_sar.toLocaleString()} ريال</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>رسوم الشحن:</span>
-                      <span>{order.shipping_sar.toLocaleString()} ريال</span>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between font-semibold text-lg">
-                      <span>المجموع الكلي:</span>
-                      <span className="text-primary">{order.total_sar.toLocaleString()} ريال</span>
-                    </div>
+              <h2 id="order-receipt-heading" className="text-lg font-semibold text-[color:var(--glass-fg)]">
+                إيصال الطلب
+              </h2>
+              <p className="text-xs text-[color:var(--fg-muted)]">رقم الطلب {order.order_number}</p>
+            </div>
+            <Badge variant={orderStatusVariant} aria-live="polite">
+              {orderStatusText}
+            </Badge>
+          </div>
+
+          <div className="grid gap-[var(--spacing-md)]" aria-label="قائمة المنتجات">
+            {order.items.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-between rounded-[var(--radius-lg)] border border-[color:var(--glass-border)] bg-[color:var(--surface)]/70 p-[var(--spacing-md)]"
+              >
+                <div className="flex items-center gap-[var(--spacing-md)]">
+                  <div className="h-14 w-14 overflow-hidden rounded-[var(--radius-md)] border border-[color:var(--glass-border)] bg-[color:var(--surface-2)]">
+                    <img
+                      src={item.product_image_url || "/placeholder.svg"}
+                      alt={item.product_title}
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
                   </div>
-
-                  <Separator />
-
-                  {/* طريقة الدفع */}
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Banknote className="h-5 w-5 text-amber-600" />
-                      <span className="font-medium text-amber-800">الدفع عند الاستلام</span>
-                    </div>
-                    <p className="text-sm text-amber-700">
-                      ستدفع <strong>{order.total_sar.toLocaleString()} ريال</strong> عند وصول الطلب
-                    </p>
+                  <div>
+                    <p className="text-sm font-medium text-[color:var(--glass-fg)]">{item.product_title}</p>
+                    <p className="text-xs text-[color:var(--fg-muted)]">الكمية: {item.quantity}</p>
                   </div>
+                </div>
+                <span className="text-sm font-semibold text-[color:var(--accent)]">
+                  {formatCurrency(item.total_price_sar)}
+                </span>
+              </div>
+            ))}
+          </div>
 
-                  {/* الخطوات التالية */}
-                  <div className="space-y-3">
-                    <h4 className="font-semibold">الخطوات التالية:</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        <span>سنتواصل معك خلال 24 ساعة</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-muted rounded-full"></div>
-                        <span>تأكيد الطلب وموعد التوصيل</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-muted rounded-full"></div>
-                        <span>شحن وتوصيل الطلب</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-muted rounded-full"></div>
-                        <span>الدفع عند الاستلام</span>
-                      </div>
-                    </div>
-                  </div>
+          <div className="space-y-[var(--spacing-sm)] border-t border-dashed border-[color:var(--glass-border)] pt-[var(--spacing-md)] text-sm">
+            {totals?.map((row) => (
+              <div
+                key={row.label}
+                className={`flex items-center justify-between ${row.emphasize ? "text-base font-semibold text-[color:var(--glass-fg)]" : "text-[color:var(--fg-muted)]"}`}
+              >
+                <span>{row.label}</span>
+                <span>{row.value}</span>
+              </div>
+            ))}
+          </div>
 
-                  <Button 
-                    onClick={() => navigate(slug ? `/store/${slug}` : '/')}
-                    className="w-full"
-                  >
-                    متابعة التسوق
-                  </Button>
-                </CardContent>
-              </Card>
+          <div className="flex flex-wrap items-center gap-[var(--spacing-sm)]">
+            <Button variant="solid" size="sm" leftIcon={<Copy className="h-4 w-4" aria-hidden />} onClick={copyOrderNumber}>
+              نسخ رقم الطلب
+            </Button>
+            <Button variant="ghost" size="sm" leftIcon={<Share2 className="h-4 w-4" aria-hidden />} onClick={shareOrder}>
+              مشاركة التفاصيل
+            </Button>
+          </div>
+        </Card>
+
+        <Card className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]" aria-label="تفاصيل إضافية عن الطلب">
+          <div className="space-y-[var(--spacing-xs)]">
+            <h3 className="text-base font-semibold text-[color:var(--glass-fg)]">ملخص سريع</h3>
+            <div className="flex items-center gap-[var(--spacing-sm)] text-sm text-[color:var(--fg-muted)]">
+              <Receipt className="h-4 w-4" aria-hidden />
+              <span>{paymentStatusText} — {order.payment_method === "cod" ? "الدفع عند الاستلام" : order.payment_method}</span>
+            </div>
+            <div className="flex items-center gap-[var(--spacing-sm)] text-sm text-[color:var(--fg-muted)]">
+              <Calendar className="h-4 w-4" aria-hidden />
+              <span>تم الإنشاء في {formatDate(order.created_at)}</span>
             </div>
           </div>
+
+          <div className="space-y-[var(--spacing-xs)]">
+            <h3 className="text-base font-semibold text-[color:var(--glass-fg)]">عنوان الشحن</h3>
+            <p className="text-sm text-[color:var(--fg-muted)]">
+              {[order.shipping_address?.street, order.shipping_address?.district, order.shipping_address?.city, order.shipping_address?.postal_code]
+                .filter(Boolean)
+                .join("، ") || "لم يتم إدخال عنوان"}
+            </p>
+            {order.shipping_address?.notes ? (
+              <p className="text-xs text-[color:var(--fg-muted)]">ملاحظات: {order.shipping_address.notes}</p>
+            ) : null}
+          </div>
+
+          <div className="space-y-[var(--spacing-sm)]">
+            <h3 className="text-base font-semibold text-[color:var(--glass-fg)]">الخطوات التالية</h3>
+            <ul className="list-disc space-y-[var(--spacing-xs)] pr-5 text-sm text-[color:var(--fg-muted)]">
+              <li>احتفظ برقم الطلب للمراجعة السريعة.</li>
+              <li>سنتواصل عبر الجوال لتأكيد موعد التسليم.</li>
+              <li>يمكنك الرجوع لهذه الصفحة من لوحة الطلبات في أي وقت.</li>
+            </ul>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-[var(--spacing-sm)]">
+            <Button variant="solid" size="sm" leftIcon={<ShoppingBag className="h-4 w-4" aria-hidden />} onClick={goToStore}>
+              العودة للمتجر
+            </Button>
+            <Button variant="ghost" size="sm" leftIcon={<Home className="h-4 w-4" aria-hidden />} onClick={() => navigate("/")}>
+              الرئيسية
+            </Button>
+          </div>
+        </Card>
+      </section>
+
+      {error ? (
+        <div
+          className="rounded-[var(--radius-lg)] border border-[color:var(--danger-border, rgba(220, 38, 38, 0.35))] bg-[color:var(--danger-bg, rgba(248, 113, 113, 0.08))] p-[var(--spacing-md)] text-sm text-[color:var(--danger-fg, #b91c1c)]"
+          role="alert"
+          aria-live="assertive"
+        >
+          {error}
         </div>
-      </div>
+      ) : null}
     </div>
   );
 };

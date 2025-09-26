@@ -196,11 +196,11 @@ export const AffiliateAnalytics = ({
                     <XAxis dataKey="day" />
                     <YAxis />
                     <Tooltip />
-                    <Area 
-                      type="monotone" 
-                      dataKey="visitors" 
-                      stroke="hsl(var(--primary))" 
-                      fill="hsl(var(--primary))"
+                    <Area
+                      type="monotone"
+                      dataKey="visitors"
+                      stroke="var(--primary)"
+                      fill="var(--primary)"
                       fillOpacity={0.2}
                     />
                   </AreaChart>
@@ -219,8 +219,8 @@ export const AffiliateAnalytics = ({
                     <XAxis dataKey="month" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="sales" fill="hsl(var(--primary))" />
-                    <Bar dataKey="commissions" fill="hsl(var(--accent))" />
+                    <Bar dataKey="sales" fill="var(--primary)" />
+                    <Bar dataKey="commissions" fill="var(--accent)" />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>

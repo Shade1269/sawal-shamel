@@ -15,16 +15,19 @@ import {
   ExternalLink,
   BookOpen,
   BarChart3,
-  Users,
+  Award,
   MessageSquare,
   ShoppingBag,
+  ShoppingCart,
   Package,
-  Truck,
-  CreditCard,
   AlertTriangle,
   CheckCircle,
   Clock,
-  Zap
+  Zap,
+  Crown,
+  Star,
+  Home,
+  Receipt
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -191,160 +194,82 @@ const QuickActionPanel: React.FC<QuickActionPanelProps> = ({
 // Pre-configured action sets for common use cases
 export const getAdminActions = (): QuickAction[] => [
   {
-    id: 'add_product',
-    title: 'إضافة منتج',
-    description: 'إضافة منتج جديد للمتجر',
-    icon: <Plus className="w-5 h-5" />,
+    id: 'admin_dashboard',
+    title: 'لوحة التحكم',
+    description: 'نظرة شاملة على الأداء',
+    icon: <Crown className="w-5 h-5" />,
     color: 'primary',
-    href: '/admin/products',
-    shortcut: 'Ctrl+N'
+    href: '/admin/dashboard'
   },
   {
     id: 'view_orders',
-    title: 'الطلبات',
-    description: 'عرض وإدارة الطلبات',
+    title: 'إدارة الطلبات',
+    description: 'عرض ومعالجة طلبات العملاء',
     icon: <ShoppingBag className="w-5 h-5" />,
     color: 'luxury',
     href: '/admin/orders',
     badge: { text: '12 جديد', variant: 'destructive' }
   },
   {
-    id: 'manage_users',
-    title: 'المستخدمون',
-    description: 'إدارة حسابات المستخدمين',
-    icon: <Users className="w-5 h-5" />,
-    color: 'premium',
-    href: '/admin/users'
-  },
-  {
-    id: 'analytics',
-    title: 'التحليلات',
-    description: 'عرض تقارير الأداء',
-    icon: <BarChart3 className="w-5 h-5" />,
-    color: 'persian',
-    href: '/admin/analytics'
-  },
-  {
     id: 'inventory',
-    title: 'المخزون',
-    description: 'إدارة المخزون والمنتجات',
+    title: 'مركز المخزون',
+    description: 'إدارة المنتجات والمستويات',
     icon: <Package className="w-5 h-5" />,
     color: 'success',
     href: '/admin/inventory',
     badge: { text: '5 تنبيه', variant: 'outline' }
   },
   {
-    id: 'settings',
-    title: 'الإعدادات',
-    description: 'إعدادات المتجر العامة',
-    icon: <Settings className="w-5 h-5" />,
-    color: 'warning',
-    href: '/admin/settings'
-  }
-];
-
-export const getMerchantActions = (): QuickAction[] => [
-  {
-    id: 'add_product',
-    title: 'منتج جديد',
-    description: 'إضافة منتج للمتجر',
-    icon: <Plus className="w-5 h-5" />,
-    color: 'primary',
-    href: '/merchant/products/new'
-  },
-  {
-    id: 'orders',
-    title: 'الطلبات',
-    description: 'إدارة طلبات العملاء',
-    icon: <ShoppingBag className="w-5 h-5" />,
-    color: 'luxury',
-    href: '/merchant/orders',
-    badge: { text: '3 جديد', variant: 'destructive' }
-  },
-  {
-    id: 'inventory',
-    title: 'المخزون',
-    description: 'تتبع المخزون',
-    icon: <Package className="w-5 h-5" />,
-    color: 'premium',
-    href: '/merchant/inventory'
-  },
-  {
-    id: 'shipping',
-    title: 'الشحن',
-    description: 'إدارة عمليات الشحن',
-    icon: <Truck className="w-5 h-5" />,
-    color: 'persian',
-    href: '/merchant/shipping'
-  },
-  {
-    id: 'payments',
-    title: 'المدفوعات',
-    description: 'تتبع المدفوعات',
-    icon: <CreditCard className="w-5 h-5" />,
-    color: 'success',
-    href: '/merchant/payments'
-  },
-  {
     id: 'analytics',
-    title: 'التقارير',
-    description: 'تحليل الأداء',
+    title: 'تحليلات الإدارة',
+    description: 'تقارير الأداء والأرباح',
     icon: <BarChart3 className="w-5 h-5" />,
-    color: 'warning',
-    href: '/merchant/analytics'
+    color: 'persian',
+    href: '/admin/analytics'
   }
 ];
 
 export const getAffiliateActions = (): QuickAction[] => [
   {
-    id: 'browse_products',
-    title: 'تصفح المنتجات',
-    description: 'البحث عن منتجات للترويج',
-    icon: <Eye className="w-5 h-5" />,
+    id: 'affiliate_home',
+    title: 'لوحة المسوق',
+    description: 'متابعة الأداء العام',
+    icon: <Star className="w-5 h-5" />,
     color: 'primary',
-    href: '/products-browser'
+    href: '/affiliate'
   },
   {
-    id: 'my_store',
-    title: 'متجري',
-    description: 'إدارة متجر الأفيليت',
+    id: 'storefront',
+    title: 'واجهة المتجر',
+    description: 'ضبط إعدادات المتجر وتجربته',
     icon: <Package className="w-5 h-5" />,
     color: 'luxury',
-    href: '/affiliate/store'
+    href: '/affiliate/storefront'
+  },
+  {
+    id: 'affiliate_orders',
+    title: 'طلبات العملاء',
+    description: 'تتبع الطلبات المرتبطة بحملاتك',
+    icon: <ShoppingBag className="w-5 h-5" />,
+    color: 'success',
+    href: '/affiliate/orders'
   },
   {
     id: 'commissions',
-    title: 'العمولات',
-    description: 'تتبع الأرباح والعمولات',
-    icon: <CreditCard className="w-5 h-5" />,
-    color: 'premium',
-    href: '/affiliate/commissions',
-    badge: { text: '245 ر.س', variant: 'default' }
-  },
-  {
-    id: 'atlantis_chat',
-    title: 'أتلانتس شات',
-    description: 'الدردشة التفاعلية',
-    icon: <MessageSquare className="w-5 h-5" />,
-    color: 'persian',
-    href: '/atlantis/chat'
-  },
-  {
-    id: 'leaderboard',
-    title: 'المتصدرون',
-    description: 'جدول المتصدرين',
+    title: 'التحليلات',
+    description: 'عرض العمولات ومؤشرات الأداء',
     icon: <BarChart3 className="w-5 h-5" />,
-    color: 'success',
-    href: '/atlantis'
+    color: 'premium',
+    href: '/affiliate/analytics',
+    badge: { text: '245 ر.س', variant: 'default' }
   },
   {
     id: 'share_store',
     title: 'مشاركة المتجر',
-    description: 'مشاركة رابط المتجر',
+    description: 'انسخ رابط متجرك للزوار',
     icon: <Share2 className="w-5 h-5" />,
     color: 'warning',
     onClick: () => {
-      // Copy store link to clipboard
       navigator.clipboard.writeText(createStoreUrl('my-store'));
     }
   }
@@ -352,41 +277,41 @@ export const getAffiliateActions = (): QuickAction[] => [
 
 export const getCustomerActions = (): QuickAction[] => [
   {
-    id: 'browse_products',
-    title: 'تصفح المنتجات',
-    description: 'اكتشف منتجات جديدة',
-    icon: <Eye className="w-5 h-5" />,
+    id: 'home',
+    title: 'الصفحة الرئيسية',
+    description: 'استكشف عروض ومنتجات المنصة',
+    icon: <Home className="w-5 h-5" />,
     color: 'primary',
-    href: '/products'
+    href: '/'
   },
   {
-    id: 'my_orders',
-    title: 'طلباتي',
-    description: 'تتبع طلباتك',
-    icon: <ShoppingBag className="w-5 h-5" />,
+    id: 'checkout',
+    title: 'إتمام الطلب',
+    description: 'أكمل عملية الشراء الحالية',
+    icon: <ShoppingCart className="w-5 h-5" />,
     color: 'luxury',
-    href: '/orders'
+    href: '/checkout'
   },
   {
-    id: 'favorites',
-    title: 'المفضلة',
-    description: 'المنتجات المحفوظة',
-    icon: <BookOpen className="w-5 h-5" />,
+    id: 'order_confirmation',
+    title: 'تأكيد الطلب',
+    description: 'عرض تفاصيل الطلب الأخير',
+    icon: <Receipt className="w-5 h-5" />,
     color: 'premium',
-    href: '/favorites'
+    href: '/order/confirmation'
   },
   {
-    id: 'chat',
-    title: 'الدردشة',
-    description: 'تواصل مع الدعم',
+    id: 'support',
+    title: 'الدعم والمساعدة',
+    description: 'تواصل مع فريق الدعم',
     icon: <MessageSquare className="w-5 h-5" />,
     color: 'persian',
-    href: '/chat'
+    href: '/auth'
   },
   {
     id: 'profile',
-    title: 'الملف الشخصي',
-    description: 'إدارة حسابك',
+    title: 'حسابي',
+    description: 'إدارة بياناتك الشخصية',
     icon: <Settings className="w-5 h-5" />,
     color: 'success',
     href: '/profile'

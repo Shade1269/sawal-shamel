@@ -1,27 +1,92 @@
-import { readFile, mkdir, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { Buffer } from 'node:buffer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const DEFAULT_MANIFEST_URL = new URL('../assets/asset-manifest.json', import.meta.url);
 
-async function main() {
-  const manifestPath = resolve(__dirname, "../assets/models.manifest.json");
-  const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
-  const outDir = resolve(__dirname, "..", manifest.outputsDir);
-  await mkdir(outDir, { recursive: true });
+function normalizeManifestUrl(manifestUrl) {
+  if (!manifestUrl) {
+    return DEFAULT_MANIFEST_URL;
+  }
 
-  for (const item of manifest.files) {
-    const b64Path = resolve(__dirname, "..", item.b64);
-    const b64 = (await readFile(b64Path, "utf8")).trim();
-    const buf = Buffer.from(b64, "base64");
-    const outPath = resolve(outDir, item.out);
-    await writeFile(outPath, buf);
-    console.log("Wrote", outPath, "(", buf.length, "bytes )");
+  if (manifestUrl instanceof URL) {
+    return manifestUrl;
+  }
+
+  try {
+    return new URL(manifestUrl, DEFAULT_MANIFEST_URL);
+  } catch (error) {
+    throw new Error(`Unable to resolve manifest URL from ${manifestUrl}: ${error.message}`);
   }
 }
 
-main().catch((e) => {
-  console.error("[decodeAssets] failed:", e);
-  process.exit(1);
-});
+export async function decodeAssetManifest(options = {}) {
+  const { manifestUrl, rootDir, force = false } = options;
+  const resolvedManifestUrl = normalizeManifestUrl(manifestUrl);
+  const projectRoot = rootDir ? resolve(rootDir) : resolve(__dirname, '..');
+
+  const manifestRaw = await readFile(resolvedManifestUrl, 'utf8');
+  const manifest = JSON.parse(manifestRaw);
+  const assets = manifest.assets ?? {};
+
+  const outputs = [];
+
+  for (const [relativePath, descriptor] of Object.entries(assets)) {
+    if (!descriptor || descriptor.encoding !== 'base64' || typeof descriptor.data !== 'string') {
+      continue;
+    }
+
+    const targetPath = resolve(projectRoot, relativePath);
+    await mkdir(dirname(targetPath), { recursive: true });
+
+    const buffer = Buffer.from(descriptor.data, 'base64');
+    let shouldWrite = force;
+
+    if (!shouldWrite) {
+      try {
+        const existing = await readFile(targetPath);
+        shouldWrite = !existing.equals(buffer);
+      } catch (error) {
+        if (error.code === 'ENOENT') {
+          shouldWrite = true;
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    if (shouldWrite) {
+      await writeFile(targetPath, buffer);
+    }
+
+    outputs.push({
+      relativePath,
+      absolutePath: targetPath,
+      bytes: buffer.length,
+      wrote: shouldWrite,
+    });
+  }
+
+  return { manifest, outputs };
+}
+
+async function runFromCli() {
+  const force = process.argv.includes('--force');
+  const { outputs } = await decodeAssetManifest({ force });
+
+  for (const output of outputs) {
+    const status = output.wrote ? 'wrote' : 'skipped';
+    console.log(`[decodeAssets] ${status} ${output.relativePath} (${output.bytes} bytes)`);
+  }
+}
+
+const cliEntry = process.argv[1] ? new URL(`file://${process.argv[1]}`).href : null;
+if (cliEntry === import.meta.url) {
+  runFromCli().catch((error) => {
+    console.error('[decodeAssets] failed:', error);
+    process.exitCode = 1;
+  });
+}

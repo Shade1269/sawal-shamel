@@ -105,9 +105,9 @@ const EnhancedAffiliateDashboardLayout: React.FC = () => {
       label: "الرئيسية",
       icon: Store,
       items: [
-        { 
-          title: 'نظرة عامة', 
-          href: '/dashboard', 
+        {
+          title: 'نظرة عامة',
+          href: '/affiliate',
           icon: BarChart3,
           description: 'إحصائيات شاملة للمبيعات'
         }
@@ -117,22 +117,22 @@ const EnhancedAffiliateDashboardLayout: React.FC = () => {
       label: "إدارة المتجر",
       icon: Store,
       items: [
-        { 
-          title: 'المنتجات', 
-          href: '/dashboard/products', 
+        {
+          title: 'واجهة المتجر',
+          href: '/affiliate/storefront',
           icon: Package,
-          description: 'إدارة وعرض المنتجات' 
+          description: 'إدارة واجهة المتجر والإعدادات'
         },
-        { 
-          title: 'الطلبات', 
-          href: '/dashboard/orders', 
+        {
+          title: 'الطلبات',
+          href: '/affiliate/orders',
           icon: ShoppingBag,
           badge: '5',
           description: 'متابعة الطلبات الجديدة'
         },
-        { 
-          title: 'العمولات', 
-          href: '/dashboard/commissions', 
+        {
+          title: 'التحليلات',
+          href: '/affiliate/analytics',
           icon: DollarSign,
           badge: 'جديد',
           description: 'عمولاتك ومكاسبك'

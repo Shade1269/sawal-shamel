@@ -64,7 +64,7 @@ const RedirectToPrimaryStore: React.FC<RedirectToPrimaryStoreProps> = ({ to }) =
             <p className="text-destructive mb-2">{error}</p>
             <button
               className="px-4 py-2 rounded-md bg-primary text-primary-foreground"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/affiliate')}
             >
               العودة للوحة التحكم
             </button>

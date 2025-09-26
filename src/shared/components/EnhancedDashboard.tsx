@@ -28,7 +28,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useAtlantisSystem } from '@/hooks/useAtlantisSystem';
 import StatsOverview, { getDashboardStats, getInventoryStats } from './StatsOverview';
-import QuickActionPanel, { getAdminActions, getMerchantActions, getAffiliateActions, getCustomerActions } from './QuickActionPanel';
+import QuickActionPanel, { getAdminActions, getAffiliateActions, getCustomerActions } from './QuickActionPanel';
 import ActivityFeed, { generateSampleActivities } from './ActivityFeed';
 
 interface QuickAction {
@@ -72,9 +72,9 @@ const EnhancedDashboard: React.FC = () => {
   const getStatsForRole = (role: string) => {
     switch (role) {
       case 'admin':
-      case 'merchant':
         return getDashboardStats();
       case 'affiliate':
+      case 'merchant':
         return getInventoryStats();
       default:
         return getDashboardStats();
@@ -100,22 +100,13 @@ const EnhancedDashboard: React.FC = () => {
     ];
 
     const roleActions: Record<string, QuickAction[]> = {
-      merchant: [
-        {
-          id: 'products',
-          title: 'إدارة المنتجات',
-          description: 'إضافة وتعديل منتجاتك',
-          icon: <ShoppingBag className="w-5 h-5" />,
-          onClick: () => navigate('/products')
-        }
-      ],
       affiliate: [
         {
           id: 'store',
           title: 'متجري التابع',
           description: 'إدارة متجرك التابع',
           icon: <Award className="w-5 h-5" />,
-          onClick: () => navigate('/affiliate-dashboard')
+          onClick: () => navigate('/affiliate')
         }
       ],
       admin: [
@@ -124,12 +115,14 @@ const EnhancedDashboard: React.FC = () => {
           title: 'لوحة الإدارة',
           description: 'إدارة النظام والمستخدمين',
           icon: <Crown className="w-5 h-5" />,
-          onClick: () => navigate('/admin')
+          onClick: () => navigate('/admin/dashboard')
         }
       ]
     };
 
-    return [...baseActions, ...(roleActions[role] || [])];
+    const normalizedRole = role === 'merchant' ? 'affiliate' : role;
+
+    return [...baseActions, ...(roleActions[normalizedRole] || [])];
   };
 
   const getAchievementsForUser = (): Achievement[] => {

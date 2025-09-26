@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { useFastAuth } from '@/hooks/useFastAuth';
-import { LogOut, Settings, User, Crown, Star, Award, Medal, CreditCard, FileText, RotateCcw, DollarSign, Share2, Store, Gift } from 'lucide-react';
+import { LogOut, Settings, User, Crown, Star, Award, Medal, ShoppingCart, Package, BarChart3 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCartDrawer } from '@/features/commerce';
@@ -27,10 +27,13 @@ const Header = () => {
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case 'admin': return <Crown className="h-4 w-4 text-yellow-500" />;
-      case 'merchant': return <Award className="h-4 w-4 text-blue-500" />;
-      case 'affiliate': return <Star className="h-4 w-4 text-purple-500" />;
-      default: return <User className="h-4 w-4 text-gray-500" />;
+      case 'admin':
+        return <Crown className="h-4 w-4 text-yellow-500" />;
+      case 'affiliate':
+      case 'merchant':
+        return <Star className="h-4 w-4 text-purple-500" />;
+      default:
+        return <User className="h-4 w-4 text-gray-500" />;
     }
   };
 
@@ -46,11 +49,15 @@ const Header = () => {
 
   const getRoleName = (role: string) => {
     switch (role) {
-      case 'admin': return 'مدير';
-      case 'merchant': return 'تاجر';
-      case 'affiliate': return 'مسوق';
-      case 'customer': return 'عميل';
-      default: return 'مستخدم';
+      case 'admin':
+        return 'مدير';
+      case 'affiliate':
+      case 'merchant':
+        return 'مسوق';
+      case 'customer':
+        return 'عميل';
+      default:
+        return 'مستخدم';
     }
   };
 
@@ -97,7 +104,7 @@ const Header = () => {
           <ShoppingCartDrawer />
           
           {/* Points Display for Affiliates */}
-          {profile?.role === 'affiliate' && (
+          {(profile?.role === 'affiliate' || profile?.role === 'marketer') && (
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="flex items-center gap-1">
                 <Medal className="h-3 w-3" />
@@ -148,65 +155,43 @@ const Header = () => {
               </DropdownMenuItem>
               
               {profile?.role === 'admin' && (
-                <DropdownMenuItem onClick={() => navigate('/admin')}>
-                  <Crown className="ml-2 h-4 w-4" />
-                  لوحة الإدارة
-                </DropdownMenuItem>
-              )}
-              
-              {profile?.role === 'merchant' && (
-                <DropdownMenuItem onClick={() => navigate('/merchant')}>
-                  <Award className="ml-2 h-4 w-4" />
-                  لوحة التاجر
-                </DropdownMenuItem>
-              )}
-              
-              {(profile?.role === 'admin' || profile?.role === 'merchant') && (
                 <>
-                  <DropdownMenuItem onClick={() => navigate('/promotions')}>
-                    <Gift className="ml-2 h-4 w-4" />
-                    الحملات الترويجية
+                  <DropdownMenuItem onClick={() => navigate('/admin/dashboard')}>
+                    <Crown className="ml-2 h-4 w-4" />
+                    لوحة الإدارة
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/admin/marketing')}>
-                    <Share2 className="ml-2 h-4 w-4" />
-                    نظام التسويق
+                  <DropdownMenuItem onClick={() => navigate('/admin/orders')}>
+                    <ShoppingCart className="ml-2 h-4 w-4" />
+                    إدارة الطلبات
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/payments')}>
-                    <CreditCard className="ml-2 h-4 w-4" />
-                    لوحة المدفوعات
+                  <DropdownMenuItem onClick={() => navigate('/admin/inventory')}>
+                    <Package className="ml-2 h-4 w-4" />
+                    إدارة المخزون
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/invoices')}>
-                    <FileText className="ml-2 h-4 w-4" />
-                    إدارة الفواتير
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/payment-gateways')}>
-                    <DollarSign className="ml-2 h-4 w-4" />
-                    بوابات الدفع
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/refunds')}>
-                    <RotateCcw className="ml-2 h-4 w-4" />
-                    المرتجعات والاسترداد
+                  <DropdownMenuItem onClick={() => navigate('/admin/analytics')}>
+                    <BarChart3 className="ml-2 h-4 w-4" />
+                    تقارير الأداء
                   </DropdownMenuItem>
                 </>
               )}
-              
-              {profile?.role === 'affiliate' && (
+
+              {(profile?.role === 'affiliate' || profile?.role === 'merchant' || profile?.role === 'marketer') && (
                 <>
-                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                  <DropdownMenuItem onClick={() => navigate('/affiliate')}>
                     <Star className="ml-2 h-4 w-4" />
                     لوحة المسوق
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/promotions')}>
-                    <Gift className="ml-2 h-4 w-4" />
-                    الحملات الترويجية
+                  <DropdownMenuItem onClick={() => navigate('/affiliate/storefront')}>
+                    <Medal className="ml-2 h-4 w-4" />
+                    إعداد المتجر
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/merchant')}>
-                    <Store className="ml-2 h-4 w-4" />
-                    لوحة تحكم المتجر
+                  <DropdownMenuItem onClick={() => navigate('/affiliate/orders')}>
+                    <ShoppingCart className="ml-2 h-4 w-4" />
+                    طلباتي
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/affiliate')}>
+                  <DropdownMenuItem onClick={() => navigate('/affiliate/analytics')}>
                     <Award className="ml-2 h-4 w-4" />
-                    متجري الشخصي
+                    التحليلات
                   </DropdownMenuItem>
                 </>
               )}

@@ -73,43 +73,43 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
     const mockData: SearchResult[] = [
       {
         id: '1',
-        title: 'أحمد محمد علي',
-        description: 'مستخدم نشط - آخر نشاط منذ ساعة',
-        type: 'user',
-        url: '/admin/users/1',
+        title: 'لوحة تحكم الإدارة',
+        description: 'نظرة عامة على أداء المنصة',
+        type: 'page',
+        url: '/admin/dashboard',
         score: 0.9
       },
       {
         id: '2',
-        title: 'هاتف ذكي سامسونج',
-        description: 'متوفر - 45 قطعة في المخزن',
-        type: 'product',
-        url: '/admin/products/2',
+        title: 'سجل طلبات العملاء',
+        description: 'متابعة ومعالجة الطلبات النشطة',
+        type: 'order',
+        url: '/admin/orders',
         score: 0.85
       },
       {
         id: '3',
-        title: 'طلب #12345',
-        description: 'مكتمل - بقيمة 850 ريال',
-        type: 'order',
-        url: '/admin/orders/12345',
-        score: 0.8
+        title: 'مركز المخزون',
+        description: 'مستويات المنتجات وتوفرها',
+        type: 'product',
+        url: '/admin/inventory',
+        score: 0.82
       },
       {
         id: '4',
-        title: 'تقرير المبيعات الشهري',
-        description: 'مايو 2024 - 120 عملية بيع',
+        title: 'تحليلات الأداء الشهرية',
+        description: 'تقارير وتحليلات الإيرادات',
         type: 'report',
-        url: '/admin/reports/monthly-sales',
-        score: 0.75
+        url: '/admin/analytics',
+        score: 0.78
       },
       {
         id: '5',
-        title: 'إدارة المستخدمين',
-        description: 'صفحة إدارة حسابات المستخدمين',
+        title: 'مركز المسوق',
+        description: 'صفحة البداية للمسوقين والشركاء',
         type: 'page',
-        url: '/admin/users',
-        score: 0.7
+        url: '/affiliate',
+        score: 0.74
       }
     ];
 

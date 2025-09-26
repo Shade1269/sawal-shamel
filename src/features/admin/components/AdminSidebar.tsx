@@ -11,111 +11,23 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import {
-  BarChart3,
-  Users,
-  Settings,
-  Package,
-  ShoppingCart,
-  CreditCard,
-  Shield,
-  Activity,
-  Globe,
-  MessageSquare,
-  Crown,
-  Zap,
-  Target,
-  Truck,
-  FileText,
-  Store,
-  TrendingUp,
-  DollarSign,
-  UserCheck,
-  Bell,
-  Database,
-  Lock,
-  Home
-} from "lucide-react";
+import { BarChart3, ShoppingCart, TrendingUp, Database } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const mainMenuItems = [
   {
-    title: "لوحة التحكم",
-    url: "/admin",
+    title: "لوحة الإدارة",
+    url: "/admin/dashboard",
     icon: BarChart3,
     exact: true
-  },
-  {
-    title: "نظرة عامة",
-    url: "/admin/dashboard", 
-    icon: Home,
-    badge: "جديد"
   }
 ];
 
 const managementItems = [
   {
-    title: "إدارة المستخدمين",
-    url: "/admin/users",
-    icon: Users,
-    badge: "12"
-  },
-  {
-    title: "إدارة المنتجات",
-    url: "/admin/products",
-    icon: Package
-  },
-  {
-    title: "إدارة الطلبات",
-    url: "/admin-orders",
-    icon: ShoppingCart,
-    badge: "5"
-  },
-  {
-    title: "إدارة المتاجر",
-    url: "/admin/stores",
-    icon: Store
-  }
-];
-
-const analyticsItems = [
-  {
-    title: "التحليلات",
-    url: "/admin/analytics",
-    icon: TrendingUp
-  },
-  {
-    title: "التقارير",
-    url: "/admin/reports",
-    icon: FileText
-  },
-  {
-    title: "المبيعات",
-    url: "/sales-reports",
-    icon: DollarSign
-  },
-  {
-    title: "سلوك المستخدمين",
-    url: "/user-behavior",
-    icon: Activity
-  }
-];
-
-const systemItems = [
-  {
-    title: "المدفوعات",
-    url: "/admin/payments",
-    icon: CreditCard
-  },
-  {
-    title: "بوابات الدفع",
-    url: "/admin/payment-gateways",
-    icon: Globe
-  },
-  {
-    title: "الشحن",
-    url: "/shipment-management",
-    icon: Truck
+    title: "الطلبات",
+    url: "/admin/orders",
+    icon: ShoppingCart
   },
   {
     title: "المخزون",
@@ -124,41 +36,17 @@ const systemItems = [
   }
 ];
 
-const securityItems = [
+const analyticsItems = [
   {
-    title: "الأمان",
-    url: "/admin/security",
-    icon: Shield
-  },
-  {
-    title: "الصلاحيات",
-    url: "/admin/permissions",
-    icon: Lock
-  },
-  {
-    title: "سجل النشاط",
-    url: "/admin/activity",
-    icon: Activity
+    title: "التحليلات",
+    url: "/admin/analytics",
+    icon: TrendingUp
   }
 ];
 
-const configItems = [
-  {
-    title: "الإعدادات",
-    url: "/admin/settings",
-    icon: Settings
-  },
-  {
-    title: "التسويق",
-    url: "/admin/marketing",
-    icon: Target
-  },
-  {
-    title: "الإشعارات",
-    url: "/admin/notifications", 
-    icon: Bell
-  }
-];
+const systemItems: any[] = [];
+const securityItems: any[] = [];
+const configItems: any[] = [];
 
 export function AdminSidebar() {
   const { state } = useSidebar();

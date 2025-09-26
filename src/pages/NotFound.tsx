@@ -48,11 +48,11 @@ const NotFound = () => {
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
-                
-                <Link to="/products">
+
+                <Link to="/checkout">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto">
                     <Search className="w-5 h-5 mr-2" />
-                    تصفح المنتجات
+                    الانتقال إلى الدفع
                   </Button>
                 </Link>
               </div>
@@ -62,28 +62,28 @@ const NotFound = () => {
 
         {/* Quick Links */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-          <Link 
-            to="/dashboard" 
+          <Link
+            to="/affiliate"
             className="p-3 bg-card/30 rounded-lg hover:bg-card/50 transition-colors border border-border/20"
           >
             <div className="flex items-center gap-2 text-primary">
               <Navigation className="h-4 w-4" />
-              <span>لوحة التحكم</span>
+              <span>مركز المسوق</span>
             </div>
           </Link>
 
-          <Link 
-            to="/products" 
+          <Link
+            to="/admin/dashboard"
             className="p-3 bg-card/30 rounded-lg hover:bg-card/50 transition-colors border border-border/20"
           >
             <div className="flex items-center gap-2 text-luxury">
               <Search className="h-4 w-4" />
-              <span>المنتجات</span>
+              <span>لوحة الإدارة</span>
             </div>
           </Link>
 
-          <Link 
-            to="/auth" 
+          <Link
+            to="/auth"
             className="p-3 bg-card/30 rounded-lg hover:bg-card/50 transition-colors border border-border/20"
           >
             <div className="flex items-center gap-2 text-premium">
@@ -92,13 +92,13 @@ const NotFound = () => {
             </div>
           </Link>
 
-          <Link 
-            to="/about" 
+          <Link
+            to="/order/confirmation"
             className="p-3 bg-card/30 rounded-lg hover:bg-card/50 transition-colors border border-border/20"
           >
             <div className="flex items-center gap-2 text-heritage">
               <AlertTriangle className="h-4 w-4" />
-              <span>معلومات عنا</span>
+              <span>تأكيد الطلب</span>
             </div>
           </Link>
         </div>

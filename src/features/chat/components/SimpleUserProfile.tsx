@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { User, Mail, Shield, Crown, Store, Users, Calendar, Award } from "lucide-react";
+import { User, Mail, Shield, Crown, Users, Calendar, Award } from "lucide-react";
 
 interface SimpleUserProfileProps {
   user: any;
@@ -17,7 +17,9 @@ const SimpleUserProfile = ({ user, isOpen, onClose }: SimpleUserProfileProps) =>
     switch (role) {
       case 'admin': return <Crown className="h-4 w-4" />;
       case 'moderator': return <Shield className="h-4 w-4" />;
-      case 'merchant': return <Store className="h-4 w-4" />;
+      case 'affiliate':
+      case 'merchant':
+        return <Users className="h-4 w-4" />;
       default: return <Users className="h-4 w-4" />;
     }
   };
@@ -26,7 +28,9 @@ const SimpleUserProfile = ({ user, isOpen, onClose }: SimpleUserProfileProps) =>
     switch (role) {
       case 'admin': return 'مدير';
       case 'moderator': return 'مشرف';
-      case 'merchant': return 'تاجر';
+      case 'affiliate':
+      case 'merchant':
+        return 'مسوق';
       default: return 'عضو';
     }
   };

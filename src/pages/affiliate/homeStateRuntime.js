@@ -16,8 +16,17 @@ export const describeAffiliateHomeSectionsRuntime = (props) => {
   if (state !== 'ready') {
     return { state, sections: [] };
   }
+
+  const sections = ['score', 'share'];
+
+  if (Array.isArray(props.topProducts) && props.topProducts.length > 0) {
+    sections.push('product-share');
+  }
+
+  sections.push('sales', 'orders');
+
   return {
     state,
-    sections: ['score', 'share', 'sales', 'orders'],
+    sections,
   };
 };

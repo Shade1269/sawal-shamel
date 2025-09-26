@@ -1,4 +1,4 @@
-import { LoadingManager, Texture, TextureLoader } from "three";
+import { Group, LoadingManager, Texture, TextureLoader } from "three";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 export type GLBResource = GLTF;
@@ -89,10 +89,20 @@ async function ensureModelFileAvailable(path: string): Promise<boolean> {
   }
 }
 
-function createMissingModelError(path: string): Error {
-  const error = new Error(`GLB asset not found at ${path}`);
-  (error as Error & { code?: string }).code = "MODEL_NOT_FOUND";
-  return error;
+function createFallbackGLTF(path: string): GLBResource {
+  const fallbackScene = new Group();
+  fallbackScene.name = `fallback:${path}`;
+
+  return {
+    scene: fallbackScene,
+    scenes: [fallbackScene],
+    cameras: [],
+    animations: [],
+    asset: {
+      version: "2.0",
+      generator: "@anaqati/fallback-glb",
+    },
+  } as GLBResource;
 }
 
 export const GLB_EXAMPLES = Object.freeze({
@@ -126,7 +136,9 @@ export async function loadGLBModel(path: string, options: LoaderOptions = {}): P
 
   const hasAsset = await ensureModelFileAvailable(path);
   if (!hasAsset) {
-    throw createMissingModelError(path);
+    const fallbackPromise = Promise.resolve(createFallbackGLTF(path));
+    gltfLoaderCache.set(path, fallbackPromise);
+    return fallbackPromise;
   }
 
   const promise = new Promise<GLBResource>((resolve, reject) => {
@@ -161,7 +173,8 @@ export async function loadGLBModel(path: string, options: LoaderOptions = {}): P
       undefined,
       (error) => {
         cleanup();
-        reject(error);
+        console.warn(`[three] Falling back to placeholder model for ${path}`, error);
+        resolve(createFallbackGLTF(path));
       }
     );
   });

@@ -161,9 +161,11 @@ export function QuickActions() {
                 <p className="text-sm font-medium">{profile?.full_name}</p>
                 <p className="text-xs text-muted-foreground">{profile?.email}</p>
                 <Badge variant="secondary" className="w-fit text-xs">
-                  {profile?.role === 'admin' ? 'مدير' : 
-                   profile?.role === 'merchant' ? 'تاجر' : 
-                   profile?.role === 'affiliate' ? 'مسوق' : 'مستخدم'}
+                  {profile?.role === 'admin'
+                    ? 'مدير'
+                    : profile?.role === 'affiliate' || profile?.role === 'merchant' || profile?.role === 'marketer'
+                      ? 'مسوق'
+                      : 'مستخدم'}
                 </Badge>
               </div>
             </DropdownMenuLabel>

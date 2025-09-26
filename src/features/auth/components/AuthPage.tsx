@@ -42,7 +42,7 @@ const AuthPage = () => {
     password: '',
     fullName: '',
     username: '',
-    role: 'affiliate' as 'affiliate' | 'merchant' | 'admin',
+    role: 'affiliate' as 'affiliate' | 'marketer' | 'admin',
   });
 
   const [signUpStep, setSignUpStep] = useState<'details' | 'username'>('details');

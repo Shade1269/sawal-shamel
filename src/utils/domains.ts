@@ -18,7 +18,7 @@ export const getBaseUrl = (): string => {
 // إنشاء رابط متجر مع معرف الإحالة
 export const createStoreUrl = (storeSlug: string, referralId?: string): string => {
   const baseUrl = getBaseUrl();
-  const storeUrl = `${baseUrl}/store/${storeSlug}`;
+  const storeUrl = `${baseUrl}/${storeSlug}`;
   
   if (referralId) {
     return `${storeUrl}?ref=${referralId}`;

@@ -192,19 +192,19 @@ export const AffiliateOverview = ({
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Line 
-                  type="monotone" 
-                  dataKey="commissions" 
-                  stroke="hsl(var(--primary))" 
+                <Line
+                  type="monotone"
+                  dataKey="commissions"
+                  stroke="var(--primary)"
                   strokeWidth={3}
-                  dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
+                  dot={{ fill: "var(--primary)", strokeWidth: 2, r: 4 }}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="sales" 
-                  stroke="hsl(var(--accent))" 
+                <Line
+                  type="monotone"
+                  dataKey="sales"
+                  stroke="var(--accent)"
                   strokeWidth={2}
-                  dot={{ fill: "hsl(var(--accent))", strokeWidth: 2, r: 3 }}
+                  dot={{ fill: "var(--accent)", strokeWidth: 2, r: 3 }}
                 />
               </LineChart>
             </ResponsiveContainer>

@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useFastAuth } from '@/hooks/useFastAuth';
-import { Loader2, User, Store, Users, ShoppingCart } from 'lucide-react';
+import { Loader2, User, Users, ShoppingCart, Star } from 'lucide-react';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const AuthForm = () => {
@@ -25,7 +25,7 @@ const AuthForm = () => {
     password: '',
     fullName: '',
     username: '',
-    role: 'affiliate' as 'merchant' | 'affiliate' | 'admin'
+    role: 'affiliate' as 'affiliate' | 'marketer' | 'admin'
   });
 
   const { goToUserHome } = useSmartNavigation();
@@ -206,7 +206,7 @@ const AuthForm = () => {
                   <Label htmlFor="signup-role">نوع الحساب</Label>
                   <Select
                     value={signUpData.role}
-                    onValueChange={(value: 'merchant' | 'affiliate' | 'admin') =>
+                    onValueChange={(value: 'affiliate' | 'marketer' | 'admin') =>
                       setSignUpData(prev => ({ ...prev, role: value }))
                     }
                   >
@@ -217,13 +217,13 @@ const AuthForm = () => {
                       <SelectItem value="affiliate">
                         <div className="flex items-center gap-2">
                           <ShoppingCart className="h-4 w-4" />
-                          مسوق بالعمولة
+                          مسوق
                         </div>
                       </SelectItem>
-                      <SelectItem value="merchant">
+                      <SelectItem value="marketer">
                         <div className="flex items-center gap-2">
-                          <Store className="h-4 w-4" />
-                          تاجر
+                          <Star className="h-4 w-4" />
+                          مسوق محترف
                         </div>
                       </SelectItem>
                       <SelectItem value="admin">

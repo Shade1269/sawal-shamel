@@ -257,10 +257,10 @@ const AdminUsers = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">التجار</p>
-                <p className="text-2xl font-bold">{users.filter(u => u.role === 'merchant').length}</p>
+                <p className="text-sm text-muted-foreground">المسوقون</p>
+                <p className="text-2xl font-bold">{users.filter(u => u.role === 'affiliate').length}</p>
               </div>
-              <Badge variant="secondary" className="text-xs">تاجر</Badge>
+              <Badge variant="secondary" className="text-xs">مسوق</Badge>
             </div>
           </CardContent>
         </Card>
@@ -325,7 +325,6 @@ const AdminUsers = () => {
                   <SelectContent>
                     <SelectItem value="all">جميع الأدوار</SelectItem>
                     <SelectItem value="admin">مدير</SelectItem>
-                    <SelectItem value="merchant">تاجر</SelectItem>
                     <SelectItem value="customer">عميل</SelectItem>
                     <SelectItem value="affiliate">مسوق</SelectItem>
                   </SelectContent>
@@ -385,7 +384,7 @@ const AdminUsers = () => {
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="customer">عميل</SelectItem>
-                                    <SelectItem value="merchant">تاجر</SelectItem>
+                                    <SelectItem value="affiliate">مسوق</SelectItem>
                                     <SelectItem value="admin">مدير</SelectItem>
                                   </SelectContent>
                                 </Select>

@@ -186,7 +186,7 @@ export const BusinessInsights = ({ business, loading }: BusinessInsightsProps) =
                 />
                 <Bar 
                   dataKey="revenue" 
-                  fill="hsl(var(--chart-2))" 
+                  fill="var(--secondary)"
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>

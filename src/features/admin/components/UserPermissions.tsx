@@ -126,9 +126,8 @@ export const UserPermissions = ({ user }: { user: User }) => {
         return true; // Admins get all permissions
       case 'moderator':
         return !['delete_users', 'system_settings', 'backup_restore', 'security_audit'].includes(permissionId);
-      case 'merchant':
-        return ['view_products', 'create_products', 'edit_products', 'view_orders', 'manage_orders'].includes(permissionId);
       case 'affiliate':
+      case 'merchant':
         return ['view_products', 'view_orders', 'view_earnings'].includes(permissionId);
       default:
         return false;

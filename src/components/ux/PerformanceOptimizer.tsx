@@ -160,7 +160,7 @@ export function PerformanceOptimizer() {
 
     // Prefetch important resources
     if (settings.enablePrefetching) {
-      const prefetchUrls = ['/dashboard', '/products', '/analytics'];
+      const prefetchUrls = ['/affiliate', '/affiliate/storefront', '/affiliate/analytics'];
       prefetchUrls.forEach(url => {
         const link = document.createElement('link');
         link.rel = 'prefetch';

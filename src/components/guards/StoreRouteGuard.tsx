@@ -28,12 +28,13 @@ export const StoreRouteGuard = ({ children }: StoreRouteGuardProps) => {
       // إذا لم يكن هناك جلسة عميل متجر صالحة، وجه لصفحة المنصة
       if (!hasValidCustomerSession) {
         const redirectMap: { [key: string]: string } = {
-          'admin': '/admin',
-          'affiliate': '/affiliate',
-          'merchant': '/merchant',
+          admin: '/admin/dashboard',
+          moderator: '/admin/dashboard',
+          affiliate: '/affiliate',
+          merchant: '/affiliate',
         };
-        
-        const redirectPath = redirectMap[profile.role] || '/dashboard';
+
+        const redirectPath = redirectMap[profile.role] || '/';
         navigate(redirectPath, { replace: true });
         return;
       }

@@ -35,7 +35,7 @@ const createSupabaseStub = () => {
     },
     auth: {
       signUp: async () => ({
-        data: { user: { id: 'user-123', email: 'merchant@example.com' } },
+        data: { user: { id: 'user-123', email: 'affiliate@example.com' } },
         error: null,
       }),
     },
@@ -53,15 +53,15 @@ test('performSignUp persists selected role into profiles table', async () => {
   await performSignUp(
     { supabase, toast, fetchUserProfile, getBaseUrlFn: () => 'https://example.com' },
     {
-      email: 'merchant@example.com',
+      email: 'affiliate@example.com',
       password: 'Password1!',
-      fullName: 'Merchant Name',
-      username: 'merchant_handle',
-      role: 'merchant',
+      fullName: 'Affiliate Name',
+      username: 'affiliate_handle',
+      role: 'affiliate',
     }
   );
 
   const profileCall = upsertCalls.find((call) => call.table === 'profiles');
   assert.ok(profileCall, 'expected profiles upsert call');
-  assert.equal(profileCall.payload.role, 'merchant');
+  assert.equal(profileCall.payload.role, 'affiliate');
 });

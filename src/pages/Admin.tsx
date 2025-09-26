@@ -488,9 +488,18 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
         role: newRole
       });
       if (!res.error) {
-        toast({ 
-          title: "تم تغيير الدور", 
-          description: `تم تغيير دور ${user.full_name || user.email} إلى ${newRole === 'admin' ? 'مدير' : newRole === 'moderator' ? 'مشرف' : newRole === 'merchant' ? 'تاجر' : 'مسوق'}` 
+        const roleLabel =
+          newRole === 'admin'
+            ? 'مدير'
+            : newRole === 'moderator'
+              ? 'مشرف'
+              : newRole === 'affiliate' || newRole === 'merchant'
+                ? 'مسوق'
+                : 'مستخدم';
+
+        toast({
+          title: "تم تغيير الدور",
+          description: `تم تغيير دور ${user.full_name || user.email} إلى ${roleLabel}`
         });
         loadLists();
       }
@@ -1489,10 +1498,10 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                               }
                               className="text-xs shrink-0"
                             >
-                              {user.role === 'admin' ? 'مدير' : 
-                               user.role === 'moderator' ? 'مشرف' : 
-                               user.role === 'merchant' ? 'تاجر' :
-                               'مسوق'}
+                              {user.role === 'admin' ? 'مدير' :
+                               user.role === 'moderator' ? 'مشرف' :
+                               user.role === 'affiliate' || user.role === 'merchant' || user.role === 'marketer' ? 'مسوق' :
+                               'مستخدم'}
                             </Badge>
                           </div>
                           <div className="flex items-center gap-2">

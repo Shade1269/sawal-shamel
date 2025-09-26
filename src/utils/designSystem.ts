@@ -7,9 +7,8 @@
 // Role Colors - ألوان الأدوار 
 export const roleColors = {
   admin: 'bg-destructive/10 text-destructive',
-  moderator: 'bg-accent/10 text-accent-foreground', 
+  moderator: 'bg-accent/10 text-accent-foreground',
   member: 'bg-muted text-muted-foreground',
-  merchant: 'bg-luxury/10 text-luxury-foreground',
   affiliate: 'bg-premium/10 text-premium-foreground',
   customer: 'bg-secondary/10 text-secondary-foreground'
 } as const;

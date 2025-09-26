@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useFastAuth } from './useFastAuth';
 
-export type UserRole = 'admin' | 'merchant' | 'affiliate' | 'customer' | 'moderator';
+export type UserRole = 'admin' | 'affiliate' | 'customer' | 'moderator';
 
 export const useUserRoles = () => {
   const [roles, setRoles] = useState<UserRole[]>([]);
@@ -30,12 +30,19 @@ export const useUserRoles = () => {
 
       if (error) throw error;
 
-      const rolesList = userRoles?.map(ur => ur.role as UserRole) || ['customer'];
+      const normalizeRole = (role: string): UserRole => {
+        if (role === 'admin') return 'admin';
+        if (role === 'affiliate' || role === 'merchant' || role === 'marketer') return 'affiliate';
+        if (role === 'moderator') return 'moderator';
+        return 'customer';
+      };
+
+      const rolesList = userRoles?.map(ur => normalizeRole(ur.role)) || ['customer'];
       setRoles(rolesList);
 
       // تحديد الدور الأساسي
-      const priority = { admin: 1, merchant: 2, affiliate: 3, moderator: 4, customer: 5 };
-      const primary = rolesList.reduce((prev, curr) => 
+      const priority = { admin: 1, affiliate: 2, moderator: 3, customer: 4 };
+      const primary = rolesList.reduce((prev, curr) =>
         priority[curr] < priority[prev] ? curr : prev, 'customer' as UserRole
       );
       setPrimaryRole(primary);

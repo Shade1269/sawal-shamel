@@ -1,25 +1,16 @@
-import { 
-  Home, 
-  Package, 
-  Users, 
-  BarChart3, 
-  Settings,
-  ShoppingBag,
-  MessageSquare,
+import {
+  BarChart3,
   Bell,
-  CreditCard,
-  Truck,
-  FileText,
+  Home,
+  LogIn,
   Shield,
-  UserCheck,
-  TrendingUp,
-  Calendar,
-  Database,
-  Globe,
-  Zap,
-  HeartHandshake,
-  Smartphone
-} from 'lucide-react';
+  ShoppingBag,
+  Store,
+  Trophy,
+  User,
+  Users,
+  Settings,
+} from "lucide-react";
 
 export interface NavigationItem {
   id: string;
@@ -38,295 +29,189 @@ export interface NavigationItem {
 }
 
 export const navigationItems: NavigationItem[] = [
-  // Main Navigation
   {
-    id: 'home',
-    title: 'الرئيسية',
-    href: '/',
+    id: "home",
+    title: "الصفحة الرئيسية",
+    href: "/",
     icon: Home,
-    description: 'الصفحة الرئيسية للمنصة',
-    keywords: ['رئيسية', 'بداية', 'home'],
-    group: 'main',
-    order: 1
+    description: "تعرف على منصة أتلانتس وتجربة الثيمات",
+    keywords: ["home", "hero", "theme"],
+    group: "public",
+    order: 0,
   },
   {
-    id: 'components',
-    title: 'المكونات',
-    href: '/components',
-    icon: Package,
-    description: 'مكونات النظام المحسّنة',
-    keywords: ['مكونات', 'components'],
-    group: 'main',
-    order: 2
+    id: "auth",
+    title: "تسجيل الدخول",
+    href: "/auth",
+    icon: LogIn,
+    description: "الدخول إلى لوحة التحكم للمسوقين والمدراء",
+    keywords: ["auth", "login", "signin"],
+    group: "public",
+    order: 1,
   },
   {
-    id: 'adaptive',
-    title: 'التكيفي',
-    href: '/adaptive',
-    icon: Zap,
-    description: 'النظام التكيفي المتقدم',
-    keywords: ['تكيفي', 'adaptive'],
-    group: 'main',
-    order: 3
+    id: "affiliate",
+    title: "مركز المسوق",
+    href: "/affiliate",
+    icon: Store,
+    description: "إدارة الأداء والمتجر للمسوقين",
+    keywords: ["affiliate", "storefront", "orders"],
+    roles: ["affiliate", "marketer", "admin"],
+    group: "main",
+    order: 2,
+    children: [
+      {
+        id: "affiliate-home",
+        title: "الرئيسية",
+        href: "/affiliate",
+        icon: Home,
+        roles: ["affiliate", "marketer", "admin"],
+      },
+      {
+        id: "affiliate-storefront",
+        title: "واجهة المتجر",
+        href: "/affiliate/storefront",
+        icon: Store,
+        roles: ["affiliate", "marketer", "admin"],
+      },
+      {
+        id: "affiliate-store-settings",
+        title: "إعدادات المتجر",
+        href: "/affiliate/store/settings",
+        icon: Settings,
+        roles: ["affiliate", "marketer", "admin"],
+      },
+      {
+        id: "affiliate-orders",
+        title: "الطلبات",
+        href: "/affiliate/orders",
+        icon: ShoppingBag,
+        roles: ["affiliate", "marketer", "admin"],
+      },
+      {
+        id: "affiliate-analytics",
+        title: "التحليلات",
+        href: "/affiliate/analytics",
+        icon: BarChart3,
+        roles: ["affiliate", "marketer", "admin"],
+      },
+    ],
   },
   {
-    id: 'unified',
-    title: 'النظام الموحد',
-    href: '/unified',
-    icon: Globe,
-    description: 'النظام الموحد المتكامل',
-    keywords: ['موحد', 'unified'],
-    group: 'main',
-    order: 4
-  },
-  {
-    id: 'mobile-test',
-    title: 'اختبار الجوال',
-    href: '/mobile-test',
-    icon: Smartphone,
-    description: 'اختبار نظام التنقل للجوال',
-    keywords: ['جوال', 'اختبار', 'mobile'],
-    group: 'main',
-    order: 5
-  },
-  {
-    id: 'dashboard',
-    title: 'لوحة التحكم',
-    href: '/dashboard',
-    icon: BarChart3,
-    description: 'إحصائيات ومراقبة الأداء',
-    keywords: ['لوحة', 'تحكم', 'إحصائيات', 'dashboard'],
-    roles: ['affiliate', 'admin', 'merchant'],
-    group: 'main',
-    order: 2
-  },
-  
-  // E-commerce
-  {
-    id: 'products',
-    title: 'المنتجات',
-    href: '/products',
-    icon: Package,
-    description: 'إدارة المنتجات والكتالوج',
-    keywords: ['منتجات', 'كتالوج', 'products'],
-    roles: ['admin', 'merchant'],
-    group: 'ecommerce',
-    order: 1
-  },
-  {
-    id: 'orders',
-    title: 'الطلبات',
-    href: '/orders',
-    icon: ShoppingBag,
-    description: 'إدارة ومتابعة الطلبات',
-    keywords: ['طلبات', 'orders'],
-    roles: ['affiliate', 'admin', 'merchant'],
-    group: 'ecommerce',
-    order: 2
-  },
-  {
-    id: 'inventory',
-    title: 'المخزون',
-    href: '/inventory',
-    icon: Database,
-    description: 'إدارة المخزون والكميات',
-    keywords: ['مخزون', 'كميات', 'inventory'],
-    roles: ['admin', 'merchant'],
-    group: 'ecommerce',
-    order: 3
-  },
-  
-  // Affiliate Program
-  {
-    id: 'affiliates',
-    title: 'الشركاء',
-    href: '/affiliates',
-    icon: Users,
-    description: 'إدارة برنامج الشراكة',
-    keywords: ['شركاء', 'أفلييت', 'affiliates'],
-    roles: ['admin'],
-    group: 'affiliate',
-    order: 1
-  },
-  {
-    id: 'commissions',
-    title: 'العمولات',
-    href: '/commissions',
-    icon: CreditCard,
-    description: 'تتبع العمولات والأرباح',
-    keywords: ['عمولات', 'أرباح', 'commissions'],
-    roles: ['affiliate', 'admin'],
-    group: 'affiliate',
-    order: 2
-  },
-  {
-    id: 'referrals',
-    title: 'الإحالات',
-    href: '/referrals',
-    icon: HeartHandshake,
-    description: 'إدارة الإحالات والمكافآت',
-    keywords: ['إحالات', 'مكافآت', 'referrals'],
-    roles: ['affiliate', 'admin'],
-    group: 'affiliate',
-    order: 3
-  },
-  
-  // Analytics & Reports
-  {
-    id: 'analytics',
-    title: 'التحليلات',
-    href: '/analytics',
-    icon: TrendingUp,
-    description: 'تحليلات مفصلة للأداء',
-    keywords: ['تحليلات', 'تقارير', 'analytics'],
-    roles: ['affiliate', 'admin', 'merchant'],
-    group: 'analytics',
-    order: 1
-  },
-  {
-    id: 'reports',
-    title: 'التقارير',
-    href: '/reports',
-    icon: FileText,
-    description: 'تقارير شاملة للمبيعات',
-    keywords: ['تقارير', 'مبيعات', 'reports'],
-    roles: ['admin', 'merchant'],
-    group: 'analytics',
-    order: 2
-  },
-  
-  // Communication
-  {
-    id: 'messages',
-    title: 'الرسائل',
-    href: '/messages',
-    icon: MessageSquare,
-    description: 'نظام الرسائل والإشعارات',
-    keywords: ['رسائل', 'تواصل', 'messages'],
-    roles: ['affiliate', 'admin', 'merchant'],
-    group: 'communication',
-    order: 1
-  },
-  {
-    id: 'notifications',
-    title: 'الإشعارات',
-    href: '/notifications',
-    icon: Bell,
-    description: 'إدارة الإشعارات',
-    keywords: ['إشعارات', 'تنبيهات', 'notifications'],
-    roles: ['affiliate', 'admin', 'merchant'],
-    group: 'communication',
-    order: 2
-  },
-  
-  // Operations
-  {
-    id: 'shipping',
-    title: 'الشحن',
-    href: '/shipping',
-    icon: Truck,
-    description: 'إدارة الشحن والتوصيل',
-    keywords: ['شحن', 'توصيل', 'shipping'],
-    roles: ['admin', 'merchant'],
-    group: 'operations',
-    order: 1
-  },
-  {
-    id: 'calendar',
-    title: 'التقويم',
-    href: '/calendar',
-    icon: Calendar,
-    description: 'جدولة المهام والمواعيد',
-    keywords: ['تقويم', 'مواعيد', 'calendar'],
-    roles: ['affiliate', 'admin', 'merchant'],
-    group: 'operations',
-    order: 2
-  },
-  
-  // Admin Only
-  {
-    id: 'users',
-    title: 'المستخدمين',
-    href: '/admin/users',
-    icon: UserCheck,
-    description: 'إدارة المستخدمين والصلاحيات',
-    keywords: ['مستخدمين', 'صلاحيات', 'users'],
-    roles: ['admin'],
-    group: 'admin',
-    order: 1
-  },
-  {
-    id: 'security',
-    title: 'الأمان',
-    href: '/admin/security',
+    id: "admin",
+    title: "لوحة الإدارة",
+    href: "/admin/dashboard",
     icon: Shield,
-    description: 'إعدادات الأمان والحماية',
-    keywords: ['أمان', 'حماية', 'security'],
-    roles: ['admin'],
-    group: 'admin',
-    order: 2
+    description: "إدارة النظام والطلبات والمخزون",
+    keywords: ["admin", "dashboard", "inventory"],
+    roles: ["admin", "moderator"],
+    group: "admin",
+    order: 3,
+    children: [
+      {
+        id: "admin-dashboard",
+        title: "نظرة عامة",
+        href: "/admin/dashboard",
+        icon: BarChart3,
+        roles: ["admin", "moderator"],
+      },
+      {
+        id: "admin-orders",
+        title: "الطلبات",
+        href: "/admin/orders",
+        icon: ShoppingBag,
+        roles: ["admin", "moderator"],
+      },
+      {
+        id: "admin-analytics",
+        title: "التحليلات",
+        href: "/admin/analytics",
+        icon: Users,
+        roles: ["admin", "moderator"],
+      },
+      {
+        id: "admin-leaderboard",
+        title: "لوحة الترتيب",
+        href: "/admin/leaderboard",
+        icon: Trophy,
+        roles: ["admin", "moderator"],
+      },
+      {
+        id: "admin-customers",
+        title: "العملاء",
+        href: "/admin/customers",
+        icon: Users,
+        roles: ["admin", "moderator"],
+      },
+    ],
   },
   {
-    id: 'system',
-    title: 'النظام',
-    href: '/admin/system',
-    icon: Zap,
-    description: 'إعدادات النظام العامة',
-    keywords: ['نظام', 'إعدادات', 'system'],
-    roles: ['admin'],
-    group: 'admin',
-    order: 3
+    id: "profile",
+    title: "حسابي",
+    href: "/profile",
+    icon: User,
+    description: "إدارة بيانات الحساب والتفضيلات الشخصية",
+    keywords: ["profile", "account", "settings"],
+    roles: ["affiliate", "marketer", "admin"],
+    group: "main",
+    order: 4,
   },
-  
-  // Public Pages
   {
-    id: 'about',
-    title: 'عن المنصة',
-    href: '/about',
-    icon: Globe,
-    description: 'معلومات عن المنصة ورؤيتها',
-    keywords: ['عن', 'معلومات', 'about'],
-    group: 'public',
-    order: 1
+    id: "notifications",
+    title: "مركز الإشعارات",
+    href: "/notifications",
+    icon: Bell,
+    description: "عرض الإشعارات والزمنية لنشاط المتجر",
+    keywords: ["notifications", "activity", "alerts"],
+    roles: ["affiliate", "marketer", "admin"],
+    group: "main",
+    order: 5,
   },
-  
-  // Settings - Always at bottom
   {
-    id: 'settings',
-    title: 'الإعدادات',
-    href: '/settings',
-    icon: Settings,
-    description: 'إعدادات الحساب والمنصة',
-    keywords: ['إعدادات', 'حساب', 'settings'],
-    roles: ['affiliate', 'admin', 'merchant'],
-    group: 'settings',
-    order: 1
-  }
+    id: "checkout",
+    title: "إتمام الطلب",
+    href: "/checkout",
+    icon: ShoppingBag,
+    description: "صفحة عامة لإكمال عملية الشراء",
+    keywords: ["checkout", "payment"],
+    group: "public",
+    order: 6,
+  },
+  {
+    id: "order-confirmation",
+    title: "تأكيد الطلب",
+    href: "/order/confirmation",
+    icon: BarChart3,
+    description: "ملخص الطلب بعد الإتمام",
+    keywords: ["order", "confirmation"],
+    group: "public",
+    order: 7,
+  },
 ];
 
-// Helper functions for navigation items
 export const getNavigationItemById = (id: string): NavigationItem | undefined => {
-  return navigationItems.find(item => item.id === id);
+  return navigationItems.find((item) => item.id === id);
 };
 
 export const getNavigationItemsByGroup = (group: string): NavigationItem[] => {
-  return navigationItems.filter(item => item.group === group).sort((a, b) => (a.order || 0) - (b.order || 0));
+  return navigationItems
+    .filter((item) => item.group === group)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
 };
 
 export const getNavigationItemsByRole = (role: string): NavigationItem[] => {
-  return navigationItems.filter(item => !item.roles || item.roles.includes(role));
+  return navigationItems.filter((item) => !item.roles || item.roles.includes(role));
 };
 
 export const searchNavigationItems = (query: string): NavigationItem[] => {
-  const searchTerms = query.toLowerCase().split(' ');
-  
-  return navigationItems.filter(item => {
-    const searchableText = [
-      item.title,
-      item.description,
-      ...(item.keywords || [])
-    ].filter(Boolean).join(' ').toLowerCase();
-    
-    return searchTerms.every(term => searchableText.includes(term));
+  const searchTerms = query.toLowerCase().split(" ");
+
+  return navigationItems.filter((item) => {
+    const searchableText = [item.title, item.description, ...(item.keywords || [])]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    return searchTerms.every((term) => searchableText.includes(term));
   });
 };

@@ -206,10 +206,10 @@ export function UserActivityTracker() {
       averageScrollDepth: 68.5,
       bounceRate: 32.1,
       mostVisitedPages: [
-        { page: '/dashboard', visits: 89 },
-        { page: '/products', visits: 67 },
-        { page: '/orders', visits: 45 },
-        { page: '/analytics', visits: 33 }
+        { page: '/affiliate', visits: 89 },
+        { page: '/affiliate/storefront', visits: 67 },
+        { page: '/affiliate/orders', visits: 45 },
+        { page: '/affiliate/analytics', visits: 33 }
       ],
       mostActiveHours: [
         { hour: 9, activity: 85 },
@@ -235,14 +235,14 @@ export function UserActivityTracker() {
       averageSessionTime: 387,
       conversionRate: 4.2,
       topPages: [
-        { page: '/dashboard', views: 456 },
-        { page: '/products', views: 234 },
-        { page: '/orders', views: 189 }
+        { page: '/affiliate', views: 456 },
+        { page: '/affiliate/storefront', views: 234 },
+        { page: '/affiliate/orders', views: 189 }
       ],
       userFlow: [
-        { from: '/dashboard', to: '/products', count: 45 },
-        { from: '/products', to: '/orders', count: 23 },
-        { from: '/dashboard', to: '/analytics', count: 18 }
+        { from: '/affiliate', to: '/affiliate/storefront', count: 45 },
+        { from: '/affiliate/storefront', to: '/affiliate/orders', count: 23 },
+        { from: '/affiliate', to: '/affiliate/analytics', count: 18 }
       ]
     };
 

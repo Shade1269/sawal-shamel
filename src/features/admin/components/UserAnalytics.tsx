@@ -85,7 +85,8 @@ export const UserAnalytics = () => {
       // Count by role
       const usersByRole: Record<string, number> = {};
       profiles?.forEach(profile => {
-        usersByRole[profile.role] = (usersByRole[profile.role] || 0) + 1;
+        const normalizedRole = profile.role === 'merchant' ? 'affiliate' : profile.role;
+        usersByRole[normalizedRole] = (usersByRole[normalizedRole] || 0) + 1;
       });
 
       // Count by level
@@ -166,10 +167,10 @@ export const UserAnalytics = () => {
   const getRoleName = (role: string) => {
     const roleNames: Record<string, string> = {
       admin: 'مدير',
-      merchant: 'تاجر',
       affiliate: 'مسوق',
       customer: 'عميل',
-      moderator: 'مشرف'
+      moderator: 'مشرف',
+      merchant: 'مسوق'
     };
     return roleNames[role] || role;
   };

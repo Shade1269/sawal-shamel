@@ -35,7 +35,6 @@ export const POINT_VALUES = {
 // User Roles
 export const USER_ROLES = {
   ADMIN: 'admin',
-  MERCHANT: 'merchant',
   AFFILIATE: 'affiliate',
   CUSTOMER: 'customer',
   MODERATOR: 'moderator'

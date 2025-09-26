@@ -20,19 +20,14 @@ export const PlatformRouteGuard = ({ children }: PlatformRouteGuardProps) => {
   const currentPath = location.pathname;
   
   // الصفحات المحمية من عملاء المتجر (الصفحات الداخلية فقط)
-  const isRestrictedPath = currentPath.startsWith('/admin') || 
-                          currentPath.startsWith('/affiliate') || 
-                          currentPath.startsWith('/merchant') ||
-                          currentPath.startsWith('/dashboard');
+  const isRestrictedPath = currentPath.startsWith('/admin') ||
+                          currentPath.startsWith('/affiliate');
   
   // الصفحات العامة المسموحة للجميع
-  const isPublicPath = currentPath === '/' || 
-                      currentPath === '/auth' || 
-                      currentPath === '/login' || 
-                      currentPath === '/signup' ||
-                      currentPath === '/about' ||
-                      currentPath === '/products' ||
-                      currentPath === '/create-admin';
+  const isPublicPath = currentPath === '/' ||
+                      currentPath === '/auth' ||
+                      currentPath === '/auth/reset' ||
+                      currentPath === '/auth/callback';
 
   useEffect(() => {
     // التحقق من وجود جلسة عميل متجر صالحة

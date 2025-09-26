@@ -279,14 +279,14 @@ export const AIAnalytics: React.FC = () => {
                   <Line 
                     type="monotone" 
                     dataKey="users" 
-                    stroke="hsl(var(--primary))" 
+                    stroke="var(--primary)"
                     strokeWidth={2}
                     name="Actual Users"
                   />
                   <Line 
                     type="monotone" 
                     dataKey="predictions" 
-                    stroke="hsl(var(--primary))" 
+                    stroke="var(--primary)"
                     strokeWidth={2}
                     strokeDasharray="5 5"
                     name="Predicted Users"
@@ -305,8 +305,8 @@ export const AIAnalytics: React.FC = () => {
                   <Area 
                     type="monotone" 
                     dataKey="revenue" 
-                    stroke="hsl(var(--primary))" 
-                    fill="hsl(var(--primary))"
+                    stroke="var(--primary)"
+                    fill="var(--primary)"
                     fillOpacity={0.3}
                     name="Revenue"
                   />

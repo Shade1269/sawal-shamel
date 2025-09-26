@@ -5,22 +5,16 @@ import App from './App.tsx'
 import './index.css'
 import { initializePerformanceOptimization } from './utils/bundleOptimization'
 import { ThemeProvider } from './components/ThemeProvider'
-
-// Register service worker for performance optimization
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(() => {
-        // SW registered successfully
-      })
-      .catch(() => {
-        // SW registration failed
-      });
-  });
-}
+import { registerServiceWorker } from './pwa/registerServiceWorker'
+import { registerWebVitals } from './pwa/reportWebVitals'
 
 // Initialize performance optimization
 initializePerformanceOptimization();
+
+if (import.meta.env.PROD) {
+  registerServiceWorker();
+  registerWebVitals();
+}
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
