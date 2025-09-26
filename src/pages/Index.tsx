@@ -42,17 +42,17 @@ import { useUserDataContext } from '@/contexts/UserDataContext';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user, profile, signOut, isAuthenticated } = useFastAuth();
+  const { user, profile, signOut, isAuthenticated, loading } = useFastAuth();
   const { userShop, userStatistics } = useUserDataContext();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const { language, toggleLanguage } = useLanguage();
   const { themeId } = useTheme('default');
 
   React.useEffect(() => {
-    if (isAuthenticated === false) {
+    if (!loading && isAuthenticated === false) {
       navigate('/auth', { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, loading, navigate]);
 
   const heroMap = {
     default: DefaultHero3D,

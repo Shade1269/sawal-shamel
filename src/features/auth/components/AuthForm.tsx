@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,12 +29,17 @@ const AuthForm = () => {
   });
 
   const { goToUserHome } = useSmartNavigation();
+  const hasRedirectedRef = useRef(false);
 
   useEffect(() => {
-    if (isAuthenticated && profile?.role) {
-      goToUserHome(profile.role);
+    if (!loading && isAuthenticated && !hasRedirectedRef.current) {
+      hasRedirectedRef.current = true;
+      goToUserHome(profile?.role);
     }
-  }, [isAuthenticated, profile?.role, goToUserHome]);
+    if (!isAuthenticated) {
+      hasRedirectedRef.current = false;
+    }
+  }, [goToUserHome, isAuthenticated, loading, profile?.role]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
