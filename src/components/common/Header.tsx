@@ -65,15 +65,15 @@ const Header = () => {
     return (
       <header className="bg-card/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div 
+          <div
             className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent cursor-pointer"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/auth')}
           >
             منصة الأفيليت
           </div>
-          
-          <Button 
-            onClick={() => navigate('/login')} 
+
+          <Button
+            onClick={() => navigate('/auth')}
             className="bg-gradient-primary hover:opacity-90"
           >
             تسجيل الدخول

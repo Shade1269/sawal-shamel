@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useStorefrontSettings, type StorefrontSettingsOptions } from "@/hooks/useStorefrontSettings";
 import { useUserDataContext } from "@/contexts/UserDataContext";
 import { cn } from "@/lib/utils";
+import ThemeSystemPreview from "@/components/theme/ThemeSystemPreview";
 
 interface AffiliateStoreSettingsProps {
   slugOverride?: string;
@@ -195,6 +196,10 @@ const AffiliateStoreSettingsPage: React.FC<AffiliateStoreSettingsProps> = ({
           </Card>
         </aside>
       </section>
+
+      <ThemeSystemPreview
+        className="rounded-[var(--radius-xl)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]"
+      />
     </div>
   );
 };

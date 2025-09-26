@@ -67,7 +67,7 @@ export const useSecurityMonitoring = (config?: {
         type: 'brute_force',
         severity: 'high',
         source: '192.168.1.100',
-        target: '/login',
+        target: '/auth',
         description: 'Multiple failed login attempts detected',
         timestamp: new Date(),
         blocked: settings.auto_block,

@@ -35,9 +35,8 @@ export function AdaptiveLayout({
   const navType = getNavigationType(device);
 
   // Check if it's an auth page
-  const isAuthPage = window.location.pathname.includes('/auth') || 
-                     window.location.pathname.includes('/login') || 
-                     window.location.pathname.includes('/signup');
+  const authPath = window.location.pathname;
+  const isAuthPage = authPath === '/auth' || authPath.startsWith('/auth/');
 
   // For auth pages or fullscreen mode, return minimal layout
   if (isAuthPage || fullscreen) {
