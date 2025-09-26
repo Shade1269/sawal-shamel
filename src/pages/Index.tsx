@@ -25,6 +25,7 @@ import {
   CreditCard,
   LineChart,
   ArrowUpRight,
+  ShoppingBag,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
