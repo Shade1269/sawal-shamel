@@ -273,7 +273,7 @@ export const useFastAuth = () => {
 
   // Enhanced Auth functions with better error handling and user feedback
   const signUp = useCallback((args: FastAuthSignUpArgs) => {
-    return performSignUp({ supabase, toast, fetchUserProfile }, args);
+    return performSignUp({ supabase, toast: (config: any) => toast(config), fetchUserProfile }, args);
   }, [toast, fetchUserProfile]);
 
   const signIn = async (email: string, password: string) => {

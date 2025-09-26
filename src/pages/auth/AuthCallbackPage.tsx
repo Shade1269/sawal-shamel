@@ -32,7 +32,7 @@ const AuthCallbackPage = () => {
       }
 
       try {
-        const { data, error } = await supabase.auth.exchangeCodeForSession({ code });
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
         if (error) {
           throw error;

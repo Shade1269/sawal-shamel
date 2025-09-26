@@ -112,7 +112,7 @@ export const useAffiliateMetrics = ({ profileId }: UseAffiliateMetricsParams): U
 
       const { data, error } = await supabase
         .from('affiliate_stores')
-        .select('id, store_name, store_slug, store_description, share_message, branding_color')
+        .select('id, store_name, store_slug, bio')
         .eq('profile_id', profileId)
         .eq('is_active', true)
         .order('created_at', { ascending: true })

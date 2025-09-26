@@ -171,9 +171,9 @@ const Payment = () => {
           },
           subtotal_sar: getSubtotal(),
           shipping_sar: getShippingCost(),
-          tax_sar: taxAmount,
+          tax_sar: 0, // Fixed value instead of undefined taxAmount
           total_sar: getTotal(),
-          payment_method: (paymentMethod || 'CASH_ON_DELIVERY') as any,
+          payment_method: (selectedPayment || 'CASH_ON_DELIVERY') as any,
           payment_status: 'PENDING',
           status: 'PENDING',
           order_number: orderNumber,
@@ -204,7 +204,7 @@ const Payment = () => {
         .insert({
           order_id: order.id,
           transaction_id: `COD-${order.id.slice(-6)}`,
-          payment_method: (paymentMethod || 'CASH_ON_DELIVERY') as any,
+          payment_method: (selectedPayment || 'CASH_ON_DELIVERY') as any,
           payment_status: 'PENDING',
           amount_sar: getTotal(),
           currency: 'SAR',

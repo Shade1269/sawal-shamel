@@ -133,7 +133,7 @@ const OrderDetailsDrawer = ({ open, order, onClose, reducedMotion }: OrderDetail
             ref={closeButtonRef}
             type="button"
             variant="ghost"
-            size="icon"
+        size="sm"
             onClick={onClose}
             aria-label="إغلاق"
             className="rounded-full border border-transparent text-[color:var(--muted-foreground)] hover:border-[color:var(--glass-border)] hover:text-[color:var(--glass-fg)]"
@@ -181,7 +181,7 @@ const OrderDetailsDrawer = ({ open, order, onClose, reducedMotion }: OrderDetail
             <div className="rounded-[var(--radius-m)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/40 p-3 space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span>{order.customerName}</span>
-                <Button variant="ghost" size="icon" aria-label="اتصال بالعميل" className="text-[color:var(--muted-foreground)] hover:text-[color:var(--glass-fg)]">
+                <Button variant="ghost" size="sm" aria-label="اتصال بالعميل" className="text-[color:var(--muted-foreground)] hover:text-[color:var(--glass-fg)]">
                   <Phone className="h-4 w-4" aria-hidden />
                 </Button>
               </div>

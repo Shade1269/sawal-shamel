@@ -4,7 +4,17 @@ import { Sparkles, Trophy } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getMyMonthlyPoints, LeaderboardScope, MonthlyPointsSummary } from '@/server/leaderboard/api';
+// TypeScript interfaces for removed server API
+type LeaderboardScope = 'users' | 'alliances';
+interface MonthlyPointsSummary {
+  totalPoints: number;
+  rank?: number;
+}
+
+const getMyMonthlyPoints = async (scope: LeaderboardScope): Promise<MonthlyPointsSummary> => {
+  // Mock data since server API is removed
+  return { totalPoints: 0, rank: undefined };
+};
 
 interface MyScoreCardProps {
   scope?: LeaderboardScope;

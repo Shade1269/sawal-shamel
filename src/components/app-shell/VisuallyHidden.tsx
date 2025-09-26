@@ -2,7 +2,7 @@ import type { HTMLAttributes } from 'react';
 import React from 'react';
 
 export type VisuallyHiddenProps = HTMLAttributes<HTMLElement> & {
-  as?: keyof JSX.IntrinsicElements;
+  as?: 'span' | 'div' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 };
 
 export const VisuallyHidden: React.FC<VisuallyHiddenProps> = React.memo(

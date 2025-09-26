@@ -299,7 +299,7 @@ const Index = () => {
                     <div className="flex flex-col gap-3 md:items-end">
                       <ThemeButton
                         type="button"
-                        variant="default"
+          variant="secondary"
                         className="inline-flex items-center gap-2"
                         onClick={handleNavigate('/affiliate/analytics')}
                       >
@@ -333,7 +333,7 @@ const Index = () => {
                     <div className="flex flex-col gap-2">
                       <ThemeButton
                         type="button"
-                        variant="default"
+                        variant="secondary"
                         className="inline-flex items-center justify-center gap-2"
                         onClick={handleStorefrontNavigate}
                       >

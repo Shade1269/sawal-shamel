@@ -419,7 +419,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             userName={profile?.full_name || user?.email || 'ضيف'}
             userEmail={profile?.email || user?.email || undefined}
             userRole={role === 'admin' ? 'مدير النظام' : role === 'affiliate' || role === 'marketer' ? 'مسوق' : 'زائر'}
-            onSignOut={signOut}
+            onSignOut={() => { signOut(); }}
             isOffline={!isOnline}
           />
 

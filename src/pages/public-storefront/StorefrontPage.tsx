@@ -267,12 +267,9 @@ const PublicStorefrontPage: React.FC<PublicStorefrontPageProps> = ({
     });
   }, [products]);
 
-  const storeName = settings.storeName || store?.display_name || store?.store_name || "متجر المسوّقة";
-  const marketerName = store?.owner_name || store?.display_name || "مسوّقة مبدعة";
-  const shortDescription =
-    settings.shortDescription ||
-    store?.short_description ||
-    "تسوق مجموعة مختارة بعناية من المنتجات مع تجربة دفع سلسة ومتكاملة.";
+  const storeName = settings.storeName || store?.store_name || "متجر المسوّقة";
+  const marketerName = store?.store_name || "مسوّقة مبدعة"; 
+  const shortDescription = settings.shortDescription || store?.bio || "تسوق مجموعة مختارة بعناية من المنتجات مع تجربة دفع سلسة ومتكاملة.";
   const logoUrl = settings.logoUrl || store?.logo_url || undefined;
   const heroEnabled = settings.useThemeHero ?? true;
 

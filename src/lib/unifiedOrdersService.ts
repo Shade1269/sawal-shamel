@@ -166,7 +166,7 @@ export class UnifiedOrdersService {
   static async updateOrderStatus(orderId: string, newStatus: string): Promise<boolean> {
     const { error } = await supabase
       .from('ecommerce_orders')
-      .update({ status: newStatus })
+      .update({ status: newStatus as any })
       .eq('id', orderId);
 
     if (error) {
@@ -197,11 +197,7 @@ export class UnifiedOrdersService {
     const { data, error } = await supabase
       .from('ecommerce_orders')
       .insert({
-        shop_id: orderData.shop_id,
-        affiliate_store_id: orderData.affiliate_store_id || null,
-        customer_name: orderData.customer_name,
-        customer_phone: orderData.customer_phone,
-        customer_email: orderData.customer_email || null,
+        order_number: orderData.order_number,
         shipping_address: orderData.shipping_address,
         subtotal_sar: orderData.subtotal_sar,
         tax_sar: orderData.tax_sar || 0,
@@ -211,8 +207,7 @@ export class UnifiedOrdersService {
         payment_status: orderData.payment_status || 'PENDING',
         status: orderData.status || 'PENDING',
         affiliate_commission_sar: orderData.affiliate_commission_sar || null,
-        order_number: orderData.order_number,
-      })
+      } as any)
       .select('id')
       .single();
 

@@ -189,7 +189,7 @@ export default function AffiliateOrdersPage() {
                       <div>
                         <h4 className="font-semibold mb-2">إجمالي الطلب</h4>
                         <p className="text-lg font-bold text-primary">
-                          {order.total.toFixed(2)} ر.س
+                          {(order as any).total_sar?.toFixed(2) || '0.00'} ر.س
                         </p>
                       </div>
                     </div>

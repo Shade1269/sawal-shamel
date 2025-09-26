@@ -294,9 +294,8 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
       const { data: order, error: orderError } = await supabaseClient
         .from("ecommerce_orders")
         .insert({
-          shop_id: shopId,
-          affiliate_store_id: affiliateStoreId || shopId,
-          buyer_session_id: cart?.session_id ?? null,
+          order_number: orderNumber,
+          payment_method: 'CASH_ON_DELIVERY' as any,
           user_id: profile?.id ?? null,
           customer_name: customerInfo.name,
           customer_email: customerInfo.email || null,
@@ -313,12 +312,10 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
           shipping_sar: shippingCost,
           tax_sar: taxAmount,
           total_sar: grandTotal,
-          payment_method: paymentMethod,
           payment_status: "PENDING",
           status: "PENDING",
-          order_number: orderNumber,
           notes: notes || null,
-        })
+        } as any)
         .select("id, order_number")
         .maybeSingle();
 
@@ -344,7 +341,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
       await supabaseClient.from("ecommerce_payment_transactions").insert({
         order_id: order.id,
         transaction_id: `COD-${order.id.slice(-6)}`,
-        payment_method: paymentMethod,
+        payment_method: (paymentMethod || 'CASH_ON_DELIVERY') as any,
         payment_status: "PENDING",
         amount_sar: grandTotal,
         currency: "SAR",

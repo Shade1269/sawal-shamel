@@ -31,9 +31,9 @@ const AffiliateStoreSettingsPage: React.FC<AffiliateStoreSettingsProps> = ({
 
   const initialSettings = useMemo(
     () => ({
-      storeName: userShop?.display_name ?? "",
-      shortDescription: userShop?.tagline ?? "",
-      logoUrl: userShop?.logo_url ?? "",
+      storeName: ((userShop as any)?.store_name || (userShop as any)?.display_name) ?? "",
+      shortDescription: ((userShop as any)?.bio || (userShop as any)?.tagline) ?? "",
+      logoUrl: (userShop as any)?.logo_url ?? "",
       accentColor: "var(--accent)",
       useThemeHero: true,
       ...(settingsOverride ?? {}),
