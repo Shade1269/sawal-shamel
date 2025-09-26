@@ -63,7 +63,7 @@ export const CustomerInsights = ({ customer, loading }: CustomerInsightsProps) =
               <Line 
                 type="monotone" 
                 dataKey="count" 
-                stroke="hsl(var(--primary))" 
+                stroke="var(--primary)"
                 strokeWidth={3}
                 dot={{ r: 4 }}
                 activeDot={{ r: 6 }}
@@ -164,7 +164,7 @@ export const CustomerInsights = ({ customer, loading }: CustomerInsightsProps) =
               />
               <Bar 
                 dataKey="value" 
-                fill="hsl(var(--chart-1))" 
+                fill="var(--primary)"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>

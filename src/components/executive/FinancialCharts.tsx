@@ -52,7 +52,7 @@ export const FinancialCharts = ({ financial, loading }: FinancialChartsProps) =>
               />
               <Bar 
                 dataKey="revenue" 
-                fill="hsl(var(--primary))" 
+                fill="var(--primary)"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>
@@ -124,7 +124,7 @@ export const FinancialCharts = ({ financial, loading }: FinancialChartsProps) =>
                 />
                 <Bar 
                   dataKey="profit" 
-                  fill="hsl(var(--secondary))" 
+                  fill="var(--secondary)"
                   radius={[0, 4, 4, 0]}
                 />
               </BarChart>

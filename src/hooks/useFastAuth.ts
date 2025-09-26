@@ -10,7 +10,7 @@ export interface FastUserProfile {
   auth_user_id: string;
   email: string;
   full_name: string;
-  role: 'admin' | 'merchant' | 'affiliate' | 'customer' | 'moderator';
+  role: 'admin' | 'affiliate' | 'marketer' | 'customer' | 'moderator';
   level: 'bronze' | 'silver' | 'gold' | 'legendary';
   is_active: boolean;
   points?: number;
@@ -20,7 +20,7 @@ export interface FastUserProfile {
   created_at?: string;
 }
 
-export type FastAuthRole = 'admin' | 'merchant' | 'affiliate';
+export type FastAuthRole = 'admin' | 'affiliate' | 'marketer';
 
 export interface FastAuthSignUpArgs {
   email: string;
@@ -350,7 +350,7 @@ export const useFastAuth = () => {
 
       // Determine redirect path based on role (returned to caller; no hard reload)
       const userId = data.user?.id;
-      let redirect = '/dashboard';
+      let redirect = '/';
       if (userId) {
         const { data: prof } = await supabase
           .from('user_profiles')
@@ -362,14 +362,20 @@ export const useFastAuth = () => {
           case 'admin':
             redirect = '/admin/dashboard';
             break;
-          case 'merchant':
-            redirect = '/merchant-dashboard';
+          case 'moderator':
+            redirect = '/admin/dashboard';
             break;
           case 'affiliate':
-            redirect = '/affiliate-dashboard';
+            redirect = '/affiliate';
+            break;
+          case 'marketer':
+            redirect = '/affiliate';
+            break;
+          case 'merchant':
+            redirect = '/affiliate';
             break;
           default:
-            redirect = '/dashboard';
+            redirect = '/';
         }
       }
       // Don't force reload; let caller navigate
@@ -475,7 +481,6 @@ export const useFastAuth = () => {
     
     // Role checks (cached and fast)
     isAdmin: hasRole('admin'),
-    isMerchant: hasRole('merchant'),
     isAffiliate: hasRole('affiliate'),
     isCustomer: hasRole('customer'),
     isModerator: hasRole('moderator'),
@@ -494,7 +499,7 @@ export const useFastAuth = () => {
     // Role helpers
     canModerate: hasRole(['admin', 'moderator']),
     canManageUsers: hasRole('admin'),
-    canCreateShops: hasRole(['admin', 'merchant']),
-    canViewAnalytics: hasRole(['admin', 'merchant', 'affiliate'])
+    canCreateShops: hasRole('admin'),
+    canViewAnalytics: hasRole(['admin', 'affiliate'])
   };
 };

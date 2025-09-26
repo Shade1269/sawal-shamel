@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { deriveSalesSnapshotsRuntime } from '../src/features/affiliate/hooks/useAffiliateMetricsRuntime.js';
+import {
+  deriveSalesSnapshotsRuntime,
+  deriveTopProductSharesRuntime,
+} from '../src/features/affiliate/hooks/useAffiliateMetricsRuntime.js';
 
 test('deriveSalesSnapshotsRuntime aggregates paid orders into daily, weekly, and monthly buckets', () => {
   const now = new Date('2024-07-15T12:00:00Z');
@@ -68,10 +71,56 @@ test('deriveSalesSnapshotsRuntime rounds revenue to two decimals', () => {
       created_at: '2024-07-15T08:00:00Z',
       total_sar: 12.3456,
       payment_status: 'PAID',
-      items: [{ id: 'item-a', quantity: 1, total_price_sar: 12.3456 }],
+      items: [{ id: 'item-a', product_title: 'قلادة', quantity: 1, total_price_sar: 12.3456 }],
     },
   ];
 
   const snapshot = deriveSalesSnapshotsRuntime(orders, now);
   assert.equal(snapshot.today.revenue, 12.35);
+});
+
+test('deriveTopProductSharesRuntime aggregates product performance', () => {
+  const orders = [
+    {
+      id: 'order-1',
+      payment_status: 'PAID',
+      created_at: '2024-07-12T10:00:00Z',
+      items: [
+        { id: 'item-1', product_id: 'prod-1', product_title: 'فستان ساتان', quantity: 2, total_price_sar: 480 },
+        { id: 'item-2', product_id: 'prod-2', product_title: 'طرحة دانتيل', quantity: 1, total_price_sar: 180 },
+      ],
+    },
+    {
+      id: 'order-2',
+      payment_status: 'PAID',
+      created_at: '2024-07-14T12:00:00Z',
+      items: [
+        { id: 'item-3', product_id: 'prod-1', product_title: 'فستان ساتان', quantity: 1, total_price_sar: 240 },
+      ],
+    },
+    {
+      id: 'order-3',
+      payment_status: 'PENDING',
+      created_at: '2024-07-14T14:00:00Z',
+      items: [
+        { id: 'item-4', product_id: 'prod-3', product_title: 'عطر شرقي', quantity: 1, total_price_sar: 320 },
+      ],
+    },
+  ];
+
+  const products = deriveTopProductSharesRuntime(orders, { limit: 2 });
+
+  assert.equal(products.length, 2);
+  assert.deepEqual(products[0], {
+    productId: 'prod-1',
+    title: 'فستان ساتان',
+    quantity: 3,
+    revenue: 720,
+  });
+  assert.deepEqual(products[1], {
+    productId: 'prod-2',
+    title: 'طرحة دانتيل',
+    quantity: 1,
+    revenue: 180,
+  });
 });

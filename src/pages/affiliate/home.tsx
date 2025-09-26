@@ -5,6 +5,7 @@ import {
   AffiliateStoreSummary,
   AffiliateMetricsSnapshot,
   AffiliateRecentOrder,
+  AffiliateProductShare,
 } from '@/features/affiliate/hooks/useAffiliateMetrics';
 import { AffiliateHomeViewRuntime } from './homeViewRuntime';
 import {
@@ -21,6 +22,7 @@ export interface AffiliateHomeViewProps {
   metricsLoading?: boolean;
   orders: AffiliateRecentOrder[];
   ordersLoading?: boolean;
+  topProducts?: AffiliateProductShare[];
   error?: string | null;
   onRefresh?: () => void;
 }
@@ -43,6 +45,7 @@ const AffiliateHomePage = () => {
     shareUrl,
     metrics,
     recentOrders,
+    topProducts,
     loading: dataLoading,
     metricsLoading,
     ordersLoading,
@@ -71,6 +74,7 @@ const AffiliateHomePage = () => {
       metricsLoading={metricsLoading}
       orders={recentOrders}
       ordersLoading={ordersLoading}
+      topProducts={topProducts}
       error={error}
       onRefresh={refetch}
     />

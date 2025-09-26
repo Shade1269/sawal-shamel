@@ -56,15 +56,8 @@ export const useNavigationShortcuts = (
     const adminShortcuts: NavigationShortcut[] = [
       {
         keys: ['cmd+shift+a', 'ctrl+shift+a'],
-        action: () => navigate('/admin'),
+        action: () => navigate('/admin/dashboard'),
         description: 'لوحة الإدارة',
-        category: 'إدارة',
-        roles: ['admin']
-      },
-      {
-        keys: ['cmd+shift+u', 'ctrl+shift+u'],
-        action: () => navigate('/admin/users'),
-        description: 'إدارة المستخدمين',
         category: 'إدارة',
         roles: ['admin']
       },
@@ -88,13 +81,6 @@ export const useNavigationShortcuts = (
         description: 'إدارة المخزون',
         category: 'تجارة',
         roles: ['admin']
-      },
-      {
-        keys: ['cmd+shift+s', 'ctrl+shift+s'],
-        action: () => navigate('/admin/settings'),
-        description: 'إعدادات النظام',
-        category: 'إعدادات',
-        roles: ['admin']
       }
     ];
 
@@ -102,31 +88,31 @@ export const useNavigationShortcuts = (
     const affiliateShortcuts: NavigationShortcut[] = [
       {
         keys: ['cmd+shift+d', 'ctrl+shift+d'],
-        action: () => navigate('/dashboard'),
+        action: () => navigate('/affiliate'),
         description: 'لوحة المسوق',
         category: 'تسويق',
-        roles: ['affiliate']
+        roles: ['affiliate', 'marketer']
       },
       {
         keys: ['cmd+shift+r', 'ctrl+shift+r'],
-        action: () => navigate('/dashboard/products'),
-        description: 'منتجاتي',
+        action: () => navigate('/affiliate/storefront'),
+        description: 'واجهة المتجر',
         category: 'تسويق',
-        roles: ['affiliate']
+        roles: ['affiliate', 'marketer']
       },
       {
         keys: ['cmd+shift+e', 'ctrl+shift+e'],
-        action: () => navigate('/dashboard/orders'),
+        action: () => navigate('/affiliate/orders'),
         description: 'طلباتي',
         category: 'تسويق',
-        roles: ['affiliate']
+        roles: ['affiliate', 'marketer']
       },
       {
         keys: ['cmd+shift+c', 'ctrl+shift+c'],
-        action: () => navigate('/dashboard/commissions'),
-        description: 'العمولات',
+        action: () => navigate('/affiliate/analytics'),
+        description: 'التحليلات',
         category: 'مالية',
-        roles: ['affiliate']
+        roles: ['affiliate', 'marketer']
       }
     ];
 
@@ -135,8 +121,8 @@ export const useNavigationShortcuts = (
       {
         keys: ['cmd+1', 'ctrl+1'],
         action: () => {
-          if (userRole === 'admin') navigate('/admin');
-          else if (userRole === 'affiliate') navigate('/dashboard');
+          if (userRole === 'admin') navigate('/admin/dashboard');
+          else if (userRole === 'affiliate' || userRole === 'marketer') navigate('/affiliate');
           else navigate('/');
         },
         description: 'الصفحة الرئيسية',
@@ -145,8 +131,8 @@ export const useNavigationShortcuts = (
       {
         keys: ['cmd+2', 'ctrl+2'],
         action: () => {
-          if (userRole === 'admin') navigate('/admin/users');
-          else if (userRole === 'affiliate') navigate('/dashboard/products');
+          if (userRole === 'admin') navigate('/admin/orders');
+          else if (userRole === 'affiliate' || userRole === 'marketer') navigate('/affiliate/storefront');
         },
         description: 'الصفحة الثانية',
         category: 'تنقل سريع'
@@ -155,7 +141,7 @@ export const useNavigationShortcuts = (
         keys: ['cmd+3', 'ctrl+3'],
         action: () => {
           if (userRole === 'admin') navigate('/admin/analytics');
-          else if (userRole === 'affiliate') navigate('/dashboard/orders');
+          else if (userRole === 'affiliate' || userRole === 'marketer') navigate('/affiliate/orders');
         },
         description: 'الصفحة الثالثة',
         category: 'تنقل سريع'

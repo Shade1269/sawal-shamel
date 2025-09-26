@@ -22,7 +22,6 @@ export const useUnifiedAuth = () => {
     clearCache,
     // Role flags
     isAdmin,
-    isMerchant,
     isAffiliate,
     isCustomer,
     isModerator,
@@ -53,7 +52,6 @@ export const useUnifiedAuth = () => {
     
     // Role checks
     isAdmin,
-    isMerchant,
     isAffiliate,
     isCustomer,
     isModerator,

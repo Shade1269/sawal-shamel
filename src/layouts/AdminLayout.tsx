@@ -103,8 +103,8 @@ export default function AdminLayout() {
                       <User className="mr-2 h-4 w-4" />
                       <span>الملف الشخصي</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate("/admin/settings")}>
-                      إعدادات الإدارة
+                    <DropdownMenuItem onClick={() => navigate('/admin/dashboard')}>
+                      لوحة الإدارة
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut} className="text-red-600">

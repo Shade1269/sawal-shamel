@@ -6,14 +6,22 @@ test('getHomeRouteForRole returns admin dashboard for admin role', () => {
   assert.equal(getHomeRouteForRole('admin'), '/admin/dashboard');
 });
 
-test('getHomeRouteForRole returns merchant area for merchant role', () => {
-  assert.equal(getHomeRouteForRole('merchant'), '/merchant');
+test('getHomeRouteForRole treats moderator as admin-level access', () => {
+  assert.equal(getHomeRouteForRole('moderator'), '/admin/dashboard');
+});
+
+test('getHomeRouteForRole maps legacy merchant role to affiliate area', () => {
+  assert.equal(getHomeRouteForRole('merchant'), '/affiliate');
 });
 
 test('getHomeRouteForRole defaults affiliates to affiliate route', () => {
   assert.equal(getHomeRouteForRole('affiliate'), '/affiliate');
 });
 
-test('getHomeRouteForRole falls back to dashboard when role missing', () => {
-  assert.equal(getHomeRouteForRole(undefined), '/dashboard');
+test('getHomeRouteForRole routes marketers to affiliate home', () => {
+  assert.equal(getHomeRouteForRole('marketer'), '/affiliate');
+});
+
+test('getHomeRouteForRole falls back to home when role missing', () => {
+  assert.equal(getHomeRouteForRole(undefined), '/');
 });

@@ -63,20 +63,20 @@ export function NavigationShortcuts() {
     },
     {
       keys: ['Ctrl', 'D'],
-      description: 'الانتقال للوحة التحكم',
-      action: () => navigate('/dashboard'),
+      description: 'الانتقال لمركز المسوق',
+      action: () => navigate('/affiliate'),
       category: 'navigation'
     },
     {
       keys: ['Ctrl', 'P'],
-      description: 'الانتقال للمنتجات',
-      action: () => navigate('/products'),
+      description: 'واجهة المتجر',
+      action: () => navigate('/affiliate/storefront'),
       category: 'navigation'
     },
     {
       keys: ['Ctrl', 'O'],
-      description: 'الانتقال للطلبات',
-      action: () => navigate('/orders'),
+      description: 'طلبات المسوق',
+      action: () => navigate('/affiliate/orders'),
       category: 'navigation'
     },
     {
@@ -119,15 +119,15 @@ export function NavigationShortcuts() {
             break;
           case 'd':
             e.preventDefault();
-            navigate('/dashboard');
+            navigate('/affiliate');
             break;
           case 'p':
             e.preventDefault();
-            navigate('/products');
+            navigate('/affiliate/storefront');
             break;
           case 'o':
             e.preventDefault();
-            navigate('/orders');
+            navigate('/affiliate/orders');
             break;
         }
       }

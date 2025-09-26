@@ -292,7 +292,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
         description: mode === 'create' ? "تم إنشاء المنتج بنجاح" : "تم تحديث المنتج بنجاح",
       });
 
-      navigate('/admin/products');
+      navigate('/admin/inventory');
     } catch (error) {
       console.error('Error saving product:', error);
       toast({
@@ -410,7 +410,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
             <div className="flex items-center gap-4">
               <Button 
                 variant="ghost" 
-                onClick={() => navigate('/admin/products')}
+                onClick={() => navigate('/admin/inventory')}
                 className="text-primary hover:bg-primary/10 gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />

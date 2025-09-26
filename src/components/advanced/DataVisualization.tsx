@@ -53,7 +53,7 @@ interface ChartData {
   color?: string;
 }
 
-const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--muted))', 'hsl(var(--secondary))'];
+const COLORS = ['var(--primary)', 'var(--accent)', 'var(--muted)', 'var(--secondary)'];
 
 export const DataVisualization: React.FC<DataVisualizationProps> = ({
   data,
@@ -221,16 +221,16 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
                       type="monotone"
                       dataKey="sales"
                       stackId="1"
-                      stroke="hsl(var(--primary))"
-                      fill="hsl(var(--primary))"
+                      stroke="var(--primary)"
+                      fill="var(--primary)"
                       fillOpacity={0.3}
                     />
                     <Area
                       type="monotone"
                       dataKey="orders"
                       stackId="2"
-                      stroke="hsl(var(--accent))"
-                      fill="hsl(var(--accent))"
+                      stroke="var(--accent)"
+                      fill="var(--accent)"
                       fillOpacity={0.3}
                     />
                   </AreaChart>
@@ -287,14 +287,14 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
                   <Line
                     type="monotone"
                     dataKey="sales"
-                    stroke="hsl(var(--primary))"
+                    stroke="var(--primary)"
                     strokeWidth={3}
-                    dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 6 }}
+                    dot={{ fill: 'var(--primary)', strokeWidth: 2, r: 6 }}
                   />
                   <Line
                     type="monotone"
                     dataKey="orders"
-                    stroke="hsl(var(--accent))"
+                    stroke="var(--accent)"
                     strokeWidth={2}
                     strokeDasharray="5 5"
                   />
@@ -317,7 +317,7 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="value" fill="var(--primary)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -360,7 +360,7 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
                     label={{ position: 'insideStart', fill: '#fff' }}
                     background
                     dataKey="value"
-                    fill="hsl(var(--primary))"
+                    fill="var(--primary)"
                   />
                   <Legend iconSize={18} wrapperStyle={{ top: 0, left: 350, transform: 'translate(0, -50%)' }} />
                 </RadialBarChart>

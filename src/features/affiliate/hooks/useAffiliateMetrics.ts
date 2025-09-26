@@ -4,7 +4,10 @@ import { startOfMonth } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { UnifiedOrdersService } from '@/lib/unifiedOrdersService';
 import { createStoreUrl } from '@/utils/domains';
-import { deriveSalesSnapshotsRuntime } from './useAffiliateMetricsRuntime';
+import {
+  deriveSalesSnapshotsRuntime,
+  deriveTopProductSharesRuntime,
+} from './useAffiliateMetricsRuntime';
 
 export interface AffiliateStoreSummary {
   id: string;
@@ -17,6 +20,8 @@ export interface AffiliateStoreSummary {
 
 export interface AffiliateOrderItemSummary {
   id: string;
+  product_id?: string | null;
+  product_title?: string | null;
   quantity: number;
   total_price_sar: number;
 }
@@ -54,6 +59,13 @@ export interface AffiliateMetricsSnapshot {
   month: SalesSnapshot;
 }
 
+export interface AffiliateProductShare {
+  productId: string;
+  title: string;
+  quantity: number;
+  revenue: number;
+}
+
 export interface UseAffiliateMetricsParams {
   profileId?: string | null;
 }
@@ -64,6 +76,7 @@ export interface UseAffiliateMetricsResult {
   metrics: AffiliateMetricsSnapshot | null;
   monthOrders: AffiliateOrderMonthlyRecord[];
   recentOrders: AffiliateRecentOrder[];
+  topProducts: AffiliateProductShare[];
   loading: boolean;
   metricsLoading: boolean;
   ordersLoading: boolean;
@@ -140,7 +153,7 @@ export const useAffiliateMetrics = ({ profileId }: UseAffiliateMetricsParams): U
           payment_status,
           status,
           created_at,
-          ecommerce_order_items (id, quantity, total_price_sar)
+          ecommerce_order_items (id, product_id, product_title, quantity, total_price_sar)
         `)
         .eq('affiliate_store_id', storeId)
         .gte('created_at', monthStart)
@@ -161,6 +174,8 @@ export const useAffiliateMetrics = ({ profileId }: UseAffiliateMetricsParams): U
         items: Array.isArray(order.ecommerce_order_items)
           ? order.ecommerce_order_items.map((item: any) => ({
               id: item.id,
+              product_id: item.product_id ?? null,
+              product_title: item.product_title ?? null,
               quantity: normaliseQuantity(item.quantity),
               total_price_sar: normaliseNumber(item.total_price_sar),
             }))
@@ -210,6 +225,10 @@ export const useAffiliateMetrics = ({ profileId }: UseAffiliateMetricsParams): U
     return createStoreUrl(storeQuery.data.store_slug);
   }, [storeQuery.data]);
 
+  const topProducts = useMemo(() => {
+    return deriveTopProductSharesRuntime(monthlyQuery.data?.orders ?? [], { limit: 4 });
+  }, [monthlyQuery.data?.orders]);
+
   const loading = storeQuery.isLoading || monthlyQuery.isLoading || recentOrdersQuery.isLoading;
 
   const error = storeQuery.error?.message
@@ -223,6 +242,7 @@ export const useAffiliateMetrics = ({ profileId }: UseAffiliateMetricsParams): U
     metrics: monthlyQuery.data?.metrics ?? null,
     monthOrders: monthlyQuery.data?.orders ?? [],
     recentOrders: recentOrdersQuery.data ?? [],
+    topProducts,
     loading,
     metricsLoading: monthlyQuery.isLoading,
     ordersLoading: recentOrdersQuery.isLoading,

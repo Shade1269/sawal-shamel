@@ -20,7 +20,7 @@ const AtlantisGuide = () => {
       <div className="border-b bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
-            <BackButton fallbackRoute="/dashboard" />
+            <BackButton fallbackRoute="/affiliate" />
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
                 <GraduationCap className="h-6 w-6 text-white" />

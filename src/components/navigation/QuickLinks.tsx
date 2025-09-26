@@ -3,17 +3,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { useFastAuth } from '@/hooks/useFastAuth';
-import { 
-  Share2, 
-  Users, 
-  Package, 
-  ShoppingCart, 
-  Settings, 
+import {
+  Package,
+  ShoppingCart,
   BarChart3,
-  Store,
   Award,
   Star,
   Crown,
+  Home,
   ArrowRight
 } from 'lucide-react';
 
@@ -28,33 +25,27 @@ const QuickLinks = () => {
     switch (role) {
       case 'admin':
         return [
-          { title: 'لوحة الإدارة', route: '/admin', icon: Crown, description: 'إدارة شاملة للنظام' },
-          { title: 'نظام التسويق', route: '/admin/marketing', icon: Share2, description: 'إدارة الحملات التسويقية' },
-          { title: 'المستخدمون', route: '/admin/users', icon: Users, description: 'إدارة المستخدمين' },
-          { title: 'الإحصائيات', route: '/admin/analytics', icon: BarChart3, description: 'تقارير مفصلة' }
+          { title: 'لوحة التحكم', route: '/admin/dashboard', icon: Crown, description: 'نظرة عامة على الأداء' },
+          { title: 'إدارة الطلبات', route: '/admin/orders', icon: ShoppingCart, description: 'متابعة الطلبات الحالية' },
+          { title: 'إدارة المخزون', route: '/admin/inventory', icon: Package, description: 'متابعة توفر المنتجات' },
+          { title: 'تحليلات الإدارة', route: '/admin/analytics', icon: BarChart3, description: 'تحليل العوائد والفرق' }
         ];
-      
+
+      case 'affiliate':
+      case 'marketer':
       case 'merchant':
         return [
-          { title: 'لوحة التاجر', route: '/merchant', icon: Store, description: 'إدارة متجرك' },
-          { title: 'المنتجات', route: '/products', icon: Package, description: 'إضافة وإدارة المنتجات' },
-          { title: 'نظام التسويق', route: '/admin/marketing', icon: Share2, description: 'أدوات التسويق والترويج' },
-          { title: 'المدفوعات', route: '/payments', icon: Award, description: 'إدارة المدفوعات' }
+          { title: 'لوحة المسوق', route: '/affiliate', icon: Star, description: 'متابعة الأداء والمهام' },
+          { title: 'واجهة المتجر', route: '/affiliate/storefront', icon: Package, description: 'إعدادات العرض والمتجر' },
+          { title: 'التحليلات', route: '/affiliate/analytics', icon: Award, description: 'تتبع أرباحك' },
+          { title: 'طلبات العملاء', route: '/affiliate/orders', icon: ShoppingCart, description: 'راقب حالة الطلبات' }
         ];
-      
-      case 'affiliate':
-        return [
-          { title: 'لوحة المسوق', route: '/affiliate', icon: Star, description: 'متجر الأفيليت الخاص بك' },
-          { title: 'تصفح المنتجات', route: '/products-browser', icon: Package, description: 'اختر منتجات لإضافتها لمتجرك' },
-          { title: 'أدوات التسويق', route: '/admin/marketing', icon: Share2, description: 'حملات ووسائل التواصل' },
-          { title: 'العمولات', route: '/affiliate', icon: Award, description: 'تتبع أرباحك' }
-        ];
-      
+
       default: // customer
         return [
-          { title: 'المنتجات', route: '/products', icon: Package, description: 'تصفح وتسوق المنتجات' },
-          { title: 'طلباتي', route: '/profile', icon: ShoppingCart, description: 'تتبع طلباتك' },
-          { title: 'الملف الشخصي', route: '/profile', icon: Settings, description: 'إدارة بياناتك' }
+          { title: 'الصفحة الرئيسية', route: '/', icon: Home, description: 'استكشف عروض المنصة' },
+          { title: 'إتمام الطلب', route: '/checkout', icon: ShoppingCart, description: 'أكمل عملية الشراء' },
+          { title: 'تأكيد الطلب', route: '/order/confirmation', icon: Award, description: 'راجع تفاصيل طلبك' }
         ];
     }
   };

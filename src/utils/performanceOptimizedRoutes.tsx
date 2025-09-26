@@ -1,318 +1,182 @@
-import { lazy, ComponentType } from 'react';
+
+import { ComponentType } from 'react';
 import { BundleOptimizer } from './bundleOptimization';
 import { CodeSplittingProvider } from '@/components/performance/CodeSplittingProvider';
 
-// Optimized route definitions with intelligent loading
-export const OptimizedRoutes = {
-  // Critical routes (preloaded) - now using unified system
-  Dashboard: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/unified/UnifiedDashboardPage'),
-    'dashboard',
-    'high'
-  ),
-  
-  Home: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/Index'),
-    'home',
-    'high'
-  ),
-
-  // Admin routes (role-based loading) - now using unified system
-  AdminDashboard: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/unified/UnifiedDashboardPage'),
-    'admin-dashboard',
-    'medium'
-  ),
-  
-  AdminUsers: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/AdminUsers'),
-    'admin-users',
-    'medium'
-  ),
-  
-  AdminSettings: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/AdminSettings'),
-    'admin-settings',
-    'low'
-  ),
-
-  ComprehensiveAdminPanel: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/ComprehensiveAdminPanel'),
-    'admin-comprehensive',
-    'low'
-  ),
-
-  // Affiliate routes - using unified dashboard
-  AffiliateStoreFront: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/AffiliateStoreFront'),
-    'affiliate-store',
-    'medium'
-  ),
-
-  // Commerce routes
-  ProductManagement: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/ProductManagement'),
-    'product-management',
-    'medium'
-  ),
-  
-  OrderManagement: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/OrderManagement'),
-    'order-management',
-    'medium'
-  ),
-  
-  Inventory: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/inventory'),
-    'inventory',
-    'medium'
-  ),
-
-  ShipmentManagement: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/ShipmentManagement'),
-    'shipment-management',
-    'low'
-  ),
-
-  // Store routes - updated
-  PublicStorefront: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/PublicStorefront'),
-    'public-storefront',
-    'high'
-  ),
-
-  // Analytics routes
-  ExecutiveDashboard: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/ExecutiveDashboard'),
-    'executive-dashboard',
-    'low'
-  ),
-  
-  MarketingDashboard: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/MarketingDashboard'),
-    'marketing-dashboard',
-    'low'
-  ),
-  
-  PaymentDashboard: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/PaymentDashboard'),
-    'payment-dashboard',
-    'low'
-  ),
-
-  // Chat routes
-  AtlantisSystem: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/AtlantisSystem'),
-    'atlantis-system',
-    'medium'
-  ),
-  
-  // Security route - chat moved to Atlantis system
-  SecurityCenter: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/SecurityCenter'),
-    'security-center',
-    'low'
-  ),
-
-  // Other routes
-  About: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/About'),
-    'about',
-    'low'
-  ),
-  
-  Profile: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/Profile'),
-    'profile',
-    'medium'
-  ),
-
-  // E-commerce specific
-  Cart: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/Cart'),
-    'cart',
-    'high'
-  ),
-  
-  CheckoutPage: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/CheckoutPage'),
-    'checkout',
-    'high'
-  ),
-  
-  OrderConfirmation: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/OrderConfirmation'),
-    'order-confirmation',
-    'medium'
-  ),
-
-  // Specialized pages
-  InvoiceManagement: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/InvoiceManagement'),
-    'invoice-management',
-    'low'
-  ),
-  
-  RefundManagement: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/RefundManagement'),
-    'refund-management',
-    'low'
-  ),
-  
-  BrandManagement: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/BrandManagement'),
-    'brand-management',
-    'low'
-  ),
-
-  CategoryManagement: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/CategoryManagement'),
-    'category-management',
-    'low'
-  ),
-
-  // Store-specific routes
-  StoreAuth: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/StoreAuth'),
-    'store-auth',
-    'medium'
-  ),
-  
-  StoreCheckout: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/StoreCheckout'),
-    'store-checkout',
-    'high'
-  ),
-
-  StoreThemeSettings: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/StoreThemeSettings'),
-    'store-theme-settings',
-    'low'
-  ),
-
-  // Payment routes
-  Payment: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/Payment'),
-    'payment',
-    'high'
-  ),
-  
-  PaymentGateways: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/PaymentGateways'),
-    'payment-gateways',
-    'low'
-  ),
-
-  // Shipping routes
-  Shipping: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/Shipping'),
-    'shipping',
-    'medium'
-  ),
-  
-  ShippingManagement: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/ShippingManagement'),
-    'shipping-management',
-    'low'
-  ),
-
-  // Tracking
-  OrderTracking: BundleOptimizer.createOptimizedLazyComponent(
-    () => import('@/pages/OrderTracking'),
-    'order-tracking',
-    'medium'
-  ),
+type RouteDefinition = {
+  importFn: () => Promise<{ default: ComponentType<any> }>;
+  chunk: string;
+  priority: 'high' | 'medium' | 'low';
 };
 
-// Route preloading strategies
+const routeDefinitions: Record<string, RouteDefinition> = {
+  Dashboard: {
+    importFn: () => import('@/pages/unified/UnifiedDashboardPage'),
+    chunk: 'dashboard',
+    priority: 'high',
+  },
+  AdminDashboard: {
+    importFn: () => import('@/pages/unified/UnifiedDashboardPage'),
+    chunk: 'admin-dashboard',
+    priority: 'medium',
+  },
+  AdminLeaderboard: {
+    importFn: () => import('@/pages/admin/AdminLeaderboard'),
+    chunk: 'admin-leaderboard',
+    priority: 'medium',
+  },
+  AdminUsers: {
+    importFn: () => import('@/pages/AdminUsers'),
+    chunk: 'admin-users',
+    priority: 'medium',
+  },
+  AdminSettings: {
+    importFn: () => import('@/pages/AdminSettings'),
+    chunk: 'admin-settings',
+    priority: 'low',
+  },
+  AdminOrders: {
+    importFn: () => import('@/pages/AdminOrderManagement'),
+    chunk: 'admin-orders',
+    priority: 'medium',
+  },
+  AffiliateHome: {
+    importFn: () => import('@/pages/affiliate/home'),
+    chunk: 'affiliate-home',
+    priority: 'medium',
+  },
+  AffiliateCommissions: {
+    importFn: () => import('@/pages/affiliate/AffiliateCommissionsPage'),
+    chunk: 'affiliate-commissions',
+    priority: 'medium',
+  },
+  ProductManagement: {
+    importFn: () => import('@/pages/ProductManagement'),
+    chunk: 'product-management',
+    priority: 'medium',
+  },
+  Inventory: {
+    importFn: () => import('@/pages/inventory'),
+    chunk: 'inventory',
+    priority: 'medium',
+  },
+  PublicStorefront: {
+    importFn: () => import('@/pages/PublicStorefront'),
+    chunk: 'public-storefront',
+    priority: 'high',
+  },
+  Profile: {
+    importFn: () => import('@/pages/profile'),
+    chunk: 'profile',
+    priority: 'medium',
+  },
+  Notifications: {
+    importFn: () => import('@/pages/notifications'),
+    chunk: 'notifications',
+    priority: 'medium',
+  },
+  Cart: {
+    importFn: () => import('@/pages/Cart'),
+    chunk: 'cart',
+    priority: 'high',
+  },
+  CheckoutPage: {
+    importFn: () => import('@/pages/CheckoutPage'),
+    chunk: 'checkout',
+    priority: 'high',
+  },
+  OrderConfirmation: {
+    importFn: () => import('@/pages/OrderConfirmationSimple'),
+    chunk: 'order-confirmation',
+    priority: 'medium',
+  },
+  OrderTracking: {
+    importFn: () => import('@/pages/OrderTracking'),
+    chunk: 'order-tracking',
+    priority: 'medium',
+  },
+  BrandManagement: {
+    importFn: () => import('@/pages/BrandManagement'),
+    chunk: 'brand-management',
+    priority: 'low',
+  },
+  CategoryManagement: {
+    importFn: () => import('@/pages/CategoryManagement'),
+    chunk: 'category-management',
+    priority: 'low',
+  },
+  StoreAuth: {
+    importFn: () => import('@/pages/StoreAuth'),
+    chunk: 'store-auth',
+    priority: 'medium',
+  },
+  StoreCheckout: {
+    importFn: () => import('@/pages/StoreCheckout'),
+    chunk: 'store-checkout',
+    priority: 'high',
+  },
+  StoreOrderConfirmation: {
+    importFn: () => import('@/pages/StoreOrderConfirmation'),
+    chunk: 'store-order-confirmation',
+    priority: 'medium',
+  },
+};
+
+type RouteKey = keyof typeof routeDefinitions;
+
+type LazyComponentType = ReturnType<typeof BundleOptimizer.createOptimizedLazyComponent<ComponentType<any>>>;
+
+const buildOptimizedRoutes = () => {
+  const routes = {} as Record<RouteKey, LazyComponentType>;
+  (Object.keys(routeDefinitions) as RouteKey[]).forEach((key) => {
+    const config = routeDefinitions[key];
+    routes[key] = BundleOptimizer.createOptimizedLazyComponent(config.importFn, config.chunk, config.priority);
+  });
+  return routes;
+};
+
+export const OptimizedRoutes = buildOptimizedRoutes();
+
+const routeImports: Record<RouteKey, RouteDefinition['importFn']> = Object.fromEntries(
+  (Object.keys(routeDefinitions) as RouteKey[]).map((key) => [key, routeDefinitions[key].importFn]),
+) as Record<RouteKey, RouteDefinition['importFn']>;
+
+const preloadByKey = (key: RouteKey) => BundleOptimizer.preloadRoute(key, routeImports[key]);
+
 export const RoutePreloader = {
-  // Preload based on user role
   preloadForRole: async (userRole: string) => {
-    const roleRoutes = {
-      admin: [
-        'AdminDashboard',
-        'AdminUsers', 
-        'ComprehensiveAdminPanel'
-      ],
-      affiliate: [
-        'Dashboard',
-        'AffiliateStoreFront'
-      ],
-      merchant: [
-        'PublicStorefront',
-        'ProductManagement',
-        'OrderManagement',
-        'Inventory'
-      ],
-      customer: [
-        'PublicStorefront',
-        'Cart',
-        'CheckoutPage'
-      ]
+    const roleRoutes: Partial<Record<string, RouteKey[]>> = {
+      admin: ['AdminDashboard', 'AdminLeaderboard', 'AdminUsers', 'AdminOrders', 'Inventory'],
+      affiliate: ['Dashboard', 'AffiliateHome', 'AffiliateCommissions'],
+      customer: ['PublicStorefront', 'Cart', 'CheckoutPage'],
     };
 
-    const routes = roleRoutes[userRole as keyof typeof roleRoutes] || [];
-    
-    return Promise.all(
-      routes.map(routeName => {
-        const routeComponent = OptimizedRoutes[routeName as keyof typeof OptimizedRoutes];
-        if (routeComponent) {
-          return BundleOptimizer.preloadRoute(
-            routeName.toLowerCase(),
-            () => import(`@/pages/${routeName}`)
-          );
-        }
-      })
-    );
+    const routes = roleRoutes[userRole] || [];
+    await Promise.all(routes.map((route) => preloadByKey(route)));
+    return [];
   },
 
-  // Preload based on user behavior
-  preloadLikelyRoutes: (currentRoute: string, userHistory: string[]) => {
-    const routeProbability = new Map<string, number>();
-    
-    // Calculate probability based on history
-    userHistory.forEach((route, index) => {
-      const weight = 1 / (userHistory.length - index); // Recent routes have higher weight
-      routeProbability.set(route, (routeProbability.get(route) || 0) + weight);
-    });
-
-    // Get top 3 likely routes
-    const likelyRoutes = Array.from(routeProbability.entries())
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 3)
-      .map(([route]) => route);
-
-    // Preload them
-    likelyRoutes.forEach(route => {
-      const routeKey = route.split('/')[1]; // Extract component name
-      if (routeKey && OptimizedRoutes[routeKey as keyof typeof OptimizedRoutes]) {
-        BundleOptimizer.preloadRoute(route, () => import(`@/pages/${routeKey}`));
-      }
-    });
+  preloadLikelyRoutes: (_currentRoute: string, _userHistory: string[]) => {
+    // Simplified preloading - handled by role-based preload
+    return [];
   },
 
-  // Preload on hover (for navigation links)
   preloadOnHover: (routeName: string) => {
-    if (OptimizedRoutes[routeName as keyof typeof OptimizedRoutes]) {
-      return BundleOptimizer.preloadRoute(
-        routeName,
-        () => import(`@/pages/${routeName}`)
-      );
+    const key = routeName as RouteKey;
+    if (routeImports[key]) {
+      return preloadByKey(key);
     }
-  }
+    return Promise.resolve();
+  },
 };
 
-// Enhanced Suspense wrapper with performance tracking
 export const PerformantSuspense: React.FC<{
   children: React.ReactNode;
   fallback?: React.ReactNode;
   chunkName?: string;
 }> = ({ children, fallback, chunkName }) => {
   return (
-    <CodeSplittingProvider 
-      chunkName={chunkName}
-      fallback={fallback}
-    >
+    <CodeSplittingProvider chunkName={chunkName} fallback={fallback}>
       {children}
     </CodeSplittingProvider>
   );

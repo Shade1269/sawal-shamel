@@ -64,19 +64,17 @@ const GlobalNotifications = () => {
       }
     ];
 
-    if (profile?.role === 'merchant') {
+    if (profile?.role === 'affiliate' || profile?.role === 'merchant' || profile?.role === 'marketer') {
       sampleNotifications.push({
         id: '4',
         title: 'طلب جديد',
-        message: 'تم استلام طلب جديد في متجرك. راجع التفاصيل لمعالجته.',
+        message: 'تم استلام طلب جديد مرتبط بروابطك. راجع التفاصيل لمعالجته.',
         type: 'success',
         read: false,
         createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-        actionUrl: '/merchant/orders'
+        actionUrl: '/affiliate/orders'
       });
-    }
 
-    if (profile?.role === 'affiliate') {
       sampleNotifications.push({
         id: '5',
         title: 'عمولة جديدة',
@@ -84,7 +82,7 @@ const GlobalNotifications = () => {
         type: 'success',
         read: false,
         createdAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
-        actionUrl: '/affiliate/earnings'
+        actionUrl: '/affiliate/analytics'
       });
     }
 

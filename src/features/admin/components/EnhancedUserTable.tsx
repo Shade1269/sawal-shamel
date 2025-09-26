@@ -28,7 +28,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { 
+import {
   Eye,
   Edit,
   Trash2,
@@ -40,7 +40,6 @@ import {
   Ban,
   Shield,
   Crown,
-  Store,
   Star,
   ShoppingCart,
   Users,
@@ -54,7 +53,7 @@ interface User {
   full_name: string;
   email: string;
   phone: string;
-  role: 'admin' | 'merchant' | 'affiliate' | 'customer' | 'moderator';
+  role: 'admin' | 'affiliate' | 'customer' | 'moderator' | 'merchant';
   level: 'bronze' | 'silver' | 'gold' | 'legendary';
   points: number;
   total_earnings: number;
@@ -99,8 +98,9 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'admin': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 border-red-200';
-      case 'merchant': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 border-blue-200';
-      case 'affiliate': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 border-green-200';
+      case 'affiliate':
+      case 'merchant':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 border-green-200';
       case 'moderator': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400 border-purple-200';
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400 border-gray-200';
     }
@@ -119,8 +119,9 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
   const getRoleName = (role: string) => {
     switch (role) {
       case 'admin': return 'مدير';
-      case 'merchant': return 'تاجر';
-      case 'affiliate': return 'مسوق';
+      case 'affiliate':
+      case 'merchant':
+        return 'مسوق';
       case 'customer': return 'عميل';
       case 'moderator': return 'مشرف';
       default: return role;
@@ -130,8 +131,9 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
   const getRoleIcon = (role: string) => {
     switch (role) {
       case 'admin': return <Crown className="h-3 w-3" />;
-      case 'merchant': return <Store className="h-3 w-3" />;
-      case 'affiliate': return <Star className="h-3 w-3" />;
+      case 'affiliate':
+      case 'merchant':
+        return <Star className="h-3 w-3" />;
       case 'customer': return <ShoppingCart className="h-3 w-3" />;
       case 'moderator': return <Shield className="h-3 w-3" />;
       default: return <Users className="h-3 w-3" />;

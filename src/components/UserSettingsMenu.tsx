@@ -15,7 +15,6 @@ import {
   Ban, 
   Clock, 
   Crown,
-  Store,
   Users
 } from "lucide-react";
 
@@ -81,7 +80,6 @@ const UserSettingsMenu = ({ user, currentUserRole, onModerationAction, onRoleCha
     switch (role) {
       case 'admin': return <Crown className="h-4 w-4" />;
       case 'moderator': return <Shield className="h-4 w-4" />;
-      case 'merchant': return <Store className="h-4 w-4" />;
       default: return <Users className="h-4 w-4" />;
     }
   };
@@ -90,7 +88,6 @@ const UserSettingsMenu = ({ user, currentUserRole, onModerationAction, onRoleCha
     switch (role) {
       case 'admin': return 'مدير';
       case 'moderator': return 'مشرف';
-      case 'merchant': return 'تاجر';
       default: return 'مسوق';
     }
   };
@@ -233,12 +230,6 @@ const UserSettingsMenu = ({ user, currentUserRole, onModerationAction, onRoleCha
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4" />
                       مسوق
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="merchant">
-                    <div className="flex items-center gap-2">
-                      <Store className="h-4 w-4" />
-                      تاجر
                     </div>
                   </SelectItem>
                   <SelectItem value="moderator">

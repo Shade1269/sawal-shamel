@@ -1,21 +1,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Users, 
-  Package, 
-  BarChart3, 
-  Settings,
-  UserPlus,
-  PackagePlus,
-  FileText,
+import {
+  Users,
+  Package,
+  BarChart3,
   Crown,
+  ShoppingBag,
+  ShoppingCart,
   Zap,
-  Shield,
-  Globe,
-  CreditCard,
-  Truck,
-  Bell,
   Database
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -25,67 +18,55 @@ export const AdminQuickActions = () => {
 
   const primaryActions = [
     {
-      title: "إدارة المستخدمين",
-      description: "مراجعة المسوقين والتجار وإدارة الصلاحيات",
-      icon: Users,
-      color: "from-blue-500 to-blue-600",
-      action: () => navigate('/admin/users'),
-      badge: "12 جديد"
+      title: "لوحة التحكم",
+      description: "نظرة شاملة على أداء المنصة",
+      icon: Crown,
+      color: "from-indigo-500 to-indigo-600",
+      action: () => navigate('/admin/dashboard'),
+      badge: "محدث"
     },
     {
-      title: "إدارة المنتجات",
-      description: "إضافة وتعديل المنتجات والفئات",
+      title: "إدارة الطلبات",
+      description: "متابعة ومعالجة طلبات العملاء",
+      icon: ShoppingBag,
+      color: "from-emerald-500 to-emerald-600",
+      action: () => navigate('/admin/orders'),
+      badge: "8 جديدة"
+    },
+    {
+      title: "إدارة المخزون",
+      description: "ضبط مستويات المنتجات وتوفرها",
       icon: Package,
-      color: "from-green-500 to-green-600",
-      action: () => navigate('/admin/products'),
-      badge: "152 منتج"
-    },
-    {
-      title: "التقارير والإحصائيات",
-      description: "تحليلات شاملة لأداء المنصة والمبيعات",
-      icon: BarChart3,
-      color: "from-purple-500 to-purple-600",
-      action: () => navigate('/admin/analytics'),
-      badge: "تحديث جديد"
+      color: "from-amber-500 to-amber-600",
+      action: () => navigate('/admin/inventory'),
+      badge: "تنبيه"
     }
   ];
 
   const secondaryActions = [
     {
-      title: "إعدادات النظام",
-      icon: Settings,
-      color: "bg-gray-100 dark:bg-gray-800",
-      action: () => navigate('/admin/settings')
+      title: "تحليلات الأداء",
+      icon: BarChart3,
+      color: "bg-purple-100 dark:bg-purple-900/20",
+      action: () => navigate('/admin/analytics')
     },
     {
-      title: "الأمان والحماية",
-      icon: Shield,
-      color: "bg-red-100 dark:bg-red-900/20",
-      action: () => navigate('/admin/security')
-    },
-    {
-      title: "بوابات الدفع",
-      icon: CreditCard,
-      color: "bg-blue-100 dark:bg-blue-900/20",
-      action: () => navigate('/admin/payment-gateways')
-    },
-    {
-      title: "إدارة الشحن",
-      icon: Truck,
-      color: "bg-orange-100 dark:bg-orange-900/20",
-      action: () => navigate('/shipment-management')
-    },
-    {
-      title: "قاعدة البيانات",
-      icon: Database,
+      title: "لوحة التحكم",
+      icon: Crown,
       color: "bg-indigo-100 dark:bg-indigo-900/20",
-      action: () => navigate('/admin/database')
+      action: () => navigate('/admin/dashboard')
     },
     {
-      title: "الإشعارات",
-      icon: Bell,
-      color: "bg-yellow-100 dark:bg-yellow-900/20",
-      action: () => navigate('/admin/notifications')
+      title: "طلبات العملاء",
+      icon: ShoppingCart,
+      color: "bg-emerald-100 dark:bg-emerald-900/20",
+      action: () => navigate('/admin/orders')
+    },
+    {
+      title: "مركز المخزون",
+      icon: Database,
+      color: "bg-amber-100 dark:bg-amber-900/20",
+      action: () => navigate('/admin/inventory')
     }
   ];
 

@@ -34,23 +34,23 @@ const DomainManager = ({ children }: DomainManagerProps) => {
       // Apply redirects ONLY if this domain is mapped to a store
       if (storeSlug) {
         // Redirect custom domain root to its mapped store slug
-        if (!currentPath.startsWith(`/store/${storeSlug}`)) {
-          navigate(`/store/${storeSlug}${search}`, { replace: true });
+        if (!currentPath.startsWith(`/${storeSlug}`)) {
+          navigate(`/${storeSlug}${search}`, { replace: true });
           return;
         }
 
         // Block platform routes on mapped custom domains
-        const platformPaths = ['/admin', '/affiliate', '/merchant', '/dashboard', '/auth'];
+        const platformPaths = ['/admin', '/affiliate', '/auth'];
         if (platformPaths.some(path => currentPath === path || currentPath.startsWith(`${path}/`))) {
-          navigate(`/store/${storeSlug}`, { replace: true });
+          navigate(`/${storeSlug}`, { replace: true });
           return;
         }
       }
     }
 
     // منع الوصول للمنصة من مسارات المتجر
-    if (currentPath.startsWith('/store/')) {
-      const platformPaths = ['/admin', '/affiliate', '/merchant', '/dashboard'];
+    if (currentPath.split('/').filter(Boolean).length === 1 && currentPath !== '/admin' && currentPath !== '/affiliate') {
+      const platformPaths = ['/admin', '/affiliate'];
       platformPaths.forEach(path => {
         const platformLinks = document.querySelectorAll(`a[href="${path}"]`);
         platformLinks.forEach(link => {

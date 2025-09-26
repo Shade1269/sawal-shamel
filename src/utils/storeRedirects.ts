@@ -38,8 +38,8 @@ export const redirectToStore = (storeSlug: string): void => {
   const currentPath = window.location.pathname;
   
   // إذا لم نكن في مسار المتجر بالفعل
-  if (!currentPath.startsWith(`/store/${storeSlug}`)) {
-    window.location.href = `/store/${storeSlug}`;
+  if (!currentPath.startsWith(`/${storeSlug}`)) {
+    window.location.href = `/${storeSlug}`;
   }
 };
 

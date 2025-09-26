@@ -93,10 +93,10 @@ export const CustomerSessionHeader: React.FC<CustomerSessionHeaderProps> = ({
         <DropdownMenuSeparator />
         
         <DropdownMenuItem
-          onClick={() => navigate(`/s/${storeSlug}/my-orders`)}
+          onClick={() => navigate(storeSlug ? `/order/confirmation?store=${storeSlug}` : '/order/confirmation')}
         >
           <Clock className="ml-2 h-4 w-4" />
-          طلباتي السابقة
+          تأكيد الطلبات
         </DropdownMenuItem>
         
         {onLogout && (

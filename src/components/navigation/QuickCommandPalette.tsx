@@ -3,22 +3,14 @@ import { Command, CommandInput, CommandItem, CommandList, CommandEmpty, CommandG
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Kbd } from '@/components/ui/kbd';
-import { 
-  Search, 
-  User, 
-  Settings, 
-  BarChart3, 
-  Package, 
+import {
+  Search,
+  User,
+  BarChart3,
+  Package,
   ShoppingCart,
-  FileText,
-  CreditCard,
-  Truck,
-  Users,
-  Shield,
   Crown,
   Store,
-  Palette,
-  Clock,
   ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -82,76 +74,39 @@ const QuickCommandPalette: React.FC<QuickCommandPaletteProps> = ({
         title: 'لوحة الإدارة',
         description: 'الانتقال إلى لوحة تحكم الإدارة',
         icon: Crown,
-        action: () => navigate('/admin'),
+        action: () => navigate('/admin/dashboard'),
         category: 'إدارة',
         keywords: ['admin', 'dashboard', 'إدارة', 'لوحة'],
         shortcut: ['⌘', 'A']
       },
       {
-        id: 'users-management',
-        title: 'إدارة المستخدمين',
-        description: 'عرض وإدارة المستخدمين',
-        icon: Users,
-        action: () => navigate('/admin/users'),
-        category: 'إدارة',
-        keywords: ['users', 'مستخدمين', 'حسابات', 'accounts'],
-        shortcut: ['⌘', 'U']
+        id: 'admin-orders',
+        title: 'إدارة الطلبات',
+        description: 'متابعة ومعالجة الطلبات',
+        icon: ShoppingCart,
+        action: () => navigate('/admin/orders'),
+        category: 'تشغيل',
+        keywords: ['orders', 'طلبات', 'مبيعات', 'sales'],
+        shortcut: ['⌘', 'O']
       },
       {
-        id: 'analytics',
-        title: 'التحليلات',
-        description: 'عرض تحليلات النظام',
+        id: 'admin-inventory',
+        title: 'إدارة المخزون',
+        description: 'إدارة توفر المنتجات ومستوياتها',
+        icon: Package,
+        action: () => navigate('/admin/inventory'),
+        category: 'تشغيل',
+        keywords: ['inventory', 'مخزون', 'products', 'منتجات']
+      },
+      {
+        id: 'admin-analytics',
+        title: 'تحليلات الإدارة',
+        description: 'عرض تحليلات الأداء والتقارير',
         icon: BarChart3,
         action: () => navigate('/admin/analytics'),
         category: 'تقارير',
         keywords: ['analytics', 'تحليلات', 'إحصائيات', 'stats'],
         shortcut: ['⌘', 'T']
-      },
-      {
-        id: 'products-admin',
-        title: 'إدارة المنتجات',
-        description: 'إضافة وإدارة المنتجات',
-        icon: Package,
-        action: () => navigate('/admin/products'),
-        category: 'تجارة إلكترونية',
-        keywords: ['products', 'منتجات', 'inventory', 'مخزون']
-      },
-      {
-        id: 'orders-admin',
-        title: 'إدارة الطلبات',
-        description: 'متابعة ومعالجة الطلبات',
-        icon: ShoppingCart,
-        action: () => navigate('/admin/orders'),
-        category: 'تجارة إلكترونية',
-        keywords: ['orders', 'طلبات', 'مبيعات', 'sales']
-      },
-      {
-        id: 'payments-admin',
-        title: 'إدارة المدفوعات',
-        description: 'مراقبة المدفوعات والفواتير',
-        icon: CreditCard,
-        action: () => navigate('/admin/payments'),
-        category: 'مالية',
-        keywords: ['payments', 'مدفوعات', 'فواتير', 'invoices']
-      },
-      {
-        id: 'security',
-        title: 'الأمان',
-        description: 'إعدادات الأمان والحماية',
-        icon: Shield,
-        action: () => navigate('/admin/security'),
-        category: 'أمان',
-        keywords: ['security', 'أمان', 'حماية', 'protection']
-      },
-      {
-        id: 'settings-admin',
-        title: 'إعدادات النظام',
-        description: 'تكوين الإعدادات العامة',
-        icon: Settings,
-        action: () => navigate('/admin/settings'),
-        category: 'إعدادات',
-        keywords: ['settings', 'إعدادات', 'تكوين', 'config'],
-        shortcut: ['⌘', ',']
       }
     ];
 
@@ -162,17 +117,17 @@ const QuickCommandPalette: React.FC<QuickCommandPaletteProps> = ({
         title: 'لوحة المسوق',
         description: 'الانتقال إلى لوحة تحكم المسوق',
         icon: Store,
-        action: () => navigate('/dashboard'),
+        action: () => navigate('/affiliate'),
         category: 'تسويق',
         keywords: ['affiliate', 'dashboard', 'مسوق', 'لوحة'],
         shortcut: ['⌘', 'D']
       },
       {
         id: 'products-affiliate',
-        title: 'منتجاتي',
-        description: 'عرض وإدارة منتجاتك',
+        title: 'واجهة المتجر',
+        description: 'إدارة متجر المسوق',
         icon: Package,
-        action: () => navigate('/dashboard/products'),
+        action: () => navigate('/affiliate/storefront'),
         category: 'تسويق',
         keywords: ['products', 'منتجات', 'my products', 'منتجاتي']
       },
@@ -181,27 +136,18 @@ const QuickCommandPalette: React.FC<QuickCommandPaletteProps> = ({
         title: 'طلباتي',
         description: 'متابعة طلبات العملاء',
         icon: ShoppingCart,
-        action: () => navigate('/dashboard/orders'),
+        action: () => navigate('/affiliate/orders'),
         category: 'تسويق',
         keywords: ['orders', 'طلبات', 'my orders', 'طلباتي']
       },
       {
         id: 'commissions',
-        title: 'العمولات',
-        description: 'عرض عمولاتك ومكاسبك',
-        icon: CreditCard,
-        action: () => navigate('/dashboard/commissions'),
+        title: 'التحليلات',
+        description: 'عرض أرباحك ومؤشراتك',
+        icon: BarChart3,
+        action: () => navigate('/affiliate/analytics'),
         category: 'مالية',
-        keywords: ['commissions', 'عمولات', 'مكاسب', 'earnings']
-      },
-      {
-        id: 'store-themes',
-        title: 'ثيمات المتجر',
-        description: 'تخصيص مظهر متجرك',
-        icon: Palette,
-        action: () => navigate('/store-themes'),
-        category: 'تخصيص',
-        keywords: ['themes', 'ثيمات', 'تخصيص', 'design']
+        keywords: ['analytics', 'عمولات', 'مكاسب', 'earnings']
       }
     ];
 
@@ -210,7 +156,7 @@ const QuickCommandPalette: React.FC<QuickCommandPaletteProps> = ({
     
     if (userRole === 'admin') {
       allCommands.push(...adminCommands);
-    } else if (userRole === 'affiliate') {
+    } else if (userRole === 'affiliate' || userRole === 'marketer') {
       allCommands.push(...affiliateCommands);
     }
 

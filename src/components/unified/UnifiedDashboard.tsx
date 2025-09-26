@@ -117,30 +117,38 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
     charts: [],
     quickActions: [
       {
-        title: "إدارة المستخدمين",
-        description: "عرض وإدارة حسابات المستخدمين",
-        icon: Users,
-        href: "/admin/users",
+        title: "لوحة التحكم",
+        description: "استعرض أحدث المؤشرات",
+        icon: Crown,
+        href: "/admin/dashboard",
         color: "bg-blue-500"
       },
       {
-        title: "التقارير",
-        description: "عرض التقارير والتحليلات",
-        icon: BarChart3,
-        href: "/admin/analytics",
+        title: "إدارة الطلبات",
+        description: "متابعة ومعالجة طلبات العملاء",
+        icon: ShoppingCart,
+        href: "/admin/orders",
         color: "bg-green-500"
       },
       {
-        title: "الصلاحيات",
-        description: "إدارة صلاحيات النظام",
-        icon: Crown,
-        href: "/admin/permissions",
+        title: "مركز المخزون",
+        description: "تحكم في توفر المنتجات",
+        icon: Package,
+        href: "/admin/inventory",
+        color: "bg-amber-500"
+      },
+      {
+        title: "تحليلات الإدارة",
+        description: "استكشف تقارير الأداء",
+        icon: BarChart3,
+        href: "/admin/analytics",
         color: "bg-purple-500"
       }
     ],
     tabs: [
       { id: "overview", title: "نظرة عامة", content: null },
-      { id: "users", title: "المستخدمين", content: null },
+      { id: "orders", title: "الطلبات", content: null },
+      { id: "inventory", title: "المخزون", content: null },
       { id: "analytics", title: "التحليلات", content: null }
     ]
   },
@@ -190,100 +198,31 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         title: "إضافة منتج",
         description: "إضافة منتج جديد للترويج",
         icon: Plus,
-        href: "/dashboard/products?action=add",
+        href: "/affiliate/storefront?action=add",
         color: "bg-green-500"
       },
       {
         title: "عرض العمولات",
         description: "تتبع العمولات المكتسبة",
         icon: DollarSign,
-        href: "/dashboard/commissions",
+        href: "/affiliate/analytics",
         color: "bg-purple-500"
       },
       {
         title: "الطلبات",
         description: "متابعة حالة الطلبات",
         icon: ShoppingCart,
-        href: "/dashboard/orders",
+        href: "/affiliate/orders",
         color: "bg-blue-500"
       }
     ],
     tabs: [
       { id: "overview", title: "نظرة عامة", content: null },
-      { id: "products", title: "المنتجات", content: null },
-      { id: "commissions", title: "العمولات", content: null }
+      { id: "storefront", title: "واجهة المتجر", content: null },
+      { id: "analytics", title: "التحليلات", content: null }
     ]
   },
 
-  merchant: {
-    title: "لوحة التاجر",
-    description: "إدارة متجرك ومنتجاتك",
-    primaryColor: "text-blue-500",
-    icon: Award,
-    stats: [
-      {
-        title: "إجمالي المبيعات",
-        value: "245,680 ر.س",
-        change: "+22%",
-        changeType: "positive",
-        icon: DollarSign,
-        color: "bg-green-500"
-      },
-      {
-        title: "الطلبات الجديدة",
-        value: "67",
-        change: "+15%",
-        changeType: "positive",
-        icon: ShoppingCart,
-        color: "bg-blue-500"
-      },
-      {
-        title: "المنتجات",
-        value: "234",
-        change: "+8",
-        changeType: "positive",
-        icon: Package,
-        color: "bg-purple-500"
-      },
-      {
-        title: "العملاء",
-        value: "1,456",
-        change: "+12%",
-        changeType: "positive",
-        icon: Users,
-        color: "bg-orange-500"
-      }
-    ],
-    charts: [],
-    quickActions: [
-      {
-        title: "إضافة منتج",
-        description: "إضافة منتج جديد للمتجر",
-        icon: Plus,
-        href: "/products?action=add",
-        color: "bg-green-500"
-      },
-      {
-        title: "إدارة الطلبات",
-        description: "متابعة ومعالجة الطلبات",
-        icon: ShoppingCart,
-        href: "/orders",
-        color: "bg-blue-500"
-      },
-      {
-        title: "التقارير",
-        description: "عرض تقارير الأداء",
-        icon: BarChart3,
-        href: "/analytics",
-        color: "bg-purple-500"
-      }
-    ],
-    tabs: [
-      { id: "overview", title: "نظرة عامة", content: null },
-      { id: "orders", title: "الطلبات", content: null },
-      { id: "products", title: "المنتجات", content: null }
-    ]
-  }
 };
 
 export function UnifiedDashboard() {
@@ -305,14 +244,12 @@ export function UnifiedDashboard() {
   const dashboardType = useMemo(() => {
     const path = location.pathname;
     if (path.startsWith('/admin')) return 'admin';
-    if (path.startsWith('/merchant')) return 'merchant';
-    if (path.startsWith('/dashboard')) return 'affiliate';
-    
+    if (path.startsWith('/affiliate')) return 'affiliate';
+
     // تحديد النوع حسب دور المستخدم
     if (profile?.role === 'admin') return 'admin';
-    if (profile?.role === 'merchant') return 'merchant';
-    if (profile?.role === 'affiliate') return 'affiliate';
-    
+    if (profile?.role === 'affiliate' || profile?.role === 'merchant' || profile?.role === 'marketer') return 'affiliate';
+
     return 'affiliate'; // افتراضي
   }, [location.pathname, profile?.role]);
 

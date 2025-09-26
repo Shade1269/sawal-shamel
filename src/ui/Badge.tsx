@@ -1,77 +1,59 @@
-import React, { forwardRef, useMemo } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import React, { forwardRef } from "react";
 import clsx from "clsx";
+
 import { useTheme } from "@/hooks/useTheme";
-import { getContrastRatio } from "@/utils/color";
 
-const pickReadableColor = (background, fallback, alt) => {
-  const fallbackRatio = getContrastRatio(fallback, background);
-  const altRatio = getContrastRatio(alt, background);
-  return fallbackRatio >= altRatio ? fallback : alt;
-};
+type CSSVars = CSSProperties & Record<`--${string}`, string | number>;
 
-export const Badge = forwardRef(function Badge(props, ref) {
-  const { variant = "primary", className, style, children, ...rest } = props;
+type BadgeVariant =
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "danger"
+  | "muted"
+  | "outline"
+  | "glass";
+
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  variant?: BadgeVariant;
+  leadingIcon?: ReactNode;
+  trailingIcon?: ReactNode;
+  pill?: boolean;
+}
+
+export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
+  { variant = "primary", leadingIcon, trailingIcon, pill = false, className, style, children, ...rest },
+  ref
+) {
   const { themeConfig } = useTheme();
+  const badgeSettings = themeConfig.components?.badge ?? {};
+  const radiusKey = badgeSettings.radius ?? "sm";
 
-  const { background, foreground } = useMemo(() => {
-    const colors = themeConfig.colors;
-    if (variant === "muted") {
-      return {
-        background: colors.muted ?? colors.border ?? "#cccccc",
-        foreground: colors.mutedFg ?? colors.fg,
-      };
-    }
-    if (variant === "success") {
-      const bg = colors.success ?? "#16a34a";
-      return {
-        background: bg,
-        foreground: pickReadableColor(bg, colors.bg, colors.fg),
-      };
-    }
-    if (variant === "warning") {
-      const bg = colors.warning ?? "#f97316";
-      return {
-        background: bg,
-        foreground: pickReadableColor(bg, colors.bg, colors.fg),
-      };
-    }
-    if (variant === "danger") {
-      const bg = colors.danger ?? "#ef4444";
-      return {
-        background: bg,
-        foreground: pickReadableColor(bg, colors.bg, colors.fg),
-      };
-    }
-    const primaryBg = colors.primary;
-    return {
-      background: primaryBg,
-      foreground: colors.primaryFg ?? pickReadableColor(primaryBg, colors.fg, colors.bg),
-    };
-  }, [themeConfig, variant]);
+  const styleVars: CSSVars = {
+    "--kit-badge-radius": pill ? "999px" : `var(--radius-${radiusKey})`,
+  };
 
-  const badgeRadius = themeConfig.components?.badge?.radius ?? "sm";
-
-  return React.createElement(
-    "span",
-    {
-      ref,
-      ...rest,
-      "data-badge": true,
-      "data-variant": variant,
-      className: clsx(
-        "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide",
-        "px-[var(--space-sm)] py-[calc(var(--space-xs)/1.5)]",
-        className
-      ),
-      style: {
-        borderRadius: `var(--radius-${badgeRadius})`,
-        backgroundColor: background,
-        color: foreground,
-        ...style,
-      },
-    },
-    children
+  return (
+    <span
+      ref={ref}
+      {...rest}
+      data-badge="true"
+      data-variant={variant}
+      className={clsx("kit-badge", className)}
+      style={{ ...(styleVars as CSSProperties), ...style }}
+    >
+      {leadingIcon ? (
+        <span aria-hidden="true">{leadingIcon}</span>
+      ) : null}
+      {children}
+      {trailingIcon ? (
+        <span aria-hidden="true">{trailingIcon}</span>
+      ) : null}
+    </span>
   );
 });
 
 export default Badge;
+export type { BadgeVariant };

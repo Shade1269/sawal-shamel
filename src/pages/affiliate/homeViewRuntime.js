@@ -15,6 +15,7 @@ export const AffiliateHomeViewRuntime = ({
   metricsLoading,
   orders,
   ordersLoading,
+  topProducts,
   error,
   onRefresh,
 }) => {
@@ -86,7 +87,7 @@ export const AffiliateHomeViewRuntime = ({
         'div',
         { className: 'grid gap-4 md:grid-cols-2' },
         React.createElement(MyScoreCard, { storeName: store.store_name }),
-        React.createElement(ShareTools, { store, shareUrl }),
+        React.createElement(ShareTools, { store, shareUrl, products: topProducts }),
       ),
       React.createElement(MySalesGlance, { metrics, loading: metricsLoading, onRefresh }),
       React.createElement(RecentOrders, { orders, loading: ordersLoading }),

@@ -79,13 +79,13 @@ const RealtimeNotifications: React.FC = () => {
 
   // Define colors directly
   const colors = {
-    primary: 'hsl(var(--primary))',
-    success: 'hsl(var(--success))',
-    warning: 'hsl(var(--warning))', 
-    danger: 'hsl(var(--destructive))',
-    info: 'hsl(var(--info))',
-    accent: 'hsl(var(--accent))',
-    muted: 'hsl(var(--muted))'
+    primary: 'var(--primary)',
+    success: 'var(--success)',
+    warning: 'var(--warning)',
+    danger: 'var(--destructive)',
+    info: 'var(--info)',
+    accent: 'var(--accent)',
+    muted: 'var(--muted)'
   };
 
   // Load notifications on mount

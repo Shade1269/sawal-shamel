@@ -1,36 +1,13 @@
-import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
 import {
-  Home,
-  Package,
-  ShoppingCart,
-  Users,
   BarChart3,
-  Settings,
-  Crown,
-  Store,
-  Star,
-  Gift,
-  Palette,
-  FileText,
-  DollarSign,
-  Truck,
-  MessageSquare,
-  Shield,
-  Eye,
-  Layout,
-  PaintBucket,
-  Zap,
-  Edit3,
-  Globe,
-  TrendingUp,
-  Target,
-  Database,
-  Search,
-  Bell,
-  HelpCircle,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  HelpCircle,
+  Home,
+  ShoppingBag,
+  Shield,
+  Store,
+  Users,
 } from "lucide-react";
 
 import {
@@ -62,97 +39,28 @@ interface NavigationItem {
 
 const navigationItems: NavigationItem[] = [
   {
-    title: "الرئيسية",
-    url: "/",
-    icon: Home,
-  },
-  {
-    title: "لوحة التحكم",
-    url: "/dashboard",
-    icon: BarChart3,
-    roles: ["affiliate", "merchant", "admin"],
+    title: "مركز المسوق",
+    url: "/affiliate",
+    icon: Store,
+    roles: ["affiliate", "marketer", "admin"],
     children: [
-      { title: "نظرة عامة", url: "/dashboard", icon: Eye },
-      { title: "المنتجات", url: "/dashboard/products", icon: Package },
-      { title: "الطلبات", url: "/dashboard/orders", icon: ShoppingCart },
-      { title: "العمولات", url: "/dashboard/commissions", icon: DollarSign },
-    ]
+      { title: "الرئيسية", url: "/affiliate", icon: Home, roles: ["affiliate", "marketer", "admin"] },
+      { title: "واجهة المتجر", url: "/affiliate/storefront", icon: Store, roles: ["affiliate", "marketer", "admin"] },
+      { title: "الطلبات", url: "/affiliate/orders", icon: ShoppingBag, roles: ["affiliate", "marketer", "admin"] },
+      { title: "التحليلات", url: "/affiliate/analytics", icon: BarChart3, roles: ["affiliate", "marketer", "admin"] },
+    ],
   },
   {
-    title: "التجارة الإلكترونية",
-    url: "/ecommerce",
-    icon: ShoppingCart,
-    children: [
-      { title: "المنتجات", url: "/products", icon: Package },
-      { title: "متصفح المنتجات", url: "/products-browser", icon: Search, roles: ["affiliate"] },
-      { title: "السلة", url: "/cart", icon: ShoppingCart },
-      { title: "الطلبات", url: "/orders", icon: FileText },
-      { title: "تتبع الطلبات", url: "/track-order", icon: Truck },
-    ]
-  },
-  {
-    title: "التسويق والترويج",
-    url: "/marketing",
-    icon: TrendingUp,
-    roles: ["affiliate", "merchant", "admin"],
-    children: [
-      { title: "الحملات الترويجية", url: "/promotions", icon: Gift },
-      { title: "التسويق المتقدم", url: "/advanced-marketing", icon: Target },
-      { title: "إدارة البانرات", url: "/banner-management", icon: Globe },
-      { title: "لوحة التسويق", url: "/marketing-dashboard", icon: BarChart3 },
-    ]
-  },
-  {
-    title: "إدارة المحتوى",
-    url: "/content",
-    icon: Edit3,
-    roles: ["affiliate", "merchant", "admin"],
-    children: [
-      { title: "إدارة المحتوى", url: "/content-management", icon: FileText },
-      { title: "بناء الصفحات", url: "/page-builder", icon: Layout },
-      { title: "إدارة CMS", url: "/cms-management", icon: Database },
-      { title: "استوديو الثيمات", url: "/theme-studio", icon: PaintBucket },
-    ]
-  },
-  {
-    title: "المدفوعات والمالية",
-    url: "/finance",
-    icon: DollarSign,
-    roles: ["merchant", "admin"],
-    children: [
-      { title: "لوحة المدفوعات", url: "/payments", icon: DollarSign },
-      { title: "إدارة الفواتير", url: "/invoices", icon: FileText },
-      { title: "بوابات الدفع", url: "/payment-gateways", icon: Zap },
-      { title: "المرتجعات", url: "/refunds", icon: Package },
-    ]
-  },
-  {
-    title: "الإدارة",
+    title: "لوحة الإدارة",
     url: "/admin",
-    icon: Crown,
-    roles: ["admin"],
+    icon: Shield,
+    roles: ["admin", "moderator"],
     children: [
-      { title: "لوحة الإدارة", url: "/admin", icon: Shield },
-      { title: "المستخدمين", url: "/admin/users", icon: Users },
-      { title: "التقارير", url: "/admin/analytics", icon: BarChart3 },
-      { title: "الصلاحيات", url: "/admin/permissions", icon: Shield },
-      { title: "الأنشطة", url: "/admin/activity", icon: Eye },
-      { title: "إدارة الطلبات", url: "/admin/orders", icon: ShoppingCart },
-    ]
-  },
-  {
-    title: "الأنظمة المتقدمة",
-    url: "/advanced",
-    icon: Zap,
-    roles: ["admin", "merchant"],
-    children: [
-      { title: "المخزون", url: "/inventory", icon: Package },
-      { title: "الشحن", url: "/shipment-management", icon: Truck },
-      { title: "المراقبة", url: "/monitoring", icon: Eye },
-      { title: "الأمان", url: "/security", icon: Shield },
-      { title: "تحسين محركات البحث", url: "/seo", icon: Search },
-      { title: "نظام أتلانتس", url: "/atlantis", icon: MessageSquare },
-    ]
+      { title: "نظرة عامة", url: "/admin/dashboard", icon: BarChart3, roles: ["admin", "moderator"] },
+      { title: "الطلبات", url: "/admin/orders", icon: ShoppingBag, roles: ["admin", "moderator"] },
+      { title: "المخزون", url: "/admin/inventory", icon: Store, roles: ["admin", "moderator"] },
+      { title: "التحليلات", url: "/admin/analytics", icon: Users, roles: ["admin", "moderator"] },
+    ],
   },
 ];
 

@@ -62,3 +62,37 @@ export const deriveSalesSnapshotsRuntime = (orders, referenceDate = new Date()) 
     month: compute(startMonth),
   };
 };
+
+export const deriveTopProductSharesRuntime = (orders, options = {}) => {
+  const limit = typeof options.limit === 'number' && options.limit > 0 ? options.limit : 3;
+
+  const aggregate = new Map();
+
+  orders.forEach((order) => {
+    if (!Array.isArray(order.items)) return;
+    if (order.payment_status && order.payment_status !== 'PAID') return;
+
+    order.items.forEach((item) => {
+      if (!item) return;
+      const productId = item.product_id || item.id;
+      const title = item.product_title || 'منتج غير مسمى';
+
+      if (!productId) return;
+
+      const quantity = Number(item.quantity) || 0;
+      const revenue = Number(item.total_price_sar) || 0;
+
+      const current = aggregate.get(productId) ?? { productId, title, quantity: 0, revenue: 0 };
+
+      current.quantity += quantity;
+      current.revenue = roundCurrencyRuntime(current.revenue + revenue);
+
+      aggregate.set(productId, current);
+    });
+  });
+
+  return Array.from(aggregate.values())
+    .filter((entry) => entry.quantity > 0 && entry.revenue > 0)
+    .sort((a, b) => (b.revenue !== a.revenue ? b.revenue - a.revenue : b.quantity - a.quantity))
+    .slice(0, limit);
+};

@@ -80,36 +80,36 @@ export default {
 				'80': '20rem',
 				'96': '24rem',
 			},
-			colors: {
-				bg: 'var(--bg)',
-				fg: 'var(--fg)',
-				border: 'var(--border)',
-				input: 'var(--muted)',
-				ring: 'var(--primary)',
-				background: 'hsl(var(--background))',
-				foreground: 'hsl(var(--foreground))',
-				primary: {
-					DEFAULT: 'var(--primary)',
-					foreground: 'var(--primary-fg)',
-					fg: 'var(--primary-fg)',
-					glow: 'var(--primary)',
-					dark: 'color-mix(in srgb, var(--primary) 85%, #000 15%)'
-				},
+                        colors: {
+                                bg: 'var(--bg)',
+                                fg: 'var(--fg)',
+                                border: 'var(--border)',
+                                input: 'hsl(var(--muted-hsl))',
+                                ring: 'var(--primary)',
+                                background: 'hsl(var(--background-hsl))',
+                                foreground: 'hsl(var(--foreground-hsl))',
+                                primary: {
+                                        DEFAULT: 'hsl(var(--primary-hsl))',
+                                        foreground: 'var(--primary-fg)',
+                                        fg: 'var(--primary-fg)',
+                                        glow: 'var(--primary)',
+                                        dark: 'color-mix(in srgb, var(--primary) 85%, #000 15%)'
+                                },
 				'primary-fg': 'var(--primary-fg)',
 				'primary-foreground': 'var(--primary-fg)',
-				secondary: {
-					DEFAULT: 'var(--secondary)',
-					foreground: 'var(--secondary-fg)'
-				},
+                                secondary: {
+                                        DEFAULT: 'hsl(var(--secondary-hsl))',
+                                        foreground: 'var(--secondary-fg)'
+                                },
 				'secondary-fg': 'var(--secondary-fg)',
-				destructive: {
-					DEFAULT: 'hsl(var(--destructive))',
-					foreground: 'hsl(var(--destructive-foreground))'
-				},
-				muted: {
-					DEFAULT: 'var(--muted)',
-					foreground: 'var(--muted-fg)'
-				},
+                                destructive: {
+                                        DEFAULT: 'hsl(var(--danger-hsl))',
+                                        foreground: 'var(--destructive-foreground)'
+                                },
+                                muted: {
+                                        DEFAULT: 'hsl(var(--muted-hsl))',
+                                        foreground: 'var(--muted-fg)'
+                                },
 				'muted-fg': 'var(--muted-fg)',
 				success: {
 					DEFAULT: 'var(--success)'
@@ -123,64 +123,64 @@ export default {
 				info: {
 					DEFAULT: 'var(--info)'
 				},
-				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					glow: 'hsl(var(--accent-glow))',
-					foreground: 'hsl(var(--accent-foreground))'
-				},
-				popover: {
-					DEFAULT: 'hsl(var(--popover))',
-					foreground: 'hsl(var(--popover-foreground))'
-				},
-				card: {
-					DEFAULT: 'hsl(var(--card))',
-					foreground: 'hsl(var(--card-foreground))'
-				},
-				luxury: {
-					DEFAULT: 'hsl(var(--luxury))',
-					foreground: 'hsl(var(--luxury-foreground))'
-				},
-				premium: {
-					DEFAULT: 'hsl(var(--premium))',
-					foreground: 'hsl(var(--premium-foreground))'
-				},
-				persian: {
-					DEFAULT: 'hsl(var(--persian))',
-					foreground: 'hsl(var(--persian-foreground))'
-				},
-				turquoise: {
-					DEFAULT: 'hsl(var(--turquoise))',
-					foreground: 'hsl(var(--turquoise-foreground))'
-				},
-				bronze: {
-					DEFAULT: 'hsl(var(--bronze))',
-					foreground: 'hsl(var(--bronze-foreground))'
-				},
-				olive: {
-					DEFAULT: 'hsl(var(--olive))',
-					foreground: 'hsl(var(--olive-foreground))'
-				},
-				coral: {
-					DEFAULT: 'hsl(var(--coral))',
-					foreground: 'hsl(var(--coral-foreground))'
-				},
-				pearl: {
-					DEFAULT: 'hsl(var(--pearl))',
-					foreground: 'hsl(var(--pearl-foreground))'
-				},
-				jasmine: {
-					DEFAULT: 'hsl(var(--jasmine))',
-					foreground: 'hsl(var(--jasmine-foreground))'
-				},
-				chat: {
-					bg: 'hsl(var(--chat-bg))',
-					sent: 'hsl(var(--chat-sent))',
-					received: 'hsl(var(--chat-received))',
-				},
-				status: {
-					online: 'hsl(var(--status-online))',
-					offline: 'hsl(var(--status-offline))',
-				}
+                                accent: {
+                                        DEFAULT: 'hsl(var(--accent-hsl))',
+                                        glow: 'color-mix(in srgb, var(--accent) 65%, #fff 35%)',
+                                        foreground: 'var(--accent-fg)'
+                                },
+                                popover: {
+                                        DEFAULT: 'hsl(var(--popover-hsl))',
+                                        foreground: 'var(--popover-foreground)'
+                                },
+                                card: {
+                                        DEFAULT: 'hsl(var(--card-hsl))',
+                                        foreground: 'var(--card-foreground)'
+                                },
+                                luxury: {
+                                        DEFAULT: 'hsl(var(--luxury-hsl))',
+                                        foreground: 'var(--luxury-foreground)'
+                                },
+                                premium: {
+                                        DEFAULT: 'hsl(var(--premium-hsl))',
+                                        foreground: 'var(--premium-foreground)'
+                                },
+                                persian: {
+                                        DEFAULT: 'hsl(var(--persian-hsl))',
+                                        foreground: 'var(--persian-foreground)'
+                                },
+                                turquoise: {
+                                        DEFAULT: 'hsl(var(--turquoise-hsl))',
+                                        foreground: 'var(--turquoise-foreground)'
+                                },
+                                bronze: {
+                                        DEFAULT: 'hsl(var(--bronze-hsl))',
+                                        foreground: 'var(--bronze-foreground)'
+                                },
+                                olive: {
+                                        DEFAULT: 'hsl(var(--olive-hsl))',
+                                        foreground: 'var(--olive-foreground)'
+                                },
+                                coral: {
+                                        DEFAULT: 'hsl(var(--coral-hsl))',
+                                        foreground: 'var(--coral-foreground)'
+                                },
+                                pearl: {
+                                        DEFAULT: 'hsl(var(--pearl-hsl))',
+                                        foreground: 'var(--pearl-foreground)'
+                                },
+                                jasmine: {
+                                        DEFAULT: 'hsl(var(--jasmine-hsl))',
+                                        foreground: 'var(--jasmine-foreground)'
+                                },
+                                chat: {
+                                        bg: 'hsl(var(--chat-bg-hsl))',
+                                        sent: 'hsl(var(--chat-sent-hsl))',
+                                        received: 'hsl(var(--chat-received-hsl))',
+                                },
+                                status: {
+                                        online: 'hsl(var(--status-online-hsl))',
+                                        offline: 'hsl(var(--status-offline-hsl))',
+                                }
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',

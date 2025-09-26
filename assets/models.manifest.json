@@ -1,8 +1,0 @@
-{
-  "outputsDir": "public/models",
-  "files": [
-    { "b64": "assets/base64/cube.glb.b64",   "out": "cube.glb" },
-    { "b64": "assets/base64/sphere.glb.b64", "out": "sphere.glb" },
-    { "b64": "assets/base64/model.glb.b64",  "out": "model.glb" }
-  ]
-}

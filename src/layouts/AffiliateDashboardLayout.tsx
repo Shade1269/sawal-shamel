@@ -31,19 +31,10 @@ export default function AffiliateDashboardLayout() {
   const primaryStore = stores?.[0];
   
   const navigation = [
-    { name: 'نظرة عامة', href: '/dashboard', icon: BarChart3 },
-    { name: 'المنتجات', href: '/dashboard/products', icon: Package },
-    { name: 'الطلبات', href: '/dashboard/orders', icon: ShoppingBag },
-    { name: 'العمولات', href: '/dashboard/commissions', icon: DollarSign },
-    { name: 'الحملات الترويجية', href: '/promotions', icon: Gift },
-    { name: 'التسويق المتقدم', href: '/advanced-marketing', icon: Target },
-    { name: 'إدارة المحتوى', href: '/content-management', icon: FileText },
-    { name: 'منشئ الصفحات', href: '/page-builder', icon: Layout },
-    ...(primaryStore ? [{
-      name: 'ثيمات المتجر', 
-      href: `/store-themes/${primaryStore.id}`, 
-      icon: Palette 
-    }] : []),
+    { name: 'نظرة عامة', href: '/affiliate', icon: BarChart3 },
+    { name: 'واجهة المتجر', href: '/affiliate/storefront', icon: Package },
+    { name: 'الطلبات', href: '/affiliate/orders', icon: ShoppingBag },
+    { name: 'التحليلات', href: '/affiliate/analytics', icon: DollarSign },
   ];
 
   return (

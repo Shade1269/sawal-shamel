@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { 
   EnhancedButton, 
   EnhancedCard, 
@@ -10,7 +10,22 @@ import {
   AnimatedCounter,
   Button
 } from '@/components/ui/index';
-import { MessageCircle, Users, Hash, Package, LogOut, User, Store, Moon, Sun, Languages } from 'lucide-react';
+import {
+  MessageCircle,
+  Users,
+  Hash,
+  Package,
+  LogOut,
+  User,
+  Store,
+  Moon,
+  Sun,
+  Languages,
+  TrendingUp,
+  CreditCard,
+  LineChart,
+  ArrowUpRight,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { useFastAuth } from '@/hooks/useFastAuth';
@@ -20,15 +35,17 @@ import { Button as ThemeButton } from '@/ui/Button';
 import { Card as ThemeCard } from '@/ui/Card';
 import { Input as ThemeInput } from '@/ui/Input';
 import { Badge as ThemeBadge } from '@/ui/Badge';
-import { Hero3D as DefaultHero3D } from '@/themes/default/Hero3D';
-import { Hero3D as LuxuryHero3D } from '@/themes/luxury/Hero3D';
-import { Hero3D as DamascusHero3D } from '@/themes/damascus/Hero3D';
+const DefaultHero3D = React.lazy(() => import('@/themes/default/Hero3D').then((mod) => ({ default: mod.Hero3D })));
+const LuxuryHero3D = React.lazy(() => import('@/themes/luxury/Hero3D').then((mod) => ({ default: mod.Hero3D })));
+const DamascusHero3D = React.lazy(() => import('@/themes/damascus/Hero3D').then((mod) => ({ default: mod.Hero3D })));
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useUserDataContext } from '@/contexts/UserDataContext';
 
 const Index = () => {
   const navigate = useNavigate();
   const { user, profile, signOut, isAuthenticated } = useFastAuth();
+  const { userShop, userStatistics } = useUserDataContext();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const { language, toggleLanguage, t } = useLanguage();
   const { themeId } = useTheme('default');
@@ -42,7 +59,60 @@ const Index = () => {
   const ActiveHero3D = heroMap[themeId as keyof typeof heroMap] ?? DefaultHero3D;
 
   const currentUser = user;
-  
+  const role = profile?.role;
+  const storeSlug = userShop?.slug;
+  const storeLink = storeSlug ? `/${storeSlug}` : '/atlantis';
+
+  const formatNumber = (value?: number, fallback = '0') =>
+    typeof value === 'number' ? value.toLocaleString('ar-EG') : fallback;
+
+  const formatCurrency = (value?: number, fallback = '‎45٬200 ر.س') => {
+    if (typeof value === 'number') {
+      return new Intl.NumberFormat('ar-SA', {
+        style: 'currency',
+        currency: 'SAR',
+        maximumFractionDigits: 0,
+      }).format(value);
+    }
+    return fallback;
+  };
+
+  const adminMetrics = React.useMemo(
+    () => [
+      {
+        label: 'الطلبات النشطة',
+        value: formatNumber(userStatistics?.pendingOrders, '128'),
+        hint: '+12% هذا الأسبوع',
+        icon: ShoppingBag,
+        target: '/admin/orders',
+      },
+      {
+        label: 'إيرادات اليوم',
+        value: formatCurrency(userStatistics?.revenueToday, '‎45٬200 ر.س'),
+        hint: 'متوسط 1.8k لكل ساعة',
+        icon: CreditCard,
+        target: '/admin/analytics',
+      },
+      {
+        label: 'الشركاء النشطون',
+        value: formatNumber(userStatistics?.activeAffiliates, '36'),
+        hint: '+5 مسوقين جدد',
+        icon: Users,
+        target: '/admin/dashboard',
+      },
+    ],
+    [userStatistics]
+  );
+
+  const affiliateSummary = React.useMemo(
+    () => ({
+      conversions: formatNumber(userStatistics?.conversionsToday, '18'),
+      revenue: formatCurrency(userStatistics?.commissionToday, '‎2٬450 ر.س'),
+      clickRate: `${formatNumber(userStatistics?.clickRate, '3.4')}%`,
+    }),
+    [userStatistics]
+  );
+
   const handleChatClick = () => {
     if (!currentUser) {
       navigate('/login');
@@ -67,14 +137,15 @@ const Index = () => {
     // Use smart navigation to go to appropriate dashboard based on user role
     if (profile?.role === 'admin') {
       navigate('/admin/dashboard');
-    } else if (profile?.role === 'affiliate') {
-      navigate('/dashboard');
-    } else if (profile?.role === 'merchant') {
-      navigate('/merchant');
+    } else if (profile?.role === 'affiliate' || profile?.role === 'merchant' || profile?.role === 'marketer') {
+      navigate('/affiliate');
     } else {
-      navigate('/old-dashboard'); // For other users, use the legacy dashboard
+      navigate('/');
     }
   };
+
+  const handleNavigate = (path: string) => () => navigate(path);
+  const handleStorefrontNavigate = () => navigate(storeLink);
 
   const handleSignOut = async () => {
     await signOut();
@@ -153,6 +224,138 @@ const Index = () => {
       )}
       
       <div className="container mx-auto px-4 py-16 relative z-10">
+        {(role === 'admin' || role === 'affiliate' || role === 'marketer') && (
+          <div className="mb-12 space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground">لوحة الترحيب السريعة</p>
+                <h2 className="text-2xl font-semibold text-foreground">
+                  متابعة فورية لأداء {role === 'admin' ? 'المنصة' : 'حملاتك'}
+                </h2>
+              </div>
+            </div>
+
+            {role === 'admin' ? (
+              <div className="grid gap-4 md:grid-cols-3">
+                {adminMetrics.map((metric) => {
+                  const Icon = metric.icon;
+                  return (
+                    <ThemeCard
+                      key={metric.label}
+                      variant="glass"
+                      interactive
+                      className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 backdrop-blur-xl"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm text-muted-foreground">{metric.label}</p>
+                          <p className="mt-2 text-2xl font-bold text-foreground">{metric.value}</p>
+                          <p className="mt-1 text-xs text-emerald-400">{metric.hint}</p>
+                        </div>
+                        <div className="rounded-full bg-[color:var(--glass-bg-strong, var(--surface-2))] p-3 text-[color:var(--primary)]">
+                          <Icon className="h-5 w-5" aria-hidden />
+                        </div>
+                      </div>
+                      <ThemeButton
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="mt-4 inline-flex items-center gap-2"
+                        onClick={handleNavigate(metric.target)}
+                      >
+                        انتقال سريع
+                        <ArrowUpRight className="h-4 w-4" aria-hidden />
+                      </ThemeButton>
+                    </ThemeCard>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2">
+                <ThemeCard
+                  variant="glass"
+                  className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 backdrop-blur-xl"
+                >
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">ملخص الأداء اليومي</p>
+                      <h3 className="mt-1 text-xl font-semibold text-foreground">نمو مستمر في العمولات</h3>
+                      <div className="mt-4 grid grid-cols-3 gap-4 text-center md:text-left">
+                        <div>
+                          <p className="text-xs text-muted-foreground">التحويلات</p>
+                          <p className="mt-1 text-lg font-bold text-foreground">{affiliateSummary.conversions}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">عمولات اليوم</p>
+                          <p className="mt-1 text-lg font-bold text-foreground">{affiliateSummary.revenue}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">CTR</p>
+                          <p className="mt-1 text-lg font-bold text-foreground">{affiliateSummary.clickRate}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-3 md:items-end">
+                      <ThemeButton
+                        type="button"
+                        variant="default"
+                        className="inline-flex items-center gap-2"
+                        onClick={handleNavigate('/affiliate/analytics')}
+                      >
+                        تفاصيل الأداء
+                        <ArrowUpRight className="h-4 w-4" aria-hidden />
+                      </ThemeButton>
+                      <ThemeButton
+                        type="button"
+                        variant="outline"
+                        className="inline-flex items-center gap-2"
+                        onClick={handleNavigate('/affiliate/orders')}
+                      >
+                        إدارة الطلبات
+                        <ArrowUpRight className="h-4 w-4" aria-hidden />
+                      </ThemeButton>
+                    </div>
+                  </div>
+                </ThemeCard>
+                <ThemeCard
+                  variant="glass"
+                  className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 backdrop-blur-xl"
+                >
+                  <div className="flex h-full flex-col justify-between gap-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground">متجر المسوق</p>
+                      <h3 className="mt-1 text-xl font-semibold text-foreground">{storeSlug ? `/${storeSlug}` : 'متجر تجريبي'}</h3>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        شارك رابط متجرك الزجاجي مع العملاء وشاهد التغييرات مباشرة.
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <ThemeButton
+                        type="button"
+                        variant="default"
+                        className="inline-flex items-center justify-center gap-2"
+                        onClick={handleStorefrontNavigate}
+                      >
+                        زيارة المتجر
+                        <ArrowUpRight className="h-4 w-4" aria-hidden />
+                      </ThemeButton>
+                      <ThemeButton
+                        type="button"
+                        variant="outline"
+                        className="inline-flex items-center justify-center gap-2"
+                        onClick={handleStoreManagementClick}
+                      >
+                        تخصيص الواجهة
+                        <ArrowUpRight className="h-4 w-4" aria-hidden />
+                      </ThemeButton>
+                    </div>
+                  </div>
+                </ThemeCard>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="mb-12">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
@@ -190,7 +393,13 @@ const Index = () => {
           </div>
         </div>
         <div className="mb-16">
-          <ActiveHero3D />
+          <Suspense
+            fallback={(
+              <div className="mt-10 h-64 w-full animate-pulse rounded-[var(--radius-xl)] border border-dashed border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/60" aria-label="جاري تحميل المشهد ثلاثي الأبعاد" />
+            )}
+          >
+            <ActiveHero3D />
+          </Suspense>
         </div>
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-6">
@@ -371,11 +580,11 @@ const Index = () => {
                   >
                     بدء رحلة التسوق
                   </EnhancedButton>
-                  <EnhancedButton 
+                  <EnhancedButton
                     variant="outline"
                     size="lg"
                     className="w-full h-12 text-lg font-bold rounded-xl"
-                    onClick={() => navigate('/s/demo-store')}
+                    onClick={() => navigate('/store/demo-store')}
                   >
                     جرب المتجر التجريبي
                   </EnhancedButton>

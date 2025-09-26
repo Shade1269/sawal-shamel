@@ -23,7 +23,20 @@ dist-ssr
 *.sln
 *.sw?
 
-# Generated GLB assets
+# Generated binary assets (restored via postinstall)
 /public/models/
+/public/lovable-uploads/
 *.glb
 *.bin
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.ico
+
+# Allow directory sentinels for generated folders
+!public/models/
+!public/models/.gitkeep
+!public/lovable-uploads/
+!public/lovable-uploads/.gitkeep

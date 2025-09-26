@@ -141,37 +141,6 @@ const productsConfigs: Record<string, ProductsConfig> = {
     ]
   },
 
-  merchant: {
-    title: "منتجاتي",
-    description: "إدارة منتجات متجرك",
-    canAdd: true,
-    canEdit: true,
-    canDelete: true,
-    showCommission: false,
-    showAnalytics: true,
-    viewModes: ['grid', 'list', 'table'],
-    filters: [
-      {
-        key: 'category',
-        label: 'الفئة',
-        type: 'select',
-        options: [
-          { value: 'electronics', label: 'إلكترونيات' },
-          { value: 'fashion', label: 'أزياء' },
-          { value: 'home', label: 'منزل وحديقة' }
-        ]
-      },
-      {
-        key: 'stock',
-        label: 'المخزون',
-        type: 'range'
-      }
-    ],
-    actions: [
-      { label: 'إضافة منتج', icon: Plus, action: 'add', variant: 'default' },
-      { label: 'تصدير', icon: Download, action: 'export', variant: 'outline' }
-    ]
-  }
 };
 
 export function UnifiedProductsManager() {
@@ -188,16 +157,15 @@ export function UnifiedProductsManager() {
 
   const managerType = useMemo(() => {
     const path = location.pathname;
-    if (path.includes('/admin/products') || path.includes('/product-management')) return 'admin';
+    if (path.includes('/admin/inventory') || path.includes('/product-management')) return 'admin';
     if (path.includes('/products-browser')) return 'affiliate';
-    if (path.includes('/merchant/products') || path.includes('/products')) return 'merchant';
-    
+    if (path === '/products' || path.startsWith('/products')) return 'affiliate';
+
     // تحديد النوع حسب دور المستخدم
     if (profile?.role === 'admin') return 'admin';
-    if (profile?.role === 'affiliate') return 'affiliate';
-    if (profile?.role === 'merchant') return 'merchant';
-    
-    return 'merchant'; // افتراضي
+    if (profile?.role === 'affiliate' || profile?.role === 'merchant' || profile?.role === 'marketer') return 'affiliate';
+
+    return 'affiliate'; // افتراضي
   }, [location.pathname, profile?.role]);
 
   const config = productsConfigs[managerType];

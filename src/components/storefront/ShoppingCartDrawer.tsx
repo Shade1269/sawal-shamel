@@ -184,7 +184,7 @@ const ShoppingCartDrawer = ({ storeSlug, onItemsChange }: ShoppingCartDrawerProp
 
   const proceedToCheckout = () => {
     setIsOpen(false);
-    navigate(`/s/${storeSlug}/checkout`);
+    navigate(storeSlug ? `/checkout?store=${storeSlug}` : '/checkout');
   };
 
   return (

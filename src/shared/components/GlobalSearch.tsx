@@ -34,31 +34,24 @@ const GlobalSearch = () => {
   const searchItems = [
     // Common pages
     { title: 'الصفحة الرئيسية', url: '/', category: 'صفحات' },
-    { title: 'المنتجات', url: '/products', category: 'صفحات' },
     { title: 'الملف الشخصي', url: '/profile', category: 'صفحات' },
     { title: 'عربة التسوق', url: '/cart', category: 'تسوق' },
     { title: 'إتمام الطلب', url: '/checkout', category: 'تسوق' },
-    { title: 'تتبع الطلب', url: '/track-order', category: 'تسوق' },
-    
+    { title: 'تأكيد الطلب', url: '/order/confirmation', category: 'تسوق' },
+
     // Analytics
-    { title: 'لوحة التحليلات', url: '/analytics', category: 'تحليلات', roles: ['merchant', 'admin'] },
-    { title: 'تقارير المبيعات', url: '/sales-reports', category: 'تحليلات', roles: ['merchant', 'admin'] },
-    { title: 'تحليل المستخدمين', url: '/user-behavior', category: 'تحليلات', roles: ['merchant', 'admin'] },
-    
+    { title: 'لوحة تحليلات الإدارة', url: '/admin/analytics', category: 'تحليلات', roles: ['admin'] },
+    { title: 'تحليلات المسوق', url: '/affiliate/analytics', category: 'تحليلات', roles: ['affiliate', 'marketer', 'admin'] },
+
     // Admin pages
-    { title: 'لوحة الإدارة', url: '/admin', category: 'إدارة', roles: ['admin'] },
-    { title: 'إدارة المستخدمين', url: '/admin/users', category: 'إدارة', roles: ['admin'] },
-    { title: 'إدارة الطلبات', url: '/admin-orders', category: 'إدارة', roles: ['admin'] },
-    { title: 'إدارة المنتجات', url: '/admin/products', category: 'إدارة', roles: ['admin'] },
-    
-    // Merchant pages
-    { title: 'لوحة التاجر', url: '/merchant-dashboard', category: 'تجارة', roles: ['merchant', 'admin'] },
-    { title: 'إدارة المخزن', url: '/admin/inventory', category: 'تجارة', roles: ['merchant', 'admin'] },
-    { title: 'المدفوعات', url: '/payments', category: 'تجارة', roles: ['merchant', 'admin'] },
-    { title: 'الفواتير', url: '/invoices', category: 'تجارة', roles: ['merchant', 'admin'] },
-    
+    { title: 'لوحة الإدارة', url: '/admin/dashboard', category: 'إدارة', roles: ['admin'] },
+    { title: 'إدارة الطلبات', url: '/admin/orders', category: 'إدارة', roles: ['admin'] },
+    { title: 'إدارة المخزون', url: '/admin/inventory', category: 'إدارة', roles: ['admin'] },
+
     // Affiliate pages
-    { title: 'لوحة المسوق', url: '/affiliate-dashboard', category: 'تسويق', roles: ['affiliate', 'admin'] },
+    { title: 'لوحة المسوق', url: '/affiliate', category: 'تسويق', roles: ['affiliate', 'marketer', 'admin'] },
+    { title: 'واجهة المتجر', url: '/affiliate/storefront', category: 'تسويق', roles: ['affiliate', 'marketer', 'admin'] },
+    { title: 'طلبات المسوق', url: '/affiliate/orders', category: 'تسويق', roles: ['affiliate', 'marketer', 'admin'] },
   ];
 
   const filteredItems = searchItems.filter(item => {

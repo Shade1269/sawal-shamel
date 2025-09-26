@@ -17,8 +17,9 @@ export function MobileBottomNavigation() {
   const navigationItems = getNavigationForDevice();
   const mainItems = navigationItems.slice(0, 4); // First 4 items
   const hasMoreItems = navigationItems.length > 4;
+  const hasVisibleItems = mainItems.length > 0 || hasMoreItems;
 
-  if (!state.bottomNavVisible) {
+  if (!state.bottomNavVisible || !hasVisibleItems) {
     return null;
   }
 

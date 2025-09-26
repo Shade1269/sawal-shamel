@@ -131,26 +131,6 @@ const ordersConfigs: Record<string, OrdersConfig> = {
     ]
   },
 
-  merchant: {
-    title: "طلبات المتجر",
-    description: "إدارة طلبات متجرك ومتابعة حالتها",
-    canEdit: true,
-    canCancel: true,
-    showCommissions: false,
-    showCustomerDetails: true,
-    allowStatusChange: true,
-    statusOptions: orderStatuses,
-    actions: [
-      { label: 'تصدير', icon: Download, action: 'export', variant: 'outline' }
-    ],
-    tabs: [
-      { id: 'all', title: 'جميع الطلبات' },
-      { id: 'new', title: 'طلبات جديدة', filter: (order) => order.status === 'pending' },
-      { id: 'processing', title: 'قيد التنفيذ', filter: (order) => ['confirmed', 'processing'].includes(order.status) },
-      { id: 'completed', title: 'مكتملة', filter: (order) => order.status === 'delivered' }
-    ]
-  },
-
   customer: {
     title: "طلباتي",
     description: "تتبع حالة طلباتك وتاريخ الشراء",
@@ -182,15 +162,14 @@ export function UnifiedOrdersManager() {
   const managerType = useMemo(() => {
     const path = location.pathname;
     if (path.includes('/admin')) return 'admin';
-    if (path.includes('/dashboard/orders')) return 'affiliate';
-    if (path.includes('/merchant') || path.includes('/orders')) return 'merchant';
+    if (path.includes('/affiliate/orders')) return 'affiliate';
     if (path.includes('/my-orders')) return 'customer';
-    
+    if (path === '/affiliate' || path.startsWith('/affiliate/')) return 'affiliate';
+
     // تحديد النوع حسب دور المستخدم
     if (profile?.role === 'admin') return 'admin';
-    if (profile?.role === 'affiliate') return 'affiliate';
-    if (profile?.role === 'merchant') return 'merchant';
-    
+    if (profile?.role === 'affiliate' || profile?.role === 'merchant' || profile?.role === 'marketer') return 'affiliate';
+
     return 'customer'; // افتراضي
   }, [location.pathname, profile?.role]);
 

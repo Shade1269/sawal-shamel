@@ -96,7 +96,7 @@ const EnhancedChart: React.FC<EnhancedChartProps> = ({
   showLegend = true,
   showGrid = true,
   showTooltip = true,
-  colors = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--secondary))'],
+  colors = ['var(--primary)', 'var(--accent)', 'var(--secondary)'],
   interactive = true,
   loading = false,
   error,
@@ -200,14 +200,14 @@ const EnhancedChart: React.FC<EnhancedChartProps> = ({
         return (
           <ResponsiveContainer width="100%" height="100%">
             <RechartsLineChart {...chartProps}>
-              {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />}
+              {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />}
               <XAxis 
                 dataKey="name" 
-                stroke="hsl(var(--muted-foreground))"
+                stroke="var(--muted-foreground)"
                 fontSize={12}
               />
-              <YAxis 
-                stroke="hsl(var(--muted-foreground))"
+              <YAxis
+                stroke="var(--muted-foreground)"
                 fontSize={12}
                 tickFormatter={formatValue}
               />
@@ -229,14 +229,14 @@ const EnhancedChart: React.FC<EnhancedChartProps> = ({
         return (
           <ResponsiveContainer width="100%" height="100%">
             <RechartsBarChart {...chartProps}>
-              {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />}
+              {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />}
               <XAxis 
                 dataKey="name" 
-                stroke="hsl(var(--muted-foreground))"
+                stroke="var(--muted-foreground)"
                 fontSize={12}
               />
-              <YAxis 
-                stroke="hsl(var(--muted-foreground))"
+              <YAxis
+                stroke="var(--muted-foreground)"
                 fontSize={12}
                 tickFormatter={formatValue}
               />
@@ -255,14 +255,14 @@ const EnhancedChart: React.FC<EnhancedChartProps> = ({
         return (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart {...chartProps}>
-              {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />}
-              <XAxis 
-                dataKey="name" 
-                stroke="hsl(var(--muted-foreground))"
+              {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />}
+              <XAxis
+                dataKey="name"
+                stroke="var(--muted-foreground)"
                 fontSize={12}
               />
-              <YAxis 
-                stroke="hsl(var(--muted-foreground))"
+              <YAxis
+                stroke="var(--muted-foreground)"
                 fontSize={12}
                 tickFormatter={formatValue}
               />

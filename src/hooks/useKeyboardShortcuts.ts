@@ -41,31 +41,31 @@ export function useKeyboardShortcuts({
       key: 'h',
       ctrlKey: true,
       description: 'الانتقال للصفحة الرئيسية',
-      action: () => navigate('/dashboard'),
+      action: () => navigate('/'),
       category: 'navigation',
       global: true
     },
     {
       key: 'p',
       ctrlKey: true,
-      description: 'إدارة المنتجات',
-      action: () => navigate('/products'),
+      description: 'واجهة المتجر للمسوق',
+      action: () => navigate('/affiliate/storefront'),
       category: 'navigation',
       global: true
     },
     {
       key: 'o',
       ctrlKey: true,
-      description: 'إدارة الطلبات',
-      action: () => navigate('/orders'),
+      description: 'متابعة الطلبات',
+      action: () => navigate('/affiliate/orders'),
       category: 'navigation',
       global: true
     },
     {
       key: 'a',
       ctrlKey: true,
-      description: 'التحليلات والتقارير',
-      action: () => navigate('/analytics'),
+      description: 'لوحة التحليلات',
+      action: () => navigate('/affiliate/analytics'),
       category: 'navigation',
       global: true
     },

@@ -21,7 +21,8 @@ import {
   Star,
   Filter,
   Command,
-  ArrowUpDown
+  ArrowUpDown,
+  Crown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFastAuth } from '@/hooks/useFastAuth';
@@ -83,17 +84,17 @@ export function SmartSearch({ isOpen, onClose, placeholder = "البحث في ك
         title: 'لوحة التحكم الرئيسية',
         description: 'نظرة عامة على الإحصائيات والأداء',
         category: 'pages',
-        url: '/dashboard',
+        url: '/affiliate',
         icon: BarChart3,
         tags: ['dashboard', 'home', 'لوحة', 'رئيسية', 'إحصائيات'],
         priority: 10
       },
       {
         id: '2',
-        title: 'إدارة المنتجات',
-        description: 'عرض وإدارة جميع المنتجات',
+        title: 'واجهة المتجر',
+        description: 'إدارة إعدادات المتجر وروابطه',
         category: 'pages',
-        url: '/products',
+        url: '/affiliate/storefront',
         icon: Package,
         tags: ['products', 'منتجات', 'إدارة', 'كتالوج'],
         priority: 9
@@ -103,7 +104,7 @@ export function SmartSearch({ isOpen, onClose, placeholder = "البحث في ك
         title: 'إدارة الطلبات',
         description: 'متابعة ومعالجة الطلبات',
         category: 'pages',
-        url: '/orders',
+        url: '/affiliate/orders',
         icon: ShoppingCart,
         tags: ['orders', 'طلبات', 'مبيعات', 'متابعة'],
         priority: 9
@@ -113,7 +114,7 @@ export function SmartSearch({ isOpen, onClose, placeholder = "البحث في ك
         title: 'التحليلات والتقارير',
         description: 'تقارير مفصلة وتحليل البيانات',
         category: 'pages',
-        url: '/analytics',
+        url: '/affiliate/analytics',
         icon: BarChart3,
         tags: ['analytics', 'تحليلات', 'تقارير', 'بيانات'],
         priority: 8
@@ -167,23 +168,43 @@ export function SmartSearch({ isOpen, onClose, placeholder = "البحث في ك
       baseResults.push(
         {
           id: '30',
-          title: 'لوحة الإدارة',
-          description: 'أدوات إدارة النظام المتقدمة',
+          title: 'لوحة تحكم الإدارة',
+          description: 'مؤشرات الأداء والأنشطة الأخيرة',
           category: 'pages',
-          url: '/admin',
-          icon: Settings,
-          tags: ['admin', 'إدارة', 'نظام', 'متقدم'],
+          url: '/admin/dashboard',
+          icon: Crown,
+          tags: ['admin', 'dashboard', 'إدارة', 'لوحة'],
           priority: 10
         },
         {
           id: '31',
-          title: 'إدارة المستخدمين',
-          description: 'عرض وإدارة حسابات المستخدمين',
-          category: 'users',
-          url: '/admin/users',
-          icon: Users,
-          tags: ['users', 'مستخدمين', 'حسابات', 'إدارة'],
+          title: 'طلبات العملاء',
+          description: 'متابعة الطلبات ومعالجتها',
+          category: 'orders',
+          url: '/admin/orders',
+          icon: ShoppingCart,
+          tags: ['orders', 'طلبات', 'مبيعات', 'إدارة'],
+          priority: 9
+        },
+        {
+          id: '32',
+          title: 'مركز المخزون',
+          description: 'إدارة مستويات وتوفر المنتجات',
+          category: 'inventory',
+          url: '/admin/inventory',
+          icon: Package,
+          tags: ['inventory', 'مخزون', 'منتجات', 'مستودع'],
           priority: 8
+        },
+        {
+          id: '33',
+          title: 'تحليلات الإدارة',
+          description: 'تقارير الأداء والتحليلات المالية',
+          category: 'analytics',
+          url: '/admin/analytics',
+          icon: BarChart3,
+          tags: ['analytics', 'تقارير', 'تحليلات', 'بيانات'],
+          priority: 7
         }
       );
     }

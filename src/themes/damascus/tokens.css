@@ -1,33 +1,156 @@
 html[data-theme="damascus"] {
-  --bg: #0f1a1c;
-  --fg: #f3ede0;
-  --primary: #5cc4b8;
-  --primary-fg: #032524;
-  --secondary: #bf7b4a;
-  --secondary-fg: #fff5e6;
-  --muted: #162426;
-  --muted-fg: #a4c5c0;
-  --success: #4ec499;
-  --warning: #e5b755;
-  --danger: #e57373;
-  --info: #5ba8f2;
-  --border: #1f3a3d;
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --space-xs: 4px;
-  --space-sm: 9px;
-  --space-md: 14px;
-  --space-lg: 20px;
-  --space-xl: 30px;
-  --font-family: 'Noto Sans Arabic', 'Cairo', 'system-ui', 'sans-serif';
-  --font-size: 16px;
-  --line-height: 1.55;
-  --shadow-card: 0 16px 38px rgba(16, 28, 32, 0.35);
+  color-scheme: dark;
+
+  /* Base HSL definitions */
+  --background-hsl: 189 30% 8%;
+  --foreground-hsl: 41 44% 92%;
+  --primary-hsl: 173 47% 56%;
+  --primary-foreground-hsl: 178 85% 8%;
+  --secondary-hsl: 25 48% 52%;
+  --secondary-foreground-hsl: 24 69% 10%;
+  --accent-hsl: 32 59% 64%;
+  --accent-foreground-hsl: 26 45% 9%;
+  --muted-hsl: 188 27% 12%;
+  --muted-foreground-hsl: 171 22% 71%;
+  --success-hsl: 158 50% 54%;
+  --warning-hsl: 41 73% 62%;
+  --danger-hsl: 0 69% 67%;
+  --info-hsl: 209 85% 65%;
+  --border-hsl: 186 33% 18%;
+  --card-hsl: 188 25% 12%;
+  --card-foreground-hsl: 41 44% 92%;
+  --popover-hsl: 188 25% 12%;
+  --popover-foreground-hsl: 41 44% 92%;
+  --chat-bg-hsl: 189 30% 8%;
+  --chat-sent-hsl: 173 47% 56%;
+  --chat-received-hsl: 188 25% 15%;
+  --status-online-hsl: 158 50% 54%;
+  --status-offline-hsl: 190 20% 52%;
+
+  /* Actual color tokens */
+  --background: hsl(var(--background-hsl));
+  --foreground: hsl(var(--foreground-hsl));
+  --primary: hsl(var(--primary-hsl));
+  --primary-fg: hsl(var(--primary-foreground-hsl));
+  --secondary: hsl(var(--secondary-hsl));
+  --secondary-fg: hsl(var(--secondary-foreground-hsl));
+  --accent: hsl(var(--accent-hsl));
+  --accent-fg: hsl(var(--accent-foreground-hsl));
+  --muted: hsl(var(--muted-hsl));
+  --muted-foreground: hsl(var(--muted-foreground-hsl));
+  --success: hsl(var(--success-hsl));
+  --warning: hsl(var(--warning-hsl));
+  --danger: hsl(var(--danger-hsl));
+  --info: hsl(var(--info-hsl));
+  --border: hsl(var(--border-hsl) / 0.55);
+  --card: hsl(var(--card-hsl) / 0.9);
+  --card-foreground: hsl(var(--card-foreground-hsl));
+  --popover: hsl(var(--popover-hsl) / 0.9);
+  --popover-foreground: hsl(var(--popover-foreground-hsl));
+  --chat-bg: hsl(var(--chat-bg-hsl));
+  --chat-sent: hsl(var(--chat-sent-hsl));
+  --chat-received: hsl(var(--chat-received-hsl));
+  --status-online: hsl(var(--status-online-hsl));
+  --status-offline: hsl(var(--status-offline-hsl));
+  --destructive: var(--danger);
+  --destructive-foreground: var(--foreground);
+
+  /* Extended palette */
+  --luxury-hsl: 25 48% 52%;
+  --luxury: hsl(var(--luxury-hsl));
+  --luxury-foreground-hsl: 24 69% 10%;
+  --luxury-foreground: hsl(var(--luxury-foreground-hsl));
+  --premium-hsl: 32 59% 64%;
+  --premium: hsl(var(--premium-hsl));
+  --premium-foreground-hsl: 26 45% 9%;
+  --premium-foreground: hsl(var(--premium-foreground-hsl));
+  --persian-hsl: 173 47% 56%;
+  --persian: hsl(var(--persian-hsl));
+  --persian-foreground-hsl: 178 85% 8%;
+  --persian-foreground: hsl(var(--persian-foreground-hsl));
+  --turquoise-hsl: 209 85% 65%;
+  --turquoise: hsl(var(--turquoise-hsl));
+  --turquoise-foreground-hsl: 0 0% 15%;
+  --turquoise-foreground: hsl(var(--turquoise-foreground-hsl));
+  --bronze-hsl: 31 48% 48%;
+  --bronze: hsl(var(--bronze-hsl));
+  --bronze-foreground-hsl: 24 69% 10%;
+  --bronze-foreground: hsl(var(--bronze-foreground-hsl));
+  --olive-hsl: 120 25% 38%;
+  --olive: hsl(var(--olive-hsl));
+  --olive-foreground-hsl: 41 44% 92%;
+  --olive-foreground: hsl(var(--olive-foreground-hsl));
+  --coral-hsl: 10 70% 60%;
+  --coral: hsl(var(--coral-hsl));
+  --coral-foreground-hsl: 24 69% 10%;
+  --coral-foreground: hsl(var(--coral-foreground-hsl));
+  --pearl-hsl: 41 44% 88%;
+  --pearl: hsl(var(--pearl-hsl));
+  --pearl-foreground-hsl: 188 27% 16%;
+  --pearl-foreground: hsl(var(--pearl-foreground-hsl));
+  --jasmine-hsl: 41 73% 62%;
+  --jasmine: hsl(var(--jasmine-hsl));
+  --jasmine-foreground-hsl: 188 27% 16%;
+  --jasmine-foreground: hsl(var(--jasmine-foreground-hsl));
+
+  /* Glass & surface tokens */
+  --bg: var(--background);
+  --fg: var(--foreground);
+  --surface: hsla(188, 28%, 13%, 0.84);
+  --surface-2: hsla(188, 30%, 20%, 0.92);
+  --glass-border: hsla(188, 25%, 52%, 0.35);
+  --shadow-glass-soft: 0 20px 44px hsla(188, 65%, 12%, 0.52);
+  --shadow-glass-strong: 0 32px 70px hsla(188, 65%, 12%, 0.68);
+  --glass-bg: var(--surface);
+  --glass-bg-strong: var(--surface-2);
+  --glass-fg: var(--fg);
+  --glass-backdrop: hsl(var(--background-hsl) / 0.58);
+
+  /* Spacing scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5625rem;
+  --space-md: 0.875rem;
+  --space-lg: 1.25rem;
+  --space-xl: 1.875rem;
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+
+  /* Radii */
+  --radius-xs: 0.375rem;
+  --radius-s: 0.75rem;
+  --radius-m: 1.25rem;
+  --radius-l: 1.75rem;
+  --radius-xl: 2rem;
+  --radius: var(--radius-m);
+  --radius-sm: var(--radius-s);
+  --radius-md: var(--radius-m);
+  --radius-lg: var(--radius-l);
+
+  /* Typography */
+  --font-sans: 'Noto Sans Arabic', 'Cairo', system-ui, sans-serif;
+  --font-size-sm: 0.9rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.2rem;
+  --font-size-xl: 1.45rem;
+  --font-line-height: 1.55;
+  --font-weight-regular: 400;
+  --font-weight-medium: 600;
+  --font-weight-bold: 700;
+
+  /* Interaction states */
+  --state-hover-bg: hsla(41, 44%, 92%, 0.08);
+  --state-active-bg: hsla(41, 44%, 92%, 0.16);
+  --state-focus-ring: hsla(173, 47%, 56%, 0.45);
+  --state-disabled-bg: hsla(188, 27%, 16%, 0.6);
+  --state-disabled-fg: hsla(171, 22%, 71%, 0.55);
+  --state-disabled-border: hsla(186, 33%, 22%, 0.35);
 }
 
 html[data-theme="damascus"] body {
-  background-color: var(--bg);
-  color: var(--fg);
-  font-family: var(--font-family);
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
 }

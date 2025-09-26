@@ -217,9 +217,8 @@ export default function SystemOverviewPage() {
             النسخة 4.0 - الإصدار النهائي
           </Badge>
           <Badge variant="secondary" className="px-3 py-1">
-            {profile?.role === 'admin' ? 'مدير النظام' : 
-             profile?.role === 'merchant' ? 'تاجر' : 
-             profile?.role === 'affiliate' ? 'مسوق' : 'مستخدم'}
+            {profile?.role === 'admin' ? 'مدير النظام' :
+             profile?.role === 'affiliate' || profile?.role === 'merchant' || profile?.role === 'marketer' ? 'مسوق' : 'مستخدم'}
           </Badge>
         </div>
       </motion.div>

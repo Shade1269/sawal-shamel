@@ -4,14 +4,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import type { AffiliateStoreSummary } from '../hooks/useAffiliateMetrics';
+import type { AffiliateStoreSummary, AffiliateProductShare } from '../hooks/useAffiliateMetrics';
 
 interface ShareToolsProps {
   store: AffiliateStoreSummary;
   shareUrl: string | null;
+  products?: AffiliateProductShare[];
 }
 
-export const ShareTools = ({ store, shareUrl }: ShareToolsProps) => {
+const currencyFormatter = new Intl.NumberFormat('ar-SA', {
+  style: 'currency',
+  currency: 'SAR',
+  maximumFractionDigits: 0,
+});
+
+export const ShareTools = ({ store, shareUrl, products }: ShareToolsProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const { toast } = useToast();
   const [qrReady, setQrReady] = useState(false);
@@ -137,6 +144,57 @@ export const ShareTools = ({ store, shareUrl }: ShareToolsProps) => {
     link.click();
   };
 
+  const buildProductShareMessage = (product: AffiliateProductShare) => {
+    const formattedPrice = currencyFormatter.format(product.revenue);
+    const baseUrl = shareUrl ?? '';
+    const reference = product.productId ? `?ref=${encodeURIComponent(product.productId)}` : '';
+    return `${product.title} متاح الآن بسعر ${formattedPrice}. تسوق من متجري عبر أناقتي: ${baseUrl}${reference}`;
+  };
+
+  const handleProductShare = async (product: AffiliateProductShare) => {
+    if (!shareUrl) {
+      toast({
+        title: 'فعّل المتجر قبل المشاركة',
+        description: 'يرجى تفعيل الرابط العام للمتجر لمشاركة المنتجات.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const message = buildProductShareMessage(product);
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: product.title,
+          text: message,
+          url: shareUrl,
+        });
+        return;
+      } catch (error) {
+        // المستخدم ربما أغلق نافذة المشاركة
+      }
+    }
+
+    if (navigator?.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(message);
+        toast({
+          title: 'تم نسخ عرض المنتج',
+          description: `يمكنك الآن لصق عرض ${product.title} في قنواتك.`,
+        });
+        return;
+      } catch (error) {
+        // fallthrough للعرض اليدوي
+      }
+    }
+
+    toast({
+      title: 'انسخ الرسالة يدويًا',
+      description: message,
+    });
+  };
+
   return (
     <Card className="anaqti-card" dir="rtl">
       <CardHeader className="pb-4">
@@ -199,6 +257,30 @@ export const ShareTools = ({ store, shareUrl }: ShareToolsProps) => {
                 تحميل QR
               </Button>
             </div>
+
+            {Array.isArray(products) && products.length > 0 ? (
+              <div className="space-y-3 rounded-[var(--radius-l)] border border-[color:var(--glass-border,rgba(15,23,42,0.08))] bg-[color:var(--glass-bg,var(--surface-2))]/70 p-[var(--spacing-md)] shadow-[var(--shadow-glass-soft,0_18px_40px_rgba(15,23,42,0.1))]">
+                <h3 className="text-sm font-semibold text-[color:var(--anaqti-text,#3d2b2b)]">أفضل المنتجات استعدادًا للمشاركة</h3>
+                <ul className="space-y-2">
+                  {products.slice(0, 3).map((product) => (
+                    <li
+                      key={product.productId}
+                      className="flex items-center justify-between gap-3 rounded-[var(--radius-m)] bg-[color:var(--glass-bg-strong,var(--surface-2))] px-[var(--spacing-md)] py-[var(--spacing-sm)] text-sm text-[color:var(--anaqti-text,#3d2b2b)]"
+                    >
+                      <div className="flex flex-col text-right">
+                        <span className="font-medium">{product.title}</span>
+                        <span className="text-xs text-[color:var(--anaqti-muted,rgba(61,43,43,0.45))]">
+                          {currencyFormatter.format(product.revenue)} · {product.quantity} قطعة مباعة
+                        </span>
+                      </div>
+                      <Button size="sm" className="rounded-full" onClick={() => handleProductShare(product)}>
+                        مشاركة
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
 
           <div className="flex flex-col items-center gap-3">

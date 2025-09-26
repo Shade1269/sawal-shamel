@@ -68,9 +68,9 @@ export class BundleOptimizer {
   // Preload critical routes
   static preloadCriticalRoutes() {
     const criticalRoutes = [
-      { path: '/dashboard', import: () => import('@/pages/unified/UnifiedDashboardPage') },
-      { path: '/products', import: () => import('@/pages/ProductsBrowser') },
-      { path: '/orders', import: () => import('@/pages/OrderManagement') },
+      { path: '/affiliate', import: () => import('@/pages/affiliate/home') },
+      { path: '/affiliate/storefront', import: () => import('@/pages/AffiliateStoreFront') },
+      { path: '/admin/dashboard', import: () => import('@/pages/unified/UnifiedDashboardPage') },
     ];
 
     criticalRoutes.forEach(route => {
@@ -83,17 +83,14 @@ export class BundleOptimizer {
     const roleComponentMap = {
       'admin': [
         () => import('@/pages/unified/UnifiedDashboardPage'),
-        () => import('@/pages/AdminUsers'),
-        () => import('@/pages/ComprehensiveAdminPanel'),
+        () => import('@/pages/admin/AdminAnalytics'),
+        () => import('@/pages/admin/AdminOrders'),
+        () => import('@/pages/admin/AdminCustomers'),
       ],
       'affiliate': [
-        () => import('@/pages/unified/UnifiedDashboardPage'),
+        () => import('@/pages/affiliate/home'),
         () => import('@/pages/AffiliateStoreFront'),
-      ],
-      'merchant': [
-        () => import('@/pages/unified/UnifiedDashboardPage'),
-        () => import('@/pages/ProductManagement'),
-        () => import('@/pages/inventory'),
+        () => import('@/pages/affiliate/AffiliateCommissionsPage'),
       ],
       'customer': [
         () => import('@/pages/PublicStorefront'),
