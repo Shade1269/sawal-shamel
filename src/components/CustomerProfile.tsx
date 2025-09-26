@@ -127,7 +127,7 @@ export const CustomerProfile: React.FC = () => {
           status: order.status,
           total_sar: order.total_sar,
           created_at: order.created_at,
-          store_name: order.affiliate_stores?.store_name
+          store_name: (order as any)?.affiliate_stores?.store_name || null
         })) || [];
 
         setOrders(formattedOrders);
