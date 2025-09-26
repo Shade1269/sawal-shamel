@@ -37,6 +37,8 @@ export const PushNotificationManager: React.FC = () => {
     systemUpdates: true,
     chatMessages: true
   });
+  const [configError, setConfigError] = useState<string | null>(null);
+  const missingKeyMessage = 'لم يتم تهيئة مفتاح الإشعارات الفورية. يرجى التواصل مع مسؤول النظام لإضافة قيمة VITE_VAPID_PUBLIC_KEY.';
 
   const { toast } = useToast();
   const { notificationTemplates } = useAtlantisNotifications();
@@ -45,6 +47,11 @@ export const PushNotificationManager: React.FC = () => {
   useEffect(() => {
     checkNotificationSupport();
     loadStoredSettings();
+  }, []);
+
+  useEffect(() => {
+    const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+    setConfigError(vapidKey ? null : missingKeyMessage);
   }, []);
 
   const checkNotificationSupport = () => {
@@ -95,6 +102,15 @@ export const PushNotificationManager: React.FC = () => {
   const requestPermission = async () => {
     if (!isSupported) return;
 
+    if (configError) {
+      toast({
+        title: "خطأ في الإعداد",
+        description: configError,
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -139,9 +155,20 @@ export const PushNotificationManager: React.FC = () => {
       await navigator.serviceWorker.ready;
 
       // إنشاء اشتراك push
+      const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+      if (!vapidPublicKey) {
+        setConfigError(missingKeyMessage);
+        toast({
+          title: "خطأ في التكوين",
+          description: missingKeyMessage,
+          variant: "destructive"
+        });
+        return;
+      }
+
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(process.env.REACT_APP_VAPID_PUBLIC_KEY || '')
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
       });
 
       // حفظ الاشتراك في قاعدة البيانات
@@ -297,6 +324,14 @@ export const PushNotificationManager: React.FC = () => {
 
       <CardContent className="space-y-6">
         {/* حالة الإشعارات */}
+        {configError && (
+          <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+            <p className="text-sm text-destructive">
+              {configError}
+            </p>
+          </div>
+        )}
+
         <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg border interactive-glow">
           <div className="flex items-center gap-3">
             <div className="relative">
@@ -320,13 +355,13 @@ export const PushNotificationManager: React.FC = () => {
             {permission === 'granted' && !isSubscribed && (
               <Button
                 onClick={subscribeToPush}
-                disabled={isLoading}
+                disabled={isLoading || !!configError}
                 size="sm"
               >
                 تفعيل الإشعارات
               </Button>
             )}
-            
+
             {permission === 'granted' && isSubscribed && (
               <>
                 <Button
@@ -334,6 +369,7 @@ export const PushNotificationManager: React.FC = () => {
                   variant="outline"
                   size="sm"
                   className="hover-glow flex items-center gap-2"
+                  disabled={!!configError}
                 >
                   <Zap className="h-4 w-4" />
                   إشعار تجريبي
@@ -349,11 +385,11 @@ export const PushNotificationManager: React.FC = () => {
                 </Button>
               </>
             )}
-            
+
             {permission !== 'granted' && (
               <Button
                 onClick={requestPermission}
-                disabled={isLoading}
+                disabled={isLoading || !!configError}
                 size="sm"
                 className="btn-atlantis animate-glow"
               >
