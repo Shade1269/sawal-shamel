@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { BarChart3, ShoppingCart, TrendingUp, Database } from "lucide-react";
+import { BarChart3, ShoppingCart, TrendingUp, Database, Crown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const mainMenuItems = [

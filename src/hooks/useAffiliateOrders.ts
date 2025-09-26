@@ -46,7 +46,7 @@ export const useAffiliateOrders = (affiliateStoreId?: string) => {
 
         // حساب الإحصائيات
         const totalOrders = ordersData.length;
-        const totalRevenue = ordersData.reduce((sum, order) => sum + Number(order.total), 0);
+        const totalRevenue = ordersData.reduce((sum, order) => sum + Number(order.total_sar), 0);
         const totalCommissions = ordersData.reduce((sum, order) => sum + Number(order.affiliate_commission_sar), 0);
         
         // جلب العمولات من جدول commissions
@@ -107,7 +107,7 @@ export const useAffiliateOrders = (affiliateStoreId?: string) => {
             setOrders(ordersData);
 
             const totalOrders = ordersData.length;
-            const totalRevenue = ordersData.reduce((sum, order) => sum + Number(order.total), 0);
+            const totalRevenue = ordersData.reduce((sum, order) => sum + Number(order.total_sar), 0);
             
             const { data: commissions } = await supabase
               .from('commissions')

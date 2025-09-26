@@ -12,9 +12,9 @@ interface Order {
   id: string;
   customer_name: string;
   customer_phone: string;
-  total: number;
-  subtotal: number;
-  tax: number;
+  total_sar: number;
+  subtotal_sar: number;
+  tax_sar: number;
   payment_method: string;
   status: string;
   shipping_address: any;
@@ -255,7 +255,7 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
                 <div className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm font-medium">{order.total.toFixed(2)} ر.س</p>
+                    <p className="text-sm font-medium">{order.total_sar.toFixed(2)} ر.س</p>
                     <p className="text-xs text-muted-foreground">إجمالي المبلغ</p>
                   </div>
                 </div>
@@ -310,7 +310,7 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
                         <div className="border-t pt-4">
                           <div className="flex justify-between text-lg font-bold">
                             <span>المجموع الكلي:</span>
-                            <span>{selectedOrder.total} ريال</span>
+                            <span>{selectedOrder.total_sar} ريال</span>
                           </div>
                         </div>
                       </div>

@@ -21,7 +21,7 @@ export function ThemeSwitcher() {
     return Object.values(THEMES).map((theme) => ({
       id: theme.id,
       label: theme.name,
-      description: theme?.meta?.tagline ?? 'معاينة حية للوحة الألوان الزجاجية',
+      description: 'معاينة حية للوحة الألوان الزجاجية',
       swatch: {
         primary: theme.colors?.primary ?? '#ffffff',
         accent: theme.colors?.secondary ?? '#c084fc',

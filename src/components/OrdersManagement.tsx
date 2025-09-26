@@ -162,7 +162,7 @@ export const OrdersManagement: React.FC<OrdersManagementProps> = ({ shopId }) =>
             <Separator className="my-4" />
             <div className="text-right">
               <p className="text-lg font-bold text-primary">
-                المجموع: {order.total} ريال
+                المجموع: {order.total_sar} ريال
               </p>
             </div>
           </div>
@@ -302,7 +302,7 @@ export const OrdersManagement: React.FC<OrdersManagementProps> = ({ shopId }) =>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-primary">
-                      {order.total} ريال
+                      {order.total_sar} ريال
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {order.items.length} منتج

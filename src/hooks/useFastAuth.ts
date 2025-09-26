@@ -10,7 +10,7 @@ export interface FastUserProfile {
   auth_user_id: string;
   email: string;
   full_name: string;
-  role: 'admin' | 'affiliate' | 'marketer' | 'customer' | 'moderator';
+  role: 'admin' | 'affiliate' | 'marketer' | 'merchant' | 'customer' | 'moderator';
   level: 'bronze' | 'silver' | 'gold' | 'legendary';
   is_active: boolean;
   points?: number;
