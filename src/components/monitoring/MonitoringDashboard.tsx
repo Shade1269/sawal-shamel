@@ -16,7 +16,7 @@ import {
   Bug,
   Zap
 } from 'lucide-react';
-import { errorTracker } from '@/utils/errorTracking';
+import { getErrorTracker } from '@/utils/errorTracking';
 import { AnalyticsUtils } from '@/hooks/useAnalytics';
 import { ABTestUtils } from '@/components/testing/ABTestProvider';
 
@@ -30,6 +30,7 @@ interface DashboardStats {
 }
 
 export const MonitoringDashboard: React.FC = () => {
+  const errorTracker = getErrorTracker();
   const [stats, setStats] = useState<DashboardStats>({
     totalErrors: 0,
     criticalErrors: 0,

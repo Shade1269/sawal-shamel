@@ -29,6 +29,7 @@ export interface PerformanceMetric {
 class ErrorTracker {
   private logs: ErrorLog[] = [];
   private metrics: PerformanceMetric[] = [];
+  private readonly isBrowser: boolean;
   // Public getter for session ID
   get sessionId(): string {
     return this._sessionId;
@@ -39,7 +40,8 @@ class ErrorTracker {
   private userRole?: string;
   private maxLogs = 1000;
 
-  constructor() {
+  constructor(isBrowser: boolean) {
+    this.isBrowser = isBrowser;
     this._sessionId = this.generateSessionId();
     this.setupGlobalErrorHandlers();
     this.setupPerformanceTracking();
@@ -57,6 +59,10 @@ class ErrorTracker {
 
   // Setup global error handlers
   private setupGlobalErrorHandlers() {
+    if (!this.isBrowser || typeof window === 'undefined') {
+      return;
+    }
+
     // Handle JavaScript errors
     window.addEventListener('error', (event) => {
       this.logError({
@@ -111,6 +117,10 @@ class ErrorTracker {
 
   // Setup performance tracking
   private setupPerformanceTracking() {
+    if (!this.isBrowser || typeof window === 'undefined' || typeof PerformanceObserver === 'undefined') {
+      return;
+    }
+
     if ('PerformanceObserver' in window) {
       // Track navigation timing
       const navObserver = new PerformanceObserver((list) => {
@@ -175,8 +185,8 @@ class ErrorTracker {
       stack: error.stack,
       level: error.level || 'error',
       timestamp: Date.now(),
-      userAgent: navigator.userAgent,
-      url: window.location.href,
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
+      url: typeof window !== 'undefined' ? window.location.href : error.url || 'unknown',
       userId: this.userId,
       userRole: this.userRole,
       sessionId: this._sessionId,
@@ -202,7 +212,7 @@ class ErrorTracker {
     console.groupEnd();
 
     // Send to external service in production
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined') {
       this.sendToExternalService(errorLog);
     }
 
@@ -330,6 +340,8 @@ class ErrorTracker {
     try {
       // In production, send to your error tracking service
       // Example: Sentry, LogRocket, or custom endpoint
+      if (typeof fetch === 'undefined') return;
+
       await fetch('/api/errors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -341,11 +353,20 @@ class ErrorTracker {
   }
 }
 
-// Create global instance
-export const errorTracker = new ErrorTracker();
+let errorTrackerInstance: ErrorTracker | null = null;
+
+export const getErrorTracker = () => {
+  if (!errorTrackerInstance) {
+    const isBrowser = typeof window !== 'undefined';
+    errorTrackerInstance = new ErrorTracker(isBrowser);
+  }
+
+  return errorTrackerInstance;
+};
 
 // Helper functions for React components
 export const useErrorTracking = () => {
+  const errorTracker = getErrorTracker();
   return {
     logError: errorTracker.logError.bind(errorTracker),
     logAction: errorTracker.logUserAction.bind(errorTracker),
@@ -355,4 +376,4 @@ export const useErrorTracking = () => {
   };
 };
 
-export default errorTracker;
+export default getErrorTracker;

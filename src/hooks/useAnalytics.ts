@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import { errorTracker } from '@/utils/errorTracking';
+import { getErrorTracker } from '@/utils/errorTracking';
 
 interface AnalyticsEvent {
   event: string;
@@ -20,6 +20,7 @@ interface UserData {
 
 export const useAnalytics = () => {
   const location = useLocation();
+  const tracker = getErrorTracker();
 
   // Track page views automatically
   useEffect(() => {
@@ -42,8 +43,8 @@ export const useAnalytics = () => {
     };
 
     sendAnalyticsEvent(event);
-    errorTracker.trackPageView(path, title);
-  }, []);
+    tracker.trackPageView(path, title);
+  }, [tracker]);
 
   // Track user interactions
   const trackEvent = useCallback((
@@ -67,8 +68,8 @@ export const useAnalytics = () => {
     };
 
     sendAnalyticsEvent(event);
-    errorTracker.logUserAction(action, category, metadata);
-  }, []);
+    tracker.logUserAction(action, category, metadata);
+  }, [tracker]);
 
   // Track button clicks
   const trackButtonClick = useCallback((buttonName: string, context?: string) => {
@@ -115,18 +116,18 @@ export const useAnalytics = () => {
     };
 
     sendAnalyticsEvent(event);
-    errorTracker.trackMetric({
+    tracker.trackMetric({
       type: 'measure',
       name: metricName,
       value,
       unit: unit as any
     });
-  }, []);
+  }, [tracker]);
 
   // Set user properties
   const setUser = useCallback((userData: UserData) => {
-    errorTracker.setUser(userData.userId!, userData.role);
-    
+    tracker.setUser(userData.userId!, userData.role);
+
     // Send user data to analytics
     sendAnalyticsEvent({
       event: 'user_identify',
@@ -134,7 +135,7 @@ export const useAnalytics = () => {
       action: 'identify',
       metadata: userData
     });
-  }, []);
+  }, [tracker]);
 
   // Track errors
   const trackError = useCallback((error: Error, context?: string) => {
@@ -151,13 +152,13 @@ export const useAnalytics = () => {
     };
 
     sendAnalyticsEvent(event);
-    errorTracker.logError({
+    tracker.logError({
       message: error.message,
       stack: error.stack,
       level: 'error',
       component: context || 'unknown'
     });
-  }, []);
+  }, [tracker]);
 
   return {
     // Page tracking
@@ -222,6 +223,9 @@ const sendAnalyticsEvent = (event: AnalyticsEvent) => {
 // Send to custom analytics service
 const sendToAnalyticsEndpoint = async (event: AnalyticsEvent) => {
   try {
+    if (typeof fetch === 'undefined') return;
+
+    const tracker = getErrorTracker();
     await fetch('/api/analytics', {
       method: 'POST',
       headers: {
@@ -230,8 +234,8 @@ const sendToAnalyticsEndpoint = async (event: AnalyticsEvent) => {
       body: JSON.stringify({
         ...event,
         timestamp: Date.now(),
-        sessionId: errorTracker.sessionId,
-        userAgent: navigator.userAgent
+        sessionId: tracker.sessionId,
+        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined
       })
     });
   } catch (error) {
