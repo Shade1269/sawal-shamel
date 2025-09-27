@@ -16,7 +16,7 @@ export const LazyComponents = {
   // Admin Components - using unified system
   AdminUsers: createLazyComponent(() => import('@/pages/AdminUsers')),
   AdminSettings: createLazyComponent(() => import('@/pages/AdminSettings')),
-  AdminOrders: createLazyComponent(() => import('@/pages/AdminOrderManagement')),
+  AdminOrders: createLazyComponent(() => import('@/pages/Admin')),
 
   // Affiliate Components - using unified system
   AffiliateStoreFront: createLazyComponent(() => import('@/pages/affiliate/home')),

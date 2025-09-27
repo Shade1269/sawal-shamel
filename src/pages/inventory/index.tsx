@@ -22,7 +22,7 @@ interface InventoryItemRow {
     variant_name: string | null;
     products?: {
       title: string | null;
-    } | null;
+    } | any;
   } | null;
 }
 

@@ -23,7 +23,7 @@ const SIZE_MAP: Record<ModalSize, string> = {
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
-export interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   open: boolean;
   onClose?: () => void;
   title?: ReactNode;

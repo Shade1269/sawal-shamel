@@ -36,7 +36,7 @@ const routeDefinitions: Record<string, RouteDefinition> = {
     priority: 'low',
   },
   AdminOrders: {
-    importFn: () => import('@/pages/AdminOrderManagement'),
+    importFn: () => import('@/pages/Admin'),
     chunk: 'admin-orders',
     priority: 'medium',
   },

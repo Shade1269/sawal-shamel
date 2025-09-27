@@ -269,12 +269,19 @@ function SceneModel({ modelConfig, accentColor, effects, onReady, onError }) {
   );
 }
 
+export interface SimpleSceneProps {
+  config: any;
+  enabled?: boolean;
+  className?: string;
+  accentColor?: string;
+}
+
 export const SimpleScene = memo(function SimpleScene({
   config,
   enabled = true,
   className,
   accentColor = "#58a6ff",
-}) {
+}: SimpleSceneProps) {
   const surface = describeSimpleSceneSurface({
     enabled,
     webglAvailable: detectWebGLSupport(),

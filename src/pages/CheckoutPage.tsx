@@ -420,7 +420,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
             variant="ghost"
             size="sm"
             leftIcon={<ChevronLeft className="h-4 w-4" aria-hidden />}
-            onClick={() => navigate(-1)}
+            onClick={() => window.history.back()}
           >
             العودة
           </Button>

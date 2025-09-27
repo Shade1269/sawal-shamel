@@ -253,7 +253,8 @@ const ErrorsOverview: React.FC<{ timeRange: string }> = ({ timeRange }) => {
       '7d': 7 * 24 * 60 * 60 * 1000
     }[timeRange];
 
-    setErrorSummary(errorTracker.getErrorSummary(timeInMs));
+    const tracker = getErrorTracker();
+    setErrorSummary(tracker.getErrorSummary(timeInMs));
   }, [timeRange]);
 
   if (!errorSummary) return <div>جاري التحميل...</div>;
@@ -305,7 +306,8 @@ const ErrorsOverview: React.FC<{ timeRange: string }> = ({ timeRange }) => {
 
 // Performance Overview Component
 const PerformanceOverview: React.FC = () => {
-  const performanceSummary = errorTracker.getPerformanceSummary();
+  const tracker = getErrorTracker();
+  const performanceSummary = tracker.getPerformanceSummary();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
