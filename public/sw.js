@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-const VERSION = 'anaqati-pwa-v3';
+const VERSION = 'anaqati-pwa-v4';
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const MEDIA_CACHE = `${VERSION}-media`;
@@ -34,12 +34,15 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
+      // حذف جميع الكاشات القديمة بقوة
       const keys = await caches.keys();
-      await Promise.all(
-        keys
-          .filter((key) => ![STATIC_CACHE, RUNTIME_CACHE, MEDIA_CACHE].includes(key))
-          .map((key) => caches.delete(key))
-      );
+      await Promise.all(keys.map((key) => caches.delete(key)));
+      
+      // إنشاء كاشات جديدة
+      await caches.open(STATIC_CACHE);
+      await caches.open(RUNTIME_CACHE);
+      await caches.open(MEDIA_CACHE);
+      
       if (self.registration.navigationPreload) {
         await self.registration.navigationPreload.enable().catch(() => {});
       }
@@ -86,10 +89,13 @@ self.addEventListener('fetch', (event) => {
 });
 
 async function handleNavigationRequest(request) {
+  // دائماً network-first للصفحات الرئيسية
   try {
-    const response = await fetch(request);
-    const cache = await caches.open(RUNTIME_CACHE);
-    cache.put(request, response.clone());
+    const response = await fetch(request, { cache: 'no-cache' });
+    if (response && response.ok) {
+      const cache = await caches.open(RUNTIME_CACHE);
+      cache.put(request, response.clone());
+    }
     return response;
   } catch (error) {
     const cache = await caches.open(RUNTIME_CACHE);
@@ -105,10 +111,25 @@ async function handleNavigationRequest(request) {
 
 async function cacheFirst(request, cacheName) {
   const cache = await caches.open(cacheName);
+  
+  // للـ JS chunks، تحقق من network أولاً لتجنب chunks قديمة
+  if (request.destination === 'script' || request.url.includes('/assets/')) {
+    try {
+      const response = await fetch(request);
+      if (response && response.ok) {
+        cache.put(request, response.clone());
+        return response;
+      }
+    } catch (error) {
+      // fallback للكاش إذا فشل network
+    }
+  }
+  
   const cached = await cache.match(request);
   if (cached) {
     return cached;
   }
+  
   try {
     const response = await fetch(request);
     if (response && response.ok) {
