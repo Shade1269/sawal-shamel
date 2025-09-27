@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import './styles/anaqti.css';
-@import './themes/default/tokens.css';
-@import './themes/luxury/tokens.css';
-@import './themes/damascus/tokens.css';
 @import './ui/styles.css';
 
 @tailwind base;
@@ -15,8 +12,37 @@
     font-family: var(--font-sans, 'Noto Sans Arabic', system-ui, sans-serif);
     font-size: var(--font-size-md, 1rem);
     line-height: var(--font-line-height, 1.5);
-    background-color: var(--bg);
-    color: var(--fg);
+    background-color: hsl(var(--bg));
+    color: hsl(var(--fg));
+
+    /* Default theme variables */
+    --bg: 13 17 23;
+    --fg: 240 246 252;
+    --primary: 35 134 54;
+    --primary-fg: 255 255 255;
+    --secondary: 110 118 129;
+    --secondary-fg: 255 255 255;
+    --muted: 33 38 45;
+    --muted-fg: 139 148 158;
+    --success: 35 134 54;
+    --warning: 210 153 34;
+    --danger: 218 54 51;
+    --info: 47 129 247;
+    --border: 48 54 61;
+    --surface: 21 26 33;
+    --surface-2: 30 36 43;
+    --accent: 35 134 54;
+    --accent-fg: 255 255 255;
+
+    /* Radius tokens */
+    --radius-s: 6px;
+    --radius-m: 8px;
+    --radius-l: 12px;
+    --radius-xl: 16px;
+
+    /* Shadow tokens */
+    --shadow-glass-soft: 0 4px 12px color-mix(in srgb, hsl(var(--bg)) 85%, transparent);
+    --shadow-glass-strong: 0 8px 24px color-mix(in srgb, hsl(var(--bg)) 75%, transparent);
 
     /* Legacy aliases */
     --card: var(--card, var(--surface));
@@ -61,10 +87,49 @@
     direction: rtl;
   }
 
-  html[data-theme='default'],
-  html[data-theme='luxury'],
-  html[data-theme='damascus'] {
+  html[data-theme='feminine'],
+  html[data-theme='night'],
+  html[data-theme='legendary'] {
     color-scheme: dark;
+  }
+
+  /* Feminine theme overrides */
+  html[data-theme='feminine'] {
+    --bg: 253 248 248;
+    --fg: 45 27 27;
+    --primary: 233 30 99;
+    --primary-fg: 255 255 255;
+    --secondary: 244 143 177;
+    --secondary-fg: 26 10 10;
+    --muted: 243 229 245;
+    --muted-fg: 107 75 107;
+    --border: 248 187 217;
+  }
+
+  /* Night theme overrides */
+  html[data-theme='night'] {
+    --bg: 10 10 10;
+    --fg: 245 245 245;
+    --primary: 187 134 252;
+    --primary-fg: 18 18 18;
+    --secondary: 3 218 198;
+    --secondary-fg: 0 0 0;
+    --muted: 31 31 31;
+    --muted-fg: 160 160 160;
+    --border: 51 51 51;
+  }
+
+  /* Legendary theme overrides */
+  html[data-theme='legendary'] {
+    --bg: 26 13 46;
+    --fg: 240 230 255;
+    --primary: 124 58 237;
+    --primary-fg: 255 255 255;
+    --secondary: 168 85 247;
+    --secondary-fg: 255 255 255;
+    --muted: 45 27 71;
+    --muted-fg: 196 181 253;
+    --border: 76 29 149;
   }
 
   * {
