@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Package, RefreshCw, ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
 import { AddInventoryDialog } from '@/components/inventory/AddInventoryDialog';
+import { SimpleProductForm } from '@/components/inventory/SimpleProductForm';
 import { ReturnInventoryDialog } from '@/components/inventory/ReturnInventoryDialog';
 import { InventoryFilters, FilterState } from '@/components/inventory/InventoryFilters';
 import { InventoryAlerts } from '@/components/inventory/InventoryAlerts';
@@ -240,16 +241,26 @@ const InventoryOverviewPage = () => {
       {/* Alerts */}
       <InventoryAlerts refreshTrigger={refreshTrigger} />
 
+      {/* إضافة منتج جديد */}
+      <SimpleProductForm 
+        warehouseId={warehouses[0]?.id}
+        onSuccess={loadInventory}
+      />
+
       {/* Main Inventory Management */}
       <Card>
         <CardHeader className="flex flex-col gap-2">
-          <CardTitle className="text-lg">إدارة المخزون</CardTitle>
+          <CardTitle className="text-lg">إدارة المخزون الحالي</CardTitle>
           <CardDescription>
             عرض وإدارة جميع أصناف المخزون مع إمكانية الإضافة والاسترجاع والجرد
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-wrap gap-2">
+            <SimpleProductForm 
+              warehouseId={warehouses[0]?.id}
+              onSuccess={loadInventory}
+            />
             <AddInventoryDialog
               warehouses={warehouses}
               onSuccess={loadInventory}
