@@ -121,6 +121,7 @@ const App = () => {
                 <Route path="home" element={<Navigate to="../" replace />} />
                 <Route path="storefront" element={<AffiliateStoreFront />} />
                 <Route path="storefront/modern" element={<ModernStorefront />} />
+                <Route path="storefront/:storeSlug" element={<ModernStorefront />} />
                 <Route path="store/settings" element={<AffiliateStoreSettingsPage />} />
                 <Route path="orders" element={<UnifiedAffiliateOrders />} />
                 <Route path="analytics" element={<AffiliateAnalyticsPage />} />
