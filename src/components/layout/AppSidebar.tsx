@@ -10,8 +10,8 @@ import {
   Shield,
   Store,
   Users,
-  Settings,
 } from "lucide-react";
+import { Settings } from "lucide-react";
 
 import {
   Sidebar,
