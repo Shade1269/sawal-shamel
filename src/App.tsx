@@ -13,8 +13,8 @@ import { navigationItems } from "@/data/navigationItems";
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import { ProtectedRoute } from "@/shared/components/ProtectedRoute";
 import DomainManager from "@/components/store/DomainManager";
-import AffiliateLayout from "@/layouts/AffiliateLayout";
-import AdminLayout from "@/layouts/EnhancedAdminLayout";
+import AffiliateLayout from "@/layouts/ModernAffiliateLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
 
 const HomePage = lazy(() => import("./pages/Index"));
@@ -29,7 +29,7 @@ const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
 const AffiliateStoreSettingsPage = lazy(() => import("./pages/affiliate/store/Settings"));
 const LegacyStoreRedirect = lazy(() => import("./pages/redirects/LegacyStoreRedirect"));
 const AffiliateAnalyticsPage = lazy(() => import("./pages/affiliate/AffiliateCommissionsPage"));
-const UnifiedOrdersPage = lazy(() => import("./pages/unified/UnifiedOrdersPage"));
+const UnifiedAffiliateOrders = lazy(() => import("./pages/unified/UnifiedAffiliateOrders"));
 const AdminHomePage = lazy(() => import("./pages/home/AdminHome"));
 const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrders"));
 const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalytics"));
@@ -108,21 +108,21 @@ const App = () => {
                               <Route path="/checkout" element={<CheckoutPage />} />
                               <Route path="/order/confirmation" element={<OrderConfirmationPage />} />
 
-                              <Route
-                                path="/affiliate/*"
-                                element={(
-                                  <ProtectedRoute requiredRole={["affiliate", "marketer", "admin"]}>
-                                    <AffiliateLayout />
-                                  </ProtectedRoute>
-                                )}
-                              >
-                                <Route index element={<MarketerHomePage />} />
-                                <Route path="home" element={<Navigate to="../" replace />} />
-                                <Route path="storefront" element={<AffiliateStoreFront />} />
-                                <Route path="store/settings" element={<AffiliateStoreSettingsPage />} />
-                                <Route path="orders" element={<UnifiedOrdersPage />} />
-                                <Route path="analytics" element={<AffiliateAnalyticsPage />} />
-                              </Route>
+              <Route
+                path="/affiliate/*"
+                element={(
+                  <ProtectedRoute requiredRole={["affiliate", "marketer", "admin"]}>
+                    <AffiliateLayout />
+                  </ProtectedRoute>
+                )}
+              >
+                <Route index element={<MarketerHomePage />} />
+                <Route path="home" element={<Navigate to="../" replace />} />
+                <Route path="storefront" element={<AffiliateStoreFront />} />
+                <Route path="store/settings" element={<AffiliateStoreSettingsPage />} />
+                <Route path="orders" element={<UnifiedAffiliateOrders />} />
+                <Route path="analytics" element={<AffiliateAnalyticsPage />} />
+              </Route>
 
                               <Route
                                 path="/admin/*"

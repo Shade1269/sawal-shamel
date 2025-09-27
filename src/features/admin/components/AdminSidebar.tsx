@@ -33,6 +33,11 @@ const managementItems = [
     title: "المخزون",
     url: "/admin/inventory",
     icon: Database
+  },
+  {
+    title: "إدارة شاملة",
+    url: "/admin/management",
+    icon: Crown
   }
 ];
 
