@@ -62,6 +62,7 @@ const InventoryOverviewPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [products, setProducts] = useState<{[key: string]: string}>({});
+  const [fullProducts, setFullProducts] = useState<any[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleFiltersChange = (filters: FilterState) => {
@@ -141,6 +142,27 @@ const InventoryOverviewPage = () => {
     setError(null);
 
     try {
+      // أولاً الحصول على معرف المستخدم الحالي والتاجر
+      const { data: { user } } = await supabase.auth.getUser();
+      let userMerchantId = null;
+      
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('auth_user_id', user.id)
+          .single();
+          
+        if (profile) {
+          const { data: merchant } = await supabase
+            .from('merchants')
+            .select('id')
+            .eq('profile_id', profile.id)
+            .single();
+          userMerchantId = merchant?.id;
+        }
+      }
+
       const [warehousesResult, itemsResult, movementsResult, productsResult] = await Promise.all([
         supabase
           .from('warehouses')
@@ -170,10 +192,12 @@ const InventoryOverviewPage = () => {
           )
           .order('created_at', { ascending: false })
           .limit(50),
-        supabase
+        userMerchantId ? supabase
           .from('products')
-          .select('id, title')
-          .limit(1000)
+          .select('id, title, sku, price_sar, stock, is_active, created_at')
+          .eq('merchant_id', userMerchantId)
+          .order('created_at', { ascending: false })
+          .limit(100) : Promise.resolve({ data: [], error: null })
       ]);
 
       if (warehousesResult.error) {
@@ -192,6 +216,7 @@ const InventoryOverviewPage = () => {
         productsResult.data.forEach(product => {
           productsMap[product.id] = product.title || 'منتج غير معروف';
         });
+        setFullProducts(productsResult.data);
       }
 
       setWarehouses(warehousesResult.data ?? []);
@@ -246,6 +271,65 @@ const InventoryOverviewPage = () => {
         warehouseId={warehouses[0]?.id}
         onSuccess={loadInventory}
       />
+
+      {/* قائمة المنتجات المحفوظة */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Package className="h-5 w-5" />
+            قائمة المنتجات المحفوظة
+          </CardTitle>
+          <CardDescription>
+            عرض جميع المنتجات التي تم إضافتها مؤخراً
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>اسم المنتج</TableHead>
+                  <TableHead>رمز المنتج (SKU)</TableHead>
+                  <TableHead className="text-center">السعر</TableHead>
+                  <TableHead className="text-center">المخزون</TableHead>
+                  <TableHead className="text-center">الحالة</TableHead>
+                  <TableHead>تاريخ الإضافة</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {fullProducts.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="py-6 text-center text-sm text-muted-foreground">
+                      لا توجد منتجات محفوظة بعد
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  fullProducts.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{product.title}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono text-sm">{product.sku || '-'}</TableCell>
+                      <TableCell className="text-center">{product.price_sar ? `${product.price_sar} ر.س` : '-'}</TableCell>
+                      <TableCell className="text-center">{product.stock || 0}</TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant={product.is_active ? "secondary" : "outline"}>
+                          {product.is_active ? 'نشط' : 'غير نشط'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        {product.created_at ? new Date(product.created_at).toLocaleDateString('ar-SA') : '-'}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Main Inventory Management */}
       <Card>
