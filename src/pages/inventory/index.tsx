@@ -5,6 +5,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Package, RefreshCw, ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
+import { AddInventoryDialog } from '@/components/inventory/AddInventoryDialog';
+import { ReturnInventoryDialog } from '@/components/inventory/ReturnInventoryDialog';
 
 interface WarehouseRow {
   id: string;
@@ -172,10 +174,27 @@ const InventoryOverviewPage = () => {
                 ))}
               </select>
             </div>
-            <Button onClick={loadInventory} disabled={loading} variant="outline" className="gap-2">
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-              تحديث البيانات
-            </Button>
+            <div className="flex gap-2">
+              <AddInventoryDialog
+                warehouses={warehouses}
+                onSuccess={loadInventory}
+              />
+              <ReturnInventoryDialog
+                inventoryItems={filteredItems.map(item => ({
+                  id: item.id,
+                  sku: item.sku,
+                  quantity_available: item.quantity_available || 0,
+                  warehouse_id: item.warehouse_id || '',
+                  location: undefined
+                }))}
+                warehouses={warehouses}
+                onSuccess={loadInventory}
+              />
+              <Button onClick={loadInventory} disabled={loading} variant="outline" className="gap-2">
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                تحديث البيانات
+              </Button>
+            </div>
           </div>
 
           {error ? (

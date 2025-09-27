@@ -71,6 +71,71 @@ export function useRealInventoryManagement() {
     }
   });
 
+  // Add inventory item mutation
+  const addInventoryItem = useMutation({
+    mutationFn: async (itemData: {
+      warehouse_id: string;
+      sku: string;
+      quantity_available: number;
+      unit_cost: number;
+      location?: string;
+      batch_number?: string;
+      expiry_date?: string;
+    }) => {
+      const { data, error } = await supabase
+        .from('inventory_items')
+        .insert(itemData)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['real_inventory_items'] });
+      toast({
+        title: "تم إضافة المنتج",
+        description: "تم إضافة المنتج للمخزون بنجاح",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "خطأ في الإضافة",
+        description: error.message || "حدث خطأ أثناء إضافة المنتج",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Update inventory item mutation
+  const updateInventoryItem = useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: Partial<SimpleInventoryItem> }) => {
+      const { data, error } = await supabase
+        .from('inventory_items')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['real_inventory_items'] });
+      toast({
+        title: "تم التحديث",
+        description: "تم تحديث بيانات المنتج بنجاح",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "خطأ في التحديث",
+        description: error.message || "حدث خطأ أثناء تحديث المنتج",
+        variant: "destructive",
+      });
+    }
+  });
+
   // Create default warehouse and inventory items
   const initializeSystem = useMutation({
     mutationFn: async () => {
@@ -176,6 +241,10 @@ export function useRealInventoryManagement() {
     loading,
     initializeSystem: () => initializeSystem.mutateAsync(),
     createWarehouse: (data: any) => createWarehouse.mutateAsync(data),
-    isInitializing: initializeSystem.isPending
+    addInventoryItem: (data: any) => addInventoryItem.mutateAsync(data),
+    updateInventoryItem: (data: any) => updateInventoryItem.mutateAsync(data),
+    isInitializing: initializeSystem.isPending,
+    isAddingItem: addInventoryItem.isPending,
+    isUpdatingItem: updateInventoryItem.isPending,
   };
 }
