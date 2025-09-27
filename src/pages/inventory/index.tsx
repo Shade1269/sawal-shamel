@@ -18,12 +18,7 @@ interface InventoryItemRow {
   quantity_available: number | null;
   quantity_reserved: number | null;
   warehouse_id: string | null;
-  product_variants?: {
-    variant_name: string | null;
-    products?: {
-      title: string | null;
-    } | any;
-  } | null;
+  product_variant_id: string | null;
 }
 
 interface MovementRow {
@@ -52,6 +47,7 @@ const InventoryOverviewPage = () => {
   const [selectedWarehouse, setSelectedWarehouse] = useState<'all' | string>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [products, setProducts] = useState<{[key: string]: string}>({});
 
   const warehouseLookup = useMemo(() => {
     const map = new Map<string, WarehouseRow>();
@@ -84,28 +80,21 @@ const InventoryOverviewPage = () => {
     setError(null);
 
     try {
-      const [warehousesResult, itemsResult, movementsResult] = await Promise.all([
+      const [warehousesResult, itemsResult, movementsResult, productsResult] = await Promise.all([
         supabase
           .from('warehouses')
           .select('id, name, code')
           .order('name', { ascending: true }),
         supabase
           .from('inventory_items')
-          .select(
-            `
+          .select(`
             id,
             sku,
             quantity_available,
             quantity_reserved,
             warehouse_id,
-            product_variants (
-              variant_name,
-              products (
-                title
-              )
-            )
-          `
-          )
+            product_variant_id
+          `)
           .limit(200),
         supabase
           .from('inventory_movements')
@@ -113,7 +102,11 @@ const InventoryOverviewPage = () => {
             `id, movement_number, movement_type, quantity, created_at, reference_type, reference_id, warehouse_product_id, product_variant_id`
           )
           .order('created_at', { ascending: false })
-          .limit(50)
+          .limit(50),
+        supabase
+          .from('products')
+          .select('id, title')
+          .limit(1000)
       ]);
 
       if (warehousesResult.error) {
@@ -126,9 +119,18 @@ const InventoryOverviewPage = () => {
         throw movementsResult.error;
       }
 
+      // إنشاء خريطة المنتجات للوصول السريع
+      const productsMap: {[key: string]: string} = {};
+      if (productsResult.data) {
+        productsResult.data.forEach(product => {
+          productsMap[product.id] = product.title || 'منتج غير معروف';
+        });
+      }
+
       setWarehouses(warehousesResult.data ?? []);
       setItems(itemsResult.data ?? []);
       setMovements(movementsResult.data ?? []);
+      setProducts(productsMap);
     } catch (err: any) {
       console.error('Failed to load inventory snapshot:', err);
       setError(err?.message ?? 'تعذر تحميل بيانات المخزون');
@@ -226,16 +228,14 @@ const InventoryOverviewPage = () => {
                   ) : (
                     filteredItems.map((item) => {
                       const warehouse = item.warehouse_id ? warehouseLookup.get(item.warehouse_id) : null;
-                      const title = item.product_variants?.products?.title ?? 'منتج غير معروف';
-                      const variantName = item.product_variants?.variant_name ?? null;
+                      // استخدام SKU كاسم المنتج إذا لم يكن متوفراً في قاعدة البيانات
+                      const title = item.sku || 'صنف غير معرف';
                       return (
                         <TableRow key={item.id}>
                           <TableCell>
                             <div className="flex flex-col">
                               <span className="font-medium">{title}</span>
-                              {variantName ? (
-                                <span className="text-xs text-muted-foreground">{variantName}</span>
-                              ) : null}
+                              <span className="text-xs text-muted-foreground">رمز المنتج: {item.sku}</span>
                             </div>
                           </TableCell>
                           <TableCell className="font-mono text-sm">{item.sku}</TableCell>
