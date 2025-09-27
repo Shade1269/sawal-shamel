@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { useTheme } from "@/hooks/useTheme";
 
 type ButtonVariant =
+  | "default"
   | "solid"
   | "outline"
   | "ghost"
@@ -15,7 +16,7 @@ type ButtonVariant =
   | "success"
   | "link";
 
-type ButtonSize = "sm" | "md" | "lg";
+type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 type CSSVars = CSSProperties & Record<`--${string}`, string | number>;
 
@@ -37,6 +38,12 @@ const SIZE_MAP: Record<ButtonSize, { fontSize: string; paddingScale: number; hei
     paddingScale: 1.2,
     heightOffset: 8,
     gapScale: 1.1,
+  },
+  icon: {
+    fontSize: "var(--font-size-md, 1rem)",
+    paddingScale: 0,
+    heightOffset: 0,
+    gapScale: 0,
   },
 };
 
