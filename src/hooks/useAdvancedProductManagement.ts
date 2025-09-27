@@ -1,28 +1,36 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { Database } from "@/integrations/supabase/types";
 
-// أنواع البيانات المتقدمة
+// استخدام الأنواع من قاعدة البيانات
+type DatabaseProduct = Database['public']['Tables']['products']['Row'];
+type DatabaseProductInsert = Database['public']['Tables']['products']['Insert'];
+
+// أنواع البيانات المتقدمة - متوافقة مع قاعدة البيانات
 export interface AdvancedProduct {
-  id: string;
+  id?: string;
   title: string;
-  description: string;
+  description?: string;
   price_sar: number;
-  compare_at_price_sar?: number;
-  cost_price_sar?: number;
-  sku_root: string;
-  status: string;
+  sku?: string;
+  sku_root?: string;
   brand?: string;
+  brand_id?: string;
   category_id?: string;
-  has_variants: boolean;
-  weight_grams?: number;
+  weight_kg?: number;
   dimensions_cm?: string;
-  tags: string[];
+  tags?: string[];
   is_active: boolean;
-  featured: boolean;
-  created_at: string;
-  updated_at: string;
-  merchant_id: string;
+  featured?: boolean;
+  stock?: number;
+  merchant_id?: string;
+  shop_id?: string;
+  image_urls?: string[];
+  has_variants?: boolean;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface ProductMedia {
@@ -30,10 +38,10 @@ export interface ProductMedia {
   product_id: string;
   media_type: 'cover_image' | 'gallery' | 'video';
   media_url: string;
-  alt_text?: string;
+  alt_text?: string | null;
   sort_order: number;
-  file_size?: number;
-  dimensions?: { width: number; height: number };
+  file_size?: number | null;
+  dimensions?: { width: number; height: number } | null;
 }
 
 export interface ProductDiscount {
@@ -145,11 +153,14 @@ export function useAdvancedProduct(id: string) {
       return {
         product: {
           ...product,
-          sku_root: product.sku || '',
-          status: product.status || 'draft',
-          has_variants: product.has_variants || false
-        },
-        media: media || [],
+          sku: product.sku || '',
+          is_active: product.is_active || false
+        } as AdvancedProduct,
+        media: (media || []).map(m => ({
+          ...m,
+          media_type: m.media_type as 'cover_image' | 'gallery' | 'video',
+          dimensions: m.dimensions ? m.dimensions as { width: number; height: number } : null
+        })) as ProductMedia[],
         discounts: discounts || [],
         variants: variants || [],
         seo: seo || { product_id: id, meta_keywords: [] },
@@ -163,8 +174,7 @@ export function useAdvancedProduct(id: string) {
 export function useAdvancedProducts(filters?: {
   search?: string;
   category_id?: string;
-  status?: string;
-  has_variants?: boolean;
+  is_active?: boolean;
 }) {
   return useQuery({
     queryKey: ["advanced-products", filters],
@@ -172,26 +182,20 @@ export function useAdvancedProducts(filters?: {
       let query = supabase
         .from("products")
         .select(`
-          *,
-          media:product_media(*),
-          variants:product_variants_advanced(*)
+          *
         `)
         .order("created_at", { ascending: false });
 
       if (filters?.search) {
-        query = query.or(`title.ilike.%${filters.search}%,sku_root.ilike.%${filters.search}%`);
+        query = query.or(`title.ilike.%${filters.search}%,sku.ilike.%${filters.search}%`);
       }
 
       if (filters?.category_id) {
         query = query.eq("category_id", filters.category_id);
       }
 
-      if (filters?.status) {
-        query = query.eq("status", filters.status);
-      }
-
-      if (filters?.has_variants !== undefined) {
-        query = query.eq("has_variants", filters.has_variants);
+      if (filters?.is_active !== undefined) {
+        query = query.eq("is_active", filters.is_active);
       }
 
       const { data, error } = await query;
@@ -208,12 +212,25 @@ export function useCreateAdvancedProduct() {
   return useMutation({
     mutationFn: async (data: CompleteProductData) => {
       // إنشاء المنتج الأساسي
+      const productInsert: DatabaseProductInsert = {
+        title: data.product.title,
+        description: data.product.description,
+        price_sar: data.product.price_sar,
+        sku: data.product.sku,
+        brand_id: data.product.brand_id,
+        category_id: data.product.category_id,
+        weight_kg: data.product.weight_kg,
+        dimensions_cm: data.product.dimensions_cm,
+        tags: data.product.tags,
+        is_active: data.product.is_active,
+        featured: data.product.featured,
+        stock: data.product.stock || 0,
+        merchant_id: data.product.merchant_id || ''
+      };
+
       const { data: product, error: productError } = await supabase
         .from("products")
-        .insert([{
-          ...data.product,
-          id: undefined // دع قاعدة البيانات تولد المعرف
-        }])
+        .insert([productInsert])
         .select()
         .single();
 
@@ -391,42 +408,4 @@ export function useCalculateFinalPrice() {
 
     return Math.max(basePrice - discountAmount, 0);
   };
-}
-
-// خطاف للتحقق من الصلاحيات
-export function useProductPermissions() {
-  return useQuery({
-    queryKey: ["product-permissions"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("product_permissions")
-        .select("*")
-        .eq("is_active", true);
-
-      if (error) throw error;
-      return data || [];
-    }
-  });
-}
-
-// خطاف لسجل النشاط
-export function useProductActivityLog(productId?: string) {
-  return useQuery({
-    queryKey: ["product-activity-log", productId],
-    queryFn: async () => {
-      let query = supabase
-        .from("product_activity_log")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (productId) {
-        query = query.eq("product_id", productId);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!productId
-  });
 }

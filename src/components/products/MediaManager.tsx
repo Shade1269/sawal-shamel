@@ -31,13 +31,27 @@ const MediaManager: React.FC<MediaManagerProps> = ({
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [videoUrlInput, setVideoUrlInput] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string>('');
-  const [videoUrl, setVideoUrl] = useState('');
 
   // فلترة الوسائط
   const coverImage = media.find(m => m.media_type === 'cover_image');
   const galleryImages = media.filter(m => m.media_type === 'gallery').sort((a, b) => a.sort_order - b.sort_order);
-  const videoUrl = media.find(m => m.media_type === 'video')?.media_url || '';
+
+  const handleVideoAdd = () => {
+    const url = videoUrlInput.trim();
+    if (url) {
+      onMediaChange([...media, {
+        product_id: "",
+        media_type: 'video' as const,
+        media_url: url,
+        sort_order: media.length,
+      }]);
+      setVideoUrlInput('');
+    }
+  };
+
+  const currentVideoUrl = media.find(m => m.media_type === 'video')?.media_url || '';
 
   // رفع الصور
   const handleFileUpload = async (files: FileList, type: 'cover_image' | 'gallery') => {
@@ -176,45 +190,10 @@ const MediaManager: React.FC<MediaManagerProps> = ({
     setDraggedIndex(null);
   };
 
-  // إضافة فيديو
-  const addVideo = () => {
-    if (!videoUrl.trim()) return;
-
-    // التحقق من صحة الرابط
-    const videoPatterns = [
-      /youtube\.com\/watch\?v=([^&]+)/,
-      /youtu\.be\/([^?]+)/,
-      /vimeo\.com\/(\d+)/
-    ];
-
-    const isValidVideo = videoPatterns.some(pattern => pattern.test(videoUrl));
-    
-    if (!isValidVideo) {
-      toast({
-        title: "رابط غير صحيح",
-        description: "يرجى إدخال رابط صحيح من يوتيوب أو فيميو",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    const videoMedia: ProductMedia = {
-      product_id: '',
-      media_type: 'video',
-      media_url: videoUrl,
-      alt_text: 'فيديو المنتج',
-      sort_order: 0
-    };
-
-    // استبدال الفيديو الحالي إن وجد
-    const updatedMedia = media.filter(m => m.media_type !== 'video');
-    onMediaChange([...updatedMedia, videoMedia]);
-  };
-
   // حذف الفيديو
   const removeVideo = () => {
     onMediaChange(media.filter(m => m.media_type !== 'video'));
-    setVideoUrl('');
+    setVideoUrlInput('');
   };
 
   return (
@@ -408,22 +387,6 @@ const MediaManager: React.FC<MediaManagerProps> = ({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-                placeholder="https://youtube.com/watch?v=..."
-                className="flex-1"
-              />
-              <Button
-                type="button"
-                onClick={addVideo}
-                disabled={!videoUrl.trim()}
-              >
-                إضافة
-              </Button>
-            </div>
-
             {media.find(m => m.media_type === 'video') && (
               <div className="relative">
                 <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
@@ -439,6 +402,22 @@ const MediaManager: React.FC<MediaManagerProps> = ({
                 </Button>
               </div>
             )}
+
+            <div className="flex gap-2">
+              <Input
+                value={videoUrlInput}
+                onChange={(e) => setVideoUrlInput(e.target.value)}
+                placeholder="https://youtube.com/watch?v=..."
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                onClick={handleVideoAdd}
+                disabled={!videoUrlInput.trim()}
+              >
+                إضافة
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
