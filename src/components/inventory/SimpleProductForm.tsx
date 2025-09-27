@@ -80,13 +80,13 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
         const filePath = `products/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
-          .from('products')
+          .from('product-images')
           .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
         const { data: { publicUrl } } = supabase.storage
-          .from('products')
+          .from('product-images')
           .getPublicUrl(filePath);
 
         uploadedUrls.push(publicUrl);
@@ -116,6 +116,27 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
         throw new Error('يجب تسجيل الدخول أولاً');
       }
 
+      // الحصول على معرف التاجر المرتبط بالمستخدم الحالي
+      const { data: userProfile, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single();
+
+      if (profileError || !userProfile) {
+        throw new Error('لم يتم العثور على ملف المستخدم');
+      }
+
+      const { data: merchant, error: merchantError } = await supabase
+        .from('merchants')
+        .select('id')
+        .eq('user_profile_id', userProfile.id)
+        .single();
+
+      if (merchantError || !merchant) {
+        throw new Error('لم يتم العثور على حساب التاجر');
+      }
+
       // إنشاء المنتج الأساسي
       const { data: product, error: productError } = await supabase
         .from('products')
@@ -127,7 +148,7 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
           image_urls: imageUrls,
           is_active: true,
           stock: variants.reduce((sum, v) => sum + v.quantity, 0),
-          merchant_id: user.id, // استخدام معرف المستخدم الحالي
+          merchant_id: merchant.id,
         })
         .select()
         .single();
@@ -137,21 +158,29 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
       // إنشاء متغيرات المنتج
       for (const variant of variants) {
         if (variant.color || variant.size || variant.quantity > 0) {
-          await supabase.from('product_variants_advanced').insert({
-            product_id: product.id,
-            sku: `${data.sku}-${variant.color}-${variant.size}`.replace(/--/g, '-').replace(/^-|-$/g, ''),
-            color: variant.color || null,
-            size: variant.size || null,
-            quantity: variant.quantity,
-            is_active: true,
-            min_stock_alert: 5,
-          });
+          const { data: createdVariant, error: variantError } = await supabase
+            .from('product_variants_advanced')
+            .insert({
+              product_id: product.id,
+              sku: `${data.sku}-${variant.color}-${variant.size}`.replace(/--/g, '-').replace(/^-|-$/g, ''),
+              color: variant.color || null,
+              size: variant.size || null,
+              quantity: variant.quantity,
+              is_active: true,
+              min_stock_alert: 5,
+            })
+            .select()
+            .single();
+
+          if (variantError || !createdVariant) {
+            throw variantError || new Error('فشل إنشاء متغير المنتج');
+          }
 
           // إضافة عنصر للمخزون إذا كان هناك warehouse
           if (warehouseId && variant.quantity > 0) {
             await supabase.from('inventory_items').insert({
               warehouse_id: warehouseId,
-              product_variant_id: product.id,
+              product_variant_id: createdVariant.id,
               sku: `${data.sku}-${variant.color}-${variant.size}`.replace(/--/g, '-').replace(/^-|-$/g, ''),
               quantity_available: variant.quantity,
               quantity_reserved: 0,
