@@ -110,6 +110,12 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
   const onSubmit = async (data: ProductForm) => {
     setSaving(true);
     try {
+      // الحصول على معرف المستخدم الحالي
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('يجب تسجيل الدخول أولاً');
+      }
+
       // إنشاء المنتج الأساسي
       const { data: product, error: productError } = await supabase
         .from('products')
@@ -121,7 +127,7 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
           image_urls: imageUrls,
           is_active: true,
           stock: variants.reduce((sum, v) => sum + v.quantity, 0),
-          merchant_id: '00000000-0000-0000-0000-000000000000', // معرف افتراضي
+          merchant_id: user.id, // استخدام معرف المستخدم الحالي
         })
         .select()
         .single();
