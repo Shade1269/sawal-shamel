@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-const VERSION = 'anaqati-pwa-v2';
+const VERSION = 'anaqati-pwa-v3';
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const MEDIA_CACHE = `${VERSION}-media`;
