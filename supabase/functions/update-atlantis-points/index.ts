@@ -1,9 +1,15 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const supabase = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+);
 
 interface PointsUpdateData {
   userId: string;
@@ -150,7 +156,7 @@ serve(async (req) => {
     // If user is in an alliance, update contribution points
     const { data: membership } = await supabase
       .from('alliance_members')
-      .select('id, alliance_id')
+      .select('id, alliance_id, contribution_points')
       .eq('user_id', profileId)
       .eq('is_active', true)
       .single();
@@ -159,16 +165,23 @@ serve(async (req) => {
       await supabase
         .from('alliance_members')
         .update({
-          contribution_points: supabase.sql`contribution_points + ${pointsToAdd}`,
+          contribution_points: membership.contribution_points + pointsToAdd,
           last_activity_at: new Date().toISOString()
         })
         .eq('id', membership.id);
+
+      // Get alliance current points
+      const { data: alliance } = await supabase
+        .from('alliances')
+        .select('total_points')
+        .eq('id', membership.alliance_id)
+        .single();
 
       // Update alliance total points
       await supabase
         .from('alliances')
         .update({
-          total_points: supabase.sql`total_points + ${pointsToAdd}`,
+          total_points: (alliance?.total_points || 0) + pointsToAdd,
           updated_at: new Date().toISOString()
         })
         .eq('id', membership.alliance_id);
@@ -221,11 +234,3 @@ serve(async (req) => {
     );
   }
 });
-
-// Import Supabase client for database operations
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.0';
-
-const supabase = createClient(
-  Deno.env.get('SUPABASE_URL') ?? '',
-  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-);

@@ -182,7 +182,7 @@ serve(async (req) => {
     const encodedData = encoder.encode(dataString);
     
     // استخدام base64 للتشفير (في الإنتاج يجب استخدام تشفير حقيقي)
-    const encryptedData = encode(encodedData);
+    const encryptedData = encode(encodedData.buffer);
     
     // حساب checksum
     const checksum = await crypto.subtle.digest('SHA-256', encodedData);
@@ -261,7 +261,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: 'Backup failed',
-        details: error.message 
+        details: error instanceof Error ? error.message : 'Unknown error occurred'
       }),
       { 
         status: 500, 

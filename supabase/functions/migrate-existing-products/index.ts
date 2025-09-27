@@ -149,7 +149,7 @@ serve(async (req) => {
         const baseProduct = products[0];
         
         // Calculate total stock (sum of all products in group)
-        const totalStock = products.reduce((sum, product) => sum + (product.stock || 0), 0);
+        const totalStock = products.reduce((sum: number, product: any) => sum + (product.stock || 0), 0);
 
         let parentProduct;
         
@@ -285,9 +285,9 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in migrate-existing-products:', error);
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: error.message 
+    return new Response(JSON.stringify({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

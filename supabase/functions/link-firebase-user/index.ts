@@ -39,7 +39,7 @@ serve(async (req) => {
       console.log('Creating new user for phone:', phone)
       const { data: newAuthUser, error: authError } = await supabaseClient.auth.admin.createUser({
         phone: phone,
-        phone_confirmed: true,
+        phone_confirm: true,
         user_metadata: { 
           phone: phone,
           firebase_verified: true
@@ -80,7 +80,7 @@ serve(async (req) => {
     // Generate session for existing or new user
     const { data: session, error: sessionError } = await supabaseClient.auth.admin.generateLink({
       type: 'magiclink',
-      phone: phone
+      email: `${phone}@temp.local`
     })
 
     if (sessionError) {
@@ -90,7 +90,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        user: authUser?.user,
+        user: authUser,
         session: session
       }),
       { 
@@ -102,7 +102,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error linking Firebase user:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error occurred' }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400 

@@ -123,10 +123,10 @@ serve(async (req) => {
       
       const result = {
         success: true,
-        profiles: [],
-        shops: [],
-        products: [],
-        activities: []
+        profiles: [] as any[],
+        shops: [] as any[],
+        products: [] as any[],
+        activities: [] as any[]
       };
 
       try {
@@ -179,7 +179,7 @@ serve(async (req) => {
         console.error('Error fetching data:', error);
         return new Response(JSON.stringify({ 
           success: false, 
-          error: error.message 
+          error: error instanceof Error ? error.message : 'Unknown error occurred' 
         }), {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -208,7 +208,7 @@ serve(async (req) => {
     console.error('Error in migrate-supabase-to-firestore:', error);
     return new Response(JSON.stringify({ 
       success: false, 
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

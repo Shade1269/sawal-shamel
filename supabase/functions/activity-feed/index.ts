@@ -35,7 +35,7 @@ serve(async (req) => {
 
           if (data.type === 'auth') {
             userId = data.userId
-            const subscriptions = new Set(data.subscriptions || ['all'])
+            const subscriptions = new Set<string>(data.subscriptions || ['all'])
             
             if (userId) {
               connections.set(userId, {

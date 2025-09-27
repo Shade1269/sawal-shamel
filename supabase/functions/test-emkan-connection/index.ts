@@ -158,7 +158,7 @@ serve(async (req) => {
     console.error("Error testing Emkan connection:", error);
     return new Response(JSON.stringify({
       success: false,
-      error: `❌ خطأ في اختبار الاتصال: ${error.message}`
+      error: `❌ خطأ في اختبار الاتصال: ${error instanceof Error ? error.message : 'Unknown error occurred'}`
     }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -43,7 +43,7 @@ serve(async (req) => {
       .eq('id', shopId)
       .single();
 
-    if (!shop) {
+    if (!shop || !shop.profiles) {
       throw new Error('Shop not found');
     }
 
@@ -51,7 +51,7 @@ serve(async (req) => {
     const { data: merchant } = await supabase
       .from('merchants')
       .select('id')
-      .eq('profile_id', shop.profiles.id)
+      .eq('profile_id', (shop.profiles as any).id)
       .single();
 
     if (!merchant) {
@@ -151,7 +151,7 @@ serve(async (req) => {
     console.error('Error in cleanup-linguistic-products:', error);
     return new Response(JSON.stringify({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

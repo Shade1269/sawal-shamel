@@ -40,7 +40,7 @@ serve(async (req) => {
     const { data: merchant } = await supabase
       .from('merchants')
       .select('id')
-      .eq('profile_id', shop.profiles.id)
+      .eq('profile_id', (shop.profiles as any).id)
       .single();
 
     if (!merchant) {
@@ -100,14 +100,14 @@ serve(async (req) => {
         const baseProduct = products[0];
         
         // Calculate consolidated data
-        const totalStock = products.reduce((sum, p) => sum + (p.stock || 0), 0);
-        const avgPrice = products.reduce((sum, p) => sum + (p.price_sar || 0), 0) / products.length;
+        const totalStock = products.reduce((sum: number, p: any) => sum + (p.stock || 0), 0);
+        const avgPrice = products.reduce((sum: number, p: any) => sum + (p.price_sar || 0), 0) / products.length;
         
         // Collect all images from variants
-        const allImages = new Set();
-        products.forEach(p => {
+        const allImages = new Set<string>();
+        products.forEach((p: any) => {
           if (p.image_urls && Array.isArray(p.image_urls)) {
-            p.image_urls.forEach(url => allImages.add(url));
+            p.image_urls.forEach((url: string) => allImages.add(url));
           }
         });
 
@@ -235,7 +235,7 @@ serve(async (req) => {
     console.error('Error in migrate-products-structure:', error);
     return new Response(JSON.stringify({
       success: false,
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
