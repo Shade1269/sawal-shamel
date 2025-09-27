@@ -116,45 +116,49 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
         throw new Error('يجب تسجيل الدخول أولاً');
       }
 
-      // الحصول على معرف المستخدم مباشرة من الـ profiles
-      const { data: userProfile, error: profileError } = await supabase
-        .from('profiles')
+      console.log('Current user ID:', user.id);
+
+      // الحصول على معرف المستخدم من user_profiles
+      const profileResponse = await supabase
+        .from('user_profiles')
         .select('id')
         .eq('auth_user_id', user.id)
-        .single();
+        .limit(1);
 
-      if (profileError || !userProfile) {
+      console.log('Profile response:', profileResponse);
+
+      if (profileResponse.error || !profileResponse.data || profileResponse.data.length === 0) {
         throw new Error('لم يتم العثور على ملف المستخدم');
       }
 
-      // البحث عن المتجر المرتبط بالمستخدم
-      const { data: merchant, error: merchantError } = await supabase
-        .from('shops')
-        .select('id')
-        .eq('owner_id', userProfile.id)
-        .single();
+      const userProfile = profileResponse.data[0];
 
-      if (merchantError || !merchant) {
-        console.warn('لا يوجد متجر مرتبط بالمستخدم، سيتم استخدام المستخدم مباشرة');
-      }
+      // إنشاء المنتج الأساسي مع user_profile_id بدلاً من merchant_id مؤقتاً
+      const productData = {
+        title: data.title,
+        sku: data.sku,
+        price_sar: data.price_sar,
+        description: data.description,
+        image_urls: imageUrls,
+        is_active: true,
+        stock: variants.reduce((sum, v) => sum + v.quantity, 0),
+        merchant_id: userProfile.id, // استخدام معرف الملف الشخصي
+      };
 
-      // إنشاء المنتج الأساسي
+      console.log('Creating product with data:', productData);
+
       const { data: product, error: productError } = await supabase
         .from('products')
-        .insert({
-          title: data.title,
-          sku: data.sku,
-          price_sar: data.price_sar,
-          description: data.description,
-          image_urls: imageUrls,
-          is_active: true,
-          stock: variants.reduce((sum, v) => sum + v.quantity, 0),
-          merchant_id: merchant?.id || userProfile.id,
-        })
+        .insert(productData)
         .select()
         .single();
 
-      if (productError) throw productError;
+      if (productError) {
+        console.error('Product creation error:', productError);
+        throw productError;
+      }
+
+      console.log('Product created successfully:', product);
 
       // إنشاء متغيرات المنتج
       for (const variant of variants) {
@@ -174,6 +178,7 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
             .single();
 
           if (variantError || !createdVariant) {
+            console.error('Variant creation error:', variantError);
             throw variantError || new Error('فشل إنشاء متغير المنتج');
           }
 
@@ -208,6 +213,7 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
       
       onSuccess?.();
     } catch (error: any) {
+      console.error('Product creation error:', error);
       toast.error('حدث خطأ في إضافة المنتج: ' + error.message);
     } finally {
       setSaving(false);
