@@ -118,22 +118,40 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
 
       console.log('Current user ID:', user.id);
 
-      // الحصول على معرف المستخدم من user_profiles
-      const profileResponse = await supabase
-        .from('user_profiles')
+      // الحصول على معرف الملف الشخصي ثم التاجر والمتجر
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
         .select('id')
         .eq('auth_user_id', user.id)
-        .limit(1);
+        .maybeSingle();
 
-      console.log('Profile response:', profileResponse);
-
-      if (profileResponse.error || !profileResponse.data || profileResponse.data.length === 0) {
+      if (profileError || !profile) {
         throw new Error('لم يتم العثور على ملف المستخدم');
       }
 
-      const userProfile = profileResponse.data[0];
+      const profileId = profile.id;
 
-      // إنشاء المنتج الأساسي مع user_profile_id بدلاً من merchant_id مؤقتاً
+      const { data: merchant, error: merchantError } = await supabase
+        .from('merchants')
+        .select('id')
+        .eq('profile_id', profileId)
+        .maybeSingle();
+
+      const { data: shop, error: shopError } = await supabase
+        .from('shops')
+        .select('id')
+        .eq('owner_id', profileId)
+        .maybeSingle();
+
+      if (merchantError) {
+        throw merchantError;
+      }
+
+      if (!merchant?.id) {
+        throw new Error('لا يوجد حساب تاجر مرتبط بحسابك. يرجى إنشاء حساب تاجر أولاً.');
+      }
+
+      // إنشاء بيانات المنتج مع merchant_id الصحيح، وإضافة shop_id إن وجد
       const productData = {
         title: data.title,
         sku: data.sku,
@@ -142,8 +160,9 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
         image_urls: imageUrls,
         is_active: true,
         stock: variants.reduce((sum, v) => sum + v.quantity, 0),
-        merchant_id: userProfile.id, // استخدام معرف الملف الشخصي
-      };
+        merchant_id: merchant.id,
+        shop_id: shop?.id ?? null,
+      } as any;
 
       console.log('Creating product with data:', productData);
 
