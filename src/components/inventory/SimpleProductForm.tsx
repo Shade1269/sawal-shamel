@@ -116,9 +116,9 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
         throw new Error('يجب تسجيل الدخول أولاً');
       }
 
-      // الحصول على معرف التاجر المرتبط بالمستخدم الحالي
+      // الحصول على معرف المستخدم مباشرة من الـ profiles
       const { data: userProfile, error: profileError } = await supabase
-        .from('user_profiles')
+        .from('profiles')
         .select('id')
         .eq('auth_user_id', user.id)
         .single();
@@ -127,14 +127,15 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
         throw new Error('لم يتم العثور على ملف المستخدم');
       }
 
+      // البحث عن المتجر المرتبط بالمستخدم
       const { data: merchant, error: merchantError } = await supabase
-        .from('merchants')
+        .from('shops')
         .select('id')
-        .eq('user_profile_id', userProfile.id)
+        .eq('owner_id', userProfile.id)
         .single();
 
       if (merchantError || !merchant) {
-        throw new Error('لم يتم العثور على حساب التاجر');
+        console.warn('لا يوجد متجر مرتبط بالمستخدم، سيتم استخدام المستخدم مباشرة');
       }
 
       // إنشاء المنتج الأساسي
@@ -148,7 +149,7 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
           image_urls: imageUrls,
           is_active: true,
           stock: variants.reduce((sum, v) => sum + v.quantity, 0),
-          merchant_id: merchant.id,
+          merchant_id: merchant?.id || userProfile.id,
         })
         .select()
         .single();

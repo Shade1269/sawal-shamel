@@ -257,10 +257,6 @@ const InventoryOverviewPage = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-wrap gap-2">
-            <SimpleProductForm 
-              warehouseId={warehouses[0]?.id}
-              onSuccess={loadInventory}
-            />
             <AddInventoryDialog
               warehouses={warehouses}
               onSuccess={loadInventory}
