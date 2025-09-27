@@ -1,0 +1,82 @@
+{
+  "id": "legendary",
+  "name": "Legendary Crown",
+  "colors": {
+    "bg": "#1a0d2e",
+    "fg": "#f0e6ff",
+    "primary": "#7c3aed",
+    "primaryFg": "#ffffff",
+    "secondary": "#a855f7",
+    "secondaryFg": "#ffffff",
+    "muted": "#2d1b47",
+    "mutedFg": "#c4b5fd",
+    "success": "#10b981",
+    "warning": "#f59e0b",
+    "danger": "#ef4444",
+    "info": "#06b6d4",
+    "border": "#4c1d95"
+  },
+  "radii": {
+    "sm": "10px",
+    "md": "16px",
+    "lg": "24px",
+    "xl": "36px"
+  },
+  "spacing": {
+    "xs": "6px",
+    "sm": "12px",
+    "md": "20px",
+    "lg": "28px",
+    "xl": "36px"
+  },
+  "typography": {
+    "fontFamily": "'Noto Sans Arabic', 'Cinzel', 'serif'",
+    "baseSize": 17,
+    "lineHeight": 1.65,
+    "weight": {
+      "normal": 400,
+      "medium": 600,
+      "bold": 800
+    }
+  },
+  "three": {
+    "background": "#0f0519",
+    "camera": {
+      "position": [0, 1.8, 4.2],
+      "fov": 38
+    },
+    "lights": [
+      { "type": "ambient", "intensity": 0.5 },
+      { "type": "directional", "intensity": 1.6, "position": [2.8, 4.0, 2.2], "color": "#ddd6fe" },
+      { "type": "spot", "intensity": 1.4, "position": [-2.2, 3.8, 1.8], "color": "#7c3aed" },
+      { "type": "point", "intensity": 0.8, "position": [0, 1.5, 2.5], "color": "#a855f7" }
+    ],
+    "model": {
+      "example": "crown",
+      "scale": [1.5, 1.5, 1.5],
+      "position": [0, -0.2, 0],
+      "rotation": [0, 30, 0],
+      "autoRotate": true,
+      "rotationSpeed": 0.25
+    },
+    "effects": {
+      "bloom": { "enabled": true, "intensity": 1.5 },
+      "fog": { "color": "#1a0d2e", "near": 6, "far": 22 },
+      "shadow": { "enabled": true, "bias": -0.0002, "mapSize": [2048, 2048], "radius": 5 }
+    }
+  },
+  "components": {
+    "button": {
+      "radius": "xl",
+      "height": 50,
+      "paddingX": "2rem",
+      "variants": ["solid", "outline", "ghost", "legendary"]
+    },
+    "card": {
+      "radius": "xl",
+      "shadow": "0 25px 60px rgba(124, 58, 237, 0.4)"
+    },
+    "input": { "radius": "lg" },
+    "badge": { "radius": "lg" }
+  }
+}
