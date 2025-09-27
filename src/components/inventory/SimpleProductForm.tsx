@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -39,6 +39,7 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ProductForm>({
     resolver: zodResolver(productSchema),
@@ -67,7 +68,8 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
   };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
+    const input = event.target;
+    const files = Array.from(input.files || []);
     if (files.length === 0) return;
 
     setUploading(true);
@@ -76,12 +78,16 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
     try {
       for (const file of files) {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
         const filePath = `products/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
           .from('product-images')
-          .upload(filePath, file);
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false,
+            contentType: file.type || 'image/*',
+          });
 
         if (uploadError) throw uploadError;
 
@@ -92,13 +98,16 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
         uploadedUrls.push(publicUrl);
       }
 
-      setImages([...images, ...files]);
-      setImageUrls([...imageUrls, ...uploadedUrls]);
+      setImages(prev => [...prev, ...files]);
+      setImageUrls(prev => [...prev, ...uploadedUrls]);
       toast.success(`تم رفع ${files.length} صورة بنجاح`);
     } catch (error: any) {
-      toast.error('حدث خطأ في رفع الصور: ' + error.message);
+      console.error('Image upload error:', error);
+      toast.error('حدث خطأ في رفع الصور: ' + (error?.message || 'غير معروف'));
     } finally {
       setUploading(false);
+      // إعادة تعيين الحقل للسماح برفع نفس الملف مرة أخرى
+      input.value = '';
     }
   };
 
@@ -304,19 +313,24 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
           <div className="space-y-4">
             <Label>صور المنتج</Label>
             <div className="flex items-center gap-4">
-              <label className="cursor-pointer">
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="sr-only"
-                />
-                <Button type="button" variant="outline" disabled={uploading} className="gap-2">
-                  <Upload className="h-4 w-4" />
-                  {uploading ? 'جاري الرفع...' : 'رفع صور'}
-                </Button>
-              </label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                disabled={uploading}
+                className="gap-2"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload className="h-4 w-4" />
+                {uploading ? 'جارٍ الرفع...' : 'رفع صور'}
+              </Button>
             </div>
             
             {imageUrls.length > 0 && (
@@ -325,7 +339,8 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
                   <div key={index} className="relative group">
                     <img
                       src={url}
-                      alt={`صورة ${index + 1}`}
+                      alt={`صورة ${index + 1} - ${form.watch('title') || 'منتج'}`}
+                      loading="lazy"
                       className="w-full h-20 object-cover rounded-lg border"
                     />
                     <button
