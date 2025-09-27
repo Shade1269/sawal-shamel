@@ -41,6 +41,9 @@ const InventoryPage = lazy(() => import("./pages/inventory/index"));
 const UiShowcasePage = lazy(() => import("./pages/UiShowcase"));
 const ProfilePage = lazy(() => import("./pages/profile"));
 const NotificationsPage = lazy(() => import("./pages/notifications"));
+const AtlantisSystem = lazy(() => import("./pages/AtlantisSystem"));
+const AtlantisChat = lazy(() => import("./features/chat/components/AtlantisChat"));
+const AtlantisChatRooms = lazy(() => import("./features/chat/components/AtlantisChatRooms"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -86,6 +89,12 @@ const App = () => {
                               <Route path="/auth/reset" element={<ResetPasswordPage />} />
                               <Route path="/auth/callback" element={<AuthCallbackPage />} />
                               <Route path="/ui" element={<UiShowcasePage />} />
+                              
+                              {/* Atlantis System Routes */}
+                              <Route path="/atlantis" element={<AtlantisSystem />} />
+                              <Route path="/atlantis/chat" element={<AtlantisChatRooms />} />
+                              <Route path="/atlantis/chat/:roomId" element={<AtlantisChat />} />
+                              
                               <Route
                                 path="/profile"
                                 element={(
