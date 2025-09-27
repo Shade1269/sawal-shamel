@@ -11,7 +11,8 @@ import {
   Star,
   Crown,
   Home,
-  ArrowRight
+  ArrowRight,
+  Settings
 } from 'lucide-react';
 
 const QuickLinks = () => {
@@ -28,7 +29,8 @@ const QuickLinks = () => {
           { title: 'لوحة التحكم', route: '/admin/dashboard', icon: Crown, description: 'نظرة عامة على الأداء' },
           { title: 'إدارة الطلبات', route: '/admin/orders', icon: ShoppingCart, description: 'متابعة الطلبات الحالية' },
           { title: 'إدارة المخزون', route: '/admin/inventory', icon: Package, description: 'متابعة توفر المنتجات' },
-          { title: 'تحليلات الإدارة', route: '/admin/analytics', icon: BarChart3, description: 'تحليل العوائد والفرق' }
+          { title: 'تحليلات الإدارة', route: '/admin/analytics', icon: BarChart3, description: 'تحليل العوائد والفرق' },
+          { title: 'إدارة شاملة', route: '/admin/management', icon: Settings, description: 'صفحة الإدارة الشاملة' }
         ];
 
       case 'affiliate':

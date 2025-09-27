@@ -28,6 +28,7 @@ const breadcrumbConfig: BreadcrumbConfig = {
   "/admin/orders": { title: "الطلبات", parent: "/admin" },
   "/admin/inventory": { title: "المخزون", parent: "/admin" },
   "/admin/analytics": { title: "التحليلات", parent: "/admin" },
+  "/admin/management": { title: "الإدارة الشاملة", parent: "/admin" },
   "/checkout": { title: "إتمام الطلب", parent: "/" },
   "/order/confirmation": { title: "تأكيد الطلب", parent: "/" },
   "/auth": { title: "تسجيل الدخول", parent: "/" },

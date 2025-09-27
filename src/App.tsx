@@ -35,6 +35,8 @@ const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrders"));
 const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminCustomersPage = lazy(() => import("./pages/admin/AdminCustomers"));
 const AdminLeaderboardPage = lazy(() => import("./pages/admin/AdminLeaderboard"));
+const AdminPage = lazy(() => import("./pages/Admin"));
+const InventoryPage = lazy(() => import("./pages/inventory/index"));
 const UiShowcasePage = lazy(() => import("./pages/UiShowcase"));
 const ProfilePage = lazy(() => import("./pages/profile"));
 const NotificationsPage = lazy(() => import("./pages/notifications"));
@@ -136,6 +138,8 @@ const App = () => {
                                 <Route path="analytics" element={<AdminAnalyticsPage />} />
                                 <Route path="leaderboard" element={<AdminLeaderboardPage />} />
                                 <Route path="customers" element={<AdminCustomersPage />} />
+                                <Route path="management" element={<AdminPage />} />
+                                <Route path="inventory" element={<InventoryPage />} />
                               </Route>
 
                               <Route path="*" element={<Navigate to="/" replace />} />

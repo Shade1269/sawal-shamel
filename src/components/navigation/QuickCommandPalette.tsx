@@ -11,7 +11,8 @@ import {
   ShoppingCart,
   Crown,
   Store,
-  ArrowRight
+  ArrowRight,
+  Settings
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useFastAuth } from '@/hooks/useFastAuth';
@@ -97,6 +98,15 @@ const QuickCommandPalette: React.FC<QuickCommandPaletteProps> = ({
         action: () => navigate('/admin/inventory'),
         category: 'تشغيل',
         keywords: ['inventory', 'مخزون', 'products', 'منتجات']
+      },
+      {
+        id: 'admin-management',
+        title: 'الإدارة الشاملة',
+        description: 'صفحة الإدارة الشاملة للنظام',
+        icon: Settings,
+        action: () => navigate('/admin/management'),
+        category: 'إدارة',
+        keywords: ['management', 'إدارة', 'comprehensive', 'شاملة']
       },
       {
         id: 'admin-analytics',

@@ -10,6 +10,7 @@ import {
   Shield,
   Store,
   Users,
+  Settings,
 } from "lucide-react";
 
 import {
@@ -62,6 +63,7 @@ const navigationItems: NavigationItem[] = [
       { title: "الطلبات", url: "/admin/orders", icon: ShoppingBag, roles: ["admin", "moderator"] },
       { title: "المخزون", url: "/admin/inventory", icon: Store, roles: ["admin", "moderator"] },
       { title: "التحليلات", url: "/admin/analytics", icon: Users, roles: ["admin", "moderator"] },
+      { title: "إدارة شاملة", url: "/admin/management", icon: Settings, roles: ["admin"] },
     ],
   },
 ];
