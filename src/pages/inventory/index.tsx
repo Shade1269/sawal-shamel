@@ -7,6 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Package, RefreshCw, ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
 import { AddInventoryDialog } from '@/components/inventory/AddInventoryDialog';
 import { ReturnInventoryDialog } from '@/components/inventory/ReturnInventoryDialog';
+import { InventoryFilters, FilterState } from '@/components/inventory/InventoryFilters';
+import { InventoryAlerts } from '@/components/inventory/InventoryAlerts';
+import { InventoryStats } from '@/components/inventory/InventoryStats';
+import { InventoryReports } from '@/components/inventory/InventoryReports';
+import { CycleCountDialog } from '@/components/inventory/CycleCountDialog';
 
 interface WarehouseRow {
   id: string;
@@ -19,6 +24,12 @@ interface InventoryItemRow {
   sku: string;
   quantity_available: number | null;
   quantity_reserved: number | null;
+  quantity_on_order: number | null;
+  reorder_level: number | null;
+  unit_cost: number | null;
+  expiry_date: string | null;
+  last_counted_at: string | null;
+  location: string | null;
   warehouse_id: string | null;
   product_variant_id: string | null;
 }
@@ -46,25 +57,72 @@ const InventoryOverviewPage = () => {
   const [warehouses, setWarehouses] = useState<WarehouseRow[]>([]);
   const [items, setItems] = useState<InventoryItemRow[]>([]);
   const [movements, setMovements] = useState<MovementRow[]>([]);
-  const [selectedWarehouse, setSelectedWarehouse] = useState<'all' | string>('all');
+  const [filteredItems, setFilteredItems] = useState<InventoryItemRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [products, setProducts] = useState<{[key: string]: string}>({});
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const warehouseLookup = useMemo(() => {
-    const map = new Map<string, WarehouseRow>();
-    warehouses.forEach((w) => {
-      map.set(w.id, w);
-    });
-    return map;
-  }, [warehouses]);
+  const handleFiltersChange = (filters: FilterState) => {
+    let filtered = [...items];
 
-  const filteredItems = useMemo(() => {
-    if (selectedWarehouse === 'all') {
-      return items;
+    // تصفية البحث
+    if (filters.search) {
+      const searchTerm = filters.search.toLowerCase();
+      filtered = filtered.filter(item => 
+        item.sku?.toLowerCase().includes(searchTerm) ||
+        products[item.product_variant_id || '']?.toLowerCase().includes(searchTerm)
+      );
     }
-    return items.filter((item) => item.warehouse_id === selectedWarehouse);
-  }, [items, selectedWarehouse]);
+
+    // تصفية المخزن
+    if (filters.warehouse !== 'all') {
+      filtered = filtered.filter(item => item.warehouse_id === filters.warehouse);
+    }
+
+    // تصفية الحالة
+    if (filters.status !== 'all') {
+      filtered = filtered.filter(item => {
+        const available = item.quantity_available || 0;
+        const reserved = item.quantity_reserved || 0;
+        
+        switch (filters.status) {
+          case 'available':
+            return available > 0;
+          case 'reserved':
+            return reserved > 0;
+          case 'out_of_stock':
+            return available === 0;
+          default:
+            return true;
+        }
+      });
+    }
+
+    // تصفية المخزون المنخفض
+    if (filters.lowStock) {
+      filtered = filtered.filter(item => {
+        const available = item.quantity_available || 0;
+        const reorderLevel = 5; // يمكن جعل هذا قابل للتخصيص
+        return available <= reorderLevel && available > 0;
+      });
+    }
+
+    // تصفية منتهي الصلاحية
+    if (filters.expired) {
+      const now = new Date();
+      filtered = filtered.filter(item => {
+        if (!item.expiry_date) return false;
+        return new Date(item.expiry_date) < now;
+      });
+    }
+
+    setFilteredItems(filtered);
+  };
+
+  useEffect(() => {
+    setFilteredItems(items);
+  }, [items]);
 
   const totals = useMemo(() => {
     return filteredItems.reduce(
@@ -94,8 +152,14 @@ const InventoryOverviewPage = () => {
             sku,
             quantity_available,
             quantity_reserved,
+            quantity_on_order,
             warehouse_id,
-            product_variant_id
+            product_variant_id,
+            reorder_level,
+            unit_cost,
+            location,
+            expiry_date,
+            last_counted_at
           `)
           .limit(200),
         supabase
@@ -133,6 +197,7 @@ const InventoryOverviewPage = () => {
       setItems(itemsResult.data ?? []);
       setMovements(movementsResult.data ?? []);
       setProducts(productsMap);
+      setRefreshTrigger(prev => prev + 1);
     } catch (err: any) {
       console.error('Failed to load inventory snapshot:', err);
       setError(err?.message ?? 'تعذر تحميل بيانات المخزون');
@@ -146,55 +211,76 @@ const InventoryOverviewPage = () => {
   }, []);
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-6 p-6" dir="rtl">
+    <div className="mx-auto flex max-w-7xl flex-col gap-6 p-6" dir="rtl">
+      {/* Header */}
       <Card>
         <CardHeader className="flex flex-col gap-2">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Package className="h-5 w-5" />
-            <CardTitle className="text-2xl">لوحة المخزون</CardTitle>
+            <CardTitle className="text-2xl">نظام المخزون المتكامل</CardTitle>
           </div>
           <CardDescription>
-            نظرة عامة سريعة على الكميات المتاحة والمحجوزة لكل مستودع ضمن نظام المخزون الداخلي.
+            إدارة شاملة للمخزون مع التتبع التلقائي، التنبيهات الذكية، والتقارير التفصيلية
+          </CardDescription>
+        </CardHeader>
+      </Card>
+
+      {/* Filters */}
+      <InventoryFilters 
+        warehouses={warehouses}
+        onFiltersChange={handleFiltersChange}
+      />
+
+      {/* Stats */}
+      <InventoryStats 
+        items={items}
+        warehouses={warehouses}
+      />
+
+      {/* Alerts */}
+      <InventoryAlerts refreshTrigger={refreshTrigger} />
+
+      {/* Main Inventory Management */}
+      <Card>
+        <CardHeader className="flex flex-col gap-2">
+          <CardTitle className="text-lg">إدارة المخزون</CardTitle>
+          <CardDescription>
+            عرض وإدارة جميع أصناف المخزون مع إمكانية الإضافة والاسترجاع والجرد
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-3 text-sm text-muted-foreground">
-              <span>تصفية حسب المستودع:</span>
-              <select
-                className="rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none"
-                value={selectedWarehouse}
-                onChange={(event) => setSelectedWarehouse(event.target.value as 'all' | string)}
-              >
-                <option value="all">جميع المستودعات</option>
-                {warehouses.map((warehouse) => (
-                  <option key={warehouse.id} value={warehouse.id}>
-                    {warehouse.name} ({warehouse.code})
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex gap-2">
-              <AddInventoryDialog
-                warehouses={warehouses}
-                onSuccess={loadInventory}
-              />
-              <ReturnInventoryDialog
-                inventoryItems={filteredItems.map(item => ({
-                  id: item.id,
-                  sku: item.sku,
-                  quantity_available: item.quantity_available || 0,
-                  warehouse_id: item.warehouse_id || '',
-                  location: undefined
-                }))}
-                warehouses={warehouses}
-                onSuccess={loadInventory}
-              />
-              <Button onClick={loadInventory} disabled={loading} variant="outline" className="gap-2">
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-                تحديث البيانات
-              </Button>
-            </div>
+          <div className="flex flex-wrap gap-2">
+            <AddInventoryDialog
+              warehouses={warehouses}
+              onSuccess={loadInventory}
+            />
+            <ReturnInventoryDialog
+              inventoryItems={filteredItems.map(item => ({
+                id: item.id,
+                sku: item.sku,
+                quantity_available: item.quantity_available || 0,
+                warehouse_id: item.warehouse_id || '',
+                location: undefined
+              }))}
+              warehouses={warehouses}
+              onSuccess={loadInventory}
+            />
+            <CycleCountDialog
+              inventoryItems={filteredItems.map(item => ({
+                id: item.id,
+                sku: item.sku,
+                quantity_available: item.quantity_available || 0,
+                warehouse_id: item.warehouse_id || '',
+                location: item.location || undefined,
+                last_counted_at: item.last_counted_at || undefined
+              }))}
+              warehouses={warehouses}
+              onSuccess={loadInventory}
+            />
+            <Button onClick={loadInventory} disabled={loading} variant="outline" className="gap-2">
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+              تحديث البيانات
+            </Button>
           </div>
 
           {error ? (
@@ -210,11 +296,15 @@ const InventoryOverviewPage = () => {
             </div>
             <div className="rounded-lg border p-4">
               <p className="text-sm text-muted-foreground">الكمية المتاحة</p>
-              <p className="text-2xl font-bold text-emerald-600">{formatNumber(totals.available)}</p>
+              <p className="text-2xl font-bold text-emerald-600">
+                {formatNumber(filteredItems.reduce((sum, item) => sum + (item.quantity_available ?? 0), 0))}
+              </p>
             </div>
             <div className="rounded-lg border p-4">
               <p className="text-sm text-muted-foreground">الكمية المحجوزة</p>
-              <p className="text-2xl font-bold text-amber-600">{formatNumber(totals.reserved)}</p>
+              <p className="text-2xl font-bold text-amber-600">
+                {formatNumber(filteredItems.reduce((sum, item) => sum + (item.quantity_reserved ?? 0), 0))}
+              </p>
             </div>
             <div className="rounded-lg border p-4">
               <p className="text-sm text-muted-foreground">آخر تحديث</p>
@@ -246,7 +336,7 @@ const InventoryOverviewPage = () => {
                     </TableRow>
                   ) : (
                     filteredItems.map((item) => {
-                      const warehouse = item.warehouse_id ? warehouseLookup.get(item.warehouse_id) : null;
+                      const warehouse = item.warehouse_id ? warehouses.find(w => w.id === item.warehouse_id) : null;
                       // استخدام SKU كاسم المنتج إذا لم يكن متوفراً في قاعدة البيانات
                       const title = item.sku || 'صنف غير معرف';
                       return (
@@ -281,6 +371,11 @@ const InventoryOverviewPage = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Reports */}
+      <InventoryReports refreshTrigger={refreshTrigger} />
+
+      {/* Recent Movements */}
 
       <Card>
         <CardHeader>
