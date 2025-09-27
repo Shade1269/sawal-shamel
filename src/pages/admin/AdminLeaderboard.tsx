@@ -229,12 +229,8 @@ const AdminLeaderboardPage = () => {
 
   return (
     <div data-page="admin-leaderboard" className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-      <PageTitle>
-        <div>
-          <h1 className="text-2xl font-bold">لوحة الترتيب</h1>
-          <p className="text-muted-foreground">تابع نقاط وعمولات المسوّقات الأعلى أداءً مع تحديثات فورية خفيفة.</p>
-        </div>
-      </PageTitle>
+      <PageTitle
+        actions={
           <Button
             variant="outline"
             size="sm"
@@ -248,6 +244,9 @@ const AdminLeaderboardPage = () => {
           </Button>
         }
       />
+      <p className="text-sm text-muted-foreground">
+        تابع نقاط وعمولات المسوّقات الأعلى أداءً مع تحديثات فورية خفيفة.
+      </p>
 
       {isLoading ? (
         <LeaderboardSkeleton />
