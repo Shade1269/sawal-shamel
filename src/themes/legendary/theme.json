@@ -1,82 +1,83 @@
 {
   "id": "legendary",
-  "name": "Legendary Crown",
+  "name": "Legendary Aurora",
   "colors": {
-    "bg": "#1a0d2e",
-    "fg": "#f0e6ff",
-    "primary": "#7c3aed",
+    "bg": "#0d0118",
+    "fg": "#f8fafc",
+    "primary": "#a855f7",
     "primaryFg": "#ffffff",
-    "secondary": "#a855f7",
+    "secondary": "#ec4899",
     "secondaryFg": "#ffffff",
-    "muted": "#2d1b47",
-    "mutedFg": "#c4b5fd",
-    "success": "#10b981",
-    "warning": "#f59e0b",
+    "muted": "#1e1b2e",
+    "mutedFg": "#a8a29e",
+    "success": "#22c55e",
+    "warning": "#eab308",
     "danger": "#ef4444",
     "info": "#06b6d4",
-    "border": "#4c1d95"
+    "border": "#27272a"
   },
   "radii": {
-    "sm": "10px",
-    "md": "16px",
-    "lg": "24px",
-    "xl": "36px"
+    "sm": "12px",
+    "md": "20px",
+    "lg": "28px",
+    "xl": "40px"
   },
   "spacing": {
     "xs": "6px",
     "sm": "12px",
     "md": "20px",
     "lg": "28px",
-    "xl": "36px"
+    "xl": "40px"
   },
   "typography": {
-    "fontFamily": "'Noto Sans Arabic', 'Cinzel', 'serif'",
-    "baseSize": 17,
-    "lineHeight": 1.65,
+    "fontFamily": "'Noto Sans Arabic', 'Rajdhani', 'sans-serif'",
+    "baseSize": 18,
+    "lineHeight": 1.7,
     "weight": {
       "normal": 400,
       "medium": 600,
-      "bold": 800
+      "bold": 700
     }
   },
   "three": {
-    "background": "#0f0519",
+    "background": "#050014",
     "camera": {
-      "position": [0, 1.8, 4.2],
-      "fov": 38
+      "position": [0, 2, 3.8],
+      "fov": 40
     },
     "lights": [
-      { "type": "ambient", "intensity": 0.5 },
-      { "type": "directional", "intensity": 1.6, "position": [2.8, 4.0, 2.2], "color": "#ddd6fe" },
-      { "type": "spot", "intensity": 1.4, "position": [-2.2, 3.8, 1.8], "color": "#7c3aed" },
-      { "type": "point", "intensity": 0.8, "position": [0, 1.5, 2.5], "color": "#a855f7" }
+      { "type": "ambient", "intensity": 0.4 },
+      { "type": "directional", "intensity": 1.6, "position": [3, 4, 3], "color": "#c084fc" },
+      { "type": "point", "intensity": 1.2, "position": [-3, 3, 2], "color": "#a855f7" },
+      { "type": "point", "intensity": 1.0, "position": [2, 1, -2], "color": "#ec4899" },
+      { "type": "spot", "intensity": 1.4, "position": [0, 6, 0], "color": "#8b5cf6" }
     ],
     "model": {
-      "example": "crown",
-      "scale": [1.5, 1.5, 1.5],
+      "example": "legendary",
+      "scale": [1.6, 1.6, 1.6],
       "position": [0, -0.2, 0],
-      "rotation": [0, 30, 0],
+      "rotation": [0, 90, 0],
       "autoRotate": true,
-      "rotationSpeed": 0.25
+      "rotationSpeed": 0.15
     },
     "effects": {
       "bloom": { "enabled": true, "intensity": 1.5 },
-      "fog": { "color": "#1a0d2e", "near": 6, "far": 22 },
-      "shadow": { "enabled": true, "bias": -0.0002, "mapSize": [2048, 2048], "radius": 5 }
+      "fog": { "color": "#050014", "near": 5, "far": 30 },
+      "shadow": { "enabled": true, "bias": -0.0001, "mapSize": [4096, 4096], "radius": 5 }
     }
   },
   "components": {
     "button": {
       "radius": "xl",
-      "height": 50,
-      "paddingX": "2rem",
-      "variants": ["solid", "outline", "ghost", "legendary"]
+      "height": 52,
+      "paddingX": "2.5rem",
+      "variants": ["solid", "outline", "ghost"]
     },
     "card": {
       "radius": "xl",
-      "shadow": "0 25px 60px rgba(124, 58, 237, 0.4)"
+      "shadow": "0 30px 60px rgba(168, 85, 247, 0.25)"
     },
-    "input": { "radius": "lg" },
-    "badge": { "radius": "lg" }
+    "input": { "radius": "xl" },
+    "badge": { "radius": "xl" }
   }
 }

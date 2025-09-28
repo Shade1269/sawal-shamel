@@ -42,7 +42,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ProductImageCarousel } from "@/features/commerce/components/ProductImageCarousel";
 import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
+// import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
 
 interface Product {
   id: string;
@@ -96,7 +96,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const storeSlug = propStoreSlug || paramStoreSlug;
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isAuthenticated, customer } = useCustomerAuthContext();
+  // Temporary authentication state - will be integrated with customer auth later
+  const isAuthenticated = false;
+  const customer = null;
   
   // States
   const [cart, setCart] = useState<CartItem[]>([]);

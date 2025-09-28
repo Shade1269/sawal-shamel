@@ -262,7 +262,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             description: 'إنشاء وتخصيص متجرك الخاص',
             icon: Store,
             badge: inventoryCount > 9 ? 9 : inventoryCount,
-            onPrefetch: getPrefetch('/affiliate/home'),
+            onPrefetch: getPrefetch('/affiliate/store/setup'),
           },
         ],
       },
