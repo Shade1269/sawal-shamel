@@ -9,3 +9,4 @@ export { default as StoreAnalyticsDashboard } from './components/StoreAnalyticsD
 export { AffiliateProductsManager } from './components/AffiliateProductsManager';
 export { AllianceManager } from './components/AllianceManager';
 export { CommissionsPanel } from './components/CommissionsPanel';
+export { CreateAffiliateStore } from './components/CreateAffiliateStore';

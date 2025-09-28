@@ -4,6 +4,7 @@ import { MyScoreCard } from '../../features/affiliate/components/MyScoreCard';
 import { MySalesGlance } from '../../features/affiliate/components/MySalesGlance';
 import { RecentOrders } from '../../features/affiliate/components/RecentOrders';
 import { ShareTools } from '../../features/affiliate/components/ShareTools';
+import { CreateAffiliateStore } from '../../features/affiliate/components/CreateAffiliateStore';
 import { resolveAffiliateHomeStateRuntime } from './homeStateRuntime.js';
 
 export const AffiliateHomeViewRuntime = ({
@@ -18,6 +19,7 @@ export const AffiliateHomeViewRuntime = ({
   topProducts,
   error,
   onRefresh,
+  onStoreCreated,
 }) => {
   const state = resolveAffiliateHomeStateRuntime({ loading, isAuthorized, store });
 
@@ -54,20 +56,7 @@ export const AffiliateHomeViewRuntime = ({
   }
 
   if (state === 'no-store') {
-    return React.createElement(
-      'div',
-      { className: 'flex min-h-screen items-center justify-center bg-[color:var(--anaqti-bg,#fdf8f4)]', dir: 'rtl' },
-      React.createElement(
-        'div',
-        { className: 'max-w-md rounded-3xl bg-white/90 p-8 text-center shadow-xl' },
-        React.createElement('p', { className: 'text-lg font-semibold text-[color:var(--anaqti-text,#3d2b2b)]' }, 'لم يتم العثور على متجر نشط.'),
-        React.createElement(
-          'p',
-          { className: 'mt-2 text-sm text-[color:var(--anaqti-muted,rgba(61,43,43,0.45))]' },
-          'أنشئ متجرك من لوحة التحكم أو تواصل مع فريق الدعم لتفعيل الحساب.',
-        ),
-      ),
-    );
+    return React.createElement(CreateAffiliateStore, { onStoreCreated });
   }
 
   return React.createElement(

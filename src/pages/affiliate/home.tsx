@@ -25,6 +25,7 @@ export interface AffiliateHomeViewProps {
   topProducts?: AffiliateProductShare[];
   error?: string | null;
   onRefresh?: () => void;
+  onStoreCreated?: () => void;
 }
 
 export const AffiliateHomeView = (props: AffiliateHomeViewProps) => <AffiliateHomeViewRuntime {...props} />;
@@ -64,6 +65,10 @@ const AffiliateHomePage = () => {
   const isAuthorized = Boolean(profile) && (isAffiliate || isAdmin);
   const loading = authLoading || dataLoading;
 
+  const handleStoreCreated = () => {
+    refetch(); // Refresh data after store creation
+  };
+
   return (
     <AffiliateHomeView
       loading={loading}
@@ -77,6 +82,7 @@ const AffiliateHomePage = () => {
       topProducts={topProducts}
       error={error}
       onRefresh={refetch}
+      onStoreCreated={handleStoreCreated}
     />
   );
 };
