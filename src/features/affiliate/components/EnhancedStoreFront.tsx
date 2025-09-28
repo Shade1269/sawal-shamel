@@ -328,12 +328,18 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
           <h3 className="text-2xl font-bold mb-3 text-foreground">المتجر غير متاح</h3>
           <p className="text-muted-foreground mb-6 leading-relaxed">
             عذراً، لا يمكن الوصول إلى هذا المتجر في الوقت الحالي. 
-            قد يكون المتجر مؤقتاً غير متاح أو تم نقله.
+            إذا كنت مسوقة، يمكنك إنشاء متجرك الخاص من هنا.
           </p>
-          <Button onClick={() => navigate('/')} className="px-8">
-            <ArrowRight className="h-4 w-4 mr-2" />
-            العودة للصفحة الرئيسية
-          </Button>
+          <div className="space-y-3">
+            <Button onClick={() => navigate('/affiliate/home')} className="px-8 w-full">
+              <Store className="h-4 w-4 mr-2" />
+              إنشاء متجر جديد
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/')} className="px-8 w-full">
+              <ArrowRight className="h-4 w-4 mr-2" />
+              العودة للصفحة الرئيسية
+            </Button>
+          </div>
         </div>
       </div>
     );
