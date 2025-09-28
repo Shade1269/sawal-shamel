@@ -18,9 +18,9 @@ const DomainManager = ({ children }: DomainManagerProps) => {
     const currentPath = location.pathname;
     const search = location.search;
 
-    const isCustomDomain = hostname !== 'localhost' 
-      && !hostname.includes('atlantiss.tech') 
-      && !hostname.includes('lovableproject.com') 
+    const isLovableProjectDomain = hostname.endsWith('.lovableproject.com');
+    const isCustomDomain = hostname !== 'localhost'
+      && !hostname.includes('atlantiss.tech')
       && !hostname.includes('lovable.app');
 
     // Skip redirect logic for atlantiss.tech - let normal routing handle it
@@ -28,7 +28,7 @@ const DomainManager = ({ children }: DomainManagerProps) => {
       return;
     }
 
-    if (isCustomDomain) {
+    if (isCustomDomain || isLovableProjectDomain) {
       const storeSlug = getStoreSlugFromDomain(hostname);
 
       // Apply redirects ONLY if this domain is mapped to a store
