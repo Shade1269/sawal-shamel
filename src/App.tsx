@@ -41,7 +41,7 @@ const InventoryPage = lazy(() => import("./pages/inventory/index"));
 const UiShowcasePage = lazy(() => import("./pages/UiShowcase"));
 const ProfilePage = lazy(() => import("./pages/profile"));
 const NotificationsPage = lazy(() => import("./pages/notifications"));
-const ResetCachePage = lazy(() => import("./pages/tools/ResetCache"));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -85,7 +85,6 @@ const App = () => {
                               <Route path="/auth" element={<AuthPage />} />
                               <Route path="/auth/reset" element={<ResetPasswordPage />} />
                               <Route path="/auth/callback" element={<AuthCallbackPage />} />
-                              <Route path="/reset" element={<ResetCachePage />} />
                               <Route path="/ui" element={<UiShowcasePage />} />
                               <Route
                                 path="/profile"

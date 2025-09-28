@@ -1,3 +1,0 @@
-ok
-# health check file
-# updated: 2025-09-28
