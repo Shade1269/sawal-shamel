@@ -4,8 +4,10 @@
 
 // قائمة النطاقات المخصصة للمتاجر
 export const STORE_DOMAINS = {
-  // مثال: 'store.yourdomain.com': 'your-store-slug'
-  // يمكن إضافة نطاقات مخصصة هنا
+  // نطاق Lovable للنشر
+  'sawalshamel.lovableproject.com': 'my-boutique',
+  // النطاق المخصص للمتجر
+  'sawalshamel.com': 'my-boutique',
 } as const;
 
 // فحص إذا كان النطاق الحالي متجر
