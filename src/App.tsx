@@ -123,6 +123,7 @@ const App = () => {
                 <Route path="storefront/modern" element={<ModernStorefront />} />
                 <Route path="storefront/:storeSlug" element={<ModernStorefront />} />
                 <Route path="store/settings" element={<AffiliateStoreSettingsPage />} />
+                <Route path="store/setup" element={<AffiliateStoreSettingsPage />} />
                 <Route path="orders" element={<UnifiedAffiliateOrders />} />
                 <Route path="analytics" element={<AffiliateAnalyticsPage />} />
               </Route>

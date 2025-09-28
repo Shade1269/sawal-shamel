@@ -257,7 +257,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         title: 'المتجر والمنتجات',
         items: [
           {
-            to: '/affiliate/home',
+            to: '/affiliate/store/setup',
             label: 'إعدادات المتجر',
             description: 'إنشاء وتخصيص متجرك الخاص',
             icon: Store,
