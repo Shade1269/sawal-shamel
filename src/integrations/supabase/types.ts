@@ -8935,11 +8935,12 @@ export type Database = {
       }
       security_definer_functions_audit: {
         Row: {
-          comment: string | null
+          documentation: string | null
           function_name: unknown | null
           has_security_definer: boolean | null
           owner: unknown | null
           schema_name: unknown | null
+          security_status: string | null
         }
         Relationships: []
       }
@@ -8999,15 +9000,6 @@ export type Database = {
       apply_theme_to_store: {
         Args: { p_custom_config?: Json; p_store_id: string; p_theme_id: string }
         Returns: boolean
-      }
-      audit_security_definer_call: {
-        Args: {
-          additional_context?: Json
-          function_name: string
-          input_params?: Json
-          user_id?: string
-        }
-        Returns: undefined
       }
       calculate_final_price: {
         Args: {
@@ -9188,6 +9180,14 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_function_call: {
+        Args: {
+          additional_context?: Json
+          function_name: string
+          input_params?: Json
+        }
+        Returns: undefined
       }
       log_login_attempt: {
         Args: {
