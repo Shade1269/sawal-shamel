@@ -257,12 +257,12 @@ export const AppShell: React.FC<AppShellProps> = ({
         title: 'المتجر والمنتجات',
         items: [
           {
-            to: '/affiliate/storefront',
+            to: '/affiliate/home',
             label: 'إعدادات المتجر',
-            description: 'تخصيص واجهة متجرك العام',
+            description: 'إنشاء وتخصيص متجرك الخاص',
             icon: Store,
             badge: inventoryCount > 9 ? 9 : inventoryCount,
-            onPrefetch: getPrefetch('/storefront'),
+            onPrefetch: getPrefetch('/affiliate/home'),
           },
         ],
       },
