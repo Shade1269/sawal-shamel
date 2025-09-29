@@ -29,7 +29,8 @@ const generateOrderNumber = () =>
 export const storeOrderService = {
   async createOrderFromCart(
     cartId: string,
-    storeId: string,
+    shopId: string,
+    affiliateStoreId: string,
     orderData: CreateOrderData
   ) {
     try {
@@ -59,14 +60,14 @@ export const storeOrderService = {
       const tax = 0;
       const total = subtotal + shipping + tax;
 
-      const sessionId = localStorage.getItem(`store_session_${storeId}`);
+      const sessionId = localStorage.getItem(`store_session_${affiliateStoreId}`);
       const orderNumber = generateOrderNumber();
 
       const { data: order, error: orderError } = await supabase
         .from('ecommerce_orders')
         .insert({
-          shop_id: storeId,
-          affiliate_store_id: storeId,
+          shop_id: shopId,
+          affiliate_store_id: affiliateStoreId,
           buyer_session_id: sessionId,
           customer_name: orderData.customerName,
           customer_phone: orderData.customerPhone,
@@ -122,7 +123,7 @@ export const storeOrderService = {
         .delete()
         .eq('cart_id', cartId);
 
-      await this.updateStoreCustomerSimple(storeId, orderData, total);
+      await this.updateStoreCustomerSimple(affiliateStoreId, orderData, total);
 
       return {
         success: true,
