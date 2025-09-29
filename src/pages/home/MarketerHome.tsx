@@ -27,14 +27,7 @@ export interface MarketerHomeProps {
 
 const MarketerHome: React.FC<MarketerHomeProps> = ({ statisticsOverride, storeSlugOverride, nameOverride }) => {
   const { profile } = useFastAuth();
-  let contextData:
-    | ({ userStatistics?: Record<string, unknown> | null; userShop?: { slug?: string | null } | null })
-    | null = null;
-  try {
-    contextData = useUserDataContext() as any;
-  } catch (error) {
-    contextData = null;
-  }
+  const contextData = useUserDataContext();
   const userStatistics = (statisticsOverride ?? (contextData?.userStatistics as Record<string, unknown> | null) ?? {}) as Record<string, any>;
   const userShop = (contextData?.userShop ?? null) as { slug?: string | null } | null;
   const storeSlug = storeSlugOverride ?? userShop?.slug ?? 'my-boutique';

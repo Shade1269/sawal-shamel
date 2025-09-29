@@ -114,7 +114,8 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
   loadingOverride,
 }) => {
   const prefersReducedMotion = usePrefersReducedMotion();
-  const navigate = navigateOverride ?? useNavigate();
+  const navigateHook = useNavigate();
+  const navigate = navigateOverride ?? navigateHook;
   const [searchParams] = useSearchParams();
   const params = useParams<{ orderId?: string; slug?: string }>();
   const orderId = searchParams.get("orderId") ?? params.orderId ?? "";

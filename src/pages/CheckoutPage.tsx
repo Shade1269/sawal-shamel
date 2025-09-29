@@ -111,7 +111,8 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
   ensureLocalStorage();
 
   const prefersReducedMotion = usePrefersReducedMotion();
-  const navigate = navigateOverride ?? useNavigate();
+  const navigateHook = useNavigate();
+  const navigate = navigateOverride ?? navigateHook;
   const auth = useFastAuth();
   const cartHook = useShoppingCart();
 
