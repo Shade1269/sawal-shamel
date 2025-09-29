@@ -45,11 +45,7 @@ const Index = () => {
   const { language, toggleLanguage } = useLanguage();
   const { themeId } = useTheme('default');
 
-  React.useEffect(() => {
-    if (!loading && isAuthenticated === false) {
-      navigate('/auth', { replace: true });
-    }
-  }, [isAuthenticated, loading, navigate]);
+  // Remove forced redirect - allow anonymous users to access homepage
 
   const currentUser = user;
   const role = profile?.role;
