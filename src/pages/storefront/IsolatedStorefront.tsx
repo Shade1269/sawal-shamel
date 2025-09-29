@@ -33,6 +33,7 @@ interface StoreContextType {
     id: string;
     store_name: string;
     store_slug: string;
+    shop_id: string;
   };
 }
 

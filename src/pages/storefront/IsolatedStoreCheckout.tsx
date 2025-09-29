@@ -26,6 +26,7 @@ interface StoreContextType {
     id: string;
     store_name: string;
     store_slug: string;
+    shop_id: string;
   };
 }
 
@@ -84,6 +85,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
     try {
       const result = await storeOrderService.createOrderFromCart(
         cart.id,
+        store.shop_id,
         store.id,
         {
           customerName: formData.customerName,
