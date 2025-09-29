@@ -3,6 +3,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Json } from '@/integrations/supabase/types';
 
+export interface StoreCategory {
+  id: string;
+  name: string;
+  isActive: boolean;
+  productCount: number;
+}
+
 export interface StoreSettings {
   id?: string;
   store_id: string;

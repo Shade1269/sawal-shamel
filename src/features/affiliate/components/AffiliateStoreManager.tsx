@@ -33,7 +33,7 @@ import {
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { useStoreSettings, type StoreCategory } from '@/hooks/useStoreSettings';
 import { useQRGenerator } from '@/hooks/useQRGenerator';
 import { useStoreAnalytics } from '@/hooks/useStoreAnalytics';
 import { ImageUpload } from '@/components/ui/image-upload';
@@ -160,12 +160,38 @@ export const AffiliateStoreManager = ({
     }
   };
 
+  // إضافة المتغيرات للفئات وطريقة العرض
+  const [displayStyle, setDisplayStyle] = useState('grid');
+  const [categories, setCategories] = useState<StoreCategory[]>([
+    { id: '1', name: 'أزياء نسائية', isActive: true, productCount: 12 },
+    { id: '2', name: 'إكسسوارات', isActive: true, productCount: 8 },
+    { id: '3', name: 'أحذية', isActive: false, productCount: 15 },
+    { id: '4', name: 'حقائب', isActive: true, productCount: 6 }
+  ]);
+
+  const toggleCategoryStatus = (categoryId: string) => {
+    setCategories(prev => prev.map(cat => 
+      cat.id === categoryId ? { ...cat, isActive: !cat.isActive } : cat
+    ));
+  };
+
+  const getDisplayStyleLabel = (style: string) => {
+    switch (style) {
+      case 'grid': return 'شبكة مع صور';
+      case 'horizontal': return 'قائمة أفقية';
+      case 'circular': return 'دائرية مميزة';
+      default: return 'شبكة مع صور';
+    }
+  };
+
   // حفظ إعدادات الفئات
   const saveCategorySettings = async () => {
+    const activeCategories = categories.filter(cat => cat.isActive).map(cat => cat.name);
     const success = await updateSettings({
-      category_display_style: categorySettings.display_style,
-      featured_categories: categorySettings.featured_categories
+      category_display_style: displayStyle,
+      featured_categories: activeCategories
     });
+    
     if (success) {
       toast({
         title: "تم الحفظ",
@@ -475,20 +501,36 @@ export const AffiliateStoreManager = ({
               {/* Category Display Style */}
               <div className="space-y-3">
                 <Label>طريقة عرض الفئات</Label>
+                <p className="text-sm text-muted-foreground mb-3">النمط الحالي: {getDisplayStyleLabel(displayStyle)}</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card className="cursor-pointer border-2 hover:border-primary transition-colors">
+                  <Card 
+                    className={`cursor-pointer border-2 hover:border-primary transition-colors ${
+                      displayStyle === 'grid' ? 'border-primary bg-primary/5' : ''
+                    }`}
+                    onClick={() => setDisplayStyle('grid')}
+                  >
                     <CardContent className="p-4 text-center">
                       <Grid className="h-8 w-8 mx-auto mb-2" />
                       <p className="text-sm font-medium">شبكة مع صور</p>
                     </CardContent>
                   </Card>
-                  <Card className="cursor-pointer border-2 hover:border-primary transition-colors">
+                  <Card 
+                    className={`cursor-pointer border-2 hover:border-primary transition-colors ${
+                      displayStyle === 'horizontal' ? 'border-primary bg-primary/5' : ''
+                    }`}
+                    onClick={() => setDisplayStyle('horizontal')}
+                  >
                     <CardContent className="p-4 text-center">
                       <AlignLeft className="h-8 w-8 mx-auto mb-2" />
                       <p className="text-sm font-medium">قائمة أفقية</p>
                     </CardContent>
                   </Card>
-                  <Card className="cursor-pointer border-2 hover:border-primary transition-colors">
+                  <Card 
+                    className={`cursor-pointer border-2 hover:border-primary transition-colors ${
+                      displayStyle === 'circular' ? 'border-primary bg-primary/5' : ''
+                    }`}
+                    onClick={() => setDisplayStyle('circular')}
+                  >
                     <CardContent className="p-4 text-center">
                       <Star className="h-8 w-8 mx-auto mb-2" />
                       <p className="text-sm font-medium">دائرية مميزة</p>
@@ -500,21 +542,33 @@ export const AffiliateStoreManager = ({
               {/* Featured Categories */}
               <div className="space-y-3">
                 <Label>الفئات المميزة</Label>
+                <p className="text-sm text-muted-foreground">
+                  فعل أو ألغ الفئات التي تريد عرضها في متجرك
+                </p>
                 <div className="space-y-3">
-                  {['أزياء نسائية', 'إكسسوارات', 'أحذية', 'حقائب'].map((category, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                  {categories.map((category) => (
+                    <div key={category.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                          <Heart className="h-5 w-5 text-primary" />
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          category.isActive ? 'bg-primary/10' : 'bg-muted'
+                        }`}>
+                          <Heart className={`h-5 w-5 ${
+                            category.isActive ? 'text-primary' : 'text-muted-foreground'
+                          }`} />
                         </div>
                         <div>
-                          <p className="font-medium">{category}</p>
-                          <p className="text-sm text-muted-foreground">12 منتج</p>
+                          <p className={`font-medium ${
+                            category.isActive ? 'text-foreground' : 'text-muted-foreground'
+                          }`}>{category.name}</p>
+                          <p className="text-sm text-muted-foreground">{category.productCount} منتج</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Switch defaultChecked />
-                        <Button variant="outline" size="sm">
+                        <Switch 
+                          checked={category.isActive}
+                          onCheckedChange={() => toggleCategoryStatus(category.id)}
+                        />
+                        <Button variant="outline" size="sm" disabled={!category.isActive}>
                           <Edit className="h-4 w-4" />
                         </Button>
                       </div>
