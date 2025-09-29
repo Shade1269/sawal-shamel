@@ -132,8 +132,6 @@ export const useIsolatedStoreCart = (storeId: string) => {
         finalTitle = product.title;
       }
 
-      const totalPrice = finalPrice * quantity;
-
       // Check if product already in cart
       const existingItem = cart.items.find(item => item.product_id === productId);
 
@@ -143,7 +141,7 @@ export const useIsolatedStoreCart = (storeId: string) => {
           .from('cart_items')
           .update({
             quantity: existingItem.quantity + quantity,
-            total_price_sar: (existingItem.quantity + quantity) * finalPrice
+            unit_price_sar: finalPrice
           })
           .eq('id', existingItem.id);
 
@@ -156,8 +154,7 @@ export const useIsolatedStoreCart = (storeId: string) => {
             cart_id: cart.id,
             product_id: productId,
             quantity,
-            unit_price_sar: finalPrice,
-            total_price_sar: totalPrice
+            unit_price_sar: finalPrice
           });
 
         if (error) throw error;
@@ -198,13 +195,11 @@ export const useIsolatedStoreCart = (storeId: string) => {
       const item = cart?.items.find(i => i.id === itemId);
       if (!item) return;
 
-      const newTotal = item.unit_price_sar * newQuantity;
-
       const { error } = await supabasePublic
         .from('cart_items')
         .update({
           quantity: newQuantity,
-          total_price_sar: newTotal
+          unit_price_sar: item.unit_price_sar
         })
         .eq('id', itemId);
 
