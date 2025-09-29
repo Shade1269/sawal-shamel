@@ -86,21 +86,33 @@ export const AppShell: React.FC<AppShellProps> = ({
   userDataOverride,
   inboxOverride,
 }) => {
-  const fastAuth = fastAuthOverride
-    ? {
-        profile: fastAuthOverride.profile ?? null,
-        user: fastAuthOverride.user ?? null,
-        signOut: fastAuthOverride.signOut ?? (() => {}),
-      }
-    : useFastAuth();
+  const fastAuthFromContext = useFastAuth();
+  const fastAuth = React.useMemo(() => {
+    if (!fastAuthOverride) {
+      return fastAuthFromContext;
+    }
 
-  const userData = userDataOverride
-    ? {
-        userShop: userDataOverride.userShop ?? null,
-        userActivities: userDataOverride.userActivities ?? [],
-        userStatistics: userDataOverride.userStatistics ?? {},
-      }
-    : useUserDataContext();
+    return {
+      ...fastAuthFromContext,
+      profile: fastAuthOverride.profile ?? fastAuthFromContext.profile,
+      user: fastAuthOverride.user ?? fastAuthFromContext.user,
+      signOut: fastAuthOverride.signOut ?? fastAuthFromContext.signOut,
+    };
+  }, [fastAuthFromContext, fastAuthOverride]);
+
+  const userDataFromContext = useUserDataContext();
+  const userData = React.useMemo(() => {
+    if (!userDataOverride) {
+      return userDataFromContext;
+    }
+
+    return {
+      ...userDataFromContext,
+      userShop: userDataOverride.userShop ?? userDataFromContext.userShop,
+      userActivities: userDataOverride.userActivities ?? userDataFromContext.userActivities,
+      userStatistics: userDataOverride.userStatistics ?? userDataFromContext.userStatistics,
+    };
+  }, [userDataFromContext, userDataOverride]);
 
   const profile = fastAuth.profile;
   const user = fastAuth.user;
