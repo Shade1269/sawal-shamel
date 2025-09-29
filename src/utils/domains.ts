@@ -3,15 +3,11 @@ export const ATLANTIS_DOMAIN = 'https://atlantiss.tech';
 
 // الحصول على رابط القاعدة المخصص
 export const getBaseUrl = (): string => {
-  // في بيئة التطوير المحلي أو للاختبار
+  // Always use the current origin in the running environment
   if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    if (hostname === 'localhost' || hostname.includes('127.0.0.1')) {
-      return window.location.origin;
-    }
+    return window.location.origin;
   }
-  
-  // استخدام النطاق المخصص لأتلانتس تيش في الإنتاج
+  // Fallback only when window is unavailable (SSR/build-time)
   return ATLANTIS_DOMAIN;
 };
 
