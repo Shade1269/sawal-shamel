@@ -29,7 +29,10 @@ import {
   Grid,
   AlignLeft,
   Star,
-  Heart
+  Heart,
+  Plus,
+  Trash2,
+  Package
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
@@ -37,6 +40,7 @@ import { useStoreSettings, type StoreCategory } from '@/hooks/useStoreSettings';
 import { useQRGenerator } from '@/hooks/useQRGenerator';
 import { useStoreAnalytics } from '@/hooks/useStoreAnalytics';
 import { ImageUpload } from '@/components/ui/image-upload';
+import { CategoryEditDialog } from './CategoryEditDialog';
 
 interface AffiliateStoreManagerProps {
   store: {
@@ -68,7 +72,7 @@ export const AffiliateStoreManager = ({
 
   // استخدام خطافات الإعدادات والتحسينات
   const { settings, updateSettings, uploadImage } = useStoreSettings(store.id);
-  const { generateQR, downloadQR, isGenerating } = useQRGenerator();
+  const { generateQR, downloadQR, qrCodeDataUrl, isGenerating } = useQRGenerator();
   const { analytics, loading: analyticsLoading } = useStoreAnalytics(store.id);
 
   const storeUrl = createStoreUrl(store.store_slug);
@@ -173,6 +177,20 @@ export const AffiliateStoreManager = ({
     setCategories(prev => prev.map(cat => 
       cat.id === categoryId ? { ...cat, isActive: !cat.isActive } : cat
     ));
+  };
+
+  const handleCategoryEdit = (updatedCategory: Partial<StoreCategory>) => {
+    setCategories(prev => prev.map(cat => 
+      cat.id === updatedCategory.id ? { ...cat, ...updatedCategory } : cat
+    ));
+  };
+
+  const handleAddCategory = (newCategory: Partial<StoreCategory>) => {
+    setCategories(prev => [...prev, newCategory as StoreCategory]);
+  };
+
+  const handleDeleteCategory = (categoryId: string) => {
+    setCategories(prev => prev.filter(cat => cat.id !== categoryId));
   };
 
   const getDisplayStyleLabel = (style: string) => {
@@ -541,7 +559,15 @@ export const AffiliateStoreManager = ({
 
               {/* Featured Categories */}
               <div className="space-y-3">
-                <Label>الفئات المميزة</Label>
+                <div className="flex items-center justify-between">
+                  <Label>الفئات المميزة</Label>
+                  <CategoryEditDialog isNew onSave={handleAddCategory}>
+                    <Button variant="outline" size="sm">
+                      <Plus className="h-4 w-4 mr-2" />
+                      إضافة فئة
+                    </Button>
+                  </CategoryEditDialog>
+                </div>
                 <p className="text-sm text-muted-foreground">
                   فعل أو ألغ الفئات التي تريد عرضها في متجرك
                 </p>
@@ -568,8 +594,18 @@ export const AffiliateStoreManager = ({
                           checked={category.isActive}
                           onCheckedChange={() => toggleCategoryStatus(category.id)}
                         />
-                        <Button variant="outline" size="sm" disabled={!category.isActive}>
-                          <Edit className="h-4 w-4" />
+                        <CategoryEditDialog category={category} onSave={handleCategoryEdit}>
+                          <Button variant="outline" size="sm" disabled={!category.isActive}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </CategoryEditDialog>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => handleDeleteCategory(category.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -616,7 +652,11 @@ export const AffiliateStoreManager = ({
                 <Label>رمز QR للمتجر</Label>
                 <div className="flex items-center gap-4">
                   <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center">
-                    <QrCode className="h-16 w-16 text-muted-foreground" />
+                    {qrCodeDataUrl ? (
+                      <img src={qrCodeDataUrl} alt="QR Code" className="w-28 h-28 rounded" />
+                    ) : (
+                      <QrCode className="h-16 w-16 text-muted-foreground" />
+                    )}
                   </div>
                   <div className="space-y-2">
                     <p className="text-sm text-muted-foreground">
@@ -626,7 +666,11 @@ export const AffiliateStoreManager = ({
                       <Button variant="outline" onClick={handleGenerateQR} disabled={isGenerating}>
                         {isGenerating ? 'جاري الإنتاج...' : 'توليد رمز QR'}
                       </Button>
-                      <Button variant="outline" disabled>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => qrCodeDataUrl && downloadQR(qrCodeDataUrl, `qr-${store.store_slug}.png`)}
+                        disabled={!qrCodeDataUrl}
+                      >
                         تحميل الصورة
                       </Button>
                     </div>

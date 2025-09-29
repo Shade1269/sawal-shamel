@@ -3,6 +3,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export const useQRGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string | null>(null);
   const { toast } = useToast();
 
   const generateQR = async (url: string, size: number = 256) => {
@@ -18,6 +19,7 @@ export const useQRGenerator = () => {
       
       // إنشاء رابط للتحميل
       const downloadUrl = URL.createObjectURL(blob);
+      setQrCodeDataUrl(downloadUrl);
       
       toast({
         title: "تم إنتاج رمز QR",
@@ -59,6 +61,7 @@ export const useQRGenerator = () => {
   return {
     generateQR,
     downloadQR,
+    qrCodeDataUrl,
     isGenerating
   };
 };
