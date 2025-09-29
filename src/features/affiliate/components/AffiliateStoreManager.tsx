@@ -33,6 +33,10 @@ import {
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { useQRGenerator } from '@/hooks/useQRGenerator';
+import { useStoreAnalytics } from '@/hooks/useStoreAnalytics';
+import { ImageUpload } from '@/components/ui/image-upload';
 
 interface AffiliateStoreManagerProps {
   store: {
@@ -62,7 +66,27 @@ export const AffiliateStoreManager = ({
     theme: store.theme
   });
 
+  // استخدام خطافات الإعدادات والتحسينات
+  const { settings, updateSettings, uploadImage } = useStoreSettings(store.id);
+  const { generateQR, downloadQR, isGenerating } = useQRGenerator();
+  const { analytics, loading: analyticsLoading } = useStoreAnalytics(store.id);
+
   const storeUrl = createStoreUrl(store.store_slug);
+
+  // حالات الإعدادات المتقدمة
+  const [heroSettings, setHeroSettings] = useState({
+    hero_title: settings?.hero_title || '',
+    hero_subtitle: settings?.hero_subtitle || '',
+    hero_description: settings?.hero_description || '',
+    hero_cta_text: settings?.hero_cta_text || 'تسوق الآن',
+    hero_cta_color: settings?.hero_cta_color || 'primary',
+    hero_image_url: settings?.hero_image_url || ''
+  });
+
+  const [categorySettings, setCategorySettings] = useState({
+    display_style: settings?.category_display_style || 'grid',
+    featured_categories: settings?.featured_categories || []
+  });
 
   const themes = [
     { value: 'classic', label: 'كلاسيكي', colors: 'من الأزرق إلى الرمادي' },
@@ -107,6 +131,57 @@ export const AffiliateStoreManager = ({
       }
     } else {
       copyStoreLink();
+    }
+  };
+
+  // وظائف إدارة الصور
+  const handleLogoUpload = async (file: File) => {
+    const result = await uploadImage(file, 'logos');
+    if (result.success && onUpdateStore) {
+      onUpdateStore({ logo_url: result.url });
+    }
+  };
+
+  const handleHeroImageUpload = async (file: File) => {
+    const result = await uploadImage(file, 'hero');
+    if (result.success) {
+      setHeroSettings(prev => ({ ...prev, hero_image_url: result.url }));
+    }
+  };
+
+  // حفظ إعدادات القسم الرئيسي
+  const saveHeroSettings = async () => {
+    const success = await updateSettings(heroSettings);
+    if (success) {
+      toast({
+        title: "تم الحفظ",
+        description: "تم حفظ إعدادات القسم الرئيسي بنجاح"
+      });
+    }
+  };
+
+  // حفظ إعدادات الفئات
+  const saveCategorySettings = async () => {
+    const success = await updateSettings({
+      category_display_style: categorySettings.display_style,
+      featured_categories: categorySettings.featured_categories
+    });
+    if (success) {
+      toast({
+        title: "تم الحفظ",
+        description: "تم حفظ إعدادات الفئات بنجاح"
+      });
+    }
+  };
+
+  // توليد وتحميل رمز QR
+  const handleGenerateQR = async () => {
+    const result = await generateQR(storeUrl, 512);
+    if (result.success && result.downloadUrl) {
+      toast({
+        title: "تم إنتاج رمز QR",
+        description: "يمكنك الآن تحميل الرمز"
+      });
     }
   };
 
@@ -272,10 +347,17 @@ export const AffiliateStoreManager = ({
                       <Store className="h-8 w-8 text-muted-foreground" />
                     )}
                   </div>
-                  <Button variant="outline" disabled={!isEditing}>
-                    <Upload className="h-4 w-4 ml-2" />
-                    رفع شعار
-                  </Button>
+                  <ImageUpload
+                    onImageSelect={handleLogoUpload}
+                    currentImage={store.logo_url}
+                    accept="image/*"
+                    className="w-20 h-20"
+                  >
+                    <Button variant="outline" disabled={!isEditing}>
+                      <Upload className="h-4 w-4 ml-2" />
+                      رفع شعار
+                    </Button>
+                  </ImageUpload>
                 </div>
               </div>
 
@@ -304,16 +386,12 @@ export const AffiliateStoreManager = ({
               {/* Hero Image */}
               <div className="space-y-3">
                 <Label>صورة الخلفية الرئيسية</Label>
-                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-                  <ImageIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground mb-4">
-                    اسحب وأفلت صورة هنا أو انقر للاختيار
-                  </p>
-                  <Button variant="outline">
-                    <Upload className="h-4 w-4 mr-2" />
-                    رفع صورة
-                  </Button>
-                </div>
+                <ImageUpload
+                  onImageSelect={handleHeroImageUpload}
+                  currentImage={heroSettings.hero_image_url}
+                  accept="image/*"
+                  className="h-64"
+                />
               </div>
 
               {/* Hero Text */}
@@ -321,6 +399,8 @@ export const AffiliateStoreManager = ({
                 <div className="space-y-2">
                   <Label>العنوان الرئيسي</Label>
                   <Input 
+                    value={heroSettings.hero_title}
+                    onChange={(e) => setHeroSettings(prev => ({ ...prev, hero_title: e.target.value }))}
                     placeholder="مرحباً بكم في متجري" 
                     className="text-right"
                   />
@@ -328,6 +408,8 @@ export const AffiliateStoreManager = ({
                 <div className="space-y-2">
                   <Label>العنوان الفرعي</Label>
                   <Input 
+                    value={heroSettings.hero_subtitle}
+                    onChange={(e) => setHeroSettings(prev => ({ ...prev, hero_subtitle: e.target.value }))}
                     placeholder="أفضل المنتجات بأسعار منافسة" 
                     className="text-right"
                   />
@@ -337,6 +419,8 @@ export const AffiliateStoreManager = ({
               <div className="space-y-2">
                 <Label>وصف مختصر</Label>
                 <Textarea 
+                  value={heroSettings.hero_description}
+                  onChange={(e) => setHeroSettings(prev => ({ ...prev, hero_description: e.target.value }))}
                   placeholder="اكتشف مجموعة رائعة من المنتجات عالية الجودة..."
                   className="min-h-20 text-right"
                 />
@@ -347,13 +431,15 @@ export const AffiliateStoreManager = ({
                 <div className="space-y-2">
                   <Label>نص زر العمل</Label>
                   <Input 
+                    value={heroSettings.hero_cta_text}
+                    onChange={(e) => setHeroSettings(prev => ({ ...prev, hero_cta_text: e.target.value }))}
                     placeholder="تسوق الآن" 
                     className="text-right"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>لون زر العمل</Label>
-                  <Select>
+                  <Select value={heroSettings.hero_cta_color} onValueChange={(value) => setHeroSettings(prev => ({ ...prev, hero_cta_color: value }))}>
                     <SelectTrigger>
                       <SelectValue placeholder="اختر اللون" />
                     </SelectTrigger>
@@ -366,7 +452,7 @@ export const AffiliateStoreManager = ({
                 </div>
               </div>
 
-              <Button className="w-full">
+              <Button className="w-full" onClick={saveHeroSettings}>
                 <Save className="h-4 w-4 mr-2" />
                 حفظ إعدادات القسم الرئيسي
               </Button>
@@ -437,7 +523,7 @@ export const AffiliateStoreManager = ({
                 </div>
               </div>
 
-              <Button className="w-full">
+              <Button className="w-full" onClick={saveCategorySettings}>
                 <Save className="h-4 w-4 mr-2" />
                 حفظ إعدادات الفئات
               </Button>
@@ -483,10 +569,10 @@ export const AffiliateStoreManager = ({
                       يمكن للعملاء مسح هذا الرمز للوصول إلى متجرك مباشرة
                     </p>
                     <div className="flex gap-2">
-                      <Button variant="outline" onClick={onGenerateQR}>
-                        توليد رمز QR
+                      <Button variant="outline" onClick={handleGenerateQR} disabled={isGenerating}>
+                        {isGenerating ? 'جاري الإنتاج...' : 'توليد رمز QR'}
                       </Button>
-                      <Button variant="outline">
+                      <Button variant="outline" disabled>
                         تحميل الصورة
                       </Button>
                     </div>
@@ -530,36 +616,66 @@ export const AffiliateStoreManager = ({
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Eye className="h-8 w-8 mx-auto mb-2 text-blue-500" />
-                <div className="text-2xl font-bold">1,234</div>
-                <div className="text-sm text-muted-foreground">إجمالي المشاهدات</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <LinkIcon className="h-8 w-8 mx-auto mb-2 text-green-500" />
-                <div className="text-2xl font-bold">456</div>
-                <div className="text-sm text-muted-foreground">النقرات على المنتجات</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Globe className="h-8 w-8 mx-auto mb-2 text-purple-500" />
-                <div className="text-2xl font-bold">89</div>
-                <div className="text-sm text-muted-foreground">زوار فريدون</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <Store className="h-8 w-8 mx-auto mb-2 text-orange-500" />
-                <div className="text-2xl font-bold">{store.total_orders}</div>
-                <div className="text-sm text-muted-foreground">إجمالي الطلبات</div>
-              </CardContent>
-            </Card>
-          </div>
+          {analyticsLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <Eye className="h-8 w-8 mx-auto mb-2 text-blue-500" />
+                    <div className="text-2xl font-bold">{analytics?.totalViews?.toLocaleString('ar-EG') || '0'}</div>
+                    <div className="text-sm text-muted-foreground">إجمالي المشاهدات</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <LinkIcon className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                    <div className="text-2xl font-bold">{analytics?.productClicks?.toLocaleString('ar-EG') || '0'}</div>
+                    <div className="text-sm text-muted-foreground">النقرات على المنتجات</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <Globe className="h-8 w-8 mx-auto mb-2 text-purple-500" />
+                    <div className="text-2xl font-bold">{analytics?.uniqueVisitors?.toLocaleString('ar-EG') || '0'}</div>
+                    <div className="text-sm text-muted-foreground">زوار فريدون</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <Store className="h-8 w-8 mx-auto mb-2 text-orange-500" />
+                    <div className="text-2xl font-bold">{analytics?.totalOrders?.toLocaleString('ar-EG') || store.total_orders}</div>
+                    <div className="text-sm text-muted-foreground">إجمالي الطلبات</div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* إحصائيات إضافية */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-lg font-bold text-green-600">{analytics?.conversionRate || 0}%</div>
+                    <div className="text-sm text-muted-foreground">معدل التحويل</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-lg font-bold text-blue-600">{analytics?.averageOrderValue?.toLocaleString('ar-EG') || 0} ر.س</div>
+                    <div className="text-sm text-muted-foreground">متوسط قيمة الطلب</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-lg font-bold text-purple-600">{analytics?.totalSales?.toLocaleString('ar-EG') || store.total_sales} ر.س</div>
+                    <div className="text-sm text-muted-foreground">إجمالي المبيعات</div>
+                  </CardContent>
+                </Card>
+              </div>
+            </>
+          )}
         </TabsContent>
       </Tabs>
     </div>

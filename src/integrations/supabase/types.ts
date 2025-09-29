@@ -188,6 +188,54 @@ export type Database = {
           },
         ]
       }
+      affiliate_store_settings: {
+        Row: {
+          category_display_style: string | null
+          created_at: string
+          featured_categories: Json | null
+          hero_cta_color: string | null
+          hero_cta_text: string | null
+          hero_description: string | null
+          hero_image_url: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
+          id: string
+          store_analytics: Json | null
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          category_display_style?: string | null
+          created_at?: string
+          featured_categories?: Json | null
+          hero_cta_color?: string | null
+          hero_cta_text?: string | null
+          hero_description?: string | null
+          hero_image_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          store_analytics?: Json | null
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          category_display_style?: string | null
+          created_at?: string
+          featured_categories?: Json | null
+          hero_cta_color?: string | null
+          hero_cta_text?: string | null
+          hero_description?: string | null
+          hero_image_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          store_analytics?: Json | null
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       affiliate_store_themes: {
         Row: {
           applied_at: string | null
