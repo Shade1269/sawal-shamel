@@ -81,7 +81,21 @@ export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => 
   const addToCart = (product: any) => {
     if (!store?.id) return;
     
-    addToCartDB(product.product_id);
+    // Find the product in the products array to get price and title
+    const productData = products?.find(p => 
+      (p.products?.id === product.product_id) || (p.product_id === product.product_id)
+    );
+    
+    // Get price and title from the nested products object
+    let price: number | undefined;
+    let title: string | undefined;
+    
+    if (productData && 'products' in productData) {
+      price = productData.products.price_sar;
+      title = productData.products.title;
+    }
+    
+    addToCartDB(product.product_id, 1, price, title);
   };
 
   const updateQuantity = (productId: string, newQuantity: number) => {
