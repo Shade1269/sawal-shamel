@@ -24,23 +24,9 @@ export default function AffiliateDashboardOverview() {
   const queryClient = useQueryClient();
   const [creating, setCreating] = useState(false);
 
-  const handleCreateStore = async () => {
-    if (!user) return;
-    setCreating(true);
-    try {
-      const storeName = 'متجر ' + (user.user_metadata?.full_name || user.email || 'المسوّق');
-      const { data: newStoreId, error } = await supabase.rpc('create_affiliate_store', {
-        p_store_name: storeName,
-        p_bio: null,
-        p_store_slug: null
-      });
-      if (error) throw error;
-      await queryClient.invalidateQueries({ queryKey: ['affiliate-store', user.id] });
-    } catch (e) {
-      console.error('Error creating affiliate store:', e);
-    } finally {
-      setCreating(false);
-    }
+  const handleCreateStore = () => {
+    // توجيه المستخدم لصفحة إنشاء المتجر
+    window.location.href = '/affiliate/store/setup';
   };
 
   // Get affiliate store
@@ -99,8 +85,8 @@ export default function AffiliateDashboardOverview() {
           <p className="text-muted-foreground mb-4">
             قم بإنشاء متجرك الأول لبدء التسويق بالعمولة
           </p>
-          <EnhancedButton onClick={handleCreateStore} disabled={creating} variant="persian" animation="glow">
-            {creating ? 'جاري الإنشاء...' : 'إنشاء متجر جديد'}
+          <EnhancedButton onClick={handleCreateStore} variant="persian" animation="glow">
+            إنشاء متجر جديد
           </EnhancedButton>
         </div>
       </div>

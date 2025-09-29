@@ -333,7 +333,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             إذا كنت مسوقة، يمكنك إنشاء متجرك الخاص من هنا.
           </p>
           <div className="space-y-3">
-            <Button onClick={() => navigate('/affiliate/home')} className="px-8 w-full">
+            <Button onClick={() => navigate('/affiliate/store/setup')} className="px-8 w-full">
               <Store className="h-4 w-4 mr-2" />
               إنشاء متجر جديد
             </Button>
