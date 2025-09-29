@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ShoppingCart, Plus, Minus, Store, Package, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 
 interface AffiliateStore {
   id: string;
@@ -37,27 +38,9 @@ interface StoreProduct {
   };
 }
 
-interface CartItem {
-  product_id: string;
-  title: string;
-  price: number;
-  quantity: number;
-  image_url: string;
-}
-
 export default function AffiliateStorefrontPage() {
   const { store_slug } = useParams<{ store_slug: string }>();
-  const navigate = useNavigate();
-  
-  // Store-specific cart state using localStorage
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    if (typeof window !== 'undefined' && store_slug) {
-      const saved = localStorage.getItem(`cart:${store_slug}`);
-      return saved ? JSON.parse(saved) : [];
-    }
-    return [];
-  });
-  
+
   const [showCheckout, setShowCheckout] = useState(false);
   const [customerData, setCustomerData] = useState({
     name: '',
@@ -65,13 +48,6 @@ export default function AffiliateStorefrontPage() {
     email: '',
     address: ''
   });
-
-  // Save cart to localStorage whenever it changes
-  React.useEffect(() => {
-    if (store_slug) {
-      localStorage.setItem(`cart:${store_slug}`, JSON.stringify(cart));
-    }
-  }, [cart, store_slug]);
 
   // Fetch store data using public client
   const { data: store, isLoading: storeLoading } = useQuery({
@@ -120,13 +96,25 @@ export default function AffiliateStorefrontPage() {
     enabled: !!store
   });
 
+  const {
+    cart: storefrontCart,
+    loading: cartLoading,
+    addToCart: addCartItem,
+    updateQuantity: updateCartItemQuantity,
+    clearCart: clearStorefrontCart,
+  } = useIsolatedStoreCart(store?.id || '');
+
+  const cartItems = storefrontCart?.items ?? [];
+  const totalAmount = storefrontCart?.total ?? 0;
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
   // Create order using public client
   const createOrderMutation = useMutation({
     mutationFn: async () => {
-      if (!store || cart.length === 0) return;
+      if (!store || !cartItems.length) return;
 
-      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      
+      const total = totalAmount;
+
       // Insert order using public client
       const orderNumber = `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
 
@@ -159,13 +147,13 @@ export default function AffiliateStorefrontPage() {
       if (orderError) throw orderError;
 
       // Insert order items
-      const orderItems = cart.map(item => ({
+      const orderItems = cartItems.map(item => ({
         order_id: orderData.id,
         product_id: item.product_id,
-        product_title: item.title,
+        product_title: item.product_title,
         quantity: item.quantity,
-        unit_price_sar: item.price,
-        total_price_sar: item.price * item.quantity,
+        unit_price_sar: item.unit_price_sar,
+        total_price_sar: item.total_price_sar,
         commission_rate: 10
       }));
 
@@ -189,14 +177,11 @@ export default function AffiliateStorefrontPage() {
 
       return orderData.order_number || orderData.id;
     },
-    onSuccess: (orderNumber) => {
+    onSuccess: async (orderNumber) => {
       toast.success("تم إنشاء الطلب بنجاح", {
         description: `رقم الطلب: ${orderNumber}`
       });
-      setCart([]);
-      if (store_slug) {
-        localStorage.removeItem(`cart:${store_slug}`);
-      }
+      await clearStorefrontCart();
       setShowCheckout(false);
       setCustomerData({ name: '', phone: '', email: '', address: '' });
     },
@@ -209,41 +194,22 @@ export default function AffiliateStorefrontPage() {
   });
 
   const addToCart = (product: StoreProduct) => {
-    const existingItem = cart.find(item => item.product_id === product.product_id);
-    
-    if (existingItem) {
-      setCart(cart.map(item => 
-        item.product_id === product.product_id 
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      ));
-    } else {
-      setCart([...cart, {
-        product_id: product.product_id,
-        title: product.products.title,
-        price: product.products.price_sar,
-        quantity: 1,
-        image_url: product.products.image_urls?.[0] || '/placeholder.svg'
-      }]);
+    if (!store?.id) {
+      toast.error('المتجر غير متاح حالياً');
+      return;
     }
 
-    toast.success("تم إضافة المنتج إلى السلة");
+    addCartItem(
+      product.product_id,
+      1,
+      product.products.price_sar,
+      product.products.title
+    );
   };
 
-  const updateQuantity = (productId: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      setCart(cart.filter(item => item.product_id !== productId));
-    } else {
-      setCart(cart.map(item => 
-        item.product_id === productId 
-          ? { ...item, quantity: newQuantity }
-          : item
-      ));
-    }
+  const updateQuantity = (itemId: string, newQuantity: number) => {
+    updateCartItemQuantity(itemId, newQuantity);
   };
-
-  const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   if (storeLoading) {
     return (
@@ -290,9 +256,9 @@ export default function AffiliateStorefrontPage() {
       </div>
 
       {/* Shopping Cart Button */}
-      {cart.length > 0 && (
+      {cartItems.length > 0 && (
         <div className="fixed top-4 left-4 z-50">
-          <Button 
+          <Button
             onClick={() => setShowCheckout(true)}
             className="relative"
             size="lg"
@@ -368,39 +334,45 @@ export default function AffiliateStorefrontPage() {
               <div>
                 <h3 className="font-semibold mb-3">عناصر السلة</h3>
                 <div className="space-y-3">
-                  {cart.map((item) => (
-                    <div key={item.product_id} className="flex items-center gap-3 p-3 border rounded">
-                      <img 
-                        src={item.image_url} 
-                        alt={item.title}
-                        className="w-12 h-12 object-cover rounded"
-                      />
-                      <div className="flex-grow">
-                        <p className="font-medium">{item.title}</p>
-                        <p className="text-sm text-muted-foreground">{item.price} ر.س</p>
+                  {cartLoading ? (
+                    <p className="text-muted-foreground">جاري تحميل السلة...</p>
+                  ) : cartItems.length === 0 ? (
+                    <p className="text-muted-foreground">السلة فارغة</p>
+                  ) : (
+                    cartItems.map((item) => (
+                      <div key={item.id} className="flex items-center gap-3 p-3 border rounded">
+                        <img
+                          src={item.product_image_url || '/placeholder.svg'}
+                          alt={item.product_title}
+                          className="w-12 h-12 object-cover rounded"
+                        />
+                        <div className="flex-grow">
+                          <p className="font-medium">{item.product_title}</p>
+                          <p className="text-sm text-muted-foreground">{item.unit_price_sar} ر.س</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          >
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                          <span className="w-8 text-center">{item.quantity}</span>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        <p className="font-semibold">
+                          {item.total_price_sar.toFixed(2)} ر.س
+                        </p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
-                        >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="w-8 text-center">{item.quantity}</span>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </div>
-                      <p className="font-semibold">
-                        {(item.price * item.quantity).toFixed(2)} ر.س
-                      </p>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
                 <div className="mt-4 pt-4 border-t">
                   <div className="flex justify-between text-lg font-bold">
@@ -463,9 +435,16 @@ export default function AffiliateStorefrontPage() {
                 >
                   إغلاق
                 </Button>
-                <Button 
+                <Button
                   onClick={() => createOrderMutation.mutate()}
-                  disabled={!customerData.name || !customerData.phone || !customerData.address || createOrderMutation.isPending}
+                  disabled={
+                    !customerData.name ||
+                    !customerData.phone ||
+                    !customerData.address ||
+                    createOrderMutation.isPending ||
+                    cartLoading ||
+                    cartItems.length === 0
+                  }
                   className="flex-1"
                 >
                   {createOrderMutation.isPending ? (

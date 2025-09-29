@@ -35,7 +35,15 @@ export const useIsolatedStoreCart = (storeId: string) => {
   const loadCart = async () => {
     try {
       const sessionId = getSessionId();
-      
+
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('storefront:last-session-id', sessionId);
+        } catch (error) {
+          console.warn('Unable to persist storefront session id', error);
+        }
+      }
+
       // Get or create cart
       let { data: cartData } = await supabasePublic
         .from('shopping_carts')
@@ -99,6 +107,15 @@ export const useIsolatedStoreCart = (storeId: string) => {
           items: cartItems,
           total
         });
+
+        if (typeof window !== 'undefined') {
+          try {
+            localStorage.setItem('storefront:last-store-id', storeId);
+            localStorage.setItem('storefront:last-cart-id', cartData.id);
+          } catch (error) {
+            console.warn('Unable to persist storefront cart context', error);
+          }
+        }
       }
     } catch (error) {
       console.error('Error loading cart:', error);
