@@ -32,7 +32,11 @@ import {
   Heart,
   Plus,
   Trash2,
-  Package
+  Package,
+  ShoppingBag,
+  TrendingUp,
+  BarChart3,
+  ShoppingCart
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
@@ -41,6 +45,8 @@ import { useQRGenerator } from '@/hooks/useQRGenerator';
 import { useStoreAnalytics } from '@/hooks/useStoreAnalytics';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { CategoryEditDialog } from './CategoryEditDialog';
+import { ProductManagement } from './ProductManagement';
+import { OrderCommissionManagement } from './OrderCommissionManagement';
 
 interface AffiliateStoreManagerProps {
   store: {
@@ -91,6 +97,9 @@ export const AffiliateStoreManager = ({
     display_style: settings?.category_display_style || 'grid',
     featured_categories: settings?.featured_categories || []
   });
+
+  // حالة لتحديد القسم الحالي
+  const [currentSection, setCurrentSection] = useState<'main' | 'products' | 'orders'>('main');
 
   const themes = [
     { value: 'classic', label: 'كلاسيكي', colors: 'من الأزرق إلى الرمادي' },
@@ -228,6 +237,35 @@ export const AffiliateStoreManager = ({
       });
     }
   };
+
+  // عرض الأقسام المختلفة حسب الاختيار
+  if (currentSection === 'products') {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" onClick={() => setCurrentSection('main')}>
+            ← العودة لإدارة المتجر
+          </Button>
+          <h2 className="text-xl font-semibold">إدارة المنتجات</h2>
+        </div>
+        <ProductManagement storeId={store.id} />
+      </div>
+    );
+  }
+
+  if (currentSection === 'orders') {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" onClick={() => setCurrentSection('main')}>
+            ← العودة لإدارة المتجر
+          </Button>
+          <h2 className="text-xl font-semibold">الطلبات والعمولات</h2>
+        </div>
+        <OrderCommissionManagement storeId={store.id} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
