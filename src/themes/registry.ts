@@ -1,47 +1,95 @@
-// Temporary simple theme structure
+// Simplified theme structure
 const defaultConfig = {
   id: "default",
   name: "Default",
   colors: {
-    background: "#ffffff",
-    foreground: "#0f172a",
+    bg: "#ffffff",
+    fg: "#0f172a",
     primary: "#2563eb",
     secondary: "#f1f5f9",
-    bg: "#ffffff"
+    background: "#ffffff",
+    foreground: "#0f172a"
   },
-  radii: { default: "0.5rem" },
-  spacing: { md: "1rem" },
-  typography: { fontFamily: "Inter" }
+  radii: { 
+    sm: "0.25rem",
+    md: "0.5rem", 
+    lg: "0.75rem",
+    xl: "1rem"
+  },
+  spacing: { 
+    xs: "0.5rem",
+    sm: "1rem",
+    md: "1.5rem", 
+    lg: "2rem",
+    xl: "3rem"
+  },
+  typography: { 
+    fontFamily: "Inter",
+    baseSize: 16,
+    lineHeight: 1.5
+  }
 };
 
 const luxuryConfig = {
   id: "luxury", 
   name: "Luxury",
   colors: {
-    background: "#0c0c0c",
-    foreground: "#fafafa",
+    bg: "#0c0c0c",
+    fg: "#fafafa",
     primary: "#d4af37",
     secondary: "#1a1a1a",
-    bg: "#0c0c0c"
+    background: "#0c0c0c",
+    foreground: "#fafafa"
   },
-  radii: { default: "0.75rem" },
-  spacing: { md: "1rem" },
-  typography: { fontFamily: "Playfair Display" }
+  radii: { 
+    sm: "0.5rem",
+    md: "0.75rem", 
+    lg: "1rem",
+    xl: "1.5rem"
+  },
+  spacing: { 
+    xs: "0.5rem",
+    sm: "1rem",
+    md: "1.5rem", 
+    lg: "2rem",
+    xl: "3rem"
+  },
+  typography: { 
+    fontFamily: "Playfair Display",
+    baseSize: 16,
+    lineHeight: 1.6
+  }
 };
 
 const damascusConfig = {
   id: "damascus",
   name: "Damascus",
   colors: {
-    background: "#0a1016",
-    foreground: "#f4f4f0", 
+    bg: "#0a1016",
+    fg: "#f4f4f0", 
     primary: "#d4af37",
     secondary: "#1a2632",
-    bg: "#0a1016"
+    background: "#0a1016",
+    foreground: "#f4f4f0"
   },
-  radii: { default: "0.75rem" },
-  spacing: { md: "1rem" },
-  typography: { fontFamily: "Cairo" }
+  radii: { 
+    sm: "0.5rem",
+    md: "0.75rem", 
+    lg: "1rem",
+    xl: "1.5rem"
+  },
+  spacing: { 
+    xs: "0.5rem",
+    sm: "1rem",
+    md: "1.5rem", 
+    lg: "2rem",
+    xl: "3rem"
+  },
+  typography: { 
+    fontFamily: "Cairo",
+    baseSize: 16,
+    lineHeight: 1.5
+  }
 };
 
 export const THEMES = {

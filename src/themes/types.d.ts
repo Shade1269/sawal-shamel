@@ -2,8 +2,10 @@ export type ThemeColors = {
   bg: string;
   fg: string;
   primary: string;
-  primaryFg?: string;
   secondary?: string;
+  background?: string;
+  foreground?: string;
+  primaryFg?: string;
   secondaryFg?: string;
   muted?: string;
   mutedFg?: string;
@@ -39,7 +41,6 @@ export type ThemeTypography = {
     bold: number;
   };
 };
-
 
 export type ThemeComponentsConfig = {
   button?: {

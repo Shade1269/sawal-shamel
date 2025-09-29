@@ -5,7 +5,7 @@ import { getContrastRatio } from "@/utils/color";
 
 export type ThemeContextValue = {
   themeId: string;
-  themeConfig: ThemeConfig;
+  themeConfig: any;
   setThemeId: (nextThemeId: string) => void;
 };
 
@@ -37,7 +37,7 @@ function useThemeController(defaultThemeId: string = "default"): ThemeContextVal
     return stored ?? defaultThemeId;
   });
 
-  const themeConfig = useMemo(() => getTheme(themeId), [themeId]);
+  const themeConfig = useMemo(() => getTheme(themeId) as any, [themeId]);
 
   const setThemeId = useCallback((nextThemeId: string) => {
     setThemeIdState(nextThemeId);

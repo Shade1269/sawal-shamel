@@ -25,20 +25,6 @@ interface ExtendedTheme {
   id: string;
   name: string;
   colors: any;
-  typography: {
-    fontFamily: string;
-    baseSize: number;
-    lineHeight: number;
-    weight: {
-      normal: number;
-      medium: number;
-      bold: number;
-    };
-  };
-  radii: any;
-  spacing: any;
-  three: any;
-  components: any;
   icon: JSX.Element;
   preview: string;
   description: string;
@@ -50,7 +36,7 @@ const themes: ExtendedTheme[] = [
   {
     id: "default",
     name: "Default",
-    colors: defaultTheme.colors,
+    colors: { primary: "#2563eb", bg: "#ffffff" },
     icon: <Palette className="h-5 w-5" />,
     preview: "bg-gradient-to-br from-blue-600 to-blue-800",
     description: "ثيم كلاسيكي أنيق ومتوازن للاستخدام العام"
@@ -58,7 +44,7 @@ const themes: ExtendedTheme[] = [
   {
     id: "luxury",
     name: "Luxury", 
-    colors: luxuryTheme.colors,
+    colors: { primary: "#d4af37", bg: "#0c0c0c" },
     icon: <Crown className="h-5 w-5" />,
     preview: "bg-gradient-to-br from-yellow-600 to-amber-800",
     description: "ثيم فاخر بألوان ذهبية للمنتجات الراقية"
@@ -66,7 +52,7 @@ const themes: ExtendedTheme[] = [
   {
     id: "damascus",
     name: "Damascus",
-    colors: damascusTheme.colors,
+    colors: { primary: "#d4af37", bg: "#0a1016" },
     icon: <Sparkles className="h-5 w-5" />,
     preview: "bg-gradient-to-br from-teal-600 to-cyan-800",
     description: "ثيم دمشقي تراثي بلمسة عصرية"
@@ -230,7 +216,7 @@ export const ThemeSelector = ({ storeId, currentTheme, onThemeChange }: ThemeSel
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Palette className="h-3 w-3" />
-                    <span>خط: {theme.typography.fontFamily.split(',')[0].replace(/'/g, '')}</span>
+                    <span>ثيم {theme.name}</span>
                   </div>
                 </div>
 
