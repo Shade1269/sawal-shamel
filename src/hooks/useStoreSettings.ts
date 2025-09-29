@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Json } from '@/integrations/supabase/types';
@@ -126,16 +126,67 @@ export const useStoreSettings = (storeId: string) => {
     fetchSettings();
   }, [storeId]);
 
+  const parsedFeaturedCategories = useMemo(() => parseFeaturedCategories(settings?.featured_categories), [settings?.featured_categories]);
+
   return {
     settings,
     loading,
     updateSettings,
     uploadImage,
     refetch: fetchSettings,
+    featuredCategories: parsedFeaturedCategories,
     // Compatibility aliases for other components
     data: settings,
     isLoading: loading
   };
+};
+
+const normalizeFeaturedCategory = (category: any): StoreCategory | null => {
+  if (!category) return null;
+
+  const id = typeof category.id === 'string' ? category.id : typeof category.name === 'string' ? category.name : undefined;
+  const name = typeof category.name === 'string' ? category.name : undefined;
+
+  if (!id || !name) return null;
+
+  return {
+    id,
+    name,
+    isActive: typeof category.isActive === 'boolean' ? category.isActive : true,
+    productCount: typeof category.productCount === 'number' ? category.productCount : 0
+  };
+};
+
+export const parseFeaturedCategories = (
+  data: StoreSettings['featured_categories']
+): StoreCategory[] => {
+  if (!data) return [];
+
+  let raw: unknown = data;
+
+  if (typeof raw === 'string') {
+    try {
+      raw = JSON.parse(raw);
+    } catch (error) {
+      console.error('Failed to parse featured categories JSON string', error);
+      return [];
+    }
+  }
+
+  if (Array.isArray(raw)) {
+    return raw.map(normalizeFeaturedCategory).filter((category): category is StoreCategory => Boolean(category));
+  }
+
+  if (raw && typeof raw === 'object' && 'categories' in raw) {
+    const categories = (raw as { categories?: unknown }).categories;
+    if (Array.isArray(categories)) {
+      return categories
+        .map(normalizeFeaturedCategory)
+        .filter((category): category is StoreCategory => Boolean(category));
+    }
+  }
+
+  return [];
 };
 
 // Helper functions for payment and shipping methods

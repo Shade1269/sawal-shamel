@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -40,13 +40,14 @@ import {
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { useStoreSettings, type StoreCategory } from '@/hooks/useStoreSettings';
+import { parseFeaturedCategories, useStoreSettings, type StoreCategory } from '@/hooks/useStoreSettings';
 import { useQRGenerator } from '@/hooks/useQRGenerator';
 import { useStoreAnalytics } from '@/hooks/useStoreAnalytics';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { CategoryEditDialog } from './CategoryEditDialog';
 import { ProductManagement } from './ProductManagement';
 import { OrderCommissionManagement } from './OrderCommissionManagement';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AffiliateStoreManagerProps {
   store: {
@@ -63,10 +64,18 @@ interface AffiliateStoreManagerProps {
   onGenerateQR?: () => void;
 }
 
-export const AffiliateStoreManager = ({ 
-  store, 
+type AffiliateProductWithDetails = {
+  products?: {
+    id: string;
+    category: string | null;
+    is_active: boolean | null;
+  } | null;
+};
+
+export const AffiliateStoreManager = ({
+  store,
   onUpdateStore,
-  onGenerateQR 
+  onGenerateQR
 }: AffiliateStoreManagerProps) => {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
@@ -91,11 +100,6 @@ export const AffiliateStoreManager = ({
     hero_cta_text: settings?.hero_cta_text || 'تسوق الآن',
     hero_cta_color: settings?.hero_cta_color || 'primary',
     hero_image_url: settings?.hero_image_url || ''
-  });
-
-  const [categorySettings, setCategorySettings] = useState({
-    display_style: settings?.category_display_style || 'grid',
-    featured_categories: settings?.featured_categories || []
   });
 
   // حالة لتحديد القسم الحالي
@@ -175,12 +179,103 @@ export const AffiliateStoreManager = ({
 
   // إضافة المتغيرات للفئات وطريقة العرض
   const [displayStyle, setDisplayStyle] = useState('grid');
-  const [categories, setCategories] = useState<StoreCategory[]>([
-    { id: '1', name: 'أزياء نسائية', isActive: true, productCount: 12 },
-    { id: '2', name: 'إكسسوارات', isActive: true, productCount: 8 },
-    { id: '3', name: 'أحذية', isActive: false, productCount: 15 },
-    { id: '4', name: 'حقائب', isActive: true, productCount: 6 }
-  ]);
+  const [categories, setCategories] = useState<StoreCategory[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<StoreCategory[]>([]);
+
+  useEffect(() => {
+    if (!settings?.category_display_style) {
+      setDisplayStyle('grid');
+      return;
+    }
+
+    setDisplayStyle(settings.category_display_style);
+  }, [settings?.category_display_style]);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      if (!store.id) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('affiliate_products')
+          .select(`
+            id,
+            is_visible,
+            products (
+              id,
+              category,
+              is_active
+            )
+          `)
+          .eq('affiliate_store_id', store.id)
+          .eq('is_visible', true);
+
+        if (error) throw error;
+
+        const categoryCounts = new Map<string, number>();
+
+        (data as AffiliateProductWithDetails[] | null)?.forEach((item) => {
+          const product = item.products;
+          if (!product || product.is_active === false) return;
+
+          const categoryName = product.category || 'غير مصنف';
+          categoryCounts.set(categoryName, (categoryCounts.get(categoryName) || 0) + 1);
+        });
+
+        const derivedCategories: StoreCategory[] = Array.from(categoryCounts.entries()).map(([name, count]) => ({
+          id: name,
+          name,
+          isActive: true,
+          productCount: count
+        }));
+
+        setAvailableCategories(derivedCategories);
+      } catch (error) {
+        console.error('Error loading available categories for affiliate store:', error);
+        toast({
+          title: 'خطأ',
+          description: 'فشل تحميل الفئات المرتبطة بمنتجات المتجر',
+          variant: 'destructive'
+        });
+      }
+    };
+
+    loadCategories();
+  }, [store.id, toast]);
+
+  useEffect(() => {
+    const storedCategories = parseFeaturedCategories(settings?.featured_categories);
+
+    if (storedCategories.length === 0 && availableCategories.length === 0) {
+      setCategories([]);
+      return;
+    }
+
+    const availableById = new Map(availableCategories.map((category) => [category.id, category]));
+
+    const mergedCategories: StoreCategory[] = availableCategories.map((category) => {
+      const stored = storedCategories.find((item) => item.id === category.id || item.name === category.name);
+      return {
+        ...category,
+        isActive: stored?.isActive ?? true,
+        productCount: stored?.productCount ?? category.productCount
+      };
+    });
+
+    storedCategories.forEach((category) => {
+      const exists = availableById.has(category.id) || mergedCategories.some((item) => item.name === category.name);
+      if (!exists) {
+        mergedCategories.push({
+          id: category.id,
+          name: category.name,
+          isActive: category.isActive,
+          productCount: category.productCount
+        });
+      }
+    });
+
+    setCategories(mergedCategories);
+  }, [settings?.featured_categories, availableCategories]);
 
   const toggleCategoryStatus = (categoryId: string) => {
     setCategories(prev => prev.map(cat => 
@@ -213,12 +308,11 @@ export const AffiliateStoreManager = ({
 
   // حفظ إعدادات الفئات
   const saveCategorySettings = async () => {
-    const activeCategories = categories.filter(cat => cat.isActive).map(cat => cat.name);
     const success = await updateSettings({
       category_display_style: displayStyle,
-      featured_categories: activeCategories
+      featured_categories: categories
     });
-    
+
     if (success) {
       toast({
         title: "تم الحفظ",
@@ -610,44 +704,50 @@ export const AffiliateStoreManager = ({
                   فعل أو ألغ الفئات التي تريد عرضها في متجرك
                 </p>
                 <div className="space-y-3">
-                  {categories.map((category) => (
-                    <div key={category.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                          category.isActive ? 'bg-primary/10' : 'bg-muted'
-                        }`}>
-                          <Heart className={`h-5 w-5 ${
-                            category.isActive ? 'text-primary' : 'text-muted-foreground'
-                          }`} />
-                        </div>
-                        <div>
-                          <p className={`font-medium ${
-                            category.isActive ? 'text-foreground' : 'text-muted-foreground'
-                          }`}>{category.name}</p>
-                          <p className="text-sm text-muted-foreground">{category.productCount} منتج</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Switch 
-                          checked={category.isActive}
-                          onCheckedChange={() => toggleCategoryStatus(category.id)}
-                        />
-                        <CategoryEditDialog category={category} onSave={handleCategoryEdit}>
-                          <Button variant="outline" size="sm" disabled={!category.isActive}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </CategoryEditDialog>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => handleDeleteCategory(category.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                  {categories.length === 0 ? (
+                    <div className="text-center text-muted-foreground border border-dashed rounded-lg py-6">
+                      لا توجد فئات مفعلة بعد، قم بإضافة فئات أو فعلها لعرضها في متجرك.
                     </div>
-                  ))}
+                  ) : (
+                    categories.map((category) => (
+                      <div key={category.id} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                            category.isActive ? 'bg-primary/10' : 'bg-muted'
+                          }`}>
+                            <Heart className={`h-5 w-5 ${
+                              category.isActive ? 'text-primary' : 'text-muted-foreground'
+                            }`} />
+                          </div>
+                          <div>
+                            <p className={`font-medium ${
+                              category.isActive ? 'text-foreground' : 'text-muted-foreground'
+                            }`}>{category.name}</p>
+                            <p className="text-sm text-muted-foreground">{category.productCount} منتج</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={category.isActive}
+                            onCheckedChange={() => toggleCategoryStatus(category.id)}
+                          />
+                          <CategoryEditDialog category={category} onSave={handleCategoryEdit}>
+                            <Button variant="outline" size="sm" disabled={!category.isActive}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </CategoryEditDialog>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteCategory(category.id)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 

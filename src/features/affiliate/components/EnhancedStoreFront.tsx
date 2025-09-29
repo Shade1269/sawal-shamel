@@ -37,11 +37,12 @@ import {
   Phone,
   Mail
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ProductImageCarousel } from "@/features/commerce/components/ProductImageCarousel";
 import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
 import { motion, AnimatePresence } from "framer-motion";
+import { parseFeaturedCategories, type StoreCategory, type StoreSettings } from "@/hooks/useStoreSettings";
 // import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
 
 interface Product {
@@ -175,15 +176,79 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     enabled: !!affiliateStore?.id,
   });
 
+  const { data: storeSettings } = useQuery({
+    queryKey: ["affiliate-store-settings", affiliateStore?.id],
+    queryFn: async () => {
+      if (!affiliateStore?.id) return null;
+
+      const { data, error } = await supabase
+        .from("affiliate_store_settings")
+        .select("*")
+        .eq("store_id", affiliateStore.id)
+        .maybeSingle();
+
+      if (error && error.code !== "PGRST116") throw error;
+      return data as StoreSettings | null;
+    },
+    enabled: !!affiliateStore?.id,
+    onError: (error) => {
+      console.error("Error loading affiliate store settings", error);
+      toast({
+        title: "خطأ في تحميل الإعدادات",
+        description: "تعذر تحميل إعدادات المتجر المخصصة",
+        variant: "destructive",
+      });
+    },
+  });
+
   // حساب المجموع
-  const cartTotal = cart.reduce((total, item) => 
+  const cartTotal = cart.reduce((total, item) =>
     total + (item.product.final_price || item.product.price_sar) * item.quantity, 0
   );
 
   const cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
 
-  // الفئات المتاحة
-  const categories = Array.from(new Set(products?.map(p => p.category) || []));
+  const productCategoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    products?.forEach((product) => {
+      const categoryName = product.category || "غير مصنف";
+      counts[categoryName] = (counts[categoryName] || 0) + 1;
+    });
+    return counts;
+  }, [products]);
+
+  const featuredCategories = useMemo(
+    () => parseFeaturedCategories(storeSettings?.featured_categories),
+    [storeSettings?.featured_categories]
+  );
+
+  const visibleCategories: StoreCategory[] = useMemo(() => {
+    if (featuredCategories.length > 0) {
+      return featuredCategories
+        .map((category) => ({
+          ...category,
+          productCount:
+            category.productCount ?? productCategoryCounts[category.name] ?? 0,
+        }))
+        .filter((category) => category.isActive !== false);
+    }
+
+    return Object.entries(productCategoryCounts).map(([name, count]) => ({
+      id: name,
+      name,
+      isActive: true,
+      productCount: count,
+    }));
+  }, [featuredCategories, productCategoryCounts]);
+
+  const categories = useMemo(() => {
+    if (visibleCategories.length > 0) {
+      return visibleCategories.map((category) => category.name);
+    }
+    return Object.keys(productCategoryCounts);
+  }, [visibleCategories, productCategoryCounts]);
+
+  const categoryDisplayStyle = storeSettings?.category_display_style || "grid";
 
   // فلترة وترتيب المنتجات المحسنة
   const filteredProducts = products?.filter(product => {
@@ -218,7 +283,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // وظائف السلة
   const addToCart = (product: Product, quantity: number = 1) => {
     const existingItem = cart.find(item => item.product.id === product.id);
-    
+
     if (existingItem) {
       setCart(cart.map(item =>
         item.product.id === product.id
@@ -282,6 +347,164 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     setPriceRange([0, 1000]);
     setSortBy("newest");
   };
+
+  const handleCategorySelection = (categoryName: string) => {
+    setSelectedCategory((current) => current === categoryName ? "all" : categoryName);
+  };
+
+  const renderCategoryLayout = () => {
+    if (visibleCategories.length === 0) return null;
+
+    const categoriesToRender = visibleCategories.filter((category) => category.productCount >= 0);
+    if (categoriesToRender.length === 0) return null;
+
+    const renderCategoryCard = (
+      category: StoreCategory,
+      variant: "grid" | "horizontal" | "circular"
+    ) => {
+      const isSelected = selectedCategory === category.name;
+      const baseClasses =
+        "transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60";
+
+      if (variant === "horizontal") {
+        return (
+          <button
+            key={category.id}
+            type="button"
+            onClick={() => handleCategorySelection(category.name)}
+            aria-pressed={isSelected}
+            className={`${baseClasses} flex-shrink-0 px-5 py-3 rounded-full border text-sm font-medium whitespace-nowrap ${
+              isSelected
+                ? "border-primary bg-primary/10 text-primary shadow"
+                : "border-border bg-background hover:border-primary/40"
+            }`}
+          >
+            <span>{category.name}</span>
+            <Badge variant="secondary" className="ml-3">
+              {category.productCount} منتج
+            </Badge>
+          </button>
+        );
+      }
+
+      if (variant === "circular") {
+        return (
+          <button
+            key={category.id}
+            type="button"
+            onClick={() => handleCategorySelection(category.name)}
+            aria-pressed={isSelected}
+            className={`${baseClasses} w-32 h-32 rounded-full border flex flex-col items-center justify-center gap-2 text-center px-4 ${
+              isSelected
+                ? "border-primary bg-primary/10 text-primary shadow-lg"
+                : "border-border bg-background hover:border-primary/40"
+            }`}
+          >
+            <span className="font-semibold text-sm leading-tight line-clamp-2">
+              {category.name}
+            </span>
+            <span className="text-xs text-muted-foreground">{category.productCount} منتج</span>
+          </button>
+        );
+      }
+
+      return (
+        <button
+          key={category.id}
+          type="button"
+          onClick={() => handleCategorySelection(category.name)}
+          aria-pressed={isSelected}
+          className={`${baseClasses} text-right p-5 rounded-2xl border bg-background/80 hover:-translate-y-1 ${
+            isSelected
+              ? "border-primary bg-primary/10 shadow-xl"
+              : "border-border hover:border-primary/40"
+          }`}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="space-y-1">
+              <p className="font-semibold text-lg">{category.name}</p>
+              <p className="text-sm text-muted-foreground">
+                اكتشف {category.productCount} منتجاً مميزاً في هذه الفئة
+              </p>
+            </div>
+            <Badge variant={isSelected ? "default" : "secondary"} className="shrink-0">
+              {category.productCount}
+            </Badge>
+          </div>
+        </button>
+      );
+    };
+
+    switch (categoryDisplayStyle) {
+      case "horizontal":
+        return (
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            <button
+              type="button"
+              onClick={() => setSelectedCategory("all")}
+              aria-pressed={selectedCategory === "all"}
+              className={`${
+                selectedCategory === "all"
+                  ? "border-primary bg-primary/10 text-primary shadow"
+                  : "border-border bg-background hover:border-primary/40"
+              } flex-shrink-0 px-5 py-3 rounded-full border text-sm font-medium whitespace-nowrap transition-colors`}
+            >
+              جميع الفئات
+            </button>
+            {categoriesToRender.map((category) => renderCategoryCard(category, "horizontal"))}
+          </div>
+        );
+      case "circular":
+        return (
+          <div className="flex flex-wrap justify-center gap-6">
+            <button
+              type="button"
+              onClick={() => setSelectedCategory("all")}
+              aria-pressed={selectedCategory === "all"}
+              className={`w-32 h-32 rounded-full border flex flex-col items-center justify-center gap-2 text-center px-4 transition-colors ${
+                selectedCategory === "all"
+                  ? "border-primary bg-primary/10 text-primary shadow-lg"
+                  : "border-border bg-background hover:border-primary/40"
+              }`}
+            >
+              <span className="font-semibold text-sm">جميع الفئات</span>
+              <span className="text-xs text-muted-foreground">
+                {products?.length || 0} منتج
+              </span>
+            </button>
+            {categoriesToRender.map((category) => renderCategoryCard(category, "circular"))}
+          </div>
+        );
+      default:
+        return (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <button
+              type="button"
+              onClick={() => setSelectedCategory("all")}
+              aria-pressed={selectedCategory === "all"}
+              className={`${
+                selectedCategory === "all"
+                  ? "border-primary bg-primary/10 shadow-xl"
+                  : "border-border hover:border-primary/40"
+              } text-right p-5 rounded-2xl border bg-background/80 hover:-translate-y-1 transition-all duration-300`}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <p className="font-semibold text-lg">جميع الفئات</p>
+                  <p className="text-sm text-muted-foreground">استعرض كل المنتجات المتاحة</p>
+                </div>
+                <Badge variant={selectedCategory === "all" ? "default" : "secondary"} className="shrink-0">
+                  {products?.length || 0}
+                </Badge>
+              </div>
+            </button>
+            {categoriesToRender.map((category) => renderCategoryCard(category, "grid"))}
+          </div>
+        );
+    }
+  };
+
+  const categorySection = renderCategoryLayout();
 
   // Loading states
   if (storeLoading || productsLoading) {
@@ -723,6 +946,31 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             </AnimatePresence>
           </div>
         </section>
+
+        {categorySection && (
+          <section className="space-y-4 bg-background/60 backdrop-blur-sm border border-primary/10 rounded-2xl p-6 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-semibold">تصفح الفئات المميزة</h2>
+                <p className="text-sm text-muted-foreground">
+                  اختر فئة لعرض المنتجات المرتبطة بها أو استعرض كل المتجر
+                </p>
+              </div>
+              {selectedCategory !== "all" && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedCategory("all")}
+                  className="text-primary hover:text-primary"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  إظهار جميع المنتجات
+                </Button>
+              )}
+            </div>
+            {categorySection}
+          </section>
+        )}
 
         {/* Products Section */}
         <section className="space-y-6">
