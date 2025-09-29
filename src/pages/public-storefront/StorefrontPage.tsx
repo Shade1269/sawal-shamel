@@ -8,7 +8,7 @@ import { useStorefrontSettings } from "@/hooks/useStorefrontSettings";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useTheme } from "@/hooks/useTheme";
 import { cn } from "@/lib/utils";
-
+import { Helmet } from "react-helmet-async";
 
 type PublicStorefrontHookResult = ReturnType<typeof usePublicStorefront>;
 
@@ -204,8 +204,8 @@ const PublicStorefrontPage: React.FC<PublicStorefrontPageProps> = ({
   settingsOverride,
   navigateOverride,
 }) => {
-  const params = useParams<{ slug?: string }>();
-  const slug = slugOverride ?? params.slug ?? "";
+  const params = useParams<{ slug?: string; storeId?: string }>();
+  const slug = slugOverride ?? params.slug ?? params.storeId ?? "";
 
   useEffect(() => {
     if (typeof window === "undefined" || !slug) return;
@@ -288,6 +288,11 @@ const PublicStorefrontPage: React.FC<PublicStorefrontPageProps> = ({
       className="min-h-screen bg-[color:var(--bg)] text-[color:var(--fg)]"
       data-storefront-root
     >
+      <Helmet>
+        <title>{`${storeName} | متجر ${marketerName}`}</title>
+        <meta name="description" content={shortDescription?.slice(0, 155) || 'تسوق منتجات مختارة بعناية.'} />
+        <link rel="canonical" href={(typeof window !== 'undefined' && slug) ? `${window.location.origin}/${slug}` : 'https://atlantiss.tech'} />
+      </Helmet>
       <a
         href="#storefront-content"
         className="skip-to-content fixed top-4 right-4 z-30 inline-flex items-center gap-2 rounded-full border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)] px-4 py-2 text-sm text-[color:var(--glass-fg)] shadow-[var(--shadow-glass-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--state-focus-ring)]"

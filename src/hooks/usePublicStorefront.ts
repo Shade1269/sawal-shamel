@@ -23,7 +23,7 @@ export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => 
         .select('*')
         .eq('store_slug', storeSlug)
         .eq('is_active', true)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
