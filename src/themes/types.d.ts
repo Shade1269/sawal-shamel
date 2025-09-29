@@ -40,37 +40,6 @@ export type ThemeTypography = {
   };
 };
 
-export type ThemeThreeModel = {
-  path?: string;
-  example?: 'cube' | 'sphere' | 'model';
-  scale?: [number, number, number] | number;
-  position?: [number, number, number];
-  rotation?: [number, number, number] | number;
-  autoRotate?: boolean;
-  rotationSpeed?: number;
-};
-
-export type ThemeThreeEffects = {
-  bloom?: boolean | { enabled?: boolean; intensity?: number };
-  fog?: { color: string; near?: number; far?: number };
-  shadow?: { enabled?: boolean; bias?: number; mapSize?: [number, number]; radius?: number };
-};
-
-export type ThemeThree = {
-  background?: string;
-  camera: {
-    position: [number, number, number];
-    fov?: number;
-  };
-  lights: Array<{
-    type: 'ambient' | 'directional' | 'point' | 'spot';
-    intensity: number;
-    position?: [number, number, number];
-    color?: string;
-  }>;
-  model?: ThemeThreeModel;
-  effects?: ThemeThreeEffects;
-};
 
 export type ThemeComponentsConfig = {
   button?: {
@@ -98,6 +67,5 @@ export type ThemeConfig = {
   radii: ThemeRadii;
   spacing: ThemeSpacing;
   typography: ThemeTypography;
-  three: ThemeThree;
   components?: ThemeComponentsConfig;
 };

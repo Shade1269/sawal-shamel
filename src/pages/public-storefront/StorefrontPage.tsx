@@ -9,15 +9,6 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useTheme } from "@/hooks/useTheme";
 import { cn } from "@/lib/utils";
 
-const HeroDefault = lazy(() => import("@/themes/default/Hero3D"));
-const HeroLuxury = lazy(() => import("@/themes/luxury/Hero3D"));
-const HeroDamascus = lazy(() => import("@/themes/damascus/Hero3D"));
-
-const heroMap = {
-  default: HeroDefault,
-  luxury: HeroLuxury,
-  damascus: HeroDamascus,
-} as const;
 
 type PublicStorefrontHookResult = ReturnType<typeof usePublicStorefront>;
 
@@ -149,11 +140,10 @@ const StorefrontProductsGrid: React.FC<{
 };
 
 const useHeroComponent = (enableAnimation: boolean) => {
-  const { themeId } = useTheme("default");
   if (!enableAnimation) {
     return null;
   }
-  return heroMap[themeId as keyof typeof heroMap] ?? heroMap.default;
+  return null; // Hero components removed
 };
 
 const StorefrontHeader: React.FC<{

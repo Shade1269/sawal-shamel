@@ -33,9 +33,6 @@ import { useFastAuth } from '@/hooks/useFastAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { Button as ThemeButton } from '@/ui/Button';
 import { Card as ThemeCard } from '@/ui/Card';
-const DefaultHero3D = React.lazy(() => import('@/themes/default/Hero3D').then((mod) => ({ default: mod.Hero3D })));
-const LuxuryHero3D = React.lazy(() => import('@/themes/luxury/Hero3D').then((mod) => ({ default: mod.Hero3D })));
-const DamascusHero3D = React.lazy(() => import('@/themes/damascus/Hero3D').then((mod) => ({ default: mod.Hero3D })));
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUserDataContext } from '@/contexts/UserDataContext';
@@ -53,14 +50,6 @@ const Index = () => {
       navigate('/auth', { replace: true });
     }
   }, [isAuthenticated, loading, navigate]);
-
-  const heroMap = {
-    default: DefaultHero3D,
-    luxury: LuxuryHero3D,
-    damascus: DamascusHero3D,
-  } as const;
-
-  const ActiveHero3D = heroMap[themeId as keyof typeof heroMap] ?? DefaultHero3D;
 
   const currentUser = user;
   const role = profile?.role;
@@ -360,15 +349,6 @@ const Index = () => {
           </div>
         )}
 
-        <div className="mb-16">
-          <Suspense
-            fallback={(
-              <div className="mt-10 h-64 w-full animate-pulse rounded-[var(--radius-xl)] border border-dashed border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/60" aria-label="جاري تحميل المشهد ثلاثي الأبعاد" />
-            )}
-          >
-            <ActiveHero3D />
-          </Suspense>
-        </div>
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-6">
             <div className="bg-gradient-persian px-4 py-2 rounded-full text-white text-sm font-medium shadow-glow animate-pulse">

@@ -48,19 +48,25 @@ interface ExtendedTheme {
 
 const themes: ExtendedTheme[] = [
   {
-    ...defaultTheme,
+    id: "default",
+    name: "Default",
+    colors: defaultTheme.colors,
     icon: <Palette className="h-5 w-5" />,
     preview: "bg-gradient-to-br from-blue-600 to-blue-800",
     description: "ثيم كلاسيكي أنيق ومتوازن للاستخدام العام"
   },
   {
-    ...luxuryTheme,
+    id: "luxury",
+    name: "Luxury", 
+    colors: luxuryTheme.colors,
     icon: <Crown className="h-5 w-5" />,
     preview: "bg-gradient-to-br from-yellow-600 to-amber-800",
     description: "ثيم فاخر بألوان ذهبية للمنتجات الراقية"
   },
   {
-    ...damascusTheme,
+    id: "damascus",
+    name: "Damascus",
+    colors: damascusTheme.colors,
     icon: <Sparkles className="h-5 w-5" />,
     preview: "bg-gradient-to-br from-teal-600 to-cyan-800",
     description: "ثيم دمشقي تراثي بلمسة عصرية"

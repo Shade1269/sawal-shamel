@@ -37,7 +37,7 @@ function useThemeController(defaultThemeId: string = "default"): ThemeContextVal
     return stored ?? defaultThemeId;
   });
 
-  const themeConfig = useMemo<ThemeConfig>(() => getTheme(themeId) as ThemeConfig, [themeId]);
+  const themeConfig = useMemo(() => getTheme(themeId), [themeId]);
 
   const setThemeId = useCallback((nextThemeId: string) => {
     setThemeIdState(nextThemeId);

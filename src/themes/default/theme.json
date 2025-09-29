@@ -1,81 +1,59 @@
 {
-  "id": "default",
-  "name": "Default Horizon",
   "colors": {
-    "bg": "#0d1117",
-    "fg": "#f0f6fc",
-    "primary": "#58a6ff",
-    "primaryFg": "#04121f",
-    "secondary": "#1f6feb",
-    "secondaryFg": "#f0f6fc",
-    "muted": "#1c2128",
-    "mutedFg": "#9aa7b7",
-    "success": "#3fb950",
-    "warning": "#d29922",
-    "danger": "#f85149",
-    "info": "#79c0ff",
-    "border": "#30363d"
+    "background": "#ffffff",
+    "foreground": "#0f172a",
+    "card": "#ffffff",
+    "cardForeground": "#0f172a",
+    "popover": "#ffffff",
+    "popoverForeground": "#0f172a",
+    "primary": "#2563eb",
+    "primaryForeground": "#f8fafc",
+    "secondary": "#f1f5f9",
+    "secondaryForeground": "#0f172a",
+    "muted": "#f1f5f9",
+    "mutedForeground": "#64748b",
+    "accent": "#f1f5f9",
+    "accentForeground": "#0f172a",
+    "destructive": "#ef4444",
+    "destructiveForeground": "#f8fafc",
+    "border": "#e2e8f0",
+    "input": "#e2e8f0",
+    "ring": "#2563eb"
   },
   "radii": {
-    "sm": "6px",
-    "md": "10px",
-    "lg": "16px",
-    "xl": "22px"
+    "default": "0.5rem",
+    "sm": "0.25rem",
+    "md": "0.5rem",
+    "lg": "0.75rem",
+    "xl": "1rem"
   },
   "spacing": {
-    "xs": "4px",
-    "sm": "8px",
-    "md": "12px",
-    "lg": "16px",
-    "xl": "24px"
+    "xs": "0.5rem",
+    "sm": "1rem",
+    "md": "1.5rem",
+    "lg": "2rem",
+    "xl": "3rem"
   },
   "typography": {
-    "fontFamily": "'Noto Sans Arabic', 'Inter', 'system-ui', 'sans-serif'",
-    "baseSize": 16,
-    "lineHeight": 1.5,
-    "weight": {
+    "fontFamily": "Inter, sans-serif",
+    "fontSize": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
+      "4xl": "2.25rem"
+    },
+    "fontWeight": {
       "normal": 400,
       "medium": 500,
       "bold": 700
     }
   },
-  "three": {
-    "background": "#050505",
-    "camera": {
-      "position": [0, 1.25, 4],
-      "fov": 45
-    },
-    "lights": [
-      { "type": "ambient", "intensity": 0.6 },
-      { "type": "directional", "intensity": 1.1, "position": [2.5, 3.5, 2], "color": "#8bc5ff" },
-      { "type": "point", "intensity": 0.6, "position": [-2.4, 2.2, 1.5], "color": "#58a6ff" }
-    ],
-    "model": {
-      "example": "cube",
-      "scale": [1.4, 1.4, 1.4],
-      "position": [0, -0.15, 0],
-      "rotation": [0, 22, 0],
-      "autoRotate": true,
-      "rotationSpeed": 0.45
-    },
-    "effects": {
-      "bloom": { "enabled": false },
-      "fog": { "color": "#050505", "near": 6, "far": 20 },
-      "shadow": { "enabled": true, "bias": -0.0004, "mapSize": [1024, 1024], "radius": 2.5 }
-    }
-  },
-  "components": {
-    "button": {
-      "radius": "md",
-      "height": 44,
-      "paddingX": "1.5rem",
-      "variants": ["solid", "outline", "ghost"]
-    },
-    "card": {
-      "radius": "lg",
-      "shadow": "0 8px 24px rgba(0, 0, 0, 0.18)"
-    },
-    "input": { "radius": "md" },
-    "badge": { "radius": "sm" }
+  "marketing": {
+    "ctaVariant": "cta-default",
+    "badgeVariant": "badge-default"
   }
 }

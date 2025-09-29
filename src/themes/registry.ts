@@ -1,35 +1,55 @@
-import defaultTheme from "./default/theme.json" with { type: "json" };
-import luxuryTheme from "./luxury/theme.json" with { type: "json" };
-import damascusTheme from "./damascus/theme.json" with { type: "json" };
-import feminineTheme from "./feminine/theme.json" with { type: "json" };
-import modernTheme from "./modern/theme.json" with { type: "json" };
-import elegantTheme from "./elegant/theme.json" with { type: "json" };
-import goldTheme from "./gold/theme.json" with { type: "json" };
-import allianceSpecialTheme from "./alliance_special/theme.json" with { type: "json" };
-import legendaryTheme from "./legendary/theme.json" with { type: "json" };
+// Temporary simple theme structure
+const defaultConfig = {
+  id: "default",
+  name: "Default",
+  colors: {
+    background: "#ffffff",
+    foreground: "#0f172a",
+    primary: "#2563eb",
+    secondary: "#f1f5f9",
+    bg: "#ffffff"
+  },
+  radii: { default: "0.5rem" },
+  spacing: { md: "1rem" },
+  typography: { fontFamily: "Inter" }
+};
 
-const defaultConfig = defaultTheme;
-const luxuryConfig = luxuryTheme;
-const damascusConfig = damascusTheme;
-const feminineConfig = feminineTheme;
-const modernConfig = modernTheme;
-const elegantConfig = elegantTheme;
-const goldConfig = goldTheme;
-const allianceSpecialConfig = allianceSpecialTheme;
-const legendaryConfig = legendaryTheme;
+const luxuryConfig = {
+  id: "luxury", 
+  name: "Luxury",
+  colors: {
+    background: "#0c0c0c",
+    foreground: "#fafafa",
+    primary: "#d4af37",
+    secondary: "#1a1a1a",
+    bg: "#0c0c0c"
+  },
+  radii: { default: "0.75rem" },
+  spacing: { md: "1rem" },
+  typography: { fontFamily: "Playfair Display" }
+};
+
+const damascusConfig = {
+  id: "damascus",
+  name: "Damascus",
+  colors: {
+    background: "#0a1016",
+    foreground: "#f4f4f0", 
+    primary: "#d4af37",
+    secondary: "#1a2632",
+    bg: "#0a1016"
+  },
+  radii: { default: "0.75rem" },
+  spacing: { md: "1rem" },
+  typography: { fontFamily: "Cairo" }
+};
 
 export const THEMES = {
   [defaultConfig.id]: defaultConfig,
   [luxuryConfig.id]: luxuryConfig,
   [damascusConfig.id]: damascusConfig,
-  [feminineConfig.id]: feminineConfig,
-  [modernConfig.id]: modernConfig,
-  [elegantConfig.id]: elegantConfig,
-  [goldConfig.id]: goldConfig,
-  [allianceSpecialConfig.id]: allianceSpecialConfig,
-  [legendaryConfig.id]: legendaryConfig,
 };
 
-export function getTheme(themeId) {
+export function getTheme(themeId: string) {
   return THEMES[themeId] ?? defaultConfig;
 }

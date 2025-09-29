@@ -1,81 +1,59 @@
 {
-  "id": "luxury",
-  "name": "Luxury Mirage",
   "colors": {
-    "bg": "#1a0f0f",
-    "fg": "#f8f1e7",
+    "background": "#0c0c0c",
+    "foreground": "#fafafa",
+    "card": "#111111",
+    "cardForeground": "#fafafa",
+    "popover": "#111111",
+    "popoverForeground": "#fafafa",
     "primary": "#d4af37",
-    "primaryFg": "#1f1400",
-    "secondary": "#b56c4a",
-    "secondaryFg": "#fff3dd",
-    "muted": "#2a1a1a",
-    "mutedFg": "#d9c8b9",
-    "success": "#52d273",
-    "warning": "#f2c94c",
-    "danger": "#eb5757",
-    "info": "#56ccf2",
-    "border": "#3b2621"
+    "primaryForeground": "#0c0c0c",
+    "secondary": "#1a1a1a",
+    "secondaryForeground": "#fafafa",
+    "muted": "#1a1a1a",
+    "mutedForeground": "#a1a1aa",
+    "accent": "#c9a236",
+    "accentForeground": "#0c0c0c",
+    "destructive": "#dc2626",
+    "destructiveForeground": "#fafafa",
+    "border": "#333333",
+    "input": "#1a1a1a",
+    "ring": "#d4af37"
   },
   "radii": {
-    "sm": "8px",
-    "md": "14px",
-    "lg": "20px",
-    "xl": "28px"
+    "default": "0.75rem",
+    "sm": "0.5rem",
+    "md": "0.75rem",
+    "lg": "1rem",
+    "xl": "1.5rem"
   },
   "spacing": {
-    "xs": "4px",
-    "sm": "10px",
-    "md": "14px",
-    "lg": "20px",
-    "xl": "28px"
+    "xs": "0.5rem",
+    "sm": "1rem",
+    "md": "1.5rem",
+    "lg": "2rem",
+    "xl": "3rem"
   },
   "typography": {
-    "fontFamily": "'Noto Sans Arabic', 'Playfair Display', 'serif'",
-    "baseSize": 17,
-    "lineHeight": 1.6,
-    "weight": {
+    "fontFamily": "Playfair Display, serif",
+    "fontSize": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
+      "4xl": "2.25rem"
+    },
+    "fontWeight": {
       "normal": 400,
       "medium": 600,
       "bold": 700
     }
   },
-  "three": {
-    "background": "#160b0b",
-    "camera": {
-      "position": [0, 1.6, 3.6],
-      "fov": 40
-    },
-    "lights": [
-      { "type": "ambient", "intensity": 0.7 },
-      { "type": "directional", "intensity": 1.35, "position": [1.5, 2.8, 1.5], "color": "#f8d48c" },
-      { "type": "spot", "intensity": 1.05, "position": [-1.4, 3.1, 1.2], "color": "#d4af37" }
-    ],
-    "model": {
-      "example": "sphere",
-      "scale": [1.2, 1.2, 1.2],
-      "position": [0, -0.1, 0],
-      "rotation": [12, 18, 0],
-      "autoRotate": true,
-      "rotationSpeed": 0.35
-    },
-    "effects": {
-      "bloom": { "enabled": true, "intensity": 1.05 },
-      "fog": { "color": "#160b0b", "near": 5, "far": 16 },
-      "shadow": { "enabled": true, "bias": -0.0003, "mapSize": [1536, 1536], "radius": 3.5 }
-    }
-  },
-  "components": {
-    "button": {
-      "radius": "lg",
-      "height": 48,
-      "paddingX": "1.75rem",
-      "variants": ["solid", "outline", "ghost"]
-    },
-    "card": {
-      "radius": "xl",
-      "shadow": "0 18px 48px rgba(0, 0, 0, 0.35)"
-    },
-    "input": { "radius": "md" },
-    "badge": { "radius": "md" }
+  "marketing": {
+    "ctaVariant": "cta-luxury",
+    "badgeVariant": "badge-luxury"
   }
 }
