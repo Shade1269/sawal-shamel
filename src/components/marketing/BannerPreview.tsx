@@ -16,6 +16,57 @@ export const BannerPreview: React.FC<BannerPreviewProps> = ({
   interactive = false,
   onInteraction
 }) => {
+  const products = Array.isArray(banner?.selectedProducts)
+    ? banner.selectedProducts
+    : Array.isArray(banner?.content_config?.selectedProducts)
+      ? banner.content_config.selectedProducts
+      : [];
+
+  const renderProductShowcase = (variant: 'grid' | 'list' = 'grid') => {
+    if (!products.length) return null;
+
+    if (variant === 'list') {
+      return (
+        <div className="flex flex-wrap gap-2 mt-3 justify-end">
+          {products.map((product: any) => (
+            <Badge key={product.id} variant="outline" className="bg-white/80 text-foreground">
+              {product.title}
+            </Badge>
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-right">
+        {products.map((product: any) => {
+          const imageUrl =
+            (Array.isArray(product.image_urls) && product.image_urls[0]) ||
+            (Array.isArray(product.images) && product.images[0]?.url) ||
+            '/placeholder.svg';
+
+          return (
+            <div
+              key={product.id}
+              className="bg-white/90 text-foreground rounded-lg p-4 shadow-sm flex gap-4"
+            >
+              <div className="w-20 h-20 rounded-md overflow-hidden bg-muted">
+                <img src={imageUrl} alt={product.title} className="w-full h-full object-cover" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold mb-1 line-clamp-2">{product.title}</h4>
+                <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                  {product.description || 'منتج من متجرك'}
+                </p>
+                <span className="text-sm font-medium text-primary">{product.price_sar} ريال</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   const getAnimationVariants = () => {
     switch (banner.animation_type) {
       case 'slide':
@@ -92,7 +143,7 @@ export const BannerPreview: React.FC<BannerPreviewProps> = ({
             </p>
           )}
           {(banner.button_text_ar || banner.button_text) && banner.button_url && (
-            <Button 
+            <Button
               size="lg"
               style={{ backgroundColor: banner.button_color }}
               className="hover:opacity-90"
@@ -101,6 +152,8 @@ export const BannerPreview: React.FC<BannerPreviewProps> = ({
               <ExternalLink className="w-4 h-4 mr-2" />
             </Button>
           )}
+
+          {renderProductShowcase('grid')}
         </div>
       </div>
 
@@ -139,6 +192,7 @@ export const BannerPreview: React.FC<BannerPreviewProps> = ({
               {banner.description_ar || banner.description}
             </span>
           )}
+          {renderProductShowcase('list')}
         </div>
       </div>
 
@@ -200,14 +254,16 @@ export const BannerPreview: React.FC<BannerPreviewProps> = ({
             </p>
           )}
           {(banner.button_text_ar || banner.button_text) && banner.button_url && (
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               className="w-full"
               style={{ backgroundColor: banner.button_color }}
             >
               {banner.button_text_ar || banner.button_text}
             </Button>
           )}
+
+          {renderProductShowcase('grid')}
         </div>
 
         {banner.show_close_button && (
@@ -254,7 +310,7 @@ export const BannerPreview: React.FC<BannerPreviewProps> = ({
             </p>
           )}
           {(banner.button_text_ar || banner.button_text) && banner.button_url && (
-            <Button 
+            <Button
               size="lg"
               className="w-full"
               style={{ backgroundColor: banner.button_color }}
@@ -262,6 +318,8 @@ export const BannerPreview: React.FC<BannerPreviewProps> = ({
               {banner.button_text_ar || banner.button_text}
             </Button>
           )}
+
+          {renderProductShowcase('grid')}
         </div>
 
         {banner.show_close_button && (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +28,7 @@ import { ar } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 import { usePromotionalBanners } from '@/hooks/usePromotionalBanners';
 import { BannerPreview } from './BannerPreview';
+import { supabase } from '@/integrations/supabase/client';
 
 interface BannerEditorProps {
   banner?: any;
@@ -45,7 +46,10 @@ export const BannerEditor: React.FC<BannerEditorProps> = ({
   onSave
 }) => {
   const { createBanner, updateBanner, isLoading } = usePromotionalBanners(storeId, affiliateStoreId);
-  
+
+  const [availableProducts, setAvailableProducts] = useState<any[]>([]);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     title_ar: '',
@@ -105,19 +109,72 @@ export const BannerEditor: React.FC<BannerEditorProps> = ({
         show_close_button: banner.show_close_button ?? true,
         animation_type: banner.animation_type || 'fade'
       });
+      const bannerProductIds = Array.isArray(banner.content_config?.product_ids)
+        ? banner.content_config.product_ids
+        : [];
+      setSelectedProductIds(bannerProductIds);
     }
   }, [banner]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setProductsLoading(true);
+        let query = supabase
+          .from('products')
+          .select('id,title,description,price_sar,image_urls,images,shop_id,is_active')
+          .eq('is_active', true);
+
+        const targetStoreId = storeId || affiliateStoreId;
+        if (targetStoreId) {
+          query = query.eq('shop_id', targetStoreId);
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+
+        setAvailableProducts(data || []);
+      } catch (error) {
+        console.error('خطأ في جلب منتجات المتجر للبنر:', error);
+      } finally {
+        setProductsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [storeId, affiliateStoreId]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const toggleProductSelection = (productId: string) => {
+    setSelectedProductIds(prev => (
+      prev.includes(productId)
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    ));
+  };
+
+  const selectedProducts = useMemo(
+    () => availableProducts.filter(product => selectedProductIds.includes(product.id)),
+    [availableProducts, selectedProductIds]
+  );
+
   const handleSubmit = async () => {
     try {
+      const payload = {
+        ...formData,
+        content_config: {
+          ...(formData.content_config || {}),
+          product_ids: selectedProductIds
+        }
+      };
+
       if (banner) {
-        await updateBanner(banner.id, formData as any);
+        await updateBanner(banner.id, payload as any);
       } else {
-        await createBanner(formData as any);
+        await createBanner(payload as any);
       }
       onSave();
     } catch (error) {
@@ -159,8 +216,13 @@ export const BannerEditor: React.FC<BannerEditorProps> = ({
             {isLoading ? 'جاري الحفظ...' : 'حفظ البانر'}
           </Button>
         </div>
-        
-        <BannerPreview banner={formData} />
+
+        <BannerPreview
+          banner={{
+            ...formData,
+            selectedProducts
+          }}
+        />
       </div>
     );
   }
@@ -309,6 +371,78 @@ export const BannerEditor: React.FC<BannerEditorProps> = ({
                   />
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>منتجات البانر</CardTitle>
+              <CardDescription>
+                اختر المنتجات التي ترغب في إبرازها داخل البانر من منتجات متجرك الحالية
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {productsLoading ? (
+                <div className="flex items-center justify-center py-6">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                </div>
+              ) : availableProducts.length === 0 ? (
+                <div className="text-center py-6 text-muted-foreground">
+                  لا توجد منتجات متاحة حالياً في متجرك. قم بإضافة منتجات أولاً لربطها بالبانر.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {availableProducts.map((product) => {
+                    const isSelected = selectedProductIds.includes(product.id);
+                    const imageUrl =
+                      (Array.isArray(product.image_urls) && product.image_urls[0]) ||
+                      (Array.isArray(product.images) && product.images[0]?.url) ||
+                      '/placeholder.svg';
+
+                    return (
+                      <button
+                        type="button"
+                        key={product.id}
+                        onClick={() => toggleProductSelection(product.id)}
+                        className={`relative text-right p-4 rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-primary/60 focus:ring-offset-2 ${
+                          isSelected
+                            ? 'border-primary bg-primary/10 shadow-sm'
+                            : 'border-muted hover:border-primary/40'
+                        }`}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="w-16 h-16 rounded-md overflow-hidden bg-muted">
+                            <img
+                              src={imageUrl}
+                              alt={product.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold mb-1 line-clamp-1">{product.title}</h4>
+                            <p className="text-sm text-muted-foreground line-clamp-2">
+                              {product.description || 'بدون وصف'}
+                            </p>
+                            <div className="mt-2 text-sm font-medium text-primary">
+                              {product.price_sar} ريال
+                            </div>
+                          </div>
+                        </div>
+
+                        {isSelected && (
+                          <Badge className="absolute top-3 left-3">مضاف</Badge>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {selectedProductIds.length > 0 && (
+                <p className="text-sm text-muted-foreground text-right">
+                  سيتم عرض {selectedProductIds.length} منتج داخل البانر.
+                </p>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
