@@ -177,7 +177,7 @@ export const ComprehensiveAffiliateManager = () => {
         </TabsContent>
 
         <TabsContent value="referrals">
-          <ReferralTrackingSystem storeId={store.id} />
+          <ReferralTrackingSystem storeId={store.id} baseUrl={`https://${store.store_slug}.mystore.com`} />
         </TabsContent>
 
         <TabsContent value="support" className="space-y-4">

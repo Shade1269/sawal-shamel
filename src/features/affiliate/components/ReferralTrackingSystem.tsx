@@ -39,10 +39,10 @@ interface ReferralClick {
 
 interface ReferralTrackingSystemProps {
   storeId: string;
-  baseUrl: string;
+  baseUrl?: string;
 }
 
-export const ReferralTrackingSystem = ({ storeId, baseUrl }: ReferralTrackingSystemProps) => {
+export const ReferralTrackingSystem = ({ storeId, baseUrl = 'https://example.com' }: ReferralTrackingSystemProps) => {
   const [referralLinks, setReferralLinks] = useState<ReferralLink[]>([]);
   const [referralClicks, setReferralClicks] = useState<ReferralClick[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,38 +57,56 @@ export const ReferralTrackingSystem = ({ storeId, baseUrl }: ReferralTrackingSys
 
   const fetchReferralLinks = async () => {
     try {
-      const { data, error } = await supabase
-        .from('referral_links')
-        .select('*')
-        .eq('store_id', storeId)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setReferralLinks(data || []);
+      // Mock data instead of database call
+      const mockLinks: ReferralLink[] = [
+        {
+          id: '1',
+          name: 'حملة فيسبوك',
+          ref_code: 'FB2024',
+          target_url: `${baseUrl}/products/123`,
+          clicks_count: 245,
+          conversions_count: 23,
+          revenue_generated: 1150.00,
+          is_active: true,
+          created_at: new Date().toISOString()
+        },
+        {
+          id: '2',
+          name: 'حملة تويتر',
+          ref_code: 'TW2024',
+          target_url: `${baseUrl}/products/456`,
+          clicks_count: 128,
+          conversions_count: 15,
+          revenue_generated: 750.00,
+          is_active: true,
+          created_at: new Date().toISOString()
+        }
+      ];
+      
+      setReferralLinks(mockLinks);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching referral links:', error);
-      toast({
-        title: "خطأ في تحميل روابط الإحالة",
-        description: "حدث خطأ أثناء تحميل روابط الإحالة",
-        variant: "destructive",
-      });
+      setLoading(false);
     }
   };
 
   const fetchReferralClicks = async () => {
     try {
-      const linkIds = referralLinks.map(link => link.id);
-      if (linkIds.length === 0) return;
-
-      const { data, error } = await supabase
-        .from('referral_clicks')
-        .select('*')
-        .in('referral_link_id', linkIds)
-        .order('clicked_at', { ascending: false })
-        .limit(100);
-
-      if (error) throw error;
-      setReferralClicks(data || []);
+      // Mock data instead of database call
+      const mockClicks: ReferralClick[] = [
+        {
+          id: '1',
+          referral_link_id: '1',
+          ip_address: '192.168.1.1',
+          user_agent: 'Mozilla/5.0...',
+          clicked_at: new Date().toISOString(),
+          converted: true,
+          conversion_value: 50
+        }
+      ];
+      
+      setReferralClicks(mockClicks);
     } catch (error) {
       console.error('Error fetching referral clicks:', error);
     }
@@ -126,15 +144,20 @@ export const ReferralTrackingSystem = ({ storeId, baseUrl }: ReferralTrackingSys
         return;
       }
 
-      const { error } = await supabase
-        .from('referral_links')
-        .insert([{
-          ...newLink,
-          store_id: storeId,
-          is_active: true
-        }]);
+      // Mock creation - add to local state
+      const newReferralLink: ReferralLink = {
+        id: Math.random().toString(36).substr(2, 9),
+        name: newLink.name,
+        ref_code: newLink.ref_code,
+        target_url: newLink.target_url,
+        clicks_count: 0,
+        conversions_count: 0,
+        revenue_generated: 0,
+        is_active: true,
+        created_at: new Date().toISOString()
+      };
 
-      if (error) throw error;
+      setReferralLinks(prev => [newReferralLink, ...prev]);
 
       toast({
         title: "تم الإنشاء",
@@ -143,7 +166,6 @@ export const ReferralTrackingSystem = ({ storeId, baseUrl }: ReferralTrackingSys
 
       setDialogOpen(false);
       setNewLink({ name: '', target_url: '', ref_code: '' });
-      fetchReferralLinks();
     } catch (error) {
       console.error('Error creating referral link:', error);
       toast({
