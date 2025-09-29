@@ -22,6 +22,7 @@ const AuthPage = lazy(() => import("./features/auth/components/AuthPage"));
 const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
 const AuthCallbackPage = lazy(() => import("./pages/auth/AuthCallbackPage"));
 const PublicStorefront = lazy(() => import("./pages/public-storefront/StorefrontPage"));
+const ProductsBrowser = lazy(() => import("./pages/ProductsBrowser"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const OrderConfirmationPage = lazy(() => import("./pages/OrderConfirmationSimple"));
 const MarketerHomePage = lazy(() => import("./pages/home/MarketerHome"));
@@ -100,6 +101,16 @@ const App = () => {
                                 element={(
                                   <ProtectedRoute requiredRole={["affiliate", "marketer", "admin"]}>
                                     <NotificationsPage />
+                                  </ProtectedRoute>
+                                )}
+                              />
+
+                              {/* Products browsing - MUST come before /:slug */}
+                              <Route 
+                                path="/products" 
+                                element={(
+                                  <ProtectedRoute requiredRole={["affiliate", "marketer", "admin"]}>
+                                    <ProductsBrowser />
                                   </ProtectedRoute>
                                 )}
                               />
