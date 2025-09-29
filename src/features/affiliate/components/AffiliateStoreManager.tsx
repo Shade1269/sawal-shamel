@@ -24,8 +24,14 @@ import {
   Share2,
   Smartphone,
   Monitor,
-  Globe
+  Globe,
+  Image as ImageIcon,
+  Grid,
+  AlignLeft,
+  Star,
+  Heart
 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 
 interface AffiliateStoreManagerProps {
@@ -148,9 +154,11 @@ export const AffiliateStoreManager = ({
 
       {/* Store Management Tabs */}
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="general">الإعدادات العامة</TabsTrigger>
           <TabsTrigger value="appearance">المظهر</TabsTrigger>
+          <TabsTrigger value="hero">القسم الرئيسي</TabsTrigger>
+          <TabsTrigger value="categories">إدارة الفئات</TabsTrigger>
           <TabsTrigger value="sharing">المشاركة</TabsTrigger>
           <TabsTrigger value="analytics">الإحصائيات</TabsTrigger>
         </TabsList>
@@ -277,6 +285,162 @@ export const AffiliateStoreManager = ({
                   حفظ التغييرات
                 </Button>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="hero" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ImageIcon className="h-5 w-5" />
+                إعدادات القسم الرئيسي
+              </CardTitle>
+              <CardDescription>
+                تخصيص القسم الرئيسي لمتجرك بالصور والنصوص الجذابة
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Hero Image */}
+              <div className="space-y-3">
+                <Label>صورة الخلفية الرئيسية</Label>
+                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
+                  <ImageIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground mb-4">
+                    اسحب وأفلت صورة هنا أو انقر للاختيار
+                  </p>
+                  <Button variant="outline">
+                    <Upload className="h-4 w-4 mr-2" />
+                    رفع صورة
+                  </Button>
+                </div>
+              </div>
+
+              {/* Hero Text */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>العنوان الرئيسي</Label>
+                  <Input 
+                    placeholder="مرحباً بكم في متجري" 
+                    className="text-right"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>العنوان الفرعي</Label>
+                  <Input 
+                    placeholder="أفضل المنتجات بأسعار منافسة" 
+                    className="text-right"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>وصف مختصر</Label>
+                <Textarea 
+                  placeholder="اكتشف مجموعة رائعة من المنتجات عالية الجودة..."
+                  className="min-h-20 text-right"
+                />
+              </div>
+
+              {/* Call to Action */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>نص زر العمل</Label>
+                  <Input 
+                    placeholder="تسوق الآن" 
+                    className="text-right"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>لون زر العمل</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر اللون" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="primary">اللون الأساسي</SelectItem>
+                      <SelectItem value="secondary">اللون الثانوي</SelectItem>
+                      <SelectItem value="accent">لون مميز</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <Button className="w-full">
+                <Save className="h-4 w-4 mr-2" />
+                حفظ إعدادات القسم الرئيسي
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="categories" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Grid className="h-5 w-5" />
+                إدارة الفئات المرئية
+              </CardTitle>
+              <CardDescription>
+                تنظيم وعرض الفئات بطريقة جذابة للعملاء
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Category Display Style */}
+              <div className="space-y-3">
+                <Label>طريقة عرض الفئات</Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="cursor-pointer border-2 hover:border-primary transition-colors">
+                    <CardContent className="p-4 text-center">
+                      <Grid className="h-8 w-8 mx-auto mb-2" />
+                      <p className="text-sm font-medium">شبكة مع صور</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="cursor-pointer border-2 hover:border-primary transition-colors">
+                    <CardContent className="p-4 text-center">
+                      <AlignLeft className="h-8 w-8 mx-auto mb-2" />
+                      <p className="text-sm font-medium">قائمة أفقية</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="cursor-pointer border-2 hover:border-primary transition-colors">
+                    <CardContent className="p-4 text-center">
+                      <Star className="h-8 w-8 mx-auto mb-2" />
+                      <p className="text-sm font-medium">دائرية مميزة</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              {/* Featured Categories */}
+              <div className="space-y-3">
+                <Label>الفئات المميزة</Label>
+                <div className="space-y-3">
+                  {['أزياء نسائية', 'إكسسوارات', 'أحذية', 'حقائب'].map((category, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                          <Heart className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{category}</p>
+                          <p className="text-sm text-muted-foreground">12 منتج</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Switch defaultChecked />
+                        <Button variant="outline" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Button className="w-full">
+                <Save className="h-4 w-4 mr-2" />
+                حفظ إعدادات الفئات
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
