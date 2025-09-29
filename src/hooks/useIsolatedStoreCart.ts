@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { toast } from 'sonner';
 
 interface CartItem {
@@ -37,19 +37,20 @@ export const useIsolatedStoreCart = (storeId: string) => {
       const sessionId = getSessionId();
       
       // Get or create cart
-      let { data: cartData } = await supabase
+      let { data: cartData } = await supabasePublic
         .from('shopping_carts')
         .select('id')
         .eq('session_id', sessionId)
         .eq('affiliate_store_id', storeId)
-        .single();
+        .maybeSingle();
 
       if (!cartData) {
-        const { data: newCart } = await supabase
+        const { data: newCart } = await supabasePublic
           .from('shopping_carts')
           .insert({
             session_id: sessionId,
-            affiliate_store_id: storeId
+            affiliate_store_id: storeId,
+            user_id: null
           })
           .select('id')
           .single();
@@ -58,31 +59,38 @@ export const useIsolatedStoreCart = (storeId: string) => {
 
       if (cartData) {
         // Load cart items
-        const { data: items } = await supabase
+        const { data: items } = await supabasePublic
           .from('cart_items')
           .select(`
             id,
             product_id,
             quantity,
             unit_price_sar,
-            total_price_sar,
-            products!inner (
-              id,
-              title,
-              image_urls
-            )
+            total_price_sar
           `)
           .eq('cart_id', cartData.id);
 
-        const cartItems: CartItem[] = (items || []).map(item => ({
-          id: item.id,
-          product_id: item.product_id,
-          product_title: (item.products as any)?.title || 'منتج',
-          quantity: item.quantity,
-          unit_price_sar: item.unit_price_sar,
-          total_price_sar: item.total_price_sar,
-          product_image_url: (item.products as any)?.image_urls?.[0]
-        }));
+        // جلب تفاصيل المنتجات للعناصر الموجودة
+        const cartItems: CartItem[] = await Promise.all(
+          (items || []).map(async (item) => {
+            // محاولة الحصول على تفاصيل المنتج من جدول products
+            const { data: productData } = await supabasePublic
+              .from('products')
+              .select('title, image_urls')
+              .eq('id', item.product_id)
+              .single();
+
+            return {
+              id: item.id,
+              product_id: item.product_id,
+              product_title: productData?.title || 'منتج',
+              quantity: item.quantity,
+              unit_price_sar: item.unit_price_sar,
+              total_price_sar: item.total_price_sar,
+              product_image_url: productData?.image_urls?.[0]
+            };
+          })
+        );
 
         const total = cartItems.reduce((sum, item) => sum + item.total_price_sar, 0);
 
@@ -100,47 +108,55 @@ export const useIsolatedStoreCart = (storeId: string) => {
     }
   };
 
-  const addToCart = async (productId: string, quantity: number = 1) => {
+  const addToCart = async (productId: string, quantity: number = 1, unitPrice?: number, productTitle?: string) => {
     try {
       if (!cart) return;
 
-      // Get product details
-      const { data: product } = await supabase
-        .from('products')
-        .select('title, price_sar, image_urls')
-        .eq('id', productId)
-        .single();
+      // استخدام السعر الممرر أو محاولة الحصول عليه من قاعدة البيانات
+      let finalPrice = unitPrice;
+      let finalTitle = productTitle || 'منتج';
 
-      if (!product) {
-        toast.error('المنتج غير موجود');
-        return;
+      if (!finalPrice) {
+        const { data: product } = await supabasePublic
+          .from('products')
+          .select('title, price_sar')
+          .eq('id', productId)
+          .single();
+
+        if (!product) {
+          toast.error('المنتج غير موجود');
+          return;
+        }
+
+        finalPrice = product.price_sar;
+        finalTitle = product.title;
       }
 
-      const totalPrice = product.price_sar * quantity;
+      const totalPrice = finalPrice * quantity;
 
       // Check if product already in cart
       const existingItem = cart.items.find(item => item.product_id === productId);
 
       if (existingItem) {
         // Update quantity
-        const { error } = await supabase
+        const { error } = await supabasePublic
           .from('cart_items')
           .update({
             quantity: existingItem.quantity + quantity,
-            total_price_sar: (existingItem.quantity + quantity) * product.price_sar
+            total_price_sar: (existingItem.quantity + quantity) * finalPrice
           })
           .eq('id', existingItem.id);
 
         if (error) throw error;
       } else {
         // Add new item
-        const { error } = await supabase
+        const { error } = await supabasePublic
           .from('cart_items')
           .insert({
             cart_id: cart.id,
             product_id: productId,
             quantity,
-            unit_price_sar: product.price_sar,
+            unit_price_sar: finalPrice,
             total_price_sar: totalPrice
           });
 
@@ -157,7 +173,7 @@ export const useIsolatedStoreCart = (storeId: string) => {
 
   const removeFromCart = async (itemId: string) => {
     try {
-      const { error } = await supabase
+      const { error } = await supabasePublic
         .from('cart_items')
         .delete()
         .eq('id', itemId);
@@ -184,7 +200,7 @@ export const useIsolatedStoreCart = (storeId: string) => {
 
       const newTotal = item.unit_price_sar * newQuantity;
 
-      const { error } = await supabase
+      const { error } = await supabasePublic
         .from('cart_items')
         .update({
           quantity: newQuantity,
@@ -205,7 +221,7 @@ export const useIsolatedStoreCart = (storeId: string) => {
     try {
       if (!cart) return;
 
-      const { error } = await supabase
+      const { error } = await supabasePublic
         .from('cart_items')
         .delete()
         .eq('cart_id', cart.id);

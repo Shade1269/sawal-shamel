@@ -100,7 +100,10 @@ export const IsolatedStorefront: React.FC = () => {
   const handleAddToCart = async (productId: string) => {
     setAddingToCart(productId);
     try {
-      await addToCart(productId, 1);
+      const product = products.find(p => p.id === productId);
+      if (product) {
+        await addToCart(productId, 1, product.price_sar, product.title);
+      }
     } finally {
       setAddingToCart(null);
     }

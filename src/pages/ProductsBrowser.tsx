@@ -255,7 +255,9 @@ const ProductsBrowser = () => {
 
       console.log('Add product result:', data);
 
-      if (data.already_exists) {
+      const result = data as { already_exists?: boolean; success?: boolean };
+      
+      if (result.already_exists) {
         toast({
           title: "تنبيه",
           description: "المنتج موجود بالفعل في متجرك",
