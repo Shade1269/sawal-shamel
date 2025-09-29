@@ -258,11 +258,23 @@ const ProductsBrowser = () => {
 
     } catch (error: any) {
       console.error('Error adding product:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      
+      let errorMessage = "تعذر إضافة المنتج";
+      
+      if (error.message?.includes('duplicate key value violates unique constraint')) {
+        errorMessage = "المنتج موجود بالفعل في متجرك";
+      } else if (error.message?.includes('RLS')) {
+        errorMessage = "خطأ في الصلاحيات - تحقق من إعدادات قاعدة البيانات";
+      } else if (error.message?.includes('violates not-null constraint')) {
+        errorMessage = "بيانات مفقودة - تحقق من الحقول المطلوبة";
+      } else if (error.message) {
+        errorMessage = `خطأ: ${error.message}`;
+      }
+      
       toast({
-        title: "خطأ",
-        description: error.message === 'duplicate key value violates unique constraint "affiliate_products_affiliate_store_id_product_id_key"' 
-          ? "المنتج موجود بالفعل في متجرك"
-          : "تعذر إضافة المنتج",
+        title: "فشل إضافة المنتج",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
