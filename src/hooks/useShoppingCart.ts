@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useFastAuth } from './useFastAuth';
 import { toast } from 'sonner';
@@ -29,12 +29,82 @@ export const useShoppingCart = (storeId?: string) => {
   const [cart, setCart] = useState<ShoppingCartData | null>(null);
   const [loading, setLoading] = useState(false);
   const [cartId, setCartId] = useState<string | null>(null);
+  const cartIdRef = useRef<string | null>(null);
+  const [activeStoreId, setActiveStoreId] = useState<string | null>(storeId ?? null);
+
+  const resolveStoreContext = useCallback(async () => {
+    let resolvedStoreId = storeId ?? null;
+    let resolvedSessionId: string | null = null;
+
+    if (!resolvedStoreId && typeof window !== 'undefined') {
+      resolvedStoreId = localStorage.getItem('storefront:last-store-id');
+    }
+
+    if (!profile?.id && typeof window !== 'undefined') {
+      if (resolvedStoreId) {
+        resolvedSessionId = localStorage.getItem(`store_session_${resolvedStoreId}`);
+      }
+
+      if (!resolvedSessionId) {
+        resolvedSessionId = localStorage.getItem('storefront:last-session-id');
+      }
+    }
+
+    if (!resolvedStoreId && typeof window !== 'undefined') {
+      const lastSlug = localStorage.getItem('storefront:last-slug');
+      if (lastSlug) {
+        try {
+          const { data: storeData } = await supabase
+            .from('affiliate_stores')
+            .select('id')
+            .eq('store_slug', lastSlug)
+            .eq('is_active', true)
+            .maybeSingle();
+
+          if (storeData?.id) {
+            resolvedStoreId = storeData.id;
+            try {
+              localStorage.setItem('storefront:last-store-id', storeData.id);
+            } catch (error) {
+              console.warn('Unable to persist storefront store id', error);
+            }
+
+            if (!resolvedSessionId) {
+              resolvedSessionId = localStorage.getItem(`store_session_${storeData.id}`);
+            }
+          }
+        } catch (error) {
+          console.warn('Unable to resolve storefront store id from slug', error);
+        }
+      }
+    }
+
+    if (!profile?.id && typeof window !== 'undefined') {
+      if (resolvedStoreId && !resolvedSessionId) {
+        resolvedSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        try {
+          localStorage.setItem(`store_session_${resolvedStoreId}`, resolvedSessionId);
+          localStorage.setItem('storefront:last-session-id', resolvedSessionId);
+        } catch (error) {
+          console.warn('Unable to persist storefront session', error);
+        }
+      }
+
+      if (!resolvedStoreId && !resolvedSessionId) {
+        resolvedSessionId = localStorage.getItem('storefront:last-session-id');
+      }
+    }
+
+    return { storeId: resolvedStoreId, sessionId: resolvedSessionId };
+  }, [profile?.id, storeId]);
 
   // Initialize cart with store support
   const initializeCart = useCallback(async () => {
     setLoading(true);
     try {
       let existingCart = null;
+
+      const { storeId: resolvedStoreId, sessionId } = await resolveStoreContext();
 
       if (profile?.id) {
         // Get user cart for specific store if provided
@@ -44,14 +114,33 @@ export const useShoppingCart = (storeId?: string) => {
             *,
             cart_items(*)
           `)
-          .eq('user_id', profile.id);
-        
-        if (storeId) {
-          query = query.eq('affiliate_store_id', storeId);
+          .eq('user_id', profile.id)
+          .order('updated_at', { ascending: false })
+          .limit(1);
+
+        if (resolvedStoreId) {
+          query = query.eq('affiliate_store_id', resolvedStoreId);
         }
-        
+
         const { data: userCart } = await query.maybeSingle();
         existingCart = userCart;
+      } else if (sessionId) {
+        let query = supabase
+          .from('shopping_carts')
+          .select(`
+            *,
+            cart_items(*)
+          `)
+          .eq('session_id', sessionId)
+          .order('updated_at', { ascending: false })
+          .limit(1);
+
+        if (resolvedStoreId) {
+          query = query.eq('affiliate_store_id', resolvedStoreId);
+        }
+
+        const { data: sessionCart } = await query.maybeSingle();
+        existingCart = sessionCart;
       }
 
       if (!existingCart) {
@@ -63,34 +152,72 @@ export const useShoppingCart = (storeId?: string) => {
 
         if (profile?.id) {
           cartData.user_id = profile.id;
+        } else if (sessionId) {
+          cartData.session_id = sessionId;
         } else {
-          cartData.session_id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+          const fallbackSession = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+          cartData.session_id = fallbackSession;
+
+          if (typeof window !== 'undefined') {
+            try {
+              localStorage.setItem('storefront:last-session-id', fallbackSession);
+            } catch (error) {
+              console.warn('Unable to persist fallback storefront session', error);
+            }
+          }
         }
 
-        // Always link to store if provided
-        if (storeId) {
+        if (resolvedStoreId) {
+          cartData.affiliate_store_id = resolvedStoreId;
+        } else if (storeId) {
           cartData.affiliate_store_id = storeId;
         }
 
         const { data: newCart, error } = await supabase
           .from('shopping_carts')
           .insert(cartData)
-          .select()
+          .select(`
+            *,
+            cart_items(*)
+          `)
           .maybeSingle();
 
         if (error) throw error;
 
         existingCart = {
           ...newCart,
-          cart_items: []
+          cart_items: newCart?.cart_items ?? []
         };
       }
 
-      setCart({
-        ...existingCart,
-        items: existingCart.cart_items || []
-      });
-      setCartId(existingCart.id);
+      if (existingCart) {
+        const items = existingCart.cart_items || existingCart.items || [];
+
+        setCart({
+          ...existingCart,
+          items
+        });
+        setCartId(existingCart.id);
+        cartIdRef.current = existingCart.id;
+        setActiveStoreId(existingCart.affiliate_store_id ?? resolvedStoreId ?? storeId ?? null);
+
+        if (typeof window !== 'undefined') {
+          try {
+            if (existingCart.session_id) {
+              localStorage.setItem('storefront:last-session-id', existingCart.session_id);
+              if (existingCart.affiliate_store_id) {
+                localStorage.setItem(`store_session_${existingCart.affiliate_store_id}`, existingCart.session_id);
+              }
+            }
+            if (existingCart.affiliate_store_id) {
+              localStorage.setItem('storefront:last-store-id', existingCart.affiliate_store_id);
+            }
+            localStorage.setItem('storefront:last-cart-id', existingCart.id);
+          } catch (error) {
+            console.warn('Unable to persist shopping cart context', error);
+          }
+        }
+      }
 
     } catch (error) {
       console.error('Error initializing cart:', error);
@@ -98,12 +225,19 @@ export const useShoppingCart = (storeId?: string) => {
     } finally {
       setLoading(false);
     }
-  }, [profile, storeId]);
+  }, [profile, resolveStoreContext, storeId]);
 
   // Add item to cart
   const addToCart = useCallback(async (productId: string, product: any, quantity: number = 1) => {
-    if (!cartId) {
+    let targetCartId = cartIdRef.current;
+
+    if (!targetCartId) {
       await initializeCart();
+      targetCartId = cartIdRef.current;
+    }
+
+    if (!targetCartId) {
+      toast.error('تعذر تجهيز العربة، حاول مرة أخرى');
       return;
     }
 
@@ -139,7 +273,7 @@ export const useShoppingCart = (storeId?: string) => {
       } else {
         // Add new item
         const newItem = {
-          cart_id: cartId,
+          cart_id: targetCartId,
           product_id: productId,
           quantity,
           unit_price_sar: product.price,
@@ -161,7 +295,7 @@ export const useShoppingCart = (storeId?: string) => {
             ...createdItem,
             product_title: product.name || product.title || 'منتج',
             product_image_url: product.image_url,
-            shop_id: product.shop_id || storeId || ''
+            shop_id: product.shop_id || activeStoreId || ''
           }]
         } : null);
       }
@@ -173,7 +307,7 @@ export const useShoppingCart = (storeId?: string) => {
     } finally {
       setLoading(false);
     }
-  }, [cartId, cart, initializeCart, storeId]);
+  }, [activeStoreId, cart, initializeCart]);
 
   // Update item quantity
   const updateQuantity = useCallback(async (itemId: string, newQuantity: number) => {
