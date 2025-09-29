@@ -9036,6 +9036,15 @@ export type Database = {
       }
     }
     Functions: {
+      add_affiliate_product: {
+        Args: {
+          p_is_visible?: boolean
+          p_product_id: string
+          p_sort_order?: number
+          p_store_id: string
+        }
+        Returns: Json
+      }
       add_loyalty_points: {
         Args: {
           customer_user_id: string

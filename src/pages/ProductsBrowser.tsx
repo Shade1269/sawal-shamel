@@ -239,22 +239,36 @@ const ProductsBrowser = () => {
     setAddingProducts(prev => new Set(prev).add(productId));
 
     try {
-      const { error } = await supabase
-        .from('affiliate_products')
-        .insert({
-          affiliate_store_id: affiliateStore.id,
-          product_id: productId,
-          is_visible: true,
-          sort_order: 0
+      // استخدام الدالة الآمنة الجديدة
+      const { data, error } = await supabase
+        .rpc('add_affiliate_product', {
+          p_store_id: affiliateStore.id,
+          p_product_id: productId,
+          p_is_visible: true,
+          p_sort_order: 0
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('RPC Error:', error);
+        throw error;
+      }
+
+      console.log('Add product result:', data);
+
+      if (data.already_exists) {
+        toast({
+          title: "تنبيه",
+          description: "المنتج موجود بالفعل في متجرك",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "تم بنجاح",
+          description: "تم إضافة المنتج إلى متجرك",
+        });
+      }
 
       setMyProducts(prev => new Set(prev).add(productId));
-      toast({
-        title: "تم بنجاح",
-        description: "تم إضافة المنتج إلى متجرك",
-      });
 
     } catch (error: any) {
       console.error('Error adding product:', error);
@@ -262,12 +276,10 @@ const ProductsBrowser = () => {
       
       let errorMessage = "تعذر إضافة المنتج";
       
-      if (error.message?.includes('duplicate key value violates unique constraint')) {
-        errorMessage = "المنتج موجود بالفعل في متجرك";
-      } else if (error.message?.includes('RLS')) {
-        errorMessage = "خطأ في الصلاحيات - تحقق من إعدادات قاعدة البيانات";
-      } else if (error.message?.includes('violates not-null constraint')) {
-        errorMessage = "بيانات مفقودة - تحقق من الحقول المطلوبة";
+      if (error.message?.includes('Not authenticated')) {
+        errorMessage = "يجب تسجيل الدخول أولاً";
+      } else if (error.message?.includes('Unauthorized store access')) {
+        errorMessage = "غير مصرح لك بالوصول لهذا المتجر";
       } else if (error.message) {
         errorMessage = `خطأ: ${error.message}`;
       }
