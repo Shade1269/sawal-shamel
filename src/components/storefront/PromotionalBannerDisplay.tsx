@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { usePromotionalBanners } from '@/hooks/usePromotionalBanners';
 import { BannerPreview } from '@/components/marketing/BannerPreview';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PromotionalBannerDisplayProps {
   affiliateStoreId?: string;
@@ -16,7 +17,7 @@ export const PromotionalBannerDisplay: React.FC<PromotionalBannerDisplayProps> =
   position,
   className = ''
 }) => {
-  const [visibleBanners, setVisibleBanners] = useState<string[]>([]);
+  const [hiddenBanners, setHiddenBanners] = useState<string[]>([]);
   const { fetchActiveBanners, trackBannerInteraction } = usePromotionalBanners(
     undefined,
     affiliateStoreId
@@ -26,18 +27,57 @@ export const PromotionalBannerDisplay: React.FC<PromotionalBannerDisplayProps> =
   useEffect(() => {
     const loadBanners = async () => {
       const activeBanners = await fetchActiveBanners(bannerType, position);
-      setBanners(activeBanners);
-      
-      // تتبع مشاهدة البانرات
+      const productIdSet = new Set<string>();
+
       activeBanners.forEach((banner: any) => {
-        trackBannerInteraction(banner.id, 'impression');
+        const ids = Array.isArray(banner.content_config?.product_ids)
+          ? banner.content_config.product_ids.map((id: string | number) => id?.toString())
+          : [];
+        ids.forEach((id: string) => productIdSet.add(id));
+      });
+
+      let productsMap = new Map<string, any>();
+
+      if (productIdSet.size > 0) {
+        const { data, error } = await supabase
+          .from('products')
+          .select('id,title,description,price_sar,image_urls,images')
+          .in('id', Array.from(productIdSet));
+
+        if (!error && data) {
+          productsMap = new Map(data.map(product => [product.id, product]));
+        }
+      }
+
+      const enrichedBanners = activeBanners.map((banner: any) => {
+        const ids = Array.isArray(banner.content_config?.product_ids)
+          ? banner.content_config.product_ids.map((id: string | number) => id?.toString())
+          : [];
+
+        const selectedProducts = ids
+          .map((id: string) => productsMap.get(id))
+          .filter(Boolean);
+
+        return {
+          ...banner,
+          selectedProducts
+        };
+      });
+
+      setBanners(enrichedBanners);
+
+      // تتبع مشاهدة البانرات
+      enrichedBanners.forEach((banner: any) => {
+        if (!hiddenBanners.includes(banner.id)) {
+          trackBannerInteraction(banner.id, 'impression');
+        }
       });
     };
 
     if (affiliateStoreId) {
       loadBanners();
     }
-  }, [affiliateStoreId, bannerType, position, fetchActiveBanners, trackBannerInteraction]);
+  }, [affiliateStoreId, bannerType, position, fetchActiveBanners, trackBannerInteraction, hiddenBanners]);
 
   const handleBannerClick = (bannerId: string, buttonUrl?: string) => {
     trackBannerInteraction(bannerId, 'click');
@@ -48,7 +88,7 @@ export const PromotionalBannerDisplay: React.FC<PromotionalBannerDisplayProps> =
 
   const handleBannerClose = (bannerId: string) => {
     trackBannerInteraction(bannerId, 'close');
-    setVisibleBanners(prev => prev.filter(id => id !== bannerId));
+    setHiddenBanners(prev => [...prev, bannerId]);
   };
 
   const getAnimationVariants = (animationType: string) => {
@@ -87,7 +127,7 @@ export const PromotionalBannerDisplay: React.FC<PromotionalBannerDisplayProps> =
     <div className={`promotional-banner-container relative z-10 ${className}`}>
       <AnimatePresence>
         {banners
-          .filter(banner => !visibleBanners.includes(banner.id))
+          .filter(banner => !hiddenBanners.includes(banner.id))
           .map((banner) => (
             <motion.div
               key={banner.id}
