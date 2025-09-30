@@ -80,8 +80,8 @@ type AffiliateProductWithDetails = {
 type StoreProductOption = {
   id: string;
   title: string;
-  category?: string | null;
-  image_url?: string | null;
+  category: string | null;
+  image_url: string | null;
   isVisible: boolean;
 };
 
@@ -297,12 +297,12 @@ export const AffiliateStoreManager = ({
             return {
               id: product.id,
               title: product.title,
-              category: product.category,
+              category: product.category || null,
               image_url: imageUrl,
               isVisible: item?.is_visible ?? true
             };
           })
-          .filter((product): product is StoreProductOption => Boolean(product));
+          .filter((product): product is StoreProductOption => Boolean(product.id));
 
         setStoreProducts(formattedProducts);
       } catch (error) {
@@ -395,7 +395,7 @@ export const AffiliateStoreManager = ({
   const saveCategorySettings = async () => {
     const success = await updateSettings({
       category_display_style: displayStyle,
-      featured_categories: categories
+      featured_categories: JSON.parse(JSON.stringify(categories))
     });
 
     if (success) {

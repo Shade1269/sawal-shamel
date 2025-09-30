@@ -176,7 +176,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     enabled: !!affiliateStore?.id,
   });
 
-  const { data: storeSettings } = useQuery({
+  const { data: storeSettings } = useQuery<StoreSettings | null>({
     queryKey: ["affiliate-store-settings", affiliateStore?.id],
     queryFn: async () => {
       if (!affiliateStore?.id) return null;
@@ -191,14 +191,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       return data as StoreSettings | null;
     },
     enabled: !!affiliateStore?.id,
-    onError: (error) => {
-      console.error("Error loading affiliate store settings", error);
-      toast({
-        title: "خطأ في تحميل الإعدادات",
-        description: "تعذر تحميل إعدادات المتجر المخصصة",
-        variant: "destructive",
-      });
-    },
   });
 
   // حساب المجموع

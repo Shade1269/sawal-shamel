@@ -11,7 +11,6 @@ interface StoreData {
   id: string;
   store_name: string;
   store_slug: string;
-  shop_id: string;
   bio?: string;
   logo_url?: string;
   theme: string;
@@ -36,7 +35,7 @@ export const IsolatedStoreLayout: React.FC = () => {
     try {
       const { data: storeData, error: storeError } = await supabase
         .from('affiliate_stores')
-        .select('id, store_name, store_slug, shop_id, bio, logo_url, theme')
+        .select('id, store_name, store_slug, bio, logo_url, theme')
         .eq('store_slug', storeSlug)
         .eq('is_active', true)
         .single();
