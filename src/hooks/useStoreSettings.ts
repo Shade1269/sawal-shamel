@@ -3,11 +3,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Json } from '@/integrations/supabase/types';
 
+export interface StoreCategoryBannerProduct {
+  id: string;
+  title: string;
+  image_url?: string | null;
+  category?: string | null;
+}
+
 export interface StoreCategory {
   id: string;
   name: string;
   isActive: boolean;
   productCount: number;
+  bannerProducts?: StoreCategoryBannerProduct[];
 }
 
 export interface StoreSettings {
@@ -141,6 +149,22 @@ export const useStoreSettings = (storeId: string) => {
   };
 };
 
+const normalizeBannerProduct = (product: any): StoreCategoryBannerProduct | null => {
+  if (!product || typeof product !== 'object') return null;
+
+  const id = typeof product.id === 'string' ? product.id : undefined;
+  const title = typeof product.title === 'string' ? product.title : undefined;
+
+  if (!id || !title) return null;
+
+  return {
+    id,
+    title,
+    image_url: typeof product.image_url === 'string' ? product.image_url : null,
+    category: typeof product.category === 'string' ? product.category : null
+  };
+};
+
 const normalizeFeaturedCategory = (category: any): StoreCategory | null => {
   if (!category) return null;
 
@@ -149,11 +173,22 @@ const normalizeFeaturedCategory = (category: any): StoreCategory | null => {
 
   if (!id || !name) return null;
 
+  const rawBannerProducts = Array.isArray(category.bannerProducts)
+    ? category.bannerProducts
+    : Array.isArray(category.selectedProducts)
+      ? category.selectedProducts
+      : undefined;
+
+  const bannerProducts = rawBannerProducts
+    ?.map(normalizeBannerProduct)
+    .filter((product): product is StoreCategoryBannerProduct => Boolean(product));
+
   return {
     id,
     name,
     isActive: typeof category.isActive === 'boolean' ? category.isActive : true,
-    productCount: typeof category.productCount === 'number' ? category.productCount : 0
+    productCount: typeof category.productCount === 'number' ? category.productCount : 0,
+    bannerProducts
   };
 };
 

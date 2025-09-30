@@ -40,7 +40,12 @@ import {
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { parseFeaturedCategories, useStoreSettings, type StoreCategory } from '@/hooks/useStoreSettings';
+import {
+  parseFeaturedCategories,
+  useStoreSettings,
+  type StoreCategory,
+  type StoreCategoryBannerProduct
+} from '@/hooks/useStoreSettings';
 import { useQRGenerator } from '@/hooks/useQRGenerator';
 import { useStoreAnalytics } from '@/hooks/useStoreAnalytics';
 import { ImageUpload } from '@/components/ui/image-upload';
@@ -70,6 +75,14 @@ type AffiliateProductWithDetails = {
     category: string | null;
     is_active: boolean | null;
   } | null;
+};
+
+type StoreProductOption = {
+  id: string;
+  title: string;
+  category?: string | null;
+  image_url?: string | null;
+  isVisible: boolean;
 };
 
 export const AffiliateStoreManager = ({
@@ -181,6 +194,8 @@ export const AffiliateStoreManager = ({
   const [displayStyle, setDisplayStyle] = useState('grid');
   const [categories, setCategories] = useState<StoreCategory[]>([]);
   const [availableCategories, setAvailableCategories] = useState<StoreCategory[]>([]);
+  const [storeProducts, setStoreProducts] = useState<StoreProductOption[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
 
   useEffect(() => {
     if (!settings?.category_display_style) {
@@ -226,7 +241,8 @@ export const AffiliateStoreManager = ({
           id: name,
           name,
           isActive: true,
-          productCount: count
+          productCount: count,
+          bannerProducts: []
         }));
 
         setAvailableCategories(derivedCategories);
@@ -244,6 +260,67 @@ export const AffiliateStoreManager = ({
   }, [store.id, toast]);
 
   useEffect(() => {
+    const loadStoreProducts = async () => {
+      if (!store.id) return;
+
+      setLoadingProducts(true);
+
+      try {
+        const { data, error } = await supabase
+          .from('affiliate_products')
+          .select(`
+            id,
+            is_visible,
+            products (
+              id,
+              title,
+              image_urls,
+              category,
+              is_active
+            )
+          `)
+          .eq('affiliate_store_id', store.id);
+
+        if (error) throw error;
+
+        const formattedProducts: StoreProductOption[] = (data || [])
+          .map((item: any) => {
+            const product = item.products as any;
+            if (!product || product.is_active === false || item?.is_visible === false) {
+              return null;
+            }
+
+            const imageUrl = Array.isArray(product.image_urls) && product.image_urls.length > 0
+              ? product.image_urls[0]
+              : null;
+
+            return {
+              id: product.id,
+              title: product.title,
+              category: product.category,
+              image_url: imageUrl,
+              isVisible: item?.is_visible ?? true
+            };
+          })
+          .filter((product): product is StoreProductOption => Boolean(product));
+
+        setStoreProducts(formattedProducts);
+      } catch (error) {
+        console.error('Error loading products for affiliate store:', error);
+        toast({
+          title: 'خطأ',
+          description: 'فشل تحميل المنتجات المتاحة للاختيار',
+          variant: 'destructive'
+        });
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+
+    loadStoreProducts();
+  }, [store.id, toast]);
+
+  useEffect(() => {
     const storedCategories = parseFeaturedCategories(settings?.featured_categories);
 
     if (storedCategories.length === 0 && availableCategories.length === 0) {
@@ -258,7 +335,8 @@ export const AffiliateStoreManager = ({
       return {
         ...category,
         isActive: stored?.isActive ?? true,
-        productCount: stored?.productCount ?? category.productCount
+        productCount: stored?.productCount ?? category.productCount,
+        bannerProducts: stored?.bannerProducts ?? category.bannerProducts ?? []
       };
     });
 
@@ -269,7 +347,8 @@ export const AffiliateStoreManager = ({
           id: category.id,
           name: category.name,
           isActive: category.isActive,
-          productCount: category.productCount
+          productCount: category.productCount,
+          bannerProducts: category.bannerProducts ?? []
         });
       }
     });
@@ -290,7 +369,13 @@ export const AffiliateStoreManager = ({
   };
 
   const handleAddCategory = (newCategory: Partial<StoreCategory>) => {
-    setCategories(prev => [...prev, newCategory as StoreCategory]);
+    setCategories(prev => [
+      ...prev,
+      {
+        ...(newCategory as StoreCategory),
+        bannerProducts: newCategory.bannerProducts ?? []
+      }
+    ]);
   };
 
   const handleDeleteCategory = (categoryId: string) => {
@@ -693,7 +778,12 @@ export const AffiliateStoreManager = ({
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <Label>الفئات المميزة</Label>
-                  <CategoryEditDialog isNew onSave={handleAddCategory}>
+                  <CategoryEditDialog
+                    isNew
+                    onSave={handleAddCategory}
+                    products={storeProducts}
+                    isLoadingProducts={loadingProducts}
+                  >
                     <Button variant="outline" size="sm">
                       <Plus className="h-4 w-4 mr-2" />
                       إضافة فئة
@@ -724,6 +814,20 @@ export const AffiliateStoreManager = ({
                               category.isActive ? 'text-foreground' : 'text-muted-foreground'
                             }`}>{category.name}</p>
                             <p className="text-sm text-muted-foreground">{category.productCount} منتج</p>
+                            {category.bannerProducts && category.bannerProducts.length > 0 && (
+                              <div className="mt-2 flex flex-wrap gap-2">
+                                {category.bannerProducts.slice(0, 3).map((product: StoreCategoryBannerProduct) => (
+                                  <Badge key={product.id} variant="secondary" className="text-xs">
+                                    {product.title}
+                                  </Badge>
+                                ))}
+                                {category.bannerProducts.length > 3 && (
+                                  <span className="text-xs text-muted-foreground">
+                                    +{category.bannerProducts.length - 3} منتج
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -731,7 +835,12 @@ export const AffiliateStoreManager = ({
                             checked={category.isActive}
                             onCheckedChange={() => toggleCategoryStatus(category.id)}
                           />
-                          <CategoryEditDialog category={category} onSave={handleCategoryEdit}>
+                          <CategoryEditDialog
+                            category={category}
+                            onSave={handleCategoryEdit}
+                            products={storeProducts}
+                            isLoadingProducts={loadingProducts}
+                          >
                             <Button variant="outline" size="sm" disabled={!category.isActive}>
                               <Edit className="h-4 w-4" />
                             </Button>
