@@ -31,11 +31,7 @@ export const PromotionalBannerDisplay: React.FC<PromotionalBannerDisplayProps> =
 
       activeBanners.forEach((banner: any) => {
         const ids = Array.isArray(banner.content_config?.product_ids)
-codex/add-product-selection-for-banner-creation-roitqz
           ? banner.content_config.product_ids.map((id: string | number) => id?.toString())
-
-          ? banner.content_config.product_ids
- main
           : [];
         ids.forEach((id: string) => productIdSet.add(id));
       });
@@ -55,11 +51,7 @@ codex/add-product-selection-for-banner-creation-roitqz
 
       const enrichedBanners = activeBanners.map((banner: any) => {
         const ids = Array.isArray(banner.content_config?.product_ids)
- codex/add-product-selection-for-banner-creation-roitqz
           ? banner.content_config.product_ids.map((id: string | number) => id?.toString())
-
-          ? banner.content_config.product_ids
-main
           : [];
 
         const selectedProducts = ids

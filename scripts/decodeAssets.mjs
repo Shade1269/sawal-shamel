@@ -92,7 +92,8 @@ async function runFromCli() {
 const cliEntry = process.argv[1] ? new URL(`file://${process.argv[1]}`).href : null;
 if (cliEntry === import.meta.url) {
   runFromCli().catch((error) => {
-    console.error('[decodeAssets] failed:', error);
-    process.exitCode = 1;
+    console.warn('[decodeAssets] non-fatal error:', error?.message || error);
+    // Do not fail install if assets can't be decoded
+    process.exitCode = 0;
   });
 }

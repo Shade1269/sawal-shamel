@@ -110,11 +110,7 @@ export const BannerEditor: React.FC<BannerEditorProps> = ({
         animation_type: banner.animation_type || 'fade'
       });
       const bannerProductIds = Array.isArray(banner.content_config?.product_ids)
- codex/add-product-selection-for-banner-creation-roitqz
         ? banner.content_config.product_ids.map((id: string | number) => id?.toString())
-
-        ? banner.content_config.product_ids
- main
         : [];
       setSelectedProductIds(bannerProductIds);
     }
@@ -152,35 +148,19 @@ export const BannerEditor: React.FC<BannerEditorProps> = ({
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
- codex/add-product-selection-for-banner-creation-roitqz
   const toggleProductSelection = (productId: string | number) => {
     const normalizedId = productId?.toString();
-
     setSelectedProductIds(prev => (
       prev.includes(normalizedId)
         ? prev.filter(id => id !== normalizedId)
         : [...prev, normalizedId]
-
-  const toggleProductSelection = (productId: string) => {
-    setSelectedProductIds(prev => (
-      prev.includes(productId)
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
- main
     ));
   };
 
-  const selectedProducts = useMemo(
- codex/add-product-selection-for-banner-creation-roitqz
-    () => {
-      const idSet = new Set(selectedProductIds.map(id => id?.toString()));
-      return availableProducts.filter(product => idSet.has(product.id?.toString()));
-    },
-
-    () => availableProducts.filter(product => selectedProductIds.includes(product.id)),
- main
-    [availableProducts, selectedProductIds]
-  );
+  const selectedProducts = useMemo(() => {
+    const idSet = new Set(selectedProductIds.map(id => id?.toString()));
+    return availableProducts.filter(product => idSet.has(product.id?.toString()));
+  }, [availableProducts, selectedProductIds]);
 
   const handleSubmit = async () => {
     try {
@@ -188,11 +168,7 @@ export const BannerEditor: React.FC<BannerEditorProps> = ({
         ...formData,
         content_config: {
           ...(formData.content_config || {}),
- codex/add-product-selection-for-banner-creation-roitqz
-          product_ids: selectedProductIds.map(id => id?.toString())
-
           product_ids: selectedProductIds
- main
         }
       };
 
@@ -418,12 +394,8 @@ export const BannerEditor: React.FC<BannerEditorProps> = ({
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                   {availableProducts.map((product) => {
- codex/add-product-selection-for-banner-creation-roitqz
                     const normalizedId = product.id?.toString();
                     const isSelected = normalizedId ? selectedProductIds.includes(normalizedId) : false;
-
-                    const isSelected = selectedProductIds.includes(product.id);
- main
                     const imageUrl =
                       (Array.isArray(product.image_urls) && product.image_urls[0]) ||
                       (Array.isArray(product.images) && product.images[0]?.url) ||
