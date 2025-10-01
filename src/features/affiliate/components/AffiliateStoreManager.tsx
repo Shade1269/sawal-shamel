@@ -99,7 +99,7 @@ export const AffiliateStoreManager = ({
   });
 
   // استخدام خطافات الإعدادات والتحسينات
-  const { settings, updateSettings, uploadImage } = useStoreSettings(store.id);
+  const { settings, updateSettings, uploadImage, refetch } = useStoreSettings(store.id);
   const { generateQR, downloadQR, qrCodeDataUrl, isGenerating } = useQRGenerator();
   const { analytics, loading: analyticsLoading } = useStoreAnalytics(store.id);
 
@@ -399,9 +399,12 @@ export const AffiliateStoreManager = ({
     });
 
     if (success) {
+      // إعادة جلب البيانات لتحديث العرض
+      await refetch();
+      
       toast({
         title: "تم الحفظ",
-        description: "تم حفظ إعدادات الفئات بنجاح"
+        description: "تم حفظ إعدادات الفئات بنجاح. سيتم تحديث المتجر تلقائياً."
       });
     }
   };
