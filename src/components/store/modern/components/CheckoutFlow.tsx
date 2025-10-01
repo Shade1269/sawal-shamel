@@ -132,11 +132,87 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
   const handleSubmit = async () => {
     setIsProcessing(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsProcessing(false);
-    onSuccess();
+    try {
+      // Import supabase client
+      const { supabase } = await import('@/integrations/supabase/client');
+      
+      // Get shop_id from first product
+      const firstProductId = cart[0].product.id;
+      const { data: productData, error: productError } = await supabase
+        .from('products')
+        .select('shop_id')
+        .eq('id', firstProductId)
+        .single();
+      
+      if (productError || !productData?.shop_id) {
+        throw new Error('لا يمكن العثور على معلومات المتجر');
+      }
+      
+      // Calculate totals
+      const subtotal = cart.reduce((sum, item) => 
+        sum + (item.product.final_price || item.product.price_sar) * item.quantity, 0
+      );
+      const shipping = total > 200 ? 0 : 25;
+      const tax = 0; // يمكن حسابها لاحقاً
+      const finalTotal = subtotal + shipping + tax;
+      
+      // Create order - Using type assertion to bypass TypeScript issues
+      const orderData: any = {
+        shop_id: productData.shop_id,
+        affiliate_store_id: store.id,
+        customer_name: customerInfo.name,
+        customer_phone: customerInfo.phone,
+        customer_email: customerInfo.email || null,
+        shipping_address: {
+          city: customerInfo.city,
+          address: customerInfo.address,
+          notes: customerInfo.notes
+        },
+        status: 'PENDING',
+        subtotal_sar: subtotal,
+        tax_sar: tax,
+        shipping_sar: shipping,
+        discount_sar: 0,
+        total_sar: finalTotal,
+        shipping_method: 'STANDARD',
+        payment_method: paymentMethod === 'cod' ? 'COD' : 'CREDIT_CARD',
+        payment_status: paymentMethod === 'cod' ? 'PENDING' : 'AWAITING_PAYMENT',
+        affiliate_commission_sar: subtotal * 0.1
+      };
+      
+      const { data: order, error: orderError } = await supabase
+        .from('ecommerce_orders')
+        .insert(orderData)
+        .select()
+        .single();
+      
+      if (orderError) throw orderError;
+      
+      // Create order items
+      const orderItems = cart.map(item => ({
+        order_id: order.id,
+        product_id: item.product.id,
+        product_title: item.product.title,
+        quantity: item.quantity,
+        unit_price_sar: item.product.final_price || item.product.price_sar,
+        total_price_sar: (item.product.final_price || item.product.price_sar) * item.quantity,
+        commission_rate: 10,
+        commission_sar: ((item.product.final_price || item.product.price_sar) * item.quantity * 0.1)
+      }));
+      
+      const { error: itemsError } = await supabase
+        .from('ecommerce_order_items')
+        .insert(orderItems);
+      
+      if (itemsError) throw itemsError;
+      
+      setIsProcessing(false);
+      onSuccess();
+    } catch (error) {
+      console.error('Error creating order:', error);
+      setIsProcessing(false);
+      alert('حدث خطأ أثناء إنشاء الطلب. يرجى المحاولة مرة أخرى.');
+    }
   };
 
   const isStepValid = () => {
