@@ -34,19 +34,6 @@ USING (store_id IN (
   )
 ));
 
-CREATE POLICY "Anonymous users can view settings for active stores"
-ON public.affiliate_store_settings
-FOR SELECT
-TO anon
-USING (
-  EXISTS (
-    SELECT 1
-    FROM affiliate_stores
-    WHERE affiliate_stores.id = affiliate_store_settings.store_id
-      AND affiliate_stores.is_active = true
-  )
-);
-
 -- إنشاء سياسات التخزين
 CREATE POLICY "Store owners can upload assets" 
 ON storage.objects 
