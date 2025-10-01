@@ -179,7 +179,7 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
         discount_sar: 0,
         total_sar: finalTotal,
         shipping_method: 'STANDARD',
-        payment_method: paymentMethod === 'cod' ? 'COD' : 'CREDIT_CARD',
+        payment_method: paymentMethod === 'cod' ? 'CASH_ON_DELIVERY' : 'CREDIT_CARD',
         payment_status: paymentMethod === 'cod' ? 'PENDING' : 'AWAITING_PAYMENT',
         affiliate_commission_sar: subtotal * 0.1
       };
