@@ -58,8 +58,10 @@ interface CartItem {
   selectedVariants?: { [key: string]: string };
 }
 
-const ModernStorefront = () => {
-  const { storeSlug } = useParams<{ storeSlug: string }>();
+interface ModernStorefrontProps { storeSlug?: string }
+const ModernStorefront: React.FC<ModernStorefrontProps> = ({ storeSlug: propStoreSlug }) => {
+  const params = useParams<{ storeSlug?: string; slug?: string }>();
+  const storeSlug = (propStoreSlug ?? params.storeSlug ?? params.slug ?? '') as string;
   const navigate = useNavigate();
   const { toast } = useToast();
   

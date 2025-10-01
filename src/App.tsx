@@ -21,7 +21,7 @@ const HomePage = lazy(() => import("./pages/Index"));
 const AuthPage = lazy(() => import("./features/auth/components/AuthPage"));
 const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
 const AuthCallbackPage = lazy(() => import("./pages/auth/AuthCallbackPage"));
-const PublicStorefront = lazy(() => import("./pages/public-storefront/StorefrontPage"));
+const StorefrontIntegration = lazy(() => import("./pages/public-storefront/StorefrontIntegration"));
 const ProductsBrowser = lazy(() => import("./pages/ProductsBrowser"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const OrderConfirmationPage = lazy(() => import("./pages/OrderConfirmationSimple"));
@@ -115,7 +115,7 @@ const App = () => {
                                 )}
                               />
 
-                              <Route path="/:slug" element={<PublicStorefront />} />
+                              <Route path="/:slug" element={<StorefrontIntegration />} />
                               <Route path="/store/:slug/*" element={<LegacyStoreRedirect />} />
 
                               <Route path="/checkout" element={<CheckoutPage />} />
