@@ -417,62 +417,69 @@ const ModernStorefront: React.FC<ModernStorefrontProps> = ({ storeSlug: propStor
                         عرض الكل ←
                       </Button>
                     </div>
-                    <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide">
-                      {bannerProducts.map((bp) => {
-                        const available = Boolean(bp.product);
-                        return (
-                          <motion.button
-                            type="button"
-                            key={`banner-${category.id}-${bp.id}`}
-                            onClick={() => bp.product && setSelectedProduct(bp.product)}
-                            whileHover={available ? { y: -8, scale: 1.03 } : undefined}
-                            className={`group relative w-64 flex-shrink-0 rounded-2xl border-2 overflow-hidden transition-all duration-300 ${
-                              available
-                                ? "bg-card/80 hover:border-primary/60 shadow-md hover:shadow-2xl"
-                                : "bg-muted cursor-not-allowed opacity-60"
-                            }`}
-                            disabled={!available}
-                          >
-                            {bp.imageUrl ? (
-                              <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10">
-                                <img
-                                  src={bp.imageUrl}
-                                  alt={bp.title}
-                                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                  loading="lazy"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                              </div>
-                            ) : (
-                              <div className="h-48 w-full bg-gradient-to-br from-primary/10 to-accent/5 flex items-center justify-center">
-                                <div className="text-center text-muted-foreground">
-                                  <div className="text-5xl mb-2">📦</div>
-                                  <p className="text-xs">لا توجد صورة</p>
-                                </div>
-                              </div>
-                            )}
-                            <div className="p-4 space-y-2 bg-card/90 backdrop-blur-sm">
-                              <p className="font-semibold text-base line-clamp-2 text-right">
-                                {bp.title}
-                              </p>
-                              {bp.price ? (
-                                <div className="flex items-center justify-between">
-                                  <span className="text-lg font-bold text-primary">
-                                    {bp.price.toFixed(0)} ريال
-                                  </span>
-                                  {available && (
-                                    <Badge variant="secondary" className="text-xs">
-                                      اضغط للعرض
-                                    </Badge>
-                                  )}
+                    {/* شريط تمرير أفقي تلقائي الحركة */}
+                    <div className="relative overflow-hidden">
+                      <motion.div
+                        className="flex gap-4 pr-4"
+                        animate={{ x: ['0%', '-50%'] }}
+                        transition={{ duration: 25, ease: 'linear', repeat: Infinity }}
+                      >
+                        {[...bannerProducts, ...bannerProducts].map((bp, idx) => {
+                          const available = Boolean(bp.product);
+                          return (
+                            <motion.button
+                              type="button"
+                              key={`banner-${category.id}-${bp.id}-${idx}`}
+                              onClick={() => bp.product && setSelectedProduct(bp.product)}
+                              whileHover={available ? { y: -8, scale: 1.03 } : undefined}
+                              className={`group relative w-64 flex-shrink-0 rounded-2xl border-2 overflow-hidden transition-all duration-300 ${
+                                available
+                                  ? 'bg-card/80 hover:border-primary/60 shadow-md hover:shadow-2xl'
+                                  : 'bg-muted cursor-not-allowed opacity-60'
+                              }`}
+                              disabled={!available}
+                            >
+                              {bp.imageUrl ? (
+                                <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10">
+                                  <img
+                                    src={bp.imageUrl}
+                                    alt={bp.title}
+                                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    loading="lazy"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 </div>
                               ) : (
-                                <span className="text-sm text-muted-foreground">سيتوفر قريباً</span>
+                                <div className="h-48 w-full bg-gradient-to-br from-primary/10 to-accent/5 flex items-center justify-center">
+                                  <div className="text-center text-muted-foreground">
+                                    <div className="text-5xl mb-2">📦</div>
+                                    <p className="text-xs">لا توجد صورة</p>
+                                  </div>
+                                </div>
                               )}
-                            </div>
-                          </motion.button>
-                        );
-                      })}
+                              <div className="p-4 space-y-2 bg-card/90 backdrop-blur-sm">
+                                <p className="font-semibold text-base line-clamp-2 text-right">
+                                  {bp.title}
+                                </p>
+                                {bp.price ? (
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-lg font-bold text-primary">
+                                      {bp.price.toFixed(0)} ريال
+                                    </span>
+                                    {available && (
+                                      <Badge variant="secondary" className="text-xs">
+                                        اضغط للعرض
+                                      </Badge>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="text-sm text-muted-foreground">سيتوفر قريباً</span>
+                                )}
+                              </div>
+                            </motion.button>
+                          );
+                        })}
+                      </motion.div>
                     </div>
                   </motion.div>
                 ))}

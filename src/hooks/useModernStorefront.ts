@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAffiliateStore } from '@/hooks/useAffiliateStore';
 import { useStorefrontSettings } from '@/hooks/useStorefrontSettings';
 
@@ -25,17 +25,19 @@ export const useModernStorefront = (storeSlug?: string) => {
   const [config, setConfig] = useState<ModernStorefrontConfig>(DEFAULT_CONFIG);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Integration with existing storefront settings
+  // Integration with existing storefront settings (memoized to avoid loops)
+  const initialLegacySettings = useMemo(() => ({
+    storeName: store?.store_name || '',
+    shortDescription: store?.bio || '',
+    logoUrl: store?.logo_url || '',
+    accentColor: 'var(--primary)',
+    useThemeHero: true,
+  }), [store?.store_name, store?.bio, store?.logo_url]);
+
   const { settings: legacySettings, updateSettings: updateLegacySettings } = useStorefrontSettings(
     slug || 'default',
     {
-      initialSettings: {
-        storeName: store?.store_name || '',
-        shortDescription: store?.bio || '',
-        logoUrl: store?.logo_url || '',
-        accentColor: 'var(--primary)',
-        useThemeHero: true
-      }
+      initialSettings: initialLegacySettings,
     }
   );
 
