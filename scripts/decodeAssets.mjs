@@ -3,8 +3,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Buffer } from 'node:buffer';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_MANIFEST_URL = new URL('../assets/asset-manifest.json', import.meta.url);
 
 function normalizeManifestUrl(manifestUrl) {
@@ -74,7 +73,10 @@ export async function decodeAssetManifest(options = {}) {
 
     return { manifest, outputs };
   } catch (error) {
-    console.log('[decodeAssets] Skipping asset decode (no manifest found)');
+    console.log(
+      '[decodeAssets] Skipping asset decode (no manifest found):',
+      error?.message || error,
+    );
     return { manifest: null, outputs: [] };
   }
 }
