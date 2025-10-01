@@ -136,16 +136,37 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
       // Import supabase client
       const { supabase } = await import('@/integrations/supabase/client');
       
-      // Get shop_id from first product
+      // Get shop_id from products through affiliate_products relation
       const firstProductId = cart[0].product.id;
-      const { data: productData, error: productError } = await supabase
-        .from('products')
-        .select('shop_id')
-        .eq('id', firstProductId)
-        .single();
       
-      if (productError || !productData?.shop_id) {
-        throw new Error('لا يمكن العثور على معلومات المتجر');
+      // Try to get shop_id from affiliate_products + products join
+      const { data: affiliateProduct, error: affiliateError } = await supabase
+        .from('affiliate_products')
+        .select(`
+          product_id,
+          products!inner(shop_id)
+        `)
+        .eq('product_id', firstProductId)
+        .eq('affiliate_store_id', store.id)
+        .maybeSingle();
+      
+      let shopId = null;
+      
+      // If product is in affiliate store, get shop_id from it
+      if (affiliateProduct && !affiliateError) {
+        shopId = (affiliateProduct.products as any)?.shop_id;
+      }
+      
+      // If still no shop_id, try direct query (for public products)
+      if (!shopId) {
+        const { data: productData } = await supabase
+          .from('products')
+          .select('shop_id')
+          .eq('id', firstProductId)
+          .eq('is_active', true)
+          .maybeSingle();
+        
+        shopId = productData?.shop_id;
       }
       
       // Calculate totals
@@ -153,12 +174,11 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
         sum + (item.product.final_price || item.product.price_sar) * item.quantity, 0
       );
       const shipping = total > 200 ? 0 : 25;
-      const tax = 0; // يمكن حسابها لاحقاً
+      const tax = 0;
       const finalTotal = subtotal + shipping + tax;
       
-      // Create order - Using type assertion to bypass TypeScript issues
+      // Create order - shop_id is optional but affiliate_store_id is required
       const orderData: any = {
-        shop_id: productData.shop_id,
         affiliate_store_id: store.id,
         customer_name: customerInfo.name,
         customer_phone: customerInfo.phone,
@@ -180,13 +200,25 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
         affiliate_commission_sar: subtotal * 0.1
       };
       
+      // Add shop_id if we found it
+      if (shopId) {
+        orderData.shop_id = shopId;
+      }
+      
+      console.log('Creating order with data:', orderData);
+      
       const { data: order, error: orderError } = await supabase
         .from('ecommerce_orders')
         .insert(orderData)
         .select()
         .single();
       
-      if (orderError) throw orderError;
+      if (orderError) {
+        console.error('Order creation error:', orderError);
+        throw orderError;
+      }
+      
+      console.log('Order created successfully:', order);
       
       // Create order items
       const orderItems = cart.map(item => ({
@@ -200,18 +232,32 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
         commission_sar: ((item.product.final_price || item.product.price_sar) * item.quantity * 0.1)
       }));
       
+      console.log('Creating order items:', orderItems);
+      
       const { error: itemsError } = await supabase
         .from('ecommerce_order_items')
         .insert(orderItems);
       
-      if (itemsError) throw itemsError;
+      if (itemsError) {
+        console.error('Order items creation error:', itemsError);
+        throw itemsError;
+      }
+      
+      console.log('Order items created successfully');
       
       setIsProcessing(false);
       onSuccess();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating order:', error);
+      console.error('Error details:', {
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        code: error?.code
+      });
       setIsProcessing(false);
-      alert('حدث خطأ أثناء إنشاء الطلب. يرجى المحاولة مرة أخرى.');
+      const errorMessage = error?.message || 'حدث خطأ أثناء إنشاء الطلب';
+      alert(`خطأ: ${errorMessage}\n\nيرجى المحاولة مرة أخرى أو التواصل مع الدعم.`);
     }
   };
 
