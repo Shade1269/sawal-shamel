@@ -11,6 +11,7 @@ import { SearchAndFilters } from './components/SearchAndFilters';
 import { CheckoutFlow } from './components/CheckoutFlow';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
+import { parseFeaturedCategories, type StoreSettings, type StoreCategory } from '@/hooks/useStoreSettings';
 
 interface Product {
   id: string;
@@ -133,6 +134,22 @@ const ModernStorefront = () => {
     enabled: !!store?.id,
   });
 
+  // إعدادات الواجهة (الفئات المميزة)
+  const { data: storeSettings } = useQuery<StoreSettings | null>({
+    queryKey: ["modern-store-settings", store?.id],
+    queryFn: async () => {
+      if (!store?.id) return null;
+      const { data, error } = await supabase
+        .from("affiliate_store_settings")
+        .select("*")
+        .eq("store_id", store.id)
+        .maybeSingle();
+      if (error && (error as any).code !== 'PGRST116') throw error;
+      return data as StoreSettings | null;
+    },
+    enabled: !!store?.id,
+  });
+
   // حفظ السلة في localStorage
   useEffect(() => {
     const savedCart = localStorage.getItem(`cart-${store?.id}`);
@@ -251,6 +268,45 @@ const ModernStorefront = () => {
       default: return Math.random() - 0.5;
     }
   }) || [];
+
+  // فئات مميزة وبنرات العرض
+  type CategoryBannerProductDisplay = {
+    id: string;
+    title: string;
+    imageUrl: string | null;
+    price: number | null;
+    product: Product | null;
+  };
+  type CategoryBannerDisplay = { category: StoreCategory; products: CategoryBannerProductDisplay[] };
+
+  const featuredCategories = React.useMemo(
+    () => parseFeaturedCategories(storeSettings?.featured_categories),
+    [storeSettings?.featured_categories]
+  );
+
+  const categoryBanners = React.useMemo<CategoryBannerDisplay[]>(() => {
+    if (!featuredCategories || featuredCategories.length === 0) return [];
+
+    const productMap = new Map<string, Product>();
+    (products ?? []).forEach((p) => productMap.set(p.id, p));
+
+    return featuredCategories
+      .filter((cat) => cat.isActive !== false && cat.bannerProducts && cat.bannerProducts.length > 0)
+      .map((cat) => {
+        const items: CategoryBannerProductDisplay[] = (cat.bannerProducts ?? [])
+          .map((bp) => {
+            const full = productMap.get(bp.id) ?? null;
+            const title = full?.title || bp.title;
+            if (!title) return null;
+            const price = full ? (full.final_price || full.price_sar) : null;
+            const imageUrl = full?.image_urls?.[0] || bp.image_url || null;
+            return { id: bp.id, title, imageUrl, price, product: full } as CategoryBannerProductDisplay;
+          })
+          .filter((x): x is CategoryBannerProductDisplay => Boolean(x));
+        return { category: cat, products: items };
+      })
+      .filter((b) => b.products.length > 0);
+  }, [featuredCategories, products]);
 
   // Loading state
   if (storeLoading || productsLoading) {
