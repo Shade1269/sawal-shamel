@@ -12,6 +12,8 @@ import { CheckoutFlow } from './components/CheckoutFlow';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { parseFeaturedCategories, type StoreSettings, type StoreCategory } from '@/hooks/useStoreSettings';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 interface Product {
   id: string;
@@ -373,6 +375,108 @@ const ModernStorefront = () => {
               setSortBy("newest");
             }}
           />
+
+          {/* البنرات المخصصة للفئات */}
+          {categoryBanners.length > 0 && (
+            <section className="space-y-6 bg-gradient-to-r from-primary/5 to-accent/5 backdrop-blur-sm border border-primary/20 rounded-3xl p-6 shadow-lg">
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  المنتجات المميزة حسب الفئات
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  مجموعة مختارة بعناية من أفضل منتجاتنا في كل فئة
+                </p>
+              </div>
+              <div className="space-y-8">
+                {categoryBanners.map(({ category, products: bannerProducts }) => (
+                  <motion.div
+                    key={category.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="space-y-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-xl font-semibold flex items-center gap-2">
+                          <span className="w-2 h-8 bg-primary rounded-full"></span>
+                          {category.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mr-4">
+                          {bannerProducts.length} منتج مختار بعناية
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedCategory(category.name)}
+                        className="text-primary hover:text-primary"
+                      >
+                        عرض الكل ←
+                      </Button>
+                    </div>
+                    <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide">
+                      {bannerProducts.map((bp) => {
+                        const available = Boolean(bp.product);
+                        return (
+                          <motion.button
+                            type="button"
+                            key={`banner-${category.id}-${bp.id}`}
+                            onClick={() => bp.product && setSelectedProduct(bp.product)}
+                            whileHover={available ? { y: -8, scale: 1.03 } : undefined}
+                            className={`group relative w-64 flex-shrink-0 rounded-2xl border-2 overflow-hidden transition-all duration-300 ${
+                              available
+                                ? "bg-card/80 hover:border-primary/60 shadow-md hover:shadow-2xl"
+                                : "bg-muted cursor-not-allowed opacity-60"
+                            }`}
+                            disabled={!available}
+                          >
+                            {bp.imageUrl ? (
+                              <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10">
+                                <img
+                                  src={bp.imageUrl}
+                                  alt={bp.title}
+                                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                  loading="lazy"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                              </div>
+                            ) : (
+                              <div className="h-48 w-full bg-gradient-to-br from-primary/10 to-accent/5 flex items-center justify-center">
+                                <div className="text-center text-muted-foreground">
+                                  <div className="text-5xl mb-2">📦</div>
+                                  <p className="text-xs">لا توجد صورة</p>
+                                </div>
+                              </div>
+                            )}
+                            <div className="p-4 space-y-2 bg-card/90 backdrop-blur-sm">
+                              <p className="font-semibold text-base line-clamp-2 text-right">
+                                {bp.title}
+                              </p>
+                              {bp.price ? (
+                                <div className="flex items-center justify-between">
+                                  <span className="text-lg font-bold text-primary">
+                                    {bp.price.toFixed(0)} ريال
+                                  </span>
+                                  {available && (
+                                    <Badge variant="secondary" className="text-xs">
+                                      اضغط للعرض
+                                    </Badge>
+                                  )}
+                                </div>
+                              ) : (
+                                <span className="text-sm text-muted-foreground">سيتوفر قريباً</span>
+                              )}
+                            </div>
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Products Grid */}
           <ProductGrid
