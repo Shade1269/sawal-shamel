@@ -21,18 +21,31 @@ INSERT INTO storage.buckets (id, name, public) VALUES ('store-assets', 'store-as
 -- إنشاء سياسات الأمان للجدول
 ALTER TABLE public.affiliate_store_settings ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Store owners can manage their settings" 
-ON public.affiliate_store_settings 
-FOR ALL 
+CREATE POLICY "Store owners can manage their settings"
+ON public.affiliate_store_settings
+FOR ALL
 USING (store_id IN (
-  SELECT affiliate_stores.id 
-  FROM affiliate_stores 
+  SELECT affiliate_stores.id
+  FROM affiliate_stores
   WHERE affiliate_stores.profile_id IN (
-    SELECT profiles.id 
-    FROM profiles 
+    SELECT profiles.id
+    FROM profiles
     WHERE profiles.auth_user_id = auth.uid()
   )
 ));
+
+CREATE POLICY "Anonymous users can view settings for active stores"
+ON public.affiliate_store_settings
+FOR SELECT
+TO anon
+USING (
+  EXISTS (
+    SELECT 1
+    FROM affiliate_stores
+    WHERE affiliate_stores.id = affiliate_store_settings.store_id
+      AND affiliate_stores.is_active = true
+  )
+);
 
 -- إنشاء سياسات التخزين
 CREATE POLICY "Store owners can upload assets" 
