@@ -71,14 +71,15 @@ export const useStoreSettings = (storeId: string) => {
     if (!storeId) return false;
 
     try {
+      const payload: Partial<StoreSettings> & { store_id: string } = {
+        store_id: storeId,
+        ...(settings?.id ? { id: settings.id } : {}),
+        ...updates
+      };
+
       const { data, error } = await supabase
         .from('affiliate_store_settings')
-        .upsert({
-          store_id: storeId,
-          ...updates
-        }, {
-          onConflict: 'store_id'
-        })
+        .upsert(payload)
         .select()
         .single();
 
