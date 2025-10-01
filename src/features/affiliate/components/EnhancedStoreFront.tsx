@@ -69,6 +69,21 @@ interface ProductVariant {
   price_modifier: number;
 }
 
+interface CategoryBannerProductDisplay {
+  id: string;
+  title: string;
+  imageUrl: string | null;
+  price: number | null;
+  rating: number | null;
+  product: Product | null;
+  category: string | null;
+}
+
+interface CategoryBannerDisplay {
+  category: StoreCategory;
+  products: CategoryBannerProductDisplay[];
+}
+
 interface AffiliateStore {
   id: string;
   store_name: string;
@@ -242,6 +257,51 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
   const categoryDisplayStyle = storeSettings?.category_display_style || "grid";
 
+  const categoryBanners = useMemo<CategoryBannerDisplay[]>(() => {
+    if (!featuredCategories || featuredCategories.length === 0) {
+      return [];
+    }
+
+    const productMap = new Map<string, Product>();
+    (products ?? []).forEach((product) => {
+      productMap.set(product.id, product);
+    });
+
+    return featuredCategories
+      .filter((category) => category.isActive !== false && category.bannerProducts && category.bannerProducts.length > 0)
+      .map((category) => {
+        const productsForBanner: CategoryBannerProductDisplay[] = (category.bannerProducts ?? [])
+          .map((bannerProduct) => {
+            const fullProduct = productMap.get(bannerProduct.id) ?? null;
+            const title = fullProduct?.title || bannerProduct.title;
+
+            if (!title) {
+              return null;
+            }
+
+            const price = fullProduct ? (fullProduct.final_price || fullProduct.price_sar) : null;
+            const imageUrl = fullProduct?.image_urls?.[0] || bannerProduct.image_url || null;
+
+            return {
+              id: bannerProduct.id,
+              title,
+              imageUrl,
+              price,
+              rating: fullProduct?.rating ?? null,
+              product: fullProduct,
+              category: bannerProduct.category ?? fullProduct?.category ?? category.name,
+            } satisfies CategoryBannerProductDisplay;
+          })
+          .filter((item): item is CategoryBannerProductDisplay => Boolean(item));
+
+        return {
+          category,
+          products: productsForBanner,
+        } satisfies CategoryBannerDisplay;
+      })
+      .filter((banner) => banner.products.length > 0);
+  }, [featuredCategories, products]);
+
   // فلترة وترتيب المنتجات المحسنة
   const filteredProducts = products?.filter(product => {
     const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -342,6 +402,19 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
   const handleCategorySelection = (categoryName: string) => {
     setSelectedCategory((current) => current === categoryName ? "all" : categoryName);
+  };
+
+  const handleBannerProductClick = (bannerProduct: CategoryBannerProductDisplay) => {
+    if (bannerProduct.product) {
+      setSelectedProduct(bannerProduct.product);
+      return;
+    }
+
+    toast({
+      title: "المنتج غير متاح",
+      description: "تمت إزالة هذا المنتج من المتجر. يرجى تحديث البنر أو اختيار منتج آخر.",
+      variant: "destructive",
+    });
   };
 
   const renderCategoryLayout = () => {
@@ -938,6 +1011,102 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             </AnimatePresence>
           </div>
         </section>
+
+        {categoryBanners.length > 0 && (
+          <section className="space-y-6 bg-background/70 backdrop-blur-sm border border-primary/10 rounded-3xl p-6 shadow-lg">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold">البنرات المخصصة للفئات</h2>
+              <p className="text-sm text-muted-foreground">
+                المنتجات المختارة لكل فئة ستظهر هنا في شرائط عرضية أنيقة في أعلى المتجر.
+              </p>
+            </div>
+            <div className="space-y-6">
+              {categoryBanners.map(({ category, products }) => (
+                <motion.div
+                  key={category.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.35 }}
+                  className="space-y-4"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="space-y-1">
+                      <h3 className="text-xl font-semibold text-primary">{category.name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {products.length} منتج مختار لعرضهم في واجهة الفئة
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedCategory(category.name)}
+                      className="text-primary hover:text-primary"
+                    >
+                      <ArrowRight className="h-4 w-4 mr-2" />
+                      استكشاف فئة {category.name}
+                    </Button>
+                  </div>
+                  <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
+                    {products.map((product) => {
+                      const isAvailable = Boolean(product.product);
+                      return (
+                        <motion.button
+                          type="button"
+                          key={`${category.id}-${product.id}`}
+                          onClick={() => handleBannerProductClick(product)}
+                          whileHover={isAvailable ? { y: -6, scale: 1.02 } : undefined}
+                          className={`group relative w-60 flex-shrink-0 text-right rounded-2xl border overflow-hidden transition-all duration-300 ${
+                            isAvailable
+                              ? "bg-card/70 hover:border-primary/40 shadow-sm hover:shadow-xl"
+                              : "bg-muted cursor-not-allowed opacity-70"
+                          }`}
+                          disabled={!isAvailable}
+                        >
+                          {product.imageUrl ? (
+                            <div className="relative h-40 w-full overflow-hidden">
+                              <img
+                                src={product.imageUrl}
+                                alt={product.title}
+                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                loading="lazy"
+                              />
+                              {product.rating && (
+                                <div className="absolute top-3 left-3 bg-background/90 text-xs px-2 py-1 rounded-full shadow">
+                                  ⭐ {product.rating.toFixed(1)}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="h-40 w-full bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center text-sm text-muted-foreground">
+                              لا توجد صورة متاحة
+                            </div>
+                          )}
+                          <div className="p-4 space-y-2">
+                            <div className="space-y-1">
+                              <p className="font-semibold line-clamp-2">{product.title}</p>
+                              {product.category && (
+                                <span className="text-xs text-muted-foreground">{product.category}</span>
+                              )}
+                            </div>
+                            <div className="flex items-center justify-between text-sm">
+                              {product.price ? (
+                                <span className="font-bold text-primary">{product.price.toFixed(0)} ريال</span>
+                              ) : (
+                                <span className="text-muted-foreground">سيتوفر قريباً</span>
+                              )}
+                              <span className="text-xs text-muted-foreground">اضغط للعرض السريع</span>
+                            </div>
+                          </div>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {categorySection && (
           <section className="space-y-4 bg-background/60 backdrop-blur-sm border border-primary/10 rounded-2xl p-6 shadow-sm">
