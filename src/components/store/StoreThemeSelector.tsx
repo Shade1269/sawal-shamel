@@ -67,8 +67,14 @@ export const StoreThemeSelector: React.FC<StoreThemeSelectorProps> = ({
 
   const handleApplyTheme = async (theme: StoreTheme) => {
     const success = await applyTheme(storeId, theme.id);
-    if (success && onThemeApplied) {
-      onThemeApplied(theme);
+    if (success) {
+      if (onThemeApplied) {
+        onThemeApplied(theme);
+      }
+      // Reload page to apply theme
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     }
   };
 
