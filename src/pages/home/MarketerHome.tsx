@@ -8,6 +8,7 @@ import { useUserDataContext } from '@/contexts/UserDataContext';
 import { Skeleton } from '@/ui/Skeleton';
 import { Button } from '@/ui/Button';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const MiniChart = lazy(() => import('@/components/home/MiniChart'));
 
@@ -29,9 +30,12 @@ const MarketerHome: React.FC<MarketerHomeProps> = ({ statisticsOverride, storeSl
   const { profile } = useFastAuth();
   const contextData = useUserDataContext();
   const userStatistics = (statisticsOverride ?? (contextData?.userStatistics as Record<string, unknown> | null) ?? {}) as Record<string, any>;
-  const userShop = (contextData?.userShop ?? null) as { slug?: string | null } | null;
-  const storeSlug = storeSlugOverride ?? userShop?.slug ?? 'my-boutique';
-  const publicStoreUrl = storeSlug ? `/${storeSlug}` : '/';
+  const userShop = (contextData?.userShop ?? null) as { slug?: string | null; store_slug?: string | null } | null;
+  const storeSlug = storeSlugOverride ?? userShop?.store_slug ?? userShop?.slug ?? 'my-boutique';
+  // Use full URL with domain for sharing
+  const publicStoreUrl = typeof window !== 'undefined' 
+    ? `${window.location.origin}/store/${storeSlug}` 
+    : `/store/${storeSlug}`;
 
   const totalSales = typeof userStatistics?.affiliateSalesTotal === 'number' ? userStatistics.affiliateSalesTotal : 148_500;
   const monthlyCommission =
@@ -83,23 +87,24 @@ const MarketerHome: React.FC<MarketerHomeProps> = ({ statisticsOverride, storeSl
         description: 'انسخ رابط المتجر أو شاركه مباشرة مع عملائك',
         icon: Share2,
         action: () => {
-          const shareUrl =
-            typeof window !== 'undefined' ? new URL(publicStoreUrl, window.location.origin).toString() : publicStoreUrl;
-
           if (typeof navigator !== 'undefined') {
             if (navigator.share) {
               navigator
                 .share({
                   title: 'متجري في منصة أناقتي',
                   text: 'اكتشف تشكيلتي المختارة من الأزياء عبر منصة أناقتي.',
-                  url: shareUrl,
+                  url: publicStoreUrl,
                 })
-                .catch(() => navigator.clipboard?.writeText(shareUrl).catch(() => undefined));
+                .catch(() => {
+                  navigator.clipboard?.writeText(publicStoreUrl).catch(() => undefined);
+                  toast.success('تم نسخ رابط المتجر');
+                });
               return;
             }
 
             if (navigator.clipboard?.writeText) {
-              void navigator.clipboard.writeText(shareUrl);
+              void navigator.clipboard.writeText(publicStoreUrl);
+              toast.success('تم نسخ رابط المتجر');
               return;
             }
           }
@@ -117,7 +122,9 @@ const MarketerHome: React.FC<MarketerHomeProps> = ({ statisticsOverride, storeSl
         label: 'اذهب لمتجري العام',
         description: 'استعرض واجهة المتجر كما يراها العملاء',
         icon: ExternalLink,
-        to: publicStoreUrl,
+        action: () => {
+          window.open(`/store/${storeSlug}`, '_blank');
+        },
       },
     ],
     [publicStoreUrl]
@@ -235,7 +242,7 @@ const MarketerHome: React.FC<MarketerHomeProps> = ({ statisticsOverride, storeSl
 
       <footer className="flex flex-wrap items-center justify-between gap-[var(--spacing-md)] text-xs text-[color:var(--muted-foreground)]">
         <span>
-          رابط متجرك العام: <Link className="underline decoration-dotted" to={publicStoreUrl}>{publicStoreUrl}</Link>
+          رابط متجرك العام: <a className="underline decoration-dotted cursor-pointer" onClick={() => window.open(`/store/${storeSlug}`, '_blank')}>{publicStoreUrl}</a>
         </span>
         <span>سيتم ترحيل العمولات المؤكدة في يوم 3 من الشهر القادم.</span>
       </footer>

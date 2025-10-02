@@ -143,6 +143,118 @@ export type Database = {
         }
         Relationships: []
       }
+      affiliate_coupon_usage: {
+        Row: {
+          coupon_id: string | null
+          customer_id: string | null
+          discount_applied: number
+          id: string
+          ip_address: unknown | null
+          order_id: string | null
+          used_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          coupon_id?: string | null
+          customer_id?: string | null
+          discount_applied: number
+          id?: string
+          ip_address?: unknown | null
+          order_id?: string | null
+          used_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          coupon_id?: string | null
+          customer_id?: string | null
+          discount_applied?: number
+          id?: string
+          ip_address?: unknown | null
+          order_id?: string | null
+          used_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_coupon_usage_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_coupons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_coupons: {
+        Row: {
+          affiliate_store_id: string | null
+          coupon_code: string
+          coupon_name: string
+          created_at: string | null
+          discount_type: string
+          discount_value: number
+          id: string
+          is_active: boolean | null
+          maximum_discount_amount: number | null
+          minimum_order_amount: number | null
+          target_id: string | null
+          target_type: string | null
+          updated_at: string | null
+          usage_count: number | null
+          usage_limit: number | null
+          usage_limit_per_customer: number | null
+          valid_from: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          coupon_code: string
+          coupon_name: string
+          created_at?: string | null
+          discount_type: string
+          discount_value: number
+          id?: string
+          is_active?: boolean | null
+          maximum_discount_amount?: number | null
+          minimum_order_amount?: number | null
+          target_id?: string | null
+          target_type?: string | null
+          updated_at?: string | null
+          usage_count?: number | null
+          usage_limit?: number | null
+          usage_limit_per_customer?: number | null
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          coupon_code?: string
+          coupon_name?: string
+          created_at?: string | null
+          discount_type?: string
+          discount_value?: number
+          id?: string
+          is_active?: boolean | null
+          maximum_discount_amount?: number | null
+          minimum_order_amount?: number | null
+          target_id?: string | null
+          target_type?: string | null
+          updated_at?: string | null
+          usage_count?: number | null
+          usage_limit?: number | null
+          usage_limit_per_customer?: number | null
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_coupons_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliate_products: {
         Row: {
           added_at: string | null

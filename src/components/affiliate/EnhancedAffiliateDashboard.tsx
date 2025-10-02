@@ -28,6 +28,8 @@ import { Progress } from '@/components/ui/progress';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { useAffiliateStore } from '@/hooks/useAffiliateStore';
+import { useAffiliateOrders } from '@/hooks/useAffiliateOrders';
 
 interface AffiliateStats {
   totalSales: number;
@@ -65,79 +67,48 @@ interface LevelInfo {
 const EnhancedAffiliateDashboard = () => {
   const navigate = useNavigate();
   const [selectedPeriod, setSelectedPeriod] = useState('thisMonth');
+  const { store, isLoading: storeLoading } = useAffiliateStore();
+  const { stats: orderStats, orders, loading: ordersLoading } = useAffiliateOrders(store?.id);
 
-  // جلب بيانات المسوق
-  const { data: affiliateData, isLoading } = useQuery({
-    queryKey: ['affiliate-dashboard'],
+  const isLoading = storeLoading || ordersLoading;
+
+  // جلب بيانات المسوق الحقيقية
+  const { data: affiliateData } = useQuery({
+    queryKey: ['affiliate-dashboard', store?.id],
     queryFn: async () => {
-      // محاكاة بيانات المسوق (يجب ربطها بقاعدة البيانات الحقيقية)
-      const mockStats: AffiliateStats = {
-        totalSales: 15420.50,
-        totalOrders: 87,
-        totalProducts: 24,
-        totalVisitors: 1250,
-        conversionRate: 6.96,
-        averageOrderValue: 177.13,
-        monthlyEarnings: 2313.08,
-        weeklyGrowth: 12.5,
-        topProducts: [
-          {
-            id: '1',
-            title: 'فستان صيفي أنيق',
-            sales: 25,
-            revenue: 2500,
-            image_url: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=300'
-          },
-          {
-            id: '2', 
-            title: 'حقيبة يد فاخرة',
-            sales: 18,
-            revenue: 1800,
-            image_url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300'
-          },
-          {
-            id: '3',
-            title: 'أحذية رياضية',
-            sales: 15,
-            revenue: 1200,
-            image_url: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=300'
-          }
-        ],
-        recentOrders: [
-          {
-            id: '1001',
-            customer_name: 'سارة أحمد',
-            total: 245.00,
-            status: 'confirmed',
-            created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-          },
-          {
-            id: '1002',
-            customer_name: 'نور محمد',
-            total: 180.50,
-            status: 'shipped',
-            created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
-          },
-          {
-            id: '1003',
-            customer_name: 'ريم خالد',
-            total: 320.00,
-            status: 'delivered',
-            created_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString()
-          }
-        ]
+      if (!store?.id) return null;
+
+      // Get real statistics from the database
+      const realStats: AffiliateStats = {
+        totalSales: orderStats?.totalRevenue || 0,
+        totalOrders: orderStats?.totalOrders || 0,
+        totalProducts: 0, // يجب إضافة عداد للمنتجات لاحقاً
+        totalVisitors: 0, // يجب ربطه بنظام التحليلات
+        conversionRate: 0,
+        averageOrderValue: orderStats?.averageOrderValue || 0,
+        monthlyEarnings: orderStats?.totalCommissions || 0,
+        weeklyGrowth: 0, // يجب حسابه من البيانات التاريخية
+        topProducts: [], // سيتم تحميله لاحقاً
+        recentOrders: orders?.slice(0, 3).map(order => ({
+          id: order.order_number || order.id,
+          customer_name: order.customer_name || 'عميل',
+          total: order.total_sar || 0,
+          status: order.status || 'pending',
+          created_at: order.created_at || new Date().toISOString()
+        })) || []
       };
 
       const levelInfo: LevelInfo = {
-        current: 'silver',
+        current: 'silver', // يجب ربطه بنظام المستويات
         progress: 75,
         nextLevel: 'gold',
         pointsToNext: 450,
         benefits: ['عمولة 15%', 'ثيمات حصرية', 'دعم أولوية', 'تقارير متقدمة']
       };
 
-      return { stats: mockStats, level: levelInfo };
-    }
+      return { stats: realStats, level: levelInfo };
+    },
+    enabled: !!store?.id
   });
 
   const stats = affiliateData?.stats;
