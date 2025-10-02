@@ -761,7 +761,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             {/* Content */}
             <div className="relative z-10 py-20 px-8 text-center space-y-6">
               {storeSettings.hero_title && (
-                <h2 className="text-4xl md:text-6xl font-bold text-foreground drop-shadow-lg">
+                <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent drop-shadow-lg">
                   {storeSettings.hero_title}
                 </h2>
               )}
