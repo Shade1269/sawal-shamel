@@ -55,7 +55,7 @@ import { OrderCommissionManagement } from './OrderCommissionManagement';
 import AffiliateCouponManager from '@/components/marketing/AffiliateCouponManager';
 import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams } from 'react-router-dom';
-import { ThemeSelector } from '@/components/store/ThemeSelector';
+import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
 import type { ThemeType } from '@/config/storeThemes';
 
 interface AffiliateStoreManagerProps {
@@ -591,34 +591,14 @@ export const AffiliateStoreManager = ({
         </TabsContent>
 
         <TabsContent value="appearance" className="space-y-6">
-          <ThemeSelector
-            currentTheme={store.theme as any as ThemeType}
-            onThemeSelect={async (themeId) => {
-              try {
-                const { error } = await supabase
-                  .from('affiliate_stores')
-                  .update({ theme: themeId as any })
-                  .eq('id', store.id);
-
-                if (error) throw error;
-
-                toast({
-                  title: "✨ تم تحديث الثيم!",
-                  description: "تم تطبيق الثيم الجديد بنجاح على متجرك"
-                });
-                
-                // إعادة تحميل الصفحة لتطبيق الثيم
-                setTimeout(() => window.location.reload(), 1000);
-              } catch (error) {
-                console.error('Error updating theme:', error);
-                toast({
-                  title: "خطأ",
-                  description: "حدث خطأ أثناء تحديث الثيم",
-                  variant: "destructive"
-                });
-              }
+          <StoreThemeSelector
+            storeId={store.id}
+            onThemeApplied={() => {
+              toast({
+                title: "✨ تم تحديث الثيم!",
+                description: "تم تطبيق الثيم الجديد بنجاح على متجرك"
+              });
             }}
-            isUpdating={false}
           />
           
           {/* شعار المتجر */}
