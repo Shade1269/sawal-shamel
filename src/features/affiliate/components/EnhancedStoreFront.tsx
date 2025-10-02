@@ -704,9 +704,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                 variant="outline" 
                 onClick={() => {
                   if (isAuthenticated) {
-                    navigate('/customer/profile');
+                    navigate(`/store/${storeSlug}/customer/profile`);
                   } else {
-                    navigate('/customer/auth');
+                    navigate(`/store/${storeSlug}/auth`);
                   }
                 }}
                 className="hover:shadow-lg transition-all"
@@ -724,7 +724,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               {/* My Orders Button */}
               <Button 
                 variant="outline"
-                onClick={() => navigate('/customer/orders')}
+                onClick={() => navigate(`/store/${storeSlug}/customer/orders`)}
                 className="hover:shadow-lg transition-all"
               >
                 <Clock className="h-4 w-4 mr-2" />
