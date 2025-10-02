@@ -736,13 +736,13 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 space-y-12">
-        {/* Hero Section - Minimal Design */}
+      <main className="container mx-auto px-4 py-8 space-y-8">
+        {/* Hero Section */}
         {(storeSettings?.hero_title || storeSettings?.hero_image_url) && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative overflow-hidden rounded-2xl bg-[#F5E6D3] mb-12"
+            className="relative overflow-hidden rounded-3xl shadow-2xl mb-12"
           >
             {/* Background Image */}
             <div className="absolute inset-0 z-0">
@@ -750,29 +750,30 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                 <img
                   src={storeSettings.hero_image_url}
                   alt="Hero Background"
-                  className="w-full h-full object-cover opacity-20"
+                  className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-[#F5E6D3]" />
+                <div className="w-full h-full bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5" />
               )}
+              <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-background/30 to-background/10 backdrop-blur-sm" />
             </div>
 
             {/* Content */}
-            <div className="relative z-10 py-16 px-8 text-center space-y-4">
+            <div className="relative z-10 py-20 px-8 text-center space-y-6">
               {storeSettings.hero_title && (
-                <h2 className="text-3xl md:text-5xl font-medium text-[#8B7355]">
+                <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent drop-shadow-lg">
                   {storeSettings.hero_title}
                 </h2>
               )}
               
               {storeSettings.hero_subtitle && (
-                <p className="text-lg md:text-xl text-[#8B7355]/80 max-w-2xl mx-auto">
+                <p className="text-xl md:text-2xl font-medium text-foreground/90 max-w-2xl mx-auto">
                   {storeSettings.hero_subtitle}
                 </p>
               )}
               
               {storeSettings.hero_description && (
-                <p className="text-base text-[#8B7355]/70 max-w-3xl mx-auto">
+                <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                   {storeSettings.hero_description}
                 </p>
               )}
@@ -780,98 +781,114 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               {storeSettings.hero_cta_text && (
                 <Button
                   size="lg"
-                  className="mt-4 bg-[#C4A57B] hover:bg-[#B8956C] text-white rounded-full px-10 py-3 text-base font-normal"
+                  variant={storeSettings.hero_cta_color as any}
+                  className="text-lg px-8 py-6 shadow-xl hover:scale-105 transition-transform"
                   onClick={() => {
                     const productsSection = document.getElementById('products-section');
                     productsSection?.scrollIntoView({ behavior: 'smooth' });
                   }}
                 >
                   {storeSettings.hero_cta_text}
+                  <ArrowRight className="mr-2 h-5 w-5" />
                 </Button>
               )}
             </div>
           </motion.section>
         )}
 
-        {/* Minimal Search Section */}
+        {/* Enhanced Search and Filter Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-3xl mx-auto"
+          className="bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm p-8 rounded-3xl border-2 border-primary/10 shadow-2xl"
         >
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Search Bar */}
-            <div className="relative">
-              <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#8B7355]/40 h-5 w-5" />
-              <Input
-                placeholder="ابحث..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-12 pl-4 h-12 text-base border border-[#E5D5C3] focus:border-[#C4A57B] rounded-lg bg-white text-center"
-              />
-              {searchQuery && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setSearchQuery("")}
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
+            <div className="relative max-w-2xl mx-auto">
+              <div className="relative">
+                <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-6 w-6" />
+                <Input
+                  placeholder="🔍 ابحث عن المنتجات المفضلة لديك..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pr-14 pl-4 h-16 text-lg border-2 focus:border-primary/50 rounded-2xl bg-background/70 backdrop-blur-sm shadow-inner text-center"
+                />
+                {searchQuery && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setSearchQuery("")}
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 hover:bg-destructive/20 hover:text-destructive"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                )}
+              </div>
             </div>
 
-            {/* Minimal Filter Controls */}
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Button 
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowFilters(!showFilters)}
-                className="text-[#8B7355] hover:bg-[#F5E6D3]"
-              >
-                <Filter className="h-4 w-4 mr-2" />
-                {showFilters ? 'إخفاء الفلاتر' : 'عرض الفلاتر'}
-              </Button>
-              
-              {(searchQuery || selectedCategory !== 'all') && (
+            {/* Filter Controls */}
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
                 <Button 
-                  variant="ghost" 
+                  variant={showFilters ? "default" : "outline"}
                   size="sm"
-                  onClick={clearFilters}
-                  className="text-[#8B7355]/70 hover:bg-[#F5E6D3]"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="hover:shadow-lg transition-all duration-300"
                 >
-                  مسح الفلاتر
+                  <SlidersHorizontal className="h-4 w-4 mr-2" />
+                  فلاتر متقدمة
+                  {showFilters ? <span className="mr-2">▲</span> : <span className="mr-2">▼</span>}
                 </Button>
-              )}
-              
-              <span className="text-sm text-[#8B7355]/60">
-                {filteredProducts?.length || 0} منتج
-              </span>
+                
+                {(searchQuery || selectedCategory !== 'all' || priceRange[0] > 0 || priceRange[1] < 1000) && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={clearFilters}
+                    className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    مسح جميع الفلاتر
+                  </Button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3 text-sm">
+                <Badge variant="secondary" className="px-3 py-1.5">
+                  {filteredProducts?.length || 0} منتج متاح
+                </Badge>
+                <span className="text-muted-foreground">
+                  من أصل {products?.length || 0} منتج
+                </span>
+              </div>
             </div>
 
-            {/* Minimal Filters Panel */}
+            {/* Advanced Filters Panel */}
             <AnimatePresence>
               {showFilters && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
                   className="overflow-hidden"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-white rounded-lg border border-[#E5D5C3] mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-background/60 backdrop-blur-sm rounded-2xl border border-primary/20 mt-4">
                     {/* Category Filter */}
-                    <div className="space-y-2">
-                      <Label className="text-sm text-[#8B7355]">التصنيف</Label>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold flex items-center gap-2 text-primary">
+                        <Package className="h-4 w-4" />
+                        التصنيف
+                      </Label>
                       <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                        <SelectTrigger className="h-10 border-[#E5D5C3] text-[#8B7355]">
+                        <SelectTrigger className="w-full h-12 border-2 hover:border-primary/40 transition-colors">
                           <SelectValue placeholder="اختر التصنيف" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">جميع التصنيفات</SelectItem>
+                          <SelectItem value="all">🌟 جميع التصنيفات</SelectItem>
                           {categories.map(category => (
                             <SelectItem key={category} value={category}>
-                              {category}
+                              📦 {category}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -879,27 +896,33 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                     </div>
 
                     {/* Sort Options */}
-                    <div className="space-y-2">
-                      <Label className="text-sm text-[#8B7355]">ترتيب حسب</Label>
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold flex items-center gap-2 text-primary">
+                        <TrendingUp className="h-4 w-4" />
+                        ترتيب حسب
+                      </Label>
                       <Select value={sortBy} onValueChange={setSortBy}>
-                        <SelectTrigger className="h-10 border-[#E5D5C3] text-[#8B7355]">
+                        <SelectTrigger className="w-full h-12 border-2 hover:border-primary/40 transition-colors">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="newest">الأحدث</SelectItem>
-                          <SelectItem value="price-low">السعر: الأقل</SelectItem>
-                          <SelectItem value="price-high">السعر: الأعلى</SelectItem>
-                          <SelectItem value="name">الاسم</SelectItem>
+                          <SelectItem value="newest">🆕 الأحدث</SelectItem>
+                          <SelectItem value="price-low">💰 السعر: من الأقل للأعلى</SelectItem>
+                          <SelectItem value="price-high">💎 السعر: من الأعلى للأقل</SelectItem>
+                          <SelectItem value="name">🔤 الاسم أبجدياً</SelectItem>
+                          <SelectItem value="rating">⭐ الأعلى تقييماً</SelectItem>
+                          <SelectItem value="discount">🔥 الأعلى خصماً</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     {/* Price Range */}
-                    <div className="space-y-2">
-                      <Label className="text-sm text-[#8B7355]">
-                        السعر ({priceRange[0]} - {priceRange[1]} ريال)
+                    <div className="space-y-3">
+                      <Label className="text-sm font-semibold flex items-center gap-2 text-primary">
+                        <Percent className="h-4 w-4" />
+                        نطاق السعر: {priceRange[0]} - {priceRange[1]} ريال
                       </Label>
-                      <div className="pt-2">
+                      <div className="px-3 py-4">
                         <Slider
                           value={priceRange}
                           onValueChange={(value) => setPriceRange(value as [number, number])}
@@ -908,6 +931,10 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                           step={10}
                           className="w-full"
                         />
+                        <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                          <span>0 ريال</span>
+                          <span>1000+ ريال</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -919,7 +946,54 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
         {/* Products Grid Section */}
         <section id="products-section" className="space-y-6">
-          {/* Products Grid - Minimal Design */}
+          <div className="space-y-4">
+            {/* Search Bar */}
+            <div className="relative">
+              <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+              <Input
+                placeholder="ابحث عن المنتجات المفضلة لديك..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pr-12 h-14 text-lg border-2 focus:border-primary/50 rounded-xl bg-background/50"
+              />
+              {searchQuery && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="hover:shadow-md transition-all"
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  فلترة متقدمة
+                  {showFilters && <span className="mr-2">↑</span>}
+                </Button>
+                
+                {(searchQuery || selectedCategory !== 'all' || priceRange[0] > 0 || priceRange[1] < 1000) && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={clearFilters}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    مسح الفلاتر
+                  </Button>
+                )}
+              </div>
 
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">
