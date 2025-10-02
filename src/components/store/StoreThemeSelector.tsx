@@ -2,7 +2,15 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Crown, Palette, Sparkles, Users, Zap } from 'lucide-react';
+import {
+  Check,
+  Crown,
+  Image as ImageIcon,
+  Palette,
+  Sparkles,
+  Users,
+  Zap
+} from 'lucide-react';
 import { useStoreThemes, StoreTheme } from '@/hooks/useStoreThemes';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -11,12 +19,41 @@ interface StoreThemeSelectorProps {
   onThemeApplied?: (theme: StoreTheme) => void;
 }
 
+const AuroraIcon: React.FC = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <linearGradient id="aurora-icon-gradient" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#9D4EDD" />
+        <stop offset="50%" stopColor="#F15BB5" />
+        <stop offset="100%" stopColor="#00BBF9" />
+      </linearGradient>
+    </defs>
+    <rect x="3" y="3" width="18" height="18" rx="5" fill="#F4ECFF" />
+    <path
+      d="M5 15C7.5 13 9.5 16.5 12 15.5C14.5 14.5 15 11 18 11.5C20 11.9 21 10 21 10"
+      stroke="url(#aurora-icon-gradient)"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <circle cx="9" cy="9" r="1.6" fill="#FEE440" />
+    <circle cx="16.5" cy="7.5" r="1.2" fill="#00F5D4" />
+  </svg>
+);
+
 const ThemeIcon = ({ themeName }: { themeName: string }) => {
   switch (themeName.toLowerCase()) {
     case 'modern minimalist':
       return <Zap className="w-5 h-5" />;
     case 'luxury premium':
       return <Crown className="w-5 h-5" />;
+    case 'aurora boutique':
+      return <AuroraIcon />;
     case 'traditional arabic':
       return <Palette className="w-5 h-5" />;
     case 'colorful vibrant':
@@ -136,6 +173,34 @@ export const StoreThemeSelector: React.FC<StoreThemeSelectorProps> = ({
               </CardHeader>
 
               <CardContent className="space-y-4">
+                {theme.preview_image_url && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1 border-primary/30 text-primary"
+                      >
+                        <ImageIcon className="w-3 h-3" />
+                        معاينة
+                      </Badge>
+                      <a
+                        href={theme.preview_image_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline"
+                      >
+                        فتح في نافذة جديدة
+                      </a>
+                    </div>
+                    <img
+                      src={theme.preview_image_url}
+                      alt={`معاينة ثيم ${theme.name_ar}`}
+                      className="w-full h-32 object-cover rounded-md border border-border/60"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+
                 <ThemePreview theme={theme} />
                 
                 <div className="flex flex-wrap gap-2 text-xs">
