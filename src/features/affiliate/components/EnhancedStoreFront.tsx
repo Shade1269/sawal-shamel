@@ -388,11 +388,16 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   };
 
   const handleCheckoutClick = () => {
-    if (!isAuthenticated) {
-      navigate(`/store/${storeSlug}/auth`);
-      return;
+    // حفظ معلومات المتجر في localStorage للاستخدام في صفحة الطلب
+    if (typeof window !== 'undefined' && storeSlug) {
+      window.localStorage.setItem('storefront:last-slug', storeSlug);
+      if (affiliateStore?.id) {
+        window.localStorage.setItem('storefront:last-store-id', affiliateStore.id);
+      }
     }
-    navigate(`/store/${storeSlug}/checkout`);
+    
+    // التوجه مباشرة لصفحة الطلب
+    navigate('/checkout');
   };
 
   const clearFilters = () => {
