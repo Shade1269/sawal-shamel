@@ -206,6 +206,8 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       return data as StoreSettings | null;
     },
     enabled: !!affiliateStore?.id,
+    staleTime: 0,
+    refetchOnMount: 'always'
   });
 
   // حساب المجموع
