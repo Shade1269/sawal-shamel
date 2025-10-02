@@ -6,8 +6,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, ArrowLeft, ShoppingCart, Truck, CreditCard, CheckCircle, Package, User, MapPin, Phone } from 'lucide-react';
+import { ArrowRight, ArrowLeft, ShoppingCart, Truck, CreditCard, CheckCircle, Package, User, MapPin, Phone, Tag, X } from 'lucide-react';
 import { useCustomerAuth } from '@/hooks/useCustomerAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface CartItem {
   product: any;
@@ -38,6 +40,7 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
   shopSettings
 }) => {
   const { customer } = useCustomerAuth();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: '',
@@ -59,9 +62,15 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
       }));
     }
   }, [customer]);
+  
   const [selectedShipping, setSelectedShipping] = useState('');
   const [selectedPayment, setSelectedPayment] = useState('');
   const [orderNumber, setOrderNumber] = useState('');
+  
+  // Coupon states
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
 
   const subtotal = cart.reduce((sum, item) => 
     sum + (item.product.final_price || item.product.price_sar) * item.quantity, 0
@@ -71,7 +80,125 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
     (company: any) => company.name === selectedShipping
   )?.price || 0;
 
-  const totalPrice = subtotal + shippingCost;
+  // حساب قيمة الخصم
+  const calculateDiscount = () => {
+    if (!appliedCoupon) return 0;
+    
+    let discount = 0;
+    if (appliedCoupon.discount_type === 'percentage') {
+      discount = (subtotal * appliedCoupon.discount_value) / 100;
+      // تطبيق الحد الأقصى للخصم إذا كان موجوداً
+      if (appliedCoupon.maximum_discount_amount && discount > appliedCoupon.maximum_discount_amount) {
+        discount = appliedCoupon.maximum_discount_amount;
+      }
+    } else {
+      // fixed amount
+      discount = appliedCoupon.discount_value;
+    }
+    
+    return Math.min(discount, subtotal); // لا يتجاوز الخصم قيمة المنتجات
+  };
+
+  const discountAmount = calculateDiscount();
+  const totalPrice = Math.max(0, subtotal - discountAmount + shippingCost);
+
+  // التحقق من صحة الكوبون
+  const validateCoupon = async () => {
+    if (!couponCode.trim()) {
+      toast({
+        title: "خطأ",
+        description: "الرجاء إدخال كود الكوبون",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setCouponLoading(true);
+    try {
+      const { data: coupon, error } = await supabase
+        .from('affiliate_coupons')
+        .select('*')
+        .eq('coupon_code', couponCode.toUpperCase())
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (!coupon) {
+        toast({
+          title: "كوبون غير صالح",
+          description: "الكوبون المدخل غير موجود أو غير نشط",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // التحقق من صلاحية التاريخ
+      const now = new Date();
+      if (coupon.valid_from && new Date(coupon.valid_from) > now) {
+        toast({
+          title: "كوبون غير صالح",
+          description: "هذا الكوبون لم يبدأ بعد",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (coupon.valid_until && new Date(coupon.valid_until) < now) {
+        toast({
+          title: "كوبون منتهي",
+          description: "انتهت صلاحية هذا الكوبون",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // التحقق من الحد الأدنى للطلب
+      if (coupon.minimum_order_amount && subtotal < coupon.minimum_order_amount) {
+        toast({
+          title: "الطلب لا يستوفي الحد الأدنى",
+          description: `يجب أن يكون مجموع الطلب ${coupon.minimum_order_amount} ريال على الأقل`,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // التحقق من حد الاستخدام
+      if (coupon.usage_limit && coupon.usage_count >= coupon.usage_limit) {
+        toast({
+          title: "كوبون منتهي",
+          description: "تم استخدام هذا الكوبون بالكامل",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // تطبيق الكوبون
+      setAppliedCoupon(coupon);
+      toast({
+        title: "تم تطبيق الكوبون!",
+        description: `تم تطبيق خصم ${coupon.discount_type === 'percentage' ? `${coupon.discount_value}%` : `${coupon.discount_value} ريال`}`,
+      });
+    } catch (error) {
+      console.error('Error validating coupon:', error);
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء التحقق من الكوبون",
+        variant: "destructive"
+      });
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    toast({
+      title: "تم إزالة الكوبون",
+      description: "تم إلغاء الكوبون من الطلب"
+    });
+  };
 
   const steps = [
     { number: 1, title: 'السلة', icon: ShoppingCart, description: 'مراجعة المنتجات' },
@@ -115,6 +242,13 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
       selectedPayment,
       subtotal,
       shippingCost,
+      coupon: appliedCoupon ? {
+        id: appliedCoupon.id,
+        code: appliedCoupon.coupon_code,
+        name: appliedCoupon.coupon_name,
+        discount: discountAmount
+      } : null,
+      discountAmount,
       totalPrice
     };
 
@@ -206,10 +340,85 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
                   </div>
                 </div>
               ))}
-              <div className="bg-muted/30 rounded-lg p-4">
-                <div className="flex justify-between text-lg font-semibold">
+              
+              {/* Coupon Section */}
+              <div className="border-2 border-dashed border-primary/30 rounded-lg p-4 bg-primary/5">
+                <div className="flex items-center gap-2 mb-3">
+                  <Tag className="h-5 w-5 text-primary" />
+                  <h4 className="font-semibold text-primary">هل لديك كوبون خصم؟</h4>
+                </div>
+                
+                {appliedCoupon ? (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                          <CheckCircle className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-green-900">{appliedCoupon.coupon_name}</p>
+                          <p className="text-sm text-green-700">
+                            كود: {appliedCoupon.coupon_code}
+                          </p>
+                          <p className="text-sm font-medium text-green-800">
+                            خصم {appliedCoupon.discount_type === 'percentage' 
+                              ? `${appliedCoupon.discount_value}%` 
+                              : `${appliedCoupon.discount_value} ريال`}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={removeCoupon}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <X className="h-4 w-4 ml-1" />
+                        إزالة
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="أدخل كود الكوبون"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      className="flex-1"
+                      dir="ltr"
+                    />
+                    <Button 
+                      onClick={validateCoupon}
+                      disabled={couponLoading || !couponCode.trim()}
+                      className="min-w-[100px]"
+                    >
+                      {couponLoading ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                      ) : (
+                        <>
+                          <Tag className="h-4 w-4 ml-1" />
+                          تطبيق
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </div>
+              
+              <div className="bg-muted/30 rounded-lg p-4 space-y-2">
+                <div className="flex justify-between text-base">
                   <span>المجموع الفرعي:</span>
                   <span>{subtotal.toFixed(2)} ر.س</span>
+                </div>
+                {appliedCoupon && discountAmount > 0 && (
+                  <div className="flex justify-between text-base text-green-600 font-medium">
+                    <span>الخصم ({appliedCoupon.coupon_code}):</span>
+                    <span>- {discountAmount.toFixed(2)} ر.س</span>
+                  </div>
+                )}
+                <div className="border-t pt-2 flex justify-between text-lg font-semibold">
+                  <span>المجموع:</span>
+                  <span className="text-primary">{(subtotal - discountAmount).toFixed(2)} ر.س</span>
                 </div>
               </div>
             </div>
@@ -346,6 +555,15 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
                     <span>المنتجات ({cart.length}):</span>
                     <span>{subtotal.toFixed(2)} ر.س</span>
                   </div>
+                  {appliedCoupon && discountAmount > 0 && (
+                    <div className="flex justify-between text-green-600 font-medium">
+                      <span className="flex items-center gap-1">
+                        <Tag className="h-4 w-4" />
+                        الخصم ({appliedCoupon.coupon_code}):
+                      </span>
+                      <span>- {discountAmount.toFixed(2)} ر.س</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span>الشحن ({selectedShipping}):</span>
                     <span>{shippingCost ? `${shippingCost.toFixed(2)} ر.س` : 'مجاني'}</span>
@@ -356,7 +574,7 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
                   </div>
                   <div className="border-t pt-2 flex justify-between font-semibold text-lg">
                     <span>المجموع النهائي:</span>
-                    <span>{totalPrice.toFixed(2)} ر.س</span>
+                    <span className="text-primary">{totalPrice.toFixed(2)} ر.س</span>
                   </div>
                 </div>
               </div>
