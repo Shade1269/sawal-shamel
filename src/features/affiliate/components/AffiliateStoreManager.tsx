@@ -203,9 +203,12 @@ export const AffiliateStoreManager = ({
   const saveHeroSettings = async () => {
     const success = await updateSettings(heroSettings);
     if (success) {
+      // إعادة جلب البيانات لتحديث المعاينة
+      await refetch();
+      
       toast({
         title: "تم الحفظ",
-        description: "تم حفظ إعدادات القسم الرئيسي بنجاح"
+        description: "تم حفظ إعدادات القسم الرئيسي بنجاح. يمكنك معاينة التغييرات الآن."
       });
     }
   };
