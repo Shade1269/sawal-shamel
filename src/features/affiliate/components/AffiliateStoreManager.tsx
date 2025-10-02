@@ -55,6 +55,7 @@ import { ProductManagement } from './ProductManagement';
 import { OrderCommissionManagement } from './OrderCommissionManagement';
 import AffiliateCouponManager from '@/components/marketing/AffiliateCouponManager';
 import { supabase } from '@/integrations/supabase/client';
+import { useSearchParams } from 'react-router-dom';
 
 interface AffiliateStoreManagerProps {
   store: {
@@ -93,6 +94,8 @@ export const AffiliateStoreManager = ({
   onGenerateQR
 }: AffiliateStoreManagerProps) => {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const tabFromUrl = searchParams.get('tab') || 'general';
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     store_name: store.store_name,
@@ -495,7 +498,7 @@ export const AffiliateStoreManager = ({
       </Card>
 
       {/* Store Management Tabs */}
-      <Tabs defaultValue="general" className="space-y-6">
+      <Tabs defaultValue={tabFromUrl} className="space-y-6">
         <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="general">الإعدادات العامة</TabsTrigger>
           <TabsTrigger value="appearance">المظهر</TabsTrigger>

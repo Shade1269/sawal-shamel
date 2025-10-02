@@ -115,7 +115,7 @@ const MarketerHome: React.FC<MarketerHomeProps> = ({ statisticsOverride, storeSl
         label: 'كوّن كوبون',
         description: 'أنشئ رمز خصم مخصص لحملة هذا الأسبوع',
         icon: TicketPercent,
-        to: '/affiliate/storefront?tab=coupons',
+        to: '/affiliate/store/settings?tab=coupons',
       },
       {
         id: 'open-public-store',
