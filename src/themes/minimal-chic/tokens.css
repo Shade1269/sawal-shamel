@@ -1,0 +1,44 @@
+/* Minimal Chic Theme */
+[data-theme="minimal-chic"] {
+  /* Primary Colors */
+  --primary: 210 29% 29%;
+  --primary-fg: 0 0% 100%;
+  
+  /* Secondary Colors */
+  --secondary: 184 9% 62%;
+  --secondary-fg: 0 0% 100%;
+  
+  /* Accent */
+  --accent: 6 78% 57%;
+  --accent-fg: 0 0% 100%;
+  
+  /* Backgrounds */
+  --bg: 0 0% 100%;
+  --fg: 210 29% 24%;
+  
+  /* Surfaces */
+  --surface: 0 0% 100%;
+  --surface-2: 210 14% 97%;
+  --muted: 210 14% 95%;
+  --muted-fg: 210 9% 45%;
+  
+  /* Card */
+  --card: 0 0% 100%;
+  --card-fg: 210 29% 24%;
+  
+  /* Borders */
+  --border: 184 9% 89%;
+  
+  /* Effects */
+  --shadow-glass-soft: 0 1px 3px rgba(44, 62, 80, 0.05);
+  --shadow-glass-strong: 0 2px 6px rgba(44, 62, 80, 0.08);
+  
+  /* Radii */
+  --radius-s: 0.25rem;
+  --radius-m: 0.25rem;
+  --radius-l: 0.25rem;
+  
+  /* Typography */
+  --font-sans: 'DM Serif Display', serif;
+  --font-heading: 'DM Serif Display', serif;
+}

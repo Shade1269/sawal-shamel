@@ -3,6 +3,10 @@
 @import './themes/default/tokens.css';
 @import './themes/luxury/tokens.css';
 @import './themes/damascus/tokens.css';
+@import './themes/timeless-elegance/tokens.css';
+@import './themes/graceful-styles/tokens.css';
+@import './themes/minimal-chic/tokens.css';
+@import './themes/modern-dark/tokens.css';
 @import './ui/styles.css';
 
 @tailwind base;
