@@ -211,7 +211,6 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
         product_title: item.product.title,
         quantity: item.quantity,
         unit_price_sar: item.product.final_price || item.product.price_sar,
-        total_price_sar: (item.product.final_price || item.product.price_sar) * item.quantity,
         commission_rate: 10,
         commission_sar: ((item.product.final_price || item.product.price_sar) * item.quantity * 0.1)
       }));
