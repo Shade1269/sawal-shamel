@@ -48,6 +48,8 @@ const AffiliateCouponManager = () => {
     targetType: 'store' as 'store' | 'product' | 'category',
     isActive: true
   });
+  
+  const [activeTab, setActiveTab] = useState<'coupons' | 'create' | 'analytics'>('coupons');
 
   const generateCouponCode = () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -77,6 +79,7 @@ const AffiliateCouponManager = () => {
       usage_limit: newCoupon.usageLimit ? parseInt(newCoupon.usageLimit) : undefined,
       usage_limit_per_customer: parseInt(newCoupon.usageLimitPerCustomer),
       target_type: newCoupon.targetType,
+      is_active: newCoupon.isActive,
     });
 
     // Reset form
@@ -123,7 +126,7 @@ const AffiliateCouponManager = () => {
 
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="coupons" className="w-full">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'coupons' | 'create' | 'analytics')} className="w-full">
         <TabsList className="grid w-full grid-cols-3 bg-card/50">
           <TabsTrigger value="coupons">الكوبونات</TabsTrigger>
           <TabsTrigger value="create">إنشاء كوبون</TabsTrigger>
@@ -143,7 +146,7 @@ const AffiliateCouponManager = () => {
               <CardContent className="p-12 text-center">
                 <Ticket className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                 <p className="text-muted-foreground mb-4">لا توجد كوبونات حالياً</p>
-                <Button onClick={() => document.querySelector<HTMLButtonElement>('[value="create"]')?.click()}>
+                <Button onClick={() => setActiveTab('create')}>
                   <Plus className="h-4 w-4 mr-2" />
                   إنشاء كوبون جديد
                 </Button>

@@ -9,6 +9,9 @@ import { Skeleton } from '@/ui/Skeleton';
 import { Button } from '@/ui/Button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAffiliateStore } from '@/hooks/useAffiliateStore';
 
 const MiniChart = lazy(() => import('@/components/home/MiniChart'));
 
@@ -37,13 +40,36 @@ const MarketerHome: React.FC<MarketerHomeProps> = ({ statisticsOverride, storeSl
     ? `${window.location.origin}/store/${storeSlug}` 
     : `/store/${storeSlug}`;
 
-  const totalSales = typeof userStatistics?.affiliateSalesTotal === 'number' ? userStatistics.affiliateSalesTotal : 148_500;
-  const monthlyCommission =
-    typeof userStatistics?.affiliateCommissionMonth === 'number' ? userStatistics.affiliateCommissionMonth : 12_400;
-  const leaderboardRank = typeof userStatistics?.leaderboardRank === 'number' ? userStatistics.leaderboardRank : 3;
-  const leaderboardOutOf = typeof userStatistics?.leaderboardTotal === 'number' ? userStatistics.leaderboardTotal : 28;
-  const conversionRate = typeof userStatistics?.conversionRate === 'number' ? userStatistics.conversionRate : 4.7;
-  const averageOrder = typeof userStatistics?.averageAffiliateOrder === 'number' ? userStatistics.averageAffiliateOrder : 890;
+  const { store } = useAffiliateStore();
+
+  const { data: monthlyCommissionValue } = useQuery({
+    queryKey: ['affiliate-monthly-commission', profile?.id],
+    queryFn: async () => {
+      if (!profile?.id) return 0;
+      const start = new Date();
+      start.setDate(1); start.setHours(0,0,0,0);
+      const end = new Date(start); end.setMonth(start.getMonth() + 1);
+
+      const { data, error } = await supabase
+        .from('commissions')
+        .select('amount_sar, confirmed_at, affiliate_id, status')
+        .eq('affiliate_id', profile.id)
+        .eq('status', 'CONFIRMED')
+        .gte('confirmed_at', start.toISOString())
+        .lt('confirmed_at', end.toISOString());
+
+      if (error) return 0;
+      return (data || []).reduce((sum, row: any) => sum + Number(row.amount_sar || 0), 0);
+    },
+    enabled: !!profile?.id,
+  });
+
+  const totalSales = typeof store?.total_sales === 'number' ? Number(store.total_sales) : 0;
+  const monthlyCommission = typeof monthlyCommissionValue === 'number' ? monthlyCommissionValue : 0;
+  const leaderboardRank = typeof userStatistics?.leaderboardRank === 'number' ? userStatistics.leaderboardRank : 0;
+  const leaderboardOutOf = typeof userStatistics?.leaderboardTotal === 'number' ? userStatistics.leaderboardTotal : 0;
+  const conversionRate = typeof userStatistics?.conversionRate === 'number' ? userStatistics.conversionRate : 0;
+  const averageOrder = typeof userStatistics?.averageAffiliateOrder === 'number' ? userStatistics.averageAffiliateOrder : 0;
 
   const metrics = React.useMemo((): KpiCardProps[] => [
     {
