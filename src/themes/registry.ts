@@ -63,20 +63,24 @@ const luxuryConfig = {
 
 const damascusConfig = {
   id: "damascus",
-  name: "Damascus",
+  name: "Damascus Heritage",
   colors: {
-    bg: "#2d2d2d",
-    fg: "#f4f4f0", 
-    primary: "#d4af37",
-    secondary: "#404040",
-    background: "#2d2d2d",
-    foreground: "#f4f4f0"
+    bg: "#0c0c0c",
+    fg: "#E8E0CF", 
+    primary: "#B89A5A",
+    secondary: "#111111",
+    background: "#0c0c0c",
+    foreground: "#E8E0CF",
+    muted: "#B8AC90",
+    gold: "#B89A5A",
+    border: "#2a2214",
+    panel: "#111111"
   },
   radii: { 
     sm: "0.5rem",
-    md: "0.75rem", 
+    md: "1rem", 
     lg: "1rem",
-    xl: "1.5rem"
+    xl: "1rem"
   },
   spacing: { 
     xs: "0.5rem",
@@ -86,9 +90,16 @@ const damascusConfig = {
     xl: "3rem"
   },
   typography: { 
-    fontFamily: "Cairo",
+    fontFamily: "Cairo, Noto Sans Arabic, sans-serif",
+    headingFont: "Cairo, Noto Sans Arabic, serif",
     baseSize: 16,
     lineHeight: 1.5
+  },
+  effects: {
+    shadows: "luxury",
+    gradients: true,
+    ornaments: true,
+    animations: "elegant"
   }
 };
 
