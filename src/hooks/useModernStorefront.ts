@@ -12,7 +12,7 @@ export interface ModernStorefrontConfig {
 
 const DEFAULT_CONFIG: ModernStorefrontConfig = {
   theme: 'luxury',
-  enableModernMode: true,
+  enableModernMode: false,
   seoEnabled: true,
   paymentMethods: ['cod', 'tabby', 'tamara', 'visa'],
   analyticsEnabled: true
