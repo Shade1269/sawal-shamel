@@ -952,27 +952,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         {/* Products Grid Section */}
         <section id="products-section" className="space-y-6">
           <div className="space-y-4">
-            {/* Search Bar */}
-            <div className="relative">
-              <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-              <Input
-                placeholder="ابحث عن المنتجات المفضلة لديك..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-12 h-14 text-lg border-2 focus:border-primary/50 rounded-xl bg-background/50"
-              />
-              {searchQuery && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setSearchQuery("")}
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-
             {/* Quick Actions */}
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2">
