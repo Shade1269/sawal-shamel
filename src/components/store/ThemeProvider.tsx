@@ -21,32 +21,28 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
   // تحميل إعدادات الثيم للمتجر
   useEffect(() => {
     if (storeId) {
+      console.log('🎨 StoreThemeProvider: Loading theme for store', storeId);
       loadThemeConfig(storeId);
     }
   }, [storeId]);
 
-  // إجبار إزالة الوضع المظلم في صفحات المتجر
+  // إزالة dark mode وتطبيق ثيم المتجر
   useEffect(() => {
-    // حفظ الحالة الحالية لـ dark mode
-    const originalClass = document.body.className;
-    const hasDark = document.body.classList.contains('dark');
+    // إزالة dark mode من body
+    document.documentElement.classList.remove('dark');
+    document.body.classList.remove('dark');
     
-    // إزالة dark class مؤقتاً للمتجر
-    if (hasDark) {
-      document.body.classList.remove('dark');
-    }
+    // إضافة class للإشارة إلى أننا في صفحة متجر
+    document.body.classList.add('store-theme');
     
-    // إعادة الحالة الأصلية عند إلغاء تحميل المكون
     return () => {
-      if (hasDark) {
-        document.body.classList.add('dark');
-      }
+      document.body.classList.remove('store-theme');
     };
   }, []);
 
   const loadThemeConfig = async (storeId: string) => {
     try {
-      console.info('ThemeProvider: Loading store theme config', { storeId });
+      console.log('🎨 Loading theme config for store:', storeId);
       
       // استخدام supabasePublic مباشرة لجلب إعدادات الثيم
       const { data, error } = await supabasePublic.rpc('get_store_theme_config', {
@@ -54,31 +50,45 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
       });
 
       if (error) {
-        console.warn('Theme config error:', error);
+        console.error('❌ Theme config error:', error);
         return;
       }
 
+      console.log('✅ Raw theme data:', data);
+      
       const rawData = data as any;
       const config = rawData?.theme_config ? rawData.theme_config : rawData;
-      console.info('ThemeProvider: Theme config loaded', {
+      
+      console.log('🎨 Processed theme config:', {
         hasConfig: !!config,
-        colorKeys: Object.keys(((config as any)?.colors ?? (config as any) ?? {})),
+        colors: config?.colors,
+        typography: config?.typography,
       });
       
-      if (config) {
+      if (config && Object.keys(config).length > 0) {
         setCurrentThemeConfig(config as StoreThemeConfig);
         applyThemeToDOM(config as StoreThemeConfig);
+      } else {
+        console.warn('⚠️ No theme config found');
       }
     } catch (error) {
-      console.error('خطأ في تحميل إعدادات الثيم:', error);
+      console.error('❌ خطأ في تحميل إعدادات الثيم:', error);
     }
   };
 
   const applyThemeToDOM = (configParam: StoreThemeConfig | any) => {
+    console.log('🎨 Starting to apply theme to DOM...', configParam);
+    
     // دعم الأشكال: { theme_config: {...} } أو { colors: {...} } أو خريطة ألوان مسطحة
     const themeConfig: any = (configParam as any)?.theme_config ?? configParam;
     const colorsSource: Record<string, any> = themeConfig?.colors ?? themeConfig;
-    if (!colorsSource) return;
+    
+    console.log('🎨 Color source:', colorsSource);
+    
+    if (!colorsSource || Object.keys(colorsSource).length === 0) {
+      console.warn('⚠️ No colors found in theme config');
+      return;
+    }
 
     const root = document.documentElement;
     const { typography, layout, effects } = themeConfig as any;
@@ -166,11 +176,12 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
       const normalized = normalizeColor(String(value));
       root.style.setProperty(`--${key}`, normalized);
       appliedKeys.push(key);
+      console.log(`✅ Applied color: --${key} = ${normalized}`);
     });
-    console.info('ThemeProvider: Applied color variables', { 
+    
+    console.log('🎨 All applied colors:', { 
       appliedKeys, 
       originalColors: Object.keys(colorsSource),
-      sampleValues: Object.entries(colorsSource).slice(0, 3).map(([k, v]) => `${k}: ${v}`)
     });
 
     // الخطوط
@@ -211,15 +222,21 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
     // تنظيف classes السابقة وإضافة class للثيم
     document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
     const themeClass = getThemeClassName(themeConfig as StoreThemeConfig);
-    document.body.classList.add(themeClass);
+    document.body.classList.add(themeClass, 'store-theme');
     
-    console.info('ThemeProvider: Applied theme to DOM', { 
-      appliedKeys, 
+    console.log('🎨 ✅ Theme applied successfully!', { 
+      appliedKeys: appliedKeys.length, 
       themeClass,
       hasTypography: !!typography,
       hasLayout: !!layout,
       hasEffects: !!effects
     });
+    
+    // فرض إعادة render للتأكد من تطبيق الألوان
+    document.body.style.visibility = 'hidden';
+    setTimeout(() => {
+      document.body.style.visibility = 'visible';
+    }, 0);
   };
 
   const getThemeClassName = (config: StoreThemeConfig): string => {
