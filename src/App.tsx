@@ -27,7 +27,6 @@ const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const OrderConfirmationPage = lazy(() => import("./pages/OrderConfirmationSimple"));
 const MarketerHomePage = lazy(() => import("./pages/home/MarketerHome"));
 const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
-const ModernStorefront = lazy(() => import("./components/store/modern/ModernStorefront"));
 const AffiliateStoreSettingsPage = lazy(() => import("./pages/affiliate/store/Settings"));
 const StoreSetup = lazy(() => import("./pages/affiliate/store/StoreSetup"));
 const LegacyStoreRedirect = lazy(() => import("./pages/redirects/LegacyStoreRedirect"));
@@ -132,8 +131,6 @@ const App = () => {
                 <Route index element={<MarketerHomePage />} />
                 <Route path="home" element={<Navigate to="../" replace />} />
                 <Route path="storefront" element={<AffiliateStoreFront />} />
-                <Route path="storefront/modern" element={<ModernStorefront />} />
-                <Route path="storefront/:storeSlug" element={<ModernStorefront />} />
                 <Route path="store/settings" element={<AffiliateStoreSettingsPage />} />
                 <Route path="store/setup" element={<StoreSetup />} />
                 <Route path="orders" element={<UnifiedAffiliateOrders />} />

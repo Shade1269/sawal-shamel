@@ -8,7 +8,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useModernStorefront } from '@/hooks/useModernStorefront';
 import { createStoreUrl } from '@/utils/domains';
 import { 
   Store, 
@@ -107,7 +106,6 @@ export const AffiliateStoreManager = ({
   const { settings, updateSettings, uploadImage, refetch } = useStoreSettings(store.id);
   const { generateQR, downloadQR, qrCodeDataUrl, isGenerating } = useQRGenerator();
   const { analytics, loading: analyticsLoading } = useStoreAnalytics(store.id);
-  const { isModernMode, toggleModernMode } = useModernStorefront(store.store_slug);
 
   const storeUrl = createStoreUrl(store.store_slug);
 
@@ -646,54 +644,6 @@ export const AffiliateStoreManager = ({
                       رفع شعار
                     </Button>
                   </ImageUpload>
-                </div>
-              </div>
-
-              {/* نوع الواجهة */}
-              <div className="space-y-3 pt-4 border-t">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <Label className="text-base">نوع واجهة المتجر</Label>
-                    <p className="text-sm text-muted-foreground">
-                      اختر بين الواجهة العصرية السريعة أو الواجهة المتقدمة الكاملة
-                    </p>
-                  </div>
-                  <Switch
-                    checked={isModernMode}
-                    onCheckedChange={toggleModernMode}
-                  />
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <Card className={`${isModernMode ? 'border-primary bg-primary/5' : 'border-muted'}`}>
-                    <CardContent className="p-4 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Monitor className="h-5 w-5 text-primary" />
-                        <h4 className="font-medium">واجهة عصرية</h4>
-                        {isModernMode && <Badge variant="default">مفعّل</Badge>}
-                      </div>
-                      <ul className="text-sm text-muted-foreground space-y-1">
-                        <li>✓ تحميل أسرع</li>
-                        <li>✓ تصميم مبسط وأنيق</li>
-                        <li>✓ تدعم البنرات المخصصة</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className={`${!isModernMode ? 'border-primary bg-primary/5' : 'border-muted'}`}>
-                    <CardContent className="p-4 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Smartphone className="h-5 w-5 text-primary" />
-                        <h4 className="font-medium">واجهة متقدمة</h4>
-                        {!isModernMode && <Badge variant="default">مفعّل</Badge>}
-                      </div>
-                      <ul className="text-sm text-muted-foreground space-y-1">
-                        <li>✓ ميزات متقدمة كاملة</li>
-                        <li>✓ تفاعل أكبر</li>
-                        <li>✓ تدعم البنرات المخصصة</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
                 </div>
               </div>
 
