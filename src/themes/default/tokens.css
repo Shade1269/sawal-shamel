@@ -1,6 +1,4 @@
 html[data-theme="default"] {
-  color-scheme: dark;
-
   /* Base HSL definitions */
   --background-hsl: 216 28% 7%;
   --foreground-hsl: 210 67% 96%;
@@ -153,4 +151,86 @@ html[data-theme="default"] body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+/* Dark Mode Colors (default) */
+html[data-theme="default"].dark {
+  /* Ensure dark mode colors are applied */
+  color-scheme: dark;
+  
+  /* Base HSL definitions for dark mode */
+  --background-hsl: 216 28% 7%;
+  --foreground-hsl: 210 67% 96%;
+  --primary-hsl: 212 100% 67%;
+  --primary-foreground-hsl: 209 77% 7%;
+  --secondary-hsl: 216 84% 52%;
+  --secondary-foreground-hsl: 0 0% 100%;
+  --accent-hsl: 269 100% 83%;
+  --accent-foreground-hsl: 208 30% 15%;
+  --muted-hsl: 215 18% 13%;
+  --muted-foreground-hsl: 213 17% 66%;
+  --border-hsl: 212 12% 21%;
+  --card-hsl: 215 20% 9%;
+  --card-foreground-hsl: 210 67% 96%;
+  
+  /* Glass & surface tokens for dark mode */
+  --surface: hsla(215, 22%, 14%, 0.82);
+  --surface-2: hsla(215, 26%, 20%, 0.9);
+  --glass-border: hsla(212, 18%, 42%, 0.35);
+  --shadow-glass-soft: 0 18px 40px hsla(212, 65%, 12%, 0.45);
+  --shadow-glass-strong: 0 28px 64px hsla(212, 65%, 12%, 0.6);
+  --glass-backdrop: hsl(216 28% 7% / 0.62);
+  
+  /* Interaction states for dark mode */
+  --state-hover-bg: hsla(210, 67%, 96%, 0.08);
+  --state-active-bg: hsla(210, 67%, 96%, 0.16);
+  --state-disabled-bg: hsla(215, 18%, 16%, 0.6);
+  --state-disabled-fg: hsla(213, 17%, 66%, 0.45);
+  --state-disabled-border: hsla(212, 12%, 25%, 0.35);
+}
+
+/* Light Mode Colors */
+html[data-theme="default"]:not(.dark) {
+  color-scheme: light;
+  /* Base HSL definitions for light mode */
+  --background-hsl: 0 0% 100%;
+  --foreground-hsl: 222 47% 11%;
+  --primary-hsl: 212 100% 50%;
+  --primary-foreground-hsl: 0 0% 100%;
+  --secondary-hsl: 216 84% 92%;
+  --secondary-foreground-hsl: 222 47% 11%;
+  --accent-hsl: 269 100% 70%;
+  --accent-foreground-hsl: 0 0% 100%;
+  --muted-hsl: 210 40% 96%;
+  --muted-foreground-hsl: 215 16% 47%;
+  --success-hsl: 128 49% 49%;
+  --warning-hsl: 41 72% 48%;
+  --danger-hsl: 3 93% 63%;
+  --info-hsl: 208 100% 74%;
+  --border-hsl: 214 32% 91%;
+  --card-hsl: 0 0% 100%;
+  --card-foreground-hsl: 222 47% 11%;
+  --popover-hsl: 0 0% 100%;
+  --popover-foreground-hsl: 222 47% 11%;
+  --chat-bg-hsl: 0 0% 100%;
+  --chat-sent-hsl: 212 100% 50%;
+  --chat-received-hsl: 210 40% 96%;
+  --status-online-hsl: 128 49% 49%;
+  --status-offline-hsl: 215 16% 47%;
+  
+  /* Glass & surface tokens for light mode */
+  --surface: hsla(0, 0%, 100%, 0.82);
+  --surface-2: hsla(210, 40%, 98%, 0.9);
+  --glass-border: hsla(214, 32%, 91%, 0.6);
+  --shadow-glass-soft: 0 4px 24px hsla(215, 25%, 27%, 0.08);
+  --shadow-glass-strong: 0 8px 40px hsla(215, 25%, 27%, 0.12);
+  --glass-backdrop: hsl(0 0% 100% / 0.62);
+  
+  /* Interaction states for light mode */
+  --state-hover-bg: hsla(222, 47%, 11%, 0.05);
+  --state-active-bg: hsla(222, 47%, 11%, 0.1);
+  --state-focus-ring: hsla(212, 100%, 50%, 0.45);
+  --state-disabled-bg: hsla(210, 40%, 96%, 0.6);
+  --state-disabled-fg: hsla(215, 16%, 47%, 0.45);
+  --state-disabled-border: hsla(214, 32%, 91%, 0.6);
 }
