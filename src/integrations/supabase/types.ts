@@ -9277,6 +9277,10 @@ export type Database = {
         }
         Returns: string
       }
+      order_exists_no_rls: {
+        Args: { p_order_id: string }
+        Returns: boolean
+      }
       process_affiliate_order: {
         Args: {
           p_affiliate_store_id: string
