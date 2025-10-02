@@ -55,6 +55,7 @@ import { OrderCommissionManagement } from './OrderCommissionManagement';
 import AffiliateCouponManager from '@/components/marketing/AffiliateCouponManager';
 import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams } from 'react-router-dom';
+import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
 
 interface AffiliateStoreManagerProps {
   store: {
@@ -589,39 +590,27 @@ export const AffiliateStoreManager = ({
         </TabsContent>
 
         <TabsContent value="appearance" className="space-y-6">
+          <StoreThemeSelector
+            storeId={store.id}
+            onThemeApplied={(theme) => {
+              toast({
+                title: "✨ تم تحديث الثيم!",
+                description: `تم تطبيق ثيم "${theme.name_ar}" بنجاح على متجرك`
+              });
+            }}
+          />
+          
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Palette className="h-5 w-5" />
-                مظهر المتجر
+                <ImageIcon className="h-5 w-5" />
+                إعدادات إضافية
               </CardTitle>
               <CardDescription>
-                اختر القالب والألوان المناسبة لمتجرك
+                تخصيص الشعار والإعدادات الأخرى
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>قالب المتجر</Label>
-                <Select 
-                  value={isEditing ? editData.theme : store.theme}
-                  onValueChange={(value) => setEditData({...editData, theme: value})}
-                  disabled={!isEditing}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {themes.map((theme) => (
-                      <SelectItem key={theme.value} value={theme.value}>
-                        <div>
-                          <div className="font-medium">{theme.label}</div>
-                          <div className="text-xs text-muted-foreground">{theme.colors}</div>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
 
               <div className="space-y-2">
                 <Label>شعار المتجر</Label>
