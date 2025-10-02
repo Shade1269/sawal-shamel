@@ -121,6 +121,20 @@ export const AffiliateStoreManager = ({
     hero_image_url: settings?.hero_image_url || ''
   });
 
+  // تحديث heroSettings عند تحميل settings من قاعدة البيانات
+  useEffect(() => {
+    if (settings) {
+      setHeroSettings({
+        hero_title: settings.hero_title || '',
+        hero_subtitle: settings.hero_subtitle || '',
+        hero_description: settings.hero_description || '',
+        hero_cta_text: settings.hero_cta_text || 'تسوق الآن',
+        hero_cta_color: settings.hero_cta_color || 'primary',
+        hero_image_url: settings.hero_image_url || ''
+      });
+    }
+  }, [settings]);
+
   // حالة لتحديد القسم الحالي
   const [currentSection, setCurrentSection] = useState<'main' | 'products' | 'orders'>('main');
 

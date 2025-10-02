@@ -735,8 +735,67 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 space-y-8">
+        {/* Hero Section */}
+        {(storeSettings?.hero_title || storeSettings?.hero_image_url) && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative overflow-hidden rounded-3xl shadow-2xl mb-12"
+          >
+            {/* Background Image */}
+            <div className="absolute inset-0 z-0">
+              {storeSettings.hero_image_url ? (
+                <img
+                  src={storeSettings.hero_image_url}
+                  alt="Hero Background"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5" />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-background/20 backdrop-blur-sm" />
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10 py-20 px-8 text-center space-y-6">
+              {storeSettings.hero_title && (
+                <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent drop-shadow-lg">
+                  {storeSettings.hero_title}
+                </h2>
+              )}
+              
+              {storeSettings.hero_subtitle && (
+                <p className="text-xl md:text-2xl font-medium text-foreground/90 max-w-2xl mx-auto">
+                  {storeSettings.hero_subtitle}
+                </p>
+              )}
+              
+              {storeSettings.hero_description && (
+                <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                  {storeSettings.hero_description}
+                </p>
+              )}
+
+              {storeSettings.hero_cta_text && (
+                <Button
+                  size="lg"
+                  variant={storeSettings.hero_cta_color as any}
+                  className="text-lg px-8 py-6 shadow-xl hover:scale-105 transition-transform"
+                  onClick={() => {
+                    const productsSection = document.getElementById('products-section');
+                    productsSection?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  {storeSettings.hero_cta_text}
+                  <ArrowRight className="mr-2 h-5 w-5" />
+                </Button>
+              )}
+            </div>
+          </motion.section>
+        )}
+
         {/* Enhanced Search and Filter Section */}
-        <motion.section 
+        <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm p-8 rounded-3xl border-2 border-primary/10 shadow-2xl"
@@ -882,8 +941,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             </AnimatePresence>
           </div>
         </motion.section>
-        {/* Enhanced Search and Filter Section */}
-        <section className="bg-gradient-to-r from-card to-card/50 p-6 rounded-2xl border shadow-lg">
+
+        {/* Products Grid Section */}
+        <section id="products-section" className="space-y-6">
           <div className="space-y-4">
             {/* Search Bar */}
             <div className="relative">
@@ -1134,7 +1194,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         )}
 
         {/* Products Section */}
-        <section className="space-y-6">
+        <section id="products-section" className="space-y-6">
           {/* Results Summary */}
           <div className="flex items-center justify-between">
             <div>
