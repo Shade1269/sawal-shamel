@@ -755,7 +755,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5" />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-background/20 backdrop-blur-sm" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-background/30 to-background/10 backdrop-blur-sm" />
             </div>
 
             {/* Content */}
