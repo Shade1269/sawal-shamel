@@ -161,7 +161,13 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
       const finalTotal = subtotal + shipping + tax;
       
       // Create order
+      const orderId = (typeof crypto !== 'undefined' && 'randomUUID' in crypto)
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2,10)}`;
+      const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
+
       const orderData: any = {
+        id: orderId,
         shop_id: productData.shop_id,
         affiliate_store_id: store.id,
         customer_name: customerInfo.name,
@@ -181,27 +187,26 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
         shipping_method: 'STANDARD',
         payment_method: paymentMethod === 'cod' ? 'CASH_ON_DELIVERY' : 'CREDIT_CARD',
         payment_status: paymentMethod === 'cod' ? 'PENDING' : 'AWAITING_PAYMENT',
-        affiliate_commission_sar: subtotal * 0.1
+        affiliate_commission_sar: subtotal * 0.1,
+        order_number: orderNumber
       };
       
       console.log('إنشاء طلب بالبيانات:', orderData);
       
-      const { data: order, error: orderError } = await supabase
+      const { error: orderError } = await supabase
         .from('ecommerce_orders')
-        .insert(orderData)
-        .select()
-        .single();
+        .insert(orderData);
       
       if (orderError) {
         console.error('خطأ في إنشاء الطلب:', orderError);
         throw orderError;
       }
       
-      console.log('✅ تم إنشاء الطلب:', order);
+      console.log('✅ تم إنشاء الطلب:', { id: orderId, order_number: orderNumber });
       
       // Create order items
       const orderItems = cart.map(item => ({
-        order_id: order.id,
+        order_id: orderId,
         product_id: item.product.id,
         product_title: item.product.title,
         quantity: item.quantity,
