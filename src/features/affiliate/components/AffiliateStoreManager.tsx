@@ -53,6 +53,7 @@ import { ImageUpload } from '@/components/ui/image-upload';
 import { CategoryEditDialog } from './CategoryEditDialog';
 import { ProductManagement } from './ProductManagement';
 import { OrderCommissionManagement } from './OrderCommissionManagement';
+import AffiliateCouponManager from '@/components/marketing/AffiliateCouponManager';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AffiliateStoreManagerProps {
@@ -495,11 +496,12 @@ export const AffiliateStoreManager = ({
 
       {/* Store Management Tabs */}
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="general">الإعدادات العامة</TabsTrigger>
           <TabsTrigger value="appearance">المظهر</TabsTrigger>
           <TabsTrigger value="hero">القسم الرئيسي</TabsTrigger>
           <TabsTrigger value="categories">إدارة الفئات</TabsTrigger>
+          <TabsTrigger value="coupons">الكوبونات</TabsTrigger>
           <TabsTrigger value="sharing">المشاركة</TabsTrigger>
           <TabsTrigger value="analytics">الإحصائيات</TabsTrigger>
         </TabsList>
@@ -1011,6 +1013,11 @@ export const AffiliateStoreManager = ({
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Coupons Tab */}
+        <TabsContent value="coupons" className="space-y-6">
+          <AffiliateCouponManager />
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
