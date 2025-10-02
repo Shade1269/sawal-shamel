@@ -174,9 +174,14 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
     Object.entries(colorsSource).forEach(([rawKey, value]) => {
       const key = keyAliasMap[rawKey] || rawKey;
       const normalized = normalizeColor(String(value));
-      root.style.setProperty(`--${key}`, normalized);
+      let finalVal = normalized;
+      // إذا كانت قيمة HSL ثلاثية بدون hsl() نلفها
+      if (/(^\d{1,3}\s+\d{1,3}%\s+\d{1,3}%$)/.test(normalized)) {
+        finalVal = `hsl(${normalized})`;
+      }
+      root.style.setProperty(`--${key}`, finalVal);
       appliedKeys.push(key);
-      console.log(`✅ Applied color: --${key} = ${normalized}`);
+      console.log(`✅ Applied color: --${key} = ${finalVal}`);
     });
     
     console.log('🎨 All applied colors:', { 
