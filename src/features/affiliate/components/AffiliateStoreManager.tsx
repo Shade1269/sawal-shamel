@@ -55,8 +55,6 @@ import { OrderCommissionManagement } from './OrderCommissionManagement';
 import AffiliateCouponManager from '@/components/marketing/AffiliateCouponManager';
 import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams } from 'react-router-dom';
-import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
-import type { ThemeType } from '@/config/storeThemes';
 
 interface AffiliateStoreManagerProps {
   store: {
@@ -591,29 +589,42 @@ export const AffiliateStoreManager = ({
         </TabsContent>
 
         <TabsContent value="appearance" className="space-y-6">
-          <StoreThemeSelector
-            storeId={store.id}
-            onThemeApplied={() => {
-              toast({
-                title: "✨ تم تحديث الثيم!",
-                description: "تم تطبيق الثيم الجديد بنجاح على متجرك"
-              });
-            }}
-          />
-          
-          {/* شعار المتجر */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Upload className="h-5 w-5" />
-                شعار المتجر
+                <Palette className="h-5 w-5" />
+                مظهر المتجر
               </CardTitle>
               <CardDescription>
-                قم برفع شعار متجرك ليظهر في الهيدر
+                اختر القالب والألوان المناسبة لمتجرك
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <div className="space-y-2">
+                <Label>قالب المتجر</Label>
+                <Select 
+                  value={isEditing ? editData.theme : store.theme}
+                  onValueChange={(value) => setEditData({...editData, theme: value})}
+                  disabled={!isEditing}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {themes.map((theme) => (
+                      <SelectItem key={theme.value} value={theme.value}>
+                        <div>
+                          <div className="font-medium">{theme.label}</div>
+                          <div className="text-xs text-muted-foreground">{theme.colors}</div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>شعار المتجر</Label>
                 <div className="flex items-center gap-4">
                   <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center">
                     {store.logo_url ? (
@@ -635,6 +646,13 @@ export const AffiliateStoreManager = ({
                   </ImageUpload>
                 </div>
               </div>
+
+              {isEditing && (
+                <Button onClick={handleSaveChanges}>
+                  <Save className="h-4 w-4 ml-2" />
+                  حفظ التغييرات
+                </Button>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
