@@ -65,11 +65,11 @@ const damascusConfig = {
   id: "damascus",
   name: "Damascus",
   colors: {
-    bg: "#0a1016",
+    bg: "#2d2d2d",
     fg: "#f4f4f0", 
     primary: "#d4af37",
-    secondary: "#1a2632",
-    background: "#0a1016",
+    secondary: "#404040",
+    background: "#2d2d2d",
     foreground: "#f4f4f0"
   },
   radii: { 
