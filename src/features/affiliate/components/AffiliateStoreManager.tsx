@@ -479,41 +479,48 @@ export const AffiliateStoreManager = ({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6 px-2 md:px-0">
       {/* Store Header */}
       <Card className="border-0 bg-gradient-to-r from-primary/10 to-accent/10">
-        <CardContent className="p-6">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
+        <CardContent className="p-4 md:p-6">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div className="flex items-start gap-3 md:gap-4">
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
                 {store.logo_url ? (
-                  <img src={store.logo_url} alt="Logo" className="w-12 h-12 rounded-full" />
+                  <img src={store.logo_url} alt="Logo" className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover" />
                 ) : (
-                  <Store className="h-8 w-8 text-primary" />
+                  <Store className="h-6 w-6 md:h-8 md:w-8 text-primary" />
                 )}
               </div>
-              <div className="space-y-2">
-                <h1 className="text-2xl font-bold">{store.store_name}</h1>
-                <p className="text-muted-foreground">{store.bio}</p>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline">{store.theme}</Badge>
-                  <Badge variant="secondary">
+              <div className="space-y-1 md:space-y-2 flex-1 min-w-0">
+                <h1 className="text-lg md:text-2xl font-bold truncate">{store.store_name}</h1>
+                <p className="text-sm md:text-base text-muted-foreground line-clamp-2">{store.bio}</p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant="outline" className="text-xs">{store.theme}</Badge>
+                  <Badge variant="secondary" className="text-xs">
                     {store.total_orders} طلب
                   </Badge>
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={() => window.open(storeUrl, '_blank')}>
-                <Eye className="h-4 w-4 ml-2" />
-                معاينة
+            <div className="flex items-center gap-2 self-stretch md:self-auto">
+              <Button 
+                variant="outline" 
+                onClick={() => window.open(storeUrl, '_blank')}
+                className="flex-1 md:flex-none"
+                size="sm"
+              >
+                <Eye className="h-4 w-4 md:ml-2" />
+                <span className="hidden md:inline">معاينة</span>
               </Button>
               <Button 
                 variant={isEditing ? "default" : "outline"}
                 onClick={() => setIsEditing(!isEditing)}
+                className="flex-1 md:flex-none"
+                size="sm"
               >
-                <Edit className="h-4 w-4 ml-2" />
-                {isEditing ? "إلغاء" : "تعديل"}
+                <Edit className="h-4 w-4 md:ml-2" />
+                <span className="hidden md:inline">{isEditing ? "إلغاء" : "تعديل"}</span>
               </Button>
             </div>
           </div>
@@ -551,36 +558,37 @@ export const AffiliateStoreManager = ({
           <TabsTrigger value="analytics">الإحصائيات</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="general" className="space-y-6">
+        <TabsContent value="general" className="space-y-4 md:space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
+            <CardHeader className="p-4 md:p-6">
+              <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+                <Settings className="h-4 w-4 md:h-5 md:w-5" />
                 الإعدادات العامة
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs md:text-sm">
                 تحديث معلومات متجرك الأساسية
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CardContent className="space-y-4 p-4 md:p-6">
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="store_name">اسم المتجر</Label>
+                  <Label htmlFor="store_name" className="text-sm">اسم المتجر</Label>
                   <Input
                     id="store_name"
                     value={isEditing ? editData.store_name : store.store_name}
                     onChange={(e) => setEditData({...editData, store_name: e.target.value})}
                     disabled={!isEditing}
+                    className="text-sm"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="store_slug">رابط المتجر</Label>
+                  <Label htmlFor="store_slug" className="text-sm">رابط المتجر</Label>
                   <div className="flex items-center gap-2">
                     <Input
                       id="store_slug"
                       value={store.store_slug}
                       disabled
-                      className="flex-1"
+                      className="flex-1 text-sm"
                     />
                     <Button size="sm" variant="outline" onClick={copyStoreLink}>
                       <Copy className="h-4 w-4" />
@@ -590,23 +598,23 @@ export const AffiliateStoreManager = ({
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="bio">وصف المتجر</Label>
+                <Label htmlFor="bio" className="text-sm">وصف المتجر</Label>
                 <Textarea
                   id="bio"
                   value={isEditing ? editData.bio : store.bio}
                   onChange={(e) => setEditData({...editData, bio: e.target.value})}
                   disabled={!isEditing}
-                  className="min-h-20"
+                  className="min-h-20 text-sm"
                 />
               </div>
 
               {isEditing && (
-                <div className="flex items-center gap-2">
-                  <Button onClick={handleSaveChanges}>
+                <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2">
+                  <Button onClick={handleSaveChanges} className="w-full md:w-auto" size="sm">
                     <Save className="h-4 w-4 ml-2" />
                     حفظ التغييرات
                   </Button>
-                  <Button variant="outline" onClick={() => setIsEditing(false)}>
+                  <Button variant="outline" onClick={() => setIsEditing(false)} className="w-full md:w-auto" size="sm">
                     إلغاء
                   </Button>
                 </div>
@@ -615,7 +623,7 @@ export const AffiliateStoreManager = ({
           </Card>
         </TabsContent>
 
-        <TabsContent value="appearance" className="space-y-6">
+        <TabsContent value="appearance" className="space-y-4 md:space-y-6">
           <StoreThemeSelector
             storeId={store.id}
             onThemeApplied={(theme) => {
@@ -627,20 +635,20 @@ export const AffiliateStoreManager = ({
           />
           
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ImageIcon className="h-5 w-5" />
+            <CardHeader className="p-4 md:p-6">
+              <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+                <ImageIcon className="h-4 w-4 md:h-5 md:w-5" />
                 إعدادات إضافية
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs md:text-sm">
                 تخصيص الشعار والإعدادات الأخرى
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 md:p-6">
 
               <div className="space-y-2">
-                <Label>شعار المتجر</Label>
-                <div className="flex items-center gap-4">
+                <Label className="text-sm">شعار المتجر</Label>
+                <div className="flex flex-col md:flex-row items-center gap-4">
                   <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center">
                     {store.logo_url ? (
                       <img src={store.logo_url} alt="Logo" className="w-16 h-16 rounded-lg object-cover" />
@@ -652,9 +660,9 @@ export const AffiliateStoreManager = ({
                     onImageSelect={handleLogoUpload}
                     currentImage={store.logo_url}
                     accept="image/*"
-                    className="w-20 h-20"
+                    className="w-full md:w-auto"
                   >
-                    <Button variant="outline" disabled={!isEditing}>
+                    <Button variant="outline" disabled={!isEditing} className="w-full md:w-auto" size="sm">
                       <Upload className="h-4 w-4 ml-2" />
                       رفع شعار
                     </Button>
@@ -663,7 +671,7 @@ export const AffiliateStoreManager = ({
               </div>
 
               {isEditing && (
-                <Button onClick={handleSaveChanges}>
+                <Button onClick={handleSaveChanges} className="w-full md:w-auto" size="sm">
                   <Save className="h-4 w-4 ml-2" />
                   حفظ التغييرات
                 </Button>
@@ -672,76 +680,76 @@ export const AffiliateStoreManager = ({
           </Card>
         </TabsContent>
 
-        <TabsContent value="hero" className="space-y-6">
+        <TabsContent value="hero" className="space-y-4 md:space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ImageIcon className="h-5 w-5" />
+            <CardHeader className="p-4 md:p-6">
+              <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+                <ImageIcon className="h-4 w-4 md:h-5 md:w-5" />
                 إعدادات القسم الرئيسي
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs md:text-sm">
                 تخصيص القسم الرئيسي لمتجرك بالصور والنصوص الجذابة
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 md:space-y-6 p-4 md:p-6">
               {/* Hero Image */}
               <div className="space-y-3">
-                <Label>صورة الخلفية الرئيسية</Label>
+                <Label className="text-sm">صورة الخلفية الرئيسية</Label>
                 <ImageUpload
                   onImageSelect={handleHeroImageUpload}
                   currentImage={heroSettings.hero_image_url}
                   accept="image/*"
-                  className="h-64"
+                  className="h-48 md:h-64"
                 />
               </div>
 
               {/* Hero Text */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>العنوان الرئيسي</Label>
+                  <Label className="text-sm">العنوان الرئيسي</Label>
                   <Input 
                     value={heroSettings.hero_title}
                     onChange={(e) => setHeroSettings(prev => ({ ...prev, hero_title: e.target.value }))}
                     placeholder="مرحباً بكم في متجري" 
-                    className="text-right"
+                    className="text-right text-sm"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>العنوان الفرعي</Label>
+                  <Label className="text-sm">العنوان الفرعي</Label>
                   <Input 
                     value={heroSettings.hero_subtitle}
                     onChange={(e) => setHeroSettings(prev => ({ ...prev, hero_subtitle: e.target.value }))}
                     placeholder="أفضل المنتجات بأسعار منافسة" 
-                    className="text-right"
+                    className="text-right text-sm"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>وصف مختصر</Label>
+                <Label className="text-sm">وصف مختصر</Label>
                 <Textarea 
                   value={heroSettings.hero_description}
                   onChange={(e) => setHeroSettings(prev => ({ ...prev, hero_description: e.target.value }))}
                   placeholder="اكتشف مجموعة رائعة من المنتجات عالية الجودة..."
-                  className="min-h-20 text-right"
+                  className="min-h-20 text-right text-sm"
                 />
               </div>
 
               {/* Call to Action */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>نص زر العمل</Label>
+                  <Label className="text-sm">نص زر العمل</Label>
                   <Input 
                     value={heroSettings.hero_cta_text}
                     onChange={(e) => setHeroSettings(prev => ({ ...prev, hero_cta_text: e.target.value }))}
                     placeholder="تسوق الآن" 
-                    className="text-right"
+                    className="text-right text-sm"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>لون زر العمل</Label>
+                  <Label className="text-sm">لون زر العمل</Label>
                   <Select value={heroSettings.hero_cta_color} onValueChange={(value) => setHeroSettings(prev => ({ ...prev, hero_cta_color: value }))}>
-                    <SelectTrigger>
+                    <SelectTrigger className="text-sm">
                       <SelectValue placeholder="اختر اللون" />
                     </SelectTrigger>
                     <SelectContent>
@@ -753,40 +761,40 @@ export const AffiliateStoreManager = ({
                 </div>
               </div>
 
-              <Button className="w-full" onClick={saveHeroSettings}>
-                <Save className="h-4 w-4 mr-2" />
+              <Button className="w-full md:w-auto" onClick={saveHeroSettings} size="sm">
+                <Save className="h-4 w-4 ml-2" />
                 حفظ إعدادات القسم الرئيسي
               </Button>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="categories" className="space-y-6">
+        <TabsContent value="categories" className="space-y-4 md:space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Grid className="h-5 w-5" />
+            <CardHeader className="p-4 md:p-6">
+              <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+                <Grid className="h-4 w-4 md:h-5 md:w-5" />
                 إدارة الفئات المرئية
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs md:text-sm">
                 تنظيم وعرض الفئات بطريقة جذابة للعملاء
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 md:space-y-6 p-4 md:p-6">
               {/* Category Display Style */}
               <div className="space-y-3">
-                <Label>طريقة عرض الفئات</Label>
-                <p className="text-sm text-muted-foreground mb-3">النمط الحالي: {getDisplayStyleLabel(displayStyle)}</p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Label className="text-sm">طريقة عرض الفئات</Label>
+                <p className="text-xs md:text-sm text-muted-foreground mb-3">النمط الحالي: {getDisplayStyleLabel(displayStyle)}</p>
+                <div className="grid grid-cols-3 gap-2 md:gap-4">
                   <Card 
                     className={`cursor-pointer border-2 hover:border-primary transition-colors ${
                       displayStyle === 'grid' ? 'border-primary bg-primary/5' : ''
                     }`}
                     onClick={() => setDisplayStyle('grid')}
                   >
-                    <CardContent className="p-4 text-center">
-                      <Grid className="h-8 w-8 mx-auto mb-2" />
-                      <p className="text-sm font-medium">شبكة مع صور</p>
+                    <CardContent className="p-3 md:p-4 text-center">
+                      <Grid className="h-6 w-6 md:h-8 md:w-8 mx-auto mb-1 md:mb-2" />
+                      <p className="text-xs md:text-sm font-medium">شبكة مع صور</p>
                     </CardContent>
                   </Card>
                   <Card 
@@ -795,9 +803,9 @@ export const AffiliateStoreManager = ({
                     }`}
                     onClick={() => setDisplayStyle('horizontal')}
                   >
-                    <CardContent className="p-4 text-center">
-                      <AlignLeft className="h-8 w-8 mx-auto mb-2" />
-                      <p className="text-sm font-medium">قائمة أفقية</p>
+                    <CardContent className="p-3 md:p-4 text-center">
+                      <AlignLeft className="h-6 w-6 md:h-8 md:w-8 mx-auto mb-1 md:mb-2" />
+                      <p className="text-xs md:text-sm font-medium">قائمة أفقية</p>
                     </CardContent>
                   </Card>
                   <Card 
@@ -806,9 +814,9 @@ export const AffiliateStoreManager = ({
                     }`}
                     onClick={() => setDisplayStyle('circular')}
                   >
-                    <CardContent className="p-4 text-center">
-                      <Star className="h-8 w-8 mx-auto mb-2" />
-                      <p className="text-sm font-medium">دائرية مميزة</p>
+                    <CardContent className="p-3 md:p-4 text-center">
+                      <Star className="h-6 w-6 md:h-8 md:w-8 mx-auto mb-1 md:mb-2" />
+                      <p className="text-xs md:text-sm font-medium">دائرية مميزة</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -816,21 +824,21 @@ export const AffiliateStoreManager = ({
 
               {/* Featured Categories */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label>الفئات المميزة</Label>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                  <Label className="text-sm">الفئات المميزة</Label>
                   <CategoryEditDialog
                     isNew
                     onSave={handleAddCategory}
                     products={storeProducts}
                     isLoadingProducts={loadingProducts}
                   >
-                    <Button variant="outline" size="sm">
-                      <Plus className="h-4 w-4 mr-2" />
+                    <Button variant="outline" size="sm" className="w-full md:w-auto">
+                      <Plus className="h-4 w-4 ml-2" />
                       إضافة فئة
                     </Button>
                   </CategoryEditDialog>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground">
                   فعل أو ألغ الفئات التي تريد عرضها في متجرك
                 </p>
                 <div className="space-y-3">
@@ -900,63 +908,69 @@ export const AffiliateStoreManager = ({
                 </div>
               </div>
 
-              <Button className="w-full" onClick={saveCategorySettings}>
-                <Save className="h-4 w-4 mr-2" />
+              <Button className="w-full md:w-auto" onClick={saveCategorySettings} size="sm">
+                <Save className="h-4 w-4 ml-2" />
                 حفظ إعدادات الفئات
               </Button>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="sharing" className="space-y-6">
+        <TabsContent value="sharing" className="space-y-4 md:space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Share2 className="h-5 w-5" />
+            <CardHeader className="p-4 md:p-6">
+              <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+                <Share2 className="h-4 w-4 md:h-5 md:w-5" />
                 مشاركة المتجر
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs md:text-sm">
                 شارك متجرك مع العملاء والمتابعين
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 md:space-y-6 p-4 md:p-6">
               {/* Store Link */}
               <div className="space-y-2">
-                <Label>رابط المتجر</Label>
-                <div className="flex items-center gap-2">
-                  <Input value={storeUrl} disabled className="flex-1" />
-                  <Button variant="outline" onClick={copyStoreLink}>
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" onClick={() => window.open(storeUrl, '_blank')}>
-                    <ExternalLink className="h-4 w-4" />
-                  </Button>
+                <Label className="text-sm">رابط المتجر</Label>
+                <div className="flex flex-col md:flex-row gap-2">
+                  <Input value={storeUrl} disabled className="flex-1 text-sm" />
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={copyStoreLink} className="flex-1 md:flex-none" size="sm">
+                      <Copy className="h-4 w-4" />
+                      <span className="md:hidden ml-2">نسخ</span>
+                    </Button>
+                    <Button variant="outline" onClick={() => window.open(storeUrl, '_blank')} className="flex-1 md:flex-none" size="sm">
+                      <ExternalLink className="h-4 w-4" />
+                      <span className="md:hidden ml-2">فتح</span>
+                    </Button>
+                  </div>
                 </div>
               </div>
 
               {/* QR Code */}
               <div className="space-y-2">
-                <Label>رمز QR للمتجر</Label>
-                <div className="flex items-center gap-4">
-                  <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center">
+                <Label className="text-sm">رمز QR للمتجر</Label>
+                <div className="flex flex-col md:flex-row items-center gap-4">
+                  <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
                     {qrCodeDataUrl ? (
                       <img src={qrCodeDataUrl} alt="QR Code" className="w-28 h-28 rounded" />
                     ) : (
                       <QrCode className="h-16 w-16 text-muted-foreground" />
                     )}
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">
+                  <div className="space-y-2 w-full md:w-auto">
+                    <p className="text-xs md:text-sm text-muted-foreground text-center md:text-right">
                       يمكن للعملاء مسح هذا الرمز للوصول إلى متجرك مباشرة
                     </p>
-                    <div className="flex gap-2">
-                      <Button variant="outline" onClick={handleGenerateQR} disabled={isGenerating}>
+                    <div className="flex flex-col md:flex-row gap-2">
+                      <Button variant="outline" onClick={handleGenerateQR} disabled={isGenerating} className="w-full md:w-auto" size="sm">
                         {isGenerating ? 'جاري الإنتاج...' : 'توليد رمز QR'}
                       </Button>
                       <Button 
                         variant="outline" 
                         onClick={() => qrCodeDataUrl && downloadQR(qrCodeDataUrl, `qr-${store.store_slug}.png`)}
                         disabled={!qrCodeDataUrl}
+                        className="w-full md:w-auto"
+                        size="sm"
                       >
                         تحميل الصورة
                       </Button>
@@ -967,28 +981,28 @@ export const AffiliateStoreManager = ({
 
               {/* Social Sharing */}
               <div className="space-y-2">
-                <Label>المشاركة على وسائل التواصل</Label>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={shareStore}>
-                    <Share2 className="h-4 w-4 ml-2" />
-                    مشاركة
+                <Label className="text-sm">المشاركة على وسائل التواصل</Label>
+                <div className="grid grid-cols-3 gap-2">
+                  <Button variant="outline" onClick={shareStore} size="sm" className="w-full">
+                    <Share2 className="h-4 w-4 md:ml-2" />
+                    <span className="hidden md:inline">مشاركة</span>
                   </Button>
-                  <Button variant="outline" onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`تسوق من متجري: ${storeUrl}`)}`)}>
-                    واتساب
+                  <Button variant="outline" onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`تسوق من متجري: ${storeUrl}`)}`)} size="sm" className="w-full">
+                    <span className="text-xs md:text-sm">واتساب</span>
                   </Button>
-                  <Button variant="outline" onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`تسوق من متجري: ${storeUrl}`)}`)}>
-                    تويتر
+                  <Button variant="outline" onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`تسوق من متجري: ${storeUrl}`)}`)} size="sm" className="w-full">
+                    <span className="text-xs md:text-sm">تويتر</span>
                   </Button>
                 </div>
               </div>
 
               {/* Device Preview */}
               <div className="space-y-2">
-                <Label>معاينة على الأجهزة</Label>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => window.open(storeUrl, '_blank')}>
-                    <Monitor className="h-4 w-4 ml-2" />
-                    كمبيوتر
+                <Label className="text-sm">معاينة على الأجهزة</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  <Button variant="outline" onClick={() => window.open(storeUrl, '_blank')} size="sm">
+                    <Monitor className="h-4 w-4 md:ml-2" />
+                    <span className="text-xs md:text-sm">كمبيوتر</span>
                   </Button>
                   <Button variant="outline" onClick={() => window.open(storeUrl, '_blank')}>
                     <Smartphone className="h-4 w-4 ml-2" />
