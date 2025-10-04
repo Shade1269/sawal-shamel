@@ -5,13 +5,33 @@ import type { Database } from './types';
 const SUPABASE_URL = "https://uewuiiopkctdtaexmtxu.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVld3VpaW9wa2N0ZHRhZXhtdHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzMjE2ODUsImV4cCI6MjA3MTg5NzY4NX0._q03bmVxGQhCczoBaOHM6mIGbA7_B4B7PZ5mhDefuFA";
 
+const resolveStorage = (): Storage | undefined => {
+  try {
+    if (typeof window === "undefined" || !window.localStorage) {
+      return undefined;
+    }
+
+    // Verify that localStorage is accessible (may throw in private modes)
+    const testKey = "__supabase_storage_test__";
+    window.localStorage.setItem(testKey, testKey);
+    window.localStorage.removeItem(testKey);
+
+    return window.localStorage;
+  } catch (error) {
+    console.warn("Supabase auth storage unavailable, falling back to in-memory sessions.", error);
+    return undefined;
+  }
+};
+
+const authStorage = resolveStorage();
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    storage: localStorage,
-    persistSession: true,
-    autoRefreshToken: true,
+    storage: authStorage,
+    persistSession: Boolean(authStorage),
+    autoRefreshToken: Boolean(authStorage),
   }
 });
