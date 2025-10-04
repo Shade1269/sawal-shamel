@@ -94,14 +94,21 @@ export const AffiliateStoreManager = ({
   onGenerateQR
 }: AffiliateStoreManagerProps) => {
   const { toast } = useToast();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const tabFromUrl = searchParams.get('tab') || 'general';
+  const [activeTab, setActiveTab] = useState(tabFromUrl);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
     store_name: store.store_name,
     bio: store.bio,
     theme: store.theme
   });
+
+  // تحديث URL عند تغيير التبويب
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setSearchParams({ tab: value });
+  };
 
   // استخدام خطافات الإعدادات والتحسينات
   const { settings, updateSettings, uploadImage, refetch } = useStoreSettings(store.id);
@@ -514,8 +521,27 @@ export const AffiliateStoreManager = ({
       </Card>
 
       {/* Store Management Tabs */}
-      <Tabs defaultValue={tabFromUrl} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-7">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
+        {/* قائمة منسدلة للجوال */}
+        <div className="md:hidden">
+          <Select value={activeTab} onValueChange={handleTabChange}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="اختر القسم" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="general">⚙️ الإعدادات العامة</SelectItem>
+              <SelectItem value="appearance">🎨 المظهر</SelectItem>
+              <SelectItem value="hero">🖼️ القسم الرئيسي</SelectItem>
+              <SelectItem value="categories">📂 إدارة الفئات</SelectItem>
+              <SelectItem value="coupons">🎟️ الكوبونات</SelectItem>
+              <SelectItem value="sharing">📤 المشاركة</SelectItem>
+              <SelectItem value="analytics">📊 الإحصائيات</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* تبويبات للشاشات الكبيرة */}
+        <TabsList className="hidden md:grid w-full grid-cols-7">
           <TabsTrigger value="general">الإعدادات العامة</TabsTrigger>
           <TabsTrigger value="appearance">المظهر</TabsTrigger>
           <TabsTrigger value="hero">القسم الرئيسي</TabsTrigger>
