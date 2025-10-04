@@ -74,8 +74,9 @@ const App = () => {
           <Toaster />
           <Sonner />
           <SupabaseAuthProvider>
-            <LanguageProvider>
-              <DarkModeProvider>
+            <FirebaseAuthProvider>
+              <LanguageProvider>
+                <DarkModeProvider>
                 <UserDataProvider>
                   <AdaptiveLayoutProvider>
                     <BrowserRouter>
@@ -167,6 +168,7 @@ const App = () => {
                 </UserDataProvider>
               </DarkModeProvider>
             </LanguageProvider>
+            </FirebaseAuthProvider>
           </SupabaseAuthProvider>
         </TooltipProvider>
       </QueryClientProvider>
