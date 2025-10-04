@@ -1,0 +1,130 @@
+/* نسيم المحيط - Ocean Breeze Theme */
+[data-theme="ocean-breeze"] {
+  /* الألوان الأساسية */
+  --bg: #0a1929;
+  --fg: #e3f2fd;
+  --primary: #29b6f6;
+  --primary-fg: #01579b;
+  --secondary: #26c6da;
+  --secondary-fg: #00acc1;
+  --muted: #1e3a8a;
+  --muted-fg: #90caf9;
+  
+  /* ألوان الحالة */
+  --success: #4caf50;
+  --warning: #ff9800;
+  --danger: #f44336;
+  --info: #2196f3;
+  --border: #1565c0;
+  
+  /* نصف قطر الحدود */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  
+  /* المسافات */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* الظلال */
+  --shadow-card: 0 10px 30px rgba(41, 182, 246, 0.15);
+  --shadow-dialog: 0 20px 60px rgba(10, 25, 41, 0.3);
+  --shadow-popover: 0 8px 24px rgba(29, 182, 246, 0.12);
+  
+  /* التدرجات */
+  --gradient-primary: linear-gradient(135deg, #29b6f6, #26c6da);
+  --gradient-secondary: linear-gradient(135deg, #1e3a8a, #0a1929);
+  --gradient-ocean: linear-gradient(180deg, #0d1421 0%, #1e3a8a 50%, #29b6f6 100%);
+  
+  /* تأثيرات النص */
+  --text-shadow-primary: 0 2px 4px rgba(41, 182, 246, 0.3);
+  --text-shadow-glow: 0 0 10px rgba(41, 182, 246, 0.5);
+}
+
+/* تخصيصات خاصة بالثيم */
+[data-theme="ocean-breeze"] .hero-3d__canvas.ocean-breeze {
+  border-radius: var(--radius-lg);
+  box-shadow: 
+    inset 0 0 20px rgba(41, 182, 246, 0.1),
+    0 8px 32px rgba(10, 25, 41, 0.4);
+}
+
+[data-theme="ocean-breeze"] .ocean-wave-effect {
+  background: var(--gradient-ocean);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="ocean-breeze"] .ocean-wave-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(41, 182, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 60%, rgba(38, 198, 218, 0.1) 0%, transparent 50%);
+  animation: oceanWaves 8s ease-in-out infinite;
+}
+
+@keyframes oceanWaves {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-5px) scale(1.02);
+    opacity: 0.8;
+  }
+}
+
+/* تأثيرات الأزرار */
+[data-theme="ocean-breeze"] button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="ocean-breeze"] button:hover {
+  box-shadow: 
+    0 8px 25px rgba(41, 182, 246, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* تأثيرات البطاقات */
+[data-theme="ocean-breeze"] .card {
+  background: linear-gradient(145deg, rgba(30, 58, 138, 0.2), rgba(10, 25, 41, 0.4));
+  border: 1px solid rgba(41, 182, 246, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="ocean-breeze"] .card:hover {
+  border-color: rgba(41, 182, 246, 0.4);
+  box-shadow: 
+    0 20px 40px rgba(41, 182, 246, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transform: translateY(-4px);
+}
+
+/* تخصيص شريط التمرير */
+[data-theme="ocean-breeze"] ::-webkit-scrollbar {
+  width: 8px;
+}
+
+[data-theme="ocean-breeze"] ::-webkit-scrollbar-track {
+  background: rgba(30, 58, 138, 0.1);
+  border-radius: 4px;
+}
+
+[data-theme="ocean-breeze"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #29b6f6, #26c6da);
+  border-radius: 4px;
+}
+
+[data-theme="ocean-breeze"] ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #26c6da, #29b6f6);
+}

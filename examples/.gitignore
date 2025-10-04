@@ -1,0 +1,5 @@
+# Example files are for documentation purposes only
+# These are not part of the main application build
+*.example.js
+*.example.ts
+*.example.tsx
