@@ -39,7 +39,7 @@ export const FirebaseAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
         setUserProfile(null);
       }
     } catch (error) {
-      console.error('Error fetching user profile:', error);
+      console.info('Firebase profile fetch not available:', error);
       setUserProfile(null);
     }
   };
@@ -47,11 +47,13 @@ export const FirebaseAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const signOut = async () => {
     try {
       const auth = await getFirebaseAuth();
-      await auth.signOut();
+      if (auth) {
+        await auth.signOut();
+      }
       setUser(null);
       setUserProfile(null);
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.info('Firebase sign out not available:', error);
     }
   };
 
@@ -61,6 +63,13 @@ export const FirebaseAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const initializeAuth = async () => {
       try {
         const auth = await getFirebaseAuth();
+        
+        // If Firebase is not available, just mark as not loading
+        if (!auth) {
+          console.info('Firebase auth not configured - skipping');
+          setLoading(false);
+          return;
+        }
         
         unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
           console.log('Firebase auth state changed:', firebaseUser?.uid);
@@ -76,7 +85,7 @@ export const FirebaseAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
           setLoading(false);
         });
       } catch (error) {
-        console.error('Error initializing Firebase auth:', error);
+        console.info('Firebase auth not available:', error);
         setLoading(false);
       }
     };

@@ -27,7 +27,10 @@ export interface UserActivity {
 
 export const useUnifiedUserData = () => {
   const { user: supabaseUser } = useSupabaseAuth();
-  const { user: firebaseUser, userProfile: firebaseProfile } = useFirebaseAuth();
+  // Firebase is optional - gracefully handle if not available
+  const firebaseAuth = useFirebaseAuth();
+  const firebaseUser = firebaseAuth?.user || null;
+  const firebaseProfile = firebaseAuth?.userProfile || null;
   const { toast } = useToast();
   
   const [userShop, setUserShop] = useState<UserShop | null>(null);

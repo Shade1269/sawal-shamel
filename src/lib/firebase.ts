@@ -16,7 +16,10 @@ const initializeFirebase = async () => {
   try {
     const { data, error } = await supabase.functions.invoke('get-firebase-config');
     
-    if (error) throw error;
+    if (error) {
+      console.warn('Firebase config not available:', error.message);
+      return { app: null, auth: null, db: null };
+    }
     
     firebaseConfig = data.firebaseConfig;
     app = initializeApp(firebaseConfig);
@@ -25,32 +28,51 @@ const initializeFirebase = async () => {
     
     return { app, auth, db };
   } catch (error) {
-    console.error('Error initializing Firebase:', error);
-    throw error;
+    console.warn('Firebase initialization skipped:', error);
+    return { app: null, auth: null, db: null };
   }
 };
 
 // Get Firebase auth instance
 export const getFirebaseAuth = async () => {
-  const { auth } = await initializeFirebase();
-  return auth;
+  try {
+    const { auth } = await initializeFirebase();
+    return auth;
+  } catch (error) {
+    console.warn('Firebase auth not available');
+    return null;
+  }
 };
 
 // Get Firebase Firestore instance
 export const getFirebaseFirestore = async () => {
-  const { db } = await initializeFirebase();
-  return db;
+  try {
+    const { db } = await initializeFirebase();
+    return db;
+  } catch (error) {
+    console.warn('Firebase Firestore not available');
+    return null;
+  }
 };
 
 // Get Firebase app instance
 export const getFirebaseApp = async () => {
-  const { app } = await initializeFirebase();
-  return app;
+  try {
+    const { app } = await initializeFirebase();
+    return app;
+  } catch (error) {
+    console.warn('Firebase app not available');
+    return null;
+  }
 };
 
 // Configure reCAPTCHA for SMS verification
 export const setupRecaptcha = async (containerId: string) => {
   const authInstance = await getFirebaseAuth();
+  
+  if (!authInstance) {
+    throw new Error('Firebase auth not available');
+  }
   
   // Force clear any existing reCAPTCHA instances
   if (window.recaptchaVerifier) {
@@ -109,6 +131,11 @@ export const setupRecaptcha = async (containerId: string) => {
 export const sendSMSOTP = async (phoneNumber: string, recaptchaVerifier: RecaptchaVerifier) => {
   try {
     const authInstance = await getFirebaseAuth();
+    
+    if (!authInstance) {
+      return { success: false, error: 'خدمة Firebase غير متوفرة حالياً' };
+    }
+    
     console.log('Attempting to send SMS to:', phoneNumber);
     const confirmationResult = await signInWithPhoneNumber(authInstance, phoneNumber, recaptchaVerifier);
     console.log('SMS sent successfully, confirmation result:', confirmationResult);

@@ -7,11 +7,18 @@ let db: any = null;
 export const getFirestoreDB = async () => {
   if (db) return db;
   
-  const auth = await getFirebaseAuth();
-  const app = auth.app;
-  db = initFirestore(app);
-  
-  return db;
+  try {
+    const auth = await getFirebaseAuth();
+    if (!auth) return null;
+    
+    const app = auth.app;
+    db = initFirestore(app);
+    
+    return db;
+  } catch (error) {
+    console.warn('Firestore not available:', error);
+    return null;
+  }
 };
 
 // Save user data to Firestore with complete user database structure
