@@ -167,13 +167,10 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       const cleanPhone = phone.replace(/\s|-/g, '');
       const fullPhone = cleanPhone.startsWith('+') ? cleanPhone : `+966${cleanPhone}`;
       
-      // استيراد Firebase
-      const { getFirebaseAuth } = await import('@/lib/firebase');
-      const { RecaptchaVerifier, signInWithPhoneNumber } = await import('firebase/auth');
+      // استخدام مساعدات Firebase
+      const { setupRecaptcha, sendSMSOTP } = await import('@/lib/firebase');
       
-      const auth = await getFirebaseAuth();
-      
-      // إنشاء reCAPTCHA verifier
+      // إنشاء container لـ reCAPTCHA
       const recaptchaContainer = 'customer-recaptcha-container';
       let container = document.getElementById(recaptchaContainer);
       
@@ -184,32 +181,19 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         document.body.appendChild(container);
       }
       
-      // تنظيف reCAPTCHA السابق
-      if (window.recaptchaVerifier) {
-        try {
-          await window.recaptchaVerifier.clear();
-          delete window.recaptchaVerifier;
-        } catch (e) {
-          console.log('Clearing reCAPTCHA:', e);
-        }
-      }
-      
-      container.innerHTML = '';
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
-      // إنشاء reCAPTCHA جديد
-      window.recaptchaVerifier = new RecaptchaVerifier(auth, recaptchaContainer, {
-        size: 'invisible',
-        callback: () => console.log('reCAPTCHA solved'),
-        'expired-callback': () => console.log('reCAPTCHA expired')
-      });
+      // إعداد reCAPTCHA
+      const verifier = await setupRecaptcha(recaptchaContainer);
       
       // إرسال OTP
-      const confirmationResult = await signInWithPhoneNumber(auth, fullPhone, window.recaptchaVerifier);
+      const result = await sendSMSOTP(fullPhone, verifier);
+      
+      if (!result.success) {
+        throw new Error(result.error);
+      }
       
       // حفظ confirmationResult في sessionStorage
       sessionStorage.setItem('customer-otp-confirmation', JSON.stringify({
-        verificationId: confirmationResult.verificationId,
+        verificationId: result.confirmationResult.verificationId,
         phone: fullPhone,
         storeId
       }));
@@ -219,7 +203,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         description: `تم إرسال رمز التحقق إلى ${fullPhone}`,
       });
 
-      return { success: true, confirmationResult };
+      return { success: true };
     } catch (error: any) {
       console.error('خطأ في إرسال OTP:', error);
       
@@ -262,7 +246,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       
       const auth = await getFirebaseAuth();
       const credential = PhoneAuthProvider.credential(verificationId, otpCode);
-      const result = await signInWithCredential(auth, credential);
+      await signInWithCredential(auth, credential);
 
       // تنظيف بيانات التحقق
       sessionStorage.removeItem('customer-otp-confirmation');
