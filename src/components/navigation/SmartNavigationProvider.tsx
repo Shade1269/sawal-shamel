@@ -64,6 +64,34 @@ interface SmartNavigationContextType {
 
 const SmartNavigationContext = createContext<SmartNavigationContextType | undefined>(undefined);
 
+const readStoredFavorites = (): NavigationItem[] => {
+  if (typeof window === 'undefined') {
+    return [];
+  }
+
+  try {
+    const raw = window.localStorage?.getItem('nav-favorites');
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn('Failed to read navigation favorites from localStorage.', error);
+    return [];
+  }
+};
+
+const persistFavorites = (items: NavigationItem[]) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    window.localStorage?.setItem('nav-favorites', JSON.stringify(items));
+  } catch (error) {
+    console.warn('Failed to persist navigation favorites to localStorage.', error);
+  }
+};
+
 interface SmartNavigationProviderProps {
   children: React.ReactNode;
   navigationItems: NavigationItem[];
@@ -86,7 +114,7 @@ export function SmartNavigationProvider({
     bottomNavVisible: device.isMobile,
     searchQuery: '',
     recentPages: [],
-    favoritePages: JSON.parse(localStorage.getItem('nav-favorites') || '[]'),
+    favoritePages: readStoredFavorites(),
     navigationHistory: [location.pathname],
     canGoBack: false,
     canGoForward: false
@@ -169,13 +197,13 @@ export function SmartNavigationProvider({
   const addToFavorites = (item: NavigationItem) => {
     const newFavorites = [...state.favoritePages.filter(fav => fav.id !== item.id), item];
     setState(prev => ({ ...prev, favoritePages: newFavorites }));
-    localStorage.setItem('nav-favorites', JSON.stringify(newFavorites));
+    persistFavorites(newFavorites);
   };
 
   const removeFromFavorites = (itemId: string) => {
     const newFavorites = state.favoritePages.filter(fav => fav.id !== itemId);
     setState(prev => ({ ...prev, favoritePages: newFavorites }));
-    localStorage.setItem('nav-favorites', JSON.stringify(newFavorites));
+    persistFavorites(newFavorites);
   };
 
   const addToRecent = (item: NavigationItem) => {
