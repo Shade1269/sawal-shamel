@@ -119,21 +119,25 @@ export const useUnifiedUserData = () => {
             .maybeSingle();
             
           if (insertError) {
-            // إذا فشل الإدراج، ربما الملف موجود، نحاول البحث
-            console.log('Profile might exist, trying to fetch:', insertError);
+            // إذا فشل الإدراج، ربما الملف موجود
+            console.log('Profile creation failed, might already exist:', insertError.message);
             
-            // البحث بطريقة مختلفة
-            const { data: existingProfiles, error: selectError } = await supabase
-              .from('profiles')
-              .select('*')
-              .limit(1000); // نحصل على جميع الملفات ونبحث محلياً
-              
-            if (!selectError && existingProfiles) {
-              const phoneProfile = existingProfiles.find(p => p.phone === phoneNumber);
-              if (phoneProfile) {
-                profile = phoneProfile;
+            // محاولة البحث عن profile موجود بهذا الجوال
+            try {
+              const { data: existingProfile, error: selectError } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('phone', phoneNumber)
+                .maybeSingle();
+                
+              if (existingProfile) {
+                profile = existingProfile;
                 console.log('Found existing profile:', profile.id);
+              } else {
+                console.error('Could not find or create profile for phone:', phoneNumber);
               }
+            } catch (fetchError) {
+              console.error('Error fetching existing profile:', fetchError);
             }
           } else {
             profile = newProfile;
@@ -425,19 +429,25 @@ export const useUnifiedUserData = () => {
         return;
       }
       
-      unifyUserData().then(() => {
-        if (isMounted) {
-          Promise.all([
-            fetchUserShop(),
-            fetchUserActivities(),
-            fetchUserStatistics()
-          ]).finally(() => {
-            if (isMounted) {
-              setLoading(false);
-            }
-          });
-        }
-      });
+      unifyUserData()
+        .then(() => {
+          if (isMounted) {
+            return Promise.all([
+              fetchUserShop(),
+              fetchUserActivities(),
+              fetchUserStatistics()
+            ]);
+          }
+        })
+        .catch((error) => {
+          console.error('Error in unifyUserData:', error);
+          setError('فشل في تحميل بيانات المستخدم');
+        })
+        .finally(() => {
+          if (isMounted) {
+            setLoading(false);
+          }
+        });
     } else {
       setUserShop(null);
       setUserActivities([]);
