@@ -84,3 +84,6 @@ verify_jwt = false
 
 [functions.activity-feed]
 verify_jwt = false
+
+[functions.mcp-full-access]
+verify_jwt = false
