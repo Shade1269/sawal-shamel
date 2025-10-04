@@ -115,8 +115,8 @@ jobs:
           fi
 
       - name: Skip migrations (secrets not provided)
-        if: ${{ not (env.SUPABASE_DB_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '') }}
-      -  run: echo "::warning::Skipping DB migrations:secrets not provided"
+          if: ${{ !(env.SUPABASE_DB_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '') }}
+    run: echo "::warning::Skipping DB migrations: secrets not provided"
 
       - run: npm run lint --if-present
       - run: npm test
