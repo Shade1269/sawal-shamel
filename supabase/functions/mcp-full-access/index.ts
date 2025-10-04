@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-mcp-key',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key',
 };
 
 serve(async (req) => {
@@ -13,22 +13,42 @@ serve(async (req) => {
   }
 
   try {
-    // Verify Bearer Token (API Key)
-    const authHeader = req.headers.get('authorization');
     const expectedKey = Deno.env.get('MCP_API_KEY');
+    const url = new URL(req.url);
     
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized: Missing Bearer token' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    // Get API key from multiple sources
+    const apiKeyFromQuery = url.searchParams.get('api_key');
+    const apiKeyFromHeader = req.headers.get('x-api-key');
+    const authHeader = req.headers.get('authorization');
+    let apiKeyFromBearer = null;
+    
+    if (authHeader?.startsWith('Bearer ')) {
+      apiKeyFromBearer = authHeader.substring(7);
     }
     
-    const token = authHeader.substring(7); // Remove "Bearer " prefix
+    // Try to get API key from body (for POST requests)
+    let apiKeyFromBody = null;
+    let bodyText = '';
     
-    if (token !== expectedKey) {
+    if (req.method === 'POST') {
+      bodyText = await req.text();
+      try {
+        const body = JSON.parse(bodyText);
+        apiKeyFromBody = body.api_key;
+      } catch (e) {
+        // Not JSON, ignore
+      }
+    }
+    
+    // Check if any API key matches
+    const providedKey = apiKeyFromQuery || apiKeyFromHeader || apiKeyFromBearer || apiKeyFromBody;
+    
+    if (!providedKey || providedKey !== expectedKey) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized: Invalid token' }),
+        JSON.stringify({ 
+          error: 'Unauthorized: Invalid or missing API key',
+          hint: 'Provide API key via: ?api_key=xxx, x-api-key header, Authorization: Bearer xxx, or in body as api_key'
+        }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -38,7 +58,13 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { action, table, data, filters, query, columns } = await req.json();
+    // Parse request body (reuse bodyText if already read)
+    if (!bodyText && req.method === 'POST') {
+      bodyText = await req.text();
+    }
+    
+    const requestData = bodyText ? JSON.parse(bodyText) : {};
+    const { action, table, data, filters, query, columns } = requestData;
 
     let result;
 
