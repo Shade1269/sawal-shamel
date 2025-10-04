@@ -22,9 +22,10 @@ interface StoreHeaderProps {
   cartItemsCount: number;
   onCartClick: () => void;
   onWishlistClick: () => void;
+  onLoginClick: () => void;
 }
 
-export const StoreHeader = ({ store, cartItemsCount, onCartClick, onWishlistClick }: StoreHeaderProps) => {
+export const StoreHeader = ({ store, cartItemsCount, onCartClick, onWishlistClick, onLoginClick }: StoreHeaderProps) => {
   return (
     <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b shadow-sm">
       <div className="container mx-auto px-4 py-4">
@@ -95,6 +96,7 @@ export const StoreHeader = ({ store, cartItemsCount, onCartClick, onWishlistClic
             <Button 
               variant="ghost" 
               size="sm"
+              onClick={onLoginClick}
               className="hover:bg-primary/10 hover:text-primary transition-all duration-300"
             >
               <User className="h-4 w-4 mr-2" />

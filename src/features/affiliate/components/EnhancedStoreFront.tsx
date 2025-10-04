@@ -35,7 +35,8 @@ import {
   Clock,
   MapPin,
   Phone,
-  Mail
+  Mail,
+  User
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -44,6 +45,7 @@ import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
 import { motion, AnimatePresence } from "framer-motion";
 import { parseFeaturedCategories, type StoreCategory, type StoreSettings } from "@/hooks/useStoreSettings";
 import { useIsolatedStoreCart } from "@/hooks/useIsolatedStoreCart";
+import { CustomerAuthModal } from "@/components/storefront/CustomerAuthModal";
 
 interface Product {
   id: string;
@@ -115,6 +117,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   
   // States
   const [showCart, setShowCart] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedVariants, setSelectedVariants] = useState<{ [productId: string]: { [variantType: string]: string } }>({});
@@ -693,6 +696,17 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
             {/* Action Buttons */}
             <div className="flex items-center gap-1.5 md:gap-2">
+              {/* Login Button */}
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowAuthModal(true)}
+                className="hover:shadow-lg hover:scale-105 transition-all rounded-xl"
+              >
+                <User className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">تسجيل الدخول</span>
+              </Button>
+
               {/* Cart Button */}
               <Sheet open={showCart} onOpenChange={setShowCart}>
                 <SheetTrigger asChild>
@@ -711,12 +725,12 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                 </SheetContent>
               </Sheet>
 
-              {/* Authentication Button - Hidden on mobile, shown in menu */}
+              {/* Orders Button - Hidden on mobile */}
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={() => navigate(`/store/${storeSlug}/customer/orders`)}
-                className="hidden md:flex hover:shadow-lg hover:scale-105 transition-all rounded-xl"
+                className="hidden lg:flex hover:shadow-lg hover:scale-105 transition-all rounded-xl"
               >
                 <Clock className="h-4 w-4 mr-2" />
                 طلباتي
@@ -1600,6 +1614,15 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Customer Authentication Modal */}
+      <CustomerAuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        storeId={affiliateStore?.id || ''}
+        storeSlug={storeSlug || ''}
+        storeName={affiliateStore?.store_name || ''}
+      />
       </div>
     </StoreThemeProvider>
   );
