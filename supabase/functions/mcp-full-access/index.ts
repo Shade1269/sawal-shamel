@@ -13,13 +13,22 @@ serve(async (req) => {
   }
 
   try {
-    // Verify MCP API Key
-    const mcpKey = req.headers.get('x-mcp-key');
+    // Verify Bearer Token (API Key)
+    const authHeader = req.headers.get('authorization');
     const expectedKey = Deno.env.get('MCP_API_KEY');
     
-    if (!mcpKey || mcpKey !== expectedKey) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized: Invalid MCP API Key' }),
+        JSON.stringify({ error: 'Unauthorized: Missing Bearer token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const token = authHeader.substring(7); // Remove "Bearer " prefix
+    
+    if (token !== expectedKey) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: Invalid token' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
