@@ -9,6 +9,7 @@ import {
   Palette,
   Sparkles,
   Users,
+  Waves,
   Zap
 } from 'lucide-react';
 import { useStoreThemes, StoreTheme } from '@/hooks/useStoreThemes';
@@ -54,6 +55,8 @@ const ThemeIcon = ({ themeName }: { themeName: string }) => {
       return <Crown className="w-5 h-5" />;
     case 'aurora boutique':
       return <AuroraIcon />;
+    case 'sands & sea':
+      return <Waves className="w-5 h-5" />;
     case 'traditional arabic':
       return <Palette className="w-5 h-5" />;
     case 'colorful vibrant':
