@@ -1,7 +1,7 @@
 html[data-theme="default"] {
   /* Base HSL definitions */
   --background-hsl: 216 28% 7%;
-  --foreground-hsl: 210 67% 96%;
+  --foreground-hsl: 210 20% 98%;
   --primary-hsl: 212 100% 67%;
   --primary-foreground-hsl: 209 77% 7%;
   --secondary-hsl: 216 84% 52%;
@@ -9,16 +9,16 @@ html[data-theme="default"] {
   --accent-hsl: 269 100% 83%;
   --accent-foreground-hsl: 208 30% 15%;
   --muted-hsl: 215 18% 13%;
-  --muted-foreground-hsl: 213 17% 66%;
+  --muted-foreground-hsl: 213 17% 80%;
   --success-hsl: 128 49% 49%;
   --warning-hsl: 41 72% 48%;
   --danger-hsl: 3 93% 63%;
   --info-hsl: 208 100% 74%;
   --border-hsl: 212 12% 21%;
   --card-hsl: 215 20% 9%;
-  --card-foreground-hsl: 210 67% 96%;
+  --card-foreground-hsl: 210 20% 98%;
   --popover-hsl: 215 20% 9%;
-  --popover-foreground-hsl: 210 67% 96%;
+  --popover-foreground-hsl: 210 20% 98%;
   --chat-bg-hsl: 216 28% 7%;
   --chat-sent-hsl: 212 100% 67%;
   --chat-received-hsl: 213 15% 16%;

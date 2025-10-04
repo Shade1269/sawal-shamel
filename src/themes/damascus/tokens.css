@@ -5,24 +5,24 @@ html[data-theme="damascene"] {
   /* Damascus Heritage - Rich Dark Theme with Gold Accents */
   /* Base HSL definitions */
   --background-hsl: 0 0% 5%;
-  --foreground-hsl: 40 30% 90%;
+  --foreground-hsl: 40 20% 98%;
   --primary-hsl: 43 45% 48%;
   --primary-foreground-hsl: 0 0% 5%;
   --secondary-hsl: 0 0% 7%;
-  --secondary-foreground-hsl: 40 30% 90%;
+  --secondary-foreground-hsl: 40 20% 98%;
   --accent-hsl: 43 45% 55%;
   --accent-foreground-hsl: 0 0% 5%;
   --muted-hsl: 40 20% 65%;
-  --muted-foreground-hsl: 40 20% 65%;
+  --muted-foreground-hsl: 40 20% 80%;
   --success-hsl: 158 50% 54%;
   --warning-hsl: 41 73% 62%;
   --danger-hsl: 0 69% 67%;
   --info-hsl: 209 85% 65%;
   --border-hsl: 30 30% 13%;
   --card-hsl: 0 0% 7%;
-  --card-foreground-hsl: 40 30% 90%;
+  --card-foreground-hsl: 40 20% 98%;
   --popover-hsl: 0 0% 7%;
-  --popover-foreground-hsl: 40 30% 90%;
+  --popover-foreground-hsl: 40 20% 98%;
   --chat-bg-hsl: 0 0% 5%;
   --chat-sent-hsl: 43 45% 48%;
   --chat-received-hsl: 0 0% 10%;

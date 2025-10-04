@@ -645,68 +645,71 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   return (
     <StoreThemeProvider storeId={affiliateStore.id}>
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Enhanced Store Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
+      {/* Enhanced Store Header - Mobile Optimized */}
+      <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-xl border-b border-primary/20 shadow-lg">
+        <div className="container mx-auto px-3 md:px-6 py-3 md:py-4">
+          <div className="flex justify-between items-center gap-3">
             {/* Store Identity */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
               {affiliateStore?.logo_url && (
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   <img
                     src={affiliateStore.logo_url}
                     alt={`شعار متجر ${affiliateStore.store_name}`}
-                    className="w-12 h-12 rounded-xl object-cover shadow-lg ring-2 ring-primary/10"
+                    className="w-10 h-10 md:w-12 md:h-12 rounded-xl object-cover shadow-lg ring-2 ring-primary/20"
                     loading="lazy"
                   />
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background"></div>
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-2 border-background animate-pulse"></div>
                 </div>
               )}
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-base md:text-2xl font-bold text-foreground truncate">
                   {affiliateStore?.store_name}
                 </h1>
                 {affiliateStore?.bio && (
-                  <p className="text-sm text-muted-foreground max-w-md truncate">
+                  <p className="text-xs md:text-sm text-muted-foreground truncate hidden sm:block">
                     {affiliateStore.bio}
                   </p>
                 )}
-                <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2 md:gap-4 mt-0.5 md:mt-1 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <TrendingUp className="h-3 w-3" />
-                    {affiliateStore.total_orders} طلب
+                    <span className="hidden sm:inline">{affiliateStore.total_orders} طلب</span>
+                    <span className="sm:hidden">{affiliateStore.total_orders}</span>
                   </span>
                   <span className="flex items-center gap-1">
                     <Package className="h-3 w-3" />
-                    {products?.length || 0} منتج
+                    <span className="hidden sm:inline">{products?.length || 0} منتج</span>
+                    <span className="sm:hidden">{products?.length || 0}</span>
                   </span>
                 </div>
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 md:gap-2">
               {/* Cart Button */}
               <Sheet open={showCart} onOpenChange={setShowCart}>
                 <SheetTrigger asChild>
-                  <Button variant="outline" className="relative group hover:shadow-lg transition-all">
-                    <ShoppingCart className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-                    السلة
+                  <Button variant="outline" size="sm" className="relative group hover:shadow-lg hover:scale-105 transition-all rounded-xl">
+                    <ShoppingCart className="h-4 w-4 md:mr-2 group-hover:scale-110 transition-transform" />
+                    <span className="hidden md:inline">السلة</span>
                     {cartItemsCount > 0 && (
-                      <Badge className="absolute -top-2 -left-2 min-w-[20px] h-5 animate-pulse">
+                      <Badge className="absolute -top-1.5 -left-1.5 min-w-[18px] h-5 text-xs animate-bounce bg-danger shadow-lg">
                         {cartItemsCount}
                       </Badge>
                     )}
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-full sm:max-w-lg">
+                <SheetContent side="left" className="w-full sm:max-w-lg bg-card/98 backdrop-blur-xl">
                   {/* Cart content will be rendered below */}
                 </SheetContent>
               </Sheet>
 
-              {/* Authentication Button */}
+              {/* Authentication Button - Hidden on mobile, shown in menu */}
               <Button 
                 variant="outline" 
+                size="sm"
                 onClick={() => {
                   if (isAuthenticated) {
                     navigate(`/store/${storeSlug}/customer/profile`);
@@ -714,11 +717,11 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                     navigate(`/store/${storeSlug}/auth`);
                   }
                 }}
-                className="hover:shadow-lg transition-all"
+                className="hidden md:flex hover:shadow-lg hover:scale-105 transition-all rounded-xl"
               >
                 {isAuthenticated ? (
                   <>
-                    <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
+                    <CheckCircle className="h-4 w-4 mr-2 text-success" />
                     حسابي
                   </>
                 ) : (
@@ -726,11 +729,12 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                 )}
               </Button>
 
-              {/* My Orders Button */}
+              {/* My Orders Button - Hidden on mobile */}
               <Button 
                 variant="outline"
+                size="sm"
                 onClick={() => navigate(`/store/${storeSlug}/customer/orders`)}
-                className="hover:shadow-lg transition-all"
+                className="hidden md:flex hover:shadow-lg hover:scale-105 transition-all rounded-xl"
               >
                 <Clock className="h-4 w-4 mr-2" />
                 طلباتي
@@ -741,13 +745,13 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 space-y-8">
-        {/* Hero Section */}
+      <main className="container mx-auto px-3 md:px-6 py-4 md:py-8 space-y-6 md:space-y-8">
+        {/* Hero Section - Enhanced */}
         {(storeSettings?.hero_title || storeSettings?.hero_image_url) && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative overflow-hidden rounded-3xl shadow-2xl mb-12"
+            className="relative overflow-hidden rounded-2xl md:rounded-3xl shadow-2xl mb-8 md:mb-12"
           >
             {/* Background Image */}
             <div className="absolute inset-0 z-0">
@@ -1229,7 +1233,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
               {filteredProducts.map((product, index) => (
                 <motion.div
                   key={product.id}
@@ -1245,7 +1249,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                   }}
                   className="group"
                 >
-                  <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-[1.02] bg-gradient-to-br from-card to-card/80">
+                  <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 bg-card rounded-2xl">
                     {/* Product Image */}
                     <div className="aspect-square relative overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10">
                       {product.image_urls && product.image_urls.length > 0 ? (
@@ -1257,25 +1261,25 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Package className="h-20 w-20 text-muted-foreground/50" />
+                          <Package className="h-16 md:h-20 w-16 md:w-20 text-muted-foreground/50" />
                         </div>
                       )}
                       
                       {/* Discount Badge */}
                       {product.discount_percentage && product.discount_percentage > 0 && (
-                        <Badge className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white animate-pulse">
+                        <Badge className="absolute top-2 md:top-3 right-2 md:right-3 bg-danger hover:bg-danger text-white animate-pulse shadow-lg">
                           <Percent className="h-3 w-3 mr-1" />
                           {product.discount_percentage}%
                         </Badge>
                       )}
 
                       {/* Quick Actions Overlay */}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-2 md:gap-3">
                         <Button 
                           size="sm" 
                           variant="secondary"
                           onClick={() => setSelectedProduct(product)}
-                          className="backdrop-blur-sm hover:scale-110 transition-transform"
+                          className="backdrop-blur-md hover:scale-110 transition-transform shadow-lg rounded-xl"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -1283,14 +1287,14 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                           size="sm" 
                           variant="secondary"
                           onClick={() => toggleWishlist(product.id)}
-                          className="backdrop-blur-sm hover:scale-110 transition-transform"
+                          className="backdrop-blur-md hover:scale-110 transition-transform shadow-lg rounded-xl"
                         >
-                          <Heart className={`h-4 w-4 ${wishlist.includes(product.id) ? 'fill-red-500 text-red-500' : ''}`} />
+                          <Heart className={`h-4 w-4 ${wishlist.includes(product.id) ? 'fill-danger text-danger' : ''}`} />
                         </Button>
                         <Button 
                           size="sm"
                           onClick={() => addToCart(product)}
-                          className="backdrop-blur-sm hover:scale-110 transition-transform"
+                          className="backdrop-blur-md hover:scale-110 transition-transform shadow-lg rounded-xl"
                           disabled={product.stock === 0}
                         >
                           <ShoppingCart className="h-4 w-4" />
@@ -1307,15 +1311,15 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                       )}
                     </div>
 
-                    <CardContent className="p-5 space-y-4">
+                    <CardContent className="p-4 md:p-5 space-y-3 md:space-y-4">
                       {/* Product Info */}
-                      <div className="space-y-2">
-                        <h3 className="font-bold text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                      <div className="space-y-1.5 md:space-y-2">
+                        <h3 className="font-bold text-base md:text-lg leading-tight line-clamp-2 text-foreground group-hover:text-primary transition-colors">
                           {product.title}
                         </h3>
                         
                         {product.description && (
-                          <p className="text-sm text-muted-foreground line-clamp-2">
+                          <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                             {product.description}
                           </p>
                         )}
@@ -1324,42 +1328,42 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                       {/* Rating */}
                       {product.rating && (
                         <div className="flex items-center gap-2">
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-0.5">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <Star
                                 key={star}
-                                className={`h-4 w-4 ${
+                                className={`h-3.5 w-3.5 md:h-4 md:w-4 ${
                                   star <= (product.rating || 0)
-                                    ? 'fill-yellow-400 text-yellow-400'
-                                    : 'text-gray-300'
+                                    ? 'fill-warning text-warning'
+                                    : 'fill-muted text-muted'
                                 }`}
                               />
                             ))}
                           </div>
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-xs md:text-sm text-muted-foreground">
                             ({product.reviews_count || 0})
                           </span>
                         </div>
                       )}
                       
                       {/* Price */}
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-2xl font-bold text-primary">
+                      <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                        <div className="space-y-0.5">
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-xl md:text-2xl font-bold text-primary">
                               {(product.final_price || product.price_sar).toFixed(0)}
                             </span>
-                            <span className="text-sm text-muted-foreground">ريال</span>
+                            <span className="text-xs md:text-sm text-muted-foreground font-medium">ريال</span>
                           </div>
                           {product.discount_percentage && product.discount_percentage > 0 && (
-                            <span className="text-sm text-muted-foreground line-through">
+                            <span className="text-xs md:text-sm text-muted-foreground line-through">
                               {product.price_sar.toFixed(0)} ريال
                             </span>
                           )}
                         </div>
                         
                         {product.stock && product.stock <= 5 && product.stock > 0 && (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs border-warning text-warning">
                             {product.stock} متبقي
                           </Badge>
                         )}
@@ -1368,11 +1372,11 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                       {/* Add to Cart Button */}
                       <Button 
                         onClick={() => addToCart(product)}
-                        className="w-full group/btn bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary transition-all duration-300 shadow-lg hover:shadow-xl"
+                        className="w-full group/btn bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/95 hover:via-primary/90 hover:to-primary/85 transition-all duration-300 shadow-lg hover:shadow-xl rounded-xl font-semibold"
                         size="lg"
                         disabled={product.stock === 0}
                       >
-                        <Plus className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform" />
+                        <Plus className="h-4 w-4 mr-2 group-hover/btn:scale-125 transition-transform" />
                         إضافة للسلة
                       </Button>
                     </CardContent>

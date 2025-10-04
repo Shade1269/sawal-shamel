@@ -3,7 +3,7 @@ html[data-theme="luxury"] {
 
   /* Base HSL definitions */
   --background-hsl: 0 27% 8%;
-  --foreground-hsl: 35 55% 94%;
+  --foreground-hsl: 35 20% 98%;
   --primary-hsl: 46 65% 52%;
   --primary-foreground-hsl: 19 52% 8%;
   --secondary-hsl: 19 42% 50%;
@@ -11,16 +11,16 @@ html[data-theme="luxury"] {
   --accent-hsl: 40 89% 76%;
   --accent-foreground-hsl: 25 45% 14%;
   --muted-hsl: 0 24% 13%;
-  --muted-foreground-hsl: 28 30% 79%;
+  --muted-foreground-hsl: 28 30% 85%;
   --success-hsl: 135 59% 57%;
   --warning-hsl: 45 86% 62%;
   --danger-hsl: 0 79% 63%;
   --info-hsl: 195 86% 64%;
   --border-hsl: 12 28% 18%;
   --card-hsl: 0 22% 12%;
-  --card-foreground-hsl: 35 55% 94%;
+  --card-foreground-hsl: 35 20% 98%;
   --popover-hsl: 0 22% 12%;
-  --popover-foreground-hsl: 35 55% 94%;
+  --popover-foreground-hsl: 35 20% 98%;
   --chat-bg-hsl: 0 27% 8%;
   --chat-sent-hsl: 46 65% 52%;
   --chat-received-hsl: 19 24% 18%;

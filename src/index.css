@@ -90,6 +90,7 @@
 }
 
 @layer components {
+  /* تأثير زجاجي جميل */
   .glass-effect {
     backdrop-filter: blur(20px);
     background: color-mix(in srgb, var(--surface) 80%, transparent);
@@ -98,6 +99,7 @@
     transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
 
+  /* تأثير الرفع عند التحويم */
   .hover-lift {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
@@ -107,6 +109,7 @@
     box-shadow: var(--shadow-glass-strong);
   }
 
+  /* تأثير التوهج عند التحويم */
   .hover-glow {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
@@ -116,6 +119,39 @@
       0 0 0 1px color-mix(in srgb, var(--primary) 25%, transparent),
       var(--shadow-glass-soft);
     transform: translateY(-2px);
+  }
+
+  /* تأثير الضغط الجميل للأزرار */
+  .btn-press-effect {
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-press-effect:active {
+    transform: scale(0.97);
+  }
+
+  .btn-press-effect:focus-visible {
+    outline: none;
+    box-shadow: 
+      0 0 0 3px var(--bg),
+      0 0 0 6px color-mix(in srgb, var(--primary) 40%, transparent),
+      0 8px 16px color-mix(in srgb, var(--primary) 20%, transparent);
+  }
+
+  .btn-press-effect:focus-visible::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--primary) 20%, transparent),
+      color-mix(in srgb, var(--accent) 20%, transparent)
+    );
+    opacity: 0.5;
+    animation: ripple 0.6s ease-out;
+    pointer-events: none;
   }
 
   .message-appear {
@@ -347,5 +383,16 @@
   }
   50% {
     background-position: 100% 50%;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.05);
   }
 }
