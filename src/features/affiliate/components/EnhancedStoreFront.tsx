@@ -43,7 +43,7 @@ import { ProductImageCarousel } from "@/features/commerce/components/ProductImag
 import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
 import { motion, AnimatePresence } from "framer-motion";
 import { parseFeaturedCategories, type StoreCategory, type StoreSettings } from "@/hooks/useStoreSettings";
-// import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
+import { useIsolatedStoreCart } from "@/hooks/useIsolatedStoreCart";
 
 interface Product {
   id: string;
@@ -112,12 +112,8 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const storeSlug = propStoreSlug || paramStoreSlug;
   const navigate = useNavigate();
   const { toast } = useToast();
-  // Temporary authentication state - will be integrated with customer auth later
-  const isAuthenticated = false;
-  const customer = null;
   
   // States
-  const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -148,6 +144,16 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     },
     enabled: !!storeSlug,
   });
+
+  // استخدام نظام السلة المحسّن
+  const { 
+    cart: isolatedCart, 
+    loading: cartLoading, 
+    addToCart: addToIsolatedCart,
+    updateQuantity: updateIsolatedQuantity,
+    removeFromCart: removeFromIsolatedCart,
+    clearCart
+  } = useIsolatedStoreCart(affiliateStore?.id || '');
 
   // جلب المنتجات
   const { data: products, isLoading: productsLoading } = useQuery({
@@ -210,12 +216,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     refetchOnMount: 'always'
   });
 
-  // حساب المجموع
-  const cartTotal = cart.reduce((total, item) =>
-    total + (item.product.final_price || item.product.price_sar) * item.quantity, 0
-  );
-
-  const cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
+  // حساب المجموع من السلة المعزولة
+  const cartTotal = isolatedCart?.total || 0;
+  const cartItemsCount = isolatedCart?.items.reduce((total, item) => total + item.quantity, 0) || 0;
 
   const productCategoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -334,45 +337,53 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     }
   }) || [];
 
-  // وظائف السلة
-  const addToCart = (product: Product, quantity: number = 1) => {
-    const existingItem = cart.find(item => item.product.id === product.id);
-
-    if (existingItem) {
-      setCart(cart.map(item =>
-        item.product.id === product.id
-          ? { ...item, quantity: item.quantity + quantity }
-          : item
-      ));
-    } else {
-      setCart([...cart, { product, quantity }]);
+  // وظائف السلة المحسّنة
+  const addToCart = async (product: Product, quantity: number = 1) => {
+    try {
+      await addToIsolatedCart(
+        product.id,
+        quantity,
+        product.final_price || product.price_sar,
+        product.title
+      );
+      
+      toast({
+        title: "✅ تم إضافة المنتج للسلة",
+        description: `تم إضافة ${product.title} إلى سلة التسوق`,
+      });
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل إضافة المنتج للسلة",
+        variant: "destructive"
+      });
     }
-
-    toast({
-      title: "✅ تم إضافة المنتج للسلة",
-      description: `تم إضافة ${product.title} إلى سلة التسوق`,
-    });
   };
 
-  const removeFromCart = (productId: string) => {
-    setCart(cart.filter(item => item.product.id !== productId));
-    toast({
-      title: "🗑️ تم حذف المنتج",
-      description: "تم حذف المنتج من السلة",
-    });
+  const removeFromCart = async (itemId: string) => {
+    try {
+      await removeFromIsolatedCart(itemId);
+      toast({
+        title: "🗑️ تم حذف المنتج",
+        description: "تم حذف المنتج من السلة",
+      });
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+    }
   };
 
-  const updateCartQuantity = (productId: string, newQuantity: number) => {
+  const updateCartQuantity = async (itemId: string, newQuantity: number) => {
     if (newQuantity === 0) {
-      removeFromCart(productId);
+      await removeFromCart(itemId);
       return;
     }
 
-    setCart(cart.map(item =>
-      item.product.id === productId
-        ? { ...item, quantity: newQuantity }
-        : item
-    ));
+    try {
+      await updateIsolatedQuantity(itemId, newQuantity);
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+    }
   };
 
   const toggleWishlist = (productId: string) => {
@@ -388,16 +399,10 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   };
 
   const handleCheckoutClick = () => {
-    // حفظ معلومات المتجر في localStorage للاستخدام في صفحة الطلب
-    if (typeof window !== 'undefined' && storeSlug) {
-      window.localStorage.setItem('storefront:last-slug', storeSlug);
-      if (affiliateStore?.id) {
-        window.localStorage.setItem('storefront:last-store-id', affiliateStore.id);
-      }
+    // التوجه لصفحة الطلب الخاصة بالمتجر
+    if (storeSlug) {
+      navigate(`/store/${storeSlug}/checkout`);
     }
-    
-    // التوجه مباشرة لصفحة الطلب
-    navigate('/checkout');
   };
 
   const clearFilters = () => {
@@ -709,29 +714,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               {/* Authentication Button - Hidden on mobile, shown in menu */}
               <Button 
                 variant="outline" 
-                size="sm"
-                onClick={() => {
-                  if (isAuthenticated) {
-                    navigate(`/store/${storeSlug}/customer/profile`);
-                  } else {
-                    navigate(`/store/${storeSlug}/auth`);
-                  }
-                }}
-                className="hidden md:flex hover:shadow-lg hover:scale-105 transition-all rounded-xl"
-              >
-                {isAuthenticated ? (
-                  <>
-                    <CheckCircle className="h-4 w-4 mr-2 text-success" />
-                    حسابي
-                  </>
-                ) : (
-                  'تسجيل دخول'
-                )}
-              </Button>
-
-              {/* My Orders Button - Hidden on mobile */}
-              <Button 
-                variant="outline"
                 size="sm"
                 onClick={() => navigate(`/store/${storeSlug}/customer/orders`)}
                 className="hidden md:flex hover:shadow-lg hover:scale-105 transition-all rounded-xl"
@@ -1402,7 +1384,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
           </SheetHeader>
           
           <div className="mt-6 space-y-4">
-            {cart.length === 0 ? (
+            {!isolatedCart || isolatedCart.items.length === 0 ? (
               <div className="text-center py-12 space-y-4">
                 <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto">
                   <ShoppingCart className="h-10 w-10 text-muted-foreground" />
@@ -1420,24 +1402,24 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             ) : (
               <>
                 <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-                  {cart.map((item) => (
+                  {isolatedCart.items.map((item) => (
                     <motion.div 
-                      key={item.product.id} 
+                      key={item.id} 
                       layout
                       className="flex items-center gap-3 p-4 border rounded-xl bg-card/50 hover:bg-card transition-colors"
                     >
                       <img 
-                        src={item.product.image_urls?.[0] || '/placeholder.svg'} 
-                        alt={item.product.title}
+                        src={item.product_image_url || '/placeholder.svg'} 
+                        alt={item.product_title}
                         className="w-16 h-16 object-cover rounded-lg border"
                       />
                       <div className="flex-1 min-w-0 space-y-1">
-                        <h4 className="font-medium text-sm line-clamp-2">{item.product.title}</h4>
+                        <h4 className="font-medium text-sm line-clamp-2">{item.product_title}</h4>
                         <p className="text-primary font-bold">
-                          {((item.product.final_price || item.product.price_sar) * item.quantity).toFixed(0)} ريال
+                          {item.total_price_sar.toFixed(0)} ريال
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {(item.product.final_price || item.product.price_sar).toFixed(0)} ريال × {item.quantity}
+                          {item.unit_price_sar.toFixed(0)} ريال × {item.quantity}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -1445,7 +1427,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                           <Button 
                             size="sm" 
                             variant="ghost"
-                            onClick={() => updateCartQuantity(item.product.id, item.quantity - 1)}
+                            onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
                             className="h-8 w-8 p-0"
                           >
                             <Minus className="h-3 w-3" />
@@ -1454,7 +1436,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                           <Button 
                             size="sm" 
                             variant="ghost"
-                            onClick={() => updateCartQuantity(item.product.id, item.quantity + 1)}
+                            onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
                             className="h-8 w-8 p-0"
                           >
                             <Plus className="h-3 w-3" />
@@ -1463,7 +1445,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                         <Button 
                           size="sm" 
                           variant="ghost"
-                          onClick={() => removeFromCart(item.product.id)}
+                          onClick={() => removeFromCart(item.id)}
                           className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
                         >
                           <X className="h-4 w-4" />

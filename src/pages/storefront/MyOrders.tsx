@@ -80,9 +80,22 @@ function MyOrders() {
       });
 
       if (error) throw error;
-      setOrders((data || []).map(order => ({
-        ...order,
-        order_items: (order.order_items as any[]) || []
+      
+      // Transform data to match Order interface
+      setOrders((data || []).map((order: any) => ({
+        order_id: order.order_id,
+        order_number: order.order_number,
+        created_at: order.created_at,
+        status: order.status,
+        total_sar: order.total_amount,
+        item_count: Array.isArray(order.items) ? order.items.length : 0,
+        order_items: Array.isArray(order.items) ? order.items.map((item: any) => ({
+          id: item.id || '',
+          title: item.product_title || '',
+          quantity: item.quantity || 0,
+          unit_price: item.unit_price || 0,
+          total_price: item.total_price || 0
+        })) : []
       })));
     } catch (error) {
       console.error('Error fetching orders:', error);

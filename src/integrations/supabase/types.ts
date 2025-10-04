@@ -9300,12 +9300,13 @@ export type Database = {
         Args: { p_session_id: string; p_store_id: string }
         Returns: {
           created_at: string
-          item_count: number
+          customer_name: string
+          customer_phone: string
+          items: Json
           order_id: string
-          order_items: Json
           order_number: string
           status: string
-          total_sar: number
+          total_amount: number
         }[]
       }
       get_store_theme_config: {
@@ -9388,6 +9389,16 @@ export type Database = {
           user_id?: string
         }
         Returns: string
+      }
+      merge_customer_data: {
+        Args: {
+          p_email?: string
+          p_firebase_uid?: string
+          p_name?: string
+          p_phone: string
+          p_store_id?: string
+        }
+        Returns: Json
       }
       order_exists_no_rls: {
         Args: { p_order_id: string }
