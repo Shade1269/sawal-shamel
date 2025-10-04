@@ -8,6 +8,7 @@ import { AdaptiveLayoutProvider, SmartNavigationProvider } from "@/components/la
 import { DarkModeProvider } from "@/shared/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
+import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
 import { navigationItems } from "@/data/navigationItems";
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
