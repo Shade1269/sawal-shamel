@@ -158,67 +158,127 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
     }
   };
 
-  // إرسال كود OTP
+  // إرسال كود OTP عبر Firebase
   const sendOTP = async (phone: string, storeId?: string) => {
     try {
       setSession(prev => ({ ...prev, isLoading: true }));
       
-      // توليد كود OTP
-      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      // تنظيف رقم الهاتف
+      const cleanPhone = phone.replace(/\s|-/g, '');
+      const fullPhone = cleanPhone.startsWith('+') ? cleanPhone : `+966${cleanPhone}`;
       
-      // حفظ جلسة OTP
-      const { error } = await supabase
-        .from('customer_otp_sessions')
-        .insert({
-          phone,
-          otp_code: otpCode,
-          store_id: storeId,
-          session_data: { timestamp: new Date().toISOString() }
-        });
-
-      if (error) throw error;
-
-      // في بيئة التطوير - عرض الكود
+      // استيراد Firebase
+      const { getFirebaseAuth } = await import('@/lib/firebase');
+      const { RecaptchaVerifier, signInWithPhoneNumber } = await import('firebase/auth');
+      
+      const auth = await getFirebaseAuth();
+      
+      // إنشاء reCAPTCHA verifier
+      const recaptchaContainer = 'customer-recaptcha-container';
+      let container = document.getElementById(recaptchaContainer);
+      
+      if (!container) {
+        container = document.createElement('div');
+        container.id = recaptchaContainer;
+        container.style.display = 'none';
+        document.body.appendChild(container);
+      }
+      
+      // تنظيف reCAPTCHA السابق
+      if (window.recaptchaVerifier) {
+        try {
+          await window.recaptchaVerifier.clear();
+          delete window.recaptchaVerifier;
+        } catch (e) {
+          console.log('Clearing reCAPTCHA:', e);
+        }
+      }
+      
+      container.innerHTML = '';
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // إنشاء reCAPTCHA جديد
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, recaptchaContainer, {
+        size: 'invisible',
+        callback: () => console.log('reCAPTCHA solved'),
+        'expired-callback': () => console.log('reCAPTCHA expired')
+      });
+      
+      // إرسال OTP
+      const confirmationResult = await signInWithPhoneNumber(auth, fullPhone, window.recaptchaVerifier);
+      
+      // حفظ confirmationResult في sessionStorage
+      sessionStorage.setItem('customer-otp-confirmation', JSON.stringify({
+        verificationId: confirmationResult.verificationId,
+        phone: fullPhone,
+        storeId
+      }));
+      
       toast({
         title: "تم إرسال كود التحقق",
-        description: `كود التحقق: ${otpCode} (للاختبار فقط)`,
-        duration: 10000,
+        description: `تم إرسال رمز التحقق إلى ${fullPhone}`,
       });
 
-      return { success: true, otpCode };
+      return { success: true, confirmationResult };
     } catch (error: any) {
+      console.error('خطأ في إرسال OTP:', error);
+      
+      let errorMessage = error.message || 'فشل في إرسال رمز التحقق';
+      
+      if (error.code === 'auth/invalid-phone-number') {
+        errorMessage = 'رقم الهاتف غير صحيح';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'تم تجاوز حد الإرسال. حاول لاحقاً';
+      }
+      
       toast({
         title: "خطأ في إرسال الكود",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
-      return { success: false, error: error.message };
+      
+      return { success: false, error: errorMessage };
     } finally {
       setSession(prev => ({ ...prev, isLoading: false }));
     }
   };
 
-  // التحقق من كود OTP وتسجيل الدخول
+  // التحقق من كود OTP وتسجيل الدخول عبر Firebase
   const verifyOTP = async (phone: string, otpCode: string, storeId?: string) => {
     try {
       setSession(prev => ({ ...prev, isLoading: true }));
 
-      // التحقق من كود OTP
-      const { data, error } = await supabase.rpc('verify_customer_otp', {
-        p_phone: phone,
-        p_otp_code: otpCode,
-        p_store_id: storeId
-      });
-
-      if (error) throw error;
-
-      const result = data as any;
-      if (!result?.success) {
-        throw new Error(result?.error || 'فشل في التحقق من الكود');
+      // استرجاع بيانات التحقق
+      const confirmationData = sessionStorage.getItem('customer-otp-confirmation');
+      if (!confirmationData) {
+        throw new Error('لم يتم العثور على جلسة التحقق');
       }
 
-      // جلب بيانات العميل
-      const customerData = await fetchCustomerByPhone(phone);
+      const { verificationId, phone: savedPhone } = JSON.parse(confirmationData);
+      
+      // التحقق من الكود عبر Firebase
+      const { PhoneAuthProvider, signInWithCredential } = await import('firebase/auth');
+      const { getFirebaseAuth } = await import('@/lib/firebase');
+      
+      const auth = await getFirebaseAuth();
+      const credential = PhoneAuthProvider.credential(verificationId, otpCode);
+      const result = await signInWithCredential(auth, credential);
+
+      // تنظيف بيانات التحقق
+      sessionStorage.removeItem('customer-otp-confirmation');
+      
+      // تنظيف reCAPTCHA
+      if (window.recaptchaVerifier) {
+        try {
+          await window.recaptchaVerifier.clear();
+          delete window.recaptchaVerifier;
+        } catch (e) {
+          console.log('Clearing reCAPTCHA:', e);
+        }
+      }
+
+      // جلب أو إنشاء بيانات العميل في Supabase
+      const customerData = await fetchCustomerByPhone(savedPhone);
       
       if (customerData) {
         saveSession(customerData);
@@ -233,12 +293,23 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
 
       throw new Error('فشل في جلب بيانات العميل');
     } catch (error: any) {
+      console.error('خطأ في التحقق:', error);
+      
+      let errorMessage = error.message || 'فشل في التحقق من الكود';
+      
+      if (error.code === 'auth/invalid-verification-code') {
+        errorMessage = 'رمز التحقق غير صحيح';
+      } else if (error.code === 'auth/code-expired') {
+        errorMessage = 'انتهت صلاحية رمز التحقق';
+      }
+      
       toast({
-        title: "خطأ في تسجيل الدخول",
-        description: error.message,
+        title: "خطأ في التحقق",
+        description: errorMessage,
         variant: "destructive",
       });
-      return { success: false, error: error.message };
+
+      return { success: false, error: errorMessage };
     } finally {
       setSession(prev => ({ ...prev, isLoading: false }));
     }
