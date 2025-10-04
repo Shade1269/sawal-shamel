@@ -44,11 +44,22 @@ function notifyUpdate(worker: ServiceWorker) {
   console.info('[pwa] تم تحديث Service Worker وسيتم تفعيل الإصدار الجديد بعد إغلاق جميع النوافذ.');
 }
 
-export function unregisterServiceWorker() {
+export async function unregisterServiceWorker() {
   if (!('serviceWorker' in navigator)) {
     return;
   }
-  navigator.serviceWorker.getRegistrations().then((registrations) => {
-    registrations.forEach((registration) => registration.unregister());
-  });
+  
+  try {
+    // إلغاء تسجيل جميع Service Workers
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map((registration) => registration.unregister()));
+    
+    // مسح جميع الكاشات
+    const cacheNames = await caches.keys();
+    await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+    
+    console.info('[pwa] تم إلغاء Service Worker ومسح جميع الكاشات');
+  } catch (error) {
+    console.warn('[pwa] خطأ في إلغاء Service Worker:', error);
+  }
 }
