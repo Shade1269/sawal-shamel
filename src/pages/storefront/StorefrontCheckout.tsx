@@ -50,7 +50,7 @@ interface CustomerData {
 }
 
 const StorefrontCheckout = () => {
-  const { store_slug = '' } = useParams();
+  const { slug = '' } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -77,7 +77,7 @@ const StorefrontCheckout = () => {
         const { data: storeData, error: storeError } = await supabasePublic
           .from('affiliate_stores')
           .select('id, store_name, store_slug')
-          .eq('store_slug', store_slug)
+          .eq('store_slug', slug)
           .eq('is_active', true)
           .maybeSingle();
 
@@ -95,14 +95,14 @@ const StorefrontCheckout = () => {
         setStore(storeData);
 
         // جلب السلة من الجلسة المحلية
-        const sessionData = localStorage.getItem(`ea_session_${store_slug}`);
+        const sessionData = localStorage.getItem(`ea_session_${slug}`);
         if (!sessionData) {
           toast({
             title: "السلة فارغة",
             description: "لا توجد منتجات في السلة",
             variant: "destructive"
           });
-          navigate(`/s/${store_slug}`);
+          navigate(`/${slug}`);
           return;
         }
 
@@ -122,7 +122,7 @@ const StorefrontCheckout = () => {
             description: "لا توجد منتجات في السلة",
             variant: "destructive"
           });
-          navigate(`/s/${store_slug}`);
+          navigate(`/${slug}`);
           return;
         }
 
@@ -150,7 +150,7 @@ const StorefrontCheckout = () => {
             description: "لا توجد منتجات في السلة",
             variant: "destructive"
           });
-          navigate(`/s/${store_slug}`);
+          navigate(`/${slug}`);
           return;
         }
 
@@ -168,10 +168,10 @@ const StorefrontCheckout = () => {
       }
     };
 
-    if (store_slug) {
+    if (slug) {
       fetchCheckoutData();
     }
-  }, [store_slug, navigate, toast]);
+  }, [slug, navigate, toast]);
 
   const calculateTotals = () => {
     const subtotal = cartItems.reduce((sum, item) => sum + item.total_price_sar, 0);
@@ -246,7 +246,7 @@ const StorefrontCheckout = () => {
       if (itemsError) throw itemsError;
 
       // حذف السلة
-      const sessionData = localStorage.getItem(`ea_session_${store_slug}`);
+      const sessionData = localStorage.getItem(`ea_session_${slug}`);
       if (sessionData) {
         const session = JSON.parse(sessionData);
         
@@ -276,7 +276,7 @@ const StorefrontCheckout = () => {
       });
 
       // الانتقال لصفحة التأكيد أو طلباتي
-      navigate(`/s/${store_slug}/my-orders`);
+      navigate(`/${slug}`);
 
     } catch (error: any) {
       console.error('Error creating order:', error);
@@ -312,7 +312,7 @@ const StorefrontCheckout = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="sm" asChild>
-              <Link to={`/s/${store_slug}`}>
+              <Link to={`/${slug}`}>
                 <ArrowLeft className="h-4 w-4 ml-2" />
                 العودة للمتجر
               </Link>

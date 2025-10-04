@@ -22,6 +22,7 @@ const AuthPage = lazy(() => import("./features/auth/components/AuthPage"));
 const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
 const AuthCallbackPage = lazy(() => import("./pages/auth/AuthCallbackPage"));
 const StorefrontIntegration = lazy(() => import("./pages/public-storefront/StorefrontIntegration"));
+const StorefrontCheckout = lazy(() => import("./pages/storefront/StorefrontCheckout"));
 const ProductsBrowser = lazy(() => import("./pages/ProductsBrowser"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const OrderConfirmationPage = lazy(() => import("./pages/OrderConfirmationSimple"));
@@ -114,11 +115,12 @@ const App = () => {
                                 )}
                               />
 
-                              <Route path="/:slug" element={<StorefrontIntegration />} />
-                              <Route path="/store/:slug/*" element={<LegacyStoreRedirect />} />
+              <Route path="/:slug" element={<StorefrontIntegration />} />
+              <Route path="/:slug/checkout" element={<StorefrontCheckout />} />
+              <Route path="/store/:slug/*" element={<LegacyStoreRedirect />} />
 
-                              <Route path="/checkout" element={<CheckoutPage />} />
-                              <Route path="/order/confirmation" element={<OrderConfirmationPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/order/confirmation" element={<OrderConfirmationPage />} />
 
               <Route
                 path="/affiliate/*"
