@@ -26,17 +26,19 @@ serve(async (req) => {
       apiKeyFromBearer = authHeader.substring(7);
     }
     
-    // Try to get API key from body (for POST requests)
-    let apiKeyFromBody = null;
+    // For POST requests, check body for API key
     let bodyText = '';
+    let apiKeyFromBody = null;
     
     if (req.method === 'POST') {
       bodyText = await req.text();
-      try {
-        const body = JSON.parse(bodyText);
-        apiKeyFromBody = body.api_key;
-      } catch (e) {
-        // Not JSON, ignore
+      if (bodyText) {
+        try {
+          const body = JSON.parse(bodyText);
+          apiKeyFromBody = body.api_key;
+        } catch (e) {
+          // Not JSON, ignore
+        }
       }
     }
     
@@ -47,9 +49,49 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           error: 'Unauthorized: Invalid or missing API key',
-          hint: 'Provide API key via: ?api_key=xxx, x-api-key header, Authorization: Bearer xxx, or in body as api_key'
+          hint: 'Provide API key via: ?api_key=xxx, x-api-key header, Authorization: Bearer xxx, or in body as api_key',
+          methods: {
+            GET: 'Get API information and available actions',
+            POST: 'Execute database operations'
+          }
         }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Handle GET requests - return API documentation
+    if (req.method === 'GET') {
+      return new Response(
+        JSON.stringify({ 
+          success: true,
+          message: 'MCP Full Access API - Authenticated',
+          version: '1.0',
+          available_actions: [
+            'select - Read data from table',
+            'insert - Insert new data',
+            'update - Update existing data',
+            'delete - Delete data',
+            'list_tables - List all tables',
+            'describe_table - Describe table structure'
+          ],
+          example_request: {
+            method: 'POST',
+            body: {
+              action: 'select',
+              table: 'affiliate_stores',
+              filters: { is_active: true }
+            }
+          },
+          tables: [
+            'affiliate_stores',
+            'affiliate_products',
+            'products',
+            'profiles',
+            'commissions',
+            'ecommerce_orders'
+          ]
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -59,11 +101,21 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Parse request body (reuse bodyText if already read)
-    if (!bodyText && req.method === 'POST') {
+    if (!bodyText) {
       bodyText = await req.text();
     }
     
-    const requestData = bodyText ? JSON.parse(bodyText) : {};
+    if (!bodyText) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Bad Request: Empty body',
+          hint: 'POST requests must include a JSON body with action and other parameters'
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const requestData = JSON.parse(bodyText);
     const { action, table, data, filters, query, columns } = requestData;
 
     let result;
