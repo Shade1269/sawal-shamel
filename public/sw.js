@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-const VERSION = 'anaqati-pwa-v4';
+const VERSION = 'anaqati-pwa-v5-force-refresh';
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const MEDIA_CACHE = `${VERSION}-media`;
@@ -89,12 +89,19 @@ self.addEventListener('fetch', (event) => {
 });
 
 async function handleNavigationRequest(request) {
-  // دائماً network-first للصفحات الرئيسية
+  // دائماً network-first للصفحات الرئيسية + عدم تخزين index.html أبداً
   try {
-    const response = await fetch(request, { cache: 'no-cache' });
+    const response = await fetch(request, { 
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache' }
+    });
     if (response && response.ok) {
-      const cache = await caches.open(RUNTIME_CACHE);
-      cache.put(request, response.clone());
+      // لا نخزن index.html في الكاش لتجنب النسخ القديمة
+      const url = new URL(request.url);
+      if (!url.pathname.endsWith('.html') && url.pathname !== '/') {
+        const cache = await caches.open(RUNTIME_CACHE);
+        cache.put(request, response.clone());
+      }
     }
     return response;
   } catch (error) {
