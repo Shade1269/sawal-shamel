@@ -13,8 +13,8 @@ export const getBaseUrl = (): string => {
 
 // إنشاء رابط متجر مع معرف الإحالة
 export const createStoreUrl = (storeSlug: string, referralId?: string): string => {
-  const baseUrl = getBaseUrl();
-  const storeUrl = `${baseUrl}/${storeSlug}`;
+  // استخدام دومين أتلانتس دائماً للروابط العامة
+  const storeUrl = `${ATLANTIS_DOMAIN}/${storeSlug}`;
   
   if (referralId) {
     return `${storeUrl}?ref=${referralId}`;
