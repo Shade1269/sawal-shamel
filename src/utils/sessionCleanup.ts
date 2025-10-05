@@ -35,8 +35,14 @@ export const cleanExpiredSession = (sessionKey: string): boolean => {
 
     return false;
   } catch (error) {
-    // إذا كانت البيانات فاسدة، احذف الجلسة
-    localStorage.removeItem(sessionKey);
+    // إذا كانت البيانات فاسدة، احذف الجلسة بأمان
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage?.removeItem(sessionKey);
+      }
+    } catch {
+      // تجاهل أخطاء التخزين (Safari Private Mode)
+    }
     console.warn(`تم حذف جلسة فاسدة: ${sessionKey}`, error);
     return true;
   }
@@ -122,7 +128,13 @@ export const createSession = (
     expiresAt: Date.now() + (expiryMinutes * 60 * 1000)
   };
   
-  localStorage.setItem(sessionKey, JSON.stringify(sessionData));
+  try {
+    if (typeof window !== 'undefined') {
+      window.localStorage?.setItem(sessionKey, JSON.stringify(sessionData));
+    }
+  } catch {
+    // تجاهل أخطاء التخزين
+  }
 };
 
 /**
@@ -138,8 +150,14 @@ export const extendSession = (
 
     const parsedData: SessionData = JSON.parse(sessionData);
     parsedData.expiresAt = Date.now() + (additionalMinutes * 60 * 1000);
-    
-    localStorage.setItem(sessionKey, JSON.stringify(parsedData));
+  
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage?.setItem(sessionKey, JSON.stringify(parsedData));
+      }
+    } catch {
+      return false;
+    }
     return true;
   } catch {
     return false;

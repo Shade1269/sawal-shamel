@@ -64,7 +64,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
     return `customer_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   };
 
-  // حفظ الجلسة في localStorage
+  // حفظ الجلسة في localStorage (محمي لـ Safari Private)
   const saveSession = (customer: CustomerProfile) => {
     const sessionToken = generateSessionToken();
     const sessionData = {
@@ -73,9 +73,13 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       timestamp: new Date().toISOString(),
       expiresAt: new Date(Date.now() + (SESSION_EXPIRY_DAYS * 24 * 60 * 60 * 1000)).toISOString()
     };
-    
-    localStorage.setItem(CUSTOMER_SESSION_KEY, JSON.stringify(sessionData));
-    
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage?.setItem(CUSTOMER_SESSION_KEY, JSON.stringify(sessionData));
+      }
+    } catch {
+      // تجاهل أخطاء التخزين في وضع التصفح الخاص
+    }
     setSession({
       customer,
       isAuthenticated: true,
@@ -84,9 +88,15 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
     });
   };
 
-  // إزالة الجلسة
+  // إزالة الجلسة (محمي لـ Safari Private)
   const clearSession = () => {
-    localStorage.removeItem(CUSTOMER_SESSION_KEY);
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage?.removeItem(CUSTOMER_SESSION_KEY);
+      }
+    } catch {
+      // تجاهل أخطاء التخزين
+    }
     setSession({
       customer: null,
       isAuthenticated: false,
@@ -98,7 +108,14 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
   // التحقق من صحة الجلسة المحفوظة
   const validateStoredSession = async (): Promise<boolean> => {
     try {
-      const storedSession = localStorage.getItem(CUSTOMER_SESSION_KEY);
+      let storedSession: string | null = null;
+      try {
+        if (typeof window !== 'undefined') {
+          storedSession = window.localStorage?.getItem(CUSTOMER_SESSION_KEY) ?? null;
+        }
+      } catch {
+        storedSession = null;
+      }
       if (!storedSession) return false;
 
       const sessionData = JSON.parse(storedSession);

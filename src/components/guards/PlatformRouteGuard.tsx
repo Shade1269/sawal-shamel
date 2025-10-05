@@ -53,8 +53,14 @@ export const PlatformRouteGuard = ({ children }: PlatformRouteGuardProps) => {
           setHasValidCustomerSession(false);
         }
       } catch (error) {
-        // إذا كانت بيانات الجلسة فاسدة، احذفها
-        localStorage.removeItem('customer_session');
+        // إذا كانت بيانات الجلسة فاسدة، حاول حذفها بأمان
+        try {
+          if (typeof window !== 'undefined') {
+            window.localStorage?.removeItem('customer_session');
+          }
+        } catch {
+          // ignore storage errors (Safari Private Mode)
+        }
         setHasValidCustomerSession(false);
       }
     };
