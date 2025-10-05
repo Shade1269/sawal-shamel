@@ -19,7 +19,7 @@ import AdminLayout from "@/layouts/AdminLayout";
 import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
 
 const HomePage = lazy(() => import("./pages/Index"));
-const AuthPage = lazy(() => import("./features/auth/components/AuthPage"));
+import AuthPage from "./features/auth/components/AuthPage"
 const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
 const AuthCallbackPage = lazy(() => import("./pages/auth/AuthCallbackPage"));
 const StorefrontIntegration = lazy(() => import("./pages/public-storefront/StorefrontIntegration"));
