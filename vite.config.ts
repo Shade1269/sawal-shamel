@@ -35,10 +35,6 @@ export default defineConfig(({ mode }) => ({
             return undefined;
           }
 
-          if (id.includes("react-router-dom") || id.includes("react-dom") || id.includes("react")) {
-            return "react";
-          }
-
           if (id.includes(`${path.sep}three${path.sep}`)) {
             return "three";
           }
