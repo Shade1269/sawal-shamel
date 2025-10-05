@@ -468,6 +468,59 @@ export const useFastAuth = () => {
     }
   };
 
+  // Fetch affiliate data with caching
+  const fetchAffiliateData = useCallback(async (profileId: string) => {
+    const cacheKey = `affiliate-data-${profileId}`;
+    const cached = getCachedProfile(cacheKey);
+    if (cached) return cached;
+
+    try {
+      const { data: stores, error: storesError } = await supabase
+        .from('affiliate_stores')
+        .select('*')
+        .eq('profile_id', profileId)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (storesError) throw storesError;
+
+      const storeData = Array.isArray(stores) ? stores[0] : null;
+      const result = {
+        store: storeData,
+        products: [],
+        commissions: [],
+        stats: {
+          totalCommissions: 0,
+          totalSales: storeData?.total_sales || 0,
+          activeProducts: 0
+        }
+      };
+
+      if (storeData?.id) {
+        const [productsRes, commissionsRes] = await Promise.allSettled([
+          supabase.from('affiliate_products').select('*, products (*)').eq('affiliate_store_id', storeData.id).eq('is_visible', true),
+          supabase.from('commissions').select('*').eq('affiliate_id', profileId).order('created_at', { ascending: false }).limit(10)
+        ]);
+
+        if (productsRes.status === 'fulfilled' && !productsRes.value.error) {
+          result.products = productsRes.value.data || [];
+          result.stats.activeProducts = result.products.length;
+        }
+
+        if (commissionsRes.status === 'fulfilled' && !commissionsRes.value.error) {
+          result.commissions = commissionsRes.value.data || [];
+          result.stats.totalCommissions = result.commissions.reduce((sum: number, c: any) => sum + (c.amount_sar || 0), 0);
+        }
+      }
+
+      cacheProfile(result as any);
+      return result;
+    } catch (error) {
+      console.error('Error fetching affiliate data:', error);
+      return null;
+    }
+  }, [getCachedProfile, cacheProfile]);
+
   return {
     // Auth state
     user,
@@ -495,6 +548,7 @@ export const useFastAuth = () => {
     hasRole,
     refreshProfile,
     clearCache,
+    fetchAffiliateData,
     
     // Role helpers
     canModerate: hasRole(['admin', 'moderator']),

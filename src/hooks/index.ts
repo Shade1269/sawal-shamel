@@ -19,7 +19,7 @@ export { useSmartNavigation } from './useSmartNavigation';
 
 // Performance & Optimization Hooks v3.2
 export { usePerformanceMonitoring } from './usePerformanceMonitoring';
-export { useOptimizedAuth } from './useOptimizedAuth';
+// useOptimizedAuth removed - use useFastAuth directly
 export { useOptimizedAtlantis } from './useOptimizedAtlantis';
 
 // Advanced Animation Hooks v3.2
@@ -65,9 +65,9 @@ export { useInvoiceManagement } from './useInvoiceManagement';
 export { useIsolatedStoreCart } from './useIsolatedStoreCart';
 export { useNavigationShortcuts } from './useNavigationShortcuts';
 export { useNotifications } from './useNotifications';
-export { useOptimizedDataFetch } from './useOptimizedDataFetch';
+// useOptimizedDataFetch removed - functionality moved to useFastAuth
 export { usePaymentGateways } from './usePaymentGateways';
-export { usePerformanceOptimized } from './usePerformanceOptimized';
+// usePerformanceOptimized removed - not needed
 export { useProductImages } from './useProductManagement';
 export { usePublicStorefront } from './usePublicStorefront';
 export { useRealInventoryManagement } from './useRealInventoryManagement';
