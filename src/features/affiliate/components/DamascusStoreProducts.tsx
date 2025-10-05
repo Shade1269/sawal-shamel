@@ -33,7 +33,8 @@ export const DamascusStoreProducts: React.FC<DamascusStoreProductsProps> = ({
             stock_quantity,
             category_id,
             is_active,
-            created_at
+            created_at,
+            variants
           )
         `)
         .eq('affiliate_store_id', storeId)
@@ -59,6 +60,7 @@ export const DamascusStoreProducts: React.FC<DamascusStoreProductsProps> = ({
             isOutOfStock: product.stock_quantity === 0,
             rating: 5,
             currency: 'SAR',
+            variants: product.variants || [],
           };
         }) || [];
     },

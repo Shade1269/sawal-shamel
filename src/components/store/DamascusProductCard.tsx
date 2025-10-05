@@ -2,6 +2,13 @@ import React from 'react';
 import { ShoppingCart, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ProductVariantDisplay } from '@/components/products/ProductVariantDisplay';
+
+interface ProductVariant {
+  type: string;
+  value: string;
+  stock: number;
+}
 
 interface Product {
   id: string;
@@ -14,6 +21,7 @@ interface Product {
   isOutOfStock?: boolean;
   rating?: number;
   currency?: string;
+  variants?: ProductVariant[];
 }
 
 interface DamascusProductCardProps {
@@ -145,6 +153,13 @@ export const DamascusProductCard: React.FC<DamascusProductCardProps> = ({
         <h3 className="text-[rgb(var(--damascus-text))] font-semibold text-base line-clamp-2 min-h-[3rem] leading-snug">
           {product.title}
         </h3>
+
+        {/* Variants Display */}
+        {product.variants && product.variants.length > 0 && (
+          <div className="border-t border-[rgb(var(--damascus-gold))]/20 pt-2">
+            <ProductVariantDisplay variants={product.variants} compact={true} />
+          </div>
+        )}
 
         {/* Rating */}
         {product.rating && (

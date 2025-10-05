@@ -37,6 +37,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useFastAuth } from '@/hooks/useFastAuth';
+import { ProductVariantDisplay } from '@/components/products/ProductVariantDisplay';
 
 const ProductsPage = () => {
   const navigate = useNavigate();
@@ -354,6 +355,13 @@ const ProductsPage = () => {
                   {product.description}
                 </p>
               </div>
+
+              {/* Variants Display */}
+              {product.variants && product.variants.length > 0 && (
+                <div className="border-t pt-2">
+                  <ProductVariantDisplay variants={product.variants} compact={true} />
+                </div>
+              )}
               
               <div className="flex items-center justify-between">
                 <div>
