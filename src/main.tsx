@@ -12,6 +12,20 @@ import { registerWebVitals } from './pwa/reportWebVitals'
 if (typeof window !== 'undefined') {
   // @ts-ignore
   ;(window as any).React = React
+
+  // Global error hooks to diagnose build-time circular/TDZ issues
+  window.addEventListener('error', (e) => {
+    try {
+      // eslint-disable-next-line no-console
+      console.error('[GlobalError]', e.message, e.error?.stack || e.filename || 'no stack');
+    } catch {}
+  });
+  window.addEventListener('unhandledrejection', (e: PromiseRejectionEvent) => {
+    try {
+      // eslint-disable-next-line no-console
+      console.error('[UnhandledRejection]', (e as any).reason?.message || e.reason, (e as any).reason?.stack || 'no stack');
+    } catch {}
+  });
 }
 
 if (import.meta.env.PROD) {
