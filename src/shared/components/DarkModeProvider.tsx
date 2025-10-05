@@ -24,22 +24,32 @@ export const DarkModeProvider: React.FC<DarkModeProviderProps> = ({ children }) 
 
   // Initialize dark mode from localStorage or system preference
   useEffect(() => {
-    const stored = localStorage.getItem('darkMode');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    const shouldBeDark = stored !== null ? stored === 'true' : prefersDark;
-    
-    setIsDarkMode(shouldBeDark);
-    updateDarkModeClass(shouldBeDark);
+    try {
+      const stored = (typeof window !== 'undefined' ? window.localStorage?.getItem('darkMode') : null);
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const shouldBeDark = stored !== null ? stored === 'true' : prefersDark;
+      setIsDarkMode(shouldBeDark);
+      updateDarkModeClass(shouldBeDark);
+    } catch {
+      // Safari Private mode may block localStorage
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDarkMode(prefersDark);
+      updateDarkModeClass(prefersDark);
+    }
   }, []);
 
   // Listen for system theme changes
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent) => {
-      const stored = localStorage.getItem('darkMode');
-      if (stored === null) {
-        // Only follow system preference if user hasn't set a preference
+      try {
+        const stored = (typeof window !== 'undefined' ? window.localStorage?.getItem('darkMode') : null);
+        if (stored === null) {
+          // Only follow system preference if user hasn't set a preference
+          setIsDarkMode(e.matches);
+          updateDarkModeClass(e.matches);
+        }
+      } catch {
         setIsDarkMode(e.matches);
         updateDarkModeClass(e.matches);
       }
@@ -62,7 +72,13 @@ export const DarkModeProvider: React.FC<DarkModeProviderProps> = ({ children }) 
   const toggleDarkMode = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
-    localStorage.setItem('darkMode', newMode.toString());
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage?.setItem('darkMode', newMode.toString());
+      }
+    } catch {
+      // ignore storage errors
+    }
     updateDarkModeClass(newMode);
   };
 

@@ -57,11 +57,16 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 
   // Initialize language from localStorage or default to Arabic
   useEffect(() => {
-    const stored = localStorage.getItem('language') as 'ar' | 'en' | null;
-    const defaultLang = stored || 'ar';
-    
-    setLanguage(defaultLang);
-    updateDocumentDirection(defaultLang);
+    try {
+      const stored = (typeof window !== 'undefined' ? window.localStorage?.getItem('language') : null) as 'ar' | 'en' | null;
+      const defaultLang = stored === 'ar' || stored === 'en' ? stored : 'ar';
+      setLanguage(defaultLang);
+      updateDocumentDirection(defaultLang);
+    } catch (e) {
+      // Safari (especially Private mode) may block localStorage access
+      setLanguage('ar');
+      updateDocumentDirection('ar');
+    }
   }, []);
 
   const updateDocumentDirection = (lang: 'ar' | 'en') => {
@@ -72,7 +77,13 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const toggleLanguage = () => {
     const newLang = language === 'ar' ? 'en' : 'ar';
     setLanguage(newLang);
-    localStorage.setItem('language', newLang);
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage?.setItem('language', newLang);
+      }
+    } catch {
+      // ignore storage errors (Safari private mode)
+    }
     updateDocumentDirection(newLang);
   };
 
