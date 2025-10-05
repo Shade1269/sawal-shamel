@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-globals */
 const VERSION = 'anaqati-pwa-v6-clear-all';
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
@@ -22,7 +21,7 @@ self.addEventListener('install', (event) => {
       const cache = await caches.open(STATIC_CACHE);
       try {
         await cache.addAll(PRECACHE_ASSETS);
-      } catch (error) {
+      } catch {
         // ignore precache failures (likely offline)
       }
       await warmupRoutes();
@@ -104,7 +103,7 @@ async function handleNavigationRequest(request) {
       }
     }
     return response;
-  } catch (error) {
+  } catch {
     const cache = await caches.open(RUNTIME_CACHE);
     const cached = await cache.match(request);
     if (cached) {
@@ -214,7 +213,7 @@ async function warmupRoutes() {
         if (response && response.ok) {
           await cache.put(route, response.clone());
         }
-      } catch (error) {
+      } catch {
         // ignore warmup failures (likely offline during install)
       }
     })
