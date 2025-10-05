@@ -1,13 +1,13 @@
--- ⚠️ SECURITY NOTICE: Legacy views were removed
--- 
--- The archived_legacy_orders and archived_legacy_simple_orders views were 
--- removed because they created security vulnerabilities by using SECURITY DEFINER.
---
--- If you need read-only historical access to this data, you should:
--- 1. Query the tables directly (orders, simple_orders) with proper authentication
--- 2. Use the unified views (v_orders_unified, v_order_items_unified) which now use 
---    SECURITY INVOKER and respect RLS policies
--- 3. Create specific RLS policies for any read-only access requirements
---
--- The frontend and server code rely exclusively on ecommerce_* tables and the 
--- unified views for data access.
+-- Archived legacy order views
+-- These views are provided for historical read-only access outside of the application runtime.
+-- The frontend and server code now rely exclusively on ecommerce_* tables.
+
+-- View of the legacy orders table (do not reference from application code).
+CREATE OR REPLACE VIEW archived_legacy_orders AS
+SELECT *
+FROM orders;
+
+-- View of the legacy simple_orders table (do not reference from application code).
+CREATE OR REPLACE VIEW archived_legacy_simple_orders AS
+SELECT *
+FROM simple_orders;

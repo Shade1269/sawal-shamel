@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-const VERSION = 'anaqati-pwa-v6-clear-all';
+const VERSION = 'anaqati-pwa-v5-force-refresh';
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const MEDIA_CACHE = `${VERSION}-media`;
@@ -119,22 +119,16 @@ async function handleNavigationRequest(request) {
 async function cacheFirst(request, cacheName) {
   const cache = await caches.open(cacheName);
   
-  // CRITICAL: For JS bundles, ALWAYS fetch fresh from network to prevent corruption
+  // للـ JS chunks، تحقق من network أولاً لتجنب chunks قديمة
   if (request.destination === 'script' || request.url.includes('/assets/')) {
     try {
-      const response = await fetch(request, { cache: 'no-store' });
+      const response = await fetch(request);
       if (response && response.ok) {
-        // Only cache after successful fresh fetch
         cache.put(request, response.clone());
         return response;
       }
     } catch (error) {
-      // Only fallback to cache if network completely fails
-      const cached = await cache.match(request);
-      if (cached) {
-        return cached;
-      }
-      throw error;
+      // fallback للكاش إذا فشل network
     }
   }
   

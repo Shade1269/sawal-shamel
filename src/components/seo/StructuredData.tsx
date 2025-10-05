@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from '@/components/seo/SafeHelmet';
+import { Helmet } from 'react-helmet-async';
 
 interface WebsiteSchema {
   '@context': 'https://schema.org';

@@ -4,8 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { AdaptiveLayoutProvider } from "@/components/layout/AdaptiveLayoutProvider";
-import { SmartNavigationProvider } from "@/components/navigation/SmartNavigationProvider";
+import { AdaptiveLayoutProvider, SmartNavigationProvider } from "@/components/layout";
 import { DarkModeProvider } from "@/shared/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
@@ -20,7 +19,7 @@ import AdminLayout from "@/layouts/AdminLayout";
 import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
 
 const HomePage = lazy(() => import("./pages/Index"));
-const AuthPage = lazy(() => import("./features/auth/components/AuthPage"));
+import AuthPage from "./features/auth/components/AuthPage"
 const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
 const AuthCallbackPage = lazy(() => import("./pages/auth/AuthCallbackPage"));
 const StorefrontIntegration = lazy(() => import("./pages/public-storefront/StorefrontIntegration"));

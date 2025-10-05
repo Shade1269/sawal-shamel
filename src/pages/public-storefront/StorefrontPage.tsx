@@ -8,7 +8,7 @@ import { useStorefrontSettings } from "@/hooks/useStorefrontSettings";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useTheme } from "@/hooks/useTheme";
 import { cn } from "@/lib/utils";
-import { Helmet } from "@/components/seo/SafeHelmet";
+import { Helmet } from "react-helmet-async";
 
 type PublicStorefrontHookResult = ReturnType<typeof usePublicStorefront>;
 
