@@ -1,15 +1,17 @@
 import React, { Suspense } from 'react';
 import { 
-  EnhancedButton, 
+  EnhancedButton 
+} from '@/components/ui/enhanced-button';
+import { 
   EnhancedCard, 
   EnhancedCardContent, 
   EnhancedCardDescription, 
   EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  AnimatedCounter,
-  Button
-} from '@/components/ui/index';
+  EnhancedCardTitle
+} from '@/components/ui/enhanced-card';
+import { ResponsiveLayout } from '@/components/layout/ResponsiveLayout';
+import { AnimatedCounter } from '@/components/interactive/AnimatedCounter';
+import { Button } from '@/components/ui/button';
 import {
   MessageCircle,
   Users,
