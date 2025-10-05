@@ -7,8 +7,6 @@ export { EnhancedStatusIndicator, statusVariants, type EnhancedStatusIndicatorPr
 export { EnhancedSidebar, sidebarVariants, type NavigationItem, type NavigationGroup } from './navigation/EnhancedSidebar'
 
 // Enhanced Navigation Components  
-export { QuickCommandPalette } from '../navigation/QuickCommandPalette'
-export { SmartSearch } from '../navigation/SmartSearch'  
 export { EnhancedTabs, tabsVariants, tabVariants, type TabItem } from '../navigation/EnhancedTabs'
 export { Kbd, kbdVariants } from './kbd'
 
@@ -21,8 +19,6 @@ export { ProgressiveLoader, FileUploadLoader, NetworkStatusLoader, loaderVariant
 
 // Enhanced Navigation System v2.3
 export { ResponsiveLayout, ResponsiveGrid, ResponsiveColumn, ShowOnMobile, ShowOnTablet, ShowOnDesktop, HideOnMobile } from '../layout/ResponsiveLayout'
-export { MegaMenu, MegaMenuTrigger, megaMenuVariants } from '../navigation/MegaMenu'
-export { MobileNavigation, BottomNavigation, mobileNavVariants } from '../navigation/MobileNavigation'
 export { EnhancedPagination, PaginationSummary, paginationVariants } from '../navigation/EnhancedPagination'
 export { VirtualizedList } from '../layout/VirtualizedList'
 export { FloatingActionButton, ScrollToTopFAB } from '../navigation/FloatingActionButton'
