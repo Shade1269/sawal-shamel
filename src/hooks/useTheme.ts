@@ -33,8 +33,13 @@ function useThemeController(defaultThemeId: string = "default"): ThemeContextVal
     if (typeof window === "undefined") {
       return defaultThemeId;
     }
-    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-    return stored ?? defaultThemeId;
+    try {
+      const stored = window.localStorage?.getItem(THEME_STORAGE_KEY);
+      return stored ?? defaultThemeId;
+    } catch {
+      // Safari Private mode may block localStorage
+      return defaultThemeId;
+    }
   });
 
   const themeConfig = useMemo(() => getTheme(themeId) as any, [themeId]);
@@ -42,7 +47,11 @@ function useThemeController(defaultThemeId: string = "default"): ThemeContextVal
   const setThemeId = useCallback((nextThemeId: string) => {
     setThemeIdState(nextThemeId);
     if (typeof window !== "undefined") {
-      window.localStorage.setItem(THEME_STORAGE_KEY, nextThemeId);
+      try {
+        window.localStorage?.setItem(THEME_STORAGE_KEY, nextThemeId);
+      } catch {
+        // ignore storage errors
+      }
     }
   }, []);
 

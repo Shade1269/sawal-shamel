@@ -232,14 +232,19 @@ export const useFastAuth = () => {
           }
         }, 0);
       } else {
-        setProfile(null);
-        // Clear cache on logout
+        // Clear cache on logout (guarded for Safari private mode)
         userCache.profile = null;
         userCache.userId = null;
         userCache.timestamp = 0;
-        localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
-        localStorage.removeItem(STORAGE_KEYS.LAST_UPDATE);
-        localStorage.removeItem(STORAGE_KEYS.USER_PROFILE + '_uid');
+        try {
+          if (typeof window !== 'undefined') {
+            window.localStorage?.removeItem(STORAGE_KEYS.USER_PROFILE);
+            window.localStorage?.removeItem(STORAGE_KEYS.LAST_UPDATE);
+            window.localStorage?.removeItem(STORAGE_KEYS.USER_PROFILE + '_uid');
+          }
+        } catch (e) {
+          console.warn('LocalStorage not available while clearing cache:', e);
+        }
       }
 
       setLoading(false);
@@ -266,9 +271,15 @@ export const useFastAuth = () => {
     userCache.profile = null;
     userCache.userId = null;
     userCache.timestamp = 0;
-    localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
-    localStorage.removeItem(STORAGE_KEYS.LAST_UPDATE);
-    localStorage.removeItem(STORAGE_KEYS.USER_PROFILE + '_uid');
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage?.removeItem(STORAGE_KEYS.USER_PROFILE);
+        window.localStorage?.removeItem(STORAGE_KEYS.LAST_UPDATE);
+        window.localStorage?.removeItem(STORAGE_KEYS.USER_PROFILE + '_uid');
+      }
+    } catch (e) {
+      console.warn('LocalStorage not available while clearing cache:', e);
+    }
   }, []);
 
   // Enhanced Auth functions with better error handling and user feedback
