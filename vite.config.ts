@@ -23,6 +23,10 @@ export default defineConfig(({ mode }) => ({
     include: ['react', 'react-dom', 'react/jsx-runtime'],
   },
   build: {
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true,
+    },
     chunkSizeWarningLimit: 1024,
     rollupOptions: {
       output: {
@@ -31,7 +35,7 @@ export default defineConfig(({ mode }) => ({
             return undefined;
           }
 
-          if (id.includes("react-router-dom") || id.includes("react-dom") || id.includes(`${path.sep}react${path.sep}`)) {
+          if (id.includes("react-router-dom") || id.includes("react-dom") || id.includes("react")) {
             return "react";
           }
 
