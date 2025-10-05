@@ -70,21 +70,24 @@ export const PlatformRouteGuard = ({ children }: PlatformRouteGuardProps) => {
 
   useEffect(() => {
     // فقط إذا كان المستخدم يحاول الدخول للصفحات المحمية
-    if (isRestrictedPath && hasValidCustomerSession) {
-      // إذا كان مستخدم المنصة مصادقًا، أزل تعارض جلسة المتجر
-      if (isAuthenticated && profile) {
-        try {
-          localStorage.removeItem('customer_session');
-          setHasValidCustomerSession(false);
-        } catch (error) {
-          console.warn('Could not remove customer session:', error);
-        }
-        return;
-      }
-      
+    // وليس لديه حساب منصة مصادق
+    if (isRestrictedPath && hasValidCustomerSession && !isAuthenticated) {
       // عميل متجر يحاول دخول صفحات المنصة المحمية → ارجاع للصفحة الرئيسية
       navigate('/', { replace: true });
       return;
+    }
+    
+    // إذا كان مستخدم المنصة مصادقًا ويحاول دخول صفحة محمية
+    // أزل أي تعارض مع جلسة متجر قديمة
+    if (isRestrictedPath && isAuthenticated && profile && hasValidCustomerSession) {
+      try {
+        if (typeof window !== 'undefined') {
+          window.localStorage?.removeItem('customer_session');
+        }
+        setHasValidCustomerSession(false);
+      } catch (error) {
+        console.warn('Could not remove customer session:', error);
+      }
     }
   }, [hasValidCustomerSession, isRestrictedPath, isAuthenticated, profile, navigate]);
 

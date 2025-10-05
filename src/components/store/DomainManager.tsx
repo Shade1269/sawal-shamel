@@ -18,45 +18,33 @@ const DomainManager = ({ children }: DomainManagerProps) => {
     const currentPath = location.pathname;
     const search = location.search;
 
+    // السماح لجميع متاجر المسوقين بالعمل من أي دومين
+    // لا حاجة لربط كل متجر بدومين مخصص - يكفي المسار /:slug
+    
     const isLovableProjectDomain = hostname.endsWith('.lovableproject.com');
     const isCustomDomain = hostname !== 'localhost'
-      && !hostname.includes('atlantiss.tech')
-      && !hostname.includes('lovable.app');
+      && !hostname.includes('lovable.app')
+      && !isLovableProjectDomain;
 
-    // Skip redirect logic for atlantiss.tech - let normal routing handle it
-    if (hostname.includes('atlantiss.tech')) {
-      return;
-    }
-
-    if (isCustomDomain || isLovableProjectDomain) {
+    // إذا كان دومين مخصص، السماح بالوصول لأي متجر عبر /:slug
+    if (isCustomDomain) {
       const storeSlug = getStoreSlugFromDomain(hostname);
 
-      // Apply redirects ONLY if this domain is mapped to a store
+      // فقط إذا كان الدومين مربوط بمتجر محدد في STORE_DOMAINS
       if (storeSlug) {
-        // Redirect custom domain root to its mapped store slug
-        if (!currentPath.startsWith(`/${storeSlug}`)) {
+        // توجيه الصفحة الرئيسية للدومين المخصص إلى المتجر المربوط
+        if (currentPath === '/' || currentPath === '') {
           navigate(`/${storeSlug}${search}`, { replace: true });
           return;
         }
 
-        // Block platform routes on mapped custom domains
+        // منع مسارات المنصة من الدومينات المربوطة
         const platformPaths = ['/admin', '/affiliate', '/auth'];
         if (platformPaths.some(path => currentPath === path || currentPath.startsWith(`${path}/`))) {
           navigate(`/${storeSlug}`, { replace: true });
           return;
         }
       }
-    }
-
-    // منع الوصول للمنصة من مسارات المتجر
-    if (currentPath.split('/').filter(Boolean).length === 1 && currentPath !== '/admin' && currentPath !== '/affiliate') {
-      const platformPaths = ['/admin', '/affiliate'];
-      platformPaths.forEach(path => {
-        const platformLinks = document.querySelectorAll(`a[href="${path}"]`);
-        platformLinks.forEach(link => {
-          link.remove(); // إزالة الروابط للمنصة
-        });
-      });
     }
   }, [location, navigate]);
 
