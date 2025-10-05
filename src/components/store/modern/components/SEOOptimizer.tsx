@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@/components/seo/SafeHelmet';
 
 interface SEOOptimizerProps {
   title: string;
