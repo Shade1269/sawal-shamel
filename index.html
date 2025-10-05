@@ -37,28 +37,6 @@
 
   <body>
     <div id="root"></div>
-    <script>
-      // Auto-recover from cached/corrupted bundle issues (e.g., "Cannot access 'F' before initialization")
-      (function () {
-        function clearSWAndReload() {
-          if (!('serviceWorker' in navigator)) return location.reload();
-          Promise.resolve()
-            .then(() => navigator.serviceWorker.getRegistrations())
-            .then((regs) => Promise.all(regs.map((r) => r.unregister())))
-            .then(() => caches.keys())
-            .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
-            .then(() => location.reload());
-        }
-        window.addEventListener('error', function (e) {
-          var msg = String(e && (e.message || e.error) || '');
-          var file = String(e && (e.filename || ''));
-          if (msg.includes("Cannot access") || file.includes('vendor')) {
-            console.warn('[recovery] Detected bundle init error, clearing SW caches and reloading...');
-            clearSWAndReload();
-          }
-        }, { once: true });
-      })();
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
