@@ -16,6 +16,7 @@ import { ProtectedRoute } from "@/shared/components/ProtectedRoute";
 import DomainManager from "@/components/store/DomainManager";
 import AffiliateLayout from "@/layouts/ModernAffiliateLayout";
 import AdminLayout from "@/layouts/AdminLayout";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
 
 const HomePage = lazy(() => import("./pages/Index"));
@@ -99,7 +100,9 @@ const App = () => {
                                 path="/profile"
                                 element={(
                                   <ProtectedRoute requiredRole={["affiliate", "marketer", "admin"]}>
-                                    <ProfilePage />
+                                    <AuthenticatedLayout>
+                                      <ProfilePage />
+                                    </AuthenticatedLayout>
                                   </ProtectedRoute>
                                 )}
                               />
@@ -107,7 +110,9 @@ const App = () => {
                                 path="/notifications"
                                 element={(
                                   <ProtectedRoute requiredRole={["affiliate", "marketer", "admin"]}>
-                                    <NotificationsPage />
+                                    <AuthenticatedLayout>
+                                      <NotificationsPage />
+                                    </AuthenticatedLayout>
                                   </ProtectedRoute>
                                 )}
                               />
@@ -117,7 +122,9 @@ const App = () => {
                                 path="/products" 
                                 element={(
                                   <ProtectedRoute requiredRole={["affiliate", "marketer", "admin"]}>
-                                    <ProductsBrowser />
+                                    <AuthenticatedLayout>
+                                      <ProductsBrowser />
+                                    </AuthenticatedLayout>
                                   </ProtectedRoute>
                                 )}
                               />
