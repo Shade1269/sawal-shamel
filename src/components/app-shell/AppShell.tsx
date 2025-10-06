@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   BarChart3,
+  CheckCircle,
   CreditCard,
   Bell,
   GaugeCircle,
@@ -189,6 +190,13 @@ export const AppShell: React.FC<AppShellProps> = ({
             icon: Package,
             badge: inventoryCount > 9 ? 9 : inventoryCount,
             onPrefetch: getPrefetch('/admin/inventory'),
+          },
+          {
+            to: '/admin/products/approval',
+            label: 'موافقة المنتجات',
+            description: 'مراجعة والموافقة على منتجات التجار',
+            icon: CheckCircle,
+            onPrefetch: getPrefetch('/admin/products/approval'),
           },
         ],
       },

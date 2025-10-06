@@ -1,6 +1,7 @@
 import {
   BarChart3,
   Bell,
+  CheckCircle,
   Home,
   LogIn,
   Shield,
@@ -135,6 +136,13 @@ export const navigationItems: NavigationItem[] = [
         title: "إدارة السحوبات",
         href: "/admin/withdrawals",
         icon: Wallet,
+        roles: ["admin", "moderator"],
+      },
+      {
+        id: "admin-products-approval",
+        title: "موافقة المنتجات",
+        href: "/admin/products/approval",
+        icon: CheckCircle,
         roles: ["admin", "moderator"],
       },
       {
