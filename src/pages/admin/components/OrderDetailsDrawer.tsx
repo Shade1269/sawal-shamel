@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef } from "react";
 import { Copy, ExternalLink, MapPin, Phone, X } from "lucide-react";
 
 import type { AdminOrder } from "@/hooks/useAdminOrders";
+import { useFastAuth } from "@/hooks/useFastAuth";
+import { maskPhone, maskEmail, shouldShowFullCustomerData } from "@/lib/privacy";
 import { Button } from "@/ui/Button";
 
 const currency = new Intl.NumberFormat("ar-SA", {
@@ -50,6 +52,8 @@ const copyToClipboard = async (value: string) => {
 const buildConfirmationLink = (orderId: string) => `${window.location.origin}/order/confirmation?id=${orderId}`;
 
 const OrderDetailsDrawer = ({ open, order, onClose, reducedMotion }: OrderDetailsDrawerProps) => {
+  const { profile } = useFastAuth();
+  const showFullData = shouldShowFullCustomerData(profile?.role);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -185,8 +189,8 @@ const OrderDetailsDrawer = ({ open, order, onClose, reducedMotion }: OrderDetail
                   <Phone className="h-4 w-4" aria-hidden />
                 </Button>
               </div>
-              <p className="text-xs text-[color:var(--muted-foreground)]">{order.customerEmail}</p>
-              <p className="text-xs text-[color:var(--muted-foreground)]">{order.customerPhone}</p>
+              <p className="text-xs text-[color:var(--muted-foreground)]">{showFullData ? order.customerEmail : maskEmail(order.customerEmail)}</p>
+              <p className="text-xs text-[color:var(--muted-foreground)]">{showFullData ? order.customerPhone : maskPhone(order.customerPhone)}</p>
             </div>
           </section>
 

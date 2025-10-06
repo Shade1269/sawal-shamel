@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, Outlet } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
@@ -37,12 +37,15 @@ const AffiliateWalletPage = lazy(() => import("./pages/affiliate/AffiliateWallet
 const UnifiedAffiliateOrders = lazy(() => import("./pages/unified/UnifiedAffiliateOrders"));
 const AdminHomePage = lazy(() => import("./pages/home/AdminHome"));
 const AdminWithdrawalsPage = lazy(() => import("./pages/admin/AdminWithdrawalsPage"));
+const AdminProductApproval = lazy(() => import("./pages/admin/AdminProductApproval"));
 const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrders"));
 const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminCustomersPage = lazy(() => import("./pages/admin/AdminCustomers"));
 const AdminLeaderboardPage = lazy(() => import("./pages/admin/AdminLeaderboard"));
 const AdminPage = lazy(() => import("./pages/Admin"));
 const InventoryPage = lazy(() => import("./pages/inventory/index"));
+const MerchantDashboard = lazy(() => import("./pages/merchant/MerchantDashboard"));
+const MerchantProducts = lazy(() => import("./pages/merchant/MerchantProducts"));
 const UiShowcasePage = lazy(() => import("./pages/UiShowcase"));
 const ProfilePage = lazy(() => import("./pages/profile"));
 const NotificationsPage = lazy(() => import("./pages/notifications"));
@@ -161,6 +164,19 @@ const App = () => {
                                 <Route path="management" element={<AdminPage />} />
                                 <Route path="inventory" element={<InventoryPage />} />
                                 <Route path="withdrawals" element={<AdminWithdrawalsPage />} />
+                                <Route path="products/approval" element={<AdminProductApproval />} />
+                              </Route>
+
+                              <Route
+                                path="/merchant"
+                                element={(
+                                  <ProtectedRoute requiredRole={["merchant"]}>
+                                    <Outlet />
+                                  </ProtectedRoute>
+                                )}
+                              >
+                                <Route index element={<MerchantDashboard />} />
+                                <Route path="products" element={<MerchantProducts />} />
                               </Route>
 
                               <Route path="*" element={<Navigate to="/" replace />} />

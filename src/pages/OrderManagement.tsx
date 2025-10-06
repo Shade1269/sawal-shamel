@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useFastAuth } from '@/hooks/useFastAuth';
+import { maskPhone, maskEmail, shouldShowFullCustomerData } from '@/lib/privacy';
 import { 
   EnhancedCard, 
   EnhancedCardContent, 
@@ -59,6 +60,7 @@ interface OrderItem {
 
 const OrderManagement = () => {
   const { profile } = useFastAuth();
+  const showFullData = shouldShowFullCustomerData(profile?.role);
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
@@ -313,7 +315,7 @@ const OrderManagement = () => {
                           <div>
                             <p className="font-medium">{order.customer_name}</p>
                             <p className="text-sm text-muted-foreground font-mono">
-                              {order.customer_phone}
+                              {showFullData ? order.customer_phone : maskPhone(order.customer_phone)}
                             </p>
                           </div>
                         </TableCell>
@@ -358,9 +360,9 @@ const OrderManagement = () => {
                                         </CardHeader>
                                         <CardContent className="space-y-2">
                                           <p><strong>الاسم:</strong> {selectedOrder.customer_name}</p>
-                                          <p><strong>الهاتف:</strong> {selectedOrder.customer_phone}</p>
+                                          <p><strong>الهاتف:</strong> {showFullData ? selectedOrder.customer_phone : maskPhone(selectedOrder.customer_phone)}</p>
                                           {selectedOrder.customer_email && (
-                                            <p><strong>الإيميل:</strong> {selectedOrder.customer_email}</p>
+                                            <p><strong>الإيميل:</strong> {showFullData ? selectedOrder.customer_email : maskEmail(selectedOrder.customer_email)}</p>
                                           )}
                                         </CardContent>
                                       </Card>

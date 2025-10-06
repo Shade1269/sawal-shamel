@@ -17,7 +17,9 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { 
   Package, 
   Search, 
@@ -76,11 +78,13 @@ const ProductsBrowser = () => {
   const [loading, setLoading] = useState(true);
   const [addingProducts, setAddingProducts] = useState<Set<string>>(new Set());
   
-  // Filters and search
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  
+  const [pricingProduct, setPricingProduct] = useState<Product | null>(null);
+  const [customPrice, setCustomPrice] = useState('');
   
   useEffect(() => {
     console.log('useEffect triggered - profile check:', { profile });
@@ -226,7 +230,12 @@ const ProductsBrowser = () => {
     setFilteredProducts(filtered);
   };
 
-  const addToMyStore = async (productId: string) => {
+  const showPricingModal = (product: Product) => {
+    setPricingProduct(product);
+    setCustomPrice(product.price_sar.toString());
+  };
+
+  const addToMyStore = async (productId: string, customPriceSar?: number) => {
     if (!affiliateStore) {
       toast({
         title: "خطأ",
@@ -239,14 +248,14 @@ const ProductsBrowser = () => {
     setAddingProducts(prev => new Set(prev).add(productId));
 
     try {
-      // استخدام الدالة الآمنة الجديدة
       const { data, error } = await supabase
         .rpc('add_affiliate_product', {
           p_store_id: affiliateStore.id,
           p_product_id: productId,
           p_is_visible: true,
-          p_sort_order: 0
-        });
+          p_sort_order: 0,
+          p_custom_price: customPriceSar || null
+        } as any);
 
       if (error) {
         console.error('RPC Error:', error);
@@ -624,7 +633,7 @@ const ProductsBrowser = () => {
                                 ) : (
                                   <Button
                                     size="sm"
-                                    onClick={() => addToMyStore(product.id)}
+                                    onClick={() => showPricingModal(product)}
                                     disabled={isProcessing}
                                     className="flex-1 bg-gradient-primary"
                                   >
@@ -720,7 +729,7 @@ const ProductsBrowser = () => {
                                 ) : (
                                   <Button
                                     size="sm"
-                                    onClick={() => addToMyStore(product.id)}
+                                    onClick={() => showPricingModal(product)}
                                     disabled={isProcessing}
                                     className="bg-gradient-primary"
                                   >
@@ -758,6 +767,79 @@ const ProductsBrowser = () => {
           )}
         </div>
       </div>
+
+      <Dialog open={!!pricingProduct} onOpenChange={() => setPricingProduct(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>تحديد سعر البيع</DialogTitle>
+            <DialogDescription>
+              حدد السعر الذي ترغب في بيع المنتج به في متجرك
+            </DialogDescription>
+          </DialogHeader>
+          {pricingProduct && (
+            <div className="space-y-4">
+              <div className="bg-muted p-4 rounded-lg">
+                <h3 className="font-semibold mb-2">{pricingProduct.title}</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">سعر التاجر:</span>
+                    <p className="font-bold text-lg">{pricingProduct.price_sar} ر.س</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">عمولة افتراضية:</span>
+                    <p className="font-bold text-lg">{pricingProduct.merchants.default_commission_rate}%</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="custom-price">سعر البيع في متجرك (ر.س)</Label>
+                <Input
+                  id="custom-price"
+                  type="number"
+                  step="0.01"
+                  min={pricingProduct.price_sar}
+                  value={customPrice}
+                  onChange={(e) => setCustomPrice(e.target.value)}
+                  placeholder={pricingProduct.price_sar.toString()}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  الحد الأدنى: {pricingProduct.price_sar} ر.س (سعر التاجر)
+                </p>
+              </div>
+
+              {customPrice && parseFloat(customPrice) >= pricingProduct.price_sar && (
+                <div className="bg-green-500/10 border border-green-500/20 p-3 rounded-lg">
+                  <p className="text-sm text-green-600">
+                    <strong>ربحك المتوقع:</strong> {(parseFloat(customPrice) - pricingProduct.price_sar).toFixed(2)} ر.س
+                  </p>
+                </div>
+              )}
+
+              <Button
+                className="w-full"
+                onClick={() => {
+                  const price = parseFloat(customPrice);
+                  if (price >= pricingProduct.price_sar) {
+                    addToMyStore(pricingProduct.id, price);
+                    setPricingProduct(null);
+                    setCustomPrice('');
+                  } else {
+                    toast({
+                      title: 'خطأ',
+                      description: 'سعر البيع يجب أن يكون أكبر من أو يساوي سعر التاجر',
+                      variant: 'destructive',
+                    });
+                  }
+                }}
+                disabled={!customPrice || parseFloat(customPrice) < pricingProduct.price_sar}
+              >
+                إضافة للمتجر
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
