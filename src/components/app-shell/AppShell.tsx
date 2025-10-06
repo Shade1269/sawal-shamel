@@ -406,6 +406,12 @@ export const AppShell: React.FC<AppShellProps> = ({
         onPrefetch: getPrefetch('/affiliate'),
       });
       items.push({
+        to: '/affiliate/store/settings?tab=products',
+        label: 'المنتجات',
+        icon: Package,
+        onPrefetch: getPrefetch('/affiliate'),
+      });
+      items.push({
         to: '/affiliate/wallet',
         label: 'المحفظة',
         icon: Wallet,
