@@ -28,7 +28,7 @@ export function applyThemeToDocument(themeConfig: any) {
   }
 }
 
-function useThemeController(defaultThemeId: string = "default"): ThemeContextValue {
+function useThemeController(defaultThemeId: string = "ferrari"): ThemeContextValue {
   const [themeId, setThemeIdState] = useState<string>(() => {
     if (typeof window === "undefined") {
       return defaultThemeId;
