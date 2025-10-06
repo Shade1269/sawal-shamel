@@ -267,40 +267,61 @@ const ProductsBrowser = () => {
     }, 10000); // 10 ثواني timeout
 
     try {
+      // 1) Preferred path: RPC (bypasses RLS and handles duplicates)
       const { data, error } = await supabase
         .rpc('add_affiliate_product', {
           p_store_id: affiliateStore.id,
           p_product_id: productId,
           p_is_visible: true,
           p_sort_order: 0,
-          p_custom_price: customPriceSar || null
+          p_custom_price: typeof customPriceSar === 'number' && !Number.isNaN(customPriceSar)
+            ? customPriceSar
+            : null,
         } as any);
 
       clearTimeout(timeoutId);
 
-      if (error) {
-        console.error('RPC Error:', error);
-        throw error;
+      if (error || !data) {
+        console.warn('RPC failed, falling back to upsert...', error);
+        // 2) Fallback: direct upsert with onConflict (may be blocked by RLS in some projects)
+        const { data: upsertData, error: upsertError } = await supabase
+          .from('affiliate_products')
+          .upsert(
+            [{
+              affiliate_store_id: affiliateStore.id,
+              product_id: productId,
+              is_visible: true,
+              sort_order: 0,
+              custom_price_sar: typeof customPriceSar === 'number' && !Number.isNaN(customPriceSar)
+                ? customPriceSar
+                : null,
+              price_set_at: typeof customPriceSar === 'number' && !Number.isNaN(customPriceSar)
+                ? new Date().toISOString()
+                : null,
+            }],
+            { onConflict: 'affiliate_store_id,product_id', ignoreDuplicates: true }
+          )
+          .select('product_id')
+          .maybeSingle();
+
+        if (upsertError) {
+          throw upsertError;
+        }
+
+        toast({ title: 'تم بنجاح', description: 'تم إضافة المنتج إلى متجرك' });
+        setMyProducts(prev => new Set(prev).add(productId));
+        return;
       }
 
-      console.log('Add product result:', data);
-
+      console.log('Add product result (RPC):', data);
       const result = data as { already_exists?: boolean; success?: boolean };
-      
+
       if (result.already_exists) {
-        toast({
-          title: "تنبيه",
-          description: "المنتج موجود بالفعل في متجرك",
-          variant: "default",
-        });
-        setMyProducts(prev => new Set(prev).add(productId));
+        toast({ title: 'تنبيه', description: 'المنتج موجود بالفعل في متجرك' });
       } else {
-        toast({
-          title: "تم بنجاح",
-          description: "تم إضافة المنتج إلى متجرك",
-        });
-        setMyProducts(prev => new Set(prev).add(productId));
+        toast({ title: 'تم بنجاح', description: 'تم إضافة المنتج إلى متجرك' });
       }
+      setMyProducts(prev => new Set(prev).add(productId));
 
     } catch (error: any) {
       clearTimeout(timeoutId);
@@ -809,7 +830,7 @@ const ProductsBrowser = () => {
                   </div>
                   <div>
                     <span className="text-muted-foreground">عمولة افتراضية:</span>
-                    <p className="font-bold text-lg">{pricingProduct.merchants.default_commission_rate}%</p>
+                    <p className="font-bold text-lg">{pricingProduct.merchants?.default_commission_rate ?? 0}%</p>
                   </div>
                 </div>
               </div>
