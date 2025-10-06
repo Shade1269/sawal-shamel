@@ -112,10 +112,6 @@ const AdminOrdersPage = () => {
   const rowRefs = useRef<(HTMLTableRowElement | null)[]>([]);
 
   useEffect(() => {
-    setSearchValue(filters.search);
-  }, [filters.search]);
-
-  useEffect(() => {
     const customerParam = searchParams.get("customer");
     if (customerParam) {
       setCustomerId(customerParam);
@@ -134,7 +130,7 @@ const AdminOrdersPage = () => {
       setSearchParams(nextParams, { replace: true });
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchValue, searchParams, setSearchParams, setSearchTerm]);
+  }, [searchValue, setSearchParams, setSearchTerm]);
 
   useEffect(() => {
     if (filters.dateRange.preset !== "custom") {

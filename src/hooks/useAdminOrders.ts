@@ -519,6 +519,7 @@ export const createAdminOrdersStore = (namespace = DEFAULT_NAMESPACE): AdminOrde
 
   const listeners = new Set<() => void>();
   let pendingTimer: ReturnType<typeof setTimeout> | null = null;
+  let cachedSnapshot: AdminOrdersSnapshot | null = null;
 
   const notify = () => {
     listeners.forEach((listener) => listener());
@@ -526,6 +527,7 @@ export const createAdminOrdersStore = (namespace = DEFAULT_NAMESPACE): AdminOrde
 
   const setState = (updater: (current: AdminOrdersBaseState) => AdminOrdersBaseState) => {
     state = updater(state);
+    cachedSnapshot = null;
     notify();
   };
 
@@ -621,7 +623,13 @@ export const createAdminOrdersStore = (namespace = DEFAULT_NAMESPACE): AdminOrde
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
-    getSnapshot: () => toSnapshot(state),
+    getSnapshot: () => {
+      if (cachedSnapshot) {
+        return cachedSnapshot;
+      }
+      cachedSnapshot = toSnapshot(state);
+      return cachedSnapshot;
+    },
     setSearchTerm: (value) => {
       runQuery({ ...state.filters, search: value });
     },
