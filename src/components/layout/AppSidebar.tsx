@@ -10,6 +10,7 @@ import {
   Shield,
   Store,
   Users,
+  Package,
 } from "lucide-react";
 import { Settings } from "lucide-react";
 
@@ -49,6 +50,7 @@ const navigationItems: NavigationItem[] = [
     children: [
       { title: "الرئيسية", url: "/affiliate", icon: Home, roles: ["affiliate", "marketer", "admin"] },
       { title: "واجهة المتجر", url: "/affiliate/storefront", icon: Store, roles: ["affiliate", "marketer", "admin"] },
+      { title: "إدارة المنتجات", url: "/affiliate/store/settings?tab=products", icon: Package, roles: ["affiliate", "marketer", "admin"] },
       { title: "الطلبات", url: "/affiliate/orders", icon: ShoppingBag, roles: ["affiliate", "marketer", "admin"] },
       { title: "التحليلات", url: "/affiliate/analytics", icon: BarChart3, roles: ["affiliate", "marketer", "admin"] },
     ],
