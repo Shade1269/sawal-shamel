@@ -310,8 +310,15 @@ export const AppShell: React.FC<AppShellProps> = ({
       },
       {
         id: 'payments',
-        title: 'المدفوعات',
+        title: 'المدفوعات والمحفظة',
         items: [
+          {
+            to: '/affiliate/wallet',
+            label: 'المحفظة',
+            description: 'إدارة الأرصدة وطلبات السحب',
+            icon: Wallet,
+            onPrefetch: getPrefetch('/affiliate/wallet'),
+          },
           {
             to: '/affiliate/analytics#payouts',
             label: 'عمولات مستحقة',

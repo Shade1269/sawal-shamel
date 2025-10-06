@@ -42,7 +42,7 @@ const AuthPage = () => {
     password: '',
     fullName: '',
     username: '',
-    role: 'affiliate' as 'affiliate' | 'marketer' | 'admin',
+    role: 'affiliate' as 'affiliate' | 'merchant' | 'admin',
   });
 
   const [signUpStep, setSignUpStep] = useState<'details' | 'username'>('details');
@@ -285,6 +285,42 @@ const AuthPage = () => {
                         required
                         className="text-right h-12 bg-background/50 border-border/50 focus:border-accent/50 focus:bg-background transition-all duration-300 rounded-xl"
                       />
+                    </div>
+
+                    <div className="space-y-3 text-right">
+                      <Label className="text-base font-semibold text-foreground">نوع الحساب</Label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setSignUpForm(prev => ({...prev, role: 'affiliate'}))}
+                          className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                            signUpForm.role === 'affiliate'
+                              ? 'border-primary bg-primary/10 shadow-lg'
+                              : 'border-border hover:border-primary/50'
+                          }`}
+                        >
+                          <div className="text-center">
+                            <div className="text-2xl mb-2">🎯</div>
+                            <div className="font-bold text-sm">مسوق</div>
+                            <div className="text-xs text-muted-foreground mt-1">ترويج المنتجات وكسب العمولات</div>
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSignUpForm(prev => ({...prev, role: 'merchant'}))}
+                          className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                            signUpForm.role === 'merchant'
+                              ? 'border-accent bg-accent/10 shadow-lg'
+                              : 'border-border hover:border-accent/50'
+                          }`}
+                        >
+                          <div className="text-center">
+                            <div className="text-2xl mb-2">🏪</div>
+                            <div className="font-bold text-sm">تاجر</div>
+                            <div className="text-xs text-muted-foreground mt-1">عرض وبيع المنتجات</div>
+                          </div>
+                        </button>
+                      </div>
                     </div>
 
                     <Button 

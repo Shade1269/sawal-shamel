@@ -20,7 +20,7 @@ export interface FastUserProfile {
   created_at?: string;
 }
 
-export type FastAuthRole = 'admin' | 'affiliate' | 'marketer';
+export type FastAuthRole = 'admin' | 'affiliate' | 'marketer' | 'merchant';
 
 export interface FastAuthSignUpArgs {
   email: string;
