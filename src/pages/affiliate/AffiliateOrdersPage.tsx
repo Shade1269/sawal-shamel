@@ -2,6 +2,8 @@ import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { useFastAuth } from '@/hooks/useFastAuth';
+import { maskPhone, shouldShowFullCustomerData } from '@/lib/privacy';
 import { UnifiedOrdersService, UnifiedOrderWithItems } from '@/lib/unifiedOrdersService';
 import { 
   EnhancedCard, 
@@ -55,6 +57,8 @@ const statusLabels = {
 
 export default function AffiliateOrdersPage() {
   const { user } = useSupabaseAuth();
+  const { profile } = useFastAuth();
+  const showFullData = shouldShowFullCustomerData(profile?.role);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -183,7 +187,7 @@ export default function AffiliateOrdersPage() {
                           الاسم: {order.customer_name}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          الهاتف: {order.customer_phone}
+                          الهاتف: {showFullData ? order.customer_phone : maskPhone(order.customer_phone)}
                         </p>
                       </div>
                       <div>

@@ -12,6 +12,8 @@ import { useSearchParams } from "react-router-dom";
 import { PageTitle } from "@/components/app-shell/PageTitle";
 import { useAdminOrders, getNextRowIndex } from "@/hooks/useAdminOrders";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { useFastAuth } from "@/hooks/useFastAuth";
+import { maskPhone, shouldShowFullCustomerData } from "@/lib/privacy";
 import { Button } from "@/ui/Button";
 import { Card } from "@/ui/Card";
 import { Input } from "@/ui/Input";
@@ -82,6 +84,8 @@ const currency = new Intl.NumberFormat("ar-SA", {
 });
 
 const AdminOrdersPage = () => {
+  const { profile } = useFastAuth();
+  const showFullData = shouldShowFullCustomerData(profile?.role);
   const {
     visibleOrders,
     total,
@@ -342,7 +346,7 @@ const AdminOrdersPage = () => {
                       <td className="px-4 py-3">
                         <div className="flex flex-col">
                           <span>{order.customerName}</span>
-                          <span className="text-xs text-[color:var(--muted-foreground)]">{order.customerPhone}</span>
+                          <span className="text-xs text-[color:var(--muted-foreground)]">{showFullData ? order.customerPhone : maskPhone(order.customerPhone)}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3">
