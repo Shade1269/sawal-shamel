@@ -245,7 +245,26 @@ const ProductsBrowser = () => {
       return;
     }
 
+    // تحقق من أن المنتج ليس قيد الإضافة بالفعل
+    if (addingProducts.has(productId)) {
+      return;
+    }
+
     setAddingProducts(prev => new Set(prev).add(productId));
+
+    // Timeout للتأكد من عدم تعليق الواجهة
+    const timeoutId = setTimeout(() => {
+      setAddingProducts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
+      toast({
+        title: "تم تجاوز وقت الانتظار",
+        description: "العملية تأخذ وقت أطول من المتوقع",
+        variant: "destructive",
+      });
+    }, 10000); // 10 ثواني timeout
 
     try {
       const { data, error } = await supabase
@@ -256,6 +275,8 @@ const ProductsBrowser = () => {
           p_sort_order: 0,
           p_custom_price: customPriceSar || null
         } as any);
+
+      clearTimeout(timeoutId);
 
       if (error) {
         console.error('RPC Error:', error);
@@ -272,16 +293,17 @@ const ProductsBrowser = () => {
           description: "المنتج موجود بالفعل في متجرك",
           variant: "default",
         });
+        setMyProducts(prev => new Set(prev).add(productId));
       } else {
         toast({
           title: "تم بنجاح",
           description: "تم إضافة المنتج إلى متجرك",
         });
+        setMyProducts(prev => new Set(prev).add(productId));
       }
 
-      setMyProducts(prev => new Set(prev).add(productId));
-
     } catch (error: any) {
+      clearTimeout(timeoutId);
       console.error('Error adding product:', error);
       console.error('Error details:', JSON.stringify(error, null, 2));
       
