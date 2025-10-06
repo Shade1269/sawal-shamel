@@ -25,7 +25,7 @@ const AuthForm = () => {
     password: '',
     fullName: '',
     username: '',
-    role: 'affiliate' as 'affiliate' | 'marketer' | 'admin'
+    role: 'affiliate' as 'affiliate' | 'marketer' | 'merchant' | 'admin'
   });
 
   const { goToUserHome } = useSmartNavigation();
@@ -211,7 +211,7 @@ const AuthForm = () => {
                   <Label htmlFor="signup-role">نوع الحساب</Label>
                   <Select
                     value={signUpData.role}
-                    onValueChange={(value: 'affiliate' | 'marketer' | 'admin') =>
+                    onValueChange={(value: 'affiliate' | 'marketer' | 'merchant' | 'admin') =>
                       setSignUpData(prev => ({ ...prev, role: value }))
                     }
                   >
@@ -223,6 +223,12 @@ const AuthForm = () => {
                         <div className="flex items-center gap-2">
                           <ShoppingCart className="h-4 w-4" />
                           مسوق
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="merchant">
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          تاجر
                         </div>
                       </SelectItem>
                       <SelectItem value="marketer">

@@ -15,7 +15,11 @@ export const getHomeRouteForRoleRuntime = (role) => {
     return '/admin/dashboard';
   }
 
-  if (normalizedRole === 'affiliate' || normalizedRole === 'merchant' || normalizedRole === 'marketer') {
+  if (normalizedRole === 'merchant') {
+    return '/merchant';
+  }
+
+  if (normalizedRole === 'affiliate' || normalizedRole === 'marketer') {
     return '/affiliate';
   }
 
