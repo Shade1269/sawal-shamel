@@ -652,7 +652,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
   return (
     <StoreThemeProvider storeId={affiliateStore.id}>
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+      <div className="min-h-screen bg-background">
       {/* Enhanced Store Header - Mobile Optimized */}
       <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-xl border-b border-primary/20 shadow-lg">
         <div className="container mx-auto px-3 md:px-6 py-3 md:py-4">
