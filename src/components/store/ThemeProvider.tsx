@@ -137,11 +137,11 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
     const normalizeColor = (val: string): string => {
       if (!val) return '';
       const v = String(val).trim();
-      if (v.startsWith('hsl(')) return v.slice(4, -1);
-      if (v.startsWith('#')) return hexToHslTriplet(v);
-      if (v.startsWith('rgb')) return rgbToHslTriplet(v);
-      // إذا كانت بالفعل ثلاثية HSL بدون hsl() نتركها كما هي
-      if (!v.includes('(') && v.includes('%')) return v;
+      if (v.startsWith('hsl(')) return v.slice(4, -1).replace(/,\s*/g, ' ').trim();
+      if (v.startsWith('#')) return hexToHslTriplet(v).replace(/,\s*/g, ' ').trim();
+      if (v.startsWith('rgb')) return rgbToHslTriplet(v).replace(/,\s*/g, ' ').trim();
+      // إذا كانت بالفعل ثلاثية HSL بدون hsl() نتركها كما هي لكن نزيل الفواصل
+      if (!v.includes('(') && v.includes('%')) return v.replace(/,\s*/g, ' ').trim();
       return v; // fallback (قد تكون var(--...))
     };
 
@@ -174,14 +174,10 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
     Object.entries(colorsSource).forEach(([rawKey, value]) => {
       const key = keyAliasMap[rawKey] || rawKey;
       const normalized = normalizeColor(String(value));
-      let finalVal = normalized;
-      // إذا كانت قيمة HSL ثلاثية بدون hsl() نلفها
-      if (/(^\d{1,3}\s+\d{1,3}%\s+\d{1,3}%$)/.test(normalized)) {
-        finalVal = `hsl(${normalized})`;
-      }
-      root.style.setProperty(`--${key}`, finalVal);
+      // استخدام القيمة المنظمة مباشرة بدون إضافة hsl() لأن Tailwind يتوقع ثلاثية فقط
+      root.style.setProperty(`--${key}`, normalized);
       appliedKeys.push(key);
-      console.log(`✅ Applied color: --${key} = ${finalVal}`);
+      console.log(`✅ Applied color: --${key} = ${normalized}`);
     });
     
     console.log('🎨 All applied colors:', { 
