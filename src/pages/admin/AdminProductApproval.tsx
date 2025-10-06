@@ -24,7 +24,7 @@ interface Product {
   merchant_id: string;
   merchants: {
     business_name: string;
-    user_profile_id: string;
+    profile_id: string;
   };
 }
 
@@ -49,13 +49,13 @@ const AdminProductApproval = () => {
         .from('products')
         .select(`
           *,
-          merchants(business_name, user_profile_id)
+          merchants(business_name, profile_id)
         `)
         .eq('approval_status', activeTab)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts((data || []) as Product[]);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({

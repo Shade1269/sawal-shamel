@@ -47,7 +47,7 @@ const MerchantProducts = () => {
       const { data, error } = await supabase
         .from('merchants')
         .select('id')
-        .eq('user_profile_id', profile.id)
+        .eq('profile_id', profile.id)
         .single();
 
       if (error) throw error;
@@ -75,7 +75,7 @@ const MerchantProducts = () => {
       const { data, error } = await query;
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts((data || []) as Product[]);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({

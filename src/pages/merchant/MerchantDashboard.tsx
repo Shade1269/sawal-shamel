@@ -31,7 +31,7 @@ const MerchantDashboard = () => {
       const { data: merchantData, error: merchantError } = await supabase
         .from('merchants')
         .select('*')
-        .eq('user_profile_id', profile.id)
+        .eq('profile_id', profile.id)
         .single();
 
       if (merchantError) throw merchantError;
@@ -43,8 +43,8 @@ const MerchantDashboard = () => {
         .eq('merchant_id', merchantData.id);
 
       const totalProducts = products?.length || 0;
-      const pendingProducts = products?.filter(p => p.approval_status === 'pending').length || 0;
-      const approvedProducts = products?.filter(p => p.approval_status === 'approved').length || 0;
+      const pendingProducts = products?.filter((p: any) => p.approval_status === 'pending').length || 0;
+      const approvedProducts = products?.filter((p: any) => p.approval_status === 'approved').length || 0;
 
       const { data: orders } = await supabase
         .from('ecommerce_orders')
