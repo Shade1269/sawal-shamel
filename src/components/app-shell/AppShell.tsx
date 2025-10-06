@@ -14,6 +14,7 @@ import {
   Store,
   Trophy,
   UserCircle,
+  Wallet,
 } from 'lucide-react';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import type { FastUserProfile } from '@/hooks/useFastAuth';
@@ -202,6 +203,13 @@ export const AppShell: React.FC<AppShellProps> = ({
             icon: CreditCard,
             isActive: (pathname) => pathname.startsWith('/admin/analytics'),
             onPrefetch: getPrefetch('/admin/analytics'),
+          },
+          {
+            to: '/admin/withdrawals',
+            label: 'إدارة السحوبات',
+            description: 'طلبات سحب المسوقات والتجار',
+            icon: Wallet,
+            onPrefetch: getPrefetch('/admin/withdrawals'),
           },
         ],
       },

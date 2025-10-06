@@ -131,6 +131,13 @@ export const navigationItems: NavigationItem[] = [
         roles: ["admin", "moderator"],
       },
       {
+        id: "admin-withdrawals",
+        title: "إدارة السحوبات",
+        href: "/admin/withdrawals",
+        icon: Wallet,
+        roles: ["admin", "moderator"],
+      },
+      {
         id: "admin-analytics",
         title: "التحليلات",
         href: "/admin/analytics",
