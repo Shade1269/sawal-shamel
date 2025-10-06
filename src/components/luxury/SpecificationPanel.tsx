@@ -73,11 +73,11 @@ export function SpecificationPanel({
   return (
     <Card
       className={cn(
-        "border-2 border-red-600/20 bg-gradient-to-br from-slate-900/95 via-slate-900/90 to-slate-800/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_12px_48px_rgba(196,30,58,0.25),0_0_24px_rgba(196,30,58,0.15)] hover:border-red-600/35 transition-all duration-500",
+        "border border-red-600/15 bg-gradient-to-br from-slate-900/98 via-slate-900/96 to-slate-800/98 backdrop-blur-sm shadow-lg shadow-black/30 hover:shadow-xl hover:shadow-red-600/15 hover:border-red-600/25 transition-all duration-500",
         className
       )}
     >
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-5">
         <div className="flex items-start justify-between">
           <div>
             <CardTitle className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
@@ -97,7 +97,7 @@ export function SpecificationPanel({
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-4">
         {groups.map((group, groupIndex) => {
           const isExpanded = expandedGroups.has(group.id);
           const IconComponent = group.icon || defaultIcons.technical;
@@ -108,14 +108,14 @@ export function SpecificationPanel({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: groupIndex * 0.1 }}
-              className="rounded-xl border-2 border-slate-700/50 bg-slate-800/30 backdrop-blur-sm overflow-hidden hover:border-red-600/30 transition-all duration-300"
+              className="rounded-xl border border-slate-700/40 bg-slate-800/50 overflow-hidden hover:border-red-600/25 transition-all duration-300"
             >
               <button
                 onClick={() => toggleGroup(group.id)}
-                className="w-full flex items-center justify-between p-4 text-right hover:bg-slate-800/50 transition-colors duration-200"
+                className="w-full flex items-center justify-between p-5 text-right hover:bg-slate-800/60 transition-colors duration-200"
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-red-600/20 border border-red-600/30">
+                  <div className="p-2 rounded-lg bg-red-600/15 border border-red-600/25">
                     <IconComponent className="h-5 w-5 text-red-400" />
                   </div>
                   <div>
@@ -148,7 +148,7 @@ export function SpecificationPanel({
                     transition={{ duration: 0.3 }}
                     className="overflow-hidden"
                   >
-                    <div className="p-4 pt-0 space-y-3">
+                    <div className="p-5 pt-0 space-y-4">
                       {group.specs.map((spec, specIndex) => {
                         const SpecIcon = spec.icon;
 
@@ -159,10 +159,10 @@ export function SpecificationPanel({
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: specIndex * 0.05 }}
                             className={cn(
-                              "flex items-start justify-between p-3 rounded-lg transition-all duration-300",
+                              "flex items-start justify-between p-4 rounded-lg transition-all duration-300",
                               spec.highlight
-                                ? "bg-red-900/20 border border-red-600/30"
-                                : "bg-slate-800/30 border border-slate-700/30 hover:border-slate-600/50"
+                                ? "bg-red-900/15 border border-red-600/25"
+                                : "bg-slate-800/40 border border-slate-700/25 hover:border-slate-600/40"
                             )}
                           >
                             <div className="flex-1 min-w-0">

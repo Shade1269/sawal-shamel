@@ -78,7 +78,7 @@ export function InteractiveDashboard({
   };
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn("space-y-8", className)}>
       {(title || subtitle) && (
         <div className="flex items-center justify-between">
           <div>
@@ -100,7 +100,7 @@ export function InteractiveDashboard({
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {widgets.map((widget, index) => {
           const IconComponent = widget.icon || Target;
           const colorClass = widget.color || defaultColors.primary;
@@ -111,17 +111,17 @@ export function InteractiveDashboard({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              whileHover={{ y: -4, scale: 1.02 }}
+              whileHover={{ y: -2, scale: 1.01 }}
             >
-              <Card className="border-2 border-red-600/20 bg-gradient-to-br from-slate-900/95 via-slate-900/90 to-slate-800/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_12px_48px_rgba(196,30,58,0.25),0_0_24px_rgba(196,30,58,0.15)] hover:border-red-600/35 transition-all duration-500 h-full">
-                <CardHeader className="pb-3">
+              <Card className="border border-red-600/15 bg-gradient-to-br from-slate-900/98 via-slate-900/96 to-slate-800/98 backdrop-blur-sm shadow-lg shadow-black/30 hover:shadow-xl hover:shadow-red-600/15 hover:border-red-600/25 transition-all duration-500 h-full">
+                <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <div className={cn(
-                        "p-3 rounded-xl shadow-lg",
-                        colorClass.replace('bg-', 'bg-') + "/20",
-                        "border-2",
-                        colorClass.replace('bg-', 'border-') + "/30"
+                        "p-3 rounded-xl shadow-md",
+                        colorClass.replace('bg-', 'bg-') + "/15",
+                        "border",
+                        colorClass.replace('bg-', 'border-') + "/25"
                       )}>
                         <IconComponent className={cn(
                           "h-6 w-6",
@@ -143,7 +143,7 @@ export function InteractiveDashboard({
                 </CardHeader>
 
                 <CardContent>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-baseline justify-between">
                       <span className="text-3xl font-bold text-white">
                         {typeof widget.value === 'number' 
@@ -216,7 +216,7 @@ export function InteractiveDashboard({
       </div>
 
       {quickActions.length > 0 && (
-        <Card className="border-2 border-red-600/20 bg-gradient-to-br from-slate-900/95 via-slate-900/90 to-slate-800/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)]">
+        <Card className="border border-red-600/15 bg-gradient-to-br from-slate-900/98 via-slate-900/96 to-slate-800/98 backdrop-blur-sm shadow-lg shadow-black/30">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-white flex items-center gap-2">
               <Zap className="h-5 w-5 text-red-500" />
@@ -224,7 +224,7 @@ export function InteractiveDashboard({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {quickActions.map((action, index) => {
                 const ActionIcon = action.icon;
                 const colorClass = action.color || defaultColors.primary;
@@ -232,22 +232,22 @@ export function InteractiveDashboard({
                 return (
                   <motion.div
                     key={action.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.1 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
                     <Button
                       onClick={action.onClick}
                       variant="outline"
-                      className="w-full h-auto flex flex-col items-start p-4 border-2 border-slate-700 bg-slate-800/30 hover:bg-slate-800/50 hover:border-red-600/50 transition-all duration-300 text-right"
+                      className="w-full h-auto flex flex-col items-start p-5 border border-slate-700/80 bg-slate-800/50 hover:bg-slate-800/60 hover:border-red-600/40 transition-all duration-300 text-right"
                     >
                       <div className={cn(
-                        "p-2 rounded-lg mb-2",
-                        colorClass.replace('bg-', 'bg-') + "/20",
+                        "p-2 rounded-lg mb-3",
+                        colorClass.replace('bg-', 'bg-') + "/15",
                         "border",
-                        colorClass.replace('bg-', 'border-') + "/30"
+                        colorClass.replace('bg-', 'border-') + "/25"
                       )}>
                         <ActionIcon className={cn(
                           "h-5 w-5",
