@@ -405,6 +405,12 @@ export const AppShell: React.FC<AppShellProps> = ({
         icon: GaugeCircle,
         onPrefetch: getPrefetch('/affiliate'),
       });
+      items.push({
+        to: '/affiliate/wallet',
+        label: 'المحفظة',
+        icon: Wallet,
+        onPrefetch: getPrefetch('/affiliate/wallet'),
+      });
     }
 
     if (role === 'admin') {

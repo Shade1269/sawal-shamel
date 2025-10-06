@@ -41,9 +41,12 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
       newErrors.store_name = 'اسم المتجر مطلوب';
     }
     
-    const slugError = validateSlug(formData.store_slug);
-    if (slugError) {
-      newErrors.store_slug = slugError;
+    // التحقق من slug فقط إذا أدخله المستخدم
+    if (formData.store_slug.trim()) {
+      const slugError = validateSlug(formData.store_slug);
+      if (slugError) {
+        newErrors.store_slug = slugError;
+      }
     }
     
     setErrors(newErrors);
@@ -119,7 +122,7 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
 
               <div className="space-y-2">
                 <Label htmlFor="store_slug" className="text-sm font-medium">
-                  اسم المتجر بالإنجليزية *
+                  اسم المتجر بالإنجليزية (اختياري)
                 </Label>
                 <Input
                   id="store_slug"
@@ -128,19 +131,18 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
                   value={formData.store_slug}
                   onChange={(e) => handleSlugChange(e.target.value)}
                   className={`text-base ${errors.store_slug ? 'border-red-500' : ''}`}
-                  required
                   disabled={isCreating}
                   dir="ltr"
                 />
                 <div className="flex items-center text-sm text-muted-foreground">
                   <span>رابط المتجر: </span>
-                  <span className="font-medium text-foreground">{window.location.origin}/{formData.store_slug || 'اسم-المتجر'}</span>
+                  <span className="font-medium text-foreground">{window.location.origin}/{formData.store_slug || 'سيُنشأ-تلقائياً'}</span>
                 </div>
                 {errors.store_slug && (
                   <p className="text-sm text-red-500">{errors.store_slug}</p>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  يُسمح بالأحرف الإنجليزية الصغيرة والأرقام والشرطات فقط
+                  يُسمح بالأحرف الإنجليزية الصغيرة والأرقام والشرطات فقط. إذا تركته فارغاً سيتم توليده تلقائياً.
                 </p>
               </div>
 
