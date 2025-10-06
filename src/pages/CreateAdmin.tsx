@@ -88,8 +88,8 @@ const CreateAdmin = () => {
 
         setSuccess(true);
         toast({
-          title: "تم إنشاء حساب المدير",
-          description: "تم إنشاء حساب المدير بنجاح",
+          title: "تم إنشاء الحساب بنجاح",
+          description: "تم إرسال رسالة التأكيد إلى البريد الإلكتروني. يرجى مراجعة البريد الإلكتروني للتفعيل.",
         });
 
         // Reset form
@@ -196,6 +196,19 @@ const CreateAdmin = () => {
               )}
             </Button>
           </form>
+
+          {success && (
+            <Alert className="mt-4 border-green-500/50 bg-green-500/10">
+              <CheckCircle className="h-4 w-4 text-green-500" />
+              <AlertDescription className="text-green-700 dark:text-green-300">
+                <strong>تم إنشاء الحساب بنجاح!</strong>
+                <br />
+                تم إرسال رسالة تأكيد إلى بريدك الإلكتروني <strong>{formData.email}</strong>
+                <br />
+                يرجى فتح البريد الإلكتروني والضغط على رابط التفعيل لتفعيل حسابك.
+              </AlertDescription>
+            </Alert>
+          )}
 
           <div className="mt-6 p-4 bg-muted/50 rounded-lg">
             <h4 className="font-semibold text-sm mb-2">ملاحظة هامة:</h4>
