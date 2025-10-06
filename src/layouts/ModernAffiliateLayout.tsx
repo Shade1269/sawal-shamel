@@ -1,9 +1,10 @@
 import { Outlet } from "react-router-dom"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { Bell, Search, User, Store, Package, ShoppingBag, BarChart3, Settings } from "lucide-react"
+import { Bell, Search, User, Store, Package, ShoppingBag, BarChart3, Settings, Home, Wallet } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+import { BottomNavMobile } from "@/components/app-shell/BottomNavMobile"
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -34,23 +35,28 @@ const affiliateMenuItems = [
     title: "نظرة عامة",
     url: "/affiliate",
     icon: BarChart3,
-    exact: true
+    exact: true,
   },
   {
     title: "واجهة المتجر",
     url: "/affiliate/storefront",
-    icon: Package
+    icon: Package,
   },
   {
     title: "الطلبات",
     url: "/affiliate/orders",
-    icon: ShoppingBag
+    icon: ShoppingBag,
   },
   {
     title: "التحليلات",
     url: "/affiliate/analytics",
-    icon: BarChart3
-  }
+    icon: BarChart3,
+  },
+  {
+    title: "المحفظة",
+    url: "/affiliate/wallet",
+    icon: Wallet,
+  },
 ];
 
 function AffiliateSidebar() {
@@ -162,7 +168,15 @@ export default function ModernAffiliateLayout() {
     }
   }
 
-  return (
+const bottomNavItems = [
+  { to: '/', label: 'الرئيسية', icon: Home },
+  { to: '/affiliate', label: 'المسوق', icon: BarChart3 },
+  { to: '/affiliate/wallet', label: 'المحفظة', icon: Wallet },
+  { to: '/notifications', label: 'الإشعارات', icon: Bell },
+  { to: '/profile', label: 'حسابي', icon: User },
+];
+
+return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         {/* Sidebar */}
@@ -243,13 +257,14 @@ export default function ModernAffiliateLayout() {
           </header>
 
           {/* Page Content */}
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto pb-24">
             <div className="container mx-auto p-6">
               <Outlet />
             </div>
           </main>
         </div>
       </div>
+      <BottomNavMobile items={bottomNavItems} />
     </SidebarProvider>
   )
 }
