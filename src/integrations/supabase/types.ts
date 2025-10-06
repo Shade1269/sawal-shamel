@@ -260,8 +260,10 @@ export type Database = {
           added_at: string | null
           affiliate_store_id: string | null
           commission_rate: number | null
+          custom_price_sar: number | null
           id: string
           is_visible: boolean
+          price_set_at: string | null
           product_id: string | null
           sort_order: number | null
         }
@@ -269,8 +271,10 @@ export type Database = {
           added_at?: string | null
           affiliate_store_id?: string | null
           commission_rate?: number | null
+          custom_price_sar?: number | null
           id?: string
           is_visible?: boolean
+          price_set_at?: string | null
           product_id?: string | null
           sort_order?: number | null
         }
@@ -278,8 +282,10 @@ export type Database = {
           added_at?: string | null
           affiliate_store_id?: string | null
           commission_rate?: number | null
+          custom_price_sar?: number | null
           id?: string
           is_visible?: boolean
+          price_set_at?: string | null
           product_id?: string | null
           sort_order?: number | null
         }
@@ -5838,6 +5844,10 @@ export type Database = {
       }
       products: {
         Row: {
+          approval_notes: string | null
+          approval_status: string
+          approved_at: string | null
+          approved_by: string | null
           attributes_schema: Json | null
           brand_id: string | null
           category: string | null
@@ -5858,6 +5868,7 @@ export type Database = {
           meta_keywords: string[] | null
           min_order_quantity: number | null
           price_sar: number
+          rejected_at: string | null
           sales_count: number | null
           seo_description: string | null
           seo_title: string | null
@@ -5871,6 +5882,10 @@ export type Database = {
           weight_kg: number | null
         }
         Insert: {
+          approval_notes?: string | null
+          approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
           attributes_schema?: Json | null
           brand_id?: string | null
           category?: string | null
@@ -5891,6 +5906,7 @@ export type Database = {
           meta_keywords?: string[] | null
           min_order_quantity?: number | null
           price_sar: number
+          rejected_at?: string | null
           sales_count?: number | null
           seo_description?: string | null
           seo_title?: string | null
@@ -5904,6 +5920,10 @@ export type Database = {
           weight_kg?: number | null
         }
         Update: {
+          approval_notes?: string | null
+          approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
           attributes_schema?: Json | null
           brand_id?: string | null
           category?: string | null
@@ -5924,6 +5944,7 @@ export type Database = {
           meta_keywords?: string[] | null
           min_order_quantity?: number | null
           price_sar?: number
+          rejected_at?: string | null
           sales_count?: number | null
           seo_description?: string | null
           seo_title?: string | null
@@ -5937,6 +5958,20 @@ export type Database = {
           weight_kg?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "products_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "products_brand_id_fkey"
             columns: ["brand_id"]
@@ -9251,12 +9286,20 @@ export type Database = {
     }
     Functions: {
       add_affiliate_product: {
-        Args: {
-          p_is_visible?: boolean
-          p_product_id: string
-          p_sort_order?: number
-          p_store_id: string
-        }
+        Args:
+          | {
+              p_custom_price?: number
+              p_is_visible?: boolean
+              p_product_id: string
+              p_sort_order?: number
+              p_store_id: string
+            }
+          | {
+              p_is_visible?: boolean
+              p_product_id: string
+              p_sort_order?: number
+              p_store_id: string
+            }
         Returns: Json
       }
       add_loyalty_points: {
