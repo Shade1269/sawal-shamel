@@ -33,8 +33,10 @@ const AffiliateStoreSettingsPage = lazy(() => import("./pages/affiliate/store/Se
 const StoreSetup = lazy(() => import("./pages/affiliate/store/StoreSetup"));
 const LegacyStoreRedirect = lazy(() => import("./pages/redirects/LegacyStoreRedirect"));
 const AffiliateAnalyticsPage = lazy(() => import("./pages/affiliate/AffiliateCommissionsPage"));
+const AffiliateWalletPage = lazy(() => import("./pages/affiliate/AffiliateWalletPage"));
 const UnifiedAffiliateOrders = lazy(() => import("./pages/unified/UnifiedAffiliateOrders"));
 const AdminHomePage = lazy(() => import("./pages/home/AdminHome"));
+const AdminWithdrawalsPage = lazy(() => import("./pages/admin/AdminWithdrawalsPage"));
 const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrders"));
 const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminCustomersPage = lazy(() => import("./pages/admin/AdminCustomers"));
@@ -139,6 +141,7 @@ const App = () => {
                 <Route path="store/setup" element={<StoreSetup />} />
                 <Route path="orders" element={<UnifiedAffiliateOrders />} />
                 <Route path="analytics" element={<AffiliateAnalyticsPage />} />
+                <Route path="wallet" element={<AffiliateWalletPage />} />
               </Route>
 
                               <Route
@@ -157,6 +160,7 @@ const App = () => {
                                 <Route path="customers" element={<AdminCustomersPage />} />
                                 <Route path="management" element={<AdminPage />} />
                                 <Route path="inventory" element={<InventoryPage />} />
+                                <Route path="withdrawals" element={<AdminWithdrawalsPage />} />
                               </Route>
 
                               <Route path="*" element={<Navigate to="/" replace />} />
