@@ -30,7 +30,8 @@ import {
   Save,
   RefreshCw,
   Activity,
-  Zap
+  Zap,
+  DollarSign
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -116,6 +117,56 @@ const AdminSettings = () => {
                   <Label>تسجيل المستخدمين الجدد</Label>
                   <p className="text-sm text-muted-foreground">
                     السماح للمستخدمين بإنشاء حسابات جديدة
+                  </p>
+                </div>
+                <Switch defaultChecked />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="shadow-elegant">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-premium" />
+                إعدادات العمولات والمدفوعات
+              </CardTitle>
+              <CardDescription>
+                تحكم في نسبة عمولة المنصة وإعدادات السحب
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="platform-commission">نسبة عمولة المنصة (%)</Label>
+                <Input
+                  id="platform-commission"
+                  type="number"
+                  placeholder="25"
+                  defaultValue="25"
+                  min="0"
+                  max="100"
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  النسبة التي تحصل عليها المنصة من كل عملية بيع
+                </p>
+              </div>
+              <div>
+                <Label htmlFor="min-withdrawal">الحد الأدنى للسحب (ر.س)</Label>
+                <Input
+                  id="min-withdrawal"
+                  type="number"
+                  placeholder="100"
+                  defaultValue="100"
+                  min="1"
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  أقل مبلغ يمكن للمسوقات والتجار سحبه
+                </p>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>تفعيل نظام المحفظة</Label>
+                  <p className="text-sm text-muted-foreground">
+                    السماح بطلبات السحب من المسوقات والتجار
                   </p>
                 </div>
                 <Switch defaultChecked />
