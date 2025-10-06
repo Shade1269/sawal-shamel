@@ -152,6 +152,7 @@ export default function AffiliateWalletPage() {
     }
   });
 
+  // Load saved payment info
   const { data: savedPaymentInfo } = useQuery({
     queryKey: ['payment-info', profile?.id],
     queryFn: async () => {
@@ -217,12 +218,6 @@ export default function AffiliateWalletPage() {
 
   const resetForm = () => {
     setWithdrawalAmount('');
-    setPaymentMethod('bank_transfer');
-    setBankName('');
-    setAccountName('');
-    setAccountNumber('');
-    setIban('');
-    setPhoneNumber('');
     setNotes('');
   };
 
