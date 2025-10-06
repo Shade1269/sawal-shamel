@@ -20,6 +20,9 @@ interface Product {
   images: any;
   approval_status: 'pending' | 'approved' | 'rejected';
   approval_notes: string | null;
+  approved_by?: string | null;
+  approved_at?: string | null;
+  rejected_at?: string | null;
   created_at: string;
   merchant_id: string;
   merchants: {
@@ -55,7 +58,7 @@ const AdminProductApproval = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProducts((data || []) as Product[]);
+      setProducts((data || []) as any as Product[]);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({
@@ -71,14 +74,18 @@ const AdminProductApproval = () => {
   const handleApprove = async (productId: string) => {
     setIsReviewing(true);
     try {
+      if (!profile?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const { error } = await supabase
         .from('products')
         .update({
           approval_status: 'approved',
-          approved_by: profile?.id,
+          approved_by: profile.id,
           approved_at: new Date().toISOString(),
           approval_notes: reviewNotes || null,
-        })
+        } as any)
         .eq('id', productId);
 
       if (error) throw error;
@@ -115,14 +122,18 @@ const AdminProductApproval = () => {
 
     setIsReviewing(true);
     try {
+      if (!profile?.id) {
+        throw new Error('User not authenticated');
+      }
+
       const { error } = await supabase
         .from('products')
         .update({
           approval_status: 'rejected',
-          approved_by: profile?.id,
+          approved_by: profile.id,
           rejected_at: new Date().toISOString(),
           approval_notes: reviewNotes,
-        })
+        } as any)
         .eq('id', productId);
 
       if (error) throw error;
