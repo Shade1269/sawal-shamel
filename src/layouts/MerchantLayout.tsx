@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
@@ -138,6 +139,46 @@ export default function MerchantLayout() {
   const { profile, user } = useFastAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
+
+  // Ensure merchant account exists for merchant users
+  useEffect(() => {
+    const ensureMerchant = async () => {
+      try {
+        if (!profile?.id || profile.role !== 'merchant') return;
+
+        const { data: existing, error } = await supabase
+          .from('merchants')
+          .select('id')
+          .eq('profile_id', profile.id)
+          .maybeSingle();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Merchant lookup error:', error);
+          return;
+        }
+
+        if (!existing) {
+          const { error: insertError } = await supabase
+            .from('merchants')
+            .insert({
+              profile_id: profile.id,
+              business_name: profile.full_name || profile.email || 'Merchant',
+              default_commission_rate: 10,
+              vat_enabled: false,
+            });
+          if (insertError) {
+            console.error('Merchant creation error:', insertError);
+          } else {
+            toast({ title: 'تم إنشاء حساب التاجر', description: 'يمكنك الآن إضافة المنتجات.' });
+          }
+        }
+      } catch (e) {
+        console.error('ensureMerchant error:', e);
+      }
+    };
+
+    ensureMerchant();
+  }, [profile?.id, profile?.role]);
 
   const handleSignOut = async () => {
     try {

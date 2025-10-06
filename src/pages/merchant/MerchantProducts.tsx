@@ -3,10 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Package, Plus, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useToast } from '@/hooks/use-toast';
+import { SimpleProductForm } from '@/components/inventory/SimpleProductForm';
 
 interface Product {
   id: string;
@@ -29,6 +31,7 @@ const MerchantProducts = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
   const [merchantId, setMerchantId] = useState<string | null>(null);
+  const [showAdd, setShowAdd] = useState(false);
 
   useEffect(() => {
     fetchMerchantId();
@@ -48,12 +51,31 @@ const MerchantProducts = () => {
         .from('merchants')
         .select('id')
         .eq('profile_id', profile.id)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
-      setMerchantId(data.id);
+      if (error && error.code !== 'PGRST116') throw error;
+
+      if (!data) {
+        // إنشاء حساب تاجر تلقائياً إذا لم يوجد
+        const { data: inserted, error: insertError } = await supabase
+          .from('merchants')
+          .insert({
+            profile_id: profile.id,
+            business_name: profile.full_name || profile.email || 'Merchant',
+            default_commission_rate: 10,
+            vat_enabled: false,
+          })
+          .select('id')
+          .maybeSingle();
+
+        if (insertError) throw insertError;
+        if (inserted?.id) setMerchantId(inserted.id);
+      } else {
+        setMerchantId(data.id);
+      }
     } catch (error) {
-      console.error('Error fetching merchant ID:', error);
+      console.error('Error ensuring merchant ID:', error);
+      toast({ title: 'خطأ', description: 'تعذر إنشاء/جلب حساب التاجر', variant: 'destructive' });
     }
   };
 
@@ -115,7 +137,7 @@ const MerchantProducts = () => {
           <h1 className="text-3xl font-bold">إدارة المنتجات</h1>
           <p className="text-muted-foreground">إدارة منتجاتك والاطلاع على حالة الموافقة</p>
         </div>
-        <Button onClick={() => toast({ title: 'قريباً', description: 'صفحة إضافة منتج قيد التطوير' })}>
+        <Button onClick={() => setShowAdd(true)}>
           <Plus className="h-4 w-4 ml-2" />
           إضافة منتج جديد
         </Button>
