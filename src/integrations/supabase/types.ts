@@ -255,6 +255,63 @@ export type Database = {
           },
         ]
       }
+      affiliate_payment_info: {
+        Row: {
+          bank_account_name: string | null
+          bank_account_number: string | null
+          bank_name: string | null
+          created_at: string
+          iban: string | null
+          id: string
+          preferred_payment_method: string | null
+          profile_id: string
+          stc_pay_number: string | null
+          updated_at: string
+          wallet_number: string | null
+        }
+        Insert: {
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_name?: string | null
+          created_at?: string
+          iban?: string | null
+          id?: string
+          preferred_payment_method?: string | null
+          profile_id: string
+          stc_pay_number?: string | null
+          updated_at?: string
+          wallet_number?: string | null
+        }
+        Update: {
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_name?: string | null
+          created_at?: string
+          iban?: string | null
+          id?: string
+          preferred_payment_method?: string | null
+          profile_id?: string
+          stc_pay_number?: string | null
+          updated_at?: string
+          wallet_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_payment_info_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_payment_info_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       affiliate_products: {
         Row: {
           added_at: string | null

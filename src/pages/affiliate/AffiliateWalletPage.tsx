@@ -152,6 +152,37 @@ export default function AffiliateWalletPage() {
     }
   });
 
+  const { data: savedPaymentInfo } = useQuery({
+    queryKey: ['payment-info', profile?.id],
+    queryFn: async () => {
+      if (!profile) return null;
+      const { data, error } = await supabase
+        .from('affiliate_payment_info')
+        .select('*')
+        .eq('profile_id', profile.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!profile
+  });
+
+  // Auto-fill form when opening withdrawal dialog
+  React.useEffect(() => {
+    if (showWithdrawalDialog && savedPaymentInfo) {
+      setPaymentMethod(savedPaymentInfo.preferred_payment_method || 'bank_transfer');
+      setBankName(savedPaymentInfo.bank_name || '');
+      setAccountName(savedPaymentInfo.bank_account_name || '');
+      setAccountNumber(savedPaymentInfo.bank_account_number || '');
+      setIban(savedPaymentInfo.iban || '');
+      if (savedPaymentInfo.stc_pay_number) {
+        setPhoneNumber(savedPaymentInfo.stc_pay_number);
+      } else if (savedPaymentInfo.wallet_number) {
+        setPhoneNumber(savedPaymentInfo.wallet_number);
+      }
+    }
+  }, [showWithdrawalDialog, savedPaymentInfo]);
+
   const createWithdrawalMutation = useMutation({
     mutationFn: async (withdrawalData: any) => {
       const { error } = await supabase

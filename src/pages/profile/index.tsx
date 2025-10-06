@@ -33,6 +33,7 @@ import {
 } from "@/ui";
 import useUserProfile, { type UserProfileHookValue } from "@/hooks/useUserProfile";
 import { THEMES } from "@/themes/registry";
+import { PaymentInfoTab } from "@/components/profile/PaymentInfoTab";
 
 const roleLabels: Record<string, string> = {
   admin: "مدير النظام",
@@ -376,9 +377,12 @@ const ProfilePageBody: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => 
       <SkipLink targetId="profile-main" label="تخطي إلى محتوى الملف الشخصي" />
       <OverviewSection hook={hook} onOpenNotifications={handleOpenNotifications} />
       <Tabs defaultValue="overview" className="space-y-6" data-section="profile-tabs">
-        <TabsList aria-label="أقسام الملف الشخصي" className="grid gap-2 md:grid-cols-3">
+        <TabsList aria-label="أقسام الملف الشخصي" className="grid gap-2 md:grid-cols-4">
           <TabsTrigger value="overview" data-tab="overview">
             الملخص
+          </TabsTrigger>
+          <TabsTrigger value="payment" data-tab="payment">
+            بيانات السحب
           </TabsTrigger>
           <TabsTrigger value="security" data-tab="security">
             الأمان
@@ -389,6 +393,9 @@ const ProfilePageBody: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => 
         </TabsList>
         <TabsPanel id="profile-main" value="overview">
           <OverviewTab hook={hook} />
+        </TabsPanel>
+        <TabsPanel value="payment">
+          <PaymentInfoTab />
         </TabsPanel>
         <TabsPanel value="security">
           <SecurityTab hook={hook} />
