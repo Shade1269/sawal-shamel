@@ -480,9 +480,9 @@ export const AffiliateStoreManager = ({
   }
 
   return (
-    <div className="space-y-4 md:space-y-6 px-2 md:px-0">
+    <div className="space-y-4 md:space-y-6">
       {/* Store Header */}
-      <Card className="border-0 bg-gradient-to-r from-primary/10 to-accent/10">
+      <Card className="border-0 bg-gradient-to-r from-primary/10 to-accent/10 rounded-none md:rounded-xl">
         <CardContent className="p-4 md:p-6">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div className="flex items-start gap-3 md:gap-4">
@@ -562,7 +562,7 @@ export const AffiliateStoreManager = ({
         </TabsList>
 
         <TabsContent value="general" className="space-y-4 md:space-y-6">
-          <Card>
+          <Card className="rounded-none md:rounded-xl border-x-0 md:border-x">
             <CardHeader className="p-4 md:p-6">
               <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                 <Settings className="h-4 w-4 md:h-5 md:w-5" />
@@ -637,7 +637,7 @@ export const AffiliateStoreManager = ({
             }}
           />
           
-          <Card>
+          <Card className="rounded-none md:rounded-xl border-x-0 md:border-x">
             <CardHeader className="p-4 md:p-6">
               <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                 <ImageIcon className="h-4 w-4 md:h-5 md:w-5" />
@@ -684,7 +684,7 @@ export const AffiliateStoreManager = ({
         </TabsContent>
 
         <TabsContent value="hero" className="space-y-4 md:space-y-6">
-          <Card>
+          <Card className="rounded-none md:rounded-xl border-x-0 md:border-x">
             <CardHeader className="p-4 md:p-6">
               <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                 <ImageIcon className="h-4 w-4 md:h-5 md:w-5" />
@@ -773,7 +773,7 @@ export const AffiliateStoreManager = ({
         </TabsContent>
 
         <TabsContent value="categories" className="space-y-4 md:space-y-6">
-          <Card>
+          <Card className="rounded-none md:rounded-xl border-x-0 md:border-x">
             <CardHeader className="p-4 md:p-6">
               <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                 <Grid className="h-4 w-4 md:h-5 md:w-5" />
@@ -920,7 +920,7 @@ export const AffiliateStoreManager = ({
         </TabsContent>
 
         <TabsContent value="sharing" className="space-y-4 md:space-y-6">
-          <Card>
+          <Card className="rounded-none md:rounded-xl border-x-0 md:border-x">
             <CardHeader className="p-4 md:p-6">
               <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                 <Share2 className="h-4 w-4 md:h-5 md:w-5" />
@@ -1035,28 +1035,28 @@ export const AffiliateStoreManager = ({
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card>
+                <Card className="rounded-none md:rounded-xl border-x-0 md:border-x">
                   <CardContent className="p-4 text-center">
                     <Eye className="h-8 w-8 mx-auto mb-2 text-blue-500" />
                     <div className="text-2xl font-bold">{analytics?.totalViews?.toLocaleString('ar-EG') || '0'}</div>
                     <div className="text-sm text-muted-foreground">إجمالي المشاهدات</div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="rounded-none md:rounded-xl border-x-0 md:border-x">
                   <CardContent className="p-4 text-center">
                     <LinkIcon className="h-8 w-8 mx-auto mb-2 text-green-500" />
                     <div className="text-2xl font-bold">{analytics?.productClicks?.toLocaleString('ar-EG') || '0'}</div>
                     <div className="text-sm text-muted-foreground">النقرات على المنتجات</div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="rounded-none md:rounded-xl border-x-0 md:border-x">
                   <CardContent className="p-4 text-center">
                     <Globe className="h-8 w-8 mx-auto mb-2 text-purple-500" />
                     <div className="text-2xl font-bold">{analytics?.uniqueVisitors?.toLocaleString('ar-EG') || '0'}</div>
                     <div className="text-sm text-muted-foreground">زوار فريدون</div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="rounded-none md:rounded-xl border-x-0 md:border-x">
                   <CardContent className="p-4 text-center">
                     <Store className="h-8 w-8 mx-auto mb-2 text-orange-500" />
                     <div className="text-2xl font-bold">{analytics?.totalOrders?.toLocaleString('ar-EG') || store.total_orders}</div>
@@ -1067,19 +1067,19 @@ export const AffiliateStoreManager = ({
 
               {/* إحصائيات إضافية */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card>
+                <Card className="rounded-none md:rounded-xl border-x-0 md:border-x">
                   <CardContent className="p-4 text-center">
                     <div className="text-lg font-bold text-green-600">{analytics?.conversionRate || 0}%</div>
                     <div className="text-sm text-muted-foreground">معدل التحويل</div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="rounded-none md:rounded-xl border-x-0 md:border-x">
                   <CardContent className="p-4 text-center">
                     <div className="text-lg font-bold text-blue-600">{analytics?.averageOrderValue?.toLocaleString('ar-EG') || 0} ر.س</div>
                     <div className="text-sm text-muted-foreground">متوسط قيمة الطلب</div>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className="rounded-none md:rounded-xl border-x-0 md:border-x">
                   <CardContent className="p-4 text-center">
                     <div className="text-lg font-bold text-purple-600">{analytics?.totalSales?.toLocaleString('ar-EG') || store.total_sales} ر.س</div>
                     <div className="text-sm text-muted-foreground">إجمالي المبيعات</div>
