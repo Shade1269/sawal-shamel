@@ -126,8 +126,10 @@ const Index = () => {
     // Use smart navigation to go to appropriate dashboard based on user role
     if (profile?.role === 'admin') {
       navigate('/admin/dashboard');
-    } else if (profile?.role === 'affiliate' || profile?.role === 'merchant' || profile?.role === 'marketer') {
+    } else if (profile?.role === 'affiliate' || profile?.role === 'marketer') {
       navigate('/affiliate');
+    } else if (profile?.role === 'merchant') {
+      navigate('/merchant');
     } else {
       navigate('/');
     }

@@ -31,7 +31,7 @@ export const StoreRouteGuard = ({ children }: StoreRouteGuardProps) => {
           admin: '/admin/dashboard',
           moderator: '/admin/dashboard',
           affiliate: '/affiliate',
-          merchant: '/affiliate',
+          merchant: '/merchant',
         };
 
         const redirectPath = redirectMap[profile.role] || '/';

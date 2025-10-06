@@ -383,7 +383,7 @@ export const useFastAuth = () => {
             redirect = '/affiliate';
             break;
           case 'merchant':
-            redirect = '/affiliate';
+            redirect = '/merchant';
             break;
           default:
             redirect = '/';
