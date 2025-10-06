@@ -81,105 +81,105 @@ export default {
 				'96': '24rem',
 			},
                         colors: {
-                                bg: 'var(--bg)',
-                                fg: 'var(--fg)',
-                                border: 'var(--border)',
-                                input: 'var(--muted)',
-                                ring: 'var(--primary)',
-                                background: 'var(--background)',
-                                foreground: 'var(--foreground)',
+                                bg: 'hsl(var(--bg) / <alpha-value>)',
+                                fg: 'hsl(var(--fg) / <alpha-value>)',
+                                border: 'hsl(var(--border) / <alpha-value>)',
+                                input: 'hsl(var(--muted) / <alpha-value>)',
+                                ring: 'hsl(var(--primary) / <alpha-value>)',
+                                background: 'hsl(var(--background) / <alpha-value>)',
+                                foreground: 'hsl(var(--foreground) / <alpha-value>)',
                                 primary: {
-                                        DEFAULT: 'var(--primary)',
-                                        foreground: 'var(--primary-fg)',
-                                        fg: 'var(--primary-fg)',
-                                        glow: 'var(--primary)',
+                                        DEFAULT: 'hsl(var(--primary) / <alpha-value>)',
+                                        foreground: 'hsl(var(--primary-fg) / <alpha-value>)',
+                                        fg: 'hsl(var(--primary-fg) / <alpha-value>)',
+                                        glow: 'hsl(var(--primary) / <alpha-value>)',
                                         dark: 'color-mix(in srgb, var(--primary) 85%, #000 15%)'
                                 },
-				'primary-fg': 'var(--primary-fg)',
-				'primary-foreground': 'var(--primary-fg)',
+				'primary-fg': 'hsl(var(--primary-fg) / <alpha-value>)',
+				'primary-foreground': 'hsl(var(--primary-fg) / <alpha-value>)',
                                 secondary: {
-                                        DEFAULT: 'var(--secondary)',
-                                        foreground: 'var(--secondary-fg)'
+                                        DEFAULT: 'hsl(var(--secondary) / <alpha-value>)',
+                                        foreground: 'hsl(var(--secondary-fg) / <alpha-value>)'
                                 },
-				'secondary-fg': 'var(--secondary-fg)',
+				'secondary-fg': 'hsl(var(--secondary-fg) / <alpha-value>)',
                                 destructive: {
-                                        DEFAULT: 'var(--danger)',
-                                        foreground: 'var(--destructive-foreground)'
+                                        DEFAULT: 'hsl(var(--danger) / <alpha-value>)',
+                                        foreground: 'hsl(var(--destructive-foreground) / <alpha-value>)'
                                 },
                                 muted: {
-                                        DEFAULT: 'var(--muted)',
-                                        foreground: 'var(--muted-foreground)'
+                                        DEFAULT: 'hsl(var(--muted) / <alpha-value>)',
+                                        foreground: 'hsl(var(--muted-foreground) / <alpha-value>)'
                                 },
-				'muted-foreground': 'var(--muted-foreground)',
+				'muted-foreground': 'hsl(var(--muted-foreground) / <alpha-value>)',
 				success: {
-					DEFAULT: 'var(--success)'
+					DEFAULT: 'hsl(var(--success) / <alpha-value>)'
 				},
 				warning: {
-					DEFAULT: 'var(--warning)'
+					DEFAULT: 'hsl(var(--warning) / <alpha-value>)'
 				},
 				danger: {
-					DEFAULT: 'var(--danger)'
+					DEFAULT: 'hsl(var(--danger) / <alpha-value>)'
 				},
 				info: {
-					DEFAULT: 'var(--info)'
+					DEFAULT: 'hsl(var(--info) / <alpha-value>)'
 				},
                                 accent: {
-                                        DEFAULT: 'var(--accent)',
+                                        DEFAULT: 'hsl(var(--accent) / <alpha-value>)',
                                         glow: 'color-mix(in srgb, var(--accent) 65%, #fff 35%)',
-                                        foreground: 'var(--accent-fg)'
+                                        foreground: 'hsl(var(--accent-fg) / <alpha-value>)'
                                 },
                                 popover: {
-                                        DEFAULT: 'var(--popover)',
-                                        foreground: 'var(--popover-foreground)'
+                                        DEFAULT: 'hsl(var(--popover) / <alpha-value>)',
+                                        foreground: 'hsl(var(--popover-foreground) / <alpha-value>)'
                                 },
                                 card: {
-                                        DEFAULT: 'var(--card)',
-                                        foreground: 'var(--card-foreground)'
+                                        DEFAULT: 'hsl(var(--card) / <alpha-value>)',
+                                        foreground: 'hsl(var(--card-foreground) / <alpha-value>)'
                                 },
                                 luxury: {
-                                        DEFAULT: 'var(--luxury)',
-                                        foreground: 'var(--luxury-foreground)'
+                                        DEFAULT: 'hsl(var(--luxury) / <alpha-value>)',
+                                        foreground: 'hsl(var(--luxury-foreground) / <alpha-value>)'
                                 },
                                 premium: {
-                                        DEFAULT: 'var(--premium)',
-                                        foreground: 'var(--premium-foreground)'
+                                        DEFAULT: 'hsl(var(--premium) / <alpha-value>)',
+                                        foreground: 'hsl(var(--premium-foreground) / <alpha-value>)'
                                 },
                                 persian: {
-                                        DEFAULT: 'var(--persian)',
-                                        foreground: 'var(--persian-foreground)'
+                                        DEFAULT: 'hsl(var(--persian) / <alpha-value>)',
+                                        foreground: 'hsl(var(--persian-foreground) / <alpha-value>)'
                                 },
                                 turquoise: {
-                                        DEFAULT: 'var(--turquoise)',
-                                        foreground: 'var(--turquoise-foreground)'
+                                        DEFAULT: 'hsl(var(--turquoise) / <alpha-value>)',
+                                        foreground: 'hsl(var(--turquoise-foreground) / <alpha-value>)'
                                 },
                                 bronze: {
-                                        DEFAULT: 'var(--bronze)',
-                                        foreground: 'var(--bronze-foreground)'
+                                        DEFAULT: 'hsl(var(--bronze) / <alpha-value>)',
+                                        foreground: 'hsl(var(--bronze-foreground) / <alpha-value>)'
                                 },
                                 olive: {
-                                        DEFAULT: 'var(--olive)',
-                                        foreground: 'var(--olive-foreground)'
+                                        DEFAULT: 'hsl(var(--olive) / <alpha-value>)',
+                                        foreground: 'hsl(var(--olive-foreground) / <alpha-value>)'
                                 },
                                 coral: {
-                                        DEFAULT: 'var(--coral)',
-                                        foreground: 'var(--coral-foreground)'
+                                        DEFAULT: 'hsl(var(--coral) / <alpha-value>)',
+                                        foreground: 'hsl(var(--coral-foreground) / <alpha-value>)'
                                 },
                                 pearl: {
-                                        DEFAULT: 'var(--pearl)',
-                                        foreground: 'var(--pearl-foreground)'
+                                        DEFAULT: 'hsl(var(--pearl) / <alpha-value>)',
+                                        foreground: 'hsl(var(--pearl-foreground) / <alpha-value>)'
                                 },
                                 jasmine: {
-                                        DEFAULT: 'var(--jasmine)',
-                                        foreground: 'var(--jasmine-foreground)'
+                                        DEFAULT: 'hsl(var(--jasmine) / <alpha-value>)',
+                                        foreground: 'hsl(var(--jasmine-foreground) / <alpha-value>)'
                                 },
                                 chat: {
-                                        bg: 'var(--chat-bg)',
-                                        sent: 'var(--chat-sent)',
-                                        received: 'var(--chat-received)',
+                                        bg: 'hsl(var(--chat-bg) / <alpha-value>)',
+                                        sent: 'hsl(var(--chat-sent) / <alpha-value>)',
+                                        received: 'hsl(var(--chat-received) / <alpha-value>)',
                                 },
                                 status: {
-                                        online: 'var(--status-online)',
-                                        offline: 'var(--status-offline)',
+                                        online: 'hsl(var(--status-online) / <alpha-value>)',
+                                        offline: 'hsl(var(--status-offline) / <alpha-value>)',
                                 }
 			},
 			backgroundImage: {
