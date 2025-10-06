@@ -17,7 +17,7 @@ INSERT INTO public.store_themes (
       "primary": "hsl(349, 69%, 45%)",
       "secondary": "hsl(220, 40%, 15%)",
       "accent": "hsl(349, 69%, 45%)",
-      "background": "hsl(220, 50%, 6%)",
+      "background": "hsl(220, 50%, 11%)",
       "foreground": "hsl(210, 20%, 96%)",
       "muted": "hsl(220, 15%, 35%)",
       "card": "hsl(220, 45%, 11%)",
