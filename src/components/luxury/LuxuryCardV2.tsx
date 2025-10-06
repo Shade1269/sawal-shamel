@@ -8,28 +8,28 @@ const luxuryCardVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-2 border-red-600/20 bg-gradient-to-br from-slate-900/95 via-slate-900/90 to-slate-800/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_12px_48px_rgba(196,30,58,0.25),0_0_24px_rgba(196,30,58,0.15)] hover:border-red-600/35",
+        default: "border border-red-600/15 bg-gradient-to-br from-slate-900/98 via-slate-900/96 to-slate-800/98 backdrop-blur-sm shadow-lg shadow-black/30 hover:shadow-xl hover:shadow-red-600/15 hover:border-red-600/25",
         
-        glass: "border-2 border-white/10 bg-gradient-to-br from-slate-900/60 via-slate-900/40 to-slate-800/60 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.15)] hover:shadow-[0_12px_48px_rgba(255,255,255,0.1)]",
+        glass: "border border-white/10 bg-gradient-to-br from-slate-900/70 via-slate-900/60 to-slate-800/70 backdrop-blur-md shadow-lg shadow-black/40 hover:shadow-xl hover:shadow-white/10",
         
-        glow: "border-2 border-red-600/30 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-800/95 backdrop-blur-xl shadow-[0_0_32px_rgba(196,30,58,0.4),0_0_64px_rgba(196,30,58,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_0_48px_rgba(196,30,58,0.6),0_0_96px_rgba(196,30,58,0.3)] animate-ferrari-glow",
+        glow: "border border-red-600/20 bg-gradient-to-br from-slate-900/98 via-slate-900/96 to-slate-800/98 backdrop-blur-sm shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 animate-ferrari-glow",
         
-        metallic: "border-2 border-slate-600/30 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_2px_8px_rgba(255,255,255,0.1)] hover:shadow-[0_12px_48px_rgba(192,197,206,0.2)] [&::before]:animate-metallic-shimmer",
+        metallic: "border border-slate-600/20 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 shadow-lg shadow-black/40 hover:shadow-xl hover:shadow-slate-600/20",
         
-        solid: "border-2 border-slate-700 bg-slate-900 shadow-2xl hover:shadow-[0_12px_48px_rgba(0,0,0,0.6)]"
+        solid: "border border-slate-700/80 bg-slate-900 shadow-lg hover:shadow-xl hover:shadow-black/50"
       },
       size: {
-        sm: "p-4",
-        md: "p-6",
-        lg: "p-8",
-        xl: "p-10"
+        sm: "p-5",
+        md: "p-7",
+        lg: "p-9",
+        xl: "p-12"
       },
       hover: {
         none: "",
-        lift: "hover:-translate-y-2",
-        scale: "hover:scale-[1.02]",
-        glow: "hover:shadow-[0_0_32px_rgba(196,30,58,0.6)]",
-        both: "hover:-translate-y-2 hover:scale-[1.02]"
+        lift: "hover:-translate-y-1",
+        scale: "hover:scale-[1.01]",
+        glow: "hover:shadow-red-600/35",
+        both: "hover:-translate-y-1 hover:scale-[1.01]"
       },
       animated: {
         true: "",
@@ -87,7 +87,7 @@ const LuxuryCardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex flex-col space-y-2 pb-4", className)}
+    className={cn("flex flex-col space-y-3 pb-5", className)}
     {...props}
   />
 ));
@@ -134,7 +134,7 @@ const LuxuryCardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex items-center pt-4", className)}
+    className={cn("flex items-center pt-5", className)}
     {...props}
   />
 ));

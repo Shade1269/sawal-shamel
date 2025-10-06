@@ -64,11 +64,11 @@ export function ProductShowcase3D({
   return (
     <Card
       className={cn(
-        "overflow-hidden border-2 border-red-600/20 bg-gradient-to-br from-slate-900/95 via-slate-900/90 to-slate-800/90 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] hover:shadow-[0_12px_48px_rgba(196,30,58,0.25),0_0_24px_rgba(196,30,58,0.15)] hover:border-red-600/35 transition-all duration-500",
+        "overflow-hidden border border-red-600/15 bg-gradient-to-br from-slate-900/98 via-slate-900/96 to-slate-800/98 backdrop-blur-sm shadow-lg shadow-black/30 hover:shadow-xl hover:shadow-red-600/15 hover:border-red-600/25 transition-all duration-500",
         className
       )}
     >
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <CardTitle className="text-2xl font-bold text-white mb-2">
@@ -89,11 +89,11 @@ export function ProductShowcase3D({
         </div>
       </CardHeader>
 
-      <CardContent className="p-6 pt-0">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <CardContent className="p-8 pt-0">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="relative perspective-1000">
             <motion.div
-              className="relative aspect-square rounded-xl overflow-hidden bg-slate-800/50 backdrop-blur-sm"
+              className="relative aspect-square rounded-xl overflow-hidden bg-slate-800/70"
               style={{
                 transformStyle: "preserve-3d",
                 perspective: "1000px"
@@ -131,7 +131,7 @@ export function ProductShowcase3D({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-slate-900/80 backdrop-blur-sm hover:bg-red-600/80 text-white border border-red-600/30 hover:border-red-600/50 h-10 w-10 rounded-lg shadow-lg"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-slate-900/90 hover:bg-red-600/80 text-white border border-red-600/20 hover:border-red-600/40 h-10 w-10 rounded-lg shadow-md"
                     onClick={prevImage}
                   >
                     <ChevronRight className="h-5 w-5" />
@@ -139,7 +139,7 @@ export function ProductShowcase3D({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900/80 backdrop-blur-sm hover:bg-red-600/80 text-white border border-red-600/30 hover:border-red-600/50 h-10 w-10 rounded-lg shadow-lg"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900/90 hover:bg-red-600/80 text-white border border-red-600/20 hover:border-red-600/40 h-10 w-10 rounded-lg shadow-md"
                     onClick={nextImage}
                   >
                     <ChevronLeft className="h-5 w-5" />
@@ -147,7 +147,7 @@ export function ProductShowcase3D({
                 </>
               )}
 
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-slate-900/80 backdrop-blur-sm px-3 py-2 rounded-lg border border-red-600/30">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-slate-900/90 px-3 py-2 rounded-lg border border-red-600/20">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -167,14 +167,14 @@ export function ProductShowcase3D({
             </motion.div>
 
             {images.length > 1 && (
-              <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
+              <div className="flex gap-3 mt-5 overflow-x-auto pb-2">
                 {images.map((img, idx) => (
                   <motion.button
                     key={idx}
                     className={cn(
                       "flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-300",
                       idx === currentIndex
-                        ? "border-red-600 shadow-[0_0_16px_rgba(196,30,58,0.5)]"
+                        ? "border-red-600 shadow-md shadow-red-600/30"
                         : "border-slate-700 hover:border-red-600/50 opacity-60 hover:opacity-100"
                     )}
                     onClick={() => {
@@ -196,7 +196,7 @@ export function ProductShowcase3D({
           </div>
 
           <div className="flex flex-col justify-between">
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="flex items-center gap-4">
                 <div className="text-4xl font-bold text-red-500">
                   {product.price_sar.toLocaleString('ar')} ريال
@@ -241,22 +241,22 @@ export function ProductShowcase3D({
               </div>
             </div>
 
-            <div className="space-y-3 pt-6">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <div className="space-y-4 pt-8">
+              <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
                 <Button
                   onClick={onAddToCart}
-                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 text-white shadow-2xl shadow-red-600/40 hover:shadow-[0_0_32px_rgba(196,30,58,0.6),0_0_64px_rgba(196,30,58,0.3)] border border-red-500/30 transition-all duration-500"
+                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 text-white shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 border border-red-500/20 transition-all duration-500"
                 >
                   <ShoppingCart className="h-5 w-5 ml-2" />
                   أضف إلى السلة
                 </Button>
               </motion.div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <Button
                   variant="outline"
                   onClick={onToggleFavorite}
-                  className="border-2 border-red-600 text-red-600 bg-slate-900/50 backdrop-blur-md hover:bg-red-950/30 hover:shadow-[0_0_24px_rgba(196,30,58,0.4)] transition-all duration-300"
+                  className="border-2 border-red-600/80 text-red-600 bg-slate-900/60 hover:bg-red-950/20 hover:border-red-600 transition-all duration-300"
                 >
                   <Heart className="h-4 w-4 ml-2" />
                   المفضلة
@@ -264,7 +264,7 @@ export function ProductShowcase3D({
                 <Button
                   variant="outline"
                   onClick={onShare}
-                  className="border-2 border-slate-600 text-slate-300 bg-slate-900/50 backdrop-blur-md hover:bg-slate-800/50 transition-all duration-300"
+                  className="border-2 border-slate-600/80 text-slate-300 bg-slate-900/60 hover:bg-slate-800/50 hover:border-slate-600 transition-all duration-300"
                 >
                   <Share2 className="h-4 w-4 ml-2" />
                   مشاركة
