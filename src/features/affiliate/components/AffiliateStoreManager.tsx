@@ -51,6 +51,7 @@ import { useStoreAnalytics } from '@/hooks/useStoreAnalytics';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { CategoryEditDialog } from './CategoryEditDialog';
 import { ProductManagement } from './ProductManagement';
+import { AffiliateProductsManager } from './AffiliateProductsManager';
 import { OrderCommissionManagement } from './OrderCommissionManagement';
 import AffiliateCouponManager from '@/components/marketing/AffiliateCouponManager';
 import { supabase } from '@/integrations/supabase/client';
@@ -540,6 +541,7 @@ export const AffiliateStoreManager = ({
               <SelectItem value="appearance">🎨 المظهر</SelectItem>
               <SelectItem value="hero">🖼️ القسم الرئيسي</SelectItem>
               <SelectItem value="categories">📂 إدارة الفئات</SelectItem>
+              <SelectItem value="products">🛍️ إدارة المنتجات</SelectItem>
               <SelectItem value="coupons">🎟️ الكوبونات</SelectItem>
               <SelectItem value="sharing">📤 المشاركة</SelectItem>
               <SelectItem value="analytics">📊 الإحصائيات</SelectItem>
@@ -548,11 +550,12 @@ export const AffiliateStoreManager = ({
         </div>
 
         {/* تبويبات للشاشات الكبيرة */}
-        <TabsList className="hidden md:grid w-full grid-cols-7">
+        <TabsList className="hidden md:grid w-full grid-cols-8">
           <TabsTrigger value="general">الإعدادات العامة</TabsTrigger>
           <TabsTrigger value="appearance">المظهر</TabsTrigger>
           <TabsTrigger value="hero">القسم الرئيسي</TabsTrigger>
           <TabsTrigger value="categories">إدارة الفئات</TabsTrigger>
+          <TabsTrigger value="products">المنتجات</TabsTrigger>
           <TabsTrigger value="coupons">الكوبونات</TabsTrigger>
           <TabsTrigger value="sharing">المشاركة</TabsTrigger>
           <TabsTrigger value="analytics">الإحصائيات</TabsTrigger>
@@ -1017,6 +1020,11 @@ export const AffiliateStoreManager = ({
         {/* Coupons Tab */}
         <TabsContent value="coupons" className="space-y-6">
           <AffiliateCouponManager />
+        </TabsContent>
+
+        {/* Products Tab */}
+        <TabsContent value="products" className="space-y-6">
+          <AffiliateProductsManager storeId={store.id} />
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">

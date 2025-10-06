@@ -21,6 +21,7 @@ interface AffiliateProduct {
   id: string;
   product_id: string;
   commission_rate: number;
+  custom_price_sar: number | null;
   is_visible: boolean;
   products: {
     title: string;
@@ -39,6 +40,7 @@ export const AffiliateProductsManager: React.FC<AffiliateProductsManagerProps> =
   const queryClient = useQueryClient();
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [commissionRates, setCommissionRates] = useState<{ [key: string]: number }>({});
+  const [customPrices, setCustomPrices] = useState<{ [key: string]: string }>({});
 
   const { data: affiliateProducts = [], isLoading } = useQuery({
     queryKey: ['affiliate-products', storeId],
@@ -61,11 +63,16 @@ export const AffiliateProductsManager: React.FC<AffiliateProductsManagerProps> =
     enabled: !!storeId
   });
 
-  const updateCommissionMutation = useMutation({
-    mutationFn: async ({ productId, rate }: { productId: string; rate: number }) => {
+  const updateProductMutation = useMutation({
+    mutationFn: async ({ productId, rate, customPrice }: { productId: string; rate: number; customPrice?: number | null }) => {
+      const updates: any = { commission_rate: rate };
+      if (customPrice !== undefined) {
+        updates.custom_price_sar = customPrice;
+      }
+      
       const { error } = await supabase
         .from('affiliate_products')
-        .update({ commission_rate: rate })
+        .update(updates)
         .eq('id', productId);
 
       if (error) throw error;
@@ -74,39 +81,61 @@ export const AffiliateProductsManager: React.FC<AffiliateProductsManagerProps> =
       queryClient.invalidateQueries({ queryKey: ['affiliate-products', storeId] });
       toast({
         title: "تم التحديث",
-        description: "تم تحديث نسبة العمولة بنجاح",
+        description: "تم تحديث بيانات المنتج بنجاح",
       });
       setEditingProduct(null);
     },
     onError: (error) => {
       toast({
         title: "خطأ",
-        description: "فشل في تحديث نسبة العمولة",
+        description: "فشل في تحديث بيانات المنتج",
         variant: "destructive",
       });
     }
   });
 
-  const handleSaveCommission = (productId: string) => {
+  const handleSaveProduct = (productId: string) => {
     const newRate = commissionRates[productId];
-    if (newRate && newRate > 0 && newRate <= 50) {
-      updateCommissionMutation.mutate({ productId, rate: newRate });
-    } else {
+    const customPriceStr = customPrices[productId];
+    const customPriceNum = customPriceStr ? parseFloat(customPriceStr) : null;
+    
+    if (!newRate || newRate <= 0 || newRate > 50) {
       toast({
         title: "خطأ في البيانات",
         description: "يجب أن تكون نسبة العمولة بين 1% و 50%",
         variant: "destructive",
       });
+      return;
     }
+    
+    if (customPriceNum !== null && customPriceNum <= 0) {
+      toast({
+        title: "خطأ في البيانات",
+        description: "السعر المخصص يجب أن يكون أكبر من صفر",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    updateProductMutation.mutate({ 
+      productId, 
+      rate: newRate,
+      customPrice: customPriceNum 
+    });
   };
 
-  const startEditing = (productId: string, currentRate: number) => {
+  const startEditing = (productId: string, currentRate: number, currentPrice: number | null) => {
     setEditingProduct(productId);
     setCommissionRates(prev => ({ ...prev, [productId]: currentRate }));
+    setCustomPrices(prev => ({ ...prev, [productId]: currentPrice?.toString() || '' }));
   };
 
   const calculatePotentialEarning = (price: number, rate: number) => {
     return (price * rate / 100).toFixed(2);
+  };
+  
+  const getDisplayPrice = (product: AffiliateProduct) => {
+    return product.custom_price_sar || product.products?.price_sar || 0;
   };
 
   if (isLoading) {
@@ -157,8 +186,13 @@ export const AffiliateProductsManager: React.FC<AffiliateProductsManagerProps> =
                       <div>
                         <h3 className="font-medium">{product.products?.title || 'منتج غير محدد'}</h3>
                         <p className="text-sm text-muted-foreground">
-                          السعر: {product.products?.price_sar} ريال
+                          السعر الأصلي: {product.products?.price_sar} ريال
                         </p>
+                        {product.custom_price_sar && (
+                          <p className="text-sm font-medium text-primary">
+                            سعرك المخصص: {product.custom_price_sar} ريال
+                          </p>
+                        )}
                       </div>
                       <Badge variant={product.is_visible ? "default" : "secondary"}>
                         {product.is_visible ? 'مرئي' : 'مخفي'}
@@ -166,6 +200,39 @@ export const AffiliateProductsManager: React.FC<AffiliateProductsManagerProps> =
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* السعر المخصص */}
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium flex items-center gap-2">
+                          💰 السعر المخصص (ريال)
+                        </Label>
+                        {editingProduct === product.id ? (
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={customPrices[product.id] || ''}
+                            onChange={(e) => setCustomPrices(prev => ({
+                              ...prev,
+                              [product.id]: e.target.value
+                            }))}
+                            className="text-center"
+                            placeholder={`${product.products?.price_sar || 0}`}
+                          />
+                        ) : (
+                          <div className="text-lg font-bold text-primary">
+                            {getDisplayPrice(product)} ريال
+                          </div>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                          {editingProduct === product.id 
+                            ? "اتركه فارغاً لاستخدام السعر الأصلي" 
+                            : product.custom_price_sar 
+                              ? "سعر مخصص"
+                              : "السعر الأصلي"
+                          }
+                        </p>
+                      </div>
+                      
                       {/* نسبة العمولة */}
                       <div className="space-y-2">
                         <Label className="text-sm font-medium flex items-center gap-2">
@@ -173,68 +240,73 @@ export const AffiliateProductsManager: React.FC<AffiliateProductsManagerProps> =
                           نسبة العمولة
                         </Label>
                         {editingProduct === product.id ? (
-                          <div className="flex gap-2">
-                            <Input
-                              type="number"
-                              min="1"
-                              max="50"
-                              value={commissionRates[product.id] || product.commission_rate}
-                              onChange={(e) => setCommissionRates(prev => ({
-                                ...prev,
-                                [product.id]: Number(e.target.value)
-                              }))}
-                              className="text-center"
-                              placeholder="نسبة %"
-                            />
-                            <Button 
-                              size="sm"
-                              onClick={() => handleSaveCommission(product.id)}
-                              disabled={updateCommissionMutation.isPending}
-                            >
-                              <Save className="h-4 w-4" />
-                            </Button>
-                          </div>
+                          <Input
+                            type="number"
+                            min="1"
+                            max="50"
+                            value={commissionRates[product.id] || product.commission_rate}
+                            onChange={(e) => setCommissionRates(prev => ({
+                              ...prev,
+                              [product.id]: Number(e.target.value)
+                            }))}
+                            className="text-center"
+                            placeholder="نسبة %"
+                          />
                         ) : (
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-lg">
-                              {product.commission_rate}%
-                            </Badge>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => startEditing(product.id, product.commission_rate)}
-                            >
-                              <Edit3 className="h-4 w-4" />
-                            </Button>
-                          </div>
+                          <Badge variant="outline" className="text-lg">
+                            {product.commission_rate}%
+                          </Badge>
                         )}
                       </div>
                       
                       {/* العمولة المتوقعة */}
                       <div className="space-y-2">
                         <Label className="text-sm font-medium">العمولة المتوقعة</Label>
-                        <div className="text-lg font-bold text-primary">
-                          {product.products?.price_sar ? 
-                            calculatePotentialEarning(
-                              product.products.price_sar, 
-                              editingProduct === product.id ? 
-                                (commissionRates[product.id] || product.commission_rate) : 
-                                product.commission_rate
-                            ) : '0.00'
-                          } ريال
+                        <div className="text-lg font-bold text-green-600">
+                          {calculatePotentialEarning(
+                            getDisplayPrice(product),
+                            editingProduct === product.id 
+                              ? (commissionRates[product.id] || product.commission_rate)
+                              : product.commission_rate
+                          )} ريال
                         </div>
-                      </div>
-                      
-                      {/* معلومات إضافية */}
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium">معدل العائد</Label>
-                        <div className="text-sm text-muted-foreground">
-                          {product.products?.price_sar ? 
-                            ((product.commission_rate / 100) * 100).toFixed(1) : '0'
-                          }% من سعر المنتج
-                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          عمولتك من كل عملية بيع
+                        </p>
                       </div>
                     </div>
+                    
+                    {/* أزرار الحفظ والتعديل */}
+                    {editingProduct === product.id ? (
+                      <div className="flex gap-2 mt-4">
+                        <Button 
+                          size="sm"
+                          onClick={() => handleSaveProduct(product.id)}
+                          disabled={updateProductMutation.isPending}
+                        >
+                          <Save className="h-4 w-4 ml-2" />
+                          حفظ التغييرات
+                        </Button>
+                        <Button 
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setEditingProduct(null)}
+                        >
+                          إلغاء
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="mt-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => startEditing(product.id, product.commission_rate, product.custom_price_sar)}
+                        >
+                          <Edit3 className="h-4 w-4 ml-2" />
+                          تعديل السعر والعمولة
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
