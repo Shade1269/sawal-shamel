@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { useAffiliateStore } from '@/hooks/useAffiliateStore';
 import { useAffiliateOrders } from '@/hooks/useAffiliateOrders';
+import { useFastAuth } from '@/hooks/useFastAuth';
+import { maskPhone, shouldShowFullCustomerData } from '@/lib/privacy';
 
 const statusIcons = {
   'PENDING': Clock,
@@ -45,6 +47,8 @@ const statusColors = {
 };
 
 export default function UnifiedAffiliateOrders() {
+  const { profile } = useFastAuth();
+  const showFullData = shouldShowFullCustomerData(profile?.role);
   const { store } = useAffiliateStore();
   const { stats, orders, loading, error } = useAffiliateOrders(store?.id);
 
@@ -171,6 +175,11 @@ export default function UnifiedAffiliateOrders() {
                         <p className="text-sm text-muted-foreground">
                           العميل: {order.customer_name || 'غير محدد'}
                         </p>
+                        {order.customer_phone && (
+                          <p className="text-sm text-muted-foreground">
+                            هاتف: {showFullData ? order.customer_phone : maskPhone(order.customer_phone)}
+                          </p>
+                        )}
                         <p className="text-sm text-muted-foreground">
                           {format(new Date(order.created_at), 'dd MMMM yyyy - HH:mm', { locale: ar })}
                         </p>

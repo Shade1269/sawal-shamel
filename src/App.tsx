@@ -47,6 +47,7 @@ const AdminPage = lazy(() => import("./pages/Admin"));
 const InventoryPage = lazy(() => import("./pages/inventory/index"));
 const MerchantDashboard = lazy(() => import("./pages/merchant/MerchantDashboard"));
 const MerchantProducts = lazy(() => import("./pages/merchant/MerchantProducts"));
+const MerchantLayout = lazy(() => import("./layouts/MerchantLayout"));
 const UiShowcasePage = lazy(() => import("./pages/UiShowcase"));
 const ProfilePage = lazy(() => import("./pages/profile"));
 const NotificationsPage = lazy(() => import("./pages/notifications"));
@@ -178,7 +179,7 @@ const App = () => {
                                 path="/merchant"
                                 element={(
                                   <ProtectedRoute requiredRole={["merchant"]}>
-                                    <Outlet />
+                                    <MerchantLayout />
                                   </ProtectedRoute>
                                 )}
                               >

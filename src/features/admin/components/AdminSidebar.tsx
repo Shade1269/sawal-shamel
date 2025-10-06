@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { BarChart3, ShoppingCart, TrendingUp, Database, Crown } from "lucide-react";
+import { BarChart3, ShoppingCart, TrendingUp, Database, Crown, Wallet, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const mainMenuItems = [
@@ -28,6 +28,16 @@ const managementItems = [
     title: "الطلبات",
     url: "/admin/orders",
     icon: ShoppingCart
+  },
+  {
+    title: "إدارة السحوبات",
+    url: "/admin/withdrawals",
+    icon: Wallet
+  },
+  {
+    title: "موافقة المنتجات",
+    url: "/admin/products/approval",
+    icon: CheckCircle
   },
   {
     title: "المخزون",

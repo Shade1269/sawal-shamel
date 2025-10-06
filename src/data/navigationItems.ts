@@ -12,6 +12,7 @@ import {
   Users,
   Settings,
   Wallet,
+  Package,
 } from "lucide-react";
 
 export interface NavigationItem {
@@ -107,6 +108,33 @@ export const navigationItems: NavigationItem[] = [
     ],
   },
   {
+    id: "merchant",
+    title: "لوحة التاجر",
+    href: "/merchant",
+    icon: Store,
+    description: "إدارة منتجاتك والطلبات",
+    keywords: ["merchant", "products", "orders"],
+    roles: ["merchant", "admin"],
+    group: "main",
+    order: 3,
+    children: [
+      {
+        id: "merchant-dashboard",
+        title: "لوحة التحكم",
+        href: "/merchant",
+        icon: Home,
+        roles: ["merchant", "admin"],
+      },
+      {
+        id: "merchant-products",
+        title: "إدارة المنتجات",
+        href: "/merchant/products",
+        icon: Package,
+        roles: ["merchant", "admin"],
+      },
+    ],
+  },
+  {
     id: "admin",
     title: "لوحة الإدارة",
     href: "/admin/dashboard",
@@ -115,7 +143,7 @@ export const navigationItems: NavigationItem[] = [
     keywords: ["admin", "dashboard", "inventory"],
     roles: ["admin", "moderator"],
     group: "admin",
-    order: 3,
+    order: 4,
     children: [
       {
         id: "admin-dashboard",
@@ -175,9 +203,9 @@ export const navigationItems: NavigationItem[] = [
     icon: User,
     description: "إدارة بيانات الحساب والتفضيلات الشخصية",
     keywords: ["profile", "account", "settings"],
-    roles: ["affiliate", "marketer", "admin"],
+    roles: ["affiliate", "marketer", "admin", "merchant"],
     group: "main",
-    order: 4,
+    order: 5,
   },
   {
     id: "notifications",
@@ -186,9 +214,9 @@ export const navigationItems: NavigationItem[] = [
     icon: Bell,
     description: "عرض الإشعارات والزمنية لنشاط المتجر",
     keywords: ["notifications", "activity", "alerts"],
-    roles: ["affiliate", "marketer", "admin"],
+    roles: ["affiliate", "marketer", "admin", "merchant"],
     group: "main",
-    order: 5,
+    order: 6,
   },
   {
     id: "checkout",
