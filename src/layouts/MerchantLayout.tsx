@@ -136,7 +136,7 @@ function MerchantSidebar() {
 }
 
 export default function MerchantLayout() {
-  const { profile, user } = useFastAuth()
+  const { profile, user, hasRole } = useFastAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
 
@@ -144,7 +144,7 @@ export default function MerchantLayout() {
   useEffect(() => {
     const ensureMerchant = async () => {
       try {
-        if (!profile?.id || profile.role !== 'merchant') return;
+        if (!profile?.id || !((profile.role === 'merchant') || hasRole?.('merchant'))) return;
 
         const { data: existing, error } = await supabase
           .from('merchants')
