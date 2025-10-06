@@ -125,7 +125,7 @@ export function AdminSidebar() {
   );
 
   return (
-    <Sidebar className="border-r border-border/40 bg-card/30 backdrop-blur-xl">
+    <Sidebar collapsible="icon" className="border-r border-border/40 bg-card/30 backdrop-blur-xl">
       <SidebarContent className="px-2 py-4">
         {/* Logo/Header */}
         <div className={`px-3 mb-6 ${isCollapsed ? "text-center" : ""}`}>
