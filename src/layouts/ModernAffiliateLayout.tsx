@@ -171,6 +171,7 @@ export default function ModernAffiliateLayout() {
 const bottomNavItems = [
   { to: '/', label: 'الرئيسية', icon: Home },
   { to: '/affiliate', label: 'المسوق', icon: BarChart3 },
+  { to: '/affiliate/store/settings?tab=products', label: 'المنتجات', icon: Package },
   { to: '/affiliate/wallet', label: 'المحفظة', icon: Wallet },
   { to: '/notifications', label: 'الإشعارات', icon: Bell },
   { to: '/profile', label: 'حسابي', icon: User },

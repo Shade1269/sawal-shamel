@@ -426,6 +426,13 @@ export const AppShell: React.FC<AppShellProps> = ({
         icon: LayoutDashboard,
         onPrefetch: getPrefetch('/admin/dashboard'),
       });
+      // Show products management shortcut for admins too
+      items.push({
+        to: '/affiliate/store/settings?tab=products',
+        label: 'المنتجات',
+        icon: Package,
+        onPrefetch: getPrefetch('/affiliate'),
+      });
     }
 
     items.push({
