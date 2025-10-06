@@ -225,9 +225,13 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
     const themeClass = getThemeClassName(themeConfig as StoreThemeConfig);
     document.body.classList.add(themeClass, 'store-theme');
     
+    const themeName = themeClass.replace('theme-', '');
+    root.setAttribute('data-theme', themeName);
+    
     console.log('🎨 ✅ Theme applied successfully!', { 
       appliedKeys: appliedKeys.length, 
       themeClass,
+      dataTheme: themeName,
       hasTypography: !!typography,
       hasLayout: !!layout,
       hasEffects: !!effects
@@ -243,6 +247,7 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
   const getThemeClassName = (config: StoreThemeConfig): string => {
     const { primary } = (config as any).colors || (config as any) || {};
     if (typeof primary === 'string') {
+      if (primary.includes('349') && primary.includes('69%') && primary.includes('45%')) return 'theme-ferrari';
       if (primary.includes('45, 100%, 51%')) return 'theme-luxury';
       if (primary.includes('30, 67%, 44%')) return 'theme-traditional';
       if (primary.includes('280, 100%, 70%')) return 'theme-colorful';
