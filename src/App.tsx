@@ -36,6 +36,7 @@ const LegacyStoreRedirect = lazy(() => import("./pages/redirects/LegacyStoreRedi
 const AffiliateAnalyticsPage = lazy(() => import("./pages/affiliate/AffiliateCommissionsPage"));
 const AffiliateWalletPage = lazy(() => import("./pages/affiliate/AffiliateWalletPage"));
 const UnifiedAffiliateOrders = lazy(() => import("./pages/unified/UnifiedAffiliateOrders"));
+const LuxuryShowcase = lazy(() => import("./pages/LuxuryShowcase"));
 const AdminHomePage = lazy(() => import("./pages/home/AdminHome"));
 const AdminWithdrawalsPage = lazy(() => import("./pages/admin/AdminWithdrawalsPage"));
 const AdminProductApproval = lazy(() => import("./pages/admin/AdminProductApproval"));
@@ -97,6 +98,7 @@ const App = () => {
                               <Route path="/auth/reset" element={<ResetPasswordPage />} />
                               <Route path="/auth/callback" element={<AuthCallbackPage />} />
                               <Route path="/ui" element={<UiShowcasePage />} />
+                              <Route path="/luxury-showcase" element={<LuxuryShowcase />} />
                               <Route
                                 path="/profile"
                                 element={(
