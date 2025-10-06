@@ -4953,6 +4953,33 @@ export type Database = {
           },
         ]
       }
+      platform_settings: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          setting_key: string
+          setting_value: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key: string
+          setting_value?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key?: string
+          setting_value?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       points_events: {
         Row: {
           affiliate_id: string
@@ -8915,6 +8942,81 @@ export type Database = {
           },
           {
             foreignKeyName: "wishlists_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      withdrawal_requests: {
+        Row: {
+          admin_notes: string | null
+          amount_sar: number
+          bank_account_name: string | null
+          bank_account_number: string | null
+          bank_name: string | null
+          created_at: string
+          iban: string | null
+          id: string
+          notes: string | null
+          payment_method: string
+          phone_number: string | null
+          processed_at: string | null
+          requested_at: string
+          status: string
+          updated_at: string
+          user_id: string
+          user_type: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount_sar: number
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_name?: string | null
+          created_at?: string
+          iban?: string | null
+          id?: string
+          notes?: string | null
+          payment_method: string
+          phone_number?: string | null
+          processed_at?: string | null
+          requested_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          user_type?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount_sar?: number
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_name?: string | null
+          created_at?: string
+          iban?: string | null
+          id?: string
+          notes?: string | null
+          payment_method?: string
+          phone_number?: string | null
+          processed_at?: string | null
+          requested_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          user_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "withdrawal_requests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "withdrawal_requests_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "safe_profiles"

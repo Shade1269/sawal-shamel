@@ -10,6 +10,7 @@ import {
   User,
   Users,
   Settings,
+  Wallet,
 } from "lucide-react";
 
 export interface NavigationItem {
@@ -93,6 +94,13 @@ export const navigationItems: NavigationItem[] = [
         title: "التحليلات",
         href: "/affiliate/analytics",
         icon: BarChart3,
+        roles: ["affiliate", "marketer", "admin"],
+      },
+      {
+        id: "affiliate-wallet",
+        title: "المحفظة",
+        href: "/affiliate/wallet",
+        icon: Wallet,
         roles: ["affiliate", "marketer", "admin"],
       },
     ],
