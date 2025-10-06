@@ -3,6 +3,7 @@
 @import './themes/default/tokens.css';
 @import './themes/luxury/tokens.css';
 @import './themes/damascus/tokens.css';
+@import './themes/ferrari/tokens.css';
 @import './ui/styles.css';
 
 @tailwind base;
@@ -213,6 +214,18 @@
   .animate-gradient-shift {
     animation: gradientShift 6s ease-in-out infinite;
   }
+
+  .animate-ferrari-glow {
+    animation: ferrariGlow 3s ease-in-out infinite alternate;
+  }
+
+  .animate-ferrari-pulse {
+    animation: ferrariPulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-metallic-shimmer {
+    animation: metallicShimmer 5s linear infinite;
+  }
 }
 
 @layer utilities {
@@ -394,5 +407,34 @@
   100% {
     opacity: 0;
     transform: scale(1.05);
+  }
+}
+
+@keyframes ferrariGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(196, 30, 58, 0.4), 0 0 40px rgba(196, 30, 58, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 32px rgba(196, 30, 58, 0.6), 0 0 64px rgba(196, 30, 58, 0.3);
+  }
+}
+
+@keyframes ferrariPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 16px rgba(196, 30, 58, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(196, 30, 58, 0.5);
+  }
+}
+
+@keyframes metallicShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
   }
 }
