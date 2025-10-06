@@ -83,17 +83,17 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5" dir="rtl">
-      <Card className="w-full max-w-md mx-4 shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/10" dir="rtl">
+      <Card className="w-full max-w-md mx-4 shadow-2xl border border-border/50 bg-card backdrop-blur-sm">
         <CardHeader className="text-center space-y-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center mx-auto">
-            <Store className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+            <Store className="w-8 h-8 text-primary-foreground" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <CardTitle className="text-2xl font-bold text-card-foreground">
               إنشاء متجرك الخاص
             </CardTitle>
-            <CardDescription className="text-base mt-2">
+            <CardDescription className="text-base mt-2 text-muted-foreground">
               ابدئي رحلتك في التسويق وأنشئي متجرك الإلكتروني الخاص
             </CardDescription>
           </div>
@@ -102,7 +102,7 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="store_name" className="text-sm font-medium">
+                <Label htmlFor="store_name" className="text-sm font-medium text-foreground">
                   اسم المتجر *
                 </Label>
                 <Input
@@ -111,17 +111,17 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
                   placeholder="مثال: متجر فاطمة للأزياء"
                   value={formData.store_name}
                   onChange={(e) => setFormData(prev => ({ ...prev, store_name: e.target.value }))}
-                  className={`text-base ${errors.store_name ? 'border-red-500' : ''}`}
+                  className={`text-base bg-background ${errors.store_name ? 'border-destructive' : ''}`}
                   required
                   disabled={isCreating}
                 />
                 {errors.store_name && (
-                  <p className="text-sm text-red-500">{errors.store_name}</p>
+                  <p className="text-sm text-destructive">{errors.store_name}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="store_slug" className="text-sm font-medium">
+                <Label htmlFor="store_slug" className="text-sm font-medium text-foreground">
                   اسم المتجر بالإنجليزية (اختياري)
                 </Label>
                 <Input
@@ -130,16 +130,16 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
                   placeholder="fatima-fashion-store"
                   value={formData.store_slug}
                   onChange={(e) => handleSlugChange(e.target.value)}
-                  className={`text-base ${errors.store_slug ? 'border-red-500' : ''}`}
+                  className={`text-base bg-background ${errors.store_slug ? 'border-destructive' : ''}`}
                   disabled={isCreating}
                   dir="ltr"
                 />
-                <div className="flex items-center text-sm text-muted-foreground">
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <span>رابط المتجر: </span>
-                  <span className="font-medium text-foreground">{window.location.origin}/{formData.store_slug || 'سيُنشأ-تلقائياً'}</span>
+                  <span className="font-medium text-foreground">{window.location.origin}/{formData.store_slug || "سيُنشأ-تلقائياً"}</span>
                 </div>
                 {errors.store_slug && (
-                  <p className="text-sm text-red-500">{errors.store_slug}</p>
+                  <p className="text-sm text-destructive">{errors.store_slug}</p>
                 )}
                 <p className="text-xs text-muted-foreground">
                   يُسمح بالأحرف الإنجليزية الصغيرة والأرقام والشرطات فقط. إذا تركته فارغاً سيتم توليده تلقائياً.
@@ -147,7 +147,7 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="bio" className="text-sm font-medium">
+                <Label htmlFor="bio" className="text-sm font-medium text-foreground">
                   وصف المتجر (اختياري)
                 </Label>
                 <Textarea
@@ -155,7 +155,7 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
                   placeholder="اكتبي وصفاً مختصراً عن متجرك وما يميزه..."
                   value={formData.bio}
                   onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                  className="min-h-20 resize-none"
+                  className="min-h-20 resize-none bg-background"
                   disabled={isCreating}
                 />
                 <p className="text-xs text-muted-foreground">
@@ -165,7 +165,7 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
 
               <Button
                 type="submit"
-                className="w-full h-12 text-base font-medium bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 transition-all duration-200"
+                className="w-full h-12 text-base font-medium"
                 disabled={isCreating || !formData.store_name.trim()}
               >
                 {isCreating ? (
@@ -182,14 +182,14 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
               </Button>
             </form>
 
-          <div className="mt-6 p-4 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
+          <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center mt-1">
+              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mt-1">
                 <Sparkles className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1">
-                <h4 className="text-sm font-medium text-foreground mb-1">ماذا بعد إنشاء المتجر؟</h4>
-                <ul className="text-xs text-muted-foreground space-y-1">
+                <h4 className="text-sm font-semibold text-card-foreground mb-2">ماذا بعد إنشاء المتجر؟</h4>
+                <ul className="text-xs text-muted-foreground space-y-1.5">
                   <li>• اختيار تصميم المتجر من الثيمات المتاحة</li>
                   <li>• إضافة المنتجات وتنظيمها</li>
                   <li>• تخصيص البنر والعروض الترويجية</li>
