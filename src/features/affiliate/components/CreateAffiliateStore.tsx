@@ -166,7 +166,7 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
               <Button
                 type="submit"
                 className="w-full h-12 text-base font-medium bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 transition-all duration-200"
-                disabled={isCreating || !formData.store_name.trim() || !formData.store_slug.trim()}
+                disabled={isCreating || !formData.store_name.trim()}
               >
                 {isCreating ? (
                   <>
