@@ -48,6 +48,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { parseFeaturedCategories, type StoreCategory, type StoreSettings } from "@/hooks/useStoreSettings";
 import { useIsolatedStoreCart } from "@/hooks/useIsolatedStoreCart";
 import { CustomerAuthModal } from "@/components/storefront/CustomerAuthModal";
+import { ReviewsSection } from "@/components/reviews/ReviewsSection";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Product {
   id: string;
@@ -60,8 +62,8 @@ interface Product {
   variants?: ProductVariant[];
   commission_amount?: number;
   final_price?: number;
-  rating?: number;
-  reviews_count?: number;
+  average_rating?: number;
+  total_reviews?: number;
   discount_percentage?: number;
 }
 
@@ -206,16 +208,24 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
       if (error) throw error;
 
-      const productsWithDetails = affiliateProducts
-        .filter(item => item.products && item.products.is_active)
-        .map(item => ({
-          ...item.products,
-          commission_amount: (item.products.price_sar * (item.commission_rate / 100)),
-          final_price: item.products.price_sar,
-          rating: Math.random() * 2 + 3,
-          reviews_count: Math.floor(Math.random() * 100) + 5,
-          discount_percentage: Math.random() > 0.7 ? Math.floor(Math.random() * 30) + 10 : 0
-        })) as Product[];
+      const productsWithDetails = await Promise.all(
+        affiliateProducts
+          .filter(item => item.products && item.products.is_active)
+          .map(async item => {
+            const { data: ratingStats } = await supabase.rpc('get_product_rating_stats', {
+              p_product_id: item.products.id
+            });
+
+            return {
+              ...item.products,
+              commission_amount: (item.products.price_sar * (item.commission_rate / 100)),
+              final_price: item.products.price_sar,
+              average_rating: ratingStats?.[0]?.average_rating || 0,
+              total_reviews: ratingStats?.[0]?.total_reviews || 0,
+              discount_percentage: Math.random() > 0.7 ? Math.floor(Math.random() * 30) + 10 : 0
+            };
+          })
+      ) as Product[];
 
       if (productsWithDetails.length === 0) return [];
 
@@ -358,7 +368,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               title,
               imageUrl,
               price,
-              rating: fullProduct?.rating ?? null,
+              rating: fullProduct?.average_rating ?? null,
               product: fullProduct,
               category: bannerProduct.category ?? fullProduct?.category ?? category.name,
             } satisfies CategoryBannerProductDisplay;
@@ -394,7 +404,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       case 'name':
         return a.title.localeCompare(b.title);
       case 'rating':
-        return (b.rating || 0) - (a.rating || 0);
+        return (b.average_rating || 0) - (a.average_rating || 0);
       case 'discount':
         return (b.discount_percentage || 0) - (a.discount_percentage || 0);
       case 'newest':
@@ -1409,14 +1419,14 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                       </div>
 
                       {/* Rating */}
-                      {product.rating && (
+                      {product.average_rating && product.average_rating > 0 && (
                         <div className="flex items-center gap-2">
                           <div className="flex items-center gap-0.5">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <Star
                                 key={star}
                                 className={`h-3.5 w-3.5 md:h-4 md:w-4 ${
-                                  star <= (product.rating || 0)
+                                  star <= Math.round(product.average_rating || 0)
                                     ? 'fill-warning text-warning'
                                     : 'fill-muted text-muted'
                                 }`}
@@ -1424,7 +1434,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                             ))}
                           </div>
                           <span className="text-xs md:text-sm text-muted-foreground">
-                            ({product.reviews_count || 0})
+                            ({product.total_reviews || 0})
                           </span>
                         </div>
                       )}
@@ -1606,7 +1616,17 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               <DialogHeader>
                 <DialogTitle className="text-2xl">{selectedProduct.title}</DialogTitle>
               </DialogHeader>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              
+              <Tabs defaultValue="details" dir="rtl">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="details">تفاصيل المنتج</TabsTrigger>
+                  <TabsTrigger value="reviews">
+                    المراجعات ({selectedProduct.total_reviews || 0})
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="details" className="mt-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Product Images */}
                 <div className="space-y-4">
                   <div className="aspect-square rounded-xl overflow-hidden">
@@ -1631,23 +1651,23 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                   </div>
 
                   {/* Rating */}
-                  {selectedProduct.rating && (
+                  {selectedProduct.average_rating && selectedProduct.average_rating > 0 && (
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <Star
                             key={star}
                             className={`h-5 w-5 ${
-                              star <= (selectedProduct.rating || 0)
+                              star <= Math.round(selectedProduct.average_rating || 0)
                                 ? 'fill-yellow-400 text-yellow-400'
                                 : 'text-gray-300'
                             }`}
                           />
                         ))}
                       </div>
-                      <span className="text-lg font-medium">{selectedProduct.rating?.toFixed(1)}</span>
+                      <span className="text-lg font-medium">{selectedProduct.average_rating.toFixed(1)}</span>
                       <span className="text-muted-foreground">
-                        ({selectedProduct.reviews_count || 0} تقييم)
+                        ({selectedProduct.total_reviews} تقييم)
                       </span>
                     </div>
                   )}
@@ -1722,10 +1742,19 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                   </div>
                 </div>
               </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+            </TabsContent>
+
+            <TabsContent value="reviews" className="mt-6">
+              <ReviewsSection 
+                productId={selectedProduct.id}
+                currentUserId={undefined}
+              />
+            </TabsContent>
+          </Tabs>
+        </>
+      )}
+    </DialogContent>
+  </Dialog>
 
       {/* Customer Authentication Modal */}
       <CustomerAuthModal
