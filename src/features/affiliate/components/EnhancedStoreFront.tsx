@@ -42,6 +42,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ProductImageCarousel } from "@/features/commerce/components/ProductImageCarousel";
 import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
+import { ProductVariantSelector } from "@/components/products/ProductVariantSelector";
 import { motion, AnimatePresence } from "framer-motion";
 import { parseFeaturedCategories, type StoreCategory, type StoreSettings } from "@/hooks/useStoreSettings";
 import { useIsolatedStoreCart } from "@/hooks/useIsolatedStoreCart";
@@ -65,10 +66,14 @@ interface Product {
 
 interface ProductVariant {
   id: string;
-  variant_type: string;
-  variant_value: string;
-  stock: number;
-  price_modifier: number;
+  product_id: string;
+  size?: string | null;
+  color?: string | null;
+  available_stock: number;
+  current_stock: number;
+  selling_price?: number;
+  variant_name?: string;
+  is_active: boolean;
 }
 
 interface CategoryBannerProductDisplay {
@@ -120,7 +125,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedVariants, setSelectedVariants] = useState<{ [productId: string]: { [variantType: string]: string } }>({});
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [productQuantities, setProductQuantities] = useState<{ [productId: string]: number }>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -186,16 +191,43 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
       if (error) throw error;
 
-      return affiliateProducts
+      const productsWithDetails = affiliateProducts
         .filter(item => item.products && item.products.is_active)
         .map(item => ({
           ...item.products,
           commission_amount: (item.products.price_sar * (item.commission_rate / 100)),
           final_price: item.products.price_sar,
-          rating: Math.random() * 2 + 3, // Random rating between 3-5 for demo
-          reviews_count: Math.floor(Math.random() * 100) + 5, // Random reviews count for demo
-          discount_percentage: Math.random() > 0.7 ? Math.floor(Math.random() * 30) + 10 : 0 // Random discount for demo
+          rating: Math.random() * 2 + 3,
+          reviews_count: Math.floor(Math.random() * 100) + 5,
+          discount_percentage: Math.random() > 0.7 ? Math.floor(Math.random() * 30) + 10 : 0
         })) as Product[];
+
+      if (productsWithDetails.length === 0) return [];
+
+      const productIds = productsWithDetails.map(p => p.id);
+      
+      const { data: variants, error: variantsError } = await supabase
+        .from("product_variants")
+        .select("*")
+        .in("product_id", productIds);
+
+      if (variantsError) {
+        console.error("Error fetching variants:", variantsError);
+        return productsWithDetails;
+      }
+
+      const variantsByProduct = (variants || []).reduce((acc, variant) => {
+        if (!acc[variant.product_id]) {
+          acc[variant.product_id] = [];
+        }
+        acc[variant.product_id].push(variant);
+        return acc;
+      }, {} as Record<string, ProductVariant[]>);
+
+      return productsWithDetails.map(product => ({
+        ...product,
+        variants: variantsByProduct[product.id] || []
+      }));
     },
     enabled: !!affiliateStore?.id,
   });
@@ -341,13 +373,20 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   }) || [];
 
   // وظائف السلة المحسّنة
-  const addToCart = async (product: Product, quantity: number = 1) => {
+  const addToCart = async (product: Product, quantity: number = 1, variantInfo?: { variant_id: string; size?: string | null; color?: string | null }) => {
     try {
+      const variants = variantInfo ? {
+        variant_id: variantInfo.variant_id,
+        size: variantInfo.size || '',
+        color: variantInfo.color || ''
+      } : undefined;
+      
       await addToIsolatedCart(
         product.id,
         quantity,
         product.final_price || product.price_sar,
-        product.title
+        product.title,
+        variants
       );
       
       toast({
@@ -1429,6 +1468,15 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                       />
                       <div className="flex-1 min-w-0 space-y-1">
                         <h4 className="font-medium text-sm line-clamp-2">{item.product_title}</h4>
+                        {item.selected_variants && Object.keys(item.selected_variants).length > 0 && (
+                          <div className="flex flex-wrap gap-1" dir="rtl">
+                            {Object.entries(item.selected_variants).map(([type, value]) => (
+                              <Badge key={type} variant="outline" className="text-xs">
+                                {type === 'size' ? 'المقاس' : type === 'color' ? 'اللون' : type}: {value}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
                         <p className="text-primary font-bold">
                           {item.total_price_sar.toFixed(0)} ريال
                         </p>
@@ -1500,7 +1548,10 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       </Sheet>
 
       {/* Enhanced Product Quick View Modal */}
-      <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
+      <Dialog open={!!selectedProduct} onOpenChange={() => {
+        setSelectedProduct(null);
+        setCurrentProductVariants({});
+      }}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           {selectedProduct && (
             <>
@@ -1578,18 +1629,31 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                     )}
                   </div>
 
+                  {selectedProduct.variants && selectedProduct.variants.length > 0 && (
+                    <ProductVariantSelector
+                      variants={selectedProduct.variants}
+                      onVariantChange={setSelectedVariant}
+                    />
+                  )}
+
                   {/* Actions */}
                   <div className="space-y-3">
                     <Button
                       className="w-full h-14 text-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-lg"
                       onClick={() => {
-                        addToCart(selectedProduct);
+                        const variantInfo = selectedVariant ? {
+                          variant_id: selectedVariant.id,
+                          size: selectedVariant.size,
+                          color: selectedVariant.color
+                        } : undefined;
+                        addToCart(selectedProduct, 1, variantInfo);
                         setSelectedProduct(null);
+                        setSelectedVariant(null);
                       }}
-                      disabled={selectedProduct.stock === 0}
+                      disabled={selectedProduct.stock === 0 || (selectedVariant && selectedVariant.available_stock === 0)}
                     >
                       <ShoppingCart className="h-5 w-5 mr-2" />
-                      {selectedProduct.stock === 0 ? 'نفد المخزون' : 'إضافة للسلة'}
+                      {(selectedProduct.stock === 0 || (selectedVariant && selectedVariant.available_stock === 0)) ? 'نفد المخزون' : 'إضافة للسلة'}
                     </Button>
                     
                     <div className="flex gap-2">
