@@ -50,6 +50,8 @@ import { useIsolatedStoreCart } from "@/hooks/useIsolatedStoreCart";
 import { CustomerAuthModal } from "@/components/storefront/CustomerAuthModal";
 import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CustomerChatWidget } from "@/components/customer-service/CustomerChatWidget";
+import { useCustomerAuthContext } from "@/contexts/CustomerAuthContext";
 
 interface Product {
   id: string;
@@ -136,6 +138,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const storeSlug = propStoreSlug || paramStoreSlug;
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { customer, isAuthenticated } = useCustomerAuthContext();
   
   // States
   const [showCart, setShowCart] = useState(false);
@@ -1764,6 +1767,21 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         storeSlug={storeSlug || ''}
         storeName={affiliateStore?.store_name || ''}
       />
+
+      {affiliateStore && (
+        <CustomerChatWidget
+          storeId={affiliateStore.id}
+          storeName={affiliateStore.store_name}
+          customerProfileId={customer?.profile_id}
+          isAuthenticated={isAuthenticated}
+          onAuthRequired={() => {
+            toast({
+              title: 'تسجيل الدخول مطلوب',
+              description: 'يجب تسجيل الدخول لبدء المحادثة مع المتجر',
+            });
+          }}
+        />
+      )}
       </div>
     </StoreThemeProvider>
   );
