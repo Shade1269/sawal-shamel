@@ -26,6 +26,8 @@ import {
   LineChart,
   ArrowUpRight,
   ShoppingBag,
+  ExternalLink,
+  AlertCircle,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -36,6 +38,7 @@ import { Card as ThemeCard } from '@/ui/Card';
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUserDataContext } from '@/contexts/UserDataContext';
+import { useAffiliateStore } from '@/hooks/useAffiliateStore';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -44,6 +47,7 @@ const Index = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const { language, toggleLanguage } = useLanguage();
   const { themeId } = useTheme('default');
+  const { store: affiliateStore, isLoading: affiliateStoreLoading } = useAffiliateStore();
 
   // Remove forced redirect - allow anonymous users to access homepage
 
@@ -278,33 +282,101 @@ const Index = () => {
               </EnhancedCardContent>
             </EnhancedCard>
 
-            <EnhancedCard variant="glass" hover="lift">
-              <EnhancedCardHeader className="text-center">
-                <div className="mx-auto w-20 h-20 bg-gradient-premium rounded-2xl flex items-center justify-center mb-6 shadow-glow">
-                  <Users className="h-10 w-10 text-white" />
-                </div>
-                <EnhancedCardTitle className="text-2xl font-bold bg-gradient-premium bg-clip-text text-transparent">مجتمع أتلانتس</EnhancedCardTitle>
-                <EnhancedCardDescription className="text-lg">
-                  انضم لـ 25+ مستخدم نشط في منصة التجارة والأفيليت
-                </EnhancedCardDescription>
-              </EnhancedCardHeader>
-              <EnhancedCardContent className="text-center">
-                <div className="flex items-center justify-center gap-3 text-muted-foreground bg-gradient-to-r from-muted/20 to-muted/10 p-3 rounded-xl border border-border/20">
-                  <Hash className="h-5 w-5" />
-                  <span className="font-medium">تجربة تسوق حصرية 24/7</span>
-                </div>
-                <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                  <div className="bg-primary/10 p-2 rounded-lg">
-                    <div className="font-bold text-primary">7</div>
-                    <div className="text-muted-foreground">متاجر</div>
+            {/* Show store navigation for affiliates/marketers */}
+            {(profile?.role === 'affiliate' || profile?.role === 'marketer') ? (
+              <EnhancedCard variant="glass" hover="lift">
+                <EnhancedCardHeader className="text-center">
+                  <div className="mx-auto w-20 h-20 bg-gradient-premium rounded-2xl flex items-center justify-center mb-6 shadow-glow">
+                    <Store className="h-10 w-10 text-white" />
                   </div>
-                  <div className="bg-luxury/10 p-2 rounded-lg">
-                    <div className="font-bold text-luxury">4</div>
-                    <div className="text-muted-foreground">تجار</div>
+                  <EnhancedCardTitle className="text-2xl font-bold bg-gradient-premium bg-clip-text text-transparent">
+                    متجري الإلكتروني
+                  </EnhancedCardTitle>
+                  <EnhancedCardDescription className="text-lg">
+                    {affiliateStoreLoading 
+                      ? 'جاري التحميل...' 
+                      : affiliateStore 
+                        ? 'اذهب لمتجرك وشارك منتجاتك مع العملاء'
+                        : 'أنشئ متجرك الإلكتروني وابدأ التسويق'}
+                  </EnhancedCardDescription>
+                </EnhancedCardHeader>
+                <EnhancedCardContent className="text-center space-y-3">
+                  {affiliateStoreLoading ? (
+                    <div className="flex items-center justify-center gap-3 text-muted-foreground bg-gradient-to-r from-muted/20 to-muted/10 p-3 rounded-xl border border-border/20">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
+                      <span className="font-medium">جاري التحقق من حالة المتجر...</span>
+                    </div>
+                  ) : affiliateStore ? (
+                    <>
+                      <div className="flex items-center justify-center gap-3 text-green-600 bg-green-50 dark:bg-green-900/20 p-3 rounded-xl border border-green-200 dark:border-green-800">
+                        <Store className="h-5 w-5" />
+                        <span className="font-medium">المتجر نشط ومفعّل ✓</span>
+                      </div>
+                      <EnhancedButton 
+                        variant="premium"
+                        size="lg" 
+                        className="w-full h-12 text-lg font-bold rounded-xl"
+                        animation="glow"
+                        onClick={() => window.open(`/store/${affiliateStore.store_slug}`, '_blank')}
+                      >
+                        <ExternalLink className="h-5 w-5 ml-2" />
+                        اذهب للمتجر
+                      </EnhancedButton>
+                      <div className="text-xs text-muted-foreground">
+                        {affiliateStore.store_name}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-center gap-3 text-amber-600 bg-amber-50 dark:bg-amber-900/20 p-3 rounded-xl border border-amber-200 dark:border-amber-800">
+                        <AlertCircle className="h-5 w-5" />
+                        <span className="font-medium">المتجر لم ينشأ بعد</span>
+                      </div>
+                      <EnhancedButton 
+                        variant="premium"
+                        size="lg" 
+                        className="w-full h-12 text-lg font-bold rounded-xl"
+                        animation="glow"
+                        onClick={() => navigate('/affiliate/store/setup')}
+                      >
+                        إنشاء متجر
+                      </EnhancedButton>
+                      <div className="text-xs text-muted-foreground">
+                        ابدأ رحلتك في التسويق بالعمولة
+                      </div>
+                    </>
+                  )}
+                </EnhancedCardContent>
+              </EnhancedCard>
+            ) : (
+              <EnhancedCard variant="glass" hover="lift">
+                <EnhancedCardHeader className="text-center">
+                  <div className="mx-auto w-20 h-20 bg-gradient-premium rounded-2xl flex items-center justify-center mb-6 shadow-glow">
+                    <Users className="h-10 w-10 text-white" />
                   </div>
-                </div>
-              </EnhancedCardContent>
-            </EnhancedCard>
+                  <EnhancedCardTitle className="text-2xl font-bold bg-gradient-premium bg-clip-text text-transparent">مجتمع أتلانتس</EnhancedCardTitle>
+                  <EnhancedCardDescription className="text-lg">
+                    انضم لـ 25+ مستخدم نشط في منصة التجارة والأفيليت
+                  </EnhancedCardDescription>
+                </EnhancedCardHeader>
+                <EnhancedCardContent className="text-center">
+                  <div className="flex items-center justify-center gap-3 text-muted-foreground bg-gradient-to-r from-muted/20 to-muted/10 p-3 rounded-xl border border-border/20">
+                    <Hash className="h-5 w-5" />
+                    <span className="font-medium">تجربة تسوق حصرية 24/7</span>
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                    <div className="bg-primary/10 p-2 rounded-lg">
+                      <div className="font-bold text-primary">7</div>
+                      <div className="text-muted-foreground">متاجر</div>
+                    </div>
+                    <div className="bg-luxury/10 p-2 rounded-lg">
+                      <div className="font-bold text-luxury">4</div>
+                      <div className="text-muted-foreground">تجار</div>
+                    </div>
+                  </div>
+                </EnhancedCardContent>
+              </EnhancedCard>
+            )}
           </div>
 
           {/* Store Management Section */}
