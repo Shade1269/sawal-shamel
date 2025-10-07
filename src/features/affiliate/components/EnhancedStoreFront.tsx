@@ -43,6 +43,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ProductImageCarousel } from "@/features/commerce/components/ProductImageCarousel";
 import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
 import { ProductVariantSelector } from "@/components/products/ProductVariantSelector";
+import { StoreBannerDisplay } from "@/components/store/StoreBannerDisplay";
 import { motion, AnimatePresence } from "framer-motion";
 import { parseFeaturedCategories, type StoreCategory, type StoreSettings } from "@/hooks/useStoreSettings";
 import { useIsolatedStoreCart } from "@/hooks/useIsolatedStoreCart";
@@ -89,6 +90,20 @@ interface CategoryBannerProductDisplay {
 interface CategoryBannerDisplay {
   category: StoreCategory;
   products: CategoryBannerProductDisplay[];
+}
+
+interface StoreBanner {
+  id: string;
+  store_id: string;
+  title: string;
+  subtitle?: string | null;
+  image_url: string;
+  link_url?: string | null;
+  link_type: 'product' | 'category' | 'external' | 'none';
+  position: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 interface AffiliateStore {
@@ -249,6 +264,22 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     enabled: !!affiliateStore?.id,
     staleTime: 0,
     refetchOnMount: 'always'
+  });
+
+  const { data: storeBanners } = useQuery<StoreBanner[]>({
+    queryKey: ["store-banners", affiliateStore?.id],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("store_banners")
+        .select("*")
+        .eq("store_id", affiliateStore!.id)
+        .eq("is_active", true)
+        .order("position", { ascending: true });
+      
+      if (error) throw error;
+      return (data || []) as StoreBanner[];
+    },
+    enabled: !!affiliateStore?.id,
   });
 
   // حساب المجموع من السلة المعزولة
@@ -444,6 +475,19 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     // التوجه لصفحة الطلب الخاصة بالمتجر
     if (storeSlug) {
       navigate(`/${storeSlug}/checkout`);
+    }
+  };
+
+  const handleBannerClick = (banner: any) => {
+    if (banner.link_type === 'product' && banner.link_url) {
+      const product = products?.find(p => p.id === banner.link_url);
+      if (product) {
+        setSelectedProduct(product);
+      }
+    } else if (banner.link_type === 'category' && banner.link_url) {
+      setSelectedCategory(banner.link_url);
+    } else if (banner.link_type === 'external' && banner.link_url) {
+      window.open(banner.link_url, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -781,6 +825,10 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
       {/* Main Content */}
       <main className="container mx-auto px-3 md:px-6 py-4 md:py-8 space-y-6 md:space-y-8">
+        {storeBanners && storeBanners.length > 0 && (
+          <StoreBannerDisplay banners={storeBanners} onBannerClick={handleBannerClick} />
+        )}
+
         {/* Hero Section - Enhanced */}
         {(storeSettings?.hero_title || storeSettings?.hero_image_url) && (
           <motion.section
@@ -1550,7 +1598,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       {/* Enhanced Product Quick View Modal */}
       <Dialog open={!!selectedProduct} onOpenChange={() => {
         setSelectedProduct(null);
-        setCurrentProductVariants({});
+        setSelectedVariant(null);
       }}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           {selectedProduct && (
@@ -1632,7 +1680,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                   {selectedProduct.variants && selectedProduct.variants.length > 0 && (
                     <ProductVariantSelector
                       variants={selectedProduct.variants}
-                      onVariantChange={setSelectedVariant}
+                      onVariantChange={setSelectedVariant as any}
                     />
                   )}
 

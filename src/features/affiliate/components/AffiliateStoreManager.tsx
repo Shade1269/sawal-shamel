@@ -54,6 +54,7 @@ import { ProductManagement } from './ProductManagement';
 import { AffiliateProductsManager } from './AffiliateProductsManager';
 import { OrderCommissionManagement } from './OrderCommissionManagement';
 import AffiliateCouponManager from '@/components/marketing/AffiliateCouponManager';
+import { BannerManagement } from './BannerManagement';
 import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams } from 'react-router-dom';
 import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
@@ -540,6 +541,7 @@ export const AffiliateStoreManager = ({
               <SelectItem value="general">⚙️ الإعدادات العامة</SelectItem>
               <SelectItem value="appearance">🎨 المظهر</SelectItem>
               <SelectItem value="hero">🖼️ القسم الرئيسي</SelectItem>
+              <SelectItem value="banners">🖼️ إدارة البانرات</SelectItem>
               <SelectItem value="categories">📂 إدارة الفئات</SelectItem>
               <SelectItem value="products">🛍️ إدارة المنتجات</SelectItem>
               <SelectItem value="coupons">🎟️ الكوبونات</SelectItem>
@@ -550,11 +552,12 @@ export const AffiliateStoreManager = ({
         </div>
 
         {/* تبويبات للشاشات الكبيرة */}
-        <TabsList className="hidden md:grid w-full grid-cols-8">
+        <TabsList className="hidden md:grid w-full grid-cols-9">
           <TabsTrigger value="general">الإعدادات العامة</TabsTrigger>
           <TabsTrigger value="appearance">المظهر</TabsTrigger>
           <TabsTrigger value="hero">القسم الرئيسي</TabsTrigger>
-          <TabsTrigger value="categories">إدارة الفئات</TabsTrigger>
+          <TabsTrigger value="banners">البانرات</TabsTrigger>
+          <TabsTrigger value="categories">الفئات</TabsTrigger>
           <TabsTrigger value="products">المنتجات</TabsTrigger>
           <TabsTrigger value="coupons">الكوبونات</TabsTrigger>
           <TabsTrigger value="sharing">المشاركة</TabsTrigger>
@@ -770,6 +773,10 @@ export const AffiliateStoreManager = ({
               </Button>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="banners" className="space-y-4 md:space-y-6">
+          <BannerManagement storeId={store.id} />
         </TabsContent>
 
         <TabsContent value="categories" className="space-y-4 md:space-y-6">
