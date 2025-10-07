@@ -19,6 +19,8 @@ interface Product {
   category: string;
   stock: number;
   view_count: number;
+  average_rating?: number;
+  total_reviews?: number;
 }
 
 interface ProductCardProps {
@@ -107,10 +109,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         
         <div className="flex items-center justify-between mb-4">
           <div className="text-xl font-bold text-primary">{product.price_sar} ريال</div>
-          <div className="flex items-center gap-1">
-            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm">4.5</span>
-          </div>
+          {product.average_rating && product.average_rating > 0 && (
+            <div className="flex items-center gap-1">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span className="text-sm">{product.average_rating.toFixed(1)}</span>
+              <span className="text-xs text-muted-foreground">({product.total_reviews})</span>
+            </div>
+          )}
         </div>
 
         {/* أزرار الإجراءات */}
