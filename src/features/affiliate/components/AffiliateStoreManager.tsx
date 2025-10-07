@@ -36,7 +36,8 @@ import {
   ShoppingBag,
   TrendingUp,
   BarChart3,
-  ShoppingCart
+  ShoppingCart,
+  MessageSquare
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
@@ -55,6 +56,7 @@ import { AffiliateProductsManager } from './AffiliateProductsManager';
 import { OrderCommissionManagement } from './OrderCommissionManagement';
 import AffiliateCouponManager from '@/components/marketing/AffiliateCouponManager';
 import { BannerManagement } from './BannerManagement';
+import { ReviewManagement } from './ReviewManagement';
 import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams } from 'react-router-dom';
 import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
@@ -545,6 +547,7 @@ export const AffiliateStoreManager = ({
               <SelectItem value="categories">📂 إدارة الفئات</SelectItem>
               <SelectItem value="products">🛍️ إدارة المنتجات</SelectItem>
               <SelectItem value="coupons">🎟️ الكوبونات</SelectItem>
+              <SelectItem value="reviews">⭐ المراجعات</SelectItem>
               <SelectItem value="sharing">📤 المشاركة</SelectItem>
               <SelectItem value="analytics">📊 الإحصائيات</SelectItem>
             </SelectContent>
@@ -552,7 +555,7 @@ export const AffiliateStoreManager = ({
         </div>
 
         {/* تبويبات للشاشات الكبيرة */}
-        <TabsList className="hidden md:grid w-full grid-cols-9">
+        <TabsList className="hidden md:grid w-full grid-cols-10">
           <TabsTrigger value="general">الإعدادات العامة</TabsTrigger>
           <TabsTrigger value="appearance">المظهر</TabsTrigger>
           <TabsTrigger value="hero">القسم الرئيسي</TabsTrigger>
@@ -560,6 +563,7 @@ export const AffiliateStoreManager = ({
           <TabsTrigger value="categories">الفئات</TabsTrigger>
           <TabsTrigger value="products">المنتجات</TabsTrigger>
           <TabsTrigger value="coupons">الكوبونات</TabsTrigger>
+          <TabsTrigger value="reviews">المراجعات</TabsTrigger>
           <TabsTrigger value="sharing">المشاركة</TabsTrigger>
           <TabsTrigger value="analytics">الإحصائيات</TabsTrigger>
         </TabsList>
@@ -1095,6 +1099,10 @@ export const AffiliateStoreManager = ({
               </div>
             </>
           )}
+        </TabsContent>
+
+        <TabsContent value="reviews" className="space-y-4 md:space-y-6">
+          <ReviewManagement storeId={store.id} />
         </TabsContent>
       </Tabs>
     </div>
