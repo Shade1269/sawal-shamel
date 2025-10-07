@@ -12,7 +12,7 @@ html[data-theme="ferrari"] {
   --accent-hsl: 349 69% 45%;
   --accent-foreground-hsl: 0 0% 100%;
   --muted-hsl: 220 20% 40%;
-  --muted-foreground-hsl: 210 10% 88%;
+  --muted-foreground-hsl: 210 12% 90%;
   --success-hsl: 142 71% 45%;
   --warning-hsl: 38 92% 50%;
   --danger-hsl: 0 84% 60%;
@@ -43,7 +43,7 @@ html[data-theme="ferrari"] {
   --warning: hsl(var(--warning-hsl));
   --danger: hsl(var(--danger-hsl));
   --info: hsl(var(--info-hsl));
-  --border: hsl(var(--border-hsl) / 0.5);
+  --border: hsl(var(--border-hsl) / 0.85);
   --card: hsl(var(--card-hsl) / 0.92);
   --card-foreground: hsl(var(--card-foreground-hsl));
   --popover: hsl(var(--popover-hsl) / 0.92);
