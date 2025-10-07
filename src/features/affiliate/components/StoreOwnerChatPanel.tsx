@@ -11,14 +11,16 @@ import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { useCustomerServiceChat } from '@/hooks/useCustomerServiceChat';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface StoreOwnerChatPanelProps {
   storeId: string;
 }
 
 export const StoreOwnerChatPanel: React.FC<StoreOwnerChatPanelProps> = ({ storeId }) => {
-  const { profile } = useSupabaseAuth();
+  const { user } = useSupabaseAuth();
   const [messageText, setMessageText] = useState('');
+  const [currentProfileId, setCurrentProfileId] = useState<string | null>(null);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   const {
@@ -33,6 +35,20 @@ export const StoreOwnerChatPanel: React.FC<StoreOwnerChatPanelProps> = ({ storeI
     storeId,
     isStoreOwner: true
   });
+
+  React.useEffect(() => {
+    const fetchProfile = async () => {
+      if (user?.id) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('auth_user_id', user.id)
+          .single();
+        if (data) setCurrentProfileId(data.id);
+      }
+    };
+    fetchProfile();
+  }, [user]);
 
   React.useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -127,7 +143,7 @@ export const StoreOwnerChatPanel: React.FC<StoreOwnerChatPanelProps> = ({ storeI
               <ScrollArea className="flex-1 p-4">
                 <div className="space-y-3">
                   {messages.map((message) => {
-                    const isOwnMessage = message.sender?.id === profile?.id;
+                    const isOwnMessage = message.sender?.id === currentProfileId;
                     return (
                       <div
                         key={message.id}
