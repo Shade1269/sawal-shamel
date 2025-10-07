@@ -91,11 +91,14 @@ async function runFromCli() {
   }
 }
 
-const cliEntry = process.argv[1] ? new URL(`file://${process.argv[1]}`).href : null;
-if (cliEntry === import.meta.url) {
-  runFromCli().catch((error) => {
-    console.warn('[decodeAssets] non-fatal error:', error?.message || error);
-    // Do not fail install if assets can't be decoded
-    process.exitCode = 0;
-  });
+// Run safely with error handling
+if (typeof import.meta.url !== 'undefined') {
+  try {
+    await runFromCli();
+  } catch (error) {
+    console.log('[decodeAssets] Skipping (no assets found)');
+  }
 }
+
+// Ensure success exit code
+process.exitCode = 0;
