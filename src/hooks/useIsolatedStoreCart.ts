@@ -10,6 +10,7 @@ interface CartItem {
   unit_price_sar: number;
   total_price_sar: number;
   product_image_url?: string;
+  selected_variants?: Record<string, string>;
 }
 
 interface StoreCart {
@@ -74,7 +75,8 @@ export const useIsolatedStoreCart = (storeId: string) => {
             product_id,
             quantity,
             unit_price_sar,
-            total_price_sar
+            total_price_sar,
+            selected_variants
           `)
           .eq('cart_id', cartData.id);
 
@@ -95,7 +97,8 @@ export const useIsolatedStoreCart = (storeId: string) => {
               quantity: item.quantity,
               unit_price_sar: item.unit_price_sar,
               total_price_sar: item.total_price_sar,
-              product_image_url: productData?.image_urls?.[0]
+              product_image_url: productData?.image_urls?.[0],
+              selected_variants: (item.selected_variants as Record<string, string>) || {}
             };
           })
         );
@@ -125,7 +128,13 @@ export const useIsolatedStoreCart = (storeId: string) => {
     }
   };
 
-  const addToCart = async (productId: string, quantity: number = 1, unitPrice?: number, productTitle?: string) => {
+  const addToCart = async (
+    productId: string, 
+    quantity: number = 1, 
+    unitPrice?: number, 
+    productTitle?: string,
+    selectedVariants?: Record<string, string>
+  ) => {
     try {
       if (!cart) return;
 
@@ -158,7 +167,8 @@ export const useIsolatedStoreCart = (storeId: string) => {
           .from('cart_items')
           .update({
             quantity: existingItem.quantity + quantity,
-            unit_price_sar: finalPrice
+            unit_price_sar: finalPrice,
+            selected_variants: selectedVariants || {}
           })
           .eq('id', existingItem.id);
 
@@ -171,7 +181,8 @@ export const useIsolatedStoreCart = (storeId: string) => {
             cart_id: cart.id,
             product_id: productId,
             quantity,
-            unit_price_sar: finalPrice
+            unit_price_sar: finalPrice,
+            selected_variants: selectedVariants || {}
           });
 
         if (error) throw error;
