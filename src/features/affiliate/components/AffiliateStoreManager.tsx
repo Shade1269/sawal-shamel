@@ -57,6 +57,7 @@ import { OrderCommissionManagement } from './OrderCommissionManagement';
 import AffiliateCouponManager from '@/components/marketing/AffiliateCouponManager';
 import { BannerManagement } from './BannerManagement';
 import { ReviewManagement } from './ReviewManagement';
+import { StoreOwnerChatPanel } from './StoreOwnerChatPanel';
 import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams } from 'react-router-dom';
 import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
@@ -548,6 +549,7 @@ export const AffiliateStoreManager = ({
               <SelectItem value="products">🛍️ إدارة المنتجات</SelectItem>
               <SelectItem value="coupons">🎟️ الكوبونات</SelectItem>
               <SelectItem value="reviews">⭐ المراجعات</SelectItem>
+              <SelectItem value="chat">💬 الدردشة</SelectItem>
               <SelectItem value="sharing">📤 المشاركة</SelectItem>
               <SelectItem value="analytics">📊 الإحصائيات</SelectItem>
             </SelectContent>
@@ -555,7 +557,7 @@ export const AffiliateStoreManager = ({
         </div>
 
         {/* تبويبات للشاشات الكبيرة */}
-        <TabsList className="hidden md:grid w-full grid-cols-10">
+        <TabsList className="hidden md:grid w-full grid-cols-11">
           <TabsTrigger value="general">الإعدادات العامة</TabsTrigger>
           <TabsTrigger value="appearance">المظهر</TabsTrigger>
           <TabsTrigger value="hero">القسم الرئيسي</TabsTrigger>
@@ -564,6 +566,7 @@ export const AffiliateStoreManager = ({
           <TabsTrigger value="products">المنتجات</TabsTrigger>
           <TabsTrigger value="coupons">الكوبونات</TabsTrigger>
           <TabsTrigger value="reviews">المراجعات</TabsTrigger>
+          <TabsTrigger value="chat">الدردشة</TabsTrigger>
           <TabsTrigger value="sharing">المشاركة</TabsTrigger>
           <TabsTrigger value="analytics">الإحصائيات</TabsTrigger>
         </TabsList>
@@ -1103,6 +1106,10 @@ export const AffiliateStoreManager = ({
 
         <TabsContent value="reviews" className="space-y-4 md:space-y-6">
           <ReviewManagement storeId={store.id} />
+        </TabsContent>
+
+        <TabsContent value="chat" className="space-y-4 md:space-y-6">
+          <StoreOwnerChatPanel storeId={store.id} />
         </TabsContent>
       </Tabs>
     </div>
