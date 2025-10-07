@@ -46,7 +46,7 @@ export const BannerManagement: React.FC<BannerManagementProps> = ({ storeId }) =
   const { data: banners, isLoading } = useQuery({
     queryKey: ['store-banners', storeId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('store_banners')
         .select('*')
         .eq('store_id', storeId)
@@ -60,7 +60,7 @@ export const BannerManagement: React.FC<BannerManagementProps> = ({ storeId }) =
 
   const deleteMutation = useMutation({
     mutationFn: async (bannerId: string) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('store_banners')
         .delete()
         .eq('id', bannerId);

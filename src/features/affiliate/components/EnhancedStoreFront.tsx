@@ -215,7 +215,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         affiliateProducts
           .filter(item => item.products && item.products.is_active)
           .map(async item => {
-            const { data: ratingStats } = await supabase.rpc('get_product_rating_stats', {
+            const { data: ratingStats } = await (supabase.rpc as any)('get_product_rating_stats', {
               p_product_id: item.products.id
             });
 

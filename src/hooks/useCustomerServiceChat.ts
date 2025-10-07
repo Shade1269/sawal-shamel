@@ -60,16 +60,16 @@ export const useCustomerServiceChat = ({
 
     try {
       setLoading(true);
-      const { data, error } = await supabase.rpc('get_or_create_customer_service_chat', {
+      const { data, error } = await (supabase.rpc as any)('get_or_create_customer_service_chat', {
         p_store_id: storeId,
         p_customer_profile_id: customerProfileId
       });
 
       if (error) throw error;
 
-      setCurrentRoomId(data);
-      await loadMessages(data);
-      setupRealtimeSubscription(data);
+      setCurrentRoomId(data as string);
+      await loadMessages(data as string);
+      setupRealtimeSubscription(data as string);
 
       return data;
     } catch (error: any) {
@@ -108,8 +108,8 @@ export const useCustomerServiceChat = ({
     if (!isStoreOwner) return;
 
     try {
-      const { data, error } = await supabase
-        .from('chat_rooms')
+      const { data, error } = await (supabase
+        .from('chat_rooms') as any)
         .select(`
           *,
           profiles!chat_rooms_customer_profile_id_fkey(full_name)
@@ -119,7 +119,7 @@ export const useCustomerServiceChat = ({
         .order('last_message_at', { ascending: false });
 
       if (error) throw error;
-      setRooms(data || []);
+      setRooms(data || [] as any);
     } catch (error) {
       console.error('Error loading store chats:', error);
     }

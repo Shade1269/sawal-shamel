@@ -21,7 +21,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
   const { data: stats } = useQuery({
     queryKey: ['product-rating-stats', productId],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_product_rating_stats', {
+      const { data, error } = await (supabase.rpc as any)('get_product_rating_stats', {
         p_product_id: productId
       });
       if (error) throw error;
@@ -32,8 +32,8 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
   const { data: reviews, isLoading } = useQuery({
     queryKey: ['product-reviews', productId, sortBy, filterRating, currentUserId],
     queryFn: async () => {
-      let query = supabase
-        .from('product_reviews')
+      let query = (supabase
+        .from('product_reviews') as any)
         .select(`
           *,
           profiles!customer_profile_id (
@@ -94,7 +94,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
 
       if (!profileData) throw new Error('Profile not found');
 
-      const { data: existingVote } = await supabase
+      const { data: existingVote } = await (supabase as any)
         .from('review_votes')
         .select('*')
         .eq('review_id', reviewId)
@@ -102,13 +102,13 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
         .single();
 
       if (existingVote) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('review_votes')
           .update({ is_helpful: isHelpful })
           .eq('id', existingVote.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('review_votes')
           .insert({
             review_id: reviewId,

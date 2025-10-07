@@ -97,8 +97,8 @@ export const ReviewSubmissionDialog: React.FC<ReviewSubmissionDialogProps> = ({
       setIsUploading(true);
       const imageUrls = images.length > 0 ? await uploadImages() : [];
 
-      const { error } = await supabase
-        .from('product_reviews')
+      const { error } = await (supabase
+        .from('product_reviews') as any)
         .insert({
           product_id: productId,
           customer_profile_id: customerProfileId,

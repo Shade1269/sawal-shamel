@@ -136,7 +136,7 @@ export const BannerEditDialog: React.FC<BannerEditDialogProps> = ({
       };
 
       if (banner?.id) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('store_banners')
           .update(bannerData)
           .eq('id', banner.id);
@@ -144,7 +144,7 @@ export const BannerEditDialog: React.FC<BannerEditDialogProps> = ({
         if (error) throw error;
         toast.success('تم تحديث البانر بنجاح');
       } else {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('store_banners')
           .insert([bannerData]);
 

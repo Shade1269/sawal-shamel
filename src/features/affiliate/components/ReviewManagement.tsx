@@ -30,8 +30,8 @@ export const ReviewManagement: React.FC<ReviewManagementProps> = ({ storeId }) =
 
       const productIds = storeProducts.map(sp => sp.product_id);
 
-      let query = supabase
-        .from('product_reviews')
+      let query = (supabase
+        .from('product_reviews') as any)
         .select(`
           *,
           products (
@@ -47,7 +47,7 @@ export const ReviewManagement: React.FC<ReviewManagementProps> = ({ storeId }) =
       if (selectedFilter === 'verified') {
         query = query.eq('is_verified', true);
       } else if (selectedFilter === 'hidden') {
-        query = query.eq('is_hidden', true);
+        query = (query as any).eq('is_hidden', true);
       }
 
       const { data, error } = await query;
@@ -58,8 +58,8 @@ export const ReviewManagement: React.FC<ReviewManagementProps> = ({ storeId }) =
 
   const toggleHiddenMutation = useMutation({
     mutationFn: async ({ reviewId, isHidden }: { reviewId: string; isHidden: boolean }) => {
-      const { error } = await supabase
-        .from('product_reviews')
+      const { error } = await (supabase
+        .from('product_reviews') as any)
         .update({ is_hidden: !isHidden })
         .eq('id', reviewId);
 
