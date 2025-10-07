@@ -489,7 +489,7 @@ export const AffiliateStoreManager = ({
       <Card className="border-0 bg-gradient-to-r from-primary/10 to-accent/10 rounded-none md:rounded-xl">
         <CardContent className="p-4 md:p-6">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div className="flex items-start gap-3 md:gap-4 flex-1">
+            <div className="flex items-start gap-3 md:gap-4">
               <div className="w-12 h-12 md:w-16 md:h-16 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
                 {store.logo_url ? (
                   <img src={store.logo_url} alt="Logo" className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover" />
@@ -508,16 +508,7 @@ export const AffiliateStoreManager = ({
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2 self-stretch md:self-auto flex-wrap">
-              <Button 
-                variant="default" 
-                onClick={() => window.open(storeUrl, '_blank')}
-                className="flex-1 md:flex-none"
-                size="sm"
-              >
-                <Globe className="h-4 w-4 md:ml-2" />
-                <span className="md:inline">الصفحة الرئيسية</span>
-              </Button>
+            <div className="flex items-center gap-2 self-stretch md:self-auto">
               <Button 
                 variant="outline" 
                 onClick={() => window.open(storeUrl, '_blank')}
