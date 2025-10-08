@@ -44,6 +44,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
+import { ProductVariantDisplay } from '@/components/products/ProductVariantDisplay';
+
+interface ProductVariant {
+  type: string;
+  value: string;
+  stock: number;
+}
 
 interface Product {
   id: string;
@@ -62,6 +69,7 @@ interface Product {
     business_name: string;
     default_commission_rate: number;
   };
+  variants?: ProductVariant[];
 }
 
 const ProductsBrowser = () => {
@@ -85,6 +93,8 @@ const ProductsBrowser = () => {
   
   const [pricingProduct, setPricingProduct] = useState<Product | null>(null);
   const [customPrice, setCustomPrice] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showViewDialog, setShowViewDialog] = useState(false);
   
   useEffect(() => {
     console.log('useEffect triggered - profile check:', { profile });
@@ -185,7 +195,51 @@ const ProductsBrowser = () => {
       console.log('Products query result:', { productsData, productsError });
       console.log('Products count:', productsData?.length || 0);
 
-      setProducts(productsData || []);
+      // جلب المتغيرات لكل منتج
+      const productsWithVariants = await Promise.all(
+        (productsData || []).map(async (product) => {
+          const { data: variants, error: variantsError } = await supabase
+            .from('product_variants_advanced')
+            .select('color, size, sku, quantity, is_active')
+            .eq('product_id', product.id)
+            .eq('is_active', true);
+
+          if (variantsError) {
+            console.error('Error loading variants for product', product.id, variantsError);
+          }
+
+          // تحويل المتغيرات إلى الصيغة المطلوبة
+          const formattedVariants: ProductVariant[] = [];
+          const processedTypes = new Set<string>();
+
+          variants?.forEach(variant => {
+            if (variant.color && !processedTypes.has(`color-${variant.color}`)) {
+              formattedVariants.push({
+                type: 'color',
+                value: variant.color,
+                stock: variant.quantity || 0
+              });
+              processedTypes.add(`color-${variant.color}`);
+            }
+            
+            if (variant.size && !processedTypes.has(`size-${variant.size}`)) {
+              formattedVariants.push({
+                type: 'size',
+                value: variant.size,
+                stock: variant.quantity || 0
+              });
+              processedTypes.add(`size-${variant.size}`);
+            }
+          });
+
+          return {
+            ...product,
+            variants: formattedVariants
+          };
+        })
+      );
+
+      setProducts(productsWithVariants || []);
       
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -652,6 +706,16 @@ const ProductsBrowser = () => {
                             </Badge>
                           </div>
 
+                          {/* عرض المتغيرات */}
+                          {product.variants && product.variants.length > 0 && (
+                            <div className="pt-2 border-t">
+                              <ProductVariantDisplay 
+                                variants={product.variants} 
+                                compact={true} 
+                              />
+                            </div>
+                          )}
+
                           {/* أزرار الإجراءات */}
                           <div className="flex gap-2 pt-2">
                             {affiliateStore && (
@@ -693,7 +757,14 @@ const ProductsBrowser = () => {
                               </>
                             )}
                             
-                            <Button variant="outline" size="sm">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                setSelectedProduct(product);
+                                setShowViewDialog(true);
+                              }}
+                            >
                               <Eye className="h-3 w-3" />
                             </Button>
                           </div>
@@ -879,6 +950,121 @@ const ProductsBrowser = () => {
               >
                 إضافة للمتجر
               </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog لعرض تفاصيل المنتج */}
+      <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>تفاصيل المنتج</DialogTitle>
+          </DialogHeader>
+          {selectedProduct && (
+            <div className="space-y-6">
+              {/* صور المنتج */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {(selectedProduct.image_urls || []).map((url, index) => (
+                  <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted">
+                    <img
+                      src={url}
+                      alt={`${selectedProduct.title} ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+                {(!selectedProduct.image_urls || selectedProduct.image_urls.length === 0) && (
+                  <div className="aspect-square rounded-lg overflow-hidden bg-muted flex items-center justify-center">
+                    <Package className="h-12 w-12 text-muted-foreground" />
+                  </div>
+                )}
+              </div>
+
+              {/* معلومات المنتج */}
+              <div>
+                <h3 className="text-2xl font-bold mb-2">{selectedProduct.title}</h3>
+                <p className="text-muted-foreground">{selectedProduct.description}</p>
+              </div>
+
+              {/* السعر والعمولة */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-muted p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">السعر</p>
+                  <p className="text-2xl font-bold text-primary">{selectedProduct.price_sar} ر.س</p>
+                </div>
+                <div className="bg-muted p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">العمولة</p>
+                  <p className="text-2xl font-bold text-green-600">{selectedProduct.merchants?.default_commission_rate || 10}%</p>
+                </div>
+              </div>
+
+              {/* المتغيرات */}
+              {selectedProduct.variants && selectedProduct.variants.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-3">المتغيرات المتاحة</h4>
+                  <ProductVariantDisplay 
+                    variants={selectedProduct.variants} 
+                    compact={false} 
+                  />
+                </div>
+              )}
+
+              {/* معلومات إضافية */}
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-muted-foreground">الفئة:</span>
+                  <p className="font-medium">{selectedProduct.category}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">المخزون:</span>
+                  <p className="font-medium">{selectedProduct.stock}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">التاجر:</span>
+                  <p className="font-medium">{selectedProduct.merchants?.business_name}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">عدد المشاهدات:</span>
+                  <p className="font-medium">{selectedProduct.view_count || 0}</p>
+                </div>
+              </div>
+
+              {/* أزرار الإجراءات */}
+              <div className="flex gap-3 pt-4">
+                {affiliateStore && (
+                  myProducts.has(selectedProduct.id) ? (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        removeFromMyStore(selectedProduct.id);
+                        setShowViewDialog(false);
+                      }}
+                      className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
+                    >
+                      حذف من متجري
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        showPricingModal(selectedProduct);
+                        setShowViewDialog(false);
+                      }}
+                      className="flex-1"
+                    >
+                      <Plus className="h-4 w-4 ml-2" />
+                      إضافة لمتجري
+                    </Button>
+                  )
+                )}
+                <Button
+                  variant="outline"
+                  onClick={() => setShowViewDialog(false)}
+                  className="flex-1"
+                >
+                  إغلاق
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
