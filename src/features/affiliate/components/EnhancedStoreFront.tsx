@@ -147,6 +147,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [variantError, setVariantError] = useState<string | null>(null);
   const [productQuantities, setProductQuantities] = useState<{ [productId: string]: number }>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -357,6 +358,14 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [storeSlug, products?.length]);
+
+  // Reset variant selection when a new product is opened
+  useEffect(() => {
+    if (selectedProduct) {
+      setSelectedVariant(null);
+      setVariantError(null);
+    }
+  }, [selectedProduct]);
 
   // حساب المجموع من السلة المعزولة
   const cartTotal = isolatedCart?.total || 0;
@@ -1732,6 +1741,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       <Dialog open={!!selectedProduct} onOpenChange={() => {
         setSelectedProduct(null);
         setSelectedVariant(null);
+        setVariantError(null);
       }}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           {selectedProduct && (
@@ -1821,10 +1831,18 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                   </div>
 
                   {selectedProduct.variants && selectedProduct.variants.length > 0 && (
-                    <ProductVariantSelector
-                      variants={selectedProduct.variants}
-                      onVariantChange={setSelectedVariant as any}
-                    />
+                    <>
+                      <ProductVariantSelector
+                        variants={selectedProduct.variants}
+                        onVariantChange={(v) => {
+                          setSelectedVariant(v as any);
+                          if (v) setVariantError(null);
+                        }}
+                      />
+                      {variantError && (
+                        <p className="text-destructive text-sm mt-1">{variantError}</p>
+                      )}
+                    </>
                   )}
 
                   {/* Actions */}
@@ -1832,6 +1850,21 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                     <Button
                       className="w-full h-14 text-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-lg"
                       onClick={() => {
+                        const requiresVariant = (selectedProduct.variants && selectedProduct.variants.length > 0);
+                        if (requiresVariant && !selectedVariant) {
+                          const hasSizes = selectedProduct.variants!.some(v => !!v.size);
+                          const hasColors = selectedProduct.variants!.some(v => !!v.color);
+                          const msg = hasSizes && hasColors
+                            ? 'يرجى اختيار المقاس واللون'
+                            : hasSizes
+                            ? 'يرجى اختيار المقاس'
+                            : hasColors
+                            ? 'يرجى اختيار اللون'
+                            : 'يرجى اختيار المتغير المناسب';
+                          setVariantError(msg);
+                          toast({ title: 'خطأ', description: msg, variant: 'destructive' });
+                          return;
+                        }
                         const variantInfo = selectedVariant ? {
                           variant_id: selectedVariant.id,
                           size: selectedVariant.size,
@@ -1840,6 +1873,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                         addToCart(selectedProduct, 1, variantInfo);
                         setSelectedProduct(null);
                         setSelectedVariant(null);
+                        setVariantError(null);
                       }}
                       disabled={selectedProduct.stock === 0 || (selectedVariant && selectedVariant.available_stock === 0)}
                     >
