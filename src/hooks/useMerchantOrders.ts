@@ -117,7 +117,7 @@ export const useMerchantOrders = () => {
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: async ({ orderId, newStatus }: { orderId: string; newStatus: string }) => {
+    mutationFn: async ({ orderId, newStatus }: { orderId: string; newStatus: 'PENDING' | 'CONFIRMED' | 'SHIPPED' | 'DELIVERED' | 'CANCELED' | 'RETURNED' }) => {
       const { error } = await supabase
         .from('ecommerce_orders')
         .update({ status: newStatus })

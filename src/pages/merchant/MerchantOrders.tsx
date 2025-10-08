@@ -18,28 +18,28 @@ import { ar } from 'date-fns/locale';
 const statusIcons = {
   PENDING: Clock,
   CONFIRMED: CheckCircle,
-  PROCESSING: Package,
   SHIPPED: Truck,
   DELIVERED: CheckCircle,
-  CANCELLED: XCircle,
+  CANCELED: XCircle,
+  RETURNED: Package,
 };
 
 const statusColors = {
   PENDING: "default",
   CONFIRMED: "secondary", 
-  PROCESSING: "default",
   SHIPPED: "default",
   DELIVERED: "default",
-  CANCELLED: "destructive",
+  CANCELED: "destructive",
+  RETURNED: "outline",
 } as const;
 
 const statusLabels = {
   PENDING: "في الانتظار",
   CONFIRMED: "مؤكد",
-  PROCESSING: "قيد المعالجة", 
   SHIPPED: "تم الشحن",
   DELIVERED: "تم التسليم",
-  CANCELLED: "ملغي",
+  CANCELED: "ملغي",
+  RETURNED: "مرتجع",
 };
 
 export default function MerchantOrders() {
@@ -212,10 +212,10 @@ export default function MerchantOrders() {
                         <SelectContent>
                           <SelectItem value="PENDING">في الانتظار</SelectItem>
                           <SelectItem value="CONFIRMED">مؤكد</SelectItem>
-                          <SelectItem value="PROCESSING">قيد المعالجة</SelectItem>
                           <SelectItem value="SHIPPED">تم الشحن</SelectItem>
                           <SelectItem value="DELIVERED">تم التسليم</SelectItem>
-                          <SelectItem value="CANCELLED">ملغي</SelectItem>
+                          <SelectItem value="CANCELED">ملغي</SelectItem>
+                          <SelectItem value="RETURNED">مرتجع</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
