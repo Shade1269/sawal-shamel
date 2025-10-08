@@ -37,10 +37,31 @@ const AdminProductApproval = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [reviewNotes, setReviewNotes] = useState('');
   const [isReviewing, setIsReviewing] = useState(false);
+  const [stats, setStats] = useState({ pending: 0, approved: 0, rejected: 0 });
 
   useEffect(() => {
     fetchProducts();
+    fetchStats();
   }, [activeTab]);
+
+  const fetchStats = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('approval_status');
+
+      if (error) throw error;
+      
+      const counts = {
+        pending: data?.filter(p => p.approval_status === 'pending').length || 0,
+        approved: data?.filter(p => p.approval_status === 'approved').length || 0,
+        rejected: data?.filter(p => p.approval_status === 'rejected').length || 0,
+      };
+      setStats(counts);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -91,6 +112,7 @@ const AdminProductApproval = () => {
       setSelectedProduct(null);
       setReviewNotes('');
       fetchProducts();
+      fetchStats();
     } catch (error) {
       console.error('Error approving product:', error);
       toast({
@@ -135,6 +157,7 @@ const AdminProductApproval = () => {
       setSelectedProduct(null);
       setReviewNotes('');
       fetchProducts();
+      fetchStats();
     } catch (error) {
       console.error('Error rejecting product:', error);
       toast({
@@ -158,13 +181,6 @@ const AdminProductApproval = () => {
       default:
         return null;
     }
-  };
-
-  const allProducts = products;
-  const stats = {
-    pending: allProducts.filter(p => p.approval_status === 'pending').length,
-    approved: allProducts.filter(p => p.approval_status === 'approved').length,
-    rejected: allProducts.filter(p => p.approval_status === 'rejected').length,
   };
 
   return (
