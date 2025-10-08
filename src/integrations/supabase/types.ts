@@ -5557,10 +5557,13 @@ export type Database = {
         Row: {
           comment: string | null
           created_at: string
+          helpful_count: number | null
           id: string
           images: Json | null
           is_approved: boolean | null
           is_featured: boolean | null
+          is_hidden: boolean
+          is_verified: boolean
           order_id: string | null
           product_id: string
           rating: number
@@ -5573,10 +5576,13 @@ export type Database = {
         Insert: {
           comment?: string | null
           created_at?: string
+          helpful_count?: number | null
           id?: string
           images?: Json | null
           is_approved?: boolean | null
           is_featured?: boolean | null
+          is_hidden?: boolean
+          is_verified?: boolean
           order_id?: string | null
           product_id: string
           rating: number
@@ -5589,10 +5595,13 @@ export type Database = {
         Update: {
           comment?: string | null
           created_at?: string
+          helpful_count?: number | null
           id?: string
           images?: Json | null
           is_approved?: boolean | null
           is_featured?: boolean | null
+          is_hidden?: boolean
+          is_verified?: boolean
           order_id?: string | null
           product_id?: string
           rating?: number
@@ -6598,6 +6607,52 @@ export type Database = {
             columns: ["return_id"]
             isOneToOne: false
             referencedRelation: "product_returns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      review_votes: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_helpful: boolean
+          review_id: string
+          voter_profile_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_helpful: boolean
+          review_id: string
+          voter_profile_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_helpful?: boolean
+          review_id?: string
+          voter_profile_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_votes_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "product_reviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_votes_voter_profile_id_fkey"
+            columns: ["voter_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_votes_voter_profile_id_fkey"
+            columns: ["voter_profile_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -7837,6 +7892,56 @@ export type Database = {
             columns: ["social_account_id"]
             isOneToOne: false
             referencedRelation: "social_media_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      store_banners: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string
+          is_active: boolean
+          link_type: string | null
+          link_url: string | null
+          position: number | null
+          store_id: string
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url: string
+          is_active?: boolean
+          link_type?: string | null
+          link_url?: string | null
+          position?: number | null
+          store_id: string
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          link_type?: string | null
+          link_url?: string | null
+          position?: number | null
+          store_id?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_banners_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
             referencedColumns: ["id"]
           },
         ]
@@ -9497,6 +9602,14 @@ export type Database = {
       get_primary_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
+      }
+      get_product_rating_stats: {
+        Args: { p_product_id: string }
+        Returns: {
+          average_rating: number
+          rating_distribution: Json
+          total_reviews: number
+        }[]
       }
       get_store_orders_for_session: {
         Args: { p_session_id: string; p_store_id: string }
