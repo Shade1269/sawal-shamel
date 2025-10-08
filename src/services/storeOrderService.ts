@@ -34,101 +34,50 @@ export const storeOrderService = {
     orderData: CreateOrderData
   ) {
     try {
-      const { data: cartItems, error: cartError } = await supabase
-        .from('cart_items')
-        .select(`
-          id,
-          product_id,
-          quantity,
-          unit_price_sar,
-          total_price_sar,
-          products!inner (
-            id,
-            title,
-            image_urls
-          )
-        `)
-        .eq('cart_id', cartId);
+      const buyerSessionId = localStorage.getItem(`store_session_${affiliateStoreId}`);
 
-      if (cartError) throw cartError;
-      if (!cartItems || cartItems.length === 0) {
-        throw new Error('السلة فارغة');
+      const payload = {
+        cart_id: cartId,
+        shop_id: shopId,
+        affiliate_store_id: affiliateStoreId,
+        buyer_session_id: buyerSessionId,
+        customer: {
+          name: orderData.customerName,
+          phone: orderData.customerPhone,
+          email: orderData.customerEmail || null,
+          address: {
+            city: orderData.shippingAddress.city,
+            district: orderData.shippingAddress.district || null,
+            street: orderData.shippingAddress.street,
+            building: orderData.shippingAddress.building || null,
+            apartment: orderData.shippingAddress.apartment || null,
+            postalCode: orderData.shippingAddress.postalCode || null,
+          },
+        },
+      };
+
+      const { data, error } = await supabase.functions.invoke('create-ecommerce-order', {
+        body: payload,
+      });
+
+      if (error) {
+        console.error('Edge function create-ecommerce-order error:', error);
+        throw error;
       }
 
-      const subtotal = cartItems.reduce((sum, item) => sum + item.total_price_sar, 0);
-      const shipping = 25;
-      const tax = 0;
-      const total = subtotal + shipping + tax;
+      if (!data?.success) {
+        throw new Error(data?.error || 'تعذر إنشاء الطلب');
+      }
 
-      const sessionId = localStorage.getItem(`store_session_${affiliateStoreId}`);
-      const orderNumber = generateOrderNumber();
-
-      const { data: order, error: orderError } = await supabase
-        .from('ecommerce_orders')
-        .insert({
-          shop_id: shopId,
-          affiliate_store_id: affiliateStoreId,
-          buyer_session_id: sessionId,
-          customer_name: orderData.customerName,
-          customer_phone: orderData.customerPhone,
-          customer_email: orderData.customerEmail || null,
-          shipping_address: {
-            ...orderData.shippingAddress,
-            phone: orderData.customerPhone,
-          },
-          subtotal_sar: subtotal,
-          shipping_sar: shipping,
-          tax_sar: tax,
-          total_sar: total,
-          payment_method: PAYMENT_METHOD_COD,
-          payment_status: PAYMENT_STATUS_PENDING,
-          status: ORDER_STATUS_PENDING,
-          order_number: orderNumber,
-        })
-        .select('id, order_number')
-        .single();
-
-      if (orderError) throw orderError;
-
-      const orderItems = cartItems.map(item => ({
-        order_id: order.id,
-        product_id: item.product_id,
-        product_title: (item.products as any)?.title || 'منتج',
-        product_image_url: (item.products as any)?.image_urls?.[0] || null,
-        quantity: item.quantity,
-        unit_price_sar: item.unit_price_sar,
-        total_price_sar: item.total_price_sar,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('ecommerce_order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
-
-      await supabase
-        .from('ecommerce_payment_transactions')
-        .insert({
-          order_id: order.id,
-          transaction_id: `COD-${order.id.slice(-6)}`,
-          payment_method: PAYMENT_METHOD_COD,
-          payment_status: PAYMENT_STATUS_PENDING,
-          amount_sar: total,
-          currency: 'SAR',
-          gateway_name: 'Cash on Delivery',
-        });
-
-      await supabase
-        .from('cart_items')
-        .delete()
-        .eq('cart_id', cartId);
-
-      await this.updateStoreCustomerSimple(affiliateStoreId, orderData, total);
+      // Best-effort customer snapshot (non-blocking)
+      try {
+        await this.updateStoreCustomerSimple(affiliateStoreId, orderData, undefined as unknown as number);
+      } catch (_) {}
 
       return {
         success: true,
-        orderId: order.id,
-        orderNumber: order.order_number || orderNumber,
+        orderId: data.order_id,
+        orderNumber: data.order_number,
       };
     } catch (error) {
       console.error('Error creating order:', error);

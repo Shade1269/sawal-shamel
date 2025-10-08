@@ -83,3 +83,6 @@ verify_jwt = false
 
 [functions.mcp-full-access]
 verify_jwt = false
+
+[functions.create-ecommerce-order]
+verify_jwt = false
