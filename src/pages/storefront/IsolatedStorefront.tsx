@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useOutletContext } from 'react-router-dom';
+import { useParams, useOutletContext, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   EnhancedCard, 
@@ -280,26 +280,32 @@ export const IsolatedStorefront: React.FC = () => {
                   )}
                 </div>
 
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <Badge variant="secondary" className="text-xs">
                     متوفر ({product.stock_quantity})
                   </Badge>
-                  
-                  <Button
-                    size="sm"
-                    onClick={() => handleAddToCart(product.id)}
-                    disabled={addingToCart === product.id}
-                    className="text-xs"
-                  >
-                    {addingToCart === product.id ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <>
-                        <ShoppingCart className="h-3 w-3 mr-1" />
-                        أضف للسلة
-                      </>
-                    )}
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Link to={`/s/${store?.store_slug || storeSlug}/p/${product.id}`} className="text-xs">
+                      <Button variant="outline" size="sm" className="text-xs">
+                        عرض الخيارات
+                      </Button>
+                    </Link>
+                    <Button
+                      size="sm"
+                      onClick={() => handleAddToCart(product.id)}
+                      disabled={addingToCart === product.id}
+                      className="text-xs"
+                    >
+                      {addingToCart === product.id ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <>
+                          <ShoppingCart className="h-3 w-3 mr-1" />
+                          أضف للسلة
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>
