@@ -32,7 +32,6 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
     email: ''
   });
   const [generatedOTP, setGeneratedOTP] = useState(''); // للاختبار فقط
-  const [verificationSuccess, setVerificationSuccess] = useState(false);
 
   // إرسال كود التحقق
   const handleSendOTP = async (e: React.FormEvent) => {
@@ -55,11 +54,7 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
 
     const result = await verifyOTP(phone, otpCode, storeId);
     if (result.success && result.customer) {
-      setVerificationSuccess(true);
-      // استدعاء onSuccess بعد تحديث الحالة
-      setTimeout(() => {
-        onSuccess?.(result.customer);
-      }, 100);
+      onSuccess?.(result.customer);
     }
   };
 
@@ -72,26 +67,6 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
       setStep('otp');
     }
   };
-
-  // إذا تم التحقق بنجاح، عرض رسالة تحميل
-  if (verificationSuccess) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-xl text-center">
-          <CardContent className="p-8 space-y-4">
-            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-              <Lock className="w-8 h-8 text-green-600" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-green-600">تم التحقق بنجاح!</h3>
-              <p className="text-muted-foreground mt-2">جاري تحويلك...</p>
-            </div>
-            <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
