@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useOutletContext, Link } from 'react-router-dom';
+import { useParams, useOutletContext, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   EnhancedCard, 
@@ -48,6 +48,7 @@ interface StoreContextType {
 export const IsolatedStorefront: React.FC = () => {
   const { storeSlug } = useParams<{ storeSlug: string }>();
   const { store } = useOutletContext<StoreContextType>();
+  const navigate = useNavigate();
   const { addToCart } = useIsolatedStoreCart(store?.id || '');
   
   const [products, setProducts] = useState<Product[]>([]);
@@ -178,9 +179,22 @@ export const IsolatedStorefront: React.FC = () => {
     setAddingToCart(productId);
     try {
       const product = products.find(p => p.id === productId);
-      if (product) {
-        await addToCart(productId, 1, product.price_sar, product.title);
+      if (!product) return;
+
+      // إذا كان للمنتج متغيرات، ننقل لصفحة التفاصيل لاختيارها قبل الإضافة
+      if (product.variants && product.variants.length > 0) {
+        setAddingToCart(null);
+        const slug = store?.store_slug || storeSlug || '';
+        if (slug) {
+          // حفظ موضع الصفحة قبل الانتقال
+          sessionStorage.setItem(`scroll_${slug}`, window.scrollY.toString());
+          // الانتقال لصفحة تفاصيل المنتج
+          navigate(`/s/${slug}/p/${productId}`);
+        }
+        return;
       }
+
+      await addToCart(productId, 1, product.price_sar, product.title);
     } finally {
       setAddingToCart(null);
     }
@@ -304,26 +318,37 @@ export const IsolatedStorefront: React.FC = () => {
                     متوفر ({product.stock_quantity})
                   </Badge>
                   <div className="flex items-center gap-2">
-                    <Link to={`/s/${store?.store_slug || storeSlug}/p/${product.id}`} className="text-xs">
-                      <Button variant="outline" size="sm" className="text-xs">
-                        عرض الخيارات
-                      </Button>
-                    </Link>
                     <Button
+                      variant="outline"
                       size="sm"
-                      onClick={() => handleAddToCart(product.id)}
-                      disabled={addingToCart === product.id}
                       className="text-xs"
+                      onClick={() => {
+                        const slug = store?.store_slug || storeSlug || '';
+                        if (!slug) return;
+                        sessionStorage.setItem(`scroll_${slug}`, window.scrollY.toString());
+                        navigate(`/s/${slug}/p/${product.id}`);
+                      }}
                     >
-                      {addingToCart === product.id ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <>
-                          <ShoppingCart className="h-3 w-3 mr-1" />
-                          أضف للسلة
-                        </>
-                      )}
+                      عرض الخيارات
                     </Button>
+                    {/* السماح بالإضافة السريعة فقط إذا لا توجد متغيرات */}
+                    {(!product.variants || product.variants.length === 0) && (
+                      <Button
+                        size="sm"
+                        onClick={() => handleAddToCart(product.id)}
+                        disabled={addingToCart === product.id}
+                        className="text-xs"
+                      >
+                        {addingToCart === product.id ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <>
+                            <ShoppingCart className="h-3 w-3 mr-1" />
+                            أضف للسلة
+                          </>
+                        )}
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>

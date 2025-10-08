@@ -172,6 +172,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       return data as AffiliateStore | null;
     },
     enabled: !!storeSlug,
+    staleTime: 5 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
   // استخدام نظام السلة المحسّن
@@ -310,8 +313,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       return data as StoreSettings | null;
     },
     enabled: !!affiliateStore?.id,
-    staleTime: 0,
-    refetchOnMount: 'always'
+    staleTime: 5 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
   const { data: storeBanners } = useQuery<StoreBanner[]>({
@@ -328,6 +332,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       return (data || []) as StoreBanner[];
     },
     enabled: !!affiliateStore?.id,
+    staleTime: 5 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
   // حفظ واستعادة scroll position عند العودة للصفحة
