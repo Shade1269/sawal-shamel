@@ -362,187 +362,52 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
   // جلب بيانات العميل بالهاتف
   const fetchCustomerByPhone = async (phone: string, storeId?: string): Promise<CustomerProfile | null> => {
     try {
-      const { e164, national } = getPhoneVariants(phone);
+      // توحيد صيغة رقم الهاتف إلى E.164
+      const digits = phone.replace(/\D/g, '');
+      const e164 = digits.startsWith('966')
+        ? `+${digits}`
+        : digits.startsWith('0')
+        ? `+966${digits.replace(/^0+/, '')}`
+        : (digits.startsWith('5') && digits.length === 9)
+        ? `+966${digits}`
+        : (phone.startsWith('+') ? phone : `+${digits}`);
 
-      // جرّب أولاً بصيغة E.164، ثم الصيغة المحلية
-      let profile: any = null;
-      let profileError: any = null;
+      // استخدم الدالة الآمنة في قاعدة البيانات لإنشاء/جلب العميل
+      const { data: result, error } = await supabase.rpc('create_customer_account', {
+        p_phone: e164,
+        p_store_id: storeId ?? null
+      });
 
-      const fetchProfile = async (value: string) => {
-        return supabase
-          .from('profiles')
-          .select(`
-            id,
-            phone,
-            email,
-            full_name,
-            customers (
-              id,
-              profile_id,
-              total_orders,
-              total_spent_sar,
-              loyalty_points,
-              created_at,
-              updated_at
-            )
-          `)
-          .eq('phone', value)
-          .eq('role', 'customer')
-          .maybeSingle();
+      if (error) throw error;
+
+      const profileId = (result as any)?.profile_id ?? (result as any)?.profileId;
+      const customerId = (result as any)?.customer_id ?? (result as any)?.customerId;
+
+      if (!customerId || !profileId) {
+        throw new Error('تعذر إنشاء/جلب العميل');
+      }
+
+      // نبني كائن العميل بالحد الأدنى من البيانات لتجاوز قيود RLS على الجداول
+      const customer: CustomerProfile = {
+        id: customerId,
+        profile_id: profileId,
+        phone: e164,
+        email: undefined,
+        full_name: e164,
+        loyalty_points: 0,
+        total_orders: 0,
+        total_spent_sar: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
 
-      // First try E.164 format
-      let resp = await fetchProfile(e164);
-
-      if (resp.error) {
-        console.error('Error fetching with E.164:', resp.error);
-      }
-
-      profile = resp.data;
-      profileError = resp.error;
-
-      // If not found, try national format
-      if (!profile && !profileError) {
-        resp = await fetchProfile(national);
-
-        if (resp.error) {
-          console.error('Error fetching with national format:', resp.error);
-        }
-
-        profile = resp.data;
-        profileError = resp.error;
-      }
-
-      if (profileError && profileError.code !== 'PGRST116') {
-        throw profileError;
-      }
-
-      const ensureCustomerAccount = async (targetPhone: string, existingProfile?: any) => {
-        console.log('Ensuring customer account via RPC:', targetPhone, 'store:', storeId ?? 'none');
-        try {
-          const { error: rpcError } = await supabase.rpc('create_customer_account', {
-            p_phone: targetPhone,
-            p_store_id: storeId ?? null
-          });
-          if (!rpcError) {
-            const { data: fetchedAfterCreate, error: fetchAfterCreateError } = await fetchProfile(targetPhone);
-            if (fetchAfterCreateError) throw fetchAfterCreateError;
-            if (fetchedAfterCreate) {
-              return fetchedAfterCreate;
-            }
-          } else {
-            console.warn('RPC create_customer_account failed, falling back to manual provisioning:', rpcError);
-          }
-        } catch (rpcException) {
-          console.warn('RPC create_customer_account threw an exception, falling back to manual provisioning:', rpcException);
-        }
-
-        // Fallback manual provisioning
-        let targetProfile = existingProfile;
-        if (!targetProfile) {
-          const { data: upsertedProfile, error: upsertProfileError } = await supabase
-            .from('profiles')
-            .upsert(
-              {
-                phone: targetPhone,
-                role: 'customer'
-              },
-              { onConflict: 'phone' }
-            )
-            .select('id, phone, email, full_name')
-            .single();
-
-          if (upsertProfileError) {
-            console.error('Manual profile upsert failed:', upsertProfileError);
-            throw upsertProfileError;
-          }
-
-          targetProfile = upsertedProfile;
-        }
-
-        const { data: customerRecord, error: customerUpsertError } = await supabase
-          .from('customers')
-          .upsert(
-            {
-              profile_id: targetProfile.id
-            },
-            { onConflict: 'profile_id' }
-          )
-          .select('id, profile_id, total_orders, total_spent_sar, loyalty_points, created_at, updated_at')
-          .single();
-
-        if (customerUpsertError) {
-          console.error('Manual customer upsert failed:', customerUpsertError);
-          throw customerUpsertError;
-        }
-
-        if (storeId) {
-          const { error: storeCustomerError } = await supabase
-            .from('store_customers')
-            .upsert(
-              {
-                store_id: storeId,
-                customer_id: customerRecord.id,
-                customer_phone: targetPhone,
-                customer_name: targetProfile?.full_name,
-                customer_email: targetProfile?.email
-              },
-              { onConflict: 'store_id,customer_id' }
-            );
-
-          if (storeCustomerError) {
-            console.warn('store_customers upsert failed:', storeCustomerError);
-          }
-        }
-
-        return {
-          ...targetProfile,
-          customers: [customerRecord]
-        };
-      };
-
-      // إذا لم يكن هناك profile، قم بإنشاءه عبر RPC الآمن أو التهيئة اليدوية ثم أعد الجلب
-      if (!profile) {
-        profile = await ensureCustomerAccount(e164);
-      }
-
-      if (!profile) {
-        throw new Error('تعذر إنشاء ملف العميل');
-      }
-
-      // إذا كان هناك profile ولكن لا يوجد customer، استخدم ensureCustomerAccount ثم أعد الجلب
-      let customersArray = Array.isArray(profile.customers) ? profile.customers : (profile.customers ? [profile.customers] : []);
-      if (customersArray.length === 0) {
-        const refreshedProfile = await ensureCustomerAccount(profile.phone, profile);
-        if (!refreshedProfile) {
-          throw new Error('لم يتم إنشاء سجل العميل');
-        }
-        customersArray = Array.isArray(refreshedProfile.customers)
-          ? refreshedProfile.customers
-          : (refreshedProfile.customers ? [refreshedProfile.customers] : []);
-        profile = refreshedProfile;
-      }
-
-      const customerData = customersArray[0];
-
-      return {
-        id: customerData.id,
-        profile_id: profile.id,
-        phone: profile.phone,
-        email: profile.email,
-        full_name: profile.full_name,
-        loyalty_points: customerData.loyalty_points || 0,
-        total_orders: customerData.total_orders || 0,
-        total_spent_sar: customerData.total_spent_sar || 0,
-        created_at: customerData.created_at,
-        updated_at: customerData.updated_at
-      };
+      return customer;
     } catch (error: any) {
       console.error('خطأ في جلب بيانات العميل:', error);
       toast({
-        title: "خطأ في جلب البيانات",
+        title: 'خطأ في جلب البيانات',
         description: error.message || 'حدث خطأ أثناء جلب بيانات العميل',
-        variant: "destructive",
+        variant: 'destructive',
       });
       return null;
     }

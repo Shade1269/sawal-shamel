@@ -74,14 +74,14 @@ export const CustomerProfile: React.FC = () => {
 
   // جلب العناوين
   useEffect(() => {
-    if (!customer?.customer_data?.id) return;
+    if (!customer?.id) return;
 
     const fetchAddresses = async () => {
       try {
         const { data, error } = await supabase
           .from('customer_addresses')
           .select('*')
-          .eq('customer_id', customer.customer_data.id)
+          .eq('customer_id', customer.id)
           .order('is_default', { ascending: false })
           .order('created_at', { ascending: false });
 
@@ -95,7 +95,7 @@ export const CustomerProfile: React.FC = () => {
     };
 
     fetchAddresses();
-  }, [customer?.customer_data?.id]);
+  }, [customer?.id]);
 
   // جلب الطلبات
   useEffect(() => {
@@ -278,12 +278,12 @@ export const CustomerProfile: React.FC = () => {
       </Card>
 
       {/* إحصائيات العميل */}
-      {customer.customer_data && (
+      {customer && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Card>
             <CardContent className="p-4 sm:p-6 text-center">
               <ShoppingBag className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-primary mb-2" />
-              <div className="text-xl sm:text-2xl font-bold">{customer.customer_data.total_orders}</div>
+              <div className="text-xl sm:text-2xl font-bold">{customer.total_orders}</div>
               <div className="text-xs sm:text-sm text-muted-foreground">إجمالي الطلبات</div>
             </CardContent>
           </Card>
@@ -291,7 +291,7 @@ export const CustomerProfile: React.FC = () => {
           <Card>
             <CardContent className="p-4 sm:p-6 text-center">
               <CreditCard className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-green-600 mb-2" />
-              <div className="text-lg sm:text-2xl font-bold">{customer.customer_data.total_spent_sar.toFixed(2)} ر.س</div>
+              <div className="text-lg sm:text-2xl font-bold">{customer.total_spent_sar.toFixed(2)} ر.س</div>
               <div className="text-xs sm:text-sm text-muted-foreground">إجمالي المشتريات</div>
             </CardContent>
           </Card>
@@ -299,7 +299,7 @@ export const CustomerProfile: React.FC = () => {
           <Card>
             <CardContent className="p-6 text-center">
               <Award className="w-8 h-8 mx-auto text-yellow-600 mb-2" />
-              <div className="text-2xl font-bold">{customer.customer_data.loyalty_points}</div>
+              <div className="text-2xl font-bold">{customer.loyalty_points}</div>
               <div className="text-sm text-muted-foreground">نقاط الولاء</div>
             </CardContent>
           </Card>
