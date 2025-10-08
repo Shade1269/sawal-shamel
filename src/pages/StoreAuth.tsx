@@ -81,7 +81,11 @@ const StoreAuth: React.FC = () => {
 
   // معالجة نجاح تسجيل الدخول
   const handleAuthSuccess = (customer: any) => {
-    navigate(returnUrl, { replace: true });
+    console.log('Auth success, navigating to:', returnUrl);
+    // استخدام setTimeout للتأكد من تحديث الحالة أولاً
+    setTimeout(() => {
+      navigate(returnUrl, { replace: true });
+    }, 200);
   };
 
   // العودة للمتجر
