@@ -22,6 +22,11 @@ interface Product {
   is_active: boolean;
   stock: number;
   created_at: string;
+  merchant_id: string;
+  brand_id?: string;
+  category_id?: string;
+  sku?: string;
+  image_url?: string;
 }
 
 const MerchantProducts = () => {
@@ -55,27 +60,22 @@ const MerchantProducts = () => {
 
       if (error && error.code !== 'PGRST116') throw error;
 
-      if (!data) {
-        // إنشاء حساب تاجر تلقائياً إذا لم يوجد
-        const { data: inserted, error: insertError } = await supabase
-          .from('merchants')
-          .insert({
-            profile_id: profile.id,
-            business_name: profile.full_name || profile.email || 'Merchant',
-            default_commission_rate: 10,
-            vat_enabled: false,
-          })
-          .select('id')
-          .maybeSingle();
-
-        if (insertError) throw insertError;
-        if (inserted?.id) setMerchantId(inserted.id);
-      } else {
+      if (data) {
         setMerchantId(data.id);
+      } else {
+        toast({ 
+          title: 'خطأ', 
+          description: 'لم يتم العثور على حساب تاجر. الرجاء تحديث الصفحة.', 
+          variant: 'destructive' 
+        });
       }
     } catch (error) {
-      console.error('Error ensuring merchant ID:', error);
-      toast({ title: 'خطأ', description: 'تعذر إنشاء/جلب حساب التاجر', variant: 'destructive' });
+      console.error('Error fetching merchant ID:', error);
+      toast({ 
+        title: 'خطأ', 
+        description: 'تعذر جلب حساب التاجر', 
+        variant: 'destructive' 
+      });
     }
   };
 
@@ -84,20 +84,20 @@ const MerchantProducts = () => {
 
     setLoading(true);
     try {
-      let query = supabase
+      const baseQuery = supabase
         .from('products')
         .select('*')
         .eq('merchant_id', merchantId)
         .order('created_at', { ascending: false });
 
-      if (activeTab !== 'all') {
-        query = query.eq('approval_status', activeTab);
-      }
+      const query = activeTab !== 'all' 
+        ? baseQuery.eq('approval_status', activeTab)
+        : baseQuery;
 
       const { data, error } = await query;
 
       if (error) throw error;
-      setProducts((data || []) as Product[]);
+      setProducts((data || []) as unknown as Product[]);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({
@@ -261,6 +261,20 @@ const MerchantProducts = () => {
           </Tabs>
         </CardContent>
       </Card>
+
+      <Dialog open={showAdd} onOpenChange={setShowAdd}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>إضافة منتج جديد</DialogTitle>
+          </DialogHeader>
+          <SimpleProductForm
+            onSuccess={() => {
+              setShowAdd(false);
+              fetchProducts();
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
