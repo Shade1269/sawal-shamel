@@ -25,6 +25,22 @@ import {
   Image as ImageIcon
 } from "lucide-react";
 import { useFastAuth } from "@/hooks/useFastAuth";
+import { ProductVariantDisplay } from "@/components/products/ProductVariantDisplay";
+import { supabase } from "@/integrations/supabase/client";
+
+interface ProductVariant {
+  color?: string;
+  size?: string;
+  sku?: string;
+  stock?: number;
+}
+
+interface ProductVariant {
+  color?: string;
+  size?: string;
+  sku?: string;
+  stock?: number;
+}
 
 interface Product {
   id: string;
@@ -38,6 +54,7 @@ interface Product {
   commission_rate?: number;
   created_at: string;
   updated_at: string;
+  variants?: ProductVariant[];
 }
 
 interface ProductsConfig {
@@ -147,13 +164,6 @@ export function UnifiedProductsManager() {
   const { profile } = useFastAuth();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'table'>('grid');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [showAddDialog, setShowAddDialog] = useState(false);
 
   const managerType = useMemo(() => {
     const path = location.pathname;
@@ -169,57 +179,54 @@ export function UnifiedProductsManager() {
   }, [location.pathname, profile?.role]);
 
   const config = productsConfigs[managerType];
+  
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showViewDialog, setShowViewDialog] = useState(false);
 
-  // تحميل المنتجات (مؤقت - بيانات وهمية)
+  // تحميل المنتجات من قاعدة البيانات
   useEffect(() => {
     const loadProducts = async () => {
-      setLoading(true);
-      // محاكاة تحميل البيانات
-      setTimeout(() => {
-        const mockProducts: Product[] = [
-          {
-            id: '1',
-            title: 'iPhone 15 Pro',
-            description: 'أحدث إصدار من آيفون',
-            price_sar: 4999,
-            category: 'electronics',
-            stock: 50,
-            image_urls: ['/placeholder.svg'],
-            is_active: true,
-            commission_rate: 8,
-            created_at: '2024-01-01',
-            updated_at: '2024-01-01'
-          },
-          {
-            id: '2',
-            title: 'قميص رجالي كلاسيكي',
-            description: 'قميص عالي الجودة',
-            price_sar: 299,
-            category: 'fashion',
-            stock: 100,
-            image_urls: ['/placeholder.svg'],
-            is_active: true,
-            commission_rate: 15,
-            created_at: '2024-01-02',
-            updated_at: '2024-01-02'
-          },
-          {
-            id: '3',
-            title: 'كرسي مكتبي مريح',
-            description: 'كرسي بتصميم эргономي',
-            price_sar: 899,
-            category: 'home',
-            stock: 25,
-            image_urls: ['/placeholder.svg'],
-            is_active: false,
-            commission_rate: 12,
-            created_at: '2024-01-03',
-            updated_at: '2024-01-03'
-          }
-        ];
-        setProducts(mockProducts);
+      try {
+        setLoading(true);
+        const { data: productsData, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // جلب المتغيرات لكل منتج
+        const productsWithVariants = await Promise.all(
+          (productsData || []).map(async (product) => {
+            const { data: variants } = await supabase
+              .from('product_variants_advanced')
+              .select('color, size, sku, quantity')
+              .eq('product_id', product.id);
+
+            return {
+              ...product,
+              variants: variants?.map(v => ({
+                color: v.color,
+                size: v.size,
+                sku: v.sku,
+                stock: v.quantity
+              })) || []
+            };
+          })
+        );
+
+        setProducts(productsWithVariants as Product[]);
+      } catch (error) {
+        console.error('Error loading products:', error);
+      } finally {
         setLoading(false);
-      }, 1000);
+      }
     };
 
     loadProducts();
@@ -305,6 +312,21 @@ export function UnifiedProductsManager() {
             )}
           </div>
           
+          {/* عرض المتغيرات */}
+          {product.variants && product.variants.length > 0 && (
+            <div className="pt-2">
+              <ProductVariantDisplay 
+                variants={product.variants.flatMap(v => {
+                  const result: Array<{type: string; value: string; stock: number}> = [];
+                  if (v.color) result.push({ type: 'color', value: v.color, stock: v.stock || 0 });
+                  if (v.size) result.push({ type: 'size', value: v.size, stock: v.stock || 0 });
+                  return result;
+                })} 
+                compact={true} 
+              />
+            </div>
+          )}
+          
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>المخزون: {product.stock}</span>
             <span>الفئة: {product.category}</span>
@@ -313,7 +335,15 @@ export function UnifiedProductsManager() {
         
         {/* Mobile-first Action Buttons */}
         <div className="flex gap-1 md:gap-2 mt-3 md:mt-4 md:opacity-0 md:group-hover:opacity-100 md:transition-opacity">
-          <Button size="sm" variant="outline" className="flex-1 text-xs md:text-sm h-8 md:h-9">
+          <Button 
+            size="sm" 
+            variant="outline" 
+            className="flex-1 text-xs md:text-sm h-8 md:h-9"
+            onClick={() => {
+              setSelectedProduct(product);
+              setShowViewDialog(true);
+            }}
+          >
             <Eye className="h-3 w-3 md:h-4 md:w-4 md:mr-1" />
             <span className="hidden sm:inline">عرض</span>
           </Button>
@@ -476,6 +506,132 @@ export function UnifiedProductsManager() {
           <div className="text-center py-6 md:py-8 text-muted-foreground text-sm md:text-base">
             نموذج إضافة المنتج قيد التطوير
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Product Dialog */}
+      <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
+        <DialogContent className="max-w-[95vw] md:max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-lg md:text-xl">تفاصيل المنتج</DialogTitle>
+          </DialogHeader>
+          
+          {selectedProduct && (
+            <div className="space-y-4">
+              {/* صور المنتج */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  {selectedProduct.image_urls && selectedProduct.image_urls.length > 0 ? (
+                    <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+                      <img 
+                        src={selectedProduct.image_urls[0]} 
+                        alt={selectedProduct.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
+                      <ImageIcon className="h-16 w-16 text-muted-foreground" />
+                    </div>
+                  )}
+                  
+                  {/* صور إضافية */}
+                  {selectedProduct.image_urls && selectedProduct.image_urls.length > 1 && (
+                    <div className="grid grid-cols-4 gap-2">
+                      {selectedProduct.image_urls.slice(1, 5).map((url, index) => (
+                        <div key={index} className="aspect-square bg-muted rounded-md overflow-hidden">
+                          <img src={url} alt={`${selectedProduct.title} ${index + 2}`} className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-2xl font-bold">{selectedProduct.title}</h3>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge variant={selectedProduct.is_active ? 'default' : 'secondary'}>
+                        {selectedProduct.is_active ? 'نشط' : 'غير نشط'}
+                      </Badge>
+                      {selectedProduct.category && (
+                        <Badge variant="outline">{selectedProduct.category}</Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-3xl font-bold text-primary">
+                      {selectedProduct.price_sar} ر.س
+                    </span>
+                    {config.showCommission && selectedProduct.commission_rate && (
+                      <div className="mt-2">
+                        <Badge variant="outline">
+                          عمولة {selectedProduct.commission_rate}%
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      <strong>المخزون:</strong> {selectedProduct.stock} وحدة
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2">الوصف</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedProduct.description || 'لا يوجد وصف'}
+                    </p>
+                  </div>
+
+                  {/* عرض المتغيرات بشكل مفصل */}
+                  {selectedProduct.variants && selectedProduct.variants.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold mb-3">المتغيرات المتاحة</h4>
+                      <ProductVariantDisplay 
+                        variants={selectedProduct.variants.flatMap(v => {
+                          const result: Array<{type: string; value: string; stock: number}> = [];
+                          if (v.color) result.push({ type: 'color', value: v.color, stock: v.stock || 0 });
+                          if (v.size) result.push({ type: 'size', value: v.size, stock: v.stock || 0 });
+                          return result;
+                        })} 
+                        compact={false} 
+                      />
+                      
+                      <div className="mt-3 space-y-2">
+                        {selectedProduct.variants.map((variant, index) => (
+                          <div key={index} className="p-3 bg-muted rounded-md text-sm">
+                            <div className="flex justify-between items-center">
+                              <div>
+                                {variant.color && <span className="font-medium">اللون: {variant.color}</span>}
+                                {variant.color && variant.size && <span className="mx-2">•</span>}
+                                {variant.size && <span className="font-medium">المقاس: {variant.size}</span>}
+                              </div>
+                              <div className="text-muted-foreground">
+                                المخزون: {variant.stock || 0}
+                              </div>
+                            </div>
+                            {variant.sku && (
+                              <div className="mt-1 text-xs text-muted-foreground">
+                                SKU: {variant.sku}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="text-xs text-muted-foreground pt-3 border-t">
+                    <p>تاريخ الإنشاء: {new Date(selectedProduct.created_at).toLocaleDateString('ar-SA')}</p>
+                    <p>آخر تحديث: {new Date(selectedProduct.updated_at).toLocaleDateString('ar-SA')}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
