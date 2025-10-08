@@ -15,7 +15,14 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, ShoppingCart, Star } from 'lucide-react';
 import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 import { PromotionalBannerDisplay } from '@/components/storefront/PromotionalBannerDisplay';
+import { ProductVariantDisplay } from '@/components/products/ProductVariantDisplay';
 import { toast } from 'sonner';
+
+interface ProductVariant {
+  type: string;
+  value: string;
+  stock: number;
+}
 
 interface Product {
   id: string;
@@ -26,6 +33,7 @@ interface Product {
   rating?: number;
   reviews_count?: number;
   stock_quantity?: number;
+  variants?: ProductVariant[];
 }
 
 interface StoreContextType {
@@ -73,7 +81,7 @@ export const IsolatedStorefront: React.FC = () => {
 
       if (error) throw error;
 
-      const formattedProducts: Product[] = (affiliateProducts || [])
+      const baseProducts: Product[] = (affiliateProducts || [])
         .map(item => {
           const product = item.products as any;
           return {
@@ -84,12 +92,62 @@ export const IsolatedStorefront: React.FC = () => {
             image_urls: product.image_urls,
             rating: product.rating,
             reviews_count: product.reviews_count,
-            stock_quantity: product.stock_quantity
-          };
+            stock_quantity: product.stock_quantity,
+          } as Product;
         })
-        .filter(product => product.stock_quantity > 0);
+        .filter(p => (p.stock_quantity ?? 0) > 0);
 
-      setProducts(formattedProducts);
+      const productIds = baseProducts.map(p => p.id);
+      let variantsMap: Record<string, ProductVariant[]> = {};
+
+      if (productIds.length > 0) {
+        const { data: variantRows, error: variantsError } = await supabase
+          .from('product_variants_advanced')
+          .select('product_id, color, size, quantity, is_active')
+          .in('product_id', productIds)
+          .eq('is_active', true);
+
+        if (variantsError) {
+          console.error('Error loading variants for storefront:', variantsError);
+        } else {
+          const tempMap: Record<string, { color: Record<string, number>; size: Record<string, number> }> = {};
+          for (const row of variantRows || []) {
+            const pid = (row as any).product_id as string;
+            if (!tempMap[pid]) tempMap[pid] = { color: {}, size: {} };
+            const qty = ((row as any).quantity ?? 0) as number;
+
+            const color = (row as any).color as string | null;
+            const size = (row as any).size as string | null;
+
+            if (color) {
+              tempMap[pid].color[color] = (tempMap[pid].color[color] ?? 0) + qty;
+            }
+            if (size) {
+              tempMap[pid].size[size] = (tempMap[pid].size[size] ?? 0) + qty;
+            }
+          }
+
+          variantsMap = Object.fromEntries(
+            Object.entries(tempMap).map(([pid, types]) => {
+              const list: ProductVariant[] = [];
+              for (const [value, stock] of Object.entries(types.color)) {
+                list.push({ type: 'color', value, stock: stock as number });
+              }
+              for (const [value, stock] of Object.entries(types.size)) {
+                list.push({ type: 'size', value, stock: stock as number });
+              }
+              return [pid, list];
+            })
+          );
+        }
+      }
+
+      const mergedProducts = baseProducts.map(p => ({
+        ...p,
+        variants: variantsMap[p.id] || [],
+      }));
+
+      setProducts(mergedProducts);
     } catch (error) {
       console.error('Error loading products:', error);
       toast.error('خطأ في تحميل المنتجات');
@@ -200,6 +258,12 @@ export const IsolatedStorefront: React.FC = () => {
                   </p>
                 )}
 
+                {product.variants && product.variants.length > 0 && (
+                  <div className="pt-2 border-t">
+                    <ProductVariantDisplay variants={product.variants} compact={true} />
+                  </div>
+                )}
+                
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-bold text-primary">
                     {product.price_sar} ر.س
