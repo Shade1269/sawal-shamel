@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useOutletContext, Link, useNavigate } from 'react-router-dom';
+import { useParams, useOutletContext, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   EnhancedCard, 
@@ -51,32 +52,14 @@ export const IsolatedStorefront: React.FC = () => {
   const navigate = useNavigate();
   const { addToCart } = useIsolatedStoreCart(store?.id || '');
   
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
 
-  // حفظ scroll position عند المغادرة
-  useEffect(() => {
-    const handleScroll = () => {
-      sessionStorage.setItem(`scroll_${storeSlug}`, window.scrollY.toString());
-    };
-    window.addEventListener('scroll', handleScroll);
-    
-    // استعادة scroll position عند العودة
-    const savedScroll = sessionStorage.getItem(`scroll_${storeSlug}`);
-    if (savedScroll && products.length > 0) {
-      setTimeout(() => {
-        window.scrollTo(0, parseInt(savedScroll));
-      }, 100);
-    }
-    
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [storeSlug, products.length]);
+  // استخدام React Query لتحميل المنتجات مع caching
+  const { data: products = [], isLoading: loading } = useQuery({
+    queryKey: ['storefront-products', store?.id],
+    queryFn: async () => {
+      if (!store?.id) return [];
 
-  const loadProducts = async () => {
-    if (!store?.id) return;
-
-    try {
       const { data: affiliateProducts, error } = await supabase
         .from('affiliate_products')
         .select(`
@@ -126,11 +109,9 @@ export const IsolatedStorefront: React.FC = () => {
           .in('product_id', productIds)
           .eq('is_active', true);
 
-        if (variantsError) {
-          console.error('Error loading variants for storefront:', variantsError);
-        } else {
+        if (!variantsError && variantRows) {
           const tempMap: Record<string, { color: Record<string, number>; size: Record<string, number> }> = {};
-          for (const row of variantRows || []) {
+          for (const row of variantRows) {
             const pid = (row as any).product_id as string;
             if (!tempMap[pid]) tempMap[pid] = { color: {}, size: {} };
             const qty = ((row as any).quantity ?? 0) as number;
@@ -161,51 +142,64 @@ export const IsolatedStorefront: React.FC = () => {
         }
       }
 
-      const mergedProducts = baseProducts.map(p => ({
+      return baseProducts.map(p => ({
         ...p,
         variants: variantsMap[p.id] || [],
       }));
+    },
+    enabled: !!store?.id,
+    staleTime: 5 * 60 * 1000, // Cache لمدة 5 دقائق
+    refetchOnMount: false, // لا تعيد التحميل عند mount
+    refetchOnWindowFocus: false, // لا تعيد التحميل عند focus
+  });
 
-      setProducts(mergedProducts);
-    } catch (error) {
-      console.error('Error loading products:', error);
-      toast.error('خطأ في تحميل المنتجات');
-    } finally {
-      setLoading(false);
+  // حفظ واستعادة scroll position
+  useEffect(() => {
+    // استعادة scroll position عند العودة
+    const savedScroll = sessionStorage.getItem(`scroll_${storeSlug}`);
+    if (savedScroll && products.length > 0) {
+      const scrollY = parseInt(savedScroll);
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: scrollY, behavior: 'instant' });
+      });
     }
-  };
+
+    // حفظ scroll position عند التمرير
+    const handleScroll = () => {
+      if (storeSlug) {
+        sessionStorage.setItem(`scroll_${storeSlug}`, window.scrollY.toString());
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [storeSlug, products.length]);
 
   const handleAddToCart = async (productId: string) => {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    // إلزامي: إذا كان للمنتج متغيرات، يجب الذهاب لصفحة التفاصيل أولاً
+    if (product.variants && product.variants.length > 0) {
+      const slug = store?.store_slug || storeSlug || '';
+      if (slug) {
+        sessionStorage.setItem(`scroll_${slug}`, window.scrollY.toString());
+        navigate(`/s/${slug}/p/${productId}`);
+      }
+      return;
+    }
+
+    // الإضافة المباشرة فقط للمنتجات بدون متغيرات
     setAddingToCart(productId);
     try {
-      const product = products.find(p => p.id === productId);
-      if (!product) return;
-
-      // إذا كان للمنتج متغيرات، ننقل لصفحة التفاصيل لاختيارها قبل الإضافة
-      if (product.variants && product.variants.length > 0) {
-        setAddingToCart(null);
-        const slug = store?.store_slug || storeSlug || '';
-        if (slug) {
-          // حفظ موضع الصفحة قبل الانتقال
-          sessionStorage.setItem(`scroll_${slug}`, window.scrollY.toString());
-          // الانتقال لصفحة تفاصيل المنتج
-          navigate(`/s/${slug}/p/${productId}`);
-        }
-        return;
-      }
-
       await addToCart(productId, 1, product.price_sar, product.title);
+      toast.success('تم إضافة المنتج للسلة');
+    } catch (error) {
+      toast.error('فشل إضافة المنتج للسلة');
     } finally {
       setAddingToCart(null);
     }
   };
-
-  useEffect(() => {
-    // تحميل المنتجات فقط إذا لم تكن محملة من قبل
-    if (store?.id && products.length === 0) {
-      loadProducts();
-    }
-  }, [store?.id]);
 
   if (loading) {
     return (
