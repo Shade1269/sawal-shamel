@@ -390,30 +390,118 @@ export const AffiliateStoreManager = ({
     setCategories(mergedCategories);
   }, [settings?.featured_categories, availableCategories]);
 
-  const toggleCategoryStatus = (categoryId: string) => {
-    setCategories(prev => prev.map(cat => 
+  const toggleCategoryStatus = async (categoryId: string) => {
+    const updatedCategories = categories.map(cat => 
       cat.id === categoryId ? { ...cat, isActive: !cat.isActive } : cat
-    ));
+    );
+    
+    setCategories(updatedCategories);
+    
+    // حفظ تلقائي في قاعدة البيانات
+    const success = await updateSettings({
+      featured_categories: JSON.parse(JSON.stringify(updatedCategories))
+    });
+
+    if (success) {
+      await refetch();
+    } else {
+      // في حالة الفشل، نعيد الحالة السابقة
+      setCategories(categories);
+      toast({
+        title: "خطأ",
+        description: "فشل تغيير حالة الفئة",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleCategoryEdit = (updatedCategory: Partial<StoreCategory>) => {
-    setCategories(prev => prev.map(cat => 
+  const handleCategoryEdit = async (updatedCategory: Partial<StoreCategory>) => {
+    const updatedCategories = categories.map(cat => 
       cat.id === updatedCategory.id ? { ...cat, ...updatedCategory } : cat
-    ));
+    );
+    
+    setCategories(updatedCategories);
+    
+    // حفظ تلقائي في قاعدة البيانات
+    const success = await updateSettings({
+      featured_categories: JSON.parse(JSON.stringify(updatedCategories))
+    });
+
+    if (success) {
+      await refetch();
+      toast({
+        title: "تم التحديث",
+        description: "تم تحديث الفئة وحفظها بنجاح"
+      });
+    } else {
+      // في حالة الفشل، نعيد الحالة السابقة
+      setCategories(categories);
+      toast({
+        title: "خطأ",
+        description: "فشل حفظ التعديلات",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleAddCategory = (newCategory: Partial<StoreCategory>) => {
-    setCategories(prev => [
-      ...prev,
+  const handleAddCategory = async (newCategory: Partial<StoreCategory>) => {
+    const updatedCategories = [
+      ...categories,
       {
         ...(newCategory as StoreCategory),
         bannerProducts: newCategory.bannerProducts ?? []
       }
-    ]);
+    ];
+    
+    setCategories(updatedCategories);
+    
+    // حفظ تلقائي في قاعدة البيانات
+    const success = await updateSettings({
+      featured_categories: JSON.parse(JSON.stringify(updatedCategories))
+    });
+
+    if (success) {
+      await refetch();
+      toast({
+        title: "تم الإضافة",
+        description: "تم إضافة الفئة وحفظها بنجاح"
+      });
+    } else {
+      // في حالة الفشل، نعيد الحالة السابقة
+      setCategories(categories);
+      toast({
+        title: "خطأ",
+        description: "فشل حفظ الفئة",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleDeleteCategory = (categoryId: string) => {
-    setCategories(prev => prev.filter(cat => cat.id !== categoryId));
+  const handleDeleteCategory = async (categoryId: string) => {
+    const updatedCategories = categories.filter(cat => cat.id !== categoryId);
+    
+    setCategories(updatedCategories);
+    
+    // حفظ تلقائي في قاعدة البيانات
+    const success = await updateSettings({
+      featured_categories: JSON.parse(JSON.stringify(updatedCategories))
+    });
+
+    if (success) {
+      await refetch();
+      toast({
+        title: "تم الحذف",
+        description: "تم حذف الفئة بنجاح"
+      });
+    } else {
+      // في حالة الفشل، نعيد الحالة السابقة
+      setCategories(categories);
+      toast({
+        title: "خطأ",
+        description: "فشل حذف الفئة",
+        variant: "destructive"
+      });
+    }
   };
 
   const getDisplayStyleLabel = (style: string) => {
