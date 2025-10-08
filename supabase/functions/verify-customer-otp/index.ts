@@ -119,30 +119,23 @@ serve(async (req) => {
       )
     }
 
-    // إنشاء أو تحديث ملف العميل إذا لزم الأمر
+    // إنشاء حساب العميل تلقائياً باستخدام database function
     try {
-      // البحث عن ملف موجود
-      const { data: existingProfile } = await supabaseClient
-        .from('profiles')
-        .select('id')
-        .eq('phone', cleanPhone)
-        .single()
+      const { data: customerData, error: customerError } = await supabaseClient
+        .rpc('create_customer_account', {
+          p_phone: cleanPhone,
+          p_store_id: store_id
+        })
 
-      if (!existingProfile) {
-        // إنشاء ملف جديد للعميل
-        await supabaseClient
-          .from('profiles')
-          .insert({
-            phone: cleanPhone,
-            role: 'customer',
-            is_active: true,
-            full_name: `عميل ${cleanPhone}`,
-            created_at: new Date().toISOString()
-          })
+      if (customerError) {
+        console.error('Error creating customer account:', customerError)
+        // لا نفشل العملية إذا فشل إنشاء الحساب
+      } else {
+        console.log('Customer account created/updated:', customerData)
       }
-    } catch (profileError) {
-      // تجاهل أخطاء إنشاء الملف الشخصي - ليس حاسماً
-      console.log('Profile creation skipped:', profileError)
+    } catch (accountError) {
+      console.error('Exception creating customer account:', accountError)
+      // نستمر حتى لو فشل إنشاء الحساب
     }
 
     return new Response(
