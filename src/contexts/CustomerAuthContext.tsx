@@ -353,9 +353,82 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         .maybeSingle();
 
       if (profileError) throw profileError;
-      if (!profile || !profile.customers?.[0]) return null;
+      
+      // إذا لم يكن هناك profile، قم بإنشاء واحد
+      if (!profile) {
+        const { data: newProfile, error: createProfileError } = await supabase
+          .from('profiles')
+          .insert({
+            phone,
+            role: 'customer',
+            full_name: `عميل ${phone}`,
+            is_active: true,
+            points: 0
+          })
+          .select('id, phone, email, full_name')
+          .single();
 
-      const customerData = profile.customers[0];
+        if (createProfileError) throw createProfileError;
+
+        // إنشاء سجل customer
+        const { data: newCustomer, error: createCustomerError } = await supabase
+          .from('customers')
+          .insert({
+            profile_id: newProfile.id,
+            loyalty_points: 0,
+            total_orders: 0,
+            total_spent_sar: 0
+          })
+          .select('id, profile_id, total_orders, total_spent_sar, loyalty_points, created_at, updated_at')
+          .single();
+
+        if (createCustomerError) throw createCustomerError;
+
+        return {
+          id: newCustomer.id,
+          profile_id: newProfile.id,
+          phone: newProfile.phone,
+          email: newProfile.email,
+          full_name: newProfile.full_name,
+          loyalty_points: 0,
+          total_orders: 0,
+          total_spent_sar: 0,
+          created_at: newCustomer.created_at,
+          updated_at: newCustomer.updated_at
+        };
+      }
+
+      // إذا كان هناك profile ولكن لا يوجد customer، قم بإنشاء customer
+      const customersArray = Array.isArray(profile.customers) ? profile.customers : (profile.customers ? [profile.customers] : []);
+      if (customersArray.length === 0) {
+        const { data: newCustomer, error: createCustomerError } = await supabase
+          .from('customers')
+          .insert({
+            profile_id: profile.id,
+            loyalty_points: 0,
+            total_orders: 0,
+            total_spent_sar: 0
+          })
+          .select('id, profile_id, total_orders, total_spent_sar, loyalty_points, created_at, updated_at')
+          .single();
+
+        if (createCustomerError) throw createCustomerError;
+
+        return {
+          id: newCustomer.id,
+          profile_id: profile.id,
+          phone: profile.phone,
+          email: profile.email,
+          full_name: profile.full_name,
+          loyalty_points: 0,
+          total_orders: 0,
+          total_spent_sar: 0,
+          created_at: newCustomer.created_at,
+          updated_at: newCustomer.updated_at
+        };
+      }
+
+      const customerData = customersArray[0];
 
       return {
         id: customerData.id,

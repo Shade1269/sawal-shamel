@@ -195,23 +195,28 @@ const ProductDetailPage = () => {
     return basePrice + variantPrice;
   };
 
+  const hasRequiredVariants = () => {
+    if (!product?.variants || product.variants.length === 0) return true;
+    
+    const requiredTypes = Array.from(new Set(product.variants.map(v => v.type)));
+    return requiredTypes.every(type => selectedVariants[type]);
+  };
+
   const addToCart = async () => {
     if (!product || !store) return;
 
     // التحقق من اختيار المتغيرات المطلوبة قبل الإضافة للسلة
-    const requiredTypes = Array.from(new Set(product.variants?.map(v => v.type) || []));
-    if (requiredTypes.length > 0) {
+    if (!hasRequiredVariants()) {
+      const requiredTypes = Array.from(new Set(product.variants?.map(v => v.type) || []));
       const missing = requiredTypes.filter(t => !selectedVariants[t]);
-      if (missing.length > 0) {
-        const firstMissing = missing[0];
-        const label = firstMissing === 'color' ? 'اللون' : firstMissing === 'size' ? 'المقاس' : 'المتغير';
-        toast({
-          title: 'اختر المتغيرات',
-          description: `يرجى اختيار ${label} قبل إضافة المنتج للسلة`,
-          variant: 'destructive'
-        });
-        return;
-      }
+      const firstMissing = missing[0];
+      const label = firstMissing === 'color' ? 'اللون' : firstMissing === 'size' ? 'المقاس' : 'المتغير';
+      toast({
+        title: 'اختر المتغيرات',
+        description: `يرجى اختيار ${label} قبل إضافة المنتج للسلة`,
+        variant: 'destructive'
+      });
+      return;
     }
 
     try {
@@ -485,13 +490,13 @@ const ProductDetailPage = () => {
                   onClick={addToCart}
                   className="flex-1"
                   size="lg"
-                  disabled={
-                    (getVariantsByType('color').length > 0 && !selectedVariants['color']) ||
-                    (getVariantsByType('size').length > 0 && !selectedVariants['size'])
-                  }
+                  disabled={!hasRequiredVariants()}
                 >
                   <ShoppingCart className="h-5 w-5 ml-2" />
-                  إضافة للسلة • {(getFinalPrice() * quantity).toFixed(2)} ر.س
+                  {hasRequiredVariants() 
+                    ? `إضافة للسلة • ${(getFinalPrice() * quantity).toFixed(2)} ر.س`
+                    : 'اختر المتغيرات أولاً'
+                  }
                 </Button>
                 
                 <Button variant="outline" size="lg">
