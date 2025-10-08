@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { useToast } from '@/hooks/use-toast';
 
 interface CustomerProfile {
@@ -289,9 +290,79 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         }
       }
 
+      // إنشاء/تمديد جلسة المتجر المطلوبة لتخطي الحلقة في صفحة السلة/الدفع
+      const targetStoreId = savedStoreId ?? storeId;
+      if (targetStoreId) {
+        try {
+          const digits = (savedPhone || phone || '').replace(/\D/g, '');
+          const normalized = digits.startsWith('966')
+            ? digits
+            : digits.startsWith('0')
+            ? `966${digits.replace(/^0+/, '')}`
+            : (digits.startsWith('5') && digits.length === 9)
+            ? `966${digits}`
+            : digits;
+          const sanitizedPhone = normalized.replace(/\D/g, '');
+
+          const now = new Date();
+          const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+          const { data: existing } = await supabasePublic
+            .from('customer_otp_sessions')
+            .select('id')
+            .eq('store_id', targetStoreId)
+            .eq('phone', sanitizedPhone)
+            .eq('verified', true)
+            .order('verified_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          let sessionId: string | null = null;
+          if (existing?.id) {
+            await supabasePublic
+              .from('customer_otp_sessions')
+              .update({ expires_at: expiresAt, updated_at: now.toISOString() })
+              .eq('id', existing.id);
+            sessionId = existing.id as string;
+          } else {
+            const { data: inserted, error: insertError } = await supabasePublic
+              .from('customer_otp_sessions')
+              .insert({
+                store_id: targetStoreId,
+                phone: sanitizedPhone,
+                otp_code: 'firebase',
+                verified: true,
+                verified_at: now.toISOString(),
+                expires_at: expiresAt,
+              })
+              .select('id')
+              .single();
+            if (insertError) throw insertError;
+            sessionId = inserted.id as string;
+          }
+
+          // تخزين الجلسة بالشكل الذي تتوقعه صفحات السلة/الدفع
+          try {
+            localStorage.setItem(
+              `customer_session_${targetStoreId}`,
+              JSON.stringify({
+                sessionId,
+                phone: sanitizedPhone,
+                storeId: targetStoreId,
+                verifiedAt: now.toISOString(),
+                expiresAt,
+              })
+            );
+          } catch {}
+        } catch (sessionError) {
+          console.warn('Failed to create/extend store session:', sessionError);
+        }
+      }
+
       // جلب أو إنشاء بيانات العميل في Supabase
       console.log('Fetching customer by phone:', savedPhone);
-      const customerData = await fetchCustomerByPhone(savedPhone, savedStoreId ?? storeId);
+      const customerData = await fetchCustomerByPhone(savedPhone, targetStoreId);
+      
       
       if (customerData) {
         console.log('Customer data fetched successfully:', customerData.id);
