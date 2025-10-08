@@ -180,10 +180,21 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
     try {
       setSession(prev => ({ ...prev, isLoading: true }));
       
-      // تنظيف رقم الهاتف
-      const cleanPhone = phone.replace(/\s|-/g, '');
-      const fullPhone = cleanPhone.startsWith('+') ? cleanPhone : `+966${cleanPhone}`;
-      
+      // تنظيف رقم الهاتف وتحويله إلى E.164
+      const digits = phone.replace(/\D/g, '');
+      let fullPhone = '';
+      if (digits.startsWith('966')) {
+        fullPhone = `+${digits}`;
+      } else if (digits.startsWith('0')) {
+        fullPhone = `+966${digits.replace(/^0+/, '')}`;
+      } else if (digits.startsWith('5') && digits.length === 9) {
+        fullPhone = `+966${digits}`;
+      } else if (phone.startsWith('+')) {
+        fullPhone = phone;
+      } else {
+        fullPhone = `+${digits}`;
+      }
+
       // استخدام مساعدات Firebase
       const { setupRecaptcha, sendSMSOTP } = await import('@/lib/firebase');
       
@@ -328,10 +339,33 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
     return { success: false, error: 'نظام كلمة المرور قيد التطوير' };
   };
 
+  // Utilities: normalize phone formats to E.164 and national (05...)
+  const getPhoneVariants = (input: string) => {
+    const digits = input.replace(/\D/g, '');
+    if (digits.startsWith('966')) {
+      const national = '0' + digits.slice(3);
+      return { e164: `+${digits}`, national };
+    }
+    if (digits.startsWith('0')) {
+      const core = digits.replace(/^0+/, '');
+      return { e164: `+966${core}`, national: `0${core}` };
+    }
+    if (digits.startsWith('5') && digits.length === 9) {
+      return { e164: `+966${digits}`, national: `0${digits}` };
+    }
+    return { e164: input.startsWith('+') ? input : `+${digits}`, national: input };
+  };
+
   // جلب بيانات العميل بالهاتف
   const fetchCustomerByPhone = async (phone: string): Promise<CustomerProfile | null> => {
     try {
-      const { data: profile, error: profileError } = await supabase
+      const { e164, national } = getPhoneVariants(phone);
+
+      // جرّب أولاً بصيغة E.164، ثم الصيغة المحلية
+      let profile: any = null;
+      let profileError: any = null;
+
+      let resp = await supabase
         .from('profiles')
         .select(`
           id,
@@ -348,9 +382,38 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
             updated_at
           )
         `)
-        .eq('phone', phone)
+        .eq('phone', e164)
         .eq('role', 'customer')
         .maybeSingle();
+      profile = resp.data;
+      profileError = resp.error;
+
+      if (!profile) {
+        resp = await supabase
+          .from('profiles')
+          .select(`
+            id,
+            phone,
+            email,
+            full_name,
+            customers (
+              id,
+              profile_id,
+              total_orders,
+              total_spent_sar,
+              loyalty_points,
+              created_at,
+              updated_at
+            )
+          `)
+          .eq('phone', national)
+          .eq('role', 'customer')
+          .maybeSingle();
+        profile = resp.data;
+        profileError = resp.error;
+      }
+
+      if (profileError) throw profileError;
 
       if (profileError) throw profileError;
       
@@ -359,9 +422,9 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         const { data: newProfile, error: createProfileError } = await supabase
           .from('profiles')
           .insert({
-            phone,
+            phone: e164,
             role: 'customer',
-            full_name: `عميل ${phone}`,
+            full_name: `عميل ${national || e164}`,
             is_active: true,
             points: 0
           })
