@@ -22,6 +22,11 @@ interface Product {
   is_active: boolean;
   stock: number;
   created_at: string;
+  merchant_id: string;
+  brand_id?: string;
+  category_id?: string;
+  sku?: string;
+  image_url?: string;
 }
 
 const MerchantProducts = () => {
@@ -55,27 +60,22 @@ const MerchantProducts = () => {
 
       if (error && error.code !== 'PGRST116') throw error;
 
-      if (!data) {
-        // إنشاء حساب تاجر تلقائياً إذا لم يوجد
-        const { data: inserted, error: insertError } = await supabase
-          .from('merchants')
-          .insert({
-            profile_id: profile.id,
-            business_name: profile.full_name || profile.email || 'Merchant',
-            default_commission_rate: 10,
-            vat_enabled: false,
-          })
-          .select('id')
-          .maybeSingle();
-
-        if (insertError) throw insertError;
-        if (inserted?.id) setMerchantId(inserted.id);
-      } else {
+      if (data) {
         setMerchantId(data.id);
+      } else {
+        toast({ 
+          title: 'خطأ', 
+          description: 'لم يتم العثور على حساب تاجر. الرجاء تحديث الصفحة.', 
+          variant: 'destructive' 
+        });
       }
     } catch (error) {
-      console.error('Error ensuring merchant ID:', error);
-      toast({ title: 'خطأ', description: 'تعذر إنشاء/جلب حساب التاجر', variant: 'destructive' });
+      console.error('Error fetching merchant ID:', error);
+      toast({ 
+        title: 'خطأ', 
+        description: 'تعذر جلب حساب التاجر', 
+        variant: 'destructive' 
+      });
     }
   };
 
@@ -97,7 +97,7 @@ const MerchantProducts = () => {
       const { data, error } = await query;
 
       if (error) throw error;
-      setProducts((data || []) as Product[]);
+      setProducts((data || []) as unknown as Product[]);
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({

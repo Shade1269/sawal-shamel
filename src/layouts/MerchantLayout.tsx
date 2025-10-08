@@ -44,7 +44,7 @@ const menuItems = [
   },
   {
     title: "الطلبات",
-    url: "/admin/orders",
+    url: "/merchant/orders",
     icon: ShoppingCart
   }
 ];

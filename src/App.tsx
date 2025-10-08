@@ -48,6 +48,7 @@ const AdminPage = lazy(() => import("./pages/Admin"));
 const InventoryPage = lazy(() => import("./pages/inventory/index"));
 const MerchantDashboard = lazy(() => import("./pages/merchant/MerchantDashboard"));
 const MerchantProducts = lazy(() => import("./pages/merchant/MerchantProducts"));
+const MerchantOrders = lazy(() => import("./pages/merchant/MerchantOrders"));
 const MerchantLayout = lazy(() => import("./layouts/MerchantLayout"));
 const UiShowcasePage = lazy(() => import("./pages/UiShowcase"));
 const ProfilePage = lazy(() => import("./pages/profile"));
@@ -187,6 +188,7 @@ const App = () => {
                               >
                                 <Route index element={<MerchantDashboard />} />
                                 <Route path="products" element={<MerchantProducts />} />
+                                <Route path="orders" element={<MerchantOrders />} />
                               </Route>
 
                               <Route path="*" element={<Navigate to="/" replace />} />

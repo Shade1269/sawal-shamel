@@ -13,6 +13,7 @@ import { InventoryAlerts } from '@/components/inventory/InventoryAlerts';
 import { InventoryStats } from '@/components/inventory/InventoryStats';
 import { InventoryReports } from '@/components/inventory/InventoryReports';
 import { CycleCountDialog } from '@/components/inventory/CycleCountDialog';
+import { ProductVariantDisplay } from '@/components/products/ProductVariantDisplay';
 
 interface WarehouseRow {
   id: string;
@@ -290,6 +291,7 @@ const InventoryOverviewPage = () => {
                 <TableRow>
                   <TableHead>اسم المنتج</TableHead>
                   <TableHead>رمز المنتج (SKU)</TableHead>
+                  <TableHead>المتغيرات</TableHead>
                   <TableHead className="text-center">السعر</TableHead>
                   <TableHead className="text-center">المخزون</TableHead>
                   <TableHead className="text-center">الحالة</TableHead>
@@ -312,6 +314,12 @@ const InventoryOverviewPage = () => {
                         </div>
                       </TableCell>
                       <TableCell className="font-mono text-sm">{product.sku || '-'}</TableCell>
+                      <TableCell>
+                        <ProductVariantDisplay 
+                          productId={product.id}
+                          compact={true}
+                        />
+                      </TableCell>
                       <TableCell className="text-center">{product.price_sar ? `${product.price_sar} ر.س` : '-'}</TableCell>
                       <TableCell className="text-center">{product.stock || 0}</TableCell>
                       <TableCell className="text-center">
