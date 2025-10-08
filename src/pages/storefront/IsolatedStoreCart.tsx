@@ -1,23 +1,12 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Button
-} from '@/components/ui/index';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
+import { ArrowLeft, ShoppingCart, Plus, Minus, Trash2, ArrowRight } from 'lucide-react';
 import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
+import { LuxuryCardV2, LuxuryCardContent } from '@/components/luxury/LuxuryCardV2';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface StoreContextType {
   store: {
@@ -64,15 +53,10 @@ export const IsolatedStoreCart: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/store/${storeSlug}`)}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            العودة للمتجر
-          </Button>
-        </div>
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">جاري تحميل السلة...</p>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4" />
+          <p className="text-slate-400">جاري تحميل السلة...</p>
         </div>
       </div>
     );
@@ -80,24 +64,37 @@ export const IsolatedStoreCart: React.FC = () => {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/store/${storeSlug}`)}>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-6">
+        <div className="flex items-center gap-4 mb-8">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate(`/store/${storeSlug}`)}
+            className="text-red-400 hover:text-red-300 hover:bg-red-950/20"
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
             العودة للمتجر
           </Button>
         </div>
 
-        <div className="text-center py-12">
-          <ShoppingCart className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-          <h3 className="text-lg font-semibold mb-2">السلة فارغة</h3>
-          <p className="text-muted-foreground mb-4">
-            لم تقم بإضافة أي منتجات للسلة بعد
-          </p>
-          <Button onClick={() => navigate(`/store/${storeSlug}`)}>
-            تسوق الآن
-          </Button>
-        </div>
+        <LuxuryCardV2 variant="glass" hover="none" className="max-w-md mx-auto">
+          <CardContent className="text-center py-16">
+            <div className="w-32 h-32 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-red-600/20 shadow-lg shadow-red-600/10">
+              <ShoppingCart className="h-16 w-16 text-red-500/50" />
+            </div>
+            <h3 className="text-2xl font-bold mb-3 text-white">السلة فارغة</h3>
+            <p className="text-slate-400 mb-6 text-lg">
+              لم تقم بإضافة أي منتجات للسلة بعد
+            </p>
+            <Button 
+              onClick={() => navigate(`/store/${storeSlug}`)}
+              className="bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 border border-red-500/20"
+              size="lg"
+            >
+              تسوق الآن
+            </Button>
+          </CardContent>
+        </LuxuryCardV2>
       </div>
     );
   }
@@ -106,124 +103,169 @@ export const IsolatedStoreCart: React.FC = () => {
   const total = cart.total + shipping;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-4 md:p-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate(`/store/${storeSlug}`)}>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => navigate(`/store/${storeSlug}`)}
+          className="text-red-400 hover:text-red-300 hover:bg-red-950/20"
+        >
           <ArrowLeft className="h-4 w-4 mr-2" />
           العودة للمتجر
         </Button>
-        <h1 className="text-2xl font-bold">سلة التسوق</h1>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+          سلة التسوق
+        </h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Cart Items */}
         <div className="lg:col-span-2 space-y-4">
-          {cart.items.map((item) => (
-            <Card key={item.id}>
-              <CardContent className="p-4">
-                <div className="flex gap-4">
-                  {item.product_image_url && (
-                    <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                      <img
-                        src={item.product_image_url}
-                        alt={item.product_title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                  
-                  <div className="flex-1 space-y-2">
-                    <h3 className="font-semibold text-sm">{item.product_title}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {item.unit_price_sar} ر.س للقطعة
-                    </p>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                          disabled={updatingItems.has(item.id)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Minus className="h-3 w-3" />
-                        </Button>
+          <AnimatePresence>
+            {cart.items.map((item) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.3 }}
+              >
+                <LuxuryCardV2 variant="glass" hover="lift" className="border-red-600/20">
+                  <LuxuryCardContent className="p-6">
+                    <div className="flex gap-6">
+                      {item.product_image_url && (
+                        <div className="relative group w-24 h-24 flex-shrink-0">
+                          <img
+                            src={item.product_image_url}
+                            alt={item.product_title}
+                            className="w-full h-full object-cover rounded-xl border-2 border-red-600/20 group-hover:border-red-600/40 transition-all duration-300"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                      )}
+                      
+                      <div className="flex-1 space-y-3">
+                        <h3 className="font-bold text-lg text-white">{item.product_title}</h3>
                         
-                        <Badge variant="secondary" className="min-w-[2rem] justify-center">
-                          {item.quantity}
-                        </Badge>
+                        {item.selected_variants && Object.keys(item.selected_variants).length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {Object.entries(item.selected_variants).map(([type, value]) => (
+                              <Badge 
+                                key={type} 
+                                variant="outline" 
+                                className="border-red-600/30 bg-red-950/20 text-red-300"
+                              >
+                                {type === 'size' ? 'المقاس' : type === 'color' ? 'اللون' : type}: {value}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
                         
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                          disabled={updatingItems.has(item.id)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </div>
+                        <p className="text-sm text-slate-400">
+                          {item.unit_price_sar.toFixed(0)} ر.س للقطعة
+                        </p>
+                        
+                        <div className="flex items-center justify-between pt-2">
+                          <div className="flex items-center gap-3 bg-slate-800/80 backdrop-blur-sm rounded-xl p-2 border border-red-600/10">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                              disabled={updatingItems.has(item.id)}
+                              className="h-9 w-9 p-0 hover:bg-red-950/30 hover:text-red-400"
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            
+                            <Badge 
+                              variant="secondary" 
+                              className="min-w-[3rem] justify-center bg-gradient-to-r from-red-950/30 to-red-900/30 text-white border border-red-600/20 text-base font-bold"
+                            >
+                              {item.quantity}
+                            </Badge>
+                            
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                              disabled={updatingItems.has(item.id)}
+                              className="h-9 w-9 p-0 hover:bg-red-950/30 hover:text-red-400"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
 
-                      <div className="flex items-center gap-3">
-                        <span className="font-semibold">
-                          {item.total_price_sar} ر.س
-                        </span>
-                        
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleRemoveItem(item.id)}
-                          disabled={updatingItems.has(item.id)}
-                          className="text-destructive hover:text-destructive h-8 w-8 p-0"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                          <div className="flex items-center gap-4">
+                            <span className="font-bold text-2xl bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                              {item.total_price_sar.toFixed(0)} ر.س
+                            </span>
+                            
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRemoveItem(item.id)}
+                              disabled={updatingItems.has(item.id)}
+                              className="text-red-400 hover:text-red-300 hover:bg-red-950/30 h-9 w-9 p-0"
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  </LuxuryCardContent>
+                </LuxuryCardV2>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
 
-        {/* Order Summary */}
         <div className="lg:col-span-1">
-          <Card className="sticky top-4">
-            <CardHeader>
-              <CardTitle className="text-lg">ملخص الطلب</CardTitle>
+          <LuxuryCardV2 
+            variant="glow" 
+            hover="lift" 
+            className="sticky top-4"
+          >
+            <CardHeader className="border-b border-red-600/15">
+              <CardTitle className="text-2xl bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                ملخص الطلب
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
+            <CardContent className="space-y-6 pt-6">
+              <div className="space-y-3">
+                <div className="flex justify-between text-base text-slate-300">
                   <span>المجموع الفرعي</span>
-                  <span>{cart.total} ر.س</span>
+                  <span className="font-semibold text-white">{cart.total.toFixed(0)} ر.س</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-base text-slate-300">
                   <span>الشحن</span>
-                  <span>{shipping} ر.س</span>
+                  <span className="font-semibold text-white">{shipping} ر.س</span>
                 </div>
-                <Separator />
-                <div className="flex justify-between font-semibold">
-                  <span>المجموع الكلي</span>
-                  <span>{total} ر.س</span>
+                <div className="h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent" />
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-xl font-bold text-white">المجموع الكلي</span>
+                  <span className="text-3xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                    {total.toFixed(0)} ر.س
+                  </span>
                 </div>
               </div>
 
               <Button 
-                className="w-full" 
+                className="w-full h-14 text-lg bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 border border-red-500/20 transition-all duration-500 group"
                 size="lg"
                 onClick={() => navigate(`/store/${storeSlug}/checkout`)}
               >
                 إتمام الطلب
+                <ArrowRight className="h-5 w-5 mr-2 group-hover:translate-x-1 transition-transform" />
               </Button>
 
-              <p className="text-xs text-muted-foreground text-center">
-                الدفع عند الاستلام متاح
-              </p>
+              <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 rounded-lg p-3 border border-red-600/10">
+                <p className="text-xs text-slate-400 text-center">
+                  الدفع عند الاستلام متاح
+                </p>
+              </div>
             </CardContent>
-          </Card>
+          </LuxuryCardV2>
         </div>
       </div>
     </div>
