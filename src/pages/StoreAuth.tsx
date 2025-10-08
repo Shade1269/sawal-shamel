@@ -34,7 +34,7 @@ const StoreAuth: React.FC = () => {
   const { storeSlug: slug } = useParams<{ storeSlug: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const returnUrl = searchParams.get('returnUrl') || `/${slug}`;
+  const returnUrl = searchParams.get('returnUrl') || `/${slug}/orders`;
   
   const { isAuthenticated, checkStoredSession } = useCustomerAuthContext();
   const { goToUserHome } = useSmartNavigation();
@@ -81,12 +81,14 @@ const StoreAuth: React.FC = () => {
 
   // معالجة نجاح تسجيل الدخول
   const handleAuthSuccess = (customer: any) => {
+    console.log('✅ Auth success, redirecting to:', returnUrl);
+    // التوجيه الفوري بعد النجاح
     navigate(returnUrl, { replace: true });
   };
 
   // العودة للمتجر
   const handleBackToStore = () => {
-    navigate(`/store/${slug}`, { replace: true });
+    navigate(`/${slug}`, { replace: true });
   };
 
   if (storeLoading) {

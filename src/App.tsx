@@ -33,6 +33,7 @@ const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
 const AffiliateStoreSettingsPage = lazy(() => import("./pages/affiliate/store/Settings"));
 const StoreSetup = lazy(() => import("./pages/affiliate/store/StoreSetup"));
 const StoreAuth = lazy(() => import("./pages/StoreAuth"));
+const CustomerOrders = lazy(() => import("./pages/customer/CustomerOrders"));
 const LegacyStoreRedirect = lazy(() => import("./pages/redirects/LegacyStoreRedirect"));
 const AffiliateAnalyticsPage = lazy(() => import("./pages/affiliate/AffiliateCommissionsPage"));
 const AffiliateWalletPage = lazy(() => import("./pages/affiliate/AffiliateWalletPage"));
@@ -136,6 +137,7 @@ const App = () => {
 
                <Route path="/:slug" element={<StorefrontIntegration />} />
                <Route path="/:slug/checkout" element={<StorefrontCheckout />} />
+               <Route path="/:slug/orders" element={<CustomerOrders />} />
                <Route path="/store/:storeSlug/auth" element={<StoreAuth />} />
                <Route path="/store/:slug/*" element={<LegacyStoreRedirect />} />
 

@@ -1,0 +1,278 @@
+import React, { useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { 
+  Package, 
+  Clock, 
+  CheckCircle, 
+  XCircle, 
+  TruckIcon,
+  ArrowRight,
+  Loader2,
+  ShoppingBag,
+  Phone,
+  MapPin
+} from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ar } from 'date-fns/locale';
+
+interface Order {
+  id: string;
+  order_number?: string;
+  customer_name: string;
+  customer_phone: string;
+  customer_email?: string;
+  total_amount_sar: number;
+  payment_status: string;
+  created_at: string;
+  shipping_address?: any;
+  items: Array<{
+    product_title: string;
+    quantity: number;
+    unit_price_sar: number;
+    total_price_sar: number;
+    product_image_url?: string;
+  }>;
+}
+
+const statusConfig = {
+  PENDING: { label: 'قيد المراجعة', icon: Clock, color: 'bg-yellow-500' },
+  PAID: { label: 'تم الدفع', icon: CheckCircle, color: 'bg-green-500' },
+  PROCESSING: { label: 'قيد التجهيز', icon: Package, color: 'bg-indigo-500' },
+  SHIPPED: { label: 'تم الشحن', icon: TruckIcon, color: 'bg-purple-500' },
+  DELIVERED: { label: 'تم التوصيل', icon: CheckCircle, color: 'bg-green-600' },
+  CANCELLED: { label: 'ملغي', icon: XCircle, color: 'bg-red-500' },
+  FAILED: { label: 'فشل', icon: XCircle, color: 'bg-red-600' },
+};
+
+const CustomerOrders: React.FC = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
+  const { isAuthenticated, customer, isLoading: authLoading } = useCustomerAuthContext();
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      navigate(`/store/${slug}/auth?returnUrl=/${slug}/orders`);
+    }
+  }, [isAuthenticated, authLoading, slug, navigate]);
+
+  // Fetch orders
+  const { data: orders, isLoading: ordersLoading, refetch } = useQuery<Order[]>({
+    queryKey: ['customer-orders', slug, customer?.phone],
+    queryFn: async () => {
+      if (!customer?.phone) throw new Error('No customer phone');
+
+      const { data, error } = await supabase
+        .from('simple_orders')
+        .select(`
+          id,
+          customer_name,
+          customer_phone,
+          customer_email,
+          total_amount_sar,
+          payment_status,
+          created_at,
+          shipping_address,
+          simple_order_items (
+            product_title,
+            quantity,
+            unit_price_sar,
+            total_price_sar,
+            product_image_url
+          )
+        `)
+        .eq('customer_phone', customer.phone)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      return (data || []).map((order: any) => ({
+        ...order,
+        order_number: order.id.slice(0, 8).toUpperCase(),
+        items: order.simple_order_items || []
+      })) as Order[];
+    },
+    enabled: !!customer?.phone && isAuthenticated,
+  });
+
+  if (authLoading || ordersLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
+          <p className="text-muted-foreground">جاري تحميل طلباتك...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null; // Will redirect via useEffect
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5">
+      {/* Header */}
+      <header className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <ShoppingBag className="w-8 h-8 text-primary" />
+              <div>
+                <h1 className="text-2xl font-bold">طلباتي</h1>
+                <p className="text-sm text-muted-foreground">
+                  مرحباً {customer?.full_name || customer?.phone}
+                </p>
+              </div>
+            </div>
+            
+            <Button
+              variant="ghost"
+              onClick={() => navigate(`/${slug}`)}
+              className="flex items-center gap-2"
+            >
+              <ArrowRight className="w-4 h-4" />
+              العودة للمتجر
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Orders List */}
+      <main className="container mx-auto px-4 py-8">
+        {orders && orders.length > 0 ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">
+                {orders.length} {orders.length === 1 ? 'طلب' : 'طلبات'}
+              </h2>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => refetch()}
+              >
+                تحديث
+              </Button>
+            </div>
+
+            {orders.map((order) => {
+              const StatusInfo = statusConfig[order.payment_status as keyof typeof statusConfig] || statusConfig.PENDING;
+              
+              return (
+                <Card key={order.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <CardHeader className="bg-muted/50">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">
+                        طلب #{order.order_number}
+                      </CardTitle>
+                      <Badge className={`${StatusInfo.color} text-white`}>
+                        <StatusInfo.icon className="w-4 h-4 ml-1" />
+                        {StatusInfo.label}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {formatDistanceToNow(new Date(order.created_at), { 
+                          addSuffix: true, 
+                          locale: ar 
+                        })}
+                      </span>
+                      {order.customer_phone && (
+                        <span className="flex items-center gap-1">
+                          <Phone className="w-4 h-4" />
+                          {order.customer_phone}
+                        </span>
+                      )}
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="p-6 space-y-4">
+                    {/* Order Items */}
+                    <div className="space-y-3">
+                      {order.items.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-4 p-3 rounded-lg bg-muted/30">
+                          {item.product_image_url && (
+                            <img
+                              src={item.product_image_url}
+                              alt={item.product_title}
+                              className="w-16 h-16 object-cover rounded-md"
+                            />
+                          )}
+                          <div className="flex-1">
+                            <p className="font-medium">{item.product_title}</p>
+                            <p className="text-sm text-muted-foreground">
+                              الكمية: {item.quantity} × {item.unit_price_sar} ر.س
+                            </p>
+                          </div>
+                          <p className="font-semibold">
+                            {item.total_price_sar.toFixed(2)} ر.س
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <Separator />
+
+                    {/* Order Total */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-semibold">المجموع الكلي</span>
+                      <span className="text-2xl font-bold text-primary">
+                        {order.total_amount_sar.toFixed(2)} ر.س
+                      </span>
+                    </div>
+
+                    {/* Shipping Address */}
+                    {order.shipping_address && (
+                      <>
+                        <Separator />
+                        <div className="space-y-2">
+                          <p className="font-semibold flex items-center gap-2">
+                            <MapPin className="w-4 h-4" />
+                            عنوان التوصيل
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {typeof order.shipping_address === 'string' 
+                              ? order.shipping_address 
+                              : JSON.stringify(order.shipping_address, null, 2)}
+                          </p>
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        ) : (
+          <Card className="text-center p-12">
+            <div className="space-y-4">
+              <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto">
+                <Package className="w-12 h-12 text-muted-foreground" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">لا توجد طلبات</h3>
+                <p className="text-muted-foreground mb-6">
+                  لم تقم بتقديم أي طلبات بعد. ابدأ التسوق الآن!
+                </p>
+                <Button onClick={() => navigate(`/${slug}`)}>
+                  <ShoppingBag className="w-4 h-4 mr-2" />
+                  تصفح المنتجات
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+      </main>
+    </div>
+  );
+};
+
+export default CustomerOrders;

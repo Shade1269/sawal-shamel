@@ -876,16 +876,28 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
             {/* Action Buttons */}
             <div className="flex items-center gap-1.5 md:gap-2">
-              {/* Login Button */}
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setShowAuthModal(true)}
-                className="hover:shadow-lg hover:scale-105 transition-all rounded-xl"
-              >
-                <User className="h-4 w-4 md:mr-2" />
-                <span className="hidden md:inline">تسجيل الدخول</span>
-              </Button>
+              {/* Login/User Button */}
+              {isAuthenticated && customer ? (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate(`/${storeSlug}/orders`)}
+                  className="hover:shadow-lg hover:scale-105 transition-all rounded-xl"
+                >
+                  <User className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">{customer.full_name || 'حسابي'}</span>
+                </Button>
+              ) : (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate(`/store/${storeSlug}/auth`)}
+                  className="hover:shadow-lg hover:scale-105 transition-all rounded-xl"
+                >
+                  <User className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">تسجيل الدخول</span>
+                </Button>
+              )}
 
               {/* Cart Button */}
               <Sheet open={showCart} onOpenChange={setShowCart}>
@@ -905,16 +917,18 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                 </SheetContent>
               </Sheet>
 
-              {/* Orders Button - Hidden on mobile */}
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => navigate(`/store/${storeSlug}/customer/orders`)}
-                className="hidden lg:flex hover:shadow-lg hover:scale-105 transition-all rounded-xl"
-              >
-                <Clock className="h-4 w-4 mr-2" />
-                طلباتي
-              </Button>
+              {/* Orders Button - Only show when authenticated */}
+              {isAuthenticated && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate(`/${storeSlug}/orders`)}
+                  className="hidden lg:flex hover:shadow-lg hover:scale-105 transition-all rounded-xl"
+                >
+                  <Clock className="h-4 w-4 mr-2" />
+                  طلباتي
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -1913,14 +1927,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     </DialogContent>
   </Dialog>
 
-      {/* Customer Authentication Modal */}
-      <CustomerAuthModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        storeId={affiliateStore?.id || ''}
-        storeSlug={storeSlug || ''}
-        storeName={affiliateStore?.store_name || ''}
-      />
 
       {affiliateStore && (
         <CustomerChatWidget
