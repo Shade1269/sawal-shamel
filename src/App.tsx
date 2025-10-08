@@ -18,6 +18,7 @@ import AffiliateLayout from "@/layouts/ModernAffiliateLayout";
 import AdminLayout from "@/layouts/AdminLayout";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
+import { CustomerAuthProvider } from "@/contexts/CustomerAuthContext";
 
 const HomePage = lazy(() => import("./pages/Index"));
 import AuthPage from "./features/auth/components/AuthPage"
@@ -137,8 +138,8 @@ const App = () => {
 
                <Route path="/:slug" element={<StorefrontIntegration />} />
                <Route path="/:slug/checkout" element={<StorefrontCheckout />} />
-               <Route path="/:slug/orders" element={<CustomerOrders />} />
-               <Route path="/store/:storeSlug/auth" element={<StoreAuth />} />
+               <Route path="/:slug/orders" element={<CustomerAuthProvider><CustomerOrders /></CustomerAuthProvider>} />
+               <Route path="/store/:storeSlug/auth" element={<CustomerAuthProvider><StoreAuth /></CustomerAuthProvider>} />
                <Route path="/store/:slug/*" element={<LegacyStoreRedirect />} />
 
               <Route path="/checkout" element={<CheckoutPage />} />
