@@ -475,7 +475,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         return (b.discount_percentage || 0) - (a.discount_percentage || 0);
       case 'newest':
       default:
-        return Math.random() - 0.5; // Random for demo
+        return 0; // keep original order (no random shuffle)
     }
   }) || [];
 
