@@ -4,13 +4,9 @@ export const performSignUpRuntime = async (
 ) => {
   const fallbackGetBaseUrl = () => {
     if (typeof window !== 'undefined') {
-      const hostname = window.location.hostname;
-      if (hostname === 'localhost' || hostname.includes('127.0.0.1')) {
-        return window.location.origin;
-      }
+      return window.location.origin;
     }
-
-    return 'https://atlantiss.tech';
+    return 'https://sawal-shamel.lovable.app';
   };
 
   const resolveBaseUrl = typeof getBaseUrlFn === 'function' ? getBaseUrlFn : fallbackGetBaseUrl;

@@ -69,10 +69,8 @@ const AuthPage = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('handleSignIn called');
     
     if (!signInForm.email || !signInForm.password) {
-      console.log('Missing email or password');
       return;
     }
     
@@ -80,10 +78,18 @@ const AuthPage = () => {
     
     const result = await signIn(signInForm.email, signInForm.password);
     
-    console.log('SignIn result:', result);
-    
     if (!result.error) {
-      navigate('/');
+      // حفظ "تذكرني" قبل التوجيه
+      if (signInForm.rememberMe) {
+        localStorage.setItem('rememberMe', JSON.stringify({
+          email: signInForm.email,
+          rememberMe: true
+        }));
+      } else {
+        localStorage.removeItem('rememberMe');
+      }
+      // التوجيه حسب الدور إن وجد، وإلا للصفحة الرئيسية
+      navigate((result as any).redirect || '/');
     }
     
     setIsLoading(false);
@@ -91,14 +97,8 @@ const AuthPage = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('handleSignUp called with:', { 
-      email: signUpForm.email, 
-      fullName: signUpForm.fullName, 
-      password: '***' 
-    });
     
     if (!signUpForm.email || !signUpForm.password || !signUpForm.fullName) {
-      console.log('Missing required fields');
       return;
     }
     
@@ -179,10 +179,7 @@ const AuthPage = () => {
                       id="signin-email"
                       type="email"
                       value={signInForm.email}
-                      onChange={(e) => {
-                        console.log('Email input changed:', e.target.value);
-                        setSignInForm(prev => ({...prev, email: e.target.value}));
-                      }}
+                      onChange={(e) => setSignInForm(prev => ({...prev, email: e.target.value}))}
                       placeholder="أدخل بريدك الإلكتروني"
                       required
                       className="text-right h-12 bg-background/50 border-border/50 focus:border-primary/50 focus:bg-background transition-all duration-300 rounded-xl"
