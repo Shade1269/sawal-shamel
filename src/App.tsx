@@ -35,8 +35,13 @@ const AffiliateStoreSettingsPage = lazy(() => import("./pages/affiliate/store/Se
 const StoreSetup = lazy(() => import("./pages/affiliate/store/StoreSetup"));
 const StoreAuth = lazy(() => import("./pages/StoreAuth"));
 const CustomerOrders = lazy(() => import("./pages/customer/CustomerOrders"));
-const LegacyStoreRedirect = lazy(() => import("./pages/redirects/LegacyStoreRedirect"));
 const AffiliateAnalyticsPage = lazy(() => import("./pages/affiliate/AffiliateCommissionsPage"));
+
+// Isolated Store Components
+const IsolatedStoreLayout = lazy(() => import("@/components/store/IsolatedStoreLayout").then(m => ({ default: m.IsolatedStoreLayout })));
+const IsolatedStorefront = lazy(() => import("./pages/storefront/IsolatedStorefront").then(m => ({ default: m.IsolatedStorefront })));
+const IsolatedStoreCart = lazy(() => import("./pages/storefront/IsolatedStoreCart").then(m => ({ default: m.IsolatedStoreCart })));
+const IsolatedStoreCheckout = lazy(() => import("./pages/storefront/IsolatedStoreCheckout").then(m => ({ default: m.IsolatedStoreCheckout })));
 const AffiliateWalletPage = lazy(() => import("./pages/affiliate/AffiliateWalletPage"));
 const UnifiedAffiliateOrders = lazy(() => import("./pages/unified/UnifiedAffiliateOrders"));
 const LuxuryShowcase = lazy(() => import("./pages/LuxuryShowcase"));
@@ -140,7 +145,13 @@ const App = () => {
                <Route path="/:slug/checkout" element={<StorefrontCheckout />} />
                <Route path="/:slug/orders" element={<CustomerAuthProvider><CustomerOrders /></CustomerAuthProvider>} />
                <Route path="/store/:storeSlug/auth" element={<CustomerAuthProvider><StoreAuth /></CustomerAuthProvider>} />
-               <Route path="/store/:slug/*" element={<LegacyStoreRedirect />} />
+               
+               {/* Isolated Store Routes */}
+               <Route path="/store/:storeSlug" element={<IsolatedStoreLayout />}>
+                 <Route index element={<IsolatedStorefront />} />
+                 <Route path="cart" element={<IsolatedStoreCart />} />
+                 <Route path="checkout" element={<IsolatedStoreCheckout />} />
+               </Route>
 
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/order/confirmation" element={<OrderConfirmationPage />} />
