@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { toast } from 'sonner';
+import { useCustomerOTP } from '@/hooks/useCustomerOTP';
 
 interface UseStorefrontOtpProps {
   storeSlug: string;
@@ -14,71 +15,57 @@ export const useStorefrontOtp = ({ storeSlug, storeId }: UseStorefrontOtpProps) 
   const [otp, setOtp] = useState('');
   const [sessionId, setSessionId] = useState<string | null>(null);
 
-  // Check for existing session on mount
-  React.useEffect(() => {
-    if (storeSlug) {
-      const savedSessionId = localStorage.getItem(`sf:${storeSlug}:cust_sess`);
-      if (savedSessionId) {
-        setSessionId(savedSessionId);
-        setStep('orders');
-      }
-    }
-  }, [storeSlug]);
+  const {
+    sendOTP,
+    verifyOTP,
+    getCustomerSession,
+    clearCustomerSession,
+    loading: sending,
+    verifying,
+  } = useCustomerOTP(storeId || '');
 
-  // Send OTP mutation
-  const sendOtpMutation = useMutation({
-    mutationFn: async () => {
-      if (!storeId || !phone) throw new Error('Missing store ID or phone');
+  useEffect(() => {
+    if (!storeId) return;
 
-      const { data, error } = await supabasePublic.rpc('create_customer_otp_session', {
-        p_store_id: storeId,
-        p_phone: phone
-      });
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      toast.success('تم إرسال رمز التحقق', {
-        description: 'تحقق من رسائل الجوال الخاصة بك'
-      });
-      setStep('otp');
-    },
-    onError: (error: any) => {
-      toast.error('خطأ في إرسال الرمز', {
-        description: error.message
-      });
-    }
-  });
-
-  // Verify OTP mutation
-  const verifyOtpMutation = useMutation({
-    mutationFn: async () => {
-      if (!storeId || !phone || !otp) throw new Error('Missing required data');
-
-      const { data, error } = await supabasePublic.rpc('verify_customer_otp', {
-        p_store_id: storeId,
-        p_phone: phone,
-        p_code: otp
-      });
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: (data) => {
-      setSessionId(String(data));
-      if (storeSlug && data) {
-        localStorage.setItem(`sf:${storeSlug}:cust_sess`, String(data));
-      }
-      toast.success('تم التحقق بنجاح');
+    const savedSession = getCustomerSession();
+    if (savedSession?.sessionId) {
+      setSessionId(savedSession.sessionId);
+      setPhone(savedSession.phone || '');
       setStep('orders');
-    },
-    onError: (error: any) => {
-      toast.error('رمز التحقق غير صحيح', {
-        description: error.message
-      });
     }
-  });
+  }, [storeId, getCustomerSession]);
+
+  const handleSendOtp = async () => {
+    if (!storeId) {
+      toast.error('خطأ في إرسال الرمز', {
+        description: 'لم يتم العثور على معرف المتجر',
+      });
+      return;
+    }
+
+    const result = await sendOTP(phone);
+    if (result.success) {
+      setStep('otp');
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!storeId) {
+      toast.error('رمز التحقق غير صحيح', {
+        description: 'لم يتم العثور على معرف المتجر',
+      });
+      return;
+    }
+
+    const result = await verifyOTP(phone, otp);
+    if (result.success && result.sessionId) {
+      setSessionId(result.sessionId);
+      if (storeSlug) {
+        localStorage.setItem(`sf:${storeSlug}:cust_sess`, result.sessionId);
+      }
+      setStep('orders');
+    }
+  };
 
   // Fetch orders
   const { data: orders, isLoading: ordersLoading, refetch: refetchOrders } = useQuery({
@@ -101,6 +88,7 @@ export const useStorefrontOtp = ({ storeSlug, storeId }: UseStorefrontOtpProps) 
     if (storeSlug) {
       localStorage.removeItem(`sf:${storeSlug}:cust_sess`);
     }
+    clearCustomerSession();
     setSessionId(null);
     setPhone('');
     setOtp('');
@@ -116,8 +104,14 @@ export const useStorefrontOtp = ({ storeSlug, storeId }: UseStorefrontOtpProps) 
     sessionId,
     orders,
     ordersLoading,
-    sendOtpMutation,
-    verifyOtpMutation,
+    sendOtpMutation: {
+      mutate: handleSendOtp,
+      isPending: sending,
+    },
+    verifyOtpMutation: {
+      mutate: handleVerifyOtp,
+      isPending: verifying,
+    },
     refetchOrders,
     handleLogout
   };
