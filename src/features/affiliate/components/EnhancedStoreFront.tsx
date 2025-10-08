@@ -235,23 +235,54 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
       const productIds = productsWithDetails.map(p => p.id);
       
-      const { data: variants, error: variantsError } = await supabase
-        .from("product_variants")
-        .select("*")
-        .in("product_id", productIds);
+      // Try advanced variants first, fallback to legacy table if needed
+      let variantsByProduct: Record<string, ProductVariant[]> = {};
 
-      if (variantsError) {
-        console.error("Error fetching variants:", variantsError);
-        return productsWithDetails;
-      }
+      // Attempt to fetch from product_variants_advanced (preferred)
+      const { data: advVariants, error: advError } = await supabase
+        .from("product_variants_advanced")
+        .select("id, product_id, color, size, quantity, price_override, is_active, sku")
+        .in("product_id", productIds)
+        .eq("is_active", true);
 
-      const variantsByProduct = (variants || []).reduce((acc, variant) => {
-        if (!acc[variant.product_id]) {
-          acc[variant.product_id] = [];
+      if (!advError && (advVariants?.length || 0) > 0) {
+        variantsByProduct = (advVariants || []).reduce((acc, v: any) => {
+          const mapped: ProductVariant = {
+            id: v.id,
+            product_id: v.product_id,
+            size: v.size,
+            color: v.color,
+            available_stock: v.quantity ?? 0,
+            current_stock: v.quantity ?? 0,
+            // selling_price can be derived in UI if needed using price_override
+            selling_price: undefined,
+            variant_name: [v.color, v.size].filter(Boolean).join(" / ") || v.sku || undefined,
+            is_active: v.is_active,
+          };
+          if (!acc[v.product_id]) acc[v.product_id] = [] as ProductVariant[];
+          acc[v.product_id].push(mapped);
+          return acc;
+        }, {} as Record<string, ProductVariant[]>);
+      } else {
+        // Fallback: legacy variants table
+        const { data: legacyVariants, error: legacyError } = await supabase
+          .from("product_variants")
+          .select("*")
+          .in("product_id", productIds);
+
+        if (legacyError) {
+          console.error("Error fetching variants:", advError || legacyError);
+          return productsWithDetails;
         }
-        acc[variant.product_id].push(variant);
-        return acc;
-      }, {} as Record<string, ProductVariant[]>);
+
+        variantsByProduct = (legacyVariants || []).reduce((acc: Record<string, ProductVariant[]>, variant: any) => {
+          if (!acc[variant.product_id]) {
+            acc[variant.product_id] = [];
+          }
+          acc[variant.product_id].push(variant as ProductVariant);
+          return acc;
+        }, {} as Record<string, ProductVariant[]>);
+      }
 
       return productsWithDetails.map(product => ({
         ...product,
