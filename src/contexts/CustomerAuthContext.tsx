@@ -290,11 +290,9 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       }
 
       // جلب أو إنشاء بيانات العميل في Supabase
-      console.log('Fetching customer by phone:', savedPhone);
       const customerData = await fetchCustomerByPhone(savedPhone);
       
       if (customerData) {
-        console.log('Customer data fetched successfully:', customerData.id);
         saveSession(customerData);
 
         toast({
@@ -305,7 +303,6 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         return { success: true, customer: customerData };
       }
 
-      console.error('Failed to fetch customer data');
       throw new Error('فشل في جلب بيانات العميل');
     } catch (error: any) {
       console.error('خطأ في التحقق:', error);
@@ -368,7 +365,6 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       let profile: any = null;
       let profileError: any = null;
 
-      // First try E.164 format
       let resp = await supabase
         .from('profiles')
         .select(`
@@ -389,16 +385,10 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         .eq('phone', e164)
         .eq('role', 'customer')
         .maybeSingle();
-      
-      if (resp.error) {
-        console.error('Error fetching with E.164:', resp.error);
-      }
-      
       profile = resp.data;
       profileError = resp.error;
 
-      // If not found, try national format
-      if (!profile && !profileError) {
+      if (!profile) {
         resp = await supabase
           .from('profiles')
           .select(`
@@ -419,25 +409,16 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
           .eq('phone', national)
           .eq('role', 'customer')
           .maybeSingle();
-        
-        if (resp.error) {
-          console.error('Error fetching with national format:', resp.error);
-        }
-        
         profile = resp.data;
         profileError = resp.error;
       }
 
-      if (profileError && profileError.code !== 'PGRST116') {
-        throw profileError;
-      }
+      if (profileError) throw profileError;
 
       if (profileError) throw profileError;
       
       // إذا لم يكن هناك profile، قم بإنشاء واحد
       if (!profile) {
-        console.log('Creating new profile for:', e164, '/', national);
-        
         const { data: newProfile, error: createProfileError } = await supabase
           .from('profiles')
           .insert({
@@ -450,10 +431,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
           .select('id, phone, email, full_name')
           .single();
 
-        if (createProfileError) {
-          console.error('Error creating profile:', createProfileError);
-          throw createProfileError;
-        }
+        if (createProfileError) throw createProfileError;
 
         // إنشاء سجل customer
         const { data: newCustomer, error: createCustomerError } = await supabase
@@ -467,10 +445,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
           .select('id, profile_id, total_orders, total_spent_sar, loyalty_points, created_at, updated_at')
           .single();
 
-        if (createCustomerError) {
-          console.error('Error creating customer:', createCustomerError);
-          throw createCustomerError;
-        }
+        if (createCustomerError) throw createCustomerError;
 
         return {
           id: newCustomer.id,
@@ -489,8 +464,6 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       // إذا كان هناك profile ولكن لا يوجد customer، قم بإنشاء customer
       const customersArray = Array.isArray(profile.customers) ? profile.customers : (profile.customers ? [profile.customers] : []);
       if (customersArray.length === 0) {
-        console.log('Creating customer record for existing profile:', profile.id);
-        
         const { data: newCustomer, error: createCustomerError } = await supabase
           .from('customers')
           .insert({
@@ -502,10 +475,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
           .select('id, profile_id, total_orders, total_spent_sar, loyalty_points, created_at, updated_at')
           .single();
 
-        if (createCustomerError) {
-          console.error('Error creating customer record:', createCustomerError);
-          throw createCustomerError;
-        }
+        if (createCustomerError) throw createCustomerError;
 
         return {
           id: newCustomer.id,
@@ -535,13 +505,8 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         created_at: customerData.created_at,
         updated_at: customerData.updated_at
       };
-    } catch (error: any) {
+    } catch (error) {
       console.error('خطأ في جلب بيانات العميل:', error);
-      toast({
-        title: "خطأ في جلب البيانات",
-        description: error.message || 'حدث خطأ أثناء جلب بيانات العميل',
-        variant: "destructive",
-      });
       return null;
     }
   };
