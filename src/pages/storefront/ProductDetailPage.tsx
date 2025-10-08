@@ -198,6 +198,22 @@ const ProductDetailPage = () => {
   const addToCart = async () => {
     if (!product || !store) return;
 
+    // التحقق من اختيار المتغيرات المطلوبة قبل الإضافة للسلة
+    const requiredTypes = Array.from(new Set(product.variants?.map(v => v.type) || []));
+    if (requiredTypes.length > 0) {
+      const missing = requiredTypes.filter(t => !selectedVariants[t]);
+      if (missing.length > 0) {
+        const firstMissing = missing[0];
+        const label = firstMissing === 'color' ? 'اللون' : firstMissing === 'size' ? 'المقاس' : 'المتغير';
+        toast({
+          title: 'اختر المتغيرات',
+          description: `يرجى اختيار ${label} قبل إضافة المنتج للسلة`,
+          variant: 'destructive'
+        });
+        return;
+      }
+    }
+
     try {
       const sessionData = localStorage.getItem(`ea_session_${store_slug}`);
       if (!sessionData) {
@@ -242,7 +258,8 @@ const ProductDetailPage = () => {
           product_id: product.product_id,
           quantity: quantity,
           unit_price_sar: getFinalPrice(),
-          total_price_sar: getFinalPrice() * quantity
+          total_price_sar: getFinalPrice() * quantity,
+          selected_variants: selectedVariants
         });
 
       if (itemError) throw itemError;
@@ -468,6 +485,10 @@ const ProductDetailPage = () => {
                   onClick={addToCart}
                   className="flex-1"
                   size="lg"
+                  disabled={
+                    (getVariantsByType('color').length > 0 && !selectedVariants['color']) ||
+                    (getVariantsByType('size').length > 0 && !selectedVariants['size'])
+                  }
                 >
                   <ShoppingCart className="h-5 w-5 ml-2" />
                   إضافة للسلة • {(getFinalPrice() * quantity).toFixed(2)} ر.س
