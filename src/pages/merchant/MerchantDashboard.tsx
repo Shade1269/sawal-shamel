@@ -28,13 +28,33 @@ const MerchantDashboard = () => {
     if (!profile) return;
 
     try {
-      const { data: merchantData, error: merchantError } = await supabase
+      let { data: merchantData, error: merchantError } = await supabase
         .from('merchants')
         .select('*')
         .eq('profile_id', profile.id)
-        .single();
+        .maybeSingle();
 
-      if (merchantError) throw merchantError;
+      if (merchantError && merchantError.code !== 'PGRST116') {
+        throw merchantError;
+      }
+
+      // Create merchant if doesn't exist
+      if (!merchantData) {
+        const { data: newMerchant, error: createError } = await supabase
+          .from('merchants')
+          .insert({
+            profile_id: profile.id,
+            business_name: profile.full_name || profile.email || 'تاجر',
+            default_commission_rate: 10.00,
+            vat_enabled: true,
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        merchantData = newMerchant;
+      }
+
       setMerchant(merchantData);
 
       const { data: products } = await supabase
