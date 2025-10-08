@@ -118,15 +118,46 @@ const ProductDetailPage = () => {
           return;
         }
 
-        // إضافة متغيرات وهمية للعرض (سيتم تطويرها لاحقاً)
-        const mockVariants: ProductVariant[] = [
-          { type: 'color', name: 'اللون', value: 'أحمر', price_adjustment: 0, stock: 5 },
-          { type: 'color', name: 'اللون', value: 'أزرق', price_adjustment: 10, stock: 3 },
-          { type: 'size', name: 'الحجم', value: 'متوسط', price_adjustment: 0, stock: 8 },
-          { type: 'size', name: 'الحجم', value: 'كبير', price_adjustment: 20, stock: 2 },
-        ];
+        // جلب المتغيرات الحقيقية من قاعدة البيانات
+        const { data: variantsData, error: variantsError } = await supabasePublic
+          .from('product_variants_advanced')
+          .select('color, size, sku, quantity, price_override, is_active')
+          .eq('product_id', product_id)
+          .eq('is_active', true);
 
-        setProduct({ ...productData, variants: mockVariants });
+        if (variantsError) {
+          console.error('Error loading variants:', variantsError);
+        }
+
+        // تحويل المتغيرات إلى الصيغة المطلوبة
+        const formattedVariants: ProductVariant[] = [];
+        const processedTypes = new Set<string>();
+
+        variantsData?.forEach(variant => {
+          if (variant.color && !processedTypes.has(`color-${variant.color}`)) {
+            formattedVariants.push({
+              type: 'color',
+              name: 'اللون',
+              value: variant.color,
+              price_adjustment: variant.price_override || 0,
+              stock: variant.quantity || 0
+            });
+            processedTypes.add(`color-${variant.color}`);
+          }
+          
+          if (variant.size && !processedTypes.has(`size-${variant.size}`)) {
+            formattedVariants.push({
+              type: 'size',
+              name: 'المقاس',
+              value: variant.size,
+              price_adjustment: variant.price_override || 0,
+              stock: variant.quantity || 0
+            });
+            processedTypes.add(`size-${variant.size}`);
+          }
+        });
+
+        setProduct({ ...productData, variants: formattedVariants });
 
       } catch (error: any) {
         console.error('Error fetching product:', error);

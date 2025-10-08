@@ -199,15 +199,24 @@ export function UnifiedProductsManager() {
           .select('*')
           .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error loading products:', error);
+          setProducts([]);
+          return;
+        }
 
         // جلب المتغيرات لكل منتج
         const productsWithVariants = await Promise.all(
           (productsData || []).map(async (product) => {
-            const { data: variants } = await supabase
+            const { data: variants, error: variantsError } = await supabase
               .from('product_variants_advanced')
-              .select('color, size, sku, quantity')
-              .eq('product_id', product.id);
+              .select('color, size, sku, quantity, is_active')
+              .eq('product_id', product.id)
+              .eq('is_active', true);
+
+            if (variantsError) {
+              console.error('Error loading variants for product', product.id, variantsError);
+            }
 
             return {
               ...product,
@@ -224,6 +233,7 @@ export function UnifiedProductsManager() {
         setProducts(productsWithVariants as Product[]);
       } catch (error) {
         console.error('Error loading products:', error);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
