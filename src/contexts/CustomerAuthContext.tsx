@@ -266,7 +266,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         throw new Error('لم يتم العثور على جلسة التحقق');
       }
 
-      const { verificationId, phone: savedPhone } = JSON.parse(confirmationData);
+      const { verificationId, phone: savedPhone, storeId: savedStoreId } = JSON.parse(confirmationData);
       
       // التحقق من الكود عبر Firebase
       const { PhoneAuthProvider, signInWithCredential } = await import('firebase/auth');
@@ -291,7 +291,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
 
       // جلب أو إنشاء بيانات العميل في Supabase
       console.log('Fetching customer by phone:', savedPhone);
-      const customerData = await fetchCustomerByPhone(savedPhone);
+      const customerData = await fetchCustomerByPhone(savedPhone, savedStoreId ?? storeId);
       
       if (customerData) {
         console.log('Customer data fetched successfully:', customerData.id);
@@ -360,7 +360,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
   };
 
   // جلب بيانات العميل بالهاتف
-  const fetchCustomerByPhone = async (phone: string): Promise<CustomerProfile | null> => {
+  const fetchCustomerByPhone = async (phone: string, storeId?: string): Promise<CustomerProfile | null> => {
     try {
       const { e164, national } = getPhoneVariants(phone);
 
@@ -368,38 +368,8 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       let profile: any = null;
       let profileError: any = null;
 
-      // First try E.164 format
-      let resp = await supabase
-        .from('profiles')
-        .select(`
-          id,
-          phone,
-          email,
-          full_name,
-          customers (
-            id,
-            profile_id,
-            total_orders,
-            total_spent_sar,
-            loyalty_points,
-            created_at,
-            updated_at
-          )
-        `)
-        .eq('phone', e164)
-        .eq('role', 'customer')
-        .maybeSingle();
-      
-      if (resp.error) {
-        console.error('Error fetching with E.164:', resp.error);
-      }
-      
-      profile = resp.data;
-      profileError = resp.error;
-
-      // If not found, try national format
-      if (!profile && !profileError) {
-        resp = await supabase
+      const fetchProfile = async (value: string) => {
+        return supabase
           .from('profiles')
           .select(`
             id,
@@ -416,14 +386,29 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
               updated_at
             )
           `)
-          .eq('phone', national)
+          .eq('phone', value)
           .eq('role', 'customer')
           .maybeSingle();
-        
+      };
+
+      // First try E.164 format
+      let resp = await fetchProfile(e164);
+
+      if (resp.error) {
+        console.error('Error fetching with E.164:', resp.error);
+      }
+
+      profile = resp.data;
+      profileError = resp.error;
+
+      // If not found, try national format
+      if (!profile && !profileError) {
+        resp = await fetchProfile(national);
+
         if (resp.error) {
           console.error('Error fetching with national format:', resp.error);
         }
-        
+
         profile = resp.data;
         profileError = resp.error;
       }
@@ -432,104 +417,110 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         throw profileError;
       }
 
-      if (profileError) throw profileError;
-      
-      // إذا لم يكن هناك profile، قم بإنشاءه عبر RPC الآمن ثم أعد الجلب
-      if (!profile) {
-        console.log('Provisioning customer via RPC (no profile found):', e164, '/', national);
-        const { error: provisionError } = await supabase
-          .rpc('create_customer_account', {
-            p_phone: e164,
-            p_store_id: null
+      const ensureCustomerAccount = async (targetPhone: string, existingProfile?: any) => {
+        console.log('Ensuring customer account via RPC:', targetPhone, 'store:', storeId ?? 'none');
+        try {
+          const { error: rpcError } = await supabase.rpc('create_customer_account', {
+            p_phone: targetPhone,
+            p_store_id: storeId ?? null
           });
-        if (provisionError) {
-          console.error('Error provisioning customer via RPC:', provisionError);
-          throw provisionError;
+          if (!rpcError) {
+            const { data: fetchedAfterCreate, error: fetchAfterCreateError } = await fetchProfile(targetPhone);
+            if (fetchAfterCreateError) throw fetchAfterCreateError;
+            if (fetchedAfterCreate) {
+              return fetchedAfterCreate;
+            }
+          } else {
+            console.warn('RPC create_customer_account failed, falling back to manual provisioning:', rpcError);
+          }
+        } catch (rpcException) {
+          console.warn('RPC create_customer_account threw an exception, falling back to manual provisioning:', rpcException);
         }
 
-        // أعد الجلب بعد التهيئة
-        const { data: fetchedAfterCreate, error: fetchAfterCreateError } = await supabase
-          .from('profiles')
-          .select(`
-            id,
-            phone,
-            email,
-            full_name,
-            customers (
-              id,
-              profile_id,
-              total_orders,
-              total_spent_sar,
-              loyalty_points,
-              created_at,
-              updated_at
+        // Fallback manual provisioning
+        let targetProfile = existingProfile;
+        if (!targetProfile) {
+          const { data: upsertedProfile, error: upsertProfileError } = await supabase
+            .from('profiles')
+            .upsert(
+              {
+                phone: targetPhone,
+                role: 'customer'
+              },
+              { onConflict: 'phone' }
             )
-          `)
-          .eq('phone', e164)
-          .eq('role', 'customer')
-          .maybeSingle();
+            .select('id, phone, email, full_name')
+            .single();
 
-        if (fetchAfterCreateError) {
-          console.error('Error refetching profile after RPC:', fetchAfterCreateError);
-          throw fetchAfterCreateError;
+          if (upsertProfileError) {
+            console.error('Manual profile upsert failed:', upsertProfileError);
+            throw upsertProfileError;
+          }
+
+          targetProfile = upsertedProfile;
         }
 
-        profile = fetchedAfterCreate;
-      }
+        const { data: customerRecord, error: customerUpsertError } = await supabase
+          .from('customers')
+          .upsert(
+            {
+              profile_id: targetProfile.id
+            },
+            { onConflict: 'profile_id' }
+          )
+          .select('id, profile_id, total_orders, total_spent_sar, loyalty_points, created_at, updated_at')
+          .single();
 
-      // إذا كان هناك profile ولكن لا يوجد customer، استخدم RPC لإنشائه ثم أعد الجلب
-      const customersArray = Array.isArray(profile.customers) ? profile.customers : (profile.customers ? [profile.customers] : []);
-      if (customersArray.length === 0) {
-        console.log('Creating customer via RPC for existing profile:', profile.id);
-        const { error: createCustRpcErr } = await supabase
-          .rpc('create_customer_account', {
-            p_phone: profile.phone,
-            p_store_id: null
-          });
-        if (createCustRpcErr) {
-          console.error('Error creating customer via RPC:', createCustRpcErr);
-          throw createCustRpcErr;
+        if (customerUpsertError) {
+          console.error('Manual customer upsert failed:', customerUpsertError);
+          throw customerUpsertError;
         }
 
-        // أعد الجلب بعد الإنشاء
-        const { data: refreshed, error: refreshErr } = await supabase
-          .from('profiles')
-          .select(`
-            id,
-            phone,
-            email,
-            full_name,
-            customers (
-              id,
-              profile_id,
-              total_orders,
-              total_spent_sar,
-              loyalty_points,
-              created_at,
-              updated_at
-            )
-          `)
-          .eq('id', profile.id)
-          .maybeSingle();
+        if (storeId) {
+          const { error: storeCustomerError } = await supabase
+            .from('store_customers')
+            .upsert(
+              {
+                store_id: storeId,
+                customer_id: customerRecord.id,
+                customer_phone: targetPhone,
+                customer_name: targetProfile?.full_name,
+                customer_email: targetProfile?.email
+              },
+              { onConflict: 'store_id,customer_id' }
+            );
 
-        if (refreshErr) throw refreshErr;
-        const refreshedCustomer = Array.isArray(refreshed?.customers) ? refreshed?.customers[0] : refreshed?.customers;
-        if (!refreshed || !refreshedCustomer) {
-          throw new Error('لم يتم إنشاء سجل العميل');
+          if (storeCustomerError) {
+            console.warn('store_customers upsert failed:', storeCustomerError);
+          }
         }
 
         return {
-          id: refreshedCustomer.id,
-          profile_id: profile.id,
-          phone: refreshed.phone,
-          email: refreshed.email,
-          full_name: refreshed.full_name,
-          loyalty_points: refreshedCustomer.loyalty_points || 0,
-          total_orders: refreshedCustomer.total_orders || 0,
-          total_spent_sar: refreshedCustomer.total_spent_sar || 0,
-          created_at: refreshedCustomer.created_at,
-          updated_at: refreshedCustomer.updated_at
+          ...targetProfile,
+          customers: [customerRecord]
         };
+      };
+
+      // إذا لم يكن هناك profile، قم بإنشاءه عبر RPC الآمن أو التهيئة اليدوية ثم أعد الجلب
+      if (!profile) {
+        profile = await ensureCustomerAccount(e164);
+      }
+
+      if (!profile) {
+        throw new Error('تعذر إنشاء ملف العميل');
+      }
+
+      // إذا كان هناك profile ولكن لا يوجد customer، استخدم ensureCustomerAccount ثم أعد الجلب
+      let customersArray = Array.isArray(profile.customers) ? profile.customers : (profile.customers ? [profile.customers] : []);
+      if (customersArray.length === 0) {
+        const refreshedProfile = await ensureCustomerAccount(profile.phone, profile);
+        if (!refreshedProfile) {
+          throw new Error('لم يتم إنشاء سجل العميل');
+        }
+        customersArray = Array.isArray(refreshedProfile.customers)
+          ? refreshedProfile.customers
+          : (refreshedProfile.customers ? [refreshedProfile.customers] : []);
+        profile = refreshedProfile;
       }
 
       const customerData = customersArray[0];
