@@ -569,9 +569,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   };
 
   const handleCheckoutClick = () => {
-    // التوجه لصفحة الطلب الخاصة بالمتجر
+    // التوجه لصفحة الطلب الخاصة بالمتجر (المسار المعزول ليتوافق مع السلة)
     if (storeSlug) {
-      navigate(`/${storeSlug}/checkout`);
+      navigate(`/store/${storeSlug}/checkout`);
     }
   };
 
