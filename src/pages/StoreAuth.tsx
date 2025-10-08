@@ -34,7 +34,7 @@ const StoreAuth: React.FC = () => {
   const { storeSlug: slug } = useParams<{ storeSlug: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const returnUrl = searchParams.get('returnUrl') || `/store/${slug}`;
+  const returnUrl = searchParams.get('returnUrl') || `/${slug}`;
   
   const { isAuthenticated, checkStoredSession } = useCustomerAuthContext();
   const { goToUserHome } = useSmartNavigation();
