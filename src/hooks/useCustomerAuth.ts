@@ -92,6 +92,19 @@ export const useCustomerAuth = () => {
         throw new Error(result?.error || 'فشل في التحقق من الكود');
       }
 
+      // تأمين إنشاء حساب العميل قبل الجلب
+      try {
+        const { error: provisionErr } = await supabase.rpc('create_customer_account', {
+          p_phone: phone,
+          p_store_id: storeId
+        });
+        if (provisionErr) {
+          console.warn('create_customer_account error:', provisionErr);
+        }
+      } catch (e) {
+        console.warn('create_customer_account exception:', e);
+      }
+
       // جلب بيانات العميل كاملة
       const customerData = await fetchCustomerProfile(phone);
       

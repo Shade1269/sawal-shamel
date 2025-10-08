@@ -434,90 +434,101 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
 
       if (profileError) throw profileError;
       
-      // إذا لم يكن هناك profile، قم بإنشاء واحد
+      // إذا لم يكن هناك profile، قم بإنشاءه عبر RPC الآمن ثم أعد الجلب
       if (!profile) {
-        console.log('Creating new profile for:', e164, '/', national);
-        
-        const { data: newProfile, error: createProfileError } = await supabase
+        console.log('Provisioning customer via RPC (no profile found):', e164, '/', national);
+        const { error: provisionError } = await supabase
+          .rpc('create_customer_account', {
+            p_phone: e164,
+            p_store_id: null
+          });
+        if (provisionError) {
+          console.error('Error provisioning customer via RPC:', provisionError);
+          throw provisionError;
+        }
+
+        // أعد الجلب بعد التهيئة
+        const { data: fetchedAfterCreate, error: fetchAfterCreateError } = await supabase
           .from('profiles')
-          .insert({
-            phone: e164,
-            role: 'customer',
-            full_name: `عميل ${national || e164}`,
-            is_active: true,
-            points: 0
-          })
-          .select('id, phone, email, full_name')
-          .single();
+          .select(`
+            id,
+            phone,
+            email,
+            full_name,
+            customers (
+              id,
+              profile_id,
+              total_orders,
+              total_spent_sar,
+              loyalty_points,
+              created_at,
+              updated_at
+            )
+          `)
+          .eq('phone', e164)
+          .eq('role', 'customer')
+          .maybeSingle();
 
-        if (createProfileError) {
-          console.error('Error creating profile:', createProfileError);
-          throw createProfileError;
+        if (fetchAfterCreateError) {
+          console.error('Error refetching profile after RPC:', fetchAfterCreateError);
+          throw fetchAfterCreateError;
         }
 
-        // إنشاء سجل customer
-        const { data: newCustomer, error: createCustomerError } = await supabase
-          .from('customers')
-          .insert({
-            profile_id: newProfile.id,
-            loyalty_points: 0,
-            total_orders: 0,
-            total_spent_sar: 0
-          })
-          .select('id, profile_id, total_orders, total_spent_sar, loyalty_points, created_at, updated_at')
-          .single();
-
-        if (createCustomerError) {
-          console.error('Error creating customer:', createCustomerError);
-          throw createCustomerError;
-        }
-
-        return {
-          id: newCustomer.id,
-          profile_id: newProfile.id,
-          phone: newProfile.phone,
-          email: newProfile.email,
-          full_name: newProfile.full_name,
-          loyalty_points: 0,
-          total_orders: 0,
-          total_spent_sar: 0,
-          created_at: newCustomer.created_at,
-          updated_at: newCustomer.updated_at
-        };
+        profile = fetchedAfterCreate;
       }
 
-      // إذا كان هناك profile ولكن لا يوجد customer، قم بإنشاء customer
+      // إذا كان هناك profile ولكن لا يوجد customer، استخدم RPC لإنشائه ثم أعد الجلب
       const customersArray = Array.isArray(profile.customers) ? profile.customers : (profile.customers ? [profile.customers] : []);
       if (customersArray.length === 0) {
-        console.log('Creating customer record for existing profile:', profile.id);
-        
-        const { data: newCustomer, error: createCustomerError } = await supabase
-          .from('customers')
-          .insert({
-            profile_id: profile.id,
-            loyalty_points: 0,
-            total_orders: 0,
-            total_spent_sar: 0
-          })
-          .select('id, profile_id, total_orders, total_spent_sar, loyalty_points, created_at, updated_at')
-          .single();
+        console.log('Creating customer via RPC for existing profile:', profile.id);
+        const { error: createCustRpcErr } = await supabase
+          .rpc('create_customer_account', {
+            p_phone: profile.phone,
+            p_store_id: null
+          });
+        if (createCustRpcErr) {
+          console.error('Error creating customer via RPC:', createCustRpcErr);
+          throw createCustRpcErr;
+        }
 
-        if (createCustomerError) {
-          console.error('Error creating customer record:', createCustomerError);
-          throw createCustomerError;
+        // أعد الجلب بعد الإنشاء
+        const { data: refreshed, error: refreshErr } = await supabase
+          .from('profiles')
+          .select(`
+            id,
+            phone,
+            email,
+            full_name,
+            customers (
+              id,
+              profile_id,
+              total_orders,
+              total_spent_sar,
+              loyalty_points,
+              created_at,
+              updated_at
+            )
+          `)
+          .eq('id', profile.id)
+          .maybeSingle();
+
+        if (refreshErr) throw refreshErr;
+        const refreshedCustomer = Array.isArray(refreshed?.customers) ? refreshed?.customers[0] : refreshed?.customers;
+        if (!refreshed || !refreshedCustomer) {
+          throw new Error('لم يتم إنشاء سجل العميل');
         }
 
         return {
-          id: newCustomer.id,
+          id: refreshedCustomer.id,
           profile_id: profile.id,
-          phone: profile.phone,
-          email: profile.email,
-          full_name: profile.full_name,
-          loyalty_points: 0,
-          total_orders: 0,
-          total_spent_sar: 0,
-          created_at: newCustomer.created_at,
-          updated_at: newCustomer.updated_at
+          phone: refreshed.phone,
+          email: refreshed.email,
+          full_name: refreshed.full_name,
+          loyalty_points: refreshedCustomer.loyalty_points || 0,
+          total_orders: refreshedCustomer.total_orders || 0,
+          total_spent_sar: refreshedCustomer.total_spent_sar || 0,
+          created_at: refreshedCustomer.created_at,
+          updated_at: refreshedCustomer.updated_at
         };
       }
 
