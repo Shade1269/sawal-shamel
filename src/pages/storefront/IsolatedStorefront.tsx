@@ -54,6 +54,24 @@ export const IsolatedStorefront: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
 
+  // حفظ scroll position عند المغادرة
+  useEffect(() => {
+    const handleScroll = () => {
+      sessionStorage.setItem(`scroll_${storeSlug}`, window.scrollY.toString());
+    };
+    window.addEventListener('scroll', handleScroll);
+    
+    // استعادة scroll position عند العودة
+    const savedScroll = sessionStorage.getItem(`scroll_${storeSlug}`);
+    if (savedScroll && products.length > 0) {
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScroll));
+      }, 100);
+    }
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [storeSlug, products.length]);
+
   const loadProducts = async () => {
     if (!store?.id) return;
 
@@ -169,7 +187,8 @@ export const IsolatedStorefront: React.FC = () => {
   };
 
   useEffect(() => {
-    if (store?.id) {
+    // تحميل المنتجات فقط إذا لم تكن محملة من قبل
+    if (store?.id && products.length === 0) {
       loadProducts();
     }
   }, [store?.id]);

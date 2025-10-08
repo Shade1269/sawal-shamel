@@ -290,6 +290,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       }));
     },
     enabled: !!affiliateStore?.id,
+    staleTime: 5 * 60 * 1000, // Cache data for 5 minutes
+    refetchOnMount: false, // Don't refetch when component mounts
+    refetchOnWindowFocus: false, // Don't refetch on window focus
   });
 
   const { data: storeSettings } = useQuery<StoreSettings | null>({
@@ -326,6 +329,29 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     },
     enabled: !!affiliateStore?.id,
   });
+
+  // حفظ واستعادة scroll position عند العودة للصفحة
+  useEffect(() => {
+    const handleScroll = () => {
+      if (storeSlug) {
+        sessionStorage.setItem(`scroll_store_${storeSlug}`, window.scrollY.toString());
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    // استعادة scroll position عند العودة
+    if (storeSlug && products && products.length > 0) {
+      const savedScroll = sessionStorage.getItem(`scroll_store_${storeSlug}`);
+      if (savedScroll) {
+        setTimeout(() => {
+          window.scrollTo({ top: parseInt(savedScroll), behavior: 'instant' });
+        }, 100);
+      }
+    }
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [storeSlug, products?.length]);
 
   // حساب المجموع من السلة المعزولة
   const cartTotal = isolatedCart?.total || 0;

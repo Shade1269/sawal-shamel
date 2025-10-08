@@ -274,8 +274,8 @@ const ProductDetailPage = () => {
         description: `تم إضافة ${product.products.title} إلى السلة`,
       });
 
-      // العودة للمتجر
-      navigate(`/s/${store_slug}`);
+      // العودة للمتجر مع الحفاظ على الحالة
+      navigate(`/s/${store_slug}`, { replace: false });
 
     } catch (error: any) {
       console.error('Error adding to cart:', error);
