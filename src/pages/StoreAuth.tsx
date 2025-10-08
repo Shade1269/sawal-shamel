@@ -48,7 +48,9 @@ const StoreAuth: React.FC = () => {
   // إعادة التوجيه إذا كان العميل مسجل دخول بالفعل
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(returnUrl, { replace: true });
+      // فك تشفير URL إذا كان مشفراً
+      const decodedUrl = decodeURIComponent(returnUrl);
+      navigate(decodedUrl, { replace: true });
     }
   }, [isAuthenticated, navigate, returnUrl]);
 
@@ -82,8 +84,11 @@ const StoreAuth: React.FC = () => {
   // معالجة نجاح تسجيل الدخول
   const handleAuthSuccess = (customer: any) => {
     console.log('✅ Auth success, redirecting to:', returnUrl);
+    // فك تشفير URL وإزالة البادئة إذا كانت موجودة
+    const decodedUrl = decodeURIComponent(returnUrl).replace(/^\//, '');
+    const finalUrl = decodedUrl.startsWith('store/') ? `/${decodedUrl}` : returnUrl;
     // التوجيه الفوري بعد النجاح
-    navigate(returnUrl, { replace: true });
+    navigate(finalUrl, { replace: true });
   };
 
   // العودة للمتجر

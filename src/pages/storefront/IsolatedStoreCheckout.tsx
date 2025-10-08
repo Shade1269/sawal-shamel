@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { storeOrderService } from '@/services/storeOrderService';
 import { toast } from 'sonner';
 import { LuxuryCardV2, LuxuryCardHeader, LuxuryCardTitle, LuxuryCardContent } from '@/components/luxury/LuxuryCardV2';
 import { motion } from 'framer-motion';
+import { useStorefrontOtp } from '@/hooks/useStorefrontOtp';
 
 interface StoreContextType {
   store: {
@@ -37,6 +38,17 @@ export const IsolatedStoreCheckout: React.FC = () => {
   const navigate = useNavigate();
   const { store } = useOutletContext<StoreContextType>();
   const { cart, loading: cartLoading, clearCart } = useIsolatedStoreCart(store?.id || '');
+  const { sessionId } = useStorefrontOtp({ storeSlug: storeSlug || '', storeId: store?.id });
+
+  // التحقق من تسجيل دخول العميل
+  useEffect(() => {
+    if (!sessionId && !cartLoading) {
+      toast.info('يجب تسجيل الدخول أولاً لإتمام الطلب');
+      // توجيه العميل لصفحة التسجيل مع حفظ مسار العودة
+      const returnUrl = encodeURIComponent(`/store/${storeSlug}/checkout`);
+      navigate(`/store/${storeSlug}/auth?returnUrl=${returnUrl}`, { replace: true });
+    }
+  }, [sessionId, cartLoading, storeSlug, navigate]);
 
   const [formData, setFormData] = useState<OrderFormData>({
     customerName: '',
