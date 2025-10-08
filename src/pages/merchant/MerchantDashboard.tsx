@@ -28,10 +28,26 @@ const MerchantDashboard = () => {
     if (!profile) return;
 
     try {
+      // Resolve real profile_id from public.profiles using auth_user_id
+      const { data: profileRow, error: profileErr } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .eq('auth_user_id', profile.auth_user_id)
+        .maybeSingle();
+
+      if (profileErr && profileErr.code !== 'PGRST116') {
+        throw profileErr;
+      }
+
+      const profileId = profileRow?.id;
+      if (!profileId) {
+        throw new Error('لا يوجد ملف شخصي مرتبط في جدول profiles');
+      }
+
       let { data: merchantData, error: merchantError } = await supabase
         .from('merchants')
         .select('*')
-        .eq('profile_id', profile.id)
+        .eq('profile_id', profileId)
         .maybeSingle();
 
       if (merchantError && merchantError.code !== 'PGRST116') {
@@ -43,7 +59,7 @@ const MerchantDashboard = () => {
         const { data: newMerchant, error: createError } = await supabase
           .from('merchants')
           .insert({
-            profile_id: profile.id,
+            profile_id: profileId,
             business_name: profile.full_name || profile.email || 'تاجر',
             default_commission_rate: 10.00,
             vat_enabled: true,
@@ -57,30 +73,28 @@ const MerchantDashboard = () => {
 
       setMerchant(merchantData);
 
-      const { data: products } = await supabase
-        .from('products')
-        .select('id, approval_status')
-        .eq('merchant_id', merchantData.id);
+      // Safely compute stats without blocking dashboard
+      try {
+        const { data: products } = await supabase
+          .from('products')
+          .select('id, approval_status')
+          .eq('merchant_id', merchantData.id);
 
-      const totalProducts = products?.length || 0;
-      const pendingProducts = products?.filter((p: any) => p.approval_status === 'pending').length || 0;
-      const approvedProducts = products?.filter((p: any) => p.approval_status === 'approved').length || 0;
+        const totalProducts = products?.length || 0;
+        const pendingProducts = products?.filter((p: any) => p.approval_status === 'pending').length || 0;
+        const approvedProducts = products?.filter((p: any) => p.approval_status === 'approved').length || 0;
 
-      const { data: orders } = await supabase
-        .from('ecommerce_orders')
-        .select('total_sar, order_items!inner(product_id)')
-        .eq('order_items.product_id', merchantData.id);
+        setStats((prev) => ({
+          ...prev,
+          totalProducts,
+          pendingProducts,
+          approvedProducts,
+        }));
+      } catch (e) {
+        console.warn('Products stats error:', e);
+      }
 
-      const totalOrders = orders?.length || 0;
-      const totalRevenue = orders?.reduce((sum, order) => sum + Number(order.total_sar), 0) || 0;
-
-      setStats({
-        totalProducts,
-        pendingProducts,
-        approvedProducts,
-        totalOrders,
-        totalRevenue,
-      });
+      // TODO: Add orders/revenue stats with correct relations later
     } catch (error) {
       console.error('Error fetching merchant data:', error);
     } finally {
