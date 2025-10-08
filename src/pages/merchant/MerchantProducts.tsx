@@ -84,15 +84,15 @@ const MerchantProducts = () => {
 
     setLoading(true);
     try {
-      let query = supabase
+      const baseQuery = supabase
         .from('products')
         .select('*')
         .eq('merchant_id', merchantId)
         .order('created_at', { ascending: false });
 
-      if (activeTab !== 'all') {
-        query = query.eq('approval_status', activeTab);
-      }
+      const query = activeTab !== 'all' 
+        ? baseQuery.eq('approval_status', activeTab)
+        : baseQuery;
 
       const { data, error } = await query;
 
@@ -261,6 +261,20 @@ const MerchantProducts = () => {
           </Tabs>
         </CardContent>
       </Card>
+
+      <Dialog open={showAdd} onOpenChange={setShowAdd}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>إضافة منتج جديد</DialogTitle>
+          </DialogHeader>
+          <SimpleProductForm
+            onSuccess={() => {
+              setShowAdd(false);
+              fetchProducts();
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
