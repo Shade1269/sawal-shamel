@@ -339,24 +339,22 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
   // حفظ واستعادة scroll position عند العودة للصفحة
   useEffect(() => {
+    // استعادة scroll position عند العودة
+    const savedScroll = sessionStorage.getItem(`scroll_store_${storeSlug}`);
+    if (savedScroll && products && products.length > 0) {
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: parseInt(savedScroll), behavior: 'instant' });
+      });
+    }
+
+    // حفظ scroll position عند التمرير
     const handleScroll = () => {
       if (storeSlug) {
         sessionStorage.setItem(`scroll_store_${storeSlug}`, window.scrollY.toString());
       }
     };
     
-    window.addEventListener('scroll', handleScroll);
-    
-    // استعادة scroll position عند العودة
-    if (storeSlug && products && products.length > 0) {
-      const savedScroll = sessionStorage.getItem(`scroll_store_${storeSlug}`);
-      if (savedScroll) {
-        setTimeout(() => {
-          window.scrollTo({ top: parseInt(savedScroll), behavior: 'instant' });
-        }, 100);
-      }
-    }
-    
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [storeSlug, products?.length]);
 
@@ -510,6 +508,18 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         variant: "destructive"
       });
     }
+  };
+
+  // معالج إضافة المنتج للسلة مع التحقق من المتغيرات
+  const handleProductAddToCart = (product: Product) => {
+    // إذا كان المنتج له متغيرات، افتح نافذة التفاصيل
+    if (product.variants && product.variants.length > 0) {
+      setSelectedProduct(product);
+      return;
+    }
+    
+    // إذا لم تكن هناك متغيرات، أضف مباشرة
+    addToCart(product);
   };
 
   const removeFromCart = async (itemId: string) => {
@@ -1454,7 +1464,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                         </Button>
                         <Button 
                           size="sm"
-                          onClick={() => addToCart(product)}
+                          onClick={() => handleProductAddToCart(product)}
                           className="backdrop-blur-md hover:scale-110 transition-transform shadow-lg rounded-xl"
                           disabled={product.stock === 0}
                         >
@@ -1532,13 +1542,13 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                       
                       {/* Add to Cart Button */}
                       <Button 
-                        onClick={() => addToCart(product)}
+                        onClick={() => handleProductAddToCart(product)}
                         className="w-full group/btn bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/95 hover:via-primary/90 hover:to-primary/85 transition-all duration-300 shadow-lg hover:shadow-xl rounded-xl font-semibold"
                         size="lg"
                         disabled={product.stock === 0}
                       >
                         <Plus className="h-4 w-4 mr-2 group-hover/btn:scale-125 transition-transform" />
-                        إضافة للسلة
+                        {product.variants && product.variants.length > 0 ? 'عرض الخيارات' : 'إضافة للسلة'}
                       </Button>
                     </CardContent>
                   </Card>
