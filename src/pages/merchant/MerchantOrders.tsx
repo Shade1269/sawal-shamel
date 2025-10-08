@@ -49,7 +49,10 @@ export default function MerchantOrders() {
   const { orders, isLoading, updateOrderStatus, isUpdating } = useMerchantOrders();
 
   const handleStatusUpdate = (orderId: string, newStatus: string) => {
-    updateOrderStatus({ orderId, newStatus }, {
+    updateOrderStatus({ 
+      orderId, 
+      newStatus: newStatus as 'PENDING' | 'CONFIRMED' | 'SHIPPED' | 'DELIVERED' | 'CANCELED' | 'RETURNED'
+    }, {
       onSuccess: () => {
         toast({
           title: "تم التحديث",

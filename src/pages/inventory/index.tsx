@@ -315,10 +315,14 @@ const InventoryOverviewPage = () => {
                       </TableCell>
                       <TableCell className="font-mono text-sm">{product.sku || '-'}</TableCell>
                       <TableCell>
-                        <ProductVariantDisplay 
-                          productId={product.id}
-                          compact={true}
-                        />
+                        {product.variants && product.variants.length > 0 ? (
+                          <ProductVariantDisplay 
+                            variants={product.variants}
+                            compact={true}
+                          />
+                        ) : (
+                          <span className="text-sm text-muted-foreground">-</span>
+                        )}
                       </TableCell>
                       <TableCell className="text-center">{product.price_sar ? `${product.price_sar} ر.س` : '-'}</TableCell>
                       <TableCell className="text-center">{product.stock || 0}</TableCell>
