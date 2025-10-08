@@ -4,24 +4,24 @@ html[data-theme="ferrari"] {
   /* Ferrari Luxury Theme - Navy Blue + Ferrari Red */
   /* Base HSL definitions - Enhanced for better visibility */
   --background-hsl: 220 50% 11%;
-  --foreground-hsl: 210 10% 98%;
+  --foreground-hsl: 0 0% 100%;
   --primary-hsl: 349 69% 45%;
   --primary-foreground-hsl: 0 0% 100%;
   --secondary-hsl: 220 40% 22%;
-  --secondary-foreground-hsl: 210 10% 98%;
+  --secondary-foreground-hsl: 0 0% 100%;
   --accent-hsl: 349 69% 45%;
   --accent-foreground-hsl: 0 0% 100%;
   --muted-hsl: 220 20% 40%;
-  --muted-foreground-hsl: 210 12% 90%;
+  --muted-foreground-hsl: 0 0% 100%;
   --success-hsl: 142 71% 45%;
   --warning-hsl: 38 92% 50%;
   --danger-hsl: 0 84% 60%;
   --info-hsl: 199 89% 48%;
-  --border-hsl: 220 30% 35%;
+  --border-hsl: 0 0% 100%;
   --card-hsl: 220 45% 14%;
-  --card-foreground-hsl: 210 10% 98%;
+  --card-foreground-hsl: 0 0% 100%;
   --popover-hsl: 220 45% 14%;
-  --popover-foreground-hsl: 210 10% 98%;
+  --popover-foreground-hsl: 0 0% 100%;
   --chat-bg-hsl: 220 50% 8%;
   --chat-sent-hsl: 349 69% 45%;
   --chat-received-hsl: 220 35% 16%;
@@ -118,7 +118,7 @@ html[data-theme="ferrari"] {
   --fg: var(--foreground);
   --surface: hsla(220, 45%, 14%, 1.0);
   --surface-2: hsla(220, 40%, 22%, 1.0);
-  --glass-border: hsla(349, 69%, 45%, 0.25);
+  --glass-border: hsla(0, 0%, 100%, 0.3);
   --shadow-glass-soft: 0 12px 32px hsla(220, 50%, 6%, 0.45);
   --shadow-glass-strong: 0 20px 48px hsla(220, 50%, 6%, 0.6);
   --ferrari-shadow: 0 4px 16px rgba(196, 30, 58, 0.18);
