@@ -1789,6 +1789,13 @@ export type Database = {
             referencedRelation: "cms_custom_pages"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_cms_widgets_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "v_cms_pages_full"
+            referencedColumns: ["id"]
+          },
         ]
       }
       cms_custom_pages: {
@@ -1895,6 +1902,13 @@ export type Database = {
             referencedRelation: "cms_custom_pages"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_cms_revisions_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "v_cms_pages_full"
+            referencedColumns: ["id"]
+          },
         ]
       }
       cms_page_templates: {
@@ -1985,6 +1999,13 @@ export type Database = {
             columns: ["page_id"]
             isOneToOne: false
             referencedRelation: "cms_custom_pages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_cms_seo_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "v_cms_pages_full"
             referencedColumns: ["id"]
           },
         ]
@@ -2263,6 +2284,13 @@ export type Database = {
             columns: ["page_id"]
             isOneToOne: false
             referencedRelation: "cms_custom_pages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_drafts_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "v_cms_pages_full"
             referencedColumns: ["id"]
           },
         ]
@@ -10471,6 +10499,38 @@ export type Database = {
             columns: ["shop_id"]
             isOneToOne: false
             referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_cms_pages_full: {
+        Row: {
+          affiliate_store_id: string | null
+          created_at: string | null
+          id: string | null
+          is_homepage: boolean | null
+          is_published: boolean | null
+          meta_description: string | null
+          meta_keywords: string[] | null
+          page_content: Json | null
+          page_settings: Json | null
+          page_slug: string | null
+          page_title: string | null
+          published_at: string | null
+          seo_score: number | null
+          store_id: string | null
+          template_data: Json | null
+          template_name: string | null
+          updated_at: string | null
+          view_count: number | null
+          widgets: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_cms_pages_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
             referencedColumns: ["id"]
           },
         ]
