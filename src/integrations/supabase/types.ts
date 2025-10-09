@@ -6999,6 +6999,34 @@ export type Database = {
             referencedRelation: "affiliate_stores"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_promotion_campaigns_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_promotion_campaigns_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_promotion_campaigns_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_promotion_campaigns_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
         ]
       }
       promotional_banners: {
@@ -7169,6 +7197,34 @@ export type Database = {
           },
           {
             foreignKeyName: "fk_promo_banners_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_promotional_banners_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_promotional_banners_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_promotional_banners_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_promotional_banners_store"
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "affiliate_stores"
