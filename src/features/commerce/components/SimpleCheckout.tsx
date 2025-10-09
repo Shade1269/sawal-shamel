@@ -164,7 +164,7 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
       toast.success('تم إنشاء الطلب بنجاح!');
 
       setTimeout(() => {
-        navigate(`/order-confirmation-simple/${order.id}`);
+        navigate(`/order-confirmation-simple/${order.id}?slug=${shopId}`);
       }, 2000);
 
     } catch (error) {
