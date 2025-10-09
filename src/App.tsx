@@ -56,6 +56,7 @@ const AdminCustomersPage = lazy(() => import("./pages/admin/AdminCustomers"));
 const AdminLeaderboardPage = lazy(() => import("./pages/admin/AdminLeaderboard"));
 const AdminPage = lazy(() => import("./pages/Admin"));
 const InventoryPage = lazy(() => import("./pages/inventory/index"));
+const ShippingManagementPage = lazy(() => import("./pages/ShippingManagement"));
 const MerchantDashboard = lazy(() => import("./pages/merchant/MerchantDashboard"));
 const MerchantProducts = lazy(() => import("./pages/merchant/MerchantProducts"));
 const MerchantOrders = lazy(() => import("./pages/merchant/MerchantOrders"));
@@ -194,6 +195,7 @@ const App = () => {
                                 <Route path="customers" element={<AdminCustomersPage />} />
                                 <Route path="management" element={<AdminPage />} />
                                 <Route path="inventory" element={<InventoryPage />} />
+                                <Route path="shipping" element={<ShippingManagementPage />} />
                                 <Route path="withdrawals" element={<AdminWithdrawalsPage />} />
                                 <Route path="products/approval" element={<AdminProductApproval />} />
                               </Route>

@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { LuxuryCardV2, LuxuryCardHeader, LuxuryCardTitle, LuxuryCardContent } from '@/components/luxury/LuxuryCardV2';
 import { motion } from 'framer-motion';
 import { useStorefrontOtp } from '@/hooks/useStorefrontOtp';
+import { useShippingManagement } from '@/hooks/useShippingManagement';
 
 interface StoreContextType {
   store: {
@@ -39,6 +40,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
   const { store } = useOutletContext<StoreContextType>();
   const { cart, loading: cartLoading, clearCart } = useIsolatedStoreCart(store?.id || '');
   const { sessionId } = useStorefrontOtp({ storeSlug: storeSlug || '', storeId: store?.id });
+  const { calculateShippingCost, loading: shippingLoading } = useShippingManagement();
 
   // التحقق من تسجيل دخول العميل
   useEffect(() => {
@@ -63,14 +65,55 @@ export const IsolatedStoreCheckout: React.FC = () => {
   });
 
   const [submitting, setSubmitting] = useState(false);
+  const [shippingOptions, setShippingOptions] = useState<Array<{
+    providerId: string;
+    providerName: string;
+    serviceType: string;
+    totalCost: number;
+    estimatedDeliveryDays: string;
+  }>>([]);
+  const [selectedShipping, setSelectedShipping] = useState<{
+    providerId: string;
+    providerName: string;
+    cost: number;
+  } | null>(null);
+  const [calculatingShipping, setCalculatingShipping] = useState(false);
 
-  // خيارات الشحن
-  const shippingProviders = [
-    { id: 'smsa', name: 'سمسا', cost: 25 },
-    { id: 'aramex', name: 'أرامكس', cost: 35 },
-    { id: 'dhl', name: 'دي إتش إل', cost: 45 },
-  ] as const;
-  const [selectedShipping, setSelectedShipping] = useState<typeof shippingProviders[number] | null>(shippingProviders[0]);
+  // حساب تكلفة الشحن عند إدخال المدينة
+  useEffect(() => {
+    const calculateShipping = async () => {
+      if (!formData.city || !cart?.items?.length) return;
+      
+      setCalculatingShipping(true);
+      
+      // حساب الوزن الإجمالي (افتراضياً 1 كجم لكل منتج)
+      const totalWeight = cart.items.reduce((sum, item) => sum + (item.quantity * 1), 0);
+      
+      const result = await calculateShippingCost(formData.city, totalWeight, 'standard', false);
+      
+      if (result.success && result.costs) {
+        setShippingOptions(result.costs);
+        // اختيار أول خيار افتراضياً
+        if (result.costs.length > 0) {
+          setSelectedShipping({
+            providerId: result.costs[0].providerId,
+            providerName: result.costs[0].providerName,
+            cost: result.costs[0].totalCost
+          });
+        }
+      } else {
+        toast.error(result.error || 'لم يتم العثور على خيارات شحن متاحة');
+        setShippingOptions([]);
+        setSelectedShipping(null);
+      }
+      
+      setCalculatingShipping(false);
+    };
+    
+    // تأخير بسيط لتجنب الكثير من الطلبات
+    const timer = setTimeout(calculateShipping, 500);
+    return () => clearTimeout(timer);
+  }, [formData.city, cart?.items, calculateShippingCost]);
 
   const handleInputChange = (field: keyof OrderFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -111,8 +154,8 @@ export const IsolatedStoreCheckout: React.FC = () => {
           }
         },
         {
-          providerId: selectedShipping?.id,
-          providerName: selectedShipping?.name,
+          providerId: selectedShipping?.providerId,
+          providerName: selectedShipping?.providerName,
           costSar: selectedShipping?.cost
         }
       );
@@ -314,6 +357,73 @@ export const IsolatedStoreCheckout: React.FC = () => {
                     />
                   </div>
                 </div>
+              </LuxuryCardContent>
+            </LuxuryCardV2>
+          </motion.div>
+
+          {/* خيارات الشحن */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <LuxuryCardV2 variant="glass" hover="lift" className="border-red-600/20">
+              <LuxuryCardHeader className="border-b border-red-600/15">
+                <LuxuryCardTitle className="text-xl">طريقة الشحن</LuxuryCardTitle>
+              </LuxuryCardHeader>
+              <LuxuryCardContent className="space-y-4 pt-6">
+                {calculatingShipping ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-red-500" />
+                    <span className="mr-3 text-slate-400">جاري حساب تكلفة الشحن...</span>
+                  </div>
+                ) : !formData.city ? (
+                  <div className="text-center py-8">
+                    <p className="text-slate-400">يرجى إدخال المدينة أولاً لعرض خيارات الشحن</p>
+                  </div>
+                ) : shippingOptions.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-slate-400">لا توجد خيارات شحن متاحة لهذه المدينة</p>
+                    <p className="text-xs text-slate-500 mt-2">يرجى الاتصال بالدعم للمساعدة</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {shippingOptions.map((option) => (
+                      <div
+                        key={`${option.providerId}-${option.serviceType}`}
+                        onClick={() => setSelectedShipping({
+                          providerId: option.providerId,
+                          providerName: option.providerName,
+                          cost: option.totalCost
+                        })}
+                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                          selectedShipping?.providerId === option.providerId
+                            ? 'border-red-600 bg-red-950/20'
+                            : 'border-slate-700/50 bg-slate-900/50 hover:border-red-600/50'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                              selectedShipping?.providerId === option.providerId
+                                ? 'border-red-600 bg-red-600'
+                                : 'border-slate-600'
+                            }`}>
+                              {selectedShipping?.providerId === option.providerId && (
+                                <CheckCircle className="h-3 w-3 text-white" />
+                              )}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-white">{option.providerName}</p>
+                              <p className="text-xs text-slate-400">التوصيل خلال {option.estimatedDeliveryDays}</p>
+                            </div>
+                          </div>
+                          <span className="text-lg font-bold text-red-400">{option.totalCost.toFixed(0)} ر.س</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </LuxuryCardContent>
             </LuxuryCardV2>
           </motion.div>
