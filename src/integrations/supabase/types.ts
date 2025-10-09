@@ -12038,6 +12038,14 @@ export type Database = {
           status: string
         }[]
       }
+      check_order_hub_orphans: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          details: Json
+          orphan_count: number
+          table_name: string
+        }[]
+      }
       cleanup_expired_otp: {
         Args: Record<PropertyKey, never>
         Returns: undefined
