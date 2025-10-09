@@ -81,17 +81,35 @@ export class UnifiedOrdersService {
    * Get order statistics for a store
    */
   static async getStoreStats(storeId?: string, affiliateStoreId?: string) {
-    let query = supabase.rpc('get_store_order_stats', {
-      p_shop_id: storeId || null,
-      p_affiliate_store_id: affiliateStoreId || null,
-    });
+    let query = supabase
+      .from('order_hub')
+      .select('status, total_amount_sar, payment_status');
+
+    if (affiliateStoreId) {
+      query = query.eq('affiliate_store_id', affiliateStoreId);
+    } else if (storeId) {
+      query = query.eq('shop_id', storeId);
+    }
 
     const { data, error } = await query;
     if (error) {
       console.error('Stats fetch error:', error);
       return null;
     }
-    return data;
+
+    // Calculate stats from data
+    const totalOrders = data.length;
+    const totalRevenue = data.reduce((sum, order) => sum + (Number(order.total_amount_sar) || 0), 0);
+    const confirmedOrders = data.filter(o => o.status === 'confirmed' || o.status === 'completed').length;
+    const pendingOrders = data.filter(o => o.status === 'pending').length;
+    
+    return {
+      total_orders: totalOrders,
+      total_revenue: totalRevenue,
+      confirmed_orders: confirmedOrders,
+      pending_orders: pendingOrders,
+      average_order_value: totalOrders > 0 ? totalRevenue / totalOrders : 0,
+    };
   }
 
   /**

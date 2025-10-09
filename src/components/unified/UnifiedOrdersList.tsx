@@ -15,10 +15,10 @@ interface UnifiedOrdersListProps {
 }
 
 export const UnifiedOrdersList: React.FC<UnifiedOrdersListProps> = ({ filters, onOrderClick }) => {
-  const { orders, isLoading, error, updateStatus, updatePaymentStatus } = useUnifiedOrders(filters);
+  const { orders, loading, error } = useUnifiedOrders(filters);
   const showSourceIndicator = isFeatureEnabled('SHOW_SOURCE_INDICATOR');
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -69,17 +69,11 @@ export const UnifiedOrdersList: React.FC<UnifiedOrdersListProps> = ({ filters, o
     }
   };
 
-  const getStatusColor = (status: string) => {
-    const statusMap: Record<string, string> = {
-      pending: 'secondary',
-      confirmed: 'default',
-      processing: 'default',
-      shipped: 'default',
-      delivered: 'default',
-      cancelled: 'destructive',
-      completed: 'default',
-    };
-    return statusMap[status.toLowerCase()] || 'secondary';
+  const getStatusColor = (status: string): "default" | "secondary" | "destructive" => {
+    const statusLower = status.toLowerCase();
+    if (statusLower === 'cancelled') return 'destructive';
+    if (statusLower === 'pending') return 'secondary';
+    return 'default';
   };
 
   return (
