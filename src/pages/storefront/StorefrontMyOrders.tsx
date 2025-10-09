@@ -226,7 +226,7 @@ const StorefrontMyOrders = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="sm" asChild>
-                <Link to={`/s/${store_slug}`}>
+                <Link to={`/${store_slug}`}>
                   <ArrowLeft className="h-4 w-4 ml-2" />
                   العودة للمتجر
                 </Link>
@@ -345,7 +345,7 @@ const StorefrontMyOrders = () => {
                     لم تقم بأي طلبات من هذا المتجر حتى الآن
                   </p>
                   <Button asChild>
-                    <Link to={`/s/${store_slug}`}>
+                    <Link to={`/${store_slug}`}>
                       ابدأ التسوق الآن
                     </Link>
                   </Button>

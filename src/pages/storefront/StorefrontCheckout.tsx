@@ -276,7 +276,7 @@ const StorefrontCheckout = () => {
       });
 
       // الانتقال لصفحة التأكيد
-      navigate(`/store/${slug}/order/${order.id}/confirmation`);
+      navigate(`/${slug}/order/${order.id}/confirmation`);
 
     } catch (error: any) {
       console.error('Error creating order:', error);

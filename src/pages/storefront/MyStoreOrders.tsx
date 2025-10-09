@@ -128,7 +128,7 @@ export const MyStoreOrders: React.FC = () => {
     return (
       <div className="space-y-4">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/store/${storeSlug}`)}>
+          <Button variant="ghost" size="sm" onClick={() => navigate(`/${storeSlug}`)}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             العودة للمتجر
           </Button>
@@ -145,7 +145,7 @@ export const MyStoreOrders: React.FC = () => {
     return (
       <div className="space-y-4">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/store/${storeSlug}`)}>
+          <Button variant="ghost" size="sm" onClick={() => navigate(`/${storeSlug}`)}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             العودة للمتجر
           </Button>
@@ -157,7 +157,7 @@ export const MyStoreOrders: React.FC = () => {
           <p className="text-muted-foreground mb-4">
             لم تقم بإجراء أي طلبات من هذا المتجر بعد
           </p>
-          <Button onClick={() => navigate(`/store/${storeSlug}`)}>
+          <Button onClick={() => navigate(`/${storeSlug}`)}>
             <ShoppingBag className="h-4 w-4 mr-2" />
             تسوق الآن
           </Button>
@@ -169,7 +169,7 @@ export const MyStoreOrders: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate(`/store/${storeSlug}`)}>
+        <Button variant="ghost" size="sm" onClick={() => navigate(`/${storeSlug}`)}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           العودة للمتجر
         </Button>

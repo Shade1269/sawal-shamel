@@ -317,7 +317,7 @@ const Index = () => {
                         size="lg" 
                         className="w-full h-12 text-lg font-bold rounded-xl"
                         animation="glow"
-                        onClick={() => window.open(`/store/${affiliateStore.store_slug}`, '_blank')}
+                        onClick={() => window.open(`/${affiliateStore.store_slug}`, '_blank')}
                       >
                         <ExternalLink className="h-5 w-5 ml-2" />
                         اذهب للمتجر

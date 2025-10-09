@@ -144,17 +144,14 @@ const App = () => {
                                 )}
                               />
 
-               <Route path="/:slug" element={<StorefrontIntegration />} />
-               <Route path="/:slug/checkout" element={<StorefrontCheckout />} />
-               <Route path="/:slug/orders" element={<CustomerAuthProvider><CustomerOrders /></CustomerAuthProvider>} />
-               <Route path="/store/:storeSlug/auth" element={<CustomerAuthProvider><StoreAuth /></CustomerAuthProvider>} />
-               
-               {/* Isolated Store Routes */}
-               <Route path="/store/:storeSlug" element={<IsolatedStoreLayout />}>
+               {/* Store Routes - Unified under /:storeSlug */}
+               <Route path="/:storeSlug" element={<IsolatedStoreLayout />}>
                  <Route index element={<IsolatedStorefront />} />
+                 <Route path="p/:productId" element={<StorefrontIntegration />} />
                  <Route path="cart" element={<IsolatedStoreCart />} />
                  <Route path="checkout" element={<IsolatedStoreCheckout />} />
                  <Route path="orders" element={<StorefrontMyOrders />} />
+                 <Route path="auth" element={<StoreAuth />} />
                  <Route path="order/:orderId/confirmation" element={<StoreOrderConfirmation />} />
                </Route>
 
