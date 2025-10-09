@@ -105,7 +105,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
   
   // حالات محلية للنماذج فقط
   const [newPaymentProvider, setNewPaymentProvider] = useState({gateway_name: '', display_name: '', api_key: ''});
-  const [newShippingCompany, setNewShippingCompany] = useState({name: '', name_en: '', code: '', api_endpoint: ''});
+  const [newShippingCompany, setNewShippingCompany] = useState({name: '', name_en: '', code: '', api_endpoint: '', base_price_sar: ''});
 
   const [productVariants, setProductVariants] = useState([
     { size: '', color: '', stock: 0 }
@@ -1195,10 +1195,16 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                     value={newShippingCompany.api_endpoint}
                     onChange={(e) => setNewShippingCompany({...newShippingCompany, api_endpoint: e.target.value})}
                   />
+                  <Input
+                    type="number"
+                    placeholder="السعر الأساسي (ريال سعودي) *"
+                    value={newShippingCompany.base_price_sar}
+                    onChange={(e) => setNewShippingCompany({...newShippingCompany, base_price_sar: e.target.value})}
+                  />
                   <Button
                     onClick={async () => {
-                      if (!newShippingCompany.name.trim() || !newShippingCompany.code.trim()) {
-                        toast({ title: "مطلوب", description: "الاسم والرمز مطلوبان", variant: "destructive" });
+                      if (!newShippingCompany.name.trim() || !newShippingCompany.code.trim() || !newShippingCompany.base_price_sar) {
+                        toast({ title: "مطلوب", description: "الاسم والرمز والسعر مطلوبان", variant: "destructive" });
                         return;
                       }
                       await createShippingProvider({
@@ -1206,11 +1212,12 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                         name_en: newShippingCompany.name_en || newShippingCompany.name,
                         code: newShippingCompany.code,
                         api_endpoint: newShippingCompany.api_endpoint,
+                        base_price_sar: parseFloat(newShippingCompany.base_price_sar),
                         is_active: true,
                         configuration: {}
                       });
                       await refetchShipping?.();
-                      setNewShippingCompany({name: '', name_en: '', code: '', api_endpoint: ''});
+                      setNewShippingCompany({name: '', name_en: '', code: '', api_endpoint: '', base_price_sar: ''});
                       toast({ title: "تم الإضافة", description: "تم إضافة شركة الشحن إلى القائمة" });
                     }}
                     className="w-full"
@@ -1240,9 +1247,12 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                   {shippingProviders.map((provider) => (
                     <div key={provider.id} className="bg-card border rounded-lg p-4">
                        <div className="flex items-start justify-between mb-2">
-                         <div className="flex-1">
+                       <div className="flex-1">
                            <h4 className="font-medium">{provider.name}</h4>
                            <p className="text-xs text-muted-foreground">رمز: {provider.code}</p>
+                           <p className="text-sm font-semibold text-primary mt-1">
+                             السعر: {provider.base_price_sar || 0} ريال
+                           </p>
                            {provider.api_endpoint && (
                              <p className="text-xs text-muted-foreground mt-1">
                                API: {provider.api_endpoint}
@@ -1276,7 +1286,13 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                              if (newName === null) return;
                              const newCode = window.prompt("تعديل رمز الشركة", provider.code);
                              if (newCode === null) return;
-                             await updateShippingProvider(provider.id, { name: newName.trim(), code: newCode.trim() });
+                             const newPrice = window.prompt("تعديل السعر الأساسي (ريال)", String(provider.base_price_sar || 0));
+                             if (newPrice === null) return;
+                             await updateShippingProvider(provider.id, { 
+                               name: newName.trim(), 
+                               code: newCode.trim(),
+                               base_price_sar: parseFloat(newPrice)
+                             });
                              toast({ title: "تم التحديث", description: "تم تحديث بيانات شركة الشحن" });
                              await refetchShipping?.();
                            }}

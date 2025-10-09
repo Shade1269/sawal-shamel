@@ -8,6 +8,7 @@ export interface ShippingProvider {
   name_en: string;
   code: string;
   api_endpoint?: string;
+  base_price_sar?: number;
   is_active: boolean;
   configuration: any;
   created_at: string;

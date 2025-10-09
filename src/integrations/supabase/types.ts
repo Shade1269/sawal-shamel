@@ -7312,6 +7312,7 @@ export type Database = {
       shipping_providers: {
         Row: {
           api_endpoint: string | null
+          base_price_sar: number
           code: string
           configuration: Json | null
           created_at: string | null
@@ -7325,6 +7326,7 @@ export type Database = {
         }
         Insert: {
           api_endpoint?: string | null
+          base_price_sar?: number
           code: string
           configuration?: Json | null
           created_at?: string | null
@@ -7338,6 +7340,7 @@ export type Database = {
         }
         Update: {
           api_endpoint?: string | null
+          base_price_sar?: number
           code?: string
           configuration?: Json | null
           created_at?: string | null
