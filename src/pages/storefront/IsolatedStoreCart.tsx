@@ -69,7 +69,7 @@ export const IsolatedStoreCart: React.FC = () => {
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={() => navigate(`/store/${storeSlug}`)}
+            onClick={() => navigate(`/${storeSlug}`)}
             className="text-red-400 hover:text-red-300 hover:bg-red-950/20"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -87,7 +87,7 @@ export const IsolatedStoreCart: React.FC = () => {
               لم تقم بإضافة أي منتجات للسلة بعد
             </p>
             <Button 
-              onClick={() => navigate(`/store/${storeSlug}`)}
+              onClick={() => navigate(`/${storeSlug}`)}
               className="bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 border border-red-500/20"
               size="lg"
             >
@@ -108,7 +108,7 @@ export const IsolatedStoreCart: React.FC = () => {
         <Button 
           variant="ghost" 
           size="sm" 
-          onClick={() => navigate(`/store/${storeSlug}`)}
+          onClick={() => navigate(`/${storeSlug}`)}
           className="text-red-400 hover:text-red-300 hover:bg-red-950/20"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -253,7 +253,7 @@ export const IsolatedStoreCart: React.FC = () => {
               <Button 
                 className="w-full h-14 text-lg bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 border border-red-500/20 transition-all duration-500 group"
                 size="lg"
-                onClick={() => navigate(`/store/${storeSlug}/checkout`)}
+                onClick={() => navigate(`/${storeSlug}/checkout`)}
               >
                 إتمام الطلب
                 <ArrowRight className="h-5 w-5 mr-2 group-hover:translate-x-1 transition-transform" />

@@ -233,7 +233,7 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
 
   const goToStore = () => {
     if (storeSlug) {
-      navigate(`/store/${storeSlug}`);
+      navigate(`/${storeSlug}`);
     } else {
       navigate("/");
     }
@@ -382,7 +382,7 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
             <Button variant="solid" size="sm" leftIcon={<ShoppingBag className="h-4 w-4" aria-hidden />} onClick={goToStore}>
               العودة للمتجر
             </Button>
-            <Button variant="outline" size="sm" leftIcon={<Package className="h-4 w-4" aria-hidden />} onClick={() => navigate(`/s/${storeSlug}/my-orders`)}>
+            <Button variant="outline" size="sm" leftIcon={<Package className="h-4 w-4" aria-hidden />} onClick={() => navigate(`/${storeSlug}/my-orders`)}>
               طلباتي
             </Button>
             <Button variant="ghost" size="sm" leftIcon={<Printer className="h-4 w-4" aria-hidden />} onClick={() => window.print()}>
