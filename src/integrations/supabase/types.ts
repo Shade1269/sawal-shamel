@@ -2748,11 +2748,13 @@ export type Database = {
           customer_email: string | null
           customer_name: string
           customer_phone: string
+          customer_session_id: string | null
           delivered_at: string | null
           discount_sar: number
           estimated_delivery_date: string | null
           id: string
           internal_notes: string | null
+          net_revenue_sar: number | null
           notes: string | null
           order_number: string
           payment_method: Database["public"]["Enums"]["payment_method"]
@@ -2782,11 +2784,13 @@ export type Database = {
           customer_email?: string | null
           customer_name: string
           customer_phone: string
+          customer_session_id?: string | null
           delivered_at?: string | null
           discount_sar?: number
           estimated_delivery_date?: string | null
           id?: string
           internal_notes?: string | null
+          net_revenue_sar?: number | null
           notes?: string | null
           order_number: string
           payment_method: Database["public"]["Enums"]["payment_method"]
@@ -2816,11 +2820,13 @@ export type Database = {
           customer_email?: string | null
           customer_name?: string
           customer_phone?: string
+          customer_session_id?: string | null
           delivered_at?: string | null
           discount_sar?: number
           estimated_delivery_date?: string | null
           id?: string
           internal_notes?: string | null
+          net_revenue_sar?: number | null
           notes?: string | null
           order_number?: string
           payment_method?: Database["public"]["Enums"]["payment_method"]
@@ -2839,6 +2845,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "ecommerce_orders_customer_session_id_fkey"
+            columns: ["customer_session_id"]
+            isOneToOne: false
+            referencedRelation: "customer_otp_sessions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "ecommerce_orders_shop_id_fkey"
             columns: ["shop_id"]
@@ -2877,6 +2890,7 @@ export type Database = {
           id: string
           initiated_at: string
           metadata: Json | null
+          net_amount_sar: number | null
           order_id: string
           payment_method: Database["public"]["Enums"]["payment_method"]
           payment_status: Database["public"]["Enums"]["payment_status"]
@@ -2897,6 +2911,7 @@ export type Database = {
           id?: string
           initiated_at?: string
           metadata?: Json | null
+          net_amount_sar?: number | null
           order_id: string
           payment_method: Database["public"]["Enums"]["payment_method"]
           payment_status?: Database["public"]["Enums"]["payment_status"]
@@ -2917,6 +2932,7 @@ export type Database = {
           id?: string
           initiated_at?: string
           metadata?: Json | null
+          net_amount_sar?: number | null
           order_id?: string
           payment_method?: Database["public"]["Enums"]["payment_method"]
           payment_status?: Database["public"]["Enums"]["payment_status"]
@@ -4370,6 +4386,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      order_hub: {
+        Row: {
+          created_at: string
+          id: string
+          order_number: string | null
+          source: string
+          source_order_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_number?: string | null
+          source: string
+          source_order_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_number?: string | null
+          source?: string
+          source_order_id?: string
+        }
+        Relationships: []
       }
       order_items: {
         Row: {
@@ -6965,6 +7005,7 @@ export type Database = {
           location: string | null
           metadata: Json | null
           shipment_id: string
+          shipment_tracking_id: string | null
           source: string
         }
         Insert: {
@@ -6977,6 +7018,7 @@ export type Database = {
           location?: string | null
           metadata?: Json | null
           shipment_id: string
+          shipment_tracking_id?: string | null
           source?: string
         }
         Update: {
@@ -6989,9 +7031,24 @@ export type Database = {
           location?: string | null
           metadata?: Json | null
           shipment_id?: string
+          shipment_tracking_id?: string | null
           source?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_shipment_events_tracking"
+            columns: ["shipment_tracking_id"]
+            isOneToOne: false
+            referencedRelation: "shipment_tracking"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipment_events_tracking"
+            columns: ["shipment_tracking_id"]
+            isOneToOne: false
+            referencedRelation: "v_shipments_overview"
+            referencedColumns: ["shipment_tracking_id"]
+          },
           {
             foreignKeyName: "shipment_events_shipment_id_fkey"
             columns: ["shipment_id"]
@@ -7039,6 +7096,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "shipments"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipment_tracking_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "v_shipments_overview"
+            referencedColumns: ["shipment_id"]
           },
         ]
       }
@@ -7670,6 +7734,7 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone: string
+          customer_session_id: string | null
           id: string
           order_status: string
           payment_method: string | null
@@ -7688,6 +7753,7 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone: string
+          customer_session_id?: string | null
           id?: string
           order_status?: string
           payment_method?: string | null
@@ -7706,6 +7772,7 @@ export type Database = {
           customer_email?: string
           customer_name?: string
           customer_phone?: string
+          customer_session_id?: string | null
           id?: string
           order_status?: string
           payment_method?: string | null
@@ -7723,6 +7790,13 @@ export type Database = {
             columns: ["affiliate_store_id"]
             isOneToOne: false
             referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "simple_orders_customer_session_id_fkey"
+            columns: ["customer_session_id"]
+            isOneToOne: false
+            referencedRelation: "customer_otp_sessions"
             referencedColumns: ["id"]
           },
           {
@@ -9406,6 +9480,170 @@ export type Database = {
         }
         Relationships: []
       }
+      v_metrics_orders_daily: {
+        Row: {
+          affiliate_store_id: string | null
+          day: string | null
+          gmv_sar: number | null
+          net_revenue_sar: number | null
+          orders_count: number | null
+        }
+        Relationships: []
+      }
+      v_metrics_orders_gmv: {
+        Row: {
+          day: string | null
+          gmv_sar: number | null
+          orders_count: number | null
+        }
+        Relationships: []
+      }
+      v_metrics_payments: {
+        Row: {
+          payment_status: Database["public"]["Enums"]["payment_status"] | null
+          total_amount_sar: number | null
+          total_gateway_fees_sar: number | null
+          tx_count: number | null
+        }
+        Relationships: []
+      }
+      v_metrics_payments_daily: {
+        Row: {
+          affiliate_store_id: string | null
+          day: string | null
+          gross_paid_sar: number | null
+          net_paid_sar: number | null
+          tx_count: number | null
+        }
+        Relationships: []
+      }
+      v_metrics_refunds: {
+        Row: {
+          day: string | null
+          refunds_count: number | null
+          total_refunds_sar: number | null
+        }
+        Relationships: []
+      }
+      v_metrics_refunds_daily: {
+        Row: {
+          affiliate_store_id: string | null
+          day: string | null
+          refund_amount_sar: number | null
+          refunds_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_metrics_shipments: {
+        Row: {
+          shipments_count: number | null
+          status: string | null
+        }
+        Relationships: []
+      }
+      v_metrics_shipments_daily: {
+        Row: {
+          affiliate_store_id: string | null
+          day: string | null
+          delivered_count: number | null
+          shipments_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_metrics_shipments_daily_unified: {
+        Row: {
+          affiliate_store_id: string | null
+          day: string | null
+          delivered_shipments: number | null
+          events_count: number | null
+          shipments_touched: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_ops_affiliate_performance: {
+        Row: {
+          affiliate_store_id: string | null
+          net_revenue_sar: number | null
+          orders_count: number | null
+          total_commission_sar: number | null
+        }
+        Relationships: []
+      }
+      v_ops_orders_status_daily: {
+        Row: {
+          day: string | null
+          net_revenue_sar: number | null
+          orders_count: number | null
+          status: Database["public"]["Enums"]["order_status"] | null
+          total_sar: number | null
+        }
+        Relationships: []
+      }
+      v_ops_payments_daily: {
+        Row: {
+          day: string | null
+          payments_count: number | null
+          total_amount_sar: number | null
+          total_net_amount_sar: number | null
+        }
+        Relationships: []
+      }
+      v_ops_refunds_daily: {
+        Row: {
+          day: string | null
+          refunds_count: number | null
+          total_refund_sar: number | null
+        }
+        Relationships: []
+      }
+      v_ops_shipping_status_daily: {
+        Row: {
+          day: string | null
+          shipments_count: number | null
+          status: string | null
+        }
+        Relationships: []
+      }
+      v_ops_top_products: {
+        Row: {
+          product_id: string | null
+          total_qty: number | null
+          total_sales_sar: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecommerce_order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_order_items_unified: {
         Row: {
           commission_rate: number | null
@@ -9447,6 +9685,33 @@ export type Database = {
           user_id: string | null
         }
         Relationships: []
+      }
+      v_shipments_overview: {
+        Row: {
+          affiliate_store_id: string | null
+          current_status: string | null
+          shipment_created_at: string | null
+          shipment_id: string | null
+          shipment_tracking_id: string | null
+          shop_id: string | null
+          tracking_number: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
