@@ -4582,54 +4582,75 @@ export type Database = {
       }
       order_hub: {
         Row: {
+          actual_delivery_date: string | null
           affiliate_store_id: string | null
+          carrier_name: string | null
           created_at: string
           customer_email: string | null
           customer_name: string | null
           customer_phone: string | null
+          estimated_delivery_date: string | null
           id: string
+          migrated_from_id: string | null
           order_number: string | null
+          payment_method: string | null
           payment_status: string | null
           shipping_address: Json | null
           shop_id: string | null
           source: string
           source_order_id: string
+          source_table: string | null
           status: string | null
           total_amount_sar: number | null
+          tracking_number: string | null
           updated_at: string
         }
         Insert: {
+          actual_delivery_date?: string | null
           affiliate_store_id?: string | null
+          carrier_name?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
+          estimated_delivery_date?: string | null
           id?: string
+          migrated_from_id?: string | null
           order_number?: string | null
+          payment_method?: string | null
           payment_status?: string | null
           shipping_address?: Json | null
           shop_id?: string | null
           source: string
           source_order_id: string
+          source_table?: string | null
           status?: string | null
           total_amount_sar?: number | null
+          tracking_number?: string | null
           updated_at?: string
         }
         Update: {
+          actual_delivery_date?: string | null
           affiliate_store_id?: string | null
+          carrier_name?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
+          estimated_delivery_date?: string | null
           id?: string
+          migrated_from_id?: string | null
           order_number?: string | null
+          payment_method?: string | null
           payment_status?: string | null
           shipping_address?: Json | null
           shop_id?: string | null
           source?: string
           source_order_id?: string
+          source_table?: string | null
           status?: string | null
           total_amount_sar?: number | null
+          tracking_number?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -10215,6 +10236,19 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      v_unified_order_items: {
+        Row: {
+          created_at: string | null
+          id: string | null
+          order_id: string | null
+          product_id: string | null
+          quantity: number | null
+          source_table: string | null
+          total_price: number | null
+          unit_price: number | null
+        }
+        Relationships: []
       }
     }
     Functions: {
