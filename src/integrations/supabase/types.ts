@@ -5701,6 +5701,7 @@ export type Database = {
           created_at: string
           id: string
           notes: string | null
+          order_hub_id: string | null
           order_id: string
           order_number: string
           processed_by: string
@@ -5717,6 +5718,7 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
+          order_hub_id?: string | null
           order_id: string
           order_number: string
           processed_by: string
@@ -5733,6 +5735,7 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
+          order_hub_id?: string | null
           order_id?: string
           order_number?: string
           processed_by?: string
@@ -5743,7 +5746,15 @@ export type Database = {
           status?: string
           total_returned_amount?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       product_reviews: {
         Row: {
@@ -6691,6 +6702,7 @@ export type Database = {
           id: string
           invoice_id: string | null
           net_refund_sar: number
+          order_hub_id: string | null
           order_id: string
           original_amount_sar: number
           payment_id: string | null
@@ -6718,6 +6730,7 @@ export type Database = {
           id?: string
           invoice_id?: string | null
           net_refund_sar: number
+          order_hub_id?: string | null
           order_id: string
           original_amount_sar: number
           payment_id?: string | null
@@ -6745,6 +6758,7 @@ export type Database = {
           id?: string
           invoice_id?: string | null
           net_refund_sar?: number
+          order_hub_id?: string | null
           order_id?: string
           original_amount_sar?: number
           payment_id?: string | null
@@ -6760,6 +6774,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_refunds_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "refunds_approved_by_fkey"
             columns: ["approved_by"]
