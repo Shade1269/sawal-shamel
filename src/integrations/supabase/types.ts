@@ -3957,6 +3957,7 @@ export type Database = {
           issue_date: string
           metadata: Json | null
           notes: string | null
+          order_hub_id: string | null
           order_id: string | null
           paid_at: string | null
           payment_status: string
@@ -3985,6 +3986,7 @@ export type Database = {
           issue_date?: string
           metadata?: Json | null
           notes?: string | null
+          order_hub_id?: string | null
           order_id?: string | null
           paid_at?: string | null
           payment_status?: string
@@ -4013,6 +4015,7 @@ export type Database = {
           issue_date?: string
           metadata?: Json | null
           notes?: string | null
+          order_hub_id?: string | null
           order_id?: string | null
           paid_at?: string | null
           payment_status?: string
@@ -4028,6 +4031,27 @@ export type Database = {
           vat_sar?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_invoices_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_invoices_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_invoices_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "invoices_customer_profile_id_fkey"
             columns: ["customer_profile_id"]
@@ -6253,6 +6277,27 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_product_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_product_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_product_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "fk_returns_order_hub"
             columns: ["order_hub_id"]
             isOneToOne: false
@@ -6264,6 +6309,13 @@ export type Database = {
             columns: ["order_hub_id"]
             isOneToOne: false
             referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
             referencedColumns: ["id"]
           },
         ]
@@ -7440,6 +7492,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "fk_refunds_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "refunds_approved_by_fkey"
             columns: ["approved_by"]
             isOneToOne: false
@@ -8048,6 +8107,7 @@ export type Database = {
           id: string
           location: string | null
           occurred_at: string
+          order_hub_id: string | null
           provider_data: Json | null
           shipment_id: string
           status: string
@@ -8058,6 +8118,7 @@ export type Database = {
           id?: string
           location?: string | null
           occurred_at: string
+          order_hub_id?: string | null
           provider_data?: Json | null
           shipment_id: string
           status: string
@@ -8068,12 +8129,34 @@ export type Database = {
           id?: string
           location?: string | null
           occurred_at?: string
+          order_hub_id?: string | null
           provider_data?: Json | null
           shipment_id?: string
           status?: string
           status_description?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_shipment_tracking_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipment_tracking_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipment_tracking_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "shipment_tracking_shipment_id_fkey"
             columns: ["shipment_id"]
@@ -8105,6 +8188,7 @@ export type Database = {
           insurance_cost: number | null
           metadata: Json | null
           migrated_from_id: string | null
+          order_hub_id: string | null
           order_id: string | null
           provider_id: string
           recipient_address: Json
@@ -8139,6 +8223,7 @@ export type Database = {
           insurance_cost?: number | null
           metadata?: Json | null
           migrated_from_id?: string | null
+          order_hub_id?: string | null
           order_id?: string | null
           provider_id: string
           recipient_address: Json
@@ -8173,6 +8258,7 @@ export type Database = {
           insurance_cost?: number | null
           metadata?: Json | null
           migrated_from_id?: string | null
+          order_hub_id?: string | null
           order_id?: string | null
           provider_id?: string
           recipient_address?: Json
@@ -8194,6 +8280,27 @@ export type Database = {
           weight_kg?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_shipments_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "shipments_order_id_fkey"
             columns: ["order_id"]
@@ -11113,6 +11220,93 @@ export type Database = {
           order_number?: string | null
           payment_method?: string | null
           payment_status?: string | null
+          shipping_address?: Json | null
+          shop_id?: string | null
+          source?: string | null
+          source_order_id?: string | null
+          source_table?: string | null
+          status?: string | null
+          total_amount_sar?: number | null
+          tracking_number?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      v_order_hub_with_relations: {
+        Row: {
+          actual_delivery_date: string | null
+          affiliate_store_id: string | null
+          carrier_name: string | null
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          estimated_delivery_date: string | null
+          id: string | null
+          invoices_count: number | null
+          migrated_from_id: string | null
+          order_number: string | null
+          payment_method: string | null
+          payment_status: string | null
+          refunds_count: number | null
+          returns_count: number | null
+          shipments_count: number | null
+          shipping_address: Json | null
+          shop_id: string | null
+          source: string | null
+          source_order_id: string | null
+          source_table: string | null
+          status: string | null
+          total_amount_sar: number | null
+          tracking_number: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          actual_delivery_date?: string | null
+          affiliate_store_id?: string | null
+          carrier_name?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          estimated_delivery_date?: string | null
+          id?: string | null
+          invoices_count?: never
+          migrated_from_id?: string | null
+          order_number?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          refunds_count?: never
+          returns_count?: never
+          shipments_count?: never
+          shipping_address?: Json | null
+          shop_id?: string | null
+          source?: string | null
+          source_order_id?: string | null
+          source_table?: string | null
+          status?: string | null
+          total_amount_sar?: number | null
+          tracking_number?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          actual_delivery_date?: string | null
+          affiliate_store_id?: string | null
+          carrier_name?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          estimated_delivery_date?: string | null
+          id?: string | null
+          invoices_count?: never
+          migrated_from_id?: string | null
+          order_number?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          refunds_count?: never
+          returns_count?: never
+          shipments_count?: never
           shipping_address?: Json | null
           shop_id?: string | null
           source?: string | null
