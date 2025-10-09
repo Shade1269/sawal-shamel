@@ -34,7 +34,13 @@ export const storeOrderService = {
     orderData: CreateOrderData
   ) {
     try {
-      const buyerSessionId = localStorage.getItem(`store_session_${affiliateStoreId}`);
+      let buyerSessionId: string | null = null;
+      try {
+        const raw = localStorage.getItem(`customer_session_${affiliateStoreId}`);
+        if (raw) buyerSessionId = JSON.parse(raw)?.sessionId || null;
+      } catch (_) {
+        buyerSessionId = localStorage.getItem(`store_session_${affiliateStoreId}`);
+      }
 
       const payload = {
         cart_id: cartId,

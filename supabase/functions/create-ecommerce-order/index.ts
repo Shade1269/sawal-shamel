@@ -25,7 +25,7 @@ serve(async (req) => {
 
     console.log("[create-ecommerce-order] Start", { cart_id, shop_id, affiliate_store_id });
 
-    if (!cart_id || !shop_id || !affiliate_store_id || !customer?.name || !customer?.phone || !customer?.address?.city || !customer?.address?.street) {
+    if (!cart_id || !affiliate_store_id || !customer?.name || !customer?.phone || !customer?.address?.city || !customer?.address?.street) {
       return new Response(
         JSON.stringify({ success: false, error: "بيانات الطلب ناقصة" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -42,8 +42,8 @@ serve(async (req) => {
     const { data: items, error: itemsLoadError } = await supabase
       .from("cart_items")
       .select(
-        `id, product_id, quantity, unit_price_sar, total_price_sar,
-         products ( id, title, image_urls )`
+         `id, product_id, quantity, unit_price_sar, total_price_sar,
+         products ( id, title, image_urls, shop_id )`
       )
       .eq("cart_id", cart_id);
 
@@ -66,11 +66,20 @@ serve(async (req) => {
 
     const orderNumber = `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
 
+    // Resolve shop_id from payload or cart items' products
+    const resolvedShopId = shop_id ?? (items?.[0]?.products?.shop_id ?? null);
+    if (!resolvedShopId) {
+      return new Response(
+        JSON.stringify({ success: false, error: "معرّف المتجر مفقود" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Create order
     const { data: order, error: orderError } = await supabase
       .from("ecommerce_orders")
       .insert({
-        shop_id,
+        shop_id: resolvedShopId,
         affiliate_store_id,
         buyer_session_id: buyer_session_id ?? null,
         customer_name: customer.name,
