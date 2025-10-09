@@ -200,7 +200,6 @@ serve(async (req) => {
       product_image_url: it.products?.image_urls?.[0] ?? null,
       quantity: it.quantity,
       unit_price_sar: it.unit_price_sar,
-      total_price_sar: it.total_price_sar ?? (it.quantity * it.unit_price_sar),
     }));
 
     const { error: oiError } = await supabase
