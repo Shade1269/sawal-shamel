@@ -3051,6 +3051,7 @@ export type Database = {
           product_title: string
           quantity: number
           selected_variants: Json | null
+          total_price_computed: number | null
           total_price_sar: number | null
           total_price_sar_computed: number | null
           unit_price_sar: number
@@ -3067,6 +3068,7 @@ export type Database = {
           product_title: string
           quantity: number
           selected_variants?: Json | null
+          total_price_computed?: number | null
           total_price_sar?: number | null
           total_price_sar_computed?: number | null
           unit_price_sar: number
@@ -3083,6 +3085,7 @@ export type Database = {
           product_title?: string
           quantity?: number
           selected_variants?: Json | null
+          total_price_computed?: number | null
           total_price_sar?: number | null
           total_price_sar_computed?: number | null
           unit_price_sar?: number
@@ -8996,6 +8999,7 @@ export type Database = {
           product_image_url: string | null
           product_title: string
           quantity: number
+          total_price_computed: number | null
           total_price_sar: number | null
           total_price_sar_computed: number | null
           unit_price_sar: number
@@ -9008,6 +9012,7 @@ export type Database = {
           product_image_url?: string | null
           product_title: string
           quantity?: number
+          total_price_computed?: number | null
           total_price_sar?: number | null
           total_price_sar_computed?: number | null
           unit_price_sar: number
@@ -9020,6 +9025,7 @@ export type Database = {
           product_image_url?: string | null
           product_title?: string
           quantity?: number
+          total_price_computed?: number | null
           total_price_sar?: number | null
           total_price_sar_computed?: number | null
           unit_price_sar?: number
