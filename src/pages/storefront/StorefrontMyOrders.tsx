@@ -97,19 +97,7 @@ const StorefrontMyOrders = () => {
 
   // إرسال كود OTP
   const handleSendOTP = async () => {
-    // التحقق من المتجر
-    if (!store) {
-      toast({
-        title: "خطأ",
-        description: "جاري تحميل بيانات المتجر...",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // التحقق من رقم الجوال
-    const cleanPhone = phone.trim();
-    if (!cleanPhone) {
+    if (!store || !phone.trim()) {
       toast({
         title: "رقم الجوال مطلوب",
         description: "يرجى إدخال رقم جوالك",
@@ -118,18 +106,7 @@ const StorefrontMyOrders = () => {
       return;
     }
 
-    // التحقق من أن الرقم يحتوي على أرقام فقط
-    const digits = cleanPhone.replace(/\D/g, '');
-    if (digits.length < 9) {
-      toast({
-        title: "رقم جوال غير صحيح",
-        description: "يرجى إدخال رقم جوال صحيح (مثال: 0501234567)",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    const result = await otpManager.sendOTP(cleanPhone);
+    const result = await otpManager.sendOTP(phone);
     if (result.success) {
       setShowOTPInput(true);
     }
@@ -249,7 +226,7 @@ const StorefrontMyOrders = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="sm" asChild>
-                <Link to={`/${store_slug}`}>
+                <Link to={`/s/${store_slug}`}>
                   <ArrowLeft className="h-4 w-4 ml-2" />
                   العودة للمتجر
                 </Link>
@@ -368,7 +345,7 @@ const StorefrontMyOrders = () => {
                     لم تقم بأي طلبات من هذا المتجر حتى الآن
                   </p>
                   <Button asChild>
-                    <Link to={`/${store_slug}`}>
+                    <Link to={`/s/${store_slug}`}>
                       ابدأ التسوق الآن
                     </Link>
                   </Button>

@@ -21,7 +21,6 @@ import { ArrowLeft, ShoppingCart, Package, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { Link } from 'react-router-dom';
-import { CheckoutOTPModal } from '@/components/storefront/CheckoutOTPModal';
 
 interface CartItem {
   id: string;
@@ -59,8 +58,6 @@ const StorefrontCheckout = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [showOTPModal, setShowOTPModal] = useState(false);
-  const [verifiedSessionId, setVerifiedSessionId] = useState<string | null>(null);
   
   const [customerData, setCustomerData] = useState<CustomerData>({
     full_name: '',
@@ -184,7 +181,7 @@ const StorefrontCheckout = () => {
     return { subtotal, shipping, total };
   };
 
-  const handleInitiateCheckout = (e: React.FormEvent) => {
+  const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!store || cartItems.length === 0) return;
@@ -198,18 +195,6 @@ const StorefrontCheckout = () => {
       });
       return;
     }
-    
-    // فتح نافذة التحقق من OTP
-    setShowOTPModal(true);
-  };
-
-  const handleOTPVerified = (sessionId: string, verifiedPhone: string) => {
-    setVerifiedSessionId(sessionId);
-    setCustomerData(prev => ({ ...prev, phone: verifiedPhone }));
-    handleSubmitOrder(sessionId, verifiedPhone);
-  };
-
-  const handleSubmitOrder = async (sessionId: string, verifiedPhone: string) => {
 
     try {
       setSubmitting(true);
@@ -223,13 +208,12 @@ const StorefrontCheckout = () => {
           shop_id: store.id, // مؤقتاً نستخدم نفس معرف المتجر
           affiliate_store_id: store.id,
           customer_name: customerData.full_name,
-          customer_phone: verifiedPhone,
+          customer_phone: customerData.phone,
           customer_email: customerData.email || null,
-          customer_session_id: sessionId,
           shipping_address: {
             address: customerData.address,
             city: customerData.city,
-            phone: verifiedPhone
+            phone: customerData.phone
           },
           subtotal_sar: subtotal,
           shipping_sar: shipping,
@@ -352,7 +336,7 @@ const StorefrontCheckout = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleInitiateCheckout} className="space-y-4">
+              <form onSubmit={handleSubmitOrder} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="full_name">الاسم الكامل *</Label>
@@ -487,15 +471,6 @@ const StorefrontCheckout = () => {
           </Card>
         </div>
       </div>
-
-      {/* OTP Modal */}
-      <CheckoutOTPModal
-        isOpen={showOTPModal}
-        onClose={() => setShowOTPModal(false)}
-        onVerified={handleOTPVerified}
-        storeId={store?.id || ''}
-        initialPhone={customerData.phone}
-      />
     </div>
   );
 };

@@ -33,6 +33,7 @@ interface Product {
   image_urls?: string[];
   rating?: number;
   reviews_count?: number;
+  stock_quantity?: number;
   variants?: ProductVariant[];
 }
 
@@ -73,6 +74,7 @@ export const IsolatedStorefront: React.FC = () => {
             image_urls,
             rating,
             reviews_count,
+            stock_quantity,
             is_active
           )
         `)
@@ -92,8 +94,10 @@ export const IsolatedStorefront: React.FC = () => {
             image_urls: product.image_urls,
             rating: product.rating,
             reviews_count: product.reviews_count,
+            stock_quantity: product.stock_quantity,
           } as Product;
-        });
+        })
+        .filter(p => (p.stock_quantity ?? 0) > 0);
 
       const productIds = baseProducts.map(p => p.id);
       let variantsMap: Record<string, ProductVariant[]> = {};
@@ -303,38 +307,43 @@ export const IsolatedStorefront: React.FC = () => {
                   )}
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                    onClick={() => {
-                      const slug = store?.store_slug || storeSlug || '';
-                      if (!slug) return;
-                      sessionStorage.setItem(`scroll_${slug}`, window.scrollY.toString());
-                      navigate(`/${slug}/p/${product.id}`);
-                    }}
-                  >
-                    عرض الخيارات
-                  </Button>
-                  {/* السماح بالإضافة السريعة فقط إذا لا توجد متغيرات */}
-                  {(!product.variants || product.variants.length === 0) && (
+                <div className="flex items-center justify-between gap-2">
+                  <Badge variant="secondary" className="text-xs">
+                    متوفر ({product.stock_quantity})
+                  </Badge>
+                  <div className="flex items-center gap-2">
                     <Button
+                      variant="outline"
                       size="sm"
-                      onClick={() => handleAddToCart(product.id)}
-                      disabled={addingToCart === product.id}
                       className="text-xs"
+                      onClick={() => {
+                        const slug = store?.store_slug || storeSlug || '';
+                        if (!slug) return;
+                        sessionStorage.setItem(`scroll_${slug}`, window.scrollY.toString());
+                        navigate(`/s/${slug}/p/${product.id}`);
+                      }}
                     >
-                      {addingToCart === product.id ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <>
-                          <ShoppingCart className="h-3 w-3 mr-1" />
-                          أضف للسلة
-                        </>
-                      )}
+                      عرض الخيارات
                     </Button>
-                  )}
+                    {/* السماح بالإضافة السريعة فقط إذا لا توجد متغيرات */}
+                    {(!product.variants || product.variants.length === 0) && (
+                      <Button
+                        size="sm"
+                        onClick={() => handleAddToCart(product.id)}
+                        disabled={addingToCart === product.id}
+                        className="text-xs"
+                      >
+                        {addingToCart === product.id ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <>
+                            <ShoppingCart className="h-3 w-3 mr-1" />
+                            أضف للسلة
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </CardContent>
