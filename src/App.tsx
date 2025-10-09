@@ -50,7 +50,7 @@ const LuxuryShowcase = lazy(() => import("./pages/LuxuryShowcase"));
 const AdminHomePage = lazy(() => import("./pages/home/AdminHome"));
 const AdminWithdrawalsPage = lazy(() => import("./pages/admin/AdminWithdrawalsPage"));
 const AdminProductApproval = lazy(() => import("./pages/admin/AdminProductApproval"));
-const OrdersRouter = lazy(() => import("./pages/admin/OrdersRouter"));
+const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrders"));
 const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminCustomersPage = lazy(() => import("./pages/admin/AdminCustomers"));
 const AdminLeaderboardPage = lazy(() => import("./pages/admin/AdminLeaderboard"));
@@ -64,9 +64,6 @@ const MerchantLayout = lazy(() => import("./layouts/MerchantLayout"));
 const UiShowcasePage = lazy(() => import("./pages/UiShowcase"));
 const ProfilePage = lazy(() => import("./pages/profile"));
 const NotificationsPage = lazy(() => import("./pages/notifications"));
-const TestingPage = lazy(() => import("./pages/Testing"));
-const DocumentationPage = lazy(() => import("./pages/Documentation"));
-const RolloutPage = lazy(() => import("./pages/Rollout"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -147,14 +144,17 @@ const App = () => {
                                 )}
                               />
 
-               {/* Store Routes - Unified under /:storeSlug */}
-               <Route path="/:storeSlug" element={<IsolatedStoreLayout />}>
+               <Route path="/:slug" element={<StorefrontIntegration />} />
+               <Route path="/:slug/checkout" element={<StorefrontCheckout />} />
+               <Route path="/:slug/orders" element={<CustomerAuthProvider><CustomerOrders /></CustomerAuthProvider>} />
+               <Route path="/store/:storeSlug/auth" element={<CustomerAuthProvider><StoreAuth /></CustomerAuthProvider>} />
+               
+               {/* Isolated Store Routes */}
+               <Route path="/store/:storeSlug" element={<IsolatedStoreLayout />}>
                  <Route index element={<IsolatedStorefront />} />
-                 <Route path="p/:productId" element={<StorefrontIntegration />} />
                  <Route path="cart" element={<IsolatedStoreCart />} />
                  <Route path="checkout" element={<IsolatedStoreCheckout />} />
                  <Route path="orders" element={<StorefrontMyOrders />} />
-                 <Route path="auth" element={<StoreAuth />} />
                  <Route path="order/:orderId/confirmation" element={<StoreOrderConfirmation />} />
                </Route>
 
@@ -189,7 +189,7 @@ const App = () => {
                               >
                                 <Route index element={<Navigate to="dashboard" replace />} />
                                 <Route path="dashboard" element={<AdminHomePage />} />
-                                <Route path="orders" element={<OrdersRouter />} />
+                                <Route path="orders" element={<AdminOrdersPage />} />
                                 <Route path="analytics" element={<AdminAnalyticsPage />} />
                                 <Route path="leaderboard" element={<AdminLeaderboardPage />} />
                                 <Route path="customers" element={<AdminCustomersPage />} />
@@ -198,9 +198,6 @@ const App = () => {
                                 <Route path="shipping" element={<ShippingManagementPage />} />
                                 <Route path="withdrawals" element={<AdminWithdrawalsPage />} />
                                 <Route path="products/approval" element={<AdminProductApproval />} />
-                                <Route path="testing" element={<TestingPage />} />
-                                <Route path="documentation" element={<DocumentationPage />} />
-                                <Route path="rollout" element={<RolloutPage />} />
                               </Route>
 
                               <Route

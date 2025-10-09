@@ -59,7 +59,7 @@ const CustomerOrders: React.FC = () => {
   // Redirect if not authenticated
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      navigate(`/${slug}/auth?returnUrl=/${slug}/orders`);
+      navigate(`/store/${slug}/auth?returnUrl=/${slug}/orders`);
     }
   }, [isAuthenticated, authLoading, slug, navigate]);
 

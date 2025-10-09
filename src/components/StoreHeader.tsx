@@ -180,7 +180,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = ({ store, productsCount }
             <div className="flex flex-col gap-3 sm:gap-4 items-start sm:items-end w-full sm:w-auto">
               <SimpleCart 
                 shopSlug={store.store_slug} 
-                onCheckout={() => navigate(`/${store.store_slug}/checkout`)}
+                onCheckout={() => navigate(`/store/${store.store_slug}/checkout`)}
               />
               
               <div className="text-right">

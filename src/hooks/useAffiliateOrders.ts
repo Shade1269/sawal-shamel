@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { UnifiedOrdersService } from '@/services/UnifiedOrdersService';
+import { UnifiedOrdersService } from '@/lib/unifiedOrdersService';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface AffiliateOrdersStats {
@@ -37,18 +37,17 @@ export const useAffiliateOrders = (affiliateStoreId?: string) => {
         setError(null);
 
         // جلب الطلبات المرتبطة بالمسوق
-        const ordersData = await UnifiedOrdersService.fetchOrders({
-          affiliateStoreId: affiliateStoreId,
+        const ordersData = await UnifiedOrdersService.getOrdersWithItems({
+          affiliate_store_id: affiliateStoreId,
+          limit: 100
         });
 
         setOrders(ordersData);
 
         // حساب الإحصائيات
         const totalOrders = ordersData.length;
-        const totalRevenue = ordersData.reduce((sum, order) => sum + Number(order.total_amount_sar || 0), 0);
-        // العمولة يمكن حسابها من جدول commissions المنفصل
-        // مؤقتاً نحسبها من النسبة إذا كانت موجودة
-        const totalCommissions = 0; // TODO: ربط مع جدول commissions
+        const totalRevenue = ordersData.reduce((sum, order) => sum + Number(order.total_sar), 0);
+        const totalCommissions = ordersData.reduce((sum, order) => sum + Number(order.affiliate_commission_sar), 0);
         
         // جلب العمولات من جدول commissions
         const { data: commissions, error: commissionsError } = await supabase
@@ -100,14 +99,15 @@ export const useAffiliateOrders = (affiliateStoreId?: string) => {
             setLoading(true);
             setError(null);
 
-            const ordersData = await UnifiedOrdersService.fetchOrders({
-              affiliateStoreId: affiliateStoreId,
+            const ordersData = await UnifiedOrdersService.getOrdersWithItems({
+              affiliate_store_id: affiliateStoreId,
+              limit: 100
             });
 
             setOrders(ordersData);
 
             const totalOrders = ordersData.length;
-            const totalRevenue = ordersData.reduce((sum, order) => sum + Number(order.total_amount_sar || 0), 0);
+            const totalRevenue = ordersData.reduce((sum, order) => sum + Number(order.total_sar), 0);
             
             const { data: commissions } = await supabase
               .from('commissions')

@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
-import { UnifiedOrdersService, UnifiedOrderFilters } from '@/services/UnifiedOrdersService';
-import type { Database } from '@/integrations/supabase/types';
+import { UnifiedOrdersService, UnifiedOrderWithItems, UnifiedOrder } from '@/lib/unifiedOrdersService';
 
-type OrderHub = Database['public']['Tables']['order_hub']['Row'];
+export interface UseUnifiedOrdersParams {
+  shopId?: string;
+  affiliateStoreId?: string;
+  limit?: number;
+  offset?: number;
+  autoRefresh?: boolean;
+}
 
-export const useUnifiedOrders = (filters?: UnifiedOrderFilters) => {
-  const [orders, setOrders] = useState<OrderHub[]>([]);
+export const useUnifiedOrders = (params: UseUnifiedOrdersParams = {}) => {
+  const [orders, setOrders] = useState<UnifiedOrderWithItems[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -13,7 +18,7 @@ export const useUnifiedOrders = (filters?: UnifiedOrderFilters) => {
     try {
       setLoading(true);
       setError(null);
-      const ordersData = await UnifiedOrdersService.fetchOrders(filters);
+      const ordersData = await UnifiedOrdersService.getOrdersWithItems(params);
       setOrders(ordersData);
     } catch (err: any) {
       console.error('Error fetching unified orders:', err);
@@ -49,7 +54,18 @@ export const useUnifiedOrders = (filters?: UnifiedOrderFilters) => {
 
   useEffect(() => {
     fetchOrders();
-  }, [filters?.storeId, filters?.affiliateStoreId, filters?.source, filters?.status]);
+  }, [params.shopId, params.affiliateStoreId, params.limit, params.offset]);
+
+  // Auto-refresh if enabled
+  useEffect(() => {
+    if (params.autoRefresh) {
+      const interval = setInterval(() => {
+        fetchOrders();
+      }, 30000); // كل 30 ثانية
+
+      return () => clearInterval(interval);
+    }
+  }, [params.autoRefresh]);
 
   return {
     orders,
@@ -75,16 +91,8 @@ export const useUnifiedOrdersStats = (shopId?: string, affiliateStoreId?: string
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const statsData = await UnifiedOrdersService.getStoreStats(shopId, affiliateStoreId);
-        if (statsData) {
-          setStats({
-            totalOrders: statsData.total_orders,
-            totalRevenue: statsData.total_revenue,
-            confirmedOrders: statsData.confirmed_orders,
-            pendingOrders: statsData.pending_orders,
-            averageOrderValue: statsData.average_order_value
-          });
-        }
+        const statsData = await UnifiedOrdersService.getOrdersStats(shopId, affiliateStoreId);
+        setStats(statsData);
       } catch (error) {
         console.error('Error fetching orders stats:', error);
       } finally {

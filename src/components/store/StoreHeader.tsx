@@ -52,7 +52,7 @@ const StoreHeader = () => {
     if (isAuthenticated) {
       signOut();
     } else {
-      navigate(`/${storeSlug}/auth`);
+      navigate(`/store/${storeSlug}/auth`);
     }
   };
 
@@ -72,7 +72,7 @@ const StoreHeader = () => {
         {/* شعار المتجر واسمه */}
         <div 
           className="flex items-center gap-3 cursor-pointer"
-          onClick={() => navigate(`/${storeSlug}`)}
+          onClick={() => navigate(`/store/${storeSlug}`)}
         >
           <Avatar className="h-10 w-10">
             <AvatarImage src={store.logo_url} alt={store.store_name} />
@@ -96,7 +96,7 @@ const StoreHeader = () => {
           <Button 
             variant="ghost" 
             size="sm"
-            onClick={() => navigate(`/${storeSlug}`)}
+            onClick={() => navigate(`/store/${storeSlug}`)}
           >
             المنتجات
           </Button>
@@ -111,7 +111,7 @@ const StoreHeader = () => {
             className="relative"
             onClick={() => {
               // فتح صفحة السلة أو استخدم Sheet
-              navigate(`/${storeSlug}/cart`);
+              navigate(`/store/${storeSlug}/cart`);
             }}
           >
             <ShoppingCart className="h-4 w-4" />

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { startOfMonth } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
-import { UnifiedOrdersService } from '@/services/UnifiedOrdersService';
+import { UnifiedOrdersService } from '@/lib/unifiedOrdersService';
 import { createStoreUrl } from '@/utils/domains';
 import {
   deriveSalesSnapshotsRuntime,
@@ -199,14 +199,15 @@ export const useAffiliateMetrics = ({ profileId }: UseAffiliateMetricsParams): U
         return [] as AffiliateRecentOrder[];
       }
 
-      const orders = await UnifiedOrdersService.fetchOrders({
-        affiliateStoreId: storeId,
+      const orders = await UnifiedOrdersService.getOrders({
+        affiliate_store_id: storeId,
+        limit: 10,
       });
 
       return orders.map((order) => ({
         id: order.id,
         orderNumber: order.order_number ?? `#${order.id.slice(0, 8)}`,
-        total: normaliseNumber(order.total_amount_sar),
+        total: normaliseNumber(order.total_sar),
         paymentStatus: order.payment_status ?? 'PENDING',
         fulfillmentStatus: order.status ?? 'PROCESSING',
         createdAt: order.created_at,

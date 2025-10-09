@@ -571,7 +571,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const handleCheckoutClick = () => {
     // التوجه لصفحة الطلب الخاصة بالمتجر (المسار المعزول ليتوافق مع السلة)
     if (storeSlug) {
-      navigate(`/${storeSlug}/checkout`);
+      navigate(`/store/${storeSlug}/checkout`);
     }
   };
 
@@ -891,7 +891,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => navigate(`/${storeSlug}/auth`)}
+                  onClick={() => navigate(`/store/${storeSlug}/auth`)}
                   className="hover:shadow-lg hover:scale-105 transition-all rounded-xl"
                 >
                   <User className="h-4 w-4 md:mr-2" />

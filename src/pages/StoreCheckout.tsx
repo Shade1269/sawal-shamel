@@ -148,7 +148,7 @@ const StoreCheckout = () => {
       clearCart();
 
       // الانتقال لصفحة التأكيد
-      navigate(`/${storeSlug}/order-confirmation/${order.id}`);
+      navigate(`/store/${storeSlug}/order-confirmation/${order.id}`);
 
       toast.success('تم إرسال طلبك بنجاح!');
     } catch (error) {
@@ -178,7 +178,7 @@ const StoreCheckout = () => {
             <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">السلة فارغة</h3>
             <p className="text-muted-foreground mb-4">لا توجد منتجات في السلة</p>
-            <Button onClick={() => navigate(`/${storeSlug}`)}>
+            <Button onClick={() => navigate(`/store/${storeSlug}`)}>
               العودة للمتجر
             </Button>
           </CardContent>
@@ -193,7 +193,7 @@ const StoreCheckout = () => {
         {/* العودة للمتجر */}
         <Button 
           variant="ghost" 
-          onClick={() => navigate(`/${storeSlug}`)}
+          onClick={() => navigate(`/store/${storeSlug}`)}
           className="mb-6"
         >
           <ArrowRight className="h-4 w-4 ml-2" />

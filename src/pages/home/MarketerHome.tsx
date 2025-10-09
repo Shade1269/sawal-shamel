@@ -37,8 +37,8 @@ const MarketerHome: React.FC<MarketerHomeProps> = ({ statisticsOverride, storeSl
   const storeSlug = storeSlugOverride ?? userShop?.store_slug ?? userShop?.slug ?? 'my-boutique';
   // Use full URL with domain for sharing
   const publicStoreUrl = typeof window !== 'undefined' 
-    ? `${window.location.origin}/${storeSlug}` 
-    : `/${storeSlug}`;
+    ? `${window.location.origin}/store/${storeSlug}` 
+    : `/store/${storeSlug}`;
 
   const { store } = useAffiliateStore();
 
@@ -149,7 +149,7 @@ const MarketerHome: React.FC<MarketerHomeProps> = ({ statisticsOverride, storeSl
         description: 'استعرض واجهة المتجر كما يراها العملاء',
         icon: ExternalLink,
         action: () => {
-          window.open(`/${storeSlug}`, '_blank');
+          window.open(`/store/${storeSlug}`, '_blank');
         },
       },
     ],
@@ -268,7 +268,7 @@ const MarketerHome: React.FC<MarketerHomeProps> = ({ statisticsOverride, storeSl
 
       <footer className="flex flex-wrap items-center justify-between gap-[var(--spacing-md)] text-xs text-[color:var(--muted-foreground)]">
         <span>
-          رابط متجرك العام: <a className="underline decoration-dotted cursor-pointer" onClick={() => window.open(`/${storeSlug}`, '_blank')}>{publicStoreUrl}</a>
+          رابط متجرك العام: <a className="underline decoration-dotted cursor-pointer" onClick={() => window.open(`/store/${storeSlug}`, '_blank')}>{publicStoreUrl}</a>
         </span>
         <span>سيتم ترحيل العمولات المؤكدة في يوم 3 من الشهر القادم.</span>
       </footer>

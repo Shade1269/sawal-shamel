@@ -115,7 +115,7 @@ export const IsolatedStoreLayout: React.FC = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate(`/${storeSlug}/orders`)}
+                  onClick={() => navigate(`/store/${storeSlug}/orders`)}
                   className="hidden sm:flex"
                 >
                   <Package className="h-4 w-4 mr-2" />
@@ -125,7 +125,7 @@ export const IsolatedStoreLayout: React.FC = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate(`/${storeSlug}/cart`)}
+                  onClick={() => navigate(`/store/${storeSlug}/cart`)}
                   className="relative"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />
@@ -153,7 +153,7 @@ export const IsolatedStoreLayout: React.FC = () => {
         {cartItemsCount > 0 && (
           <div className="fixed bottom-4 right-4 sm:hidden">
             <Button
-              onClick={() => navigate(`/${storeSlug}/cart`)}
+              onClick={() => navigate(`/store/${storeSlug}/cart`)}
               className="rounded-full h-14 w-14 shadow-lg"
             >
               <ShoppingCart className="h-6 w-6" />

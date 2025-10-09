@@ -260,7 +260,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
       ? window.localStorage.getItem("storefront:last-slug") ?? undefined
       : undefined;
 
-  const emptyStateHref = lastStoreSlug ? `/${lastStoreSlug}` : "/";
+  const emptyStateHref = lastStoreSlug ? `/store/${lastStoreSlug}` : "/";
 
   const handlePlaceOrder = async () => {
     setTouched({
