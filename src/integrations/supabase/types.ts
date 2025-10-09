@@ -6381,6 +6381,7 @@ export type Database = {
           current_stock: number
           id: string
           image_urls: Json | null
+          image_urls_array: string[] | null
           is_active: boolean
           material: string | null
           min_stock_level: number | null
@@ -6404,6 +6405,7 @@ export type Database = {
           current_stock?: number
           id?: string
           image_urls?: Json | null
+          image_urls_array?: string[] | null
           is_active?: boolean
           material?: string | null
           min_stock_level?: number | null
@@ -6427,6 +6429,7 @@ export type Database = {
           current_stock?: number
           id?: string
           image_urls?: Json | null
+          image_urls_array?: string[] | null
           is_active?: boolean
           material?: string | null
           min_stock_level?: number | null
@@ -8446,7 +8449,7 @@ export type Database = {
           product_image_url: string | null
           product_title: string
           quantity: number
-          total_price_sar: number
+          total_price_sar: number | null
           total_price_sar_computed: number | null
           unit_price_sar: number
         }
@@ -8458,7 +8461,7 @@ export type Database = {
           product_image_url?: string | null
           product_title: string
           quantity?: number
-          total_price_sar: number
+          total_price_sar?: number | null
           total_price_sar_computed?: number | null
           unit_price_sar: number
         }
@@ -8470,7 +8473,7 @@ export type Database = {
           product_image_url?: string | null
           product_title?: string
           quantity?: number
-          total_price_sar?: number
+          total_price_sar?: number | null
           total_price_sar_computed?: number | null
           unit_price_sar?: number
         }
@@ -10547,6 +10550,16 @@ export type Database = {
           },
         ]
       }
+      v_generated_columns_status: {
+        Row: {
+          avg_value: number | null
+          calculation: string | null
+          column_name: string | null
+          row_count: number | null
+          table_name: string | null
+        }
+        Relationships: []
+      }
       v_metrics_orders_daily: {
         Row: {
           affiliate_store_id: string | null
@@ -10713,16 +10726,14 @@ export type Database = {
       }
       v_order_items_unified: {
         Row: {
-          commission_rate: number | null
-          commission_sar: number | null
           created_at: string | null
           id: string | null
-          merchant_id: string | null
           order_id: string | null
           product_id: string | null
+          product_image_url: string | null
           product_title: string | null
           quantity: number | null
-          source_table: string | null
+          source: string | null
           total_price_sar: number | null
           unit_price_sar: number | null
         }
@@ -10782,14 +10793,20 @@ export type Database = {
       }
       v_unified_order_items: {
         Row: {
+          commission_rate: number | null
+          commission_sar: number | null
           created_at: string | null
           id: string | null
           order_id: string | null
           product_id: string | null
+          product_image_url: string | null
+          product_sku: string | null
+          product_title: string | null
           quantity: number | null
-          source_table: string | null
-          total_price: number | null
-          unit_price: number | null
+          selected_variants: Json | null
+          source: string | null
+          total_price_sar: number | null
+          unit_price_sar: number | null
         }
         Relationships: []
       }
