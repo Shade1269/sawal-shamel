@@ -19,6 +19,8 @@ import { useSupabaseUserData } from "@/hooks/useSupabaseUserData";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from 'react-router-dom';
 import { BackButton } from '@/components/ui/back-button';
+import { useShippingManagement } from '@/hooks/useShippingManagement';
+import { usePaymentGateways } from '@/hooks/usePaymentGateways';
 
 
 import { 
@@ -85,13 +87,24 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
     commission_rate: ''
   });
   
-  // Payment Providers States
-  const [paymentProviders, setPaymentProviders] = useState<{name: string, apiKey: string}[]>([]);
-  const [newPaymentProvider, setNewPaymentProvider] = useState({name: '', apiKey: ''});
+  // استخدام Hooks لإدارة الشحن والدفع من قاعدة البيانات
+  const { 
+    providers: shippingProviders, 
+    loading: shippingLoading,
+    createProvider: createShippingProvider,
+    updateProvider: updateShippingProvider
+  } = useShippingManagement();
   
-  // Shipping Companies States
-  const [shippingCompanies, setShippingCompanies] = useState<{name: string, apiKey: string, price: number}[]>([]);
-  const [newShippingCompany, setNewShippingCompany] = useState({name: '', apiKey: '', price: 0});
+  const {
+    gateways: paymentGateways,
+    loading: paymentLoading,
+    createGateway: createPaymentGateway,
+    deleteGateway: deletePaymentGateway
+  } = usePaymentGateways();
+  
+  // حالات محلية للنماذج فقط
+  const [newPaymentProvider, setNewPaymentProvider] = useState({gateway_name: '', display_name: '', api_key: ''});
+  const [newShippingCompany, setNewShippingCompany] = useState({name: '', name_en: '', code: '', api_endpoint: ''});
 
   const [productVariants, setProductVariants] = useState([
     { size: '', color: '', stock: 0 }
@@ -232,26 +245,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
     setLoading(false);
   };
 
-  // Load and save payment providers and shipping companies
-  const loadProviders = () => {
-    const savedPaymentProviders = localStorage.getItem('admin_payment_providers');
-    const savedShippingCompanies = localStorage.getItem('admin_shipping_companies');
-    
-    if (savedPaymentProviders) {
-      setPaymentProviders(JSON.parse(savedPaymentProviders));
-    }
-    
-    if (savedShippingCompanies) {
-      setShippingCompanies(JSON.parse(savedShippingCompanies));
-    }
-  };
-
-  const saveProviders = () => {
-    localStorage.setItem('admin_payment_providers', JSON.stringify(paymentProviders));
-    localStorage.setItem('admin_shipping_companies', JSON.stringify(shippingCompanies));
-  };
-
-  // تم إيقاف الحفظ التلقائي - استخدم زر الحفظ اليدوي في الأسفل
+  // لا حاجة لـ loadProviders و saveProviders - البيانات تأتي مباشرة من قاعدة البيانات
 
   const loadProducts = async () => {
     try {
@@ -552,7 +546,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
   useEffect(() => {
     if (isAllowed) {
       loadLists();
-      loadProviders(); // Load saved providers
+      // البيانات تأتي مباشرة من قاعدة البيانات عبر Hooks
     }
   }, [isAllowed]);
 
@@ -1068,34 +1062,51 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-4">
                   <Plus className="h-5 w-5 text-primary" />
-                  <h3 className="font-semibold">إضافة شركة دفع</h3>
+                  <h3 className="font-semibold">إضافة وسيلة دفع</h3>
                 </div>
 
                 <div className="space-y-3">
                   <Input
-                    placeholder="اسم شركة الدفع"
-                    value={newPaymentProvider.name}
-                    onChange={(e) => setNewPaymentProvider({...newPaymentProvider, name: e.target.value})}
+                    placeholder="معرف الوسيلة (مثل: tabby, tamara)"
+                    value={newPaymentProvider.gateway_name}
+                    onChange={(e) => setNewPaymentProvider({...newPaymentProvider, gateway_name: e.target.value})}
                   />
                   <Input
-                    placeholder="API Key"
-                    value={newPaymentProvider.apiKey}
-                    onChange={(e) => setNewPaymentProvider({...newPaymentProvider, apiKey: e.target.value})}
+                    placeholder="الاسم المعروض (مثل: تابي، تمارا)"
+                    value={newPaymentProvider.display_name}
+                    onChange={(e) => setNewPaymentProvider({...newPaymentProvider, display_name: e.target.value})}
+                  />
+                  <Input
+                    placeholder="API Key (اختياري)"
+                    value={newPaymentProvider.api_key}
+                    onChange={(e) => setNewPaymentProvider({...newPaymentProvider, api_key: e.target.value})}
                   />
                   <Button
-                    onClick={() => {
-                      if (!newPaymentProvider.name.trim()) {
-                        toast({ title: "مطلوب", description: "اسم الشركة مطلوب", variant: "destructive" });
+                    onClick={async () => {
+                      if (!newPaymentProvider.gateway_name.trim() || !newPaymentProvider.display_name.trim()) {
+                        toast({ title: "مطلوب", description: "المعرف والاسم المعروض مطلوبان", variant: "destructive" });
                         return;
                       }
-                      const updatedProviders = [...paymentProviders, {...newPaymentProvider}];
-                      setPaymentProviders(updatedProviders);
-                      setNewPaymentProvider({name: '', apiKey: ''});
-                      toast({ title: "تم الإضافة", description: "تم إضافة شركة الدفع بنجاح" });
+                      await createPaymentGateway({
+                        gateway_name: newPaymentProvider.gateway_name,
+                        display_name: newPaymentProvider.display_name,
+                        provider: newPaymentProvider.gateway_name, // استخدام نفس المعرف كـ provider
+                        api_key: newPaymentProvider.api_key || '',
+                        is_enabled: true,
+                        is_test_mode: false,
+                        percentage_fee: 0,
+                        fixed_fee_sar: 0,
+                        min_amount_sar: 0,
+                        allowed_currencies: ['SAR'],
+                        configuration: {}
+                      });
+                      setNewPaymentProvider({gateway_name: '', display_name: '', api_key: ''});
+                      toast({ title: "تم الإضافة", description: "تم إضافة وسيلة الدفع وستظهر لجميع المتاجر" });
                     }}
                     className="w-full"
+                    disabled={paymentLoading}
                   >
-                    إضافة شركة دفع
+                    إضافة وسيلة دفع
                   </Button>
                 </div>
               </div>
@@ -1104,37 +1115,42 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-4">
                   <Settings className="h-5 w-5 text-primary" />
-                  <h3 className="font-semibold">شركات الدفع</h3>
-                  <Badge variant="outline">{paymentProviders.length}</Badge>
+                  <h3 className="font-semibold">وسائل الدفع</h3>
+                  <Badge variant="outline">{paymentGateways.length}</Badge>
                 </div>
 
                 <div className="max-h-96 overflow-y-auto space-y-3">
-                  {paymentProviders.map((provider, index) => (
-                    <div key={index} className="bg-card border rounded-lg p-4">
+                  {paymentGateways.map((gateway) => (
+                    <div key={gateway.id} className="bg-card border rounded-lg p-4">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
-                          <h4 className="font-medium">{provider.name}</h4>
+                          <h4 className="font-medium">{gateway.display_name}</h4>
+                          <p className="text-xs text-muted-foreground">معرف: {gateway.gateway_name}</p>
                           <p className="text-sm text-muted-foreground">
-                            API Key: {provider.apiKey ? '••••••••' : 'غير محدد'}
+                            API Key: {gateway.api_key ? '••••••••' : 'غير محدد'}
                           </p>
+                          <Badge variant={gateway.is_enabled ? 'default' : 'secondary'} className="mt-1">
+                            {gateway.is_enabled ? 'نشط' : 'غير نشط'}
+                          </Badge>
                         </div>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => {
-                            setPaymentProviders(prev => prev.filter((_, i) => i !== index));
-                            toast({ title: "تم الحذف", description: "تم حذف شركة الدفع بنجاح" });
+                          onClick={async () => {
+                            await deletePaymentGateway(gateway.id);
+                            toast({ title: "تم الحذف", description: "تم حذف وسيلة الدفع من جميع المتاجر" });
                           }}
                           className="text-destructive hover:text-destructive"
+                          disabled={paymentLoading}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
                   ))}
-                  {paymentProviders.length === 0 && (
+                  {paymentGateways.length === 0 && (
                     <div className="text-center py-8 text-muted-foreground">
-                      لا توجد شركات دفع محددة
+                      {paymentLoading ? 'جاري التحميل...' : 'لا توجد وسائل دفع محددة'}
                     </div>
                   )}
                 </div>
@@ -1159,35 +1175,53 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
 
                 <div className="space-y-3">
                   <Input
-                    placeholder="اسم شركة الشحن"
+                    placeholder="اسم الشركة بالعربية"
                     value={newShippingCompany.name}
                     onChange={(e) => setNewShippingCompany({...newShippingCompany, name: e.target.value})}
                   />
                   <Input
-                    placeholder="API Key"
-                    value={newShippingCompany.apiKey}
-                    onChange={(e) => setNewShippingCompany({...newShippingCompany, apiKey: e.target.value})}
+                    placeholder="اسم الشركة بالإنجليزية"
+                    value={newShippingCompany.name_en}
+                    onChange={(e) => setNewShippingCompany({...newShippingCompany, name_en: e.target.value})}
                   />
                   <Input
-                    type="number"
-                    placeholder="سعر الشحن (ريال)"
-                    value={newShippingCompany.price}
-                    onChange={(e) => setNewShippingCompany({...newShippingCompany, price: parseFloat(e.target.value) || 0})}
+                    placeholder="رمز الشركة (مثل: aramex, smsa)"
+                    value={newShippingCompany.code}
+                    onChange={(e) => setNewShippingCompany({...newShippingCompany, code: e.target.value})}
+                  />
+                  <Input
+                    placeholder="رابط API (اختياري)"
+                    value={newShippingCompany.api_endpoint}
+                    onChange={(e) => setNewShippingCompany({...newShippingCompany, api_endpoint: e.target.value})}
                   />
                   <Button
-                    onClick={() => {
-                      if (!newShippingCompany.name.trim()) {
-                        toast({ title: "مطلوب", description: "اسم الشركة مطلوب", variant: "destructive" });
+                    onClick={async () => {
+                      if (!newShippingCompany.name.trim() || !newShippingCompany.code.trim()) {
+                        toast({ title: "مطلوب", description: "الاسم والرمز مطلوبان", variant: "destructive" });
                         return;
                       }
-                      const updatedCompanies = [...shippingCompanies, {...newShippingCompany}];
-                      setShippingCompanies(updatedCompanies);
-                      setNewShippingCompany({name: '', apiKey: '', price: 0});
-                      toast({ title: "تم الإضافة", description: "تم إضافة شركة الشحن بنجاح" });
+                      await createShippingProvider({
+                        name: newShippingCompany.name,
+                        name_en: newShippingCompany.name_en || newShippingCompany.name,
+                        code: newShippingCompany.code,
+                        api_endpoint: newShippingCompany.api_endpoint,
+                        is_active: true,
+                        configuration: {}
+                      });
+                      setNewShippingCompany({name: '', name_en: '', code: '', api_endpoint: ''});
+                      toast({ title: "تم الإضافة", description: "تم إضافة شركة الشحن. يمكنك الآن تحديد المناطق والأسعار من صفحة الشحن" });
                     }}
                     className="w-full"
+                    disabled={shippingLoading}
                   >
                     إضافة شركة شحن
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/admin/shipping')}
+                    className="w-full"
+                  >
+                    إدارة المناطق والأسعار
                   </Button>
                 </div>
               </div>
@@ -1197,55 +1231,45 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                 <div className="flex items-center gap-2 mb-4">
                   <Package className="h-5 w-5 text-primary" />
                   <h3 className="font-semibold">شركات الشحن</h3>
-                  <Badge variant="outline">{shippingCompanies.length}</Badge>
+                  <Badge variant="outline">{shippingProviders.length}</Badge>
                 </div>
 
                 <div className="max-h-96 overflow-y-auto space-y-3">
-                  {shippingCompanies.map((company, index) => (
-                    <div key={index} className="bg-card border rounded-lg p-4">
+                  {shippingProviders.map((provider) => (
+                    <div key={provider.id} className="bg-card border rounded-lg p-4">
                        <div className="flex items-start justify-between mb-2">
                          <div className="flex-1">
-                           <h4 className="font-medium">{company.name}</h4>
-                           <p className="text-sm text-muted-foreground">
-                             API Key: {company.apiKey ? '••••••••' : 'غير محدد'}
-                           </p>
-                           <p className="text-sm font-medium text-primary">
-                             سعر الشحن: {company.price} ريال
-                           </p>
+                           <h4 className="font-medium">{provider.name}</h4>
+                           <p className="text-xs text-muted-foreground">رمز: {provider.code}</p>
+                           {provider.api_endpoint && (
+                             <p className="text-xs text-muted-foreground mt-1">
+                               API: {provider.api_endpoint}
+                             </p>
+                           )}
+                           <Badge variant={provider.is_active ? 'default' : 'secondary'} className="mt-2">
+                             {provider.is_active ? 'نشط' : 'غير نشط'}
+                           </Badge>
                          </div>
-                         <div className="flex items-center gap-2">
-                           <Input
-                             type="number"
-                             placeholder="سعر جديد"
-                             className="w-24 h-8"
-                             onChange={(e) => {
-                               const newPrice = parseFloat(e.target.value) || 0;
-                               setShippingCompanies(prev => 
-                                 prev.map((comp, i) => 
-                                   i === index ? { ...comp, price: newPrice } : comp
-                                 )
-                               );
-                             }}
-                           />
-                           <Button
-                             variant="ghost"
-                             size="sm"
-                             onClick={() => {
-                               const updatedCompanies = shippingCompanies.filter((_, i) => i !== index);
-                               setShippingCompanies(updatedCompanies);
-                               toast({ title: "تم الحذف", description: "تم حذف شركة الشحن بنجاح" });
-                             }}
-                             className="text-destructive hover:text-destructive"
-                           >
-                             <Trash2 className="h-4 w-4" />
-                           </Button>
-                         </div>
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={async () => {
+                             await updateShippingProvider(provider.id, { is_active: !provider.is_active });
+                             toast({ 
+                               title: provider.is_active ? "تم التعطيل" : "تم التفعيل", 
+                               description: `تم ${provider.is_active ? 'تعطيل' : 'تفعيل'} الشركة بنجاح` 
+                             });
+                           }}
+                           disabled={shippingLoading}
+                         >
+                           {provider.is_active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                         </Button>
                        </div>
                     </div>
                   ))}
-                  {shippingCompanies.length === 0 && (
+                  {shippingProviders.length === 0 && (
                     <div className="text-center py-8 text-muted-foreground">
-                      لا توجد شركات شحن محددة
+                      {shippingLoading ? 'جاري التحميل...' : 'لا توجد شركات شحن محددة'}
                     </div>
                   )}
                 </div>
@@ -1253,15 +1277,14 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
             </div>
           </div>
 
-          <div className="flex justify-end mb-8">
-            <Button
-              onClick={() => {
-                saveProviders();
-                toast({ title: "تم الحفظ", description: "تم حفظ إعدادات الدفع والشحن" });
-              }}
-            >
-              حفظ إعدادات الدفع والشحن
-            </Button>
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-8">
+            <p className="text-sm text-primary">
+              ✓ جميع التغييرات يتم حفظها تلقائياً في قاعدة البيانات
+              <br />
+              ✓ وسائل الدفع وشركات الشحن متاحة الآن لجميع المتاجر
+              <br />
+              ✓ لتحديد أسعار ومناطق الشحن، استخدم <Button variant="link" className="p-0 h-auto" onClick={() => navigate('/admin/shipping')}>صفحة إدارة الشحن</Button>
+            </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
