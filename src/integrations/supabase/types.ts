@@ -4389,25 +4389,55 @@ export type Database = {
       }
       order_hub: {
         Row: {
+          affiliate_store_id: string | null
           created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
           id: string
           order_number: string | null
+          payment_status: string | null
+          shipping_address: Json | null
+          shop_id: string | null
           source: string
           source_order_id: string
+          status: string | null
+          total_amount_sar: number | null
+          updated_at: string
         }
         Insert: {
+          affiliate_store_id?: string | null
           created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
           id?: string
           order_number?: string | null
+          payment_status?: string | null
+          shipping_address?: Json | null
+          shop_id?: string | null
           source: string
           source_order_id: string
+          status?: string | null
+          total_amount_sar?: number | null
+          updated_at?: string
         }
         Update: {
+          affiliate_store_id?: string | null
           created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
           id?: string
           order_number?: string | null
+          payment_status?: string | null
+          shipping_address?: Json | null
+          shop_id?: string | null
           source?: string
           source_order_id?: string
+          status?: string | null
+          total_amount_sar?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
