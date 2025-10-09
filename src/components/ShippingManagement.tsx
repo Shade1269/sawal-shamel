@@ -301,7 +301,7 @@ const ShippingManagement: React.FC = () => {
                       </Badge>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {zone.postal_codes.map((city, index) => (
+                      {(Array.isArray(zone.postal_codes) ? zone.postal_codes : []).map((city, index) => (
                         <Badge key={index} variant="outline">{city}</Badge>
                       ))}
                     </div>

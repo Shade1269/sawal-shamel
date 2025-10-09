@@ -92,7 +92,8 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
     providers: shippingProviders, 
     loading: shippingLoading,
     createProvider: createShippingProvider,
-    updateProvider: updateShippingProvider
+    updateProvider: updateShippingProvider,
+    refetch: refetchShipping
   } = useShippingManagement();
   
   const {
@@ -1208,8 +1209,9 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                         is_active: true,
                         configuration: {}
                       });
+                      await refetchShipping?.();
                       setNewShippingCompany({name: '', name_en: '', code: '', api_endpoint: ''});
-                      toast({ title: "تم الإضافة", description: "تم إضافة شركة الشحن. يمكنك الآن تحديد المناطق والأسعار من صفحة الشحن" });
+                      toast({ title: "تم الإضافة", description: "تم إضافة شركة الشحن إلى القائمة" });
                     }}
                     className="w-full"
                     disabled={shippingLoading}
@@ -1254,15 +1256,34 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                            variant="ghost"
                            size="sm"
                            onClick={async () => {
-                             await updateShippingProvider(provider.id, { is_active: !provider.is_active });
+                             const nextActive = !provider.is_active;
+                             await updateShippingProvider(provider.id, { is_active: nextActive });
                              toast({ 
-                               title: provider.is_active ? "تم التعطيل" : "تم التفعيل", 
-                               description: `تم ${provider.is_active ? 'تعطيل' : 'تفعيل'} الشركة بنجاح` 
+                               title: nextActive ? "تم التفعيل" : "تم التعطيل", 
+                               description: `تم ${nextActive ? 'تفعيل' : 'تعطيل'} الشركة بنجاح` 
                              });
+                             await refetchShipping?.();
                            }}
                            disabled={shippingLoading}
                          >
                            {provider.is_active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                         </Button>
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={async () => {
+                             const newName = window.prompt("تعديل اسم الشركة", provider.name);
+                             if (newName === null) return;
+                             const newCode = window.prompt("تعديل رمز الشركة", provider.code);
+                             if (newCode === null) return;
+                             await updateShippingProvider(provider.id, { name: newName.trim(), code: newCode.trim() });
+                             toast({ title: "تم التحديث", description: "تم تحديث بيانات شركة الشحن" });
+                             await refetchShipping?.();
+                           }}
+                           disabled={shippingLoading}
+                           title="تعديل"
+                         >
+                           <Edit className="h-4 w-4" />
                          </Button>
                        </div>
                     </div>
