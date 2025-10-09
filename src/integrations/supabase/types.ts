@@ -8521,6 +8521,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_settings_shop"
+            columns: ["shop_id"]
+            isOneToOne: true
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "fk_shop_settings_shop"
             columns: ["shop_id"]
             isOneToOne: true
