@@ -3771,7 +3771,15 @@ export type Database = {
           lead_id?: string
           performed_by?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_lead_activities_lead"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       leaderboard_weekly: {
         Row: {
@@ -3892,6 +3900,20 @@ export type Database = {
           },
           {
             foreignKeyName: "fk_leads_assigned"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_leads_assignee"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_leads_assignee"
             columns: ["assigned_to"]
             isOneToOne: false
             referencedRelation: "safe_profiles"
