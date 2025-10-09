@@ -64,6 +64,14 @@ export const IsolatedStoreCheckout: React.FC = () => {
 
   const [submitting, setSubmitting] = useState(false);
 
+  // خيارات الشحن
+  const shippingProviders = [
+    { id: 'smsa', name: 'سمسا', cost: 25 },
+    { id: 'aramex', name: 'أرامكس', cost: 35 },
+    { id: 'dhl', name: 'دي إتش إل', cost: 45 },
+  ] as const;
+  const [selectedShipping, setSelectedShipping] = useState<typeof shippingProviders[number] | null>(shippingProviders[0]);
+
   const handleInputChange = (field: keyof OrderFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -101,13 +109,18 @@ export const IsolatedStoreCheckout: React.FC = () => {
             apartment: formData.apartment,
             postalCode: formData.postalCode
           }
+        },
+        {
+          providerId: selectedShipping?.id,
+          providerName: selectedShipping?.name,
+          costSar: selectedShipping?.cost
         }
       );
 
       if (result.success) {
         toast.success('تم إنشاء الطلب بنجاح!');
         await clearCart();
-        navigate(`/store/${storeSlug}/orders?highlight=${result.orderId}`);
+        navigate(`/store/${storeSlug}/order/${result.orderId}/confirmation`);
       } else {
         toast.error(result.error || 'خطأ في إنشاء الطلب');
       }
@@ -151,7 +164,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
     );
   }
 
-  const shipping = 25;
+  const shipping = selectedShipping?.cost ?? 25;
   const total = cart.total + shipping;
 
   return (

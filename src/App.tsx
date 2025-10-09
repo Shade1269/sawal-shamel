@@ -44,6 +44,8 @@ const IsolatedStoreCart = lazy(() => import("./pages/storefront/IsolatedStoreCar
 const IsolatedStoreCheckout = lazy(() => import("./pages/storefront/IsolatedStoreCheckout").then(m => ({ default: m.IsolatedStoreCheckout })));
 const AffiliateWalletPage = lazy(() => import("./pages/affiliate/AffiliateWalletPage"));
 const UnifiedAffiliateOrders = lazy(() => import("./pages/unified/UnifiedAffiliateOrders"));
+const StorefrontMyOrders = lazy(() => import("./pages/storefront/StorefrontMyOrders"));
+const StoreOrderConfirmation = lazy(() => import("./pages/StoreOrderConfirmation"));
 const LuxuryShowcase = lazy(() => import("./pages/LuxuryShowcase"));
 const AdminHomePage = lazy(() => import("./pages/home/AdminHome"));
 const AdminWithdrawalsPage = lazy(() => import("./pages/admin/AdminWithdrawalsPage"));
@@ -151,6 +153,8 @@ const App = () => {
                  <Route index element={<IsolatedStorefront />} />
                  <Route path="cart" element={<IsolatedStoreCart />} />
                  <Route path="checkout" element={<IsolatedStoreCheckout />} />
+                 <Route path="orders" element={<StorefrontMyOrders />} />
+                 <Route path="order/:orderId/confirmation" element={<StoreOrderConfirmation />} />
                </Route>
 
               <Route path="/checkout" element={<CheckoutPage />} />

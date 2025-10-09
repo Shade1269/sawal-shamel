@@ -31,7 +31,8 @@ export const storeOrderService = {
     cartId: string,
     shopId: string,
     affiliateStoreId: string,
-    orderData: CreateOrderData
+    orderData: CreateOrderData,
+    shippingInfo?: { providerId?: string; providerName?: string; costSar?: number }
   ) {
     try {
       let buyerSessionId: string | null = null;
@@ -42,7 +43,7 @@ export const storeOrderService = {
         buyerSessionId = localStorage.getItem(`store_session_${affiliateStoreId}`);
       }
 
-      const payload = {
+      const payload: any = {
         cart_id: cartId,
         shop_id: shopId,
         affiliate_store_id: affiliateStoreId,
@@ -61,6 +62,14 @@ export const storeOrderService = {
           },
         },
       };
+
+      if (shippingInfo) {
+        payload.shipping = {
+          provider_id: shippingInfo.providerId || null,
+          provider_name: shippingInfo.providerName || null,
+          cost_sar: shippingInfo.costSar ?? null,
+        };
+      }
 
       const { data, error } = await supabase.functions.invoke('create-ecommerce-order', {
         body: payload,
