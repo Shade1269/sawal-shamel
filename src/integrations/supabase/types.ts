@@ -6259,6 +6259,13 @@ export type Database = {
             referencedRelation: "order_hub"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
         ]
       }
       product_reviews: {
@@ -7423,6 +7430,13 @@ export type Database = {
             columns: ["order_hub_id"]
             isOneToOne: false
             referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_refunds_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
             referencedColumns: ["id"]
           },
           {
@@ -11032,6 +11046,84 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      v_order_hub_full: {
+        Row: {
+          actual_delivery_date: string | null
+          affiliate_store_id: string | null
+          carrier_name: string | null
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          estimated_delivery_date: string | null
+          id: string | null
+          items: Json | null
+          migrated_from_id: string | null
+          order_number: string | null
+          payment_method: string | null
+          payment_status: string | null
+          shipping_address: Json | null
+          shop_id: string | null
+          source: string | null
+          source_order_id: string | null
+          source_table: string | null
+          status: string | null
+          total_amount_sar: number | null
+          tracking_number: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          actual_delivery_date?: string | null
+          affiliate_store_id?: string | null
+          carrier_name?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          estimated_delivery_date?: string | null
+          id?: string | null
+          items?: never
+          migrated_from_id?: string | null
+          order_number?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          shipping_address?: Json | null
+          shop_id?: string | null
+          source?: string | null
+          source_order_id?: string | null
+          source_table?: string | null
+          status?: string | null
+          total_amount_sar?: number | null
+          tracking_number?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          actual_delivery_date?: string | null
+          affiliate_store_id?: string | null
+          carrier_name?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          estimated_delivery_date?: string | null
+          id?: string | null
+          items?: never
+          migrated_from_id?: string | null
+          order_number?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          shipping_address?: Json | null
+          shop_id?: string | null
+          source?: string | null
+          source_order_id?: string | null
+          source_table?: string | null
+          status?: string | null
+          total_amount_sar?: number | null
+          tracking_number?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       v_order_items_unified: {
         Row: {
