@@ -26,6 +26,14 @@ serve(async (req) => {
     console.log("[create-ecommerce-order] Start", { cart_id, shop_id, affiliate_store_id });
 
     if (!cart_id || !affiliate_store_id || !customer?.name || !customer?.phone || !customer?.address?.city || !customer?.address?.street) {
+      console.warn("[create-ecommerce-order] Validation failed", {
+        hasCart: !!cart_id,
+        hasAffiliate: !!affiliate_store_id,
+        hasName: !!customer?.name,
+        hasPhone: !!customer?.phone,
+        hasCity: !!customer?.address?.city,
+        hasStreet: !!customer?.address?.street,
+      });
       return new Response(
         JSON.stringify({ success: false, error: "بيانات الطلب ناقصة" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -67,8 +75,25 @@ serve(async (req) => {
     const orderNumber = `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
 
     // Resolve shop_id from payload or cart items' products
-    const resolvedShopId = shop_id ?? (items?.[0]?.products?.shop_id ?? null);
+    const normalizedShopId = (typeof shop_id === "string" && shop_id.trim().length > 0) ? shop_id : null;
+    let resolvedShopId = normalizedShopId ?? (items?.[0]?.products?.shop_id ?? null);
+
+    // Fallback: fetch product's shop_id if not present in the nested select
+    if (!resolvedShopId && items?.[0]?.product_id) {
+      const { data: prod, error: prodErr } = await supabase
+        .from("products")
+        .select("shop_id")
+        .eq("id", items[0].product_id)
+        .single();
+      if (prodErr) {
+        console.warn("[create-ecommerce-order] Fallback fetch product shop_id error", prodErr);
+      } else {
+        resolvedShopId = prod?.shop_id ?? null;
+      }
+    }
+
     if (!resolvedShopId) {
+      console.warn("[create-ecommerce-order] Missing shop_id after resolution", { shop_id, productShopId: items?.[0]?.products?.shop_id, firstProductId: items?.[0]?.product_id });
       return new Response(
         JSON.stringify({ success: false, error: "معرّف المتجر مفقود" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
