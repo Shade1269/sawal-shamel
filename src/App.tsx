@@ -50,7 +50,7 @@ const LuxuryShowcase = lazy(() => import("./pages/LuxuryShowcase"));
 const AdminHomePage = lazy(() => import("./pages/home/AdminHome"));
 const AdminWithdrawalsPage = lazy(() => import("./pages/admin/AdminWithdrawalsPage"));
 const AdminProductApproval = lazy(() => import("./pages/admin/AdminProductApproval"));
-const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrders"));
+const OrdersRouter = lazy(() => import("./pages/admin/OrdersRouter"));
 const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminCustomersPage = lazy(() => import("./pages/admin/AdminCustomers"));
 const AdminLeaderboardPage = lazy(() => import("./pages/admin/AdminLeaderboard"));
@@ -189,7 +189,7 @@ const App = () => {
                               >
                                 <Route index element={<Navigate to="dashboard" replace />} />
                                 <Route path="dashboard" element={<AdminHomePage />} />
-                                <Route path="orders" element={<AdminOrdersPage />} />
+                                <Route path="orders" element={<OrdersRouter />} />
                                 <Route path="analytics" element={<AdminAnalyticsPage />} />
                                 <Route path="leaderboard" element={<AdminLeaderboardPage />} />
                                 <Route path="customers" element={<AdminCustomersPage />} />
