@@ -1742,7 +1742,29 @@ export type Database = {
           updated_at?: string
           usage_count?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_cms_blocks_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_cms_blocks_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_cms_blocks_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cms_content_widgets: {
         Row: {
@@ -1861,6 +1883,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_cms_pages_affiliate_store"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "fk_cms_pages_store"
             columns: ["store_id"]
             isOneToOne: false
@@ -1898,6 +1927,27 @@ export type Database = {
           revision_number?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_cms_revisions_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_cms_revisions_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_cms_revisions_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fk_cms_revisions_page"
             columns: ["page_id"]
@@ -2261,6 +2311,41 @@ export type Database = {
           version_number?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_content_drafts_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_content_drafts_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_content_drafts_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_content_drafts_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "cms_custom_pages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_content_drafts_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "v_cms_pages_full"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fk_drafts_created_by"
             columns: ["created_by"]
@@ -4485,6 +4570,34 @@ export type Database = {
           },
           {
             foreignKeyName: "fk_marketing_auto_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_marketing_campaigns_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_marketing_campaigns_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_marketing_campaigns_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_marketing_campaigns_store"
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "affiliate_stores"
@@ -6852,6 +6965,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_promo_campaigns_affiliate_store"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "fk_promo_campaigns_creator"
             columns: ["created_by"]
             isOneToOne: false
@@ -7017,6 +7137,34 @@ export type Database = {
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_promo_banners_affiliate_store"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_promo_banners_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_promo_banners_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_promo_banners_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
             referencedColumns: ["id"]
           },
           {
@@ -7490,6 +7638,34 @@ export type Database = {
           usage_count?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_saved_components_affiliate_store"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_saved_components_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_saved_components_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_saved_components_creator"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fk_saved_components_store"
             columns: ["store_id"]
@@ -10541,6 +10717,13 @@ export type Database = {
           widgets: Json | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_cms_pages_affiliate_store"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fk_cms_pages_store"
             columns: ["store_id"]
