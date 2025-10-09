@@ -95,7 +95,7 @@ export const SimpleCart: React.FC<SimpleCartProps> = ({
       onCheckout();
     } else {
       // Default checkout navigation using navigate
-      navigate(`/store/${shopSlug}/checkout`);
+      navigate(`/${shopSlug}/checkout`);
     }
   };
 

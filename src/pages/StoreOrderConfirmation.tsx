@@ -166,7 +166,7 @@ const StoreOrderConfirmation = () => {
             <p className="text-muted-foreground mb-4">
               لم يتم العثور على الطلب المطلوب
             </p>
-            <Button onClick={() => navigate(`/store/${storeSlug}`)}>
+            <Button onClick={() => navigate(`/${storeSlug}`)}>
               العودة للمتجر
             </Button>
           </CardContent>
@@ -225,7 +225,7 @@ const StoreOrderConfirmation = () => {
                 <FileText className="h-4 w-4 mr-2" />
                 طباعة الفاتورة
               </Button>
-              <Button variant="outline" size="sm" onClick={() => navigate(`/store/${storeSlug}`)}>
+              <Button variant="outline" size="sm" onClick={() => navigate(`/${storeSlug}`)}>
                 <ShoppingBag className="h-4 w-4 mr-2" />
                 العودة للمتجر
               </Button>

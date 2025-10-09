@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react';
-import { UnifiedOrdersService, UnifiedOrderWithItems, UnifiedOrder } from '@/lib/unifiedOrdersService';
+import { UnifiedOrdersService, UnifiedOrderFilters } from '@/services/UnifiedOrdersService';
+import type { Database } from '@/integrations/supabase/types';
 
-export interface UseUnifiedOrdersParams {
-  shopId?: string;
-  affiliateStoreId?: string;
-  limit?: number;
-  offset?: number;
-  autoRefresh?: boolean;
-}
+type OrderHub = Database['public']['Tables']['order_hub']['Row'];
 
-export const useUnifiedOrders = (params: UseUnifiedOrdersParams = {}) => {
-  const [orders, setOrders] = useState<UnifiedOrderWithItems[]>([]);
+export const useUnifiedOrders = (filters?: UnifiedOrderFilters) => {
+  const [orders, setOrders] = useState<OrderHub[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,7 +13,7 @@ export const useUnifiedOrders = (params: UseUnifiedOrdersParams = {}) => {
     try {
       setLoading(true);
       setError(null);
-      const ordersData = await UnifiedOrdersService.getOrdersWithItems(params);
+      const ordersData = await UnifiedOrdersService.fetchOrders(filters);
       setOrders(ordersData);
     } catch (err: any) {
       console.error('Error fetching unified orders:', err);
@@ -54,18 +49,7 @@ export const useUnifiedOrders = (params: UseUnifiedOrdersParams = {}) => {
 
   useEffect(() => {
     fetchOrders();
-  }, [params.shopId, params.affiliateStoreId, params.limit, params.offset]);
-
-  // Auto-refresh if enabled
-  useEffect(() => {
-    if (params.autoRefresh) {
-      const interval = setInterval(() => {
-        fetchOrders();
-      }, 30000); // كل 30 ثانية
-
-      return () => clearInterval(interval);
-    }
-  }, [params.autoRefresh]);
+  }, [filters?.storeId, filters?.affiliateStoreId, filters?.source, filters?.status]);
 
   return {
     orders,
@@ -91,8 +75,16 @@ export const useUnifiedOrdersStats = (shopId?: string, affiliateStoreId?: string
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const statsData = await UnifiedOrdersService.getOrdersStats(shopId, affiliateStoreId);
-        setStats(statsData);
+        const statsData = await UnifiedOrdersService.getStoreStats(shopId, affiliateStoreId);
+        if (statsData) {
+          setStats({
+            totalOrders: statsData.total_orders,
+            totalRevenue: statsData.total_revenue,
+            confirmedOrders: statsData.confirmed_orders,
+            pendingOrders: statsData.pending_orders,
+            averageOrderValue: statsData.average_order_value
+          });
+        }
       } catch (error) {
         console.error('Error fetching orders stats:', error);
       } finally {

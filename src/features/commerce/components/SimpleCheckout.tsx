@@ -10,7 +10,6 @@ import { Separator } from '@/components/ui/separator';
 import { CheckCircle, Package, Banknote, MapPin, Phone, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { CheckoutOTPModal } from '@/components/storefront/CheckoutOTPModal';
 
 interface CartItem {
   id: string;
@@ -52,8 +51,6 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
   const [loading, setLoading] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
-  const [showOTPModal, setShowOTPModal] = useState(false);
-  const [verifiedSessionId, setVerifiedSessionId] = useState<string | null>(null);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: '',
     phone: '',
@@ -94,18 +91,9 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
     return true;
   };
 
-  const handleInitiateCheckout = () => {
+  const handlePlaceOrder = async () => {
     if (!validateForm()) return;
-    setShowOTPModal(true);
-  };
 
-  const handleOTPVerified = (sessionId: string, verifiedPhone: string) => {
-    setVerifiedSessionId(sessionId);
-    setCustomerInfo(prev => ({ ...prev, phone: verifiedPhone }));
-    handlePlaceOrder(sessionId, verifiedPhone);
-  };
-
-  const handlePlaceOrder = async (sessionId: string, verifiedPhone: string) => {
     setLoading(true);
     try {
       if (!shopId) {
@@ -120,9 +108,8 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
           shop_id: shopId,
           affiliate_store_id: shopId,
           customer_name: customerInfo.name,
-          customer_phone: verifiedPhone,
+          customer_phone: customerInfo.phone,
           customer_email: customerInfo.email || null,
-          customer_session_id: sessionId,
           shipping_address: {
             address: customerInfo.address,
             city: customerInfo.city,
@@ -177,7 +164,7 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
       toast.success('تم إنشاء الطلب بنجاح!');
 
       setTimeout(() => {
-        navigate(`/order-confirmation-simple/${order.id}?slug=${shopId}`);
+        navigate(`/order-confirmation-simple/${order.id}`);
       }, 2000);
 
     } catch (error) {
@@ -397,7 +384,7 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
               </div>
 
               <Button
-                onClick={handleInitiateCheckout}
+                onClick={handlePlaceOrder}
                 disabled={loading}
                 className="w-full"
                 size="lg"
@@ -406,21 +393,12 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
               </Button>
 
               <p className="text-xs text-center text-muted-foreground">
-                بتأكيد الطلب، سيتم إرسال رمز تحقق إلى رقم جوالك
+                بتأكيد الطلب، فإنك توافق على استلام المنتجات ودفع المبلغ عند التسليم
               </p>
             </CardContent>
           </Card>
         </div>
       </div>
-
-      {/* OTP Modal */}
-      <CheckoutOTPModal
-        isOpen={showOTPModal}
-        onClose={() => setShowOTPModal(false)}
-        onVerified={handleOTPVerified}
-        storeId={shopId || ''}
-        initialPhone={customerInfo.phone}
-      />
     </div>
   );
 };

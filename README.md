@@ -173,6 +173,47 @@ npm run dev
 - **CSV export**: Each manager ships a CSV exporter that serializes the currently filtered dataset, generating lightweight blobs and download links without blocking the UI.
 - **Cross navigation**: The customer drawer includes a "view in orders" action that routes to `/admin/orders?customer=...`, reusing the cached store to surface the same filter state instantly.
 
+## 📦 Unified Orders System (v1.0.0)
+
+### Overview
+A comprehensive unified orders system that consolidates e-commerce orders, simple orders, and manual entries into a single hub with advanced tracking and analytics.
+
+### Key Features
+- **Centralized Hub**: Single `order_hub` table unifying all order sources
+- **4 ENUMs**: order_source, order_status, payment_status, return_status
+- **Generated Columns**: Automatic calculations for totals and relationships
+- **Complete Relations**: Links to items, shipments, returns, refunds, and invoices
+- **Service Layer**: `UnifiedOrdersService` with 8+ comprehensive methods
+- **React Hooks**: `useUnifiedOrders` and `useUnifiedOrdersStats` for state management
+- **Feature Flags**: Gradual rollout control with 10+ flags
+- **Data Quality**: Automatic backfill, validation, and health checks
+
+### Components
+- `UnifiedOrdersList`: Main orders list with filtering and search
+- `UnifiedOrdersManager`: Complete order management interface
+- `UnifiedDashboard`: Analytics and KPI overview
+- `DataQualityDashboard`: Data health monitoring
+- `UnifiedSystemTester`: Automated testing suite
+- `RolloutManager`: Gradual rollout control panel
+
+### Documentation
+- `/docs/UNIFIED_SYSTEM_API.md`: Complete API documentation
+- `/docs/ARCHITECTURE.md`: System architecture and design
+- `/docs/ROLLOUT_GUIDE.md`: 4-stage rollout strategy
+- `/docs/CHANGELOG.md`: All system changes
+
+### Testing Routes
+- `/testing`: Data quality checks and system tests
+- `/rollout`: Rollout management and monitoring
+- `/documentation`: In-app documentation
+
+### Migration Path
+1. ✅ Infrastructure (order_hub table, ENUMs, relations)
+2. ✅ Services & Hooks (UnifiedOrdersService, custom hooks)
+3. ✅ UI Components (dashboards, managers, testers)
+4. ✅ Documentation (API, architecture, guides)
+5. 🔄 Gradual Rollout (4 stages with feature flags)
+
 ## 🛍️ Public Storefront for Marketers
 - **Route & layout**: The public store lives at `/:slug`, presenting a glass header with store branding, marketer attribution, and a persistent CTA to `/checkout`.
 - **Glass hero & grid**: A theme-aware 3D hero (with reduced-motion fallback) leads into a lazy product grid that reuses the glass `Card` primitive, `var(--surface)` layers, and lazy-loaded imagery.

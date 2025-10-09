@@ -67,7 +67,7 @@ const statusLabels = {
 
 export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
   const { stats, loading: statsLoading } = useUnifiedOrdersStats(shopId);
-  const { orders, loading: ordersLoading, updateOrderStatus } = useUnifiedOrders({ shopId });
+  const { orders, loading: ordersLoading, updateOrderStatus } = useUnifiedOrders({ storeId: shopId });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -255,7 +255,7 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
                 <div className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-sm font-medium">{order.total_sar.toFixed(2)} ر.س</p>
+                    <p className="text-sm font-medium">{order.total_amount_sar?.toFixed(2) || '0.00'} ر.س</p>
                     <p className="text-xs text-muted-foreground">إجمالي المبلغ</p>
                   </div>
                 </div>
@@ -264,7 +264,7 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
               <div className="flex justify-between items-center">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" onClick={() => setSelectedOrder(order)}>
+                    <Button variant="outline" size="sm" onClick={() => setSelectedOrder(order as any)}>
                       <Eye className="h-4 w-4 mr-1" />
                       عرض التفاصيل
                     </Button>

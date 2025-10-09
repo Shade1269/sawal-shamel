@@ -47,8 +47,8 @@ export const IsolatedStoreCheckout: React.FC = () => {
     if (!sessionId && !cartLoading) {
       toast.info('يجب تسجيل الدخول أولاً لإتمام الطلب');
       // توجيه العميل لصفحة التسجيل مع حفظ مسار العودة
-      const returnUrl = encodeURIComponent(`/store/${storeSlug}/checkout`);
-      navigate(`/store/${storeSlug}/auth?returnUrl=${returnUrl}`, { replace: true });
+      const returnUrl = encodeURIComponent(`/${storeSlug}/checkout`);
+      navigate(`/${storeSlug}/auth?returnUrl=${returnUrl}`, { replace: true });
     }
   }, [sessionId, cartLoading, storeSlug, navigate]);
 
@@ -163,7 +163,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
       if (result.success) {
         toast.success('تم إنشاء الطلب بنجاح!');
         await clearCart();
-        navigate(`/store/${storeSlug}/order/${result.orderId}/confirmation`);
+        navigate(`/${storeSlug}/order/${result.orderId}/confirmation`);
       } else {
         toast.error(result.error || 'خطأ في إنشاء الطلب');
       }
@@ -196,7 +196,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
               لا يمكن إتمام الطلب مع سلة فارغة
             </p>
             <Button 
-              onClick={() => navigate(`/store/${storeSlug}`)}
+              onClick={() => navigate(`/${storeSlug}`)}
               className="bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 shadow-lg shadow-red-600/25"
             >
               تسوق الآن
@@ -216,7 +216,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
         <Button 
           variant="ghost" 
           size="sm" 
-          onClick={() => navigate(`/store/${storeSlug}/cart`)}
+          onClick={() => navigate(`/${storeSlug}/cart`)}
           className="text-red-400 hover:text-red-300 hover:bg-red-950/20"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />

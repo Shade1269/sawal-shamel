@@ -181,7 +181,7 @@ const Header = () => {
                     <Star className="ml-2 h-4 w-4" />
                     لوحة المسوق
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/affiliate/store/settings')}>
+                  <DropdownMenuItem onClick={() => navigate('/affiliate/storefront')}>
                     <Medal className="ml-2 h-4 w-4" />
                     إعداد المتجر
                   </DropdownMenuItem>
