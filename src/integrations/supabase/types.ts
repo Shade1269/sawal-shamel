@@ -10398,6 +10398,7 @@ export type Database = {
         | "faq"
         | "testimonial"
       discount_type: "percent" | "amount"
+      discount_type_enum: "PERCENTAGE" | "FIXED_AMOUNT"
       order_status:
         | "PENDING"
         | "CONFIRMED"
@@ -10405,6 +10406,15 @@ export type Database = {
         | "DELIVERED"
         | "CANCELED"
         | "RETURNED"
+      order_status_enum:
+        | "PENDING"
+        | "CONFIRMED"
+        | "PROCESSING"
+        | "SHIPPED"
+        | "DELIVERED"
+        | "CANCELLED"
+        | "RETURNED"
+        | "REFUNDED"
       page_status: "draft" | "published" | "scheduled" | "archived"
       payment_method:
         | "CASH_ON_DELIVERY"
@@ -10422,8 +10432,44 @@ export type Database = {
         | "FAILED"
         | "CANCELLED"
         | "REFUNDED"
+      payment_status_enum:
+        | "PENDING"
+        | "PROCESSING"
+        | "PAID"
+        | "FAILED"
+        | "REFUNDED"
+        | "PARTIALLY_REFUNDED"
+        | "CANCELLED"
       product_status: "draft" | "active" | "inactive" | "archived"
+      refund_status_enum:
+        | "PENDING"
+        | "PROCESSING"
+        | "COMPLETED"
+        | "FAILED"
+        | "CANCELLED"
+      return_status_enum:
+        | "PENDING"
+        | "APPROVED"
+        | "REJECTED"
+        | "RECEIVED"
+        | "REFUNDED"
+        | "CANCELLED"
+      shipment_status_enum:
+        | "PENDING"
+        | "PICKED_UP"
+        | "IN_TRANSIT"
+        | "OUT_FOR_DELIVERY"
+        | "DELIVERED"
+        | "FAILED"
+        | "RETURNED"
+        | "CANCELLED"
       shipping_method: "STANDARD" | "EXPRESS" | "SAME_DAY" | "PICKUP"
+      shipping_method_enum:
+        | "STANDARD"
+        | "EXPRESS"
+        | "SAME_DAY"
+        | "NEXT_DAY"
+        | "PICKUP"
       theme_type:
         | "classic"
         | "feminine"
@@ -10434,6 +10480,7 @@ export type Database = {
         | "alliance_special"
         | "legendary"
       user_level: "bronze" | "silver" | "gold" | "legendary"
+      user_level_enum: "BRONZE" | "SILVER" | "GOLD" | "PLATINUM" | "LEGENDARY"
       user_role: "affiliate" | "merchant" | "admin" | "moderator" | "customer"
     }
     CompositeTypes: {
@@ -10584,6 +10631,7 @@ export const Constants = {
         "testimonial",
       ],
       discount_type: ["percent", "amount"],
+      discount_type_enum: ["PERCENTAGE", "FIXED_AMOUNT"],
       order_status: [
         "PENDING",
         "CONFIRMED",
@@ -10591,6 +10639,16 @@ export const Constants = {
         "DELIVERED",
         "CANCELED",
         "RETURNED",
+      ],
+      order_status_enum: [
+        "PENDING",
+        "CONFIRMED",
+        "PROCESSING",
+        "SHIPPED",
+        "DELIVERED",
+        "CANCELLED",
+        "RETURNED",
+        "REFUNDED",
       ],
       page_status: ["draft", "published", "scheduled", "archived"],
       payment_method: [
@@ -10611,8 +10669,49 @@ export const Constants = {
         "CANCELLED",
         "REFUNDED",
       ],
+      payment_status_enum: [
+        "PENDING",
+        "PROCESSING",
+        "PAID",
+        "FAILED",
+        "REFUNDED",
+        "PARTIALLY_REFUNDED",
+        "CANCELLED",
+      ],
       product_status: ["draft", "active", "inactive", "archived"],
+      refund_status_enum: [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "FAILED",
+        "CANCELLED",
+      ],
+      return_status_enum: [
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "RECEIVED",
+        "REFUNDED",
+        "CANCELLED",
+      ],
+      shipment_status_enum: [
+        "PENDING",
+        "PICKED_UP",
+        "IN_TRANSIT",
+        "OUT_FOR_DELIVERY",
+        "DELIVERED",
+        "FAILED",
+        "RETURNED",
+        "CANCELLED",
+      ],
       shipping_method: ["STANDARD", "EXPRESS", "SAME_DAY", "PICKUP"],
+      shipping_method_enum: [
+        "STANDARD",
+        "EXPRESS",
+        "SAME_DAY",
+        "NEXT_DAY",
+        "PICKUP",
+      ],
       theme_type: [
         "classic",
         "feminine",
@@ -10624,6 +10723,7 @@ export const Constants = {
         "legendary",
       ],
       user_level: ["bronze", "silver", "gold", "legendary"],
+      user_level_enum: ["BRONZE", "SILVER", "GOLD", "PLATINUM", "LEGENDARY"],
       user_role: ["affiliate", "merchant", "admin", "moderator", "customer"],
     },
   },
