@@ -2748,6 +2748,7 @@ export type Database = {
           customer_email: string | null
           customer_name: string
           customer_phone: string
+          customer_session_id: string | null
           delivered_at: string | null
           discount_sar: number
           estimated_delivery_date: string | null
@@ -2782,6 +2783,7 @@ export type Database = {
           customer_email?: string | null
           customer_name: string
           customer_phone: string
+          customer_session_id?: string | null
           delivered_at?: string | null
           discount_sar?: number
           estimated_delivery_date?: string | null
@@ -2816,6 +2818,7 @@ export type Database = {
           customer_email?: string | null
           customer_name?: string
           customer_phone?: string
+          customer_session_id?: string | null
           delivered_at?: string | null
           discount_sar?: number
           estimated_delivery_date?: string | null
@@ -2839,6 +2842,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "ecommerce_orders_customer_session_id_fkey"
+            columns: ["customer_session_id"]
+            isOneToOne: false
+            referencedRelation: "customer_otp_sessions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "ecommerce_orders_shop_id_fkey"
             columns: ["shop_id"]
@@ -7670,6 +7680,7 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone: string
+          customer_session_id: string | null
           id: string
           order_status: string
           payment_method: string | null
@@ -7688,6 +7699,7 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone: string
+          customer_session_id?: string | null
           id?: string
           order_status?: string
           payment_method?: string | null
@@ -7706,6 +7718,7 @@ export type Database = {
           customer_email?: string
           customer_name?: string
           customer_phone?: string
+          customer_session_id?: string | null
           id?: string
           order_status?: string
           payment_method?: string | null
@@ -7723,6 +7736,13 @@ export type Database = {
             columns: ["affiliate_store_id"]
             isOneToOne: false
             referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "simple_orders_customer_session_id_fkey"
+            columns: ["customer_session_id"]
+            isOneToOne: false
+            referencedRelation: "customer_otp_sessions"
             referencedColumns: ["id"]
           },
           {

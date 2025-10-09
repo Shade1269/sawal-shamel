@@ -9,6 +9,7 @@ import {
   Receipt,
   Share2,
   ShoppingBag,
+  Printer,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -380,6 +381,12 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
           <div className="flex flex-wrap items-center gap-[var(--spacing-sm)]">
             <Button variant="solid" size="sm" leftIcon={<ShoppingBag className="h-4 w-4" aria-hidden />} onClick={goToStore}>
               العودة للمتجر
+            </Button>
+            <Button variant="outline" size="sm" leftIcon={<Package className="h-4 w-4" aria-hidden />} onClick={() => navigate(`/s/${storeSlug}/my-orders`)}>
+              طلباتي
+            </Button>
+            <Button variant="ghost" size="sm" leftIcon={<Printer className="h-4 w-4" aria-hidden />} onClick={() => window.print()}>
+              طباعة الفاتورة
             </Button>
             <Button variant="ghost" size="sm" leftIcon={<Home className="h-4 w-4" aria-hidden />} onClick={() => navigate("/")}>
               الرئيسية
