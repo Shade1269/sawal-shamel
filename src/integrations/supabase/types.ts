@@ -9687,14 +9687,9 @@ export type Database = {
         Row: {
           affiliate_store_id: string | null
           avg_order_value: number | null
-          completed_orders: number | null
           shop_id: string | null
           total_orders: number | null
-          total_refunded: number | null
-          total_refunds: number | null
-          total_returns: number | null
           total_revenue: number | null
-          total_shipments: number | null
         }
         Relationships: [
           {
@@ -9709,11 +9704,9 @@ export type Database = {
       refunds_analytics: {
         Row: {
           affiliate_store_id: string | null
-          avg_refund: number | null
           date: string | null
           refund_count: number | null
           shop_id: string | null
-          total_refunded: number | null
         }
         Relationships: [
           {
