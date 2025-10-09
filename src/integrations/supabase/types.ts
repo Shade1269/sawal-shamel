@@ -2942,6 +2942,39 @@ export type Database = {
           },
         ]
       }
+      data_quality_report: {
+        Row: {
+          affected_count: number
+          created_at: string
+          id: string
+          issue_description: string
+          report_type: string
+          sample_ids: Json | null
+          severity: string
+          table_name: string
+        }
+        Insert: {
+          affected_count?: number
+          created_at?: string
+          id?: string
+          issue_description: string
+          report_type: string
+          sample_ids?: Json | null
+          severity?: string
+          table_name: string
+        }
+        Update: {
+          affected_count?: number
+          created_at?: string
+          id?: string
+          issue_description?: string
+          report_type?: string
+          sample_ids?: Json | null
+          severity?: string
+          table_name?: string
+        }
+        Relationships: []
+      }
       ecommerce_coupon_usage: {
         Row: {
           coupon_id: string
@@ -11996,6 +12029,14 @@ export type Database = {
       calculate_weekly_rankings: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      check_data_quality: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          check_name: string
+          details: Json
+          status: string
+        }[]
       }
       cleanup_expired_otp: {
         Args: Record<PropertyKey, never>
