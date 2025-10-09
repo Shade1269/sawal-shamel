@@ -411,6 +411,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_affiliate_settings_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "fk_store_settings_store"
             columns: ["store_id"]
             isOneToOne: false
@@ -3479,6 +3486,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_inventory_movements_created_by"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_inventory_movements_created_by"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "fk_inventory_movements_creator"
             columns: ["created_by"]
             isOneToOne: false
@@ -3914,6 +3935,20 @@ export type Database = {
           },
           {
             foreignKeyName: "fk_leads_assigned"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_leads_assigned_to"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_leads_assigned_to"
             columns: ["assigned_to"]
             isOneToOne: false
             referencedRelation: "safe_profiles"
@@ -8000,6 +8035,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "fk_simple_order_items_product"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "simple_order_items_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
@@ -8485,6 +8527,13 @@ export type Database = {
             referencedRelation: "shops"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_store_settings_shop"
+            columns: ["shop_id"]
+            isOneToOne: true
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
         ]
       }
       store_shipping_config: {
@@ -8873,7 +8922,29 @@ export type Database = {
           user_id?: string
           version?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_custom_themes_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_custom_themes_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_custom_themes_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_levels: {
         Row: {
@@ -9200,7 +9271,15 @@ export type Database = {
           typography_settings?: Json | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_theme_custom_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       warehouse_products: {
         Row: {
