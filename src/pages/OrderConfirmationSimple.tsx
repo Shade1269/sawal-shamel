@@ -232,7 +232,7 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
 
   const goToStore = () => {
     if (storeSlug) {
-      navigate(`/${storeSlug}`);
+      navigate(`/store/${storeSlug}`);
     } else {
       navigate("/");
     }
