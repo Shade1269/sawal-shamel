@@ -7389,6 +7389,51 @@ export type Database = {
           },
         ]
       }
+      shipment_status_history: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          location: string | null
+          metadata: Json | null
+          shipment_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          shipment_id: string
+          status: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          shipment_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shipment_status_history_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipment_status_history_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "v_shipments_overview"
+            referencedColumns: ["shipment_id"]
+          },
+        ]
+      }
       shipment_tracking: {
         Row: {
           created_at: string | null
@@ -7451,6 +7496,7 @@ export type Database = {
           id: string
           insurance_cost: number | null
           metadata: Json | null
+          migrated_from_id: string | null
           order_id: string | null
           provider_id: string
           recipient_address: Json
@@ -7463,6 +7509,7 @@ export type Database = {
           shipment_number: string
           shipping_cost: number
           shop_id: string | null
+          source_table: string | null
           special_instructions: string | null
           status: string
           total_cost: number
@@ -7483,6 +7530,7 @@ export type Database = {
           id?: string
           insurance_cost?: number | null
           metadata?: Json | null
+          migrated_from_id?: string | null
           order_id?: string | null
           provider_id: string
           recipient_address: Json
@@ -7495,6 +7543,7 @@ export type Database = {
           shipment_number: string
           shipping_cost: number
           shop_id?: string | null
+          source_table?: string | null
           special_instructions?: string | null
           status?: string
           total_cost: number
@@ -7515,6 +7564,7 @@ export type Database = {
           id?: string
           insurance_cost?: number | null
           metadata?: Json | null
+          migrated_from_id?: string | null
           order_id?: string | null
           provider_id?: string
           recipient_address?: Json
@@ -7527,6 +7577,7 @@ export type Database = {
           shipment_number?: string
           shipping_cost?: number
           shop_id?: string | null
+          source_table?: string | null
           special_instructions?: string | null
           status?: string
           total_cost?: number
@@ -10247,6 +10298,31 @@ export type Database = {
           source_table: string | null
           total_price: number | null
           unit_price: number | null
+        }
+        Relationships: []
+      }
+      v_unified_shipments: {
+        Row: {
+          actual_delivery_date: string | null
+          cod_amount: number | null
+          created_at: string | null
+          current_location: string | null
+          dimensions: Json | null
+          estimated_delivery: string | null
+          id: string | null
+          order_id: string | null
+          recipient_address: Json | null
+          recipient_name: string | null
+          recipient_phone: string | null
+          shipment_number: string | null
+          shipping_cost: number | null
+          shop_id: string | null
+          source_table: string | null
+          special_instructions: string | null
+          status: string | null
+          tracking_number: string | null
+          updated_at: string | null
+          weight_kg: number | null
         }
         Relationships: []
       }
