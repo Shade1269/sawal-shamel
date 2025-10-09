@@ -3621,6 +3621,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "inventory_alerts_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "v_returns_with_orders"
+            referencedColumns: ["return_id"]
+          },
+          {
             foreignKeyName: "inventory_alerts_warehouse_product_id_fkey"
             columns: ["warehouse_product_id"]
             isOneToOne: false
@@ -4036,6 +4043,13 @@ export type Database = {
             columns: ["order_hub_id"]
             isOneToOne: false
             referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_invoices_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
             referencedColumns: ["id"]
           },
           {
@@ -6287,6 +6301,13 @@ export type Database = {
             foreignKeyName: "fk_product_returns_hub"
             columns: ["order_hub_id"]
             isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_product_returns_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
             referencedRelation: "v_order_hub_full"
             referencedColumns: ["id"]
           },
@@ -6308,6 +6329,13 @@ export type Database = {
             foreignKeyName: "fk_product_returns_order_hub"
             columns: ["order_hub_id"]
             isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_product_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
             referencedRelation: "v_order_hub_full"
             referencedColumns: ["id"]
           },
@@ -6323,6 +6351,13 @@ export type Database = {
             columns: ["order_hub_id"]
             isOneToOne: false
             referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
             referencedColumns: ["id"]
           },
           {
@@ -7410,6 +7445,13 @@ export type Database = {
             referencedRelation: "refunds"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "refund_items_refund_id_fkey"
+            columns: ["refund_id"]
+            isOneToOne: false
+            referencedRelation: "v_refunds_with_orders"
+            referencedColumns: ["refund_id"]
+          },
         ]
       }
       refunds: {
@@ -7509,6 +7551,13 @@ export type Database = {
             foreignKeyName: "fk_refunds_hub"
             columns: ["order_hub_id"]
             isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_refunds_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
             referencedRelation: "v_order_hub_full"
             referencedColumns: ["id"]
           },
@@ -7524,6 +7573,13 @@ export type Database = {
             columns: ["order_hub_id"]
             isOneToOne: false
             referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_refunds_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
             referencedColumns: ["id"]
           },
           {
@@ -7638,6 +7694,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "product_returns"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "return_items_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "v_returns_with_orders"
+            referencedColumns: ["return_id"]
           },
         ]
       }
@@ -8141,6 +8204,13 @@ export type Database = {
             referencedRelation: "v_shipments_overview"
             referencedColumns: ["shipment_id"]
           },
+          {
+            foreignKeyName: "shipment_status_history_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "v_shipments_with_orders"
+            referencedColumns: ["shipment_id"]
+          },
         ]
       }
       shipment_tracking: {
@@ -8189,6 +8259,13 @@ export type Database = {
             foreignKeyName: "fk_shipment_tracking_order_hub"
             columns: ["order_hub_id"]
             isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipment_tracking_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
             referencedRelation: "v_order_hub_full"
             referencedColumns: ["id"]
           },
@@ -8211,6 +8288,13 @@ export type Database = {
             columns: ["shipment_id"]
             isOneToOne: false
             referencedRelation: "v_shipments_overview"
+            referencedColumns: ["shipment_id"]
+          },
+          {
+            foreignKeyName: "shipment_tracking_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "v_shipments_with_orders"
             referencedColumns: ["shipment_id"]
           },
         ]
@@ -8333,6 +8417,13 @@ export type Database = {
             foreignKeyName: "fk_shipments_hub"
             columns: ["order_hub_id"]
             isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
             referencedRelation: "v_order_hub_full"
             referencedColumns: ["id"]
           },
@@ -8348,6 +8439,13 @@ export type Database = {
             columns: ["order_hub_id"]
             isOneToOne: false
             referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
             referencedColumns: ["id"]
           },
           {
@@ -11217,6 +11315,63 @@ export type Database = {
           },
         ]
       }
+      v_order_complete: {
+        Row: {
+          affiliate_store_id: string | null
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          id: string | null
+          items: Json | null
+          order_number: string | null
+          payment_status: string | null
+          refunds_count: number | null
+          returns_count: number | null
+          shipments_count: number | null
+          shop_id: string | null
+          source: string | null
+          status: string | null
+          total_amount_sar: number | null
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string | null
+          items?: never
+          order_number?: string | null
+          payment_status?: string | null
+          refunds_count?: never
+          returns_count?: never
+          shipments_count?: never
+          shop_id?: string | null
+          source?: string | null
+          status?: string | null
+          total_amount_sar?: number | null
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string | null
+          items?: never
+          order_number?: string | null
+          payment_status?: string | null
+          refunds_count?: never
+          returns_count?: never
+          shipments_count?: never
+          shop_id?: string | null
+          source?: string | null
+          status?: string | null
+          total_amount_sar?: number | null
+        }
+        Relationships: []
+      }
       v_order_hub_full: {
         Row: {
           actual_delivery_date: string | null
@@ -11422,6 +11577,192 @@ export type Database = {
         }
         Relationships: []
       }
+      v_refunds_with_orders: {
+        Row: {
+          customer_name: string | null
+          customer_phone: string | null
+          order_hub_id: string | null
+          order_number: string | null
+          order_source: string | null
+          refund_amount_sar: number | null
+          refund_created_at: string | null
+          refund_id: string | null
+          refund_method: string | null
+          refund_number: string | null
+          refund_reason: string | null
+          refund_status: string | null
+          source_order_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_refunds_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_refunds_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_refunds_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_refunds_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_refunds_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_refunds_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_refunds_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_refunds_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_order_id_fkey"
+            columns: ["source_order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_returns_with_orders: {
+        Row: {
+          customer_name: string | null
+          customer_phone: string | null
+          hub_order_number: string | null
+          order_hub_id: string | null
+          order_source: string | null
+          order_status: string | null
+          return_created_at: string | null
+          return_id: string | null
+          return_number: string | null
+          return_order_number: string | null
+          return_reason: string | null
+          return_status: string | null
+          source_order_id: string | null
+          total_returned_amount: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_product_returns_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_product_returns_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_product_returns_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_product_returns_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_product_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_product_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_product_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_product_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_returns_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_shipments_overview: {
         Row: {
           affiliate_store_id: string | null
@@ -11445,6 +11786,88 @@ export type Database = {
             columns: ["shop_id"]
             isOneToOne: false
             referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_shipments_with_orders: {
+        Row: {
+          current_location: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          estimated_delivery: string | null
+          order_hub_id: string | null
+          order_number: string | null
+          order_source: string | null
+          shipment_created_at: string | null
+          shipment_id: string | null
+          shipment_number: string | null
+          shipment_status: string | null
+          source_order_id: string | null
+          tracking_number: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_shipments_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_order_id_fkey"
+            columns: ["source_order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]
