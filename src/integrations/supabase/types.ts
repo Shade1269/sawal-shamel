@@ -9613,6 +9613,34 @@ export type Database = {
             referencedRelation: "v_user_stats"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_user_themes_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_user_themes_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_user_themes_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_user_themes_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
         ]
       }
       user_levels: {
@@ -9971,6 +9999,13 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "fk_theme_custom_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_theme_customizations_store"
             columns: ["store_id"]
             isOneToOne: false
             referencedRelation: "affiliate_stores"
