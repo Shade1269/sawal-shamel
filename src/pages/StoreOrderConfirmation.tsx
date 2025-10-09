@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-  CheckCircle, 
+import {
+  CheckCircle,
   Clock,
   Home,
   Phone,
@@ -16,10 +16,13 @@ import {
   FileText,
   Truck,
   Copy,
-  Check
+  Check,
+  ListChecks
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+
+const STORE_CONTEXT_KEY = (slug: string) => `storefront:${slug}:context`;
 
 interface Order {
   id: string;
@@ -145,6 +148,23 @@ const StoreOrderConfirmation = () => {
     window.print();
   };
 
+  useEffect(() => {
+    if (!order || !storeSlug || typeof window === 'undefined') return;
+
+    const contextPayload = {
+      marketerStoreId: order.affiliate_store_id,
+      storeId: order.affiliate_store_id,
+      storeSlug,
+      updatedAt: new Date().toISOString(),
+    };
+
+    try {
+      localStorage.setItem(STORE_CONTEXT_KEY(storeSlug), JSON.stringify(contextPayload));
+    } catch (error) {
+      console.warn('Failed to persist storefront context on confirmation', error);
+    }
+  }, [order, storeSlug]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -221,6 +241,14 @@ const StoreOrderConfirmation = () => {
               <p className="text-sm text-muted-foreground">تأكيد الطلب</p>
             </div>
             <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(`/store/${storeSlug}/orders`)}
+              >
+                <ListChecks className="h-4 w-4 mr-2" />
+                طلباتي
+              </Button>
               <Button variant="outline" size="sm" onClick={handlePrintInvoice}>
                 <FileText className="h-4 w-4 mr-2" />
                 طباعة الفاتورة

@@ -353,7 +353,9 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
                 expiresAt,
               })
             );
-          } catch {}
+          } catch (storageError) {
+            console.warn('Failed to persist customer session snapshot', storageError);
+          }
         } catch (sessionError) {
           console.warn('Failed to create/extend store session:', sessionError);
         }

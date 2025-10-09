@@ -87,7 +87,9 @@ export const storeOrderService = {
       // Best-effort customer snapshot (non-blocking)
       try {
         await this.updateStoreCustomerSimple(affiliateStoreId, orderData, undefined as unknown as number);
-      } catch (_) {}
+      } catch (snapshotError) {
+        console.warn('Failed to update store customer snapshot', snapshotError);
+      }
 
       return {
         success: true,

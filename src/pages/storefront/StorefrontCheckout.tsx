@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
+import {
+  EnhancedCard,
+  EnhancedCardContent,
   EnhancedCardHeader, 
   EnhancedCardTitle,
   ResponsiveLayout,
@@ -21,6 +21,8 @@ import { ArrowLeft, ShoppingCart, Package, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { Link } from 'react-router-dom';
+import { CheckoutOTPDialog } from '@/components/storefront/CheckoutOTPDialog';
+import { useCustomerOTP } from '@/hooks/useCustomerOTP';
 
 interface CartItem {
   id: string;
@@ -49,6 +51,21 @@ interface CustomerData {
   notes?: string;
 }
 
+const CHECKOUT_STATE_KEY = (slug: string) => `storefront:${slug}:checkout_state`;
+const RETURN_URL_KEY = (slug: string) => `storefront:${slug}:return_url`;
+const STORE_CONTEXT_KEY = (slug: string) => `storefront:${slug}:context`;
+
+const normalizePhoneForComparison = (phone: string) => {
+  const digits = phone.replace(/\D/g, '');
+  if (!digits) return '';
+
+  if (digits.startsWith('966')) {
+    return digits.slice(3).replace(/^0+/, '');
+  }
+
+  return digits.replace(/^0+/, '');
+};
+
 const StorefrontCheckout = () => {
   const { slug = '' } = useParams();
   const navigate = useNavigate();
@@ -58,7 +75,13 @@ const StorefrontCheckout = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  
+  const [cartId, setCartId] = useState<string | null>(null);
+  const [checkoutId, setCheckoutId] = useState<string | null>(null);
+  const [otpDialogOpen, setOtpDialogOpen] = useState(false);
+  const [pendingSubmission, setPendingSubmission] = useState(false);
+  const [pendingCustomerData, setPendingCustomerData] = useState<CustomerData | null>(null);
+  const [hydratedState, setHydratedState] = useState(false);
+
   const [customerData, setCustomerData] = useState<CustomerData>({
     full_name: '',
     phone: '',
@@ -67,6 +90,95 @@ const StorefrontCheckout = () => {
     city: '',
     notes: ''
   });
+
+  const { getCustomerSession } = useCustomerOTP(store?.id || '');
+
+  const checkoutStateKey = useMemo(() => (slug ? CHECKOUT_STATE_KEY(slug) : null), [slug]);
+  const returnUrlKey = useMemo(() => (slug ? RETURN_URL_KEY(slug) : null), [slug]);
+  const storeContextKey = useMemo(() => (slug ? STORE_CONTEXT_KEY(slug) : null), [slug]);
+
+  const persistCheckoutState = useCallback((data: CustomerData) => {
+    if (!checkoutStateKey || typeof window === 'undefined') return;
+
+    const payload = {
+      customer: data,
+      cartId,
+      checkoutId,
+      storeId: store?.id ?? null,
+      marketerStoreId: store?.id ?? null,
+      updatedAt: new Date().toISOString(),
+    };
+
+    try {
+      localStorage.setItem(checkoutStateKey, JSON.stringify(payload));
+    } catch (error) {
+      console.warn('Failed to persist checkout state', error);
+    }
+  }, [checkoutStateKey, cartId, checkoutId, store?.id]);
+
+  const hydrateCheckoutState = useCallback(() => {
+    if (!checkoutStateKey || typeof window === 'undefined' || hydratedState) return;
+
+    try {
+      const stored = localStorage.getItem(checkoutStateKey);
+      if (!stored) {
+        setHydratedState(true);
+        return;
+      }
+
+      const parsed = JSON.parse(stored);
+      if (parsed?.customer) {
+        setCustomerData((prev) => ({
+          ...prev,
+          ...parsed.customer,
+        }));
+      }
+
+      if (parsed?.cartId) {
+        setCartId(parsed.cartId);
+      }
+
+      if (parsed?.checkoutId) {
+        setCheckoutId(parsed.checkoutId);
+      }
+    } catch (error) {
+      console.warn('Failed to hydrate checkout state', error);
+    } finally {
+      setHydratedState(true);
+    }
+  }, [checkoutStateKey, hydratedState]);
+
+  useEffect(() => {
+    hydrateCheckoutState();
+  }, [hydrateCheckoutState]);
+
+  useEffect(() => {
+    if (!store || !storeContextKey || typeof window === 'undefined') return;
+
+    const contextPayload = {
+      marketerStoreId: store.id,
+      storeId: store.id,
+      storeSlug: store.store_slug,
+      updatedAt: new Date().toISOString(),
+    };
+
+    try {
+      localStorage.setItem(storeContextKey, JSON.stringify(contextPayload));
+    } catch (error) {
+      console.warn('Failed to persist store context', error);
+    }
+  }, [store, storeContextKey]);
+
+  useEffect(() => {
+    if (!slug || !returnUrlKey || typeof window === 'undefined') return;
+
+    localStorage.setItem(returnUrlKey, window.location.pathname + window.location.search);
+  }, [slug, returnUrlKey]);
+
+  useEffect(() => {
+    if (!hydratedState) return;
+    persistCheckoutState(customerData);
+  }, [customerData, persistCheckoutState, hydratedState]);
 
   useEffect(() => {
     const fetchCheckoutData = async () => {
@@ -107,7 +219,10 @@ const StorefrontCheckout = () => {
         }
 
         const session = JSON.parse(sessionData);
-        
+        if (session?.sessionId) {
+          setCheckoutId(session.sessionId);
+        }
+
         // البحث عن السلة المرتبطة بهذه الجلسة والمتجر
         const { data: cart } = await supabasePublic
           .from('shopping_carts')
@@ -143,7 +258,7 @@ const StorefrontCheckout = () => {
           .eq('cart_id', cart.id);
 
         if (itemsError) throw itemsError;
-        
+
         if (!items || items.length === 0) {
           toast({
             title: "السلة فارغة",
@@ -155,6 +270,22 @@ const StorefrontCheckout = () => {
         }
 
         setCartItems(items);
+        setCartId(cart.id);
+
+        if (checkoutStateKey && typeof window !== 'undefined') {
+          try {
+            localStorage.setItem(checkoutStateKey, JSON.stringify({
+              customer: customerData,
+              cartId: cart.id,
+              checkoutId: session?.sessionId ?? null,
+              storeId: storeData.id,
+              marketerStoreId: storeData.id,
+              updatedAt: new Date().toISOString(),
+            }));
+          } catch (error) {
+            console.warn('Failed to persist checkout bootstrap state', error);
+          }
+        }
 
       } catch (error: any) {
         console.error('Error fetching checkout data:', error);
@@ -173,47 +304,34 @@ const StorefrontCheckout = () => {
     }
   }, [slug, navigate, toast]);
 
-  const calculateTotals = () => {
+  const calculateTotals = useCallback(() => {
     const subtotal = cartItems.reduce((sum, item) => sum + item.total_price_sar, 0);
     const shipping = 0; // مجاني مؤقتاً
     const total = subtotal + shipping;
-    
-    return { subtotal, shipping, total };
-  };
 
-  const handleSubmitOrder = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+    return { subtotal, shipping, total };
+  }, [cartItems]);
+
+  const submitOrder = useCallback(async (formData: CustomerData) => {
     if (!store || cartItems.length === 0) return;
-    
-    // التحقق من البيانات المطلوبة
-    if (!customerData.full_name || !customerData.phone || !customerData.address || !customerData.city) {
-      toast({
-        title: "بيانات ناقصة",
-        description: "يرجى ملء جميع الحقول المطلوبة",
-        variant: "destructive"
-      });
-      return;
-    }
 
     try {
       setSubmitting(true);
-      
+
       const { subtotal, shipping, total } = calculateTotals();
-      
-      // إنشاء الطلب
+
       const { data: order, error: orderError } = await supabasePublic
         .from('ecommerce_orders')
         .insert({
-          shop_id: store.id, // مؤقتاً نستخدم نفس معرف المتجر
+          shop_id: store.id,
           affiliate_store_id: store.id,
-          customer_name: customerData.full_name,
-          customer_phone: customerData.phone,
-          customer_email: customerData.email || null,
+          customer_name: formData.full_name,
+          customer_phone: formData.phone,
+          customer_email: formData.email || null,
           shipping_address: {
-            address: customerData.address,
-            city: customerData.city,
-            phone: customerData.phone
+            address: formData.address,
+            city: formData.city,
+            phone: formData.phone
           },
           subtotal_sar: subtotal,
           shipping_sar: shipping,
@@ -221,7 +339,7 @@ const StorefrontCheckout = () => {
           payment_method: 'CASH_ON_DELIVERY' as any,
           payment_status: 'PENDING',
           status: 'PENDING',
-          notes: customerData.notes || null,
+          notes: formData.notes || null,
           order_number: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
         })
         .select('id, order_number')
@@ -229,7 +347,6 @@ const StorefrontCheckout = () => {
 
       if (orderError) throw orderError;
 
-      // إنشاء عناصر الطلب
       const orderItems = cartItems.map(item => ({
         order_id: order.id,
         product_id: item.product_id,
@@ -245,29 +362,47 @@ const StorefrontCheckout = () => {
 
       if (itemsError) throw itemsError;
 
-      // حذف السلة
-      const sessionData = localStorage.getItem(`ea_session_${slug}`);
-      if (sessionData) {
-        const session = JSON.parse(sessionData);
-        
-        const { data: cart } = await supabasePublic
-          .from('shopping_carts')
-          .select('id')
-          .eq('session_id', session.sessionId)
-          .eq('affiliate_store_id', store.id)
-          .maybeSingle();
+      if (cartId) {
+        await supabasePublic
+          .from('cart_items')
+          .delete()
+          .eq('cart_id', cartId);
 
-        if (cart) {
-          await supabasePublic
-            .from('cart_items')
-            .delete()
-            .eq('cart_id', cart.id);
-            
-          await supabasePublic
+        await supabasePublic
+          .from('shopping_carts')
+          .delete()
+          .eq('id', cartId);
+      } else {
+        const sessionData = typeof window !== 'undefined' ? localStorage.getItem(`ea_session_${slug}`) : null;
+        if (sessionData) {
+          const session = JSON.parse(sessionData);
+          const { data: cart } = await supabasePublic
             .from('shopping_carts')
-            .delete()
-            .eq('id', cart.id);
+            .select('id')
+            .eq('session_id', session.sessionId)
+            .eq('affiliate_store_id', store.id)
+            .maybeSingle();
+
+          if (cart) {
+            await supabasePublic
+              .from('cart_items')
+              .delete()
+              .eq('cart_id', cart.id);
+
+            await supabasePublic
+              .from('shopping_carts')
+              .delete()
+              .eq('id', cart.id);
+          }
         }
+      }
+
+      if (checkoutStateKey && typeof window !== 'undefined') {
+        localStorage.removeItem(checkoutStateKey);
+      }
+
+      if (returnUrlKey && typeof window !== 'undefined') {
+        localStorage.removeItem(returnUrlKey);
       }
 
       toast({
@@ -275,7 +410,6 @@ const StorefrontCheckout = () => {
         description: `رقم طلبك: ${order.order_number || order.id}`,
       });
 
-      // الانتقال لصفحة التأكيد
       navigate(`/store/${slug}/order/${order.id}/confirmation`);
 
     } catch (error: any) {
@@ -287,6 +421,62 @@ const StorefrontCheckout = () => {
       });
     } finally {
       setSubmitting(false);
+      setPendingCustomerData(null);
+    }
+  }, [cartItems, cartId, checkoutStateKey, navigate, returnUrlKey, slug, store, toast, calculateTotals]);
+
+  const isPhoneVerified = useCallback((phone: string) => {
+    if (!store) return false;
+
+    const session = getCustomerSession();
+    if (!session?.phone) {
+      return false;
+    }
+
+    const sessionPhone = normalizePhoneForComparison(session.phone);
+    const currentPhone = normalizePhoneForComparison(phone);
+
+    return Boolean(sessionPhone) && sessionPhone === currentPhone;
+  }, [getCustomerSession, store]);
+
+  const handleSubmitOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!store || cartItems.length === 0) return;
+
+    const formData: CustomerData = { ...customerData };
+
+    if (!formData.full_name || !formData.phone || !formData.address || !formData.city) {
+      toast({
+        title: "بيانات ناقصة",
+        description: "يرجى ملء جميع الحقول المطلوبة",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    persistCheckoutState(formData);
+    setPendingCustomerData(formData);
+
+    if (!isPhoneVerified(formData.phone)) {
+      setPendingSubmission(true);
+      setOtpDialogOpen(true);
+      return;
+    }
+
+    await submitOrder(formData);
+  };
+
+  const handleOTPCompleted = (verifiedPhone: string) => {
+    setCustomerData(prev => ({ ...prev, phone: verifiedPhone }));
+    setPendingCustomerData(prev => (prev ? { ...prev, phone: verifiedPhone } : prev));
+    setOtpDialogOpen(false);
+
+    if (pendingSubmission && pendingCustomerData) {
+      setPendingSubmission(false);
+      void submitOrder({ ...pendingCustomerData, phone: verifiedPhone });
+    } else {
+      setPendingSubmission(false);
     }
   };
 
@@ -406,11 +596,11 @@ const StorefrontCheckout = () => {
                   disabled={submitting}
                   size="lg"
                 >
-                  {submitting ? 'جاري إنشاء الطلب...' : `تأكيد الطلب - ${total} ر.س`}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                {submitting ? 'جاري إنشاء الطلب...' : `تأكيد الطلب - ${total} ر.س`}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
 
           {/* ملخص الطلب */}
           <Card>
@@ -471,6 +661,17 @@ const StorefrontCheckout = () => {
           </Card>
         </div>
       </div>
+
+      <CheckoutOTPDialog
+        open={otpDialogOpen}
+        storeId={store?.id}
+        initialPhone={pendingCustomerData?.phone || customerData.phone}
+        onClose={() => {
+          setOtpDialogOpen(false);
+          setPendingSubmission(false);
+        }}
+        onVerified={handleOTPCompleted}
+      />
     </div>
   );
 };
