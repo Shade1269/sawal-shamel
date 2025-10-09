@@ -1668,7 +1668,15 @@ export type Database = {
           widget_name?: string
           widget_type?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_cms_widgets_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "cms_custom_pages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cms_custom_pages: {
         Row: {
@@ -1728,7 +1736,15 @@ export type Database = {
           updated_at?: string
           view_count?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_cms_pages_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cms_page_revisions: {
         Row: {
@@ -1758,7 +1774,15 @@ export type Database = {
           page_id?: string
           revision_number?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_cms_revisions_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "cms_custom_pages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cms_page_templates: {
         Row: {
@@ -1842,7 +1866,15 @@ export type Database = {
           ranking_position?: number | null
           search_volume?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_cms_seo_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "cms_custom_pages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       commission_payouts: {
         Row: {
@@ -2070,7 +2102,15 @@ export type Database = {
           updated_at?: string
           version_number?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_drafts_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "cms_custom_pages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       content_sections: {
         Row: {
