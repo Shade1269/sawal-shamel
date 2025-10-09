@@ -94,10 +94,66 @@ serve(async (req) => {
 
     if (!resolvedShopId) {
       console.warn("[create-ecommerce-order] Missing shop_id after resolution", { shop_id, productShopId: items?.[0]?.products?.shop_id, firstProductId: items?.[0]?.product_id });
-      return new Response(
-        JSON.stringify({ success: false, error: "معرّف المتجر مفقود" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+
+      // Try to resolve shop via affiliate store owner (profile -> shops)
+      if (affiliate_store_id) {
+        try {
+          const { data: affStore, error: affErr } = await supabase
+            .from("affiliate_stores")
+            .select("profile_id, store_name, store_slug")
+            .eq("id", affiliate_store_id)
+            .single();
+
+          if (affErr) {
+            console.warn("[create-ecommerce-order] Failed to fetch affiliate store for fallback", affErr);
+          } else if (affStore?.profile_id) {
+            // 1) Try to find an existing shop for this profile
+            const { data: existingShop, error: shopLookupErr } = await supabase
+              .from("shops")
+              .select("id")
+              .eq("owner_id", affStore.profile_id)
+              .limit(1)
+              .single();
+
+            if (existingShop?.id) {
+              resolvedShopId = existingShop.id;
+              console.log("[create-ecommerce-order] Resolved shop_id via affiliate owner shop", { resolvedShopId });
+            } else if (shopLookupErr) {
+              console.warn("[create-ecommerce-order] Shop lookup error (may be just not found)", shopLookupErr);
+            }
+
+            // 2) If still missing, create a minimal shop for this profile and use it
+            if (!resolvedShopId) {
+              const generatedSlug = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+              const { data: newShop, error: createShopErr } = await supabase
+                .from("shops")
+                .insert({
+                  owner_id: affStore.profile_id,
+                  display_name: affStore.store_name ?? "Affiliate Shop",
+                  slug: (affStore.store_slug ? `${affStore.store_slug}-store` : `store-${generatedSlug}`),
+                })
+                .select("id")
+                .single();
+
+              if (createShopErr) {
+                console.error("[create-ecommerce-order] Failed to create fallback shop", createShopErr);
+              } else if (newShop?.id) {
+                resolvedShopId = newShop.id;
+                console.log("[create-ecommerce-order] Created and resolved fallback shop_id", { resolvedShopId });
+              }
+            }
+          }
+        } catch (fallbackErr) {
+          console.error("[create-ecommerce-order] Fallback via affiliate store failed", fallbackErr);
+        }
+      }
+
+      if (!resolvedShopId) {
+        return new Response(
+          JSON.stringify({ success: false, error: "معرّف المتجر مفقود" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     // Create order
