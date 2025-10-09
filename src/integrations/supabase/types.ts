@@ -1211,6 +1211,7 @@ export type Database = {
           quantity: number
           selected_variants: Json | null
           total_price_sar: number | null
+          total_price_sar_computed: number | null
           unit_price_sar: number
           updated_at: string
         }
@@ -1222,6 +1223,7 @@ export type Database = {
           quantity: number
           selected_variants?: Json | null
           total_price_sar?: number | null
+          total_price_sar_computed?: number | null
           unit_price_sar: number
           updated_at?: string
         }
@@ -1233,6 +1235,7 @@ export type Database = {
           quantity?: number
           selected_variants?: Json | null
           total_price_sar?: number | null
+          total_price_sar_computed?: number | null
           unit_price_sar?: number
           updated_at?: string
         }
@@ -2931,6 +2934,7 @@ export type Database = {
           quantity: number
           selected_variants: Json | null
           total_price_sar: number | null
+          total_price_sar_computed: number | null
           unit_price_sar: number
         }
         Insert: {
@@ -2946,6 +2950,7 @@ export type Database = {
           quantity: number
           selected_variants?: Json | null
           total_price_sar?: number | null
+          total_price_sar_computed?: number | null
           unit_price_sar: number
         }
         Update: {
@@ -2961,6 +2966,7 @@ export type Database = {
           quantity?: number
           selected_variants?: Json | null
           total_price_sar?: number | null
+          total_price_sar_computed?: number | null
           unit_price_sar?: number
         }
         Relationships: [
@@ -6368,6 +6374,7 @@ export type Database = {
       product_variants: {
         Row: {
           available_stock: number | null
+          available_stock_computed: number | null
           color: string | null
           cost_price: number | null
           created_at: string
@@ -6390,6 +6397,7 @@ export type Database = {
         }
         Insert: {
           available_stock?: number | null
+          available_stock_computed?: number | null
           color?: string | null
           cost_price?: number | null
           created_at?: string
@@ -6412,6 +6420,7 @@ export type Database = {
         }
         Update: {
           available_stock?: number | null
+          available_stock_computed?: number | null
           color?: string | null
           cost_price?: number | null
           created_at?: string
@@ -8438,6 +8447,7 @@ export type Database = {
           product_title: string
           quantity: number
           total_price_sar: number
+          total_price_sar_computed: number | null
           unit_price_sar: number
         }
         Insert: {
@@ -8449,6 +8459,7 @@ export type Database = {
           product_title: string
           quantity?: number
           total_price_sar: number
+          total_price_sar_computed?: number | null
           unit_price_sar: number
         }
         Update: {
@@ -8460,6 +8471,7 @@ export type Database = {
           product_title?: string
           quantity?: number
           total_price_sar?: number
+          total_price_sar_computed?: number | null
           unit_price_sar?: number
         }
         Relationships: [
