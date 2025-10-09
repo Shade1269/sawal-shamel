@@ -64,6 +64,9 @@ const MerchantLayout = lazy(() => import("./layouts/MerchantLayout"));
 const UiShowcasePage = lazy(() => import("./pages/UiShowcase"));
 const ProfilePage = lazy(() => import("./pages/profile"));
 const NotificationsPage = lazy(() => import("./pages/notifications"));
+const TestingPage = lazy(() => import("./pages/Testing"));
+const DocumentationPage = lazy(() => import("./pages/Documentation"));
+const RolloutPage = lazy(() => import("./pages/Rollout"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -195,6 +198,9 @@ const App = () => {
                                 <Route path="shipping" element={<ShippingManagementPage />} />
                                 <Route path="withdrawals" element={<AdminWithdrawalsPage />} />
                                 <Route path="products/approval" element={<AdminProductApproval />} />
+                                <Route path="testing" element={<TestingPage />} />
+                                <Route path="documentation" element={<DocumentationPage />} />
+                                <Route path="rollout" element={<RolloutPage />} />
                               </Route>
 
                               <Route
