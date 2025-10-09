@@ -6780,6 +6780,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "fk_variants_warehouse_product"
+            columns: ["warehouse_product_id"]
+            isOneToOne: false
+            referencedRelation: "warehouse_products"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "product_variants_warehouse_product_id_fkey"
             columns: ["warehouse_product_id"]
             isOneToOne: false
