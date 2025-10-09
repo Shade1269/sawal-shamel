@@ -9642,6 +9642,106 @@ export type Database = {
       }
     }
     Views: {
+      gmv_analytics: {
+        Row: {
+          affiliate_store_id: string | null
+          avg_order_value: number | null
+          completed_gmv: number | null
+          date: string | null
+          gmv: number | null
+          shop_id: string | null
+          total_orders: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecommerce_orders_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders_dashboard: {
+        Row: {
+          affiliate_store_id: string | null
+          avg_value: number | null
+          newest_order: string | null
+          oldest_order: string | null
+          order_count: number | null
+          shop_id: string | null
+          status: Database["public"]["Enums"]["order_status"] | null
+          total_value: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecommerce_orders_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_overview: {
+        Row: {
+          affiliate_store_id: string | null
+          avg_order_value: number | null
+          completed_orders: number | null
+          shop_id: string | null
+          total_orders: number | null
+          total_refunded: number | null
+          total_refunds: number | null
+          total_returns: number | null
+          total_revenue: number | null
+          total_shipments: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecommerce_orders_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      refunds_analytics: {
+        Row: {
+          affiliate_store_id: string | null
+          avg_refund: number | null
+          date: string | null
+          refund_count: number | null
+          shop_id: string | null
+          total_refunded: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecommerce_orders_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      returns_analytics: {
+        Row: {
+          affiliate_store_id: string | null
+          date: string | null
+          return_count: number | null
+          shop_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecommerce_orders_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       safe_profiles: {
         Row: {
           auth_user_id: string | null
@@ -9697,6 +9797,25 @@ export type Database = {
           security_status: string | null
         }
         Relationships: []
+      }
+      shipments_dashboard: {
+        Row: {
+          affiliate_store_id: string | null
+          newest_shipment: string | null
+          oldest_shipment: string | null
+          shipment_count: number | null
+          shop_id: string | null
+          status: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ecommerce_orders_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       v_metrics_orders_daily: {
         Row: {
