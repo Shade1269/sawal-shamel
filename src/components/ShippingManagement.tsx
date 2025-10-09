@@ -9,14 +9,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Plus, Edit2, Package, MapPin, Calculator } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Plus, Edit2, Package, MapPin, Calculator, Trash2, CheckSquare } from 'lucide-react';
 import { useShippingManagement } from '@/hooks/useShippingManagement';
+import { useShippingZones } from '@/hooks/useShippingZones';
 import { ShippingCalculator } from '@/components/ShippingCalculator';
+import { saudiCities } from '@/data/saudiCities';
+import { toast } from 'sonner';
 
 const ShippingManagement: React.FC = () => {
   const {
     providers,
-    zones,
+    zones: shippingZones,
     rates,
     loading,
     createProvider,
@@ -25,10 +29,24 @@ const ShippingManagement: React.FC = () => {
     updateRate
   } = useShippingManagement();
 
+  const {
+    zones,
+    loading: zonesLoading,
+    createZone,
+    updateZone,
+    deleteZone,
+    refetch: refetchZones
+  } = useShippingZones();
+
   const [showProviderDialog, setShowProviderDialog] = useState(false);
+  const [showZoneDialog, setShowZoneDialog] = useState(false);
   const [showRateDialog, setShowRateDialog] = useState(false);
   const [editingProvider, setEditingProvider] = useState<any>(null);
+  const [editingZone, setEditingZone] = useState<any>(null);
   const [editingRate, setEditingRate] = useState<any>(null);
+  const [selectedCities, setSelectedCities] = useState<string[]>([]);
+  const [selectAllCities, setSelectAllCities] = useState(false);
+  const [citySearch, setCitySearch] = useState('');
 
   const [providerForm, setProviderForm] = useState({
     name: '',
@@ -37,6 +55,14 @@ const ShippingManagement: React.FC = () => {
     api_endpoint: '',
     is_active: true,
     configuration: {}
+  });
+
+  const [zoneForm, setZoneForm] = useState({
+    name: '',
+    name_en: '',
+    zone_code: '',
+    zone_type: 'city',
+    is_active: true
   });
 
   const [rateForm, setRateForm] = useState({
@@ -65,6 +91,30 @@ const ShippingManagement: React.FC = () => {
     resetProviderForm();
   };
 
+  const handleZoneSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (selectedCities.length === 0) {
+      toast.error('يرجى اختيار مدينة واحدة على الأقل');
+      return;
+    }
+
+    const zoneData = {
+      ...zoneForm,
+      postal_codes: selectedCities
+    };
+    
+    if (editingZone) {
+      await updateZone(editingZone.id, zoneData);
+      setEditingZone(null);
+    } else {
+      await createZone(zoneData);
+    }
+    
+    setShowZoneDialog(false);
+    resetZoneForm();
+  };
+
   const handleRateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -88,6 +138,19 @@ const ShippingManagement: React.FC = () => {
       is_active: true,
       configuration: {}
     });
+  };
+
+  const resetZoneForm = () => {
+    setZoneForm({
+      name: '',
+      name_en: '',
+      zone_code: '',
+      zone_type: 'city',
+      is_active: true
+    });
+    setSelectedCities([]);
+    setSelectAllCities(false);
+    setCitySearch('');
   };
 
   const resetRateForm = () => {
@@ -117,6 +180,19 @@ const ShippingManagement: React.FC = () => {
     setShowProviderDialog(true);
   };
 
+  const startEditZone = (zone: any) => {
+    setEditingZone(zone);
+    setZoneForm({
+      name: zone.name,
+      name_en: zone.name_en || '',
+      zone_code: zone.zone_code,
+      zone_type: zone.zone_type,
+      is_active: zone.is_active
+    });
+    setSelectedCities(Array.isArray(zone.postal_codes) ? zone.postal_codes : []);
+    setShowZoneDialog(true);
+  };
+
   const startEditRate = (rate: any) => {
     setEditingRate(rate);
     setRateForm({
@@ -131,6 +207,34 @@ const ShippingManagement: React.FC = () => {
       max_price: rate.max_price || 0
     });
     setShowRateDialog(true);
+  };
+
+  const handleSelectAllCities = (checked: boolean) => {
+    setSelectAllCities(checked);
+    if (checked) {
+      setSelectedCities([...saudiCities]);
+    } else {
+      setSelectedCities([]);
+    }
+  };
+
+  const handleCityToggle = (city: string, checked: boolean) => {
+    if (checked) {
+      setSelectedCities(prev => [...prev, city]);
+    } else {
+      setSelectedCities(prev => prev.filter(c => c !== city));
+      setSelectAllCities(false);
+    }
+  };
+
+  const filteredCities = saudiCities.filter(city => 
+    city.toLowerCase().includes(citySearch.toLowerCase())
+  );
+
+  const handleDeleteZone = async (zoneId: string) => {
+    if (confirm('هل أنت متأكد من حذف هذه المنطقة؟')) {
+      await deleteZone(zoneId);
+    }
   };
 
   if (loading) {
@@ -287,8 +391,133 @@ const ShippingManagement: React.FC = () => {
 
         <TabsContent value="zones">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle>مناطق الشحن</CardTitle>
+              <Dialog open={showZoneDialog} onOpenChange={setShowZoneDialog}>
+                <DialogTrigger asChild>
+                  <Button onClick={() => {
+                    resetZoneForm();
+                    setEditingZone(null);
+                  }}>
+                    <Plus className="h-4 w-4 ml-2" />
+                    إضافة منطقة شحن
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>
+                      {editingZone ? 'تعديل منطقة الشحن' : 'إضافة منطقة شحن جديدة'}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleZoneSubmit} className="space-y-4">
+                    <div>
+                      <Label htmlFor="zone_name">اسم المنطقة بالعربية</Label>
+                      <Input
+                        id="zone_name"
+                        value={zoneForm.name}
+                        onChange={(e) => setZoneForm({...zoneForm, name: e.target.value})}
+                        placeholder="مثال: المنطقة الوسطى"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="zone_name_en">اسم المنطقة بالإنجليزية</Label>
+                      <Input
+                        id="zone_name_en"
+                        value={zoneForm.name_en}
+                        onChange={(e) => setZoneForm({...zoneForm, name_en: e.target.value})}
+                        placeholder="Example: Central Region"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="zone_code">رمز المنطقة</Label>
+                      <Input
+                        id="zone_code"
+                        value={zoneForm.zone_code}
+                        onChange={(e) => setZoneForm({...zoneForm, zone_code: e.target.value})}
+                        placeholder="مثال: CENTRAL"
+                        required
+                      />
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-base">المدن المشمولة</Label>
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            id="select_all"
+                            checked={selectAllCities}
+                            onCheckedChange={handleSelectAllCities}
+                          />
+                          <Label htmlFor="select_all" className="text-sm font-medium cursor-pointer">
+                            <CheckSquare className="h-4 w-4 inline ml-1" />
+                            تحديد جميع المدن ({saudiCities.length} مدينة)
+                          </Label>
+                        </div>
+                      </div>
+                      
+                      <Input
+                        placeholder="بحث عن مدينة..."
+                        value={citySearch}
+                        onChange={(e) => setCitySearch(e.target.value)}
+                        className="w-full"
+                      />
+                      
+                      <div className="border rounded-lg p-4 max-h-64 overflow-y-auto bg-muted/20">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          {filteredCities.map((city) => (
+                            <div key={city} className="flex items-center space-x-2 space-x-reverse">
+                              <Checkbox
+                                id={`city_${city}`}
+                                checked={selectedCities.includes(city)}
+                                onCheckedChange={(checked) => handleCityToggle(city, checked as boolean)}
+                              />
+                              <Label
+                                htmlFor={`city_${city}`}
+                                className="text-sm cursor-pointer hover:text-primary"
+                              >
+                                {city}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                        {filteredCities.length === 0 && (
+                          <div className="text-center text-muted-foreground py-4">
+                            لا توجد مدن تطابق البحث
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-2">
+                        <Badge variant="secondary">
+                          المدن المحددة: {selectedCities.length}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2 space-x-reverse">
+                      <Switch
+                        id="zone_is_active"
+                        checked={zoneForm.is_active}
+                        onCheckedChange={(checked) => setZoneForm({...zoneForm, is_active: checked})}
+                      />
+                      <Label htmlFor="zone_is_active">منطقة نشطة</Label>
+                    </div>
+                    
+                    <div className="flex justify-end space-x-2 space-x-reverse pt-4">
+                      <Button type="button" variant="outline" onClick={() => setShowZoneDialog(false)}>
+                        إلغاء
+                      </Button>
+                      <Button type="submit" disabled={selectedCities.length === 0}>
+                        {editingZone ? 'تحديث' : 'إضافة'}
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4">
@@ -296,14 +525,36 @@ const ShippingManagement: React.FC = () => {
                   <div key={zone.id} className="p-4 border rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-semibold">{zone.name}</h3>
-                      <Badge variant={zone.is_active ? 'default' : 'secondary'}>
-                        {zone.is_active ? 'نشط' : 'غير نشط'}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={zone.is_active ? 'default' : 'secondary'}>
+                          {zone.is_active ? 'نشط' : 'غير نشط'}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => startEditZone(zone)}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteZone(zone.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
                     </div>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      رمز: {zone.zone_code} | عدد المدن: {Array.isArray(zone.postal_codes) ? zone.postal_codes.length : 0}
+                    </p>
                     <div className="flex flex-wrap gap-2">
-                      {(Array.isArray(zone.postal_codes) ? zone.postal_codes : []).map((city, index) => (
+                      {(Array.isArray(zone.postal_codes) ? zone.postal_codes : []).slice(0, 10).map((city, index) => (
                         <Badge key={index} variant="outline">{city}</Badge>
                       ))}
+                      {Array.isArray(zone.postal_codes) && zone.postal_codes.length > 10 && (
+                        <Badge variant="outline">+{zone.postal_codes.length - 10} مدن أخرى</Badge>
+                      )}
                     </div>
                   </div>
                 ))}
