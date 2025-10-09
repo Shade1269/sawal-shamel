@@ -144,6 +144,15 @@ const App = () => {
                                 )}
                               />
 
+               {/* Store Routes with /s/ prefix */}
+               <Route path="/s/:storeSlug" element={<IsolatedStoreLayout />}>
+                 <Route index element={<IsolatedStorefront />} />
+                 <Route path="cart" element={<IsolatedStoreCart />} />
+                 <Route path="checkout" element={<IsolatedStoreCheckout />} />
+                 <Route path="my-orders" element={<StorefrontMyOrders />} />
+                 <Route path="order/:orderId/confirmation" element={<StoreOrderConfirmation />} />
+               </Route>
+
                <Route path="/:slug" element={<StorefrontIntegration />} />
                <Route path="/:slug/checkout" element={<StorefrontCheckout />} />
                <Route path="/:slug/orders" element={<CustomerAuthProvider><CustomerOrders /></CustomerAuthProvider>} />
