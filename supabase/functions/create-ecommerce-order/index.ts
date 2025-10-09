@@ -21,6 +21,7 @@ serve(async (req) => {
       affiliate_store_id,
       buyer_session_id,
       customer,
+      shipping,
     } = body || {};
 
     console.log("[create-ecommerce-order] Start", { cart_id, shop_id, affiliate_store_id });
@@ -68,11 +69,12 @@ serve(async (req) => {
     }
 
     const subtotal = items.reduce((sum: number, it: any) => sum + (it.total_price_sar ?? (it.quantity * it.unit_price_sar)), 0);
-    const shipping = 25;
+    const shippingCost = shipping?.cost_sar ?? 25;
     const tax = 0;
-    const total = subtotal + shipping + tax;
+    const total = subtotal + shippingCost + tax;
 
     const orderNumber = `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
+    const trackingNumber = `TRK-${Date.now()}-${Math.random().toString(36).slice(-8).toUpperCase()}`;
 
     // Resolve shop_id from payload or cart items' products
     const normalizedShopId = (typeof shop_id === "string" && shop_id.trim().length > 0) ? shop_id : null;
@@ -174,17 +176,19 @@ serve(async (req) => {
           apartment: customer.address.apartment ?? null,
           postalCode: customer.address.postalCode ?? null,
           phone: customer.phone,
+          shipping_provider: shipping?.provider_name ?? null,
         },
         subtotal_sar: subtotal,
-        shipping_sar: shipping,
+        shipping_sar: shippingCost,
         tax_sar: tax,
         total_sar: total,
         payment_method: "CASH_ON_DELIVERY",
         payment_status: "PENDING",
         status: "PENDING",
         order_number: orderNumber,
+        tracking_number: trackingNumber,
       })
-      .select("id, order_number")
+      .select("id, order_number, tracking_number")
       .single();
 
     if (orderError) {
@@ -233,7 +237,12 @@ serve(async (req) => {
     await supabase.from("shopping_carts").delete().eq("id", cart_id);
 
     return new Response(
-      JSON.stringify({ success: true, order_id: order.id, order_number: order.order_number ?? orderNumber }),
+      JSON.stringify({ 
+        success: true, 
+        order_id: order.id, 
+        order_number: order.order_number ?? orderNumber,
+        tracking_number: order.tracking_number ?? trackingNumber
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {

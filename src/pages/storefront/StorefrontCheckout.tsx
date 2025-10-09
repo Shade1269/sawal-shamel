@@ -275,8 +275,8 @@ const StorefrontCheckout = () => {
         description: `رقم طلبك: ${order.order_number || order.id}`,
       });
 
-      // الانتقال لصفحة التأكيد أو طلباتي
-      navigate(`/${slug}`);
+      // الانتقال لصفحة التأكيد
+      navigate(`/store/${slug}/order/${order.id}/confirmation`);
 
     } catch (error: any) {
       console.error('Error creating order:', error);
