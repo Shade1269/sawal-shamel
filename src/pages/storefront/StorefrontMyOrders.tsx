@@ -97,7 +97,19 @@ const StorefrontMyOrders = () => {
 
   // إرسال كود OTP
   const handleSendOTP = async () => {
-    if (!store || !phone.trim()) {
+    // التحقق من المتجر
+    if (!store) {
+      toast({
+        title: "خطأ",
+        description: "جاري تحميل بيانات المتجر...",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // التحقق من رقم الجوال
+    const cleanPhone = phone.trim();
+    if (!cleanPhone) {
       toast({
         title: "رقم الجوال مطلوب",
         description: "يرجى إدخال رقم جوالك",
@@ -106,7 +118,18 @@ const StorefrontMyOrders = () => {
       return;
     }
 
-    const result = await otpManager.sendOTP(phone);
+    // التحقق من أن الرقم يحتوي على أرقام فقط
+    const digits = cleanPhone.replace(/\D/g, '');
+    if (digits.length < 9) {
+      toast({
+        title: "رقم جوال غير صحيح",
+        description: "يرجى إدخال رقم جوال صحيح (مثال: 0501234567)",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const result = await otpManager.sendOTP(cleanPhone);
     if (result.success) {
       setShowOTPInput(true);
     }
