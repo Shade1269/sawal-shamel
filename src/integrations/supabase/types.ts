@@ -8279,6 +8279,13 @@ export type Database = {
             foreignKeyName: "fk_shipment_events_shipment"
             columns: ["shipment_id"]
             isOneToOne: false
+            referencedRelation: "shipments_with_latest_event"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipment_events_shipment"
+            columns: ["shipment_id"]
+            isOneToOne: false
             referencedRelation: "v_shipments_overview"
             referencedColumns: ["shipment_id"]
           },
@@ -8346,6 +8353,13 @@ export type Database = {
             columns: ["shipment_id"]
             isOneToOne: false
             referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipment_status_history_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments_with_latest_event"
             referencedColumns: ["id"]
           },
           {
@@ -8432,6 +8446,13 @@ export type Database = {
             columns: ["shipment_id"]
             isOneToOne: false
             referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipment_tracking_shipment_id_fkey"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments_with_latest_event"
             referencedColumns: ["id"]
           },
           {
@@ -11265,6 +11286,204 @@ export type Database = {
           },
         ]
       }
+      shipments_with_latest_event: {
+        Row: {
+          actual_delivery_date: string | null
+          cash_on_delivery: number | null
+          cod_fee: number | null
+          created_at: string | null
+          current_location: string | null
+          declared_value: number | null
+          dimensions: Json | null
+          estimated_delivery: string | null
+          estimated_delivery_date: string | null
+          external_tracking_id: string | null
+          id: string | null
+          insurance_cost: number | null
+          last_update_time: string | null
+          latest_event: Json | null
+          metadata: Json | null
+          migrated_from_id: string | null
+          order_hub_id: string | null
+          order_id: string | null
+          provider_id: string | null
+          recipient_address: Json | null
+          recipient_name: string | null
+          recipient_phone: string | null
+          sender_address: Json | null
+          sender_name: string | null
+          sender_phone: string | null
+          service_type: string | null
+          shipment_number: string | null
+          shipping_cost: number | null
+          shop_id: string | null
+          source_table: string | null
+          special_instructions: string | null
+          status: string | null
+          total_cost: number | null
+          tracking_number: string | null
+          tracking_url: string | null
+          updated_at: string | null
+          weight_kg: number | null
+        }
+        Insert: {
+          actual_delivery_date?: string | null
+          cash_on_delivery?: number | null
+          cod_fee?: number | null
+          created_at?: string | null
+          current_location?: string | null
+          declared_value?: number | null
+          dimensions?: Json | null
+          estimated_delivery?: string | null
+          estimated_delivery_date?: string | null
+          external_tracking_id?: string | null
+          id?: string | null
+          insurance_cost?: number | null
+          last_update_time?: string | null
+          latest_event?: never
+          metadata?: Json | null
+          migrated_from_id?: string | null
+          order_hub_id?: string | null
+          order_id?: string | null
+          provider_id?: string | null
+          recipient_address?: Json | null
+          recipient_name?: string | null
+          recipient_phone?: string | null
+          sender_address?: Json | null
+          sender_name?: string | null
+          sender_phone?: string | null
+          service_type?: string | null
+          shipment_number?: string | null
+          shipping_cost?: number | null
+          shop_id?: string | null
+          source_table?: string | null
+          special_instructions?: string | null
+          status?: string | null
+          total_cost?: number | null
+          tracking_number?: string | null
+          tracking_url?: string | null
+          updated_at?: string | null
+          weight_kg?: number | null
+        }
+        Update: {
+          actual_delivery_date?: string | null
+          cash_on_delivery?: number | null
+          cod_fee?: number | null
+          created_at?: string | null
+          current_location?: string | null
+          declared_value?: number | null
+          dimensions?: Json | null
+          estimated_delivery?: string | null
+          estimated_delivery_date?: string | null
+          external_tracking_id?: string | null
+          id?: string | null
+          insurance_cost?: number | null
+          last_update_time?: string | null
+          latest_event?: never
+          metadata?: Json | null
+          migrated_from_id?: string | null
+          order_hub_id?: string | null
+          order_id?: string | null
+          provider_id?: string | null
+          recipient_address?: Json | null
+          recipient_name?: string | null
+          recipient_phone?: string | null
+          sender_address?: Json | null
+          sender_name?: string | null
+          sender_phone?: string | null
+          service_type?: string | null
+          shipment_number?: string | null
+          shipping_cost?: number | null
+          shop_id?: string | null
+          source_table?: string | null
+          special_instructions?: string | null
+          status?: string | null
+          total_cost?: number | null
+          tracking_number?: string | null
+          tracking_url?: string | null
+          updated_at?: string | null
+          weight_kg?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_shipments_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "order_hub"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_complete"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_full"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipments_order_hub"
+            columns: ["order_hub_id"]
+            isOneToOne: false
+            referencedRelation: "v_order_hub_with_relations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "shipping_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_cms_pages_full: {
         Row: {
           affiliate_store_id: string | null
@@ -12271,6 +12490,15 @@ export type Database = {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_latest_shipment_event: {
+        Args: { p_shipment_id: string }
+        Returns: {
+          event_description: string
+          event_timestamp: string
+          event_type: string
+          location: string
+        }[]
       }
       get_latest_shipment_location: {
         Args: { p_shipment_id: string }
