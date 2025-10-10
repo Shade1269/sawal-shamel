@@ -40,3 +40,6 @@ dist-ssr
 !public/models/.gitkeep
 !public/lovable-uploads/
 !public/lovable-uploads/.gitkeep
+
+# AgentOps environment
+agentops/.env
