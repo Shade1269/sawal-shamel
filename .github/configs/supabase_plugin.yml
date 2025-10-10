@@ -1,0 +1,2 @@
+schema: *
+allow_system_tables: true
