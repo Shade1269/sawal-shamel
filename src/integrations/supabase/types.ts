@@ -8207,6 +8207,7 @@ export type Database = {
         Row: {
           coordinates: Json | null
           created_at: string
+          created_by: string | null
           event_description: string
           event_timestamp: string
           event_type: string
@@ -8220,6 +8221,7 @@ export type Database = {
         Insert: {
           coordinates?: Json | null
           created_at?: string
+          created_by?: string | null
           event_description: string
           event_timestamp?: string
           event_type: string
@@ -8233,6 +8235,7 @@ export type Database = {
         Update: {
           coordinates?: Json | null
           created_at?: string
+          created_by?: string | null
           event_description?: string
           event_timestamp?: string
           event_type?: string
@@ -8244,6 +8247,48 @@ export type Database = {
           source?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_shipment_events_created_by"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipment_events_created_by"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipment_events_created_by"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipment_events_shipment"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "shipments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_shipment_events_shipment"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "v_shipments_overview"
+            referencedColumns: ["shipment_id"]
+          },
+          {
+            foreignKeyName: "fk_shipment_events_shipment"
+            columns: ["shipment_id"]
+            isOneToOne: false
+            referencedRelation: "v_shipments_with_orders"
+            referencedColumns: ["shipment_id"]
+          },
           {
             foreignKeyName: "fk_shipment_events_tracking"
             columns: ["shipment_tracking_id"]
@@ -8415,9 +8460,11 @@ export type Database = {
           declared_value: number | null
           dimensions: Json | null
           estimated_delivery: string | null
+          estimated_delivery_date: string | null
           external_tracking_id: string | null
           id: string
           insurance_cost: number | null
+          last_update_time: string | null
           metadata: Json | null
           migrated_from_id: string | null
           order_hub_id: string | null
@@ -8438,6 +8485,7 @@ export type Database = {
           status: string
           total_cost: number
           tracking_number: string | null
+          tracking_url: string | null
           updated_at: string | null
           weight_kg: number
         }
@@ -8450,9 +8498,11 @@ export type Database = {
           declared_value?: number | null
           dimensions?: Json | null
           estimated_delivery?: string | null
+          estimated_delivery_date?: string | null
           external_tracking_id?: string | null
           id?: string
           insurance_cost?: number | null
+          last_update_time?: string | null
           metadata?: Json | null
           migrated_from_id?: string | null
           order_hub_id?: string | null
@@ -8473,6 +8523,7 @@ export type Database = {
           status?: string
           total_cost: number
           tracking_number?: string | null
+          tracking_url?: string | null
           updated_at?: string | null
           weight_kg: number
         }
@@ -8485,9 +8536,11 @@ export type Database = {
           declared_value?: number | null
           dimensions?: Json | null
           estimated_delivery?: string | null
+          estimated_delivery_date?: string | null
           external_tracking_id?: string | null
           id?: string
           insurance_cost?: number | null
+          last_update_time?: string | null
           metadata?: Json | null
           migrated_from_id?: string | null
           order_hub_id?: string | null
@@ -8508,6 +8561,7 @@ export type Database = {
           status?: string
           total_cost?: number
           tracking_number?: string | null
+          tracking_url?: string | null
           updated_at?: string | null
           weight_kg?: number
         }
@@ -12218,6 +12272,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_latest_shipment_location: {
+        Args: { p_shipment_id: string }
+        Returns: string
+      }
       get_primary_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
@@ -12228,6 +12286,17 @@ export type Database = {
           average_rating: number
           rating_distribution: Json
           total_reviews: number
+        }[]
+      }
+      get_shipment_history: {
+        Args: { p_shipment_id: string }
+        Returns: {
+          created_at: string
+          event_description: string
+          event_id: string
+          event_timestamp: string
+          event_type: string
+          location: string
         }[]
       }
       get_store_orders_for_session: {
