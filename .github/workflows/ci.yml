@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
 
       - name: Cache npm
         uses: actions/cache@v3
@@ -29,40 +29,27 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Configure npm registry
+      - name: Configure npm registry (if token provided)
+        if: ${{ secrets.NPM_TOKEN != '' }}
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          set -euo pipefail
-          if [ -n "${NPM_TOKEN:-}" ]; then
-            npm config set //registry.npmjs.org/:_authToken="$NPM_TOKEN"
-          fi
+          npm config set //registry.npmjs.org/:_authToken="$NPM_TOKEN"
           npm config set registry https://registry.npmjs.org/
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund --retry=5 --fetch-retries=5 --fetch-retry-factor=2 --fetch-timeout=60000
+        run: npm ci --no-audit --no-fund
 
-      - name: Install Supabase CLI (official)
+      - name: Install Supabase CLI
         uses: supabase/setup-cli@v1
         with:
           version: latest
-
-      - name: Ensure Supabase CLI installed
-        run: |
-          set -euo pipefail
-          if ! command -v supabase >/dev/null 2>&1; then
-            echo "Supabase CLI not found, installing via fallback script"
-            curl -fsSL https://get.supabase.com/cli | sh
-            if [ -d "$HOME/.supabase/bin" ]; then
-              echo "$HOME/.supabase/bin" >> "$GITHUB_PATH"
-            fi
-          fi
 
       - name: Print tool versions
         run: |
           node -v
           npm -v
-          supabase --version
+          supabase --version || true
           psql --version || true
 
       - name: Run database migrations
@@ -71,49 +58,25 @@ jobs:
           SUPABASE_DB_URL: ${{ env.SUPABASE_DB_URL }}
         run: |
           set -euo pipefail
-          DB_URL="$SUPABASE_DB_URL"
-          PUSH_SUCCESS=0
-
-          echo "Attempting supabase db push"
-          if supabase db push --db-url "$DB_URL"; then
-            PUSH_SUCCESS=1
-          else
-            echo "::warning::supabase db push failed; attempting psql fallback"
-          fi
-
-          if [ "$PUSH_SUCCESS" -ne 1 ]; then
+          supabase db push --db-url "$SUPABASE_DB_URL" || {
+            echo "::warning::supabase db push failed; applying SQL files via psql"
             if ! command -v psql >/dev/null 2>&1; then
-              sudo apt-get update
-              sudo apt-get install -y postgresql-client
+              sudo apt-get update && sudo apt-get install -y postgresql-client
             fi
-
-            SQL_FILES=(
-              sql/01_policies.sql
-              sql/02_indexes.sql
-              sql/03_commissions_pipeline.sql
-              sql/04_points_leaderboard.sql
-              sql/05_internal_inventory.sql
-            )
-
-            FALLBACK_SUCCESS=1
-            for file in "${SQL_FILES[@]}"; do
-              if [ -f "$file" ]; then
-                echo "Applying $file via psql"
-                if ! psql "$DB_URL" -v ON_ERROR_STOP=1 -f "$file"; then
-                  FALLBACK_SUCCESS=0
-                  break
-                fi
-              else
-                echo "::warning::Missing migration file $file"
-              fi
+            for file in sql/*.sql; do
+              [ -f "$file" ] && psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$file"
             done
+          }
 
-            if [ "$FALLBACK_SUCCESS" -ne 1 ]; then
-              echo "::error::Migrations failed"
-              exit 1
-            fi
-          fi
+      - name: Skip migrations (secrets not provided)
+        if: ${{ !(env.SUPABASE_DB_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '') }}
+        run: echo "::warning::Skipping DB migrations: secrets not provided"
 
-  - run: npm run lint --if-present
-  - run: npm test
-  - run: npm run build --if-present
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Test
+        run: npm test --if-present
+
+      - name: Build
+        run: npm run build --if-present

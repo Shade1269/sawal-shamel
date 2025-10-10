@@ -209,11 +209,16 @@ export default {
 				'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
 				'bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
 			},
-			borderRadius: {
-				sm: 'var(--radius-sm)',
-				md: 'var(--radius-md)',
-				lg: 'var(--radius-lg)'
-			},
+                        borderRadius: {
+                                sm: 'var(--radius-sm)',
+                                md: 'var(--radius-md)',
+                                lg: 'var(--radius-lg)',
+                                xl: '1rem',
+                                '2xl': '1.25rem'
+                        },
+                        backdropBlur: {
+                                xs: '2px'
+                        },
 			keyframes: {
 				// Basic UI Animations
 				'accordion-down': {
