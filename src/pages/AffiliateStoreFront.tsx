@@ -1,29 +1,20 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { EnhancedStoreFront } from '@/features/affiliate';
 import { CustomerAuthProvider } from '@/contexts/CustomerAuthContext';
 import { useAffiliateStore } from '@/hooks/useAffiliateStore';
+import { IsolatedStorefront } from '@/pages/storefront/IsolatedStorefront';
 
 const AffiliateStoreFront = () => {
-  const { storeSlug } = useParams<{ storeSlug: string }>();
   const navigate = useNavigate();
   const { store, isLoading } = useAffiliateStore();
 
   useEffect(() => {
-    // إذا لم يكن هناك storeSlug في الرابط وكان المستخدم لديه متجر
-    if (!storeSlug && store && !isLoading) {
-      // إذا كان لدى المستخدم متجر، اذهب إلى إعدادات المتجر
-      navigate(`/affiliate/store/settings`, { replace: true });
-      return;
-    }
-    
-    // إذا لم يكن هناك storeSlug ولا يوجد متجر
-    if (!storeSlug && !store && !isLoading) {
-      // اذهب إلى صفحة إنشاء المتجر
+    // إذا لم يكن لدى المستخدم متجر، اذهب إلى صفحة الإنشاء
+    if (!store && !isLoading) {
       navigate('/affiliate/store/setup', { replace: true });
       return;
     }
-  }, [storeSlug, store, isLoading, navigate]);
+  }, [store, isLoading, navigate]);
 
   // إذا كان لا يزال يحمل البيانات
   if (isLoading) {
@@ -36,10 +27,22 @@ const AffiliateStoreFront = () => {
       </div>
     );
   }
+
+  if (!store) {
+    return null;
+  }
   
   return (
     <CustomerAuthProvider>
-      <EnhancedStoreFront storeSlug={storeSlug} />
+      <div className="container mx-auto px-4 py-6">
+        <IsolatedStorefront 
+          storeData={{
+            id: store.id,
+            store_name: store.store_name,
+            store_slug: store.store_slug,
+          }} 
+        />
+      </div>
     </CustomerAuthProvider>
   );
 };
