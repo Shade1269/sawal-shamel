@@ -1,7 +1,7 @@
 # تقرير التقدم: توحيد قاعدة البيانات
 
-**آخر تحديث**: 2025-10-10  
-**الحالة**: 🟢 المراحل 1-3 + 4(ب) مكتملة (50% من الخطة الشاملة)
+**آخر تحديث**: 2025-10-11  
+**الحالة**: 🟢 المراحل 1-3 + 4(ب-ج) مكتملة (60% من الخطة الشاملة)
 
 ---
 
@@ -154,7 +154,10 @@
 - **4 arrays مُحدّدة** بأنواع صريحة
 - **1 جدول جديد** للشحنات (`shipment_events`)
 - **5 حقول جديدة** في `shipments`
-- **10 فهارس جديدة** للأداء
+- **4 حقول جديدة** في `profiles` (avatar_url, bio, level, total_earnings)
+- **15 فهارس جديدة** للأداء (10 شحن + 5 profiles)
+- **3 دوال جديدة** للهوية (get_user_profile، get_current_profile، check_profile_orphans)
+- **1 view جديد** للتوافق (`user_profiles_compat`)
 
 ### الكود:
 - ✅ `UnifiedOrdersService` (237 سطر)
@@ -166,12 +169,41 @@
 
 ---
 
-## 🔜 المتبقي (Remaining - 50%)
-
 ### المرحلة 4(ج): توحيد الهوية
-- ❌ اعتماد `profiles` كـ SSOT
-- ❌ ترحيل مراجع `auth.users` → `profiles`
-- ❌ توحيد `user_profiles` مع `profiles`
+**الحالة**: ✅ 100%
+
+#### الحقول الجديدة في profiles (4):
+- ✅ `avatar_url` - رابط صورة المستخدم
+- ✅ `bio` - نبذة عن المستخدم  
+- ✅ `level` - مستوى المستخدم (user_level)
+- ✅ `total_earnings` - إجمالي الأرباح
+
+#### ترحيل البيانات:
+- ✅ نسخ البيانات من `user_profiles` → `profiles`
+- ✅ إنشاء `user_profiles_compat` view للتوافق الخلفي
+
+#### الدوال الموحدة (3 functions):
+- ✅ `get_user_profile()` - الحصول على بيانات مستخدم محدد
+- ✅ `get_current_profile()` - الحصول على بيانات المستخدم الحالي
+- ✅ `check_profile_orphans()` - فحص البيانات اليتيمة
+
+#### الفهارس (5 indexes):
+- ✅ `idx_profiles_auth_user_id` (partial)
+- ✅ `idx_profiles_email` (partial)
+- ✅ `idx_profiles_phone` (partial)
+- ✅ `idx_profiles_role`
+- ✅ `idx_profiles_is_active` (partial)
+
+#### RLS Policies (3 policies):
+- ✅ Users can select own profile
+- ✅ Users can update own profile
+- ✅ Admins can select all profiles
+
+**نتيجة**: `profiles` الآن SSOT موحد مع دوال آمنة ✅
+
+---
+
+## 🔜 المتبقي (Remaining - 40%)
 
 ### المرحلة 4(د): توحيد CMS
 - ❌ تحديد نظام CMS الرئيسي (store_pages vs cms_custom_pages)
