@@ -74,7 +74,6 @@ export const IsolatedStorefront: React.FC = () => {
             image_urls,
             rating,
             reviews_count,
-            stock_quantity,
             is_active
           )
         `)
@@ -94,13 +93,13 @@ export const IsolatedStorefront: React.FC = () => {
             image_urls: product.image_urls,
             rating: product.rating,
             reviews_count: product.reviews_count,
-            stock_quantity: product.stock_quantity,
+            stock_quantity: 0, // سيتم حسابها من variants
           } as Product;
-        })
-        .filter(p => (p.stock_quantity ?? 0) > 0);
+        });
 
       const productIds = baseProducts.map(p => p.id);
       let variantsMap: Record<string, ProductVariant[]> = {};
+      const stockMap: Record<string, number> = {};
 
       if (productIds.length > 0) {
         const { data: variantRows, error: variantsError } = await supabase
@@ -115,6 +114,9 @@ export const IsolatedStorefront: React.FC = () => {
             const pid = (row as any).product_id as string;
             if (!tempMap[pid]) tempMap[pid] = { color: {}, size: {} };
             const qty = ((row as any).quantity ?? 0) as number;
+
+            // حساب إجمالي الكمية المتاحة للمنتج
+            stockMap[pid] = (stockMap[pid] || 0) + qty;
 
             const color = (row as any).color as string | null;
             const size = (row as any).size as string | null;
@@ -142,10 +144,13 @@ export const IsolatedStorefront: React.FC = () => {
         }
       }
 
-      return baseProducts.map(p => ({
-        ...p,
-        variants: variantsMap[p.id] || [],
-      }));
+      return baseProducts
+        .map(p => ({
+          ...p,
+          stock_quantity: stockMap[p.id] || 0,
+          variants: variantsMap[p.id] || [],
+        }))
+        .filter(p => p.stock_quantity > 0);
     },
     enabled: !!store?.id,
     staleTime: 5 * 60 * 1000, // Cache لمدة 5 دقائق
