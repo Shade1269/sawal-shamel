@@ -189,7 +189,7 @@ export const IsolatedStorefront: React.FC = () => {
       const slug = store?.store_slug || storeSlug || '';
       if (slug) {
         sessionStorage.setItem(`scroll_${slug}`, window.scrollY.toString());
-        navigate(`/s/${slug}/p/${productId}`);
+        navigate(`/${slug}/p/${productId}`);
       }
       return;
     }
