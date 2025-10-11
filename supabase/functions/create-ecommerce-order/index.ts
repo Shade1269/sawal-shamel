@@ -232,6 +232,27 @@ serve(async (req) => {
       console.warn("[create-ecommerce-order] Insert payment tx warning", txError);
     }
 
+    // إضافة الطلب إلى order_hub الموحد
+    const { error: hubError } = await supabase
+      .from("order_hub")
+      .insert({
+        source: "ecommerce",
+        source_order_id: order.id,
+        order_number: order.order_number ?? orderNumber,
+        customer_name: customer.name,
+        customer_phone: customer.phone,
+        customer_email: customer.email ?? null,
+        total_amount_sar: total,
+        status: "PENDING",
+        payment_status: "PENDING",
+        affiliate_store_id,
+        shop_id: resolvedShopId,
+      });
+
+    if (hubError) {
+      console.warn("[create-ecommerce-order] Insert order_hub warning", hubError);
+    }
+
     // Clear cart
     await supabase.from("cart_items").delete().eq("cart_id", cart_id);
     await supabase.from("shopping_carts").delete().eq("id", cart_id);
