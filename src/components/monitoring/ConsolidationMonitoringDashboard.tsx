@@ -4,23 +4,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, CheckCircle2, TrendingUp, Database } from 'lucide-react';
 
-interface MetricCard {
-  title: string;
-  value: number;
-  change?: number;
-  status: 'success' | 'warning' | 'error';
-}
-
 export function ConsolidationMonitoringDashboard() {
-  // Order Hub Metrics
+  // Order Hub Metrics - استعلامات مباشرة
   const { data: orderMetrics } = useQuery({
     queryKey: ['order-hub-metrics'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_order_hub_metrics');
-      if (error) throw error;
-      return data;
+      const [total, ecommerce, simple, manual] = await Promise.all([
+        supabase.from('order_hub').select('id', { count: 'exact', head: true }),
+        supabase.from('order_hub').select('id', { count: 'exact', head: true }).eq('source', 'ecommerce'),
+        supabase.from('order_hub').select('id', { count: 'exact', head: true }).eq('source', 'simple'),
+        supabase.from('order_hub').select('id', { count: 'exact', head: true }).eq('source', 'manual'),
+      ]);
+      return {
+        total_orders: total.count || 0,
+        ecommerce_orders: ecommerce.count || 0,
+        simple_orders: simple.count || 0,
+        manual_orders: manual.count || 0,
+      };
     },
-    refetchInterval: 30000, // كل 30 ثانية
+    refetchInterval: 30000,
   });
 
   // Data Quality Checks
@@ -29,9 +31,9 @@ export function ConsolidationMonitoringDashboard() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('check_data_quality');
       if (error) throw error;
-      return data;
+      return data as Array<{ check_name: string; status: string; details: any }>;
     },
-    refetchInterval: 60000, // كل دقيقة
+    refetchInterval: 60000,
   });
 
   // Legacy Tables Status

@@ -317,16 +317,41 @@ export const RolloutManager: React.FC = () => {
 
 function getFlagDescription(flag: FeatureFlag): string {
   const descriptions: Record<FeatureFlag, string> = {
+    // Core
     USE_UNIFIED_ORDERS: 'تفعيل نظام order_hub الموحد',
     USE_UNIFIED_RETURNS: 'استخدام المرتجعات الموحدة',
     USE_UNIFIED_REFUNDS: 'استخدام الاستردادات الموحدة',
     USE_UNIFIED_SHIPMENTS: 'استخدام الشحنات الموحدة',
-    SHOW_UNIFIED_DASHBOARD: 'عرض لوحة التحكم الموحدة',
-    SHOW_SOURCE_INDICATOR: 'عرض مصدر الطلب (ecommerce/simple/manual)',
-    ENABLE_DUAL_WRITE: 'الكتابة على الجداول القديمة والجديدة',
+    USE_UNIFIED_IDENTITY: 'استخدام profiles كمصدر موحد للهوية',
+    USE_UNIFIED_CMS: 'استخدام cms_custom_pages كمصدر موحد',
+    
+    // Contract Phase
+    BLOCK_LEGACY_ORDERS_WRITE: 'منع الكتابة في orders القديم',
+    BLOCK_LEGACY_SIMPLE_ORDERS_WRITE: 'منع الكتابة في simple_orders',
+    BLOCK_LEGACY_USER_PROFILES_WRITE: 'منع الكتابة في user_profiles',
+    BLOCK_LEGACY_STORE_PAGES_WRITE: 'منع الكتابة في store_pages',
+    BLOCK_LEGACY_SHIPMENTS_TRACKING_WRITE: 'منع الكتابة في shipments_tracking',
+    
+    // Reading Strategy
     PREFER_LEGACY_READ: 'القراءة من الجداول القديمة عند التوفر',
+    ENABLE_DUAL_READ: 'القراءة من الجداول القديمة والجديدة للمقارنة',
+    
+    // UI/UX
+    SHOW_UNIFIED_DASHBOARD: 'عرض لوحة التحكم الموحدة',
+    SHOW_SOURCE_INDICATOR: 'عرض مصدر البيانات',
+    SHOW_MIGRATION_STATUS: 'عرض حالة الترحيل',
+    SHOW_LEGACY_WARNING: 'تحذير عند الوصول للبيانات القديمة',
+    
+    // Admin/Debug
     SHOW_MIGRATION_TOOLS: 'عرض أدوات الترحيل في الإدارة',
     ENABLE_DATA_VALIDATION: 'تشغيل فحوصات التحقق من البيانات',
+    ENABLE_MONITORING_DASHBOARD: 'عرض لوحة المراقبة المباشرة',
+    ENABLE_ROLLBACK_MODE: 'تفعيل وضع الرجوع للنظام القديم (طوارئ)',
+    
+    // Performance
+    USE_MATERIALIZED_VIEWS: 'استخدام Materialized Views للتحليلات',
+    ENABLE_QUERY_CACHING: 'تفعيل تخزين الاستعلامات مؤقتاً',
+    ENABLE_BATCH_OPERATIONS: 'تفعيل العمليات المجمعة',
   };
   return descriptions[flag] || flag;
 }
