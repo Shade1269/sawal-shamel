@@ -41,7 +41,18 @@ export const usePlatformPhoneAuth = () => {
   const isValidSaudiPhone = (formatted: string): boolean => {
     // Must be +966 followed by 9 digits starting with 5
     const saudiPattern = /^\+9665\d{8}$/;
-    return saudiPattern.test(formatted);
+    const isValid = saudiPattern.test(formatted);
+    
+    if (!isValid) {
+      console.log('Phone validation failed:', {
+        input: formatted,
+        pattern: 'Expected: +9665XXXXXXXX',
+        length: formatted.length,
+        expectedLength: 13
+      });
+    }
+    
+    return isValid;
   };
   const sendOTP = async (phone: string): Promise<PhoneAuthResponse> => {
     setLoading(true);
