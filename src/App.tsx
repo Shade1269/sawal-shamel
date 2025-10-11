@@ -67,25 +67,6 @@ const NotificationsPage = lazy(() => import("./pages/notifications"));
 const TestingPage = lazy(() => import("./pages/Testing"));
 const DocumentationPage = lazy(() => import("./pages/Documentation"));
 const RolloutPage = lazy(() => import("./pages/Rollout"));
-const CategoryManagementPage = lazy(() => import("./pages/CategoryManagement"));
-const BrandManagementPage = lazy(() => import("./pages/BrandManagement"));
-const BannerManagementPage = lazy(() => import("./pages/BannerManagementPage"));
-const CMSManagementPage = lazy(() => import("./pages/CMSManagement"));
-const ThemeStudioPage = lazy(() => import("./pages/ThemeStudioPage"));
-const InvoiceManagementPage = lazy(() => import("./pages/InvoiceManagement"));
-const RefundManagementPage = lazy(() => import("./pages/RefundManagement"));
-const PromotionsPage = lazy(() => import("./pages/PromotionsPage"));
-const AdvancedMarketingPage = lazy(() => import("./pages/AdvancedMarketingPage"));
-const SEOManagementPage = lazy(() => import("./pages/SEOManagement"));
-const CreateAdminPage = lazy(() => import("./pages/CreateAdmin"));
-const ExecutiveDashboardPage = lazy(() => import("./pages/ExecutiveDashboard"));
-const MonitoringPage = lazy(() => import("./pages/MonitoringPage"));
-const OrderManagementPage = lazy(() => import("./pages/OrderManagement"));
-const OrderTrackingPage = lazy(() => import("./pages/OrderTracking"));
-const PaymentDashboardPage = lazy(() => import("./pages/PaymentDashboard"));
-const PaymentGatewaysPage = lazy(() => import("./pages/PaymentGateways"));
-const SecurityCenterPage = lazy(() => import("./pages/SecurityCenter"));
-const ShipmentManagementPage = lazy(() => import("./pages/ShipmentManagement"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -177,9 +158,8 @@ const App = () => {
                  <Route path="order/:orderId/confirmation" element={<StoreOrderConfirmation />} />
                </Route>
 
-               <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/order/confirmation" element={<OrderConfirmationPage />} />
-              <Route path="/track-order" element={<OrderTrackingPage />} />
 
               <Route
                 path="/affiliate/*"
@@ -194,15 +174,9 @@ const App = () => {
                 <Route path="storefront" element={<AffiliateStoreFront />} />
                 <Route path="store/settings" element={<AffiliateStoreSettingsPage />} />
                 <Route path="store/setup" element={<StoreSetup />} />
-                <Route path="store/cms" element={<CMSManagementPage />} />
-                <Route path="store/theme" element={<ThemeStudioPage />} />
-                <Route path="store/banners" element={<BannerManagementPage />} />
-                <Route path="store/seo" element={<SEOManagementPage />} />
                 <Route path="orders" element={<UnifiedAffiliateOrders />} />
                 <Route path="analytics" element={<AffiliateAnalyticsPage />} />
                 <Route path="wallet" element={<AffiliateWalletPage />} />
-                <Route path="promotions" element={<PromotionsPage />} />
-                <Route path="marketing" element={<AdvancedMarketingPage />} />
               </Route>
 
                               <Route
@@ -223,23 +197,11 @@ const App = () => {
                                 <Route path="inventory" element={<InventoryPage />} />
                                 <Route path="shipping" element={<ShippingManagementPage />} />
                                 <Route path="withdrawals" element={<AdminWithdrawalsPage />} />
-                <Route path="products/approval" element={<AdminProductApproval />} />
-                <Route path="categories" element={<CategoryManagementPage />} />
-                <Route path="brands" element={<BrandManagementPage />} />
-                <Route path="invoices" element={<InvoiceManagementPage />} />
-                <Route path="refunds" element={<RefundManagementPage />} />
-                <Route path="order-management" element={<OrderManagementPage />} />
-                <Route path="shipment-management" element={<ShipmentManagementPage />} />
-                <Route path="payments/dashboard" element={<PaymentDashboardPage />} />
-                <Route path="payments/gateways" element={<PaymentGatewaysPage />} />
-                <Route path="executive" element={<ExecutiveDashboardPage />} />
-                <Route path="monitoring" element={<MonitoringPage />} />
-                <Route path="security" element={<SecurityCenterPage />} />
-                <Route path="create-admin" element={<CreateAdminPage />} />
-                <Route path="testing" element={<TestingPage />} />
-                <Route path="documentation" element={<DocumentationPage />} />
-                <Route path="rollout" element={<RolloutPage />} />
-              </Route>
+                                <Route path="products/approval" element={<AdminProductApproval />} />
+                                <Route path="testing" element={<TestingPage />} />
+                                <Route path="documentation" element={<DocumentationPage />} />
+                                <Route path="rollout" element={<RolloutPage />} />
+                              </Route>
 
                               <Route
                                 path="/merchant"
