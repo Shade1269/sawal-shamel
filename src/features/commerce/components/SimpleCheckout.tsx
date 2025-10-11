@@ -100,53 +100,66 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
         throw new Error('معرف المتجر غير متوفر');
       }
 
-      // استخدام Edge Function الموحد
+      console.log('Placing order with SimpleCheckout data:', {
+        affiliate_store_id: shopId,
+        customer: customerInfo,
+        items: cartItems
+      });
+
+      // تحويل عناصر السلة إلى الصيغة المطلوبة للنظام الموحد
+      const formattedItems = cartItems.map(item => ({
+        id: item.id,
+        quantity: item.quantity,
+        price: item.price,
+      }));
+
+      // استخدام Edge Function الموحد مع الصيغة الجديدة
       const { data, error } = await supabase.functions.invoke('create-ecommerce-order', {
         body: {
-          shop_id: shopId,
           affiliate_store_id: shopId,
-          customer_name: customerInfo.name,
-          customer_phone: customerInfo.phone,
-          customer_email: customerInfo.email || null,
-          shipping_address: {
-            address: customerInfo.address,
+          buyer_session_id: localStorage.getItem('buyerSessionId') || null,
+          customer: {
+            name: customerInfo.name,
+            phone: customerInfo.phone,
+            email: customerInfo.email || null,
             city: customerInfo.city,
+            address: customerInfo.address,
             notes: customerInfo.notes || null,
           },
-          subtotal_sar: subtotal,
-          shipping_sar: shippingCost,
-          tax_sar: 0,
-          total_sar: total,
-          payment_method: PAYMENT_METHOD_COD,
-          notes: customerInfo.notes || null,
-          order_items: cartItems.map(item => ({
-            product_id: item.id,
-            product_title: item.name,
-            product_image_url: item.image || null,
-            quantity: item.quantity,
-            unit_price_sar: item.price,
-            total_price_sar: item.price * item.quantity,
-          }))
+          shipping: {
+            cost_sar: shippingCost,
+            provider_name: 'توصيل محلي',
+          },
+          items: formattedItems, // إرسال المنتجات مباشرة بدون cart_id
         }
       });
 
-      if (error) throw error;
-      if (!data?.order) throw new Error("missing order response");
+      console.log('Edge Function response:', { data, error });
 
-      const order = data.order;
+      if (error) {
+        console.error('Edge function error:', error);
+        throw new Error(error.message || 'فشل في إنشاء الطلب');
+      }
 
-      setOrderNumber(order.order_number || orderNumber);
+      if (!data?.success) {
+        throw new Error(data?.error || 'فشل في إنشاء الطلب');
+      }
+
+      console.log('Order created successfully:', data);
+      
+      const newOrderNumber = data.order_number || generateOrderNumber();
+      setOrderNumber(newOrderNumber);
       setOrderCompleted(true);
 
       toast.success('تم إنشاء الطلب بنجاح!');
+      
+      if (onOrderComplete) {
+        onOrderComplete(newOrderNumber);
+      }
 
-      setTimeout(() => {
-        navigate(`/order-confirmation-simple/${order.id}`);
-      }, 2000);
-
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error placing order:', error);
-      toast.error('حدث خطأ أثناء إنشاء الطلب');
+      toast.error(error.message || 'حدث خطأ أثناء إنشاء الطلب');
     } finally {
       setLoading(false);
     }

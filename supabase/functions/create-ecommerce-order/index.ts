@@ -22,18 +22,23 @@ serve(async (req) => {
       buyer_session_id,
       customer,
       shipping,
+      items: directItems, // للطلبات المباشرة من SimpleCheckout
     } = body || {};
 
-    console.log("[create-ecommerce-order] Start", { cart_id, shop_id, affiliate_store_id });
+    console.log("[create-ecommerce-order] Start", { 
+      cart_id, 
+      shop_id, 
+      affiliate_store_id,
+      hasDirectItems: !!directItems,
+      isCartBased: !!cart_id,
+    });
 
-    if (!cart_id || !affiliate_store_id || !customer?.name || !customer?.phone || !customer?.address?.city || !customer?.address?.street) {
+    // التحقق من البيانات الأساسية
+    if (!affiliate_store_id || !customer?.name || !customer?.phone) {
       console.warn("[create-ecommerce-order] Validation failed", {
-        hasCart: !!cart_id,
         hasAffiliate: !!affiliate_store_id,
         hasName: !!customer?.name,
         hasPhone: !!customer?.phone,
-        hasCity: !!customer?.address?.city,
-        hasStreet: !!customer?.address?.street,
       });
       return new Response(
         JSON.stringify({ success: false, error: "بيانات الطلب ناقصة" }),
@@ -47,23 +52,61 @@ serve(async (req) => {
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
-    // Load cart items with product details
-    const { data: items, error: itemsLoadError } = await supabase
-      .from("cart_items")
-      .select(
-         `id, product_id, quantity, unit_price_sar, total_price_sar,
-         products ( id, title, image_urls, shop_id )`
-      )
-      .eq("cart_id", cart_id);
+    let items: any[] = [];
 
-    if (itemsLoadError) {
-      console.error("[create-ecommerce-order] Load cart items error", itemsLoadError);
-      throw itemsLoadError;
+    // تحميل المنتجات من السلة أو استخدام المنتجات المباشرة
+    if (cart_id) {
+      // نظام السلة (cart-based)
+      const { data: cartItems, error: itemsLoadError } = await supabase
+        .from("cart_items")
+        .select(
+           `id, product_id, quantity, unit_price_sar, total_price_sar,
+           products ( id, title, image_urls, shop_id )`
+        )
+        .eq("cart_id", cart_id);
+
+      if (itemsLoadError) {
+        console.error("[create-ecommerce-order] Load cart items error", itemsLoadError);
+        throw itemsLoadError;
+      }
+      items = cartItems || [];
+    } else if (directItems && Array.isArray(directItems)) {
+      // نظام الطلب المباشر (direct order من SimpleCheckout)
+      console.log("[create-ecommerce-order] Using direct items", { count: directItems.length });
+      
+      // تحميل بيانات المنتجات
+      const productIds = directItems.map((item: any) => item.id);
+      const { data: products, error: productsError } = await supabase
+        .from("products")
+        .select("id, title, image_urls, shop_id, price_sar")
+        .in("id", productIds);
+
+      if (productsError) {
+        console.error("[create-ecommerce-order] Load products error", productsError);
+        throw productsError;
+      }
+
+      // تحويل المنتجات المباشرة إلى نفس صيغة cart items
+      items = directItems.map((item: any) => {
+        const product = products?.find((p: any) => p.id === item.id);
+        return {
+          product_id: item.id,
+          quantity: item.quantity,
+          unit_price_sar: item.price,
+          total_price_sar: item.price * item.quantity,
+          products: product ? {
+            id: product.id,
+            title: product.title,
+            image_urls: product.image_urls,
+            shop_id: product.shop_id,
+          } : null,
+        };
+      });
     }
 
     if (!items || items.length === 0) {
       return new Response(
-        JSON.stringify({ success: false, error: "السلة فارغة" }),
+        JSON.stringify({ success: false, error: "لا توجد منتجات في الطلب" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -73,8 +116,16 @@ serve(async (req) => {
     const tax = 0;
     const total = subtotal + shippingCost + tax;
 
-    const orderNumber = `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
+    const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
     const trackingNumber = `TRK-${Date.now()}-${Math.random().toString(36).slice(-8).toUpperCase()}`;
+    
+    console.log("[create-ecommerce-order] Order totals", { 
+      subtotal, 
+      shippingCost, 
+      tax, 
+      total,
+      itemsCount: items.length 
+    });
 
     // Resolve shop_id from payload or cart items' products
     const normalizedShopId = (typeof shop_id === "string" && shop_id.trim().length > 0) ? shop_id : null;
@@ -169,14 +220,15 @@ serve(async (req) => {
         customer_phone: customer.phone,
         customer_email: customer.email ?? null,
         shipping_address: {
-          city: customer.address.city,
-          district: customer.address.district ?? null,
-          street: customer.address.street,
-          building: customer.address.building ?? null,
-          apartment: customer.address.apartment ?? null,
-          postalCode: customer.address.postalCode ?? null,
+          city: customer.address?.city || customer.city || "غير محدد",
+          district: customer.address?.district || customer.district || null,
+          street: customer.address?.street || customer.address || null,
+          building: customer.address?.building || null,
+          apartment: customer.address?.apartment || null,
+          postalCode: customer.address?.postalCode || null,
           phone: customer.phone,
-          shipping_provider: shipping?.provider_name ?? null,
+          shipping_provider: shipping?.provider_name || null,
+          notes: customer.notes || shipping?.notes || null,
         },
         subtotal_sar: subtotal,
         shipping_sar: shippingCost,
@@ -253,9 +305,12 @@ serve(async (req) => {
       console.warn("[create-ecommerce-order] Insert order_hub warning", hubError);
     }
 
-    // Clear cart
-    await supabase.from("cart_items").delete().eq("cart_id", cart_id);
-    await supabase.from("shopping_carts").delete().eq("id", cart_id);
+    // Clear cart (فقط إذا كان الطلب من السلة)
+    if (cart_id) {
+      await supabase.from("cart_items").delete().eq("cart_id", cart_id);
+      await supabase.from("shopping_carts").delete().eq("id", cart_id);
+      console.log("[create-ecommerce-order] Cart cleared", { cart_id });
+    }
 
     return new Response(
       JSON.stringify({ 
