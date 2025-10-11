@@ -73,27 +73,17 @@ const OrderTrackingPage = () => {
     try {
       setLoading(true);
 
-      // البحث عن الطلب
-      const { data: orderData, error } = await supabasePublic
-        .from('ecommerce_orders')
-        .select(`
-          id,
-          order_number,
-          status,
-          customer_name,
-          customer_phone,
-          total_sar,
-          created_at,
-          tracking_number,
-          estimated_delivery_date
-        `)
+      // البحث عن الطلب في order_hub
+      const { data: hubData, error: hubError } = await supabasePublic
+        .from('order_hub')
+        .select('*')
         .eq('order_number', orderNumber)
         .eq('customer_phone', customerPhone)
         .maybeSingle();
 
-      if (error) throw error;
+      if (hubError) throw hubError;
 
-      if (!orderData) {
+      if (!hubData) {
         toast({
           title: "الطلب غير موجود",
           description: "لم يتم العثور على طلب بهذه البيانات",
@@ -102,21 +92,56 @@ const OrderTrackingPage = () => {
         return;
       }
 
-      // جلب عناصر الطلب
-      const { data: itemsData } = await supabasePublic
-        .from('ecommerce_order_items')
-        .select('id, product_title, quantity, unit_price_sar')
-        .eq('order_id', orderData.id);
+      // جلب تفاصيل الطلب من الجدول الأصلي
+      let orderDetails: any = null;
+      let items: any[] = [];
+
+      if (hubData.source === 'ecommerce') {
+        const { data: ecomData } = await supabasePublic
+          .from('ecommerce_orders')
+          .select('*, ecommerce_order_items(*)')
+          .eq('id', hubData.source_order_id)
+          .maybeSingle();
+        
+        if (ecomData) {
+          orderDetails = ecomData;
+          items = ecomData.ecommerce_order_items || [];
+        }
+      } else if (hubData.source === 'simple') {
+        const { data: simpleData } = await supabasePublic
+          .from('simple_orders')
+          .select('*, simple_order_items(*)')
+          .eq('id', hubData.source_order_id)
+          .maybeSingle();
+        
+        if (simpleData) {
+          orderDetails = simpleData;
+          items = simpleData.simple_order_items || [];
+        }
+      }
 
       setOrder({
-        ...orderData,
-        items: itemsData || []
+        id: hubData.id,
+        order_number: hubData.order_number || hubData.id,
+        status: hubData.status || 'PENDING',
+        customer_name: hubData.customer_name,
+        customer_phone: hubData.customer_phone,
+        total_sar: hubData.total_amount_sar || 0,
+        created_at: hubData.created_at,
+        tracking_number: orderDetails?.tracking_number,
+        estimated_delivery_date: hubData.estimated_delivery_date,
+        items: items.map(item => ({
+          id: item.id,
+          product_title: item.product_title,
+          quantity: item.quantity,
+          unit_price_sar: item.unit_price_sar
+        }))
       });
 
       // إضافة أحداث التتبع التجريبية
       const mockEvents: TrackingEvent[] = [
         {
-          date: orderData.created_at,
+          date: hubData.created_at,
           status: 'تم استلام الطلب',
           description: 'تم تأكيد طلبكم وبدأت معالجته',
           location: 'المتجر'

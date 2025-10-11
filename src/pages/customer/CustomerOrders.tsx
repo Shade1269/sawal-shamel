@@ -69,35 +69,67 @@ const CustomerOrders: React.FC = () => {
     queryFn: async () => {
       if (!customer?.phone) throw new Error('No customer phone');
 
-      const { data, error } = await supabase
-        .from('simple_orders')
-        .select(`
-          id,
-          customer_name,
-          customer_phone,
-          customer_email,
-          total_amount_sar,
-          payment_status,
-          created_at,
-          shipping_address,
-          simple_order_items (
-            product_title,
-            quantity,
-            unit_price_sar,
-            total_price_sar,
-            product_image_url
-          )
-        `)
+      // جلب الطلبات من order_hub
+      const { data: hubOrders, error: hubError } = await supabase
+        .from('order_hub')
+        .select('*')
         .eq('customer_phone', customer.phone)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (hubError) throw hubError;
 
-      return (data || []).map((order: any) => ({
-        ...order,
-        order_number: order.id.slice(0, 8).toUpperCase(),
-        items: order.simple_order_items || []
-      })) as Order[];
+      // جلب تفاصيل كل طلب من الجداول الأصلية
+      const ordersWithItems = await Promise.all(
+        (hubOrders || []).map(async (hubOrder) => {
+          let items: any[] = [];
+          let orderDetails: any = null;
+
+          if (hubOrder.source === 'ecommerce') {
+            const { data: ecomData } = await supabase
+              .from('ecommerce_orders')
+              .select('*, ecommerce_order_items(*)')
+              .eq('id', hubOrder.source_order_id)
+              .maybeSingle();
+            
+            if (ecomData) {
+              orderDetails = ecomData;
+              items = ecomData.ecommerce_order_items || [];
+            }
+          } else if (hubOrder.source === 'simple') {
+            const { data: simpleData } = await supabase
+              .from('simple_orders')
+              .select('*, simple_order_items(*)')
+              .eq('id', hubOrder.source_order_id)
+              .maybeSingle();
+            
+            if (simpleData) {
+              orderDetails = simpleData;
+              items = simpleData.simple_order_items || [];
+            }
+          }
+
+          return {
+            id: hubOrder.id,
+            order_number: hubOrder.order_number || hubOrder.id.slice(0, 8).toUpperCase(),
+            customer_name: hubOrder.customer_name,
+            customer_phone: hubOrder.customer_phone,
+            customer_email: hubOrder.customer_email,
+            total_amount_sar: hubOrder.total_amount_sar || 0,
+            payment_status: hubOrder.payment_status || 'PENDING',
+            created_at: hubOrder.created_at,
+            shipping_address: orderDetails?.shipping_address || hubOrder.shipping_address,
+            items: items.map(item => ({
+              product_title: item.product_title,
+              quantity: item.quantity,
+              unit_price_sar: item.unit_price_sar,
+              total_price_sar: item.total_price_sar,
+              product_image_url: item.product_image_url
+            }))
+          };
+        })
+      );
+
+      return ordersWithItems as Order[];
     },
     enabled: !!customer?.phone && isAuthenticated,
   });

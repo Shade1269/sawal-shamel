@@ -152,26 +152,72 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
     const fetchOrder = async () => {
       try {
         setLoading(true);
-        const { data, error: fetchError } = await supabaseClient
-          .from("ecommerce_orders")
-          .select(
-            `id, order_number, customer_name, customer_phone, customer_email, shipping_address, subtotal_sar, shipping_sar, tax_sar, total_sar, payment_status, payment_method, status, created_at, ecommerce_order_items ( id, product_title, product_image_url, quantity, unit_price_sar, total_price_sar )`
-          )
+        // جلب الطلب من order_hub أولاً
+        const { data: hubData, error: hubError } = await supabaseClient
+          .from("order_hub")
+          .select("*")
           .eq("id", orderId)
           .maybeSingle();
 
-        if (fetchError) throw fetchError;
+        if (hubError) throw hubError;
 
-        if (!data) {
+        if (!hubData) {
           setOrder(null);
           setError("لم يتم العثور على الطلب");
           return;
         }
 
-        const items = (data as any).ecommerce_order_items ?? [];
+        // جلب التفاصيل الكاملة من الجدول الأصلي
+        let orderDetails: any = null;
+        let items: OrderItem[] = [];
+
+        if (hubData.source === 'ecommerce') {
+          const { data: ecomData } = await supabaseClient
+            .from("ecommerce_orders")
+            .select("*, ecommerce_order_items(*)")
+            .eq("id", hubData.source_order_id)
+            .maybeSingle();
+          
+          if (ecomData) {
+            orderDetails = ecomData;
+            items = ecomData.ecommerce_order_items || [];
+          }
+        } else if (hubData.source === 'simple') {
+          const { data: simpleData } = await supabaseClient
+            .from("simple_orders")
+            .select("*, simple_order_items(*)")
+            .eq("id", hubData.source_order_id)
+            .maybeSingle();
+          
+          if (simpleData) {
+            orderDetails = simpleData;
+            items = simpleData.simple_order_items || [];
+          }
+        }
+
         setOrder({
-          ...(data as any),
-          items,
+          id: hubData.id,
+          order_number: hubData.order_number || hubData.id,
+          customer_name: hubData.customer_name || '',
+          customer_phone: hubData.customer_phone || '',
+          customer_email: hubData.customer_email,
+          shipping_address: orderDetails?.shipping_address || hubData.shipping_address as any,
+          subtotal_sar: orderDetails?.subtotal_sar || hubData.total_amount_sar || 0,
+          shipping_sar: orderDetails?.shipping_sar || 0,
+          tax_sar: orderDetails?.tax_sar || 0,
+          total_sar: hubData.total_amount_sar || 0,
+          payment_status: hubData.payment_status || 'PENDING',
+          payment_method: hubData.payment_method || 'cod',
+          status: hubData.status || 'PENDING',
+          created_at: hubData.created_at,
+          items: items.map(item => ({
+            id: item.id,
+            product_title: item.product_title,
+            product_image_url: item.product_image_url,
+            quantity: item.quantity,
+            unit_price_sar: item.unit_price_sar,
+            total_price_sar: item.total_price_sar
+          })),
         });
         setError(null);
       } catch (err) {
