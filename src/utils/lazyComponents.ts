@@ -13,25 +13,16 @@ export const createLazyComponent = <T extends ComponentType<any>>(
 
 // Pre-defined lazy components for major sections
 export const LazyComponents = {
-  // Admin Components - using unified system
-  AdminUsers: createLazyComponent(() => import('@/pages/AdminUsers')),
-  AdminSettings: createLazyComponent(() => import('@/pages/AdminSettings')),
+  // Admin Components
   AdminOrders: createLazyComponent(() => import('@/pages/Admin')),
 
-  // Affiliate Components - using unified system
+  // Affiliate Components
   AffiliateStoreFront: createLazyComponent(() => import('@/pages/affiliate/home')),
 
   // Commerce Components
-  ProductManagement: createLazyComponent(() => import('@/pages/ProductManagement')),
   Inventory: createLazyComponent(() => import('@/pages/inventory')),
-
   BrandManagement: createLazyComponent(() => import('@/pages/BrandManagement')),
   CategoryManagement: createLazyComponent(() => import('@/pages/CategoryManagement')),
-
-  // Analytics Components
-
-  // Store Components - updated
-  PublicStorefront: createLazyComponent(() => import('@/pages/PublicStorefront')),
 };
 
 // Route-based code splitting helper

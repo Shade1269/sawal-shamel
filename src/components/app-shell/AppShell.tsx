@@ -67,7 +67,6 @@ const createPrefetchers = () => {
   register('/profile', () => import('@/pages/profile'));
   register('/notifications', () => import('@/pages/notifications'));
   register('/storefront', () => import('@/pages/AffiliateStoreFront'));
-  register('public-store', () => import('@/pages/PublicStorefront'));
   register('/affiliate', () => import('@/pages/home/MarketerHome'));
   register('/affiliate/orders', () => import('@/pages/unified/UnifiedOrdersPage'));
   register('/affiliate/analytics', () => import('@/pages/affiliate/AffiliateCommissionsPage'));
