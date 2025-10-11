@@ -16,8 +16,15 @@ export const usePlatformPhoneAuth = () => {
   const formatPhone = (input: string) => {
     try {
       const digits = input.replace(/\D/g, '');
-      // Already in international format with plus
-      if (input.startsWith('+')) return input;
+      // If already formatted with +, normalize +9660XXXXXXXX -> +966XXXXXXXX
+      if (input.startsWith('+')) {
+        if (digits.startsWith('966')) {
+          const national = digits.slice(3);
+          const normalized = national.startsWith('0') ? national.slice(1) : national;
+          return `+966${normalized}`;
+        }
+        return input; // other countries not supported in this flow
+      }
       // 00 -> +
       if (digits.startsWith('00')) return `+${digits.slice(2)}`;
       // Starts with country code 966
