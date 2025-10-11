@@ -136,7 +136,14 @@ export const useCustomerOTP = (storeId: string) => {
       ensureRecaptchaContainer('storefront-customer-recaptcha');
 
       const { setupRecaptcha, sendSMSOTP } = await import('@/lib/firebase');
-      const verifier = await setupRecaptcha('storefront-customer-recaptcha');
+      
+      let verifier;
+      try {
+        verifier = await setupRecaptcha('storefront-customer-recaptcha');
+      } catch (setupError: any) {
+        console.error('Failed to setup reCAPTCHA:', setupError);
+        throw new Error('خدمة التحقق غير متاحة حالياً، يرجى المحاولة لاحقاً');
+      }
 
       const result = await sendSMSOTP(e164, verifier);
       if (!result.success) {
