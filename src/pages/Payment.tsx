@@ -152,11 +152,9 @@ const Payment = () => {
         throw new Error("المتجر غير موجود");
       }
 
-      const orderNumber = `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
-
-      const { data: order, error: orderError } = await supabase
-        .from("ecommerce_orders")
-        .insert({
+      // استخدام Edge Function الموحد
+      const { data, error } = await supabase.functions.invoke('create-ecommerce-order', {
+        body: {
           shop_id: shop.id,
           affiliate_store_id: shop.id,
           customer_name: customerInfo?.name || '',
@@ -171,45 +169,25 @@ const Payment = () => {
           },
           subtotal_sar: getSubtotal(),
           shipping_sar: getShippingCost(),
-          tax_sar: 0, // Fixed value instead of undefined taxAmount
+          tax_sar: 0,
           total_sar: getTotal(),
-          payment_method: (selectedPayment || 'CASH_ON_DELIVERY') as any,
-          payment_status: 'PENDING',
-          status: 'PENDING',
-          order_number: orderNumber,
-        })
-        .select('id, order_number')
-        .maybeSingle();
+          payment_method: selectedPayment || 'CASH_ON_DELIVERY',
+          notes: customerInfo?.notes || null,
+          order_items: cartItems.map(item => ({
+            product_id: item.id,
+            product_title: item.name,
+            product_image_url: item.image || null,
+            quantity: item.quantity,
+            unit_price_sar: item.price,
+            total_price_sar: item.price * item.quantity
+          }))
+        }
+      });
 
-      if (orderError) throw orderError;
+      if (error) throw error;
+      if (!data?.order) throw new Error("missing order response");
 
-      const orderItems = cartItems.map(item => ({
-        order_id: order.id,
-        product_id: item.id,
-        product_title: item.name,
-        product_image_url: item.image || null,
-        quantity: item.quantity,
-        unit_price_sar: item.price,
-        total_price_sar: item.price * item.quantity
-      }));
-
-      const { error: itemsError } = await supabase
-        .from("ecommerce_order_items")
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
-
-      await supabase
-        .from('ecommerce_payment_transactions')
-        .insert({
-          order_id: order.id,
-          transaction_id: `COD-${order.id.slice(-6)}`,
-          payment_method: (selectedPayment || 'CASH_ON_DELIVERY') as any,
-          payment_status: 'PENDING',
-          amount_sar: getTotal(),
-          currency: 'SAR',
-          gateway_name: 'Cash on Delivery',
-        });
+      const order = data.order;
 
       // Clear cart and saved data
       localStorage.removeItem(`cart_${slug}`);

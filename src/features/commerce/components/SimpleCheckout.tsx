@@ -100,11 +100,9 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
         throw new Error('معرف المتجر غير متوفر');
       }
 
-      const orderNumber = generateOrderNumber();
-
-      const { data: order, error: orderError } = await supabase
-        .from('ecommerce_orders')
-        .insert({
+      // استخدام Edge Function الموحد
+      const { data, error } = await supabase.functions.invoke('create-ecommerce-order', {
+        body: {
           shop_id: shopId,
           affiliate_store_id: shopId,
           customer_name: customerInfo.name,
@@ -120,43 +118,22 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
           tax_sar: 0,
           total_sar: total,
           payment_method: PAYMENT_METHOD_COD,
-          payment_status: PAYMENT_STATUS_PENDING,
-          status: ORDER_STATUS_PENDING,
-          order_number: orderNumber,
           notes: customerInfo.notes || null,
-        })
-        .select('id, order_number')
-        .single();
+          order_items: cartItems.map(item => ({
+            product_id: item.id,
+            product_title: item.name,
+            product_image_url: item.image || null,
+            quantity: item.quantity,
+            unit_price_sar: item.price,
+            total_price_sar: item.price * item.quantity,
+          }))
+        }
+      });
 
-      if (orderError) throw orderError;
+      if (error) throw error;
+      if (!data?.order) throw new Error("missing order response");
 
-      const orderItems = cartItems.map(item => ({
-        order_id: order.id,
-        product_id: item.id,
-        product_title: item.name,
-        product_image_url: item.image || null,
-        quantity: item.quantity,
-        unit_price_sar: item.price,
-        total_price_sar: item.price * item.quantity,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('ecommerce_order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
-
-      await supabase
-        .from('ecommerce_payment_transactions')
-        .insert({
-          order_id: order.id,
-          transaction_id: `COD-${order.id.slice(-6)}`,
-          payment_method: PAYMENT_METHOD_COD,
-          payment_status: PAYMENT_STATUS_PENDING,
-          amount_sar: total,
-          currency: 'SAR',
-          gateway_name: 'Cash on Delivery',
-        });
+      const order = data.order;
 
       setOrderNumber(order.order_number || orderNumber);
       setOrderCompleted(true);

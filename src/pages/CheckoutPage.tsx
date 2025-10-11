@@ -290,13 +290,11 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
         throw new Error("missing shop identifier");
       }
 
-      const orderNumber = `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
-
-      const { data: order, error: orderError } = await supabaseClient
-        .from("ecommerce_orders")
-        .insert({
-          order_number: orderNumber,
-          payment_method: 'CASH_ON_DELIVERY' as any,
+      // استخدام Edge Function الموحد
+      const { data, error } = await supabaseClient.functions.invoke('create-ecommerce-order', {
+        body: {
+          shop_id: shopId,
+          affiliate_store_id: affiliateStoreId,
           user_id: profile?.id ?? null,
           customer_name: customerInfo.name,
           customer_email: customerInfo.email || null,
@@ -313,42 +311,23 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
           shipping_sar: shippingCost,
           tax_sar: taxAmount,
           total_sar: grandTotal,
-          payment_status: "PENDING",
-          status: "PENDING",
+          payment_method: paymentMethod || 'CASH_ON_DELIVERY',
           notes: notes || null,
-        } as any)
-        .select("id, order_number")
-        .maybeSingle();
-
-      if (orderError) throw orderError;
-      if (!order) throw new Error("missing order response");
-
-      const itemsPayload = computedItems.map((item) => ({
-        order_id: order.id,
-        product_id: item.product_id,
-        product_title: item.product_title,
-        product_image_url: item.product_image_url,
-        quantity: item.quantity,
-        unit_price_sar: item.unit_price_sar,
-        total_price_sar: item.total,
-      }));
-
-      const { error: itemsError } = await supabaseClient
-        .from("ecommerce_order_items")
-        .insert(itemsPayload);
-
-      if (itemsError) throw itemsError;
-
-      await supabaseClient.from("ecommerce_payment_transactions").insert({
-        order_id: order.id,
-        transaction_id: `COD-${order.id.slice(-6)}`,
-        payment_method: (paymentMethod || 'CASH_ON_DELIVERY') as any,
-        payment_status: "PENDING",
-        amount_sar: grandTotal,
-        currency: "SAR",
-        gateway_name: "Cash on Delivery",
+          order_items: computedItems.map((item) => ({
+            product_id: item.product_id,
+            product_title: item.product_title,
+            product_image_url: item.product_image_url,
+            quantity: item.quantity,
+            unit_price_sar: item.unit_price_sar,
+            total_price_sar: item.total,
+          }))
+        }
       });
 
+      if (error) throw error;
+      if (!data?.order) throw new Error("missing order response");
+
+      const order = data.order;
       await clearCart();
 
       if (!prefersReducedMotion) {

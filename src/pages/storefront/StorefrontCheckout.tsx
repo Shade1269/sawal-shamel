@@ -201,11 +201,10 @@ const StorefrontCheckout = () => {
       
       const { subtotal, shipping, total } = calculateTotals();
       
-      // إنشاء الطلب
-      const { data: order, error: orderError } = await supabasePublic
-        .from('ecommerce_orders')
-        .insert({
-          shop_id: store.id, // مؤقتاً نستخدم نفس معرف المتجر
+      // استخدام Edge Function الموحد
+      const { data, error } = await supabasePublic.functions.invoke('create-ecommerce-order', {
+        body: {
+          shop_id: store.id,
           affiliate_store_id: store.id,
           customer_name: customerData.full_name,
           customer_phone: customerData.phone,
@@ -217,33 +216,25 @@ const StorefrontCheckout = () => {
           },
           subtotal_sar: subtotal,
           shipping_sar: shipping,
+          tax_sar: 0,
           total_sar: total,
-          payment_method: 'CASH_ON_DELIVERY' as any,
-          payment_status: 'PENDING',
-          status: 'PENDING',
+          payment_method: 'CASH_ON_DELIVERY',
           notes: customerData.notes || null,
-          order_number: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-        })
-        .select('id, order_number')
-        .single();
+          order_items: cartItems.map(item => ({
+            product_id: item.product_id,
+            product_title: item.products.title,
+            product_image_url: item.products.image_urls?.[0] || null,
+            quantity: item.quantity,
+            unit_price_sar: item.unit_price_sar,
+            total_price_sar: item.total_price_sar
+          }))
+        }
+      });
 
-      if (orderError) throw orderError;
+      if (error) throw error;
+      if (!data?.order) throw new Error("missing order response");
 
-      // إنشاء عناصر الطلب
-      const orderItems = cartItems.map(item => ({
-        order_id: order.id,
-        product_id: item.product_id,
-        product_title: item.products.title,
-        quantity: item.quantity,
-        unit_price_sar: item.unit_price_sar,
-        total_price_sar: item.total_price_sar
-      }));
-
-      const { error: itemsError } = await supabasePublic
-        .from('ecommerce_order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
+      const order = data.order;
 
       // حذف السلة
       const sessionData = localStorage.getItem(`ea_session_${slug}`);

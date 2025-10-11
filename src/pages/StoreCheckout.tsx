@@ -90,11 +90,9 @@ const StoreCheckout = () => {
     setSubmitting(true);
     
     try {
-      const orderNumber = `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
-
-      const { data: order, error: orderError } = await supabase
-        .from('ecommerce_orders')
-        .insert({
+      // استخدام Edge Function الموحد
+      const { data, error } = await supabase.functions.invoke('create-ecommerce-order', {
+        body: {
           shop_id: store.id,
           affiliate_store_id: store.id,
           buyer_session_id: storeSlug || null,
@@ -106,43 +104,23 @@ const StoreCheckout = () => {
           shipping_sar: 0,
           tax_sar: 0,
           total_sar: getTotalPrice(),
-          payment_method: 'CASH_ON_DELIVERY' as any,
-          payment_status: 'PENDING',
-          status: 'PENDING',
-          order_number: orderNumber,
-        })
-        .select('id, order_number')
-        .maybeSingle();
+          payment_method: 'CASH_ON_DELIVERY',
+          notes: null,
+          order_items: cartItems.map(item => ({
+            product_id: item.id,
+            product_title: item.name,
+            product_image_url: item.image,
+            quantity: item.quantity,
+            unit_price_sar: item.price,
+            total_price_sar: item.price * item.quantity
+          }))
+        }
+      });
 
-      if (orderError) throw orderError;
+      if (error) throw error;
+      if (!data?.order) throw new Error("missing order response");
 
-      const orderItems = cartItems.map(item => ({
-        order_id: order.id,
-        product_id: item.id,
-        product_title: item.name,
-        product_image_url: item.image,
-        quantity: item.quantity,
-        unit_price_sar: item.price,
-        total_price_sar: item.price * item.quantity
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('ecommerce_order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
-
-      await supabase
-        .from('ecommerce_payment_transactions')
-        .insert({
-          order_id: order.id,
-          transaction_id: `COD-${order.id.slice(-6)}`,
-          payment_method: 'CASH_ON_DELIVERY' as any,
-          payment_status: 'PENDING',
-          amount_sar: getTotalPrice(),
-          currency: 'SAR',
-          gateway_name: 'Cash on Delivery',
-        });
+      const order = data.order;
 
       // مسح السلة
       clearCart();
