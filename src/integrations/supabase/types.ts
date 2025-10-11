@@ -1923,6 +1923,13 @@ export type Database = {
             foreignKeyName: "fk_cms_widgets_page"
             columns: ["page_id"]
             isOneToOne: false
+            referencedRelation: "store_pages_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_cms_widgets_page"
+            columns: ["page_id"]
+            isOneToOne: false
             referencedRelation: "v_cms_pages_full"
             referencedColumns: ["id"]
           },
@@ -2071,6 +2078,13 @@ export type Database = {
             foreignKeyName: "fk_cms_revisions_page"
             columns: ["page_id"]
             isOneToOne: false
+            referencedRelation: "store_pages_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_cms_revisions_page"
+            columns: ["page_id"]
+            isOneToOne: false
             referencedRelation: "v_cms_pages_full"
             referencedColumns: ["id"]
           },
@@ -2164,6 +2178,13 @@ export type Database = {
             columns: ["page_id"]
             isOneToOne: false
             referencedRelation: "cms_custom_pages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_cms_seo_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "store_pages_compat"
             referencedColumns: ["id"]
           },
           {
@@ -2483,6 +2504,13 @@ export type Database = {
             foreignKeyName: "fk_content_drafts_page"
             columns: ["page_id"]
             isOneToOne: false
+            referencedRelation: "store_pages_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_content_drafts_page"
+            columns: ["page_id"]
+            isOneToOne: false
             referencedRelation: "v_cms_pages_full"
             referencedColumns: ["id"]
           },
@@ -2519,6 +2547,13 @@ export type Database = {
             columns: ["page_id"]
             isOneToOne: false
             referencedRelation: "cms_custom_pages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_drafts_page"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "store_pages_compat"
             referencedColumns: ["id"]
           },
           {
@@ -11756,6 +11791,35 @@ export type Database = {
           },
         ]
       }
+      page_builder_archive: {
+        Row: {
+          auto_save_data: Json | null
+          element_config: Json | null
+          element_created_at: string | null
+          element_data: Json | null
+          element_id: string | null
+          element_name: string | null
+          element_styles: Json | null
+          element_type: string | null
+          element_updated_at: string | null
+          grid_column: number | null
+          grid_row: number | null
+          grid_span_x: number | null
+          grid_span_y: number | null
+          is_locked: boolean | null
+          is_visible: boolean | null
+          last_activity: string | null
+          page_id: string | null
+          parent_id: string | null
+          session_active: boolean | null
+          session_data: Json | null
+          session_id: string | null
+          sort_order: number | null
+          status: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
       performance_overview: {
         Row: {
           affiliate_store_id: string | null
@@ -12080,6 +12144,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      store_pages_compat: {
+        Row: {
+          content: Json | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          is_homepage: boolean | null
+          is_published: boolean | null
+          published_at: string | null
+          settings: Json | null
+          slug: string | null
+          store_id: string | null
+          template_id: string | null
+          title: string | null
+          updated_at: string | null
+          view_count: number | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          is_homepage?: boolean | null
+          is_published?: boolean | null
+          published_at?: string | null
+          settings?: Json | null
+          slug?: string | null
+          store_id?: never
+          template_id?: string | null
+          title?: string | null
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          is_homepage?: boolean | null
+          is_published?: boolean | null
+          published_at?: string | null
+          settings?: Json | null
+          slug?: string | null
+          store_id?: never
+          template_id?: string | null
+          title?: string | null
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Relationships: []
       }
       user_profiles_compat: {
         Row: {
@@ -13030,6 +13145,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      check_cms_orphans: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          check_type: string
+          details: Json
+          orphan_count: number
+        }[]
+      }
       check_data_quality: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -13198,6 +13321,18 @@ export type Database = {
         Args: { p_shipment_id: string }
         Returns: string
       }
+      get_page_with_widgets: {
+        Args: { p_page_id: string }
+        Returns: {
+          is_published: boolean
+          page_content: Json
+          page_id: string
+          page_settings: Json
+          page_slug: string
+          page_title: string
+          widgets: Json
+        }[]
+      }
       get_primary_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
@@ -13219,6 +13354,22 @@ export type Database = {
           event_timestamp: string
           event_type: string
           location: string
+        }[]
+      }
+      get_store_cms_pages: {
+        Args: { p_affiliate_store_id?: string; p_store_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          is_homepage: boolean
+          is_published: boolean
+          meta_description: string
+          page_content: Json
+          page_slug: string
+          page_title: string
+          published_at: string
+          updated_at: string
+          view_count: number
         }[]
       }
       get_store_orders_for_session: {
@@ -13355,6 +13506,10 @@ export type Database = {
           p_order_items: Json
           p_session_id: string
         }
+        Returns: Json
+      }
+      publish_cms_page: {
+        Args: { p_page_id: string }
         Returns: Json
       }
       update_customer_tier: {

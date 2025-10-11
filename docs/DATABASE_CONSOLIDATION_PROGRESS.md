@@ -1,7 +1,7 @@
 # تقرير التقدم: توحيد قاعدة البيانات
 
 **آخر تحديث**: 2025-10-11  
-**الحالة**: 🟢 المراحل 1-3 + 4(ب-ج) مكتملة (60% من الخطة الشاملة)
+**الحالة**: 🟢 المراحل 1-3 + 4(ب-ج-د) مكتملة (70% من الخطة الشاملة)
 
 ---
 
@@ -187,9 +187,9 @@
 - **1 جدول جديد** للشحنات (`shipment_events`)
 - **5 حقول جديدة** في `shipments`
 - **4 حقول جديدة** في `profiles` (avatar_url, bio, level, total_earnings)
-- **15 فهارس جديدة** للأداء (10 شحن + 5 profiles)
-- **3 دوال جديدة** للهوية (get_user_profile، get_current_profile، check_profile_orphans)
-- **1 view جديد** للتوافق (`user_profiles_compat`)
+- **20 فهارس جديدة** للأداء (10 شحن + 5 profiles + 5 CMS)
+- **6 دوال جديدة** (3 هوية + 3 CMS)
+- **3 views جديدة** للتوافق (user_profiles_compat, store_pages_compat, page_builder_archive)
 
 ### الكود:
 - ✅ `UnifiedOrdersService` (237 سطر)
@@ -235,11 +235,36 @@
 
 ---
 
-## 🔜 المتبقي (Remaining - 40%)
+### المرحلة 4(د): توحيد نظام CMS
+**الحالة**: ✅ 100%
 
-### المرحلة 4(د): توحيد CMS
-- ❌ تحديد نظام CMS الرئيسي (store_pages vs cms_custom_pages)
-- ❌ ترحيل أو أرشفة page_builder_*
+#### نظام CMS الموحد:
+- ✅ `cms_custom_pages` هو SSOT الآن
+- ✅ يدعم shops و affiliate_stores
+- ✅ `store_pages` → DEPRECATED
+
+#### Views للتوافق الخلفي (2):
+- ✅ `store_pages_compat` - يعرض cms_custom_pages كـ store_pages
+- ✅ `page_builder_archive` - أرشيف page_builder_*
+
+#### الفهارس (5 indexes):
+- ✅ `idx_cms_pages_store_id` (partial)
+- ✅ `idx_cms_pages_affiliate_store_id` (partial)
+- ✅ `idx_cms_pages_slug`
+- ✅ `idx_cms_pages_published` (partial)
+- ✅ `idx_cms_pages_homepage` (partial)
+
+#### Functions الموحدة (3):
+- ✅ `get_store_cms_pages()` - صفحات متجر محدد
+- ✅ `get_page_with_widgets()` - صفحة مع widgets
+- ✅ `publish_cms_page()` - نشر صفحة مع revision
+- ✅ `check_cms_orphans()` - فحص البيانات اليتيمة
+
+**نتيجة**: نظام CMS موحد بالكامل ✅
+
+---
+
+## 🔜 المتبقي (Remaining - 30%)
 
 ### المرحلة 5: طبقة الوصول للبيانات (DAL)
 - ❌ Repositories محايدة عن تغييرات الجدول
