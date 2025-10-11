@@ -74,7 +74,6 @@ export const IsolatedStorefront: React.FC = () => {
             image_urls,
             rating,
             reviews_count,
-            stock_quantity,
             is_active
           )
         `)
@@ -94,13 +93,12 @@ export const IsolatedStorefront: React.FC = () => {
             image_urls: product.image_urls,
             rating: product.rating,
             reviews_count: product.reviews_count,
-            stock_quantity: product.stock_quantity,
+            stock_quantity: 0, // سيتم حسابه من المتغيرات
           } as Product;
-        })
-        .filter(p => (p.stock_quantity ?? 0) > 0);
+        });
 
       const productIds = baseProducts.map(p => p.id);
-      let variantsMap: Record<string, ProductVariant[]> = {};
+      let variantsMap: Record<string, { variants: ProductVariant[]; totalStock: number }> = {};
 
       if (productIds.length > 0) {
         const { data: variantRows, error: variantsError } = await supabase
@@ -130,22 +128,32 @@ export const IsolatedStorefront: React.FC = () => {
           variantsMap = Object.fromEntries(
             Object.entries(tempMap).map(([pid, types]) => {
               const list: ProductVariant[] = [];
+              let totalStock = 0;
               for (const [value, stock] of Object.entries(types.color)) {
                 list.push({ type: 'color', value, stock: stock as number });
+                totalStock += stock as number;
               }
               for (const [value, stock] of Object.entries(types.size)) {
                 list.push({ type: 'size', value, stock: stock as number });
+                totalStock += stock as number;
               }
-              return [pid, list];
+              return [pid, { variants: list, totalStock }];
             })
           );
         }
       }
 
-      return baseProducts.map(p => ({
-        ...p,
-        variants: variantsMap[p.id] || [],
-      }));
+      // تحديث المخزون لكل منتج من المتغيرات
+      return baseProducts
+        .map(p => {
+          const variantData = variantsMap[p.id];
+          return {
+            ...p,
+            variants: variantData?.variants || [],
+            stock_quantity: variantData?.totalStock || 0,
+          };
+        })
+        .filter(p => p.stock_quantity > 0); // عرض المنتجات المتوفرة فقط
     },
     enabled: !!store?.id,
     staleTime: 5 * 60 * 1000, // Cache لمدة 5 دقائق
