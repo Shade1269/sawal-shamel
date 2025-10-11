@@ -73,7 +73,6 @@ const ProductsPage = () => {
             profile:profiles (full_name)
           )
         `)
-        .eq('approval_status', 'approved')
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 

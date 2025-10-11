@@ -194,18 +194,10 @@ export function UnifiedProductsManager() {
     const loadProducts = async () => {
       try {
         setLoading(true);
-        
-        // للمسوقين والعملاء: فقط المنتجات الموافق عليها والنشطة
-        // للأدمن: جميع المنتجات
-        let query = supabase.from('products').select('*');
-        
-        if (managerType !== 'admin') {
-          query = query
-            .eq('approval_status', 'approved')
-            .eq('is_active', true);
-        }
-        
-        const { data: productsData, error } = await query.order('created_at', { ascending: false });
+        const { data: productsData, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
 
         if (error) {
           console.error('Error loading products:', error);
