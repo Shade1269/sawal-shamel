@@ -1,26 +1,44 @@
 /**
- * Feature Flags Configuration
- * Controls gradual rollout of unified order system
+ * Feature Flags Configuration - المرحلة النهائية
+ * Controls gradual rollout and deprecation of legacy systems
  */
 
 export const FEATURE_FLAGS = {
-  // Core unified system flags
-  USE_UNIFIED_ORDERS: true, // Master switch for order_hub
-  USE_UNIFIED_RETURNS: true, // Use unified returns system
-  USE_UNIFIED_REFUNDS: true, // Use unified refunds system
-  USE_UNIFIED_SHIPMENTS: true, // Use unified shipments system
+  // ============ CORE UNIFIED SYSTEM FLAGS ============
+  USE_UNIFIED_ORDERS: true,     // Master switch for order_hub (SSOT)
+  USE_UNIFIED_RETURNS: true,    // Unified returns via order_hub
+  USE_UNIFIED_REFUNDS: true,    // Unified refunds via order_hub
+  USE_UNIFIED_SHIPMENTS: true,  // Use shipment_tracking (not shipments_tracking)
+  USE_UNIFIED_IDENTITY: true,   // Use profiles as SSOT (not user_profiles)
+  USE_UNIFIED_CMS: true,        // Use cms_custom_pages as SSOT
   
-  // UI feature flags
-  SHOW_UNIFIED_DASHBOARD: true, // Show unified dashboard views
-  SHOW_SOURCE_INDICATOR: true, // Show order source (ecommerce/simple/manual)
+  // ============ CONTRACT PHASE FLAGS ============
+  BLOCK_LEGACY_ORDERS_WRITE: true,      // منع الكتابة في orders القديم
+  BLOCK_LEGACY_SIMPLE_ORDERS_WRITE: true, // منع الكتابة في simple_orders
+  BLOCK_LEGACY_USER_PROFILES_WRITE: true, // منع الكتابة في user_profiles
+  BLOCK_LEGACY_STORE_PAGES_WRITE: true,   // منع الكتابة في store_pages
+  BLOCK_LEGACY_SHIPMENTS_TRACKING_WRITE: true, // منع الكتابة في shipments_tracking
   
-  // Data migration flags
-  ENABLE_DUAL_WRITE: false, // Write to both old and new tables (for migration)
-  PREFER_LEGACY_READ: false, // Read from legacy tables when available
+  // ============ READING STRATEGY ============
+  PREFER_LEGACY_READ: false,    // false = read from new tables only
+  ENABLE_DUAL_READ: false,      // Read from both and compare (for validation)
   
-  // Admin/Debug flags
-  SHOW_MIGRATION_TOOLS: true, // Show data migration tools in admin
-  ENABLE_DATA_VALIDATION: true, // Run validation checks
+  // ============ UI/UX FLAGS ============
+  SHOW_UNIFIED_DASHBOARD: true,
+  SHOW_SOURCE_INDICATOR: true,  // Show data source badges
+  SHOW_MIGRATION_STATUS: true,  // Show migration progress indicators
+  SHOW_LEGACY_WARNING: true,    // Warn when accessing legacy data
+  
+  // ============ ADMIN/DEBUG FLAGS ============
+  SHOW_MIGRATION_TOOLS: true,
+  ENABLE_DATA_VALIDATION: true,
+  ENABLE_MONITORING_DASHBOARD: true, // Show real-time metrics
+  ENABLE_ROLLBACK_MODE: false,  // Emergency rollback to legacy
+  
+  // ============ PERFORMANCE FLAGS ============
+  USE_MATERIALIZED_VIEWS: false, // Use MVs for analytics (future)
+  ENABLE_QUERY_CACHING: true,
+  ENABLE_BATCH_OPERATIONS: true,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;
