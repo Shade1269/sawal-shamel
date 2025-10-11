@@ -108,74 +108,66 @@ export default function AffiliateStorefrontPage() {
   const totalAmount = storefrontCart?.total ?? 0;
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Create order using public client
+  // Create order using Edge Function
   const createOrderMutation = useMutation({
     mutationFn: async () => {
       if (!store || !cartItems.length) return;
 
-      const total = totalAmount;
-
-      // Insert order using public client
-      const orderNumber = `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
-
-      const { data: orderData, error: orderError } = await supabasePublic
-        .from('ecommerce_orders')
+      // إنشاء cart_id مؤقت
+      const { data: cart, error: cartError } = await supabasePublic
+        .from('shopping_carts')
         .insert({
           shop_id: store.id,
           affiliate_store_id: store.id,
-          customer_name: customerData.name,
-          customer_phone: customerData.phone,
-          customer_email: customerData.email || null,
-          shipping_address: {
-            address: customerData.address,
-            phone: customerData.phone,
-            name: customerData.name
-          },
-          subtotal_sar: total,
-          tax_sar: 0,
-          shipping_sar: 0,
-          total_sar: total,
-          payment_method: 'CASH_ON_DELIVERY',
-          payment_status: 'PENDING',
-          status: 'PENDING',
-          affiliate_commission_sar: total * 0.1,
-          order_number: orderNumber
+          session_id: `session-${Date.now()}`,
         })
-        .select('id, order_number')
+        .select('id')
         .single();
 
-      if (orderError) throw orderError;
+      if (cartError || !cart) throw new Error('فشل إنشاء السلة');
 
-      // Insert order items
-      const orderItems = cartItems.map(item => ({
-        order_id: orderData.id,
+      // إضافة العناصر إلى السلة
+      const cartItemsToInsert = cartItems.map(item => ({
+        cart_id: cart.id,
         product_id: item.product_id,
-        product_title: item.product_title,
         quantity: item.quantity,
         unit_price_sar: item.unit_price_sar,
         total_price_sar: item.total_price_sar,
-        commission_rate: 10
       }));
 
       const { error: itemsError } = await supabasePublic
-        .from('ecommerce_order_items')
-        .insert(orderItems);
+        .from('cart_items')
+        .insert(cartItemsToInsert);
 
       if (itemsError) throw itemsError;
 
-      await supabasePublic
-        .from('ecommerce_payment_transactions')
-        .insert({
-          order_id: orderData.id,
-          transaction_id: `COD-${orderData.id.slice(-6)}`,
-          payment_method: 'CASH_ON_DELIVERY',
-          payment_status: 'PENDING',
-          amount_sar: total,
-          currency: 'SAR',
-          gateway_name: 'Cash on Delivery',
-        });
+      // استدعاء Edge Function لإنشاء الطلب
+      const { data, error } = await supabasePublic.functions.invoke('create-ecommerce-order', {
+        body: {
+          cart_id: cart.id,
+          shop_id: store.id,
+          affiliate_store_id: store.id,
+          customer: {
+            name: customerData.name,
+            phone: customerData.phone,
+            email: customerData.email || null,
+            address: {
+              street: customerData.address,
+              city: '',
+              district: '',
+            }
+          },
+          shipping: {
+            cost_sar: 0,
+            provider_name: 'محلي'
+          }
+        }
+      });
 
-      return orderData.order_number || orderData.id;
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'فشل إنشاء الطلب');
+
+      return data.order_number;
     },
     onSuccess: async (orderNumber) => {
       toast.success("تم إنشاء الطلب بنجاح", {

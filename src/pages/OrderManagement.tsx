@@ -77,8 +77,9 @@ const OrderManagement = () => {
 
     setLoading(true);
     try {
+      // جلب من order_hub أولاً
       let query = supabase
-        .from('ecommerce_orders')
+        .from('order_hub')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -104,13 +105,71 @@ const OrderManagement = () => {
         query = query.or(`order_number.ilike.%${searchTerm}%,customer_name.ilike.%${searchTerm}%,customer_phone.ilike.%${searchTerm}%`);
       }
 
-      const { data, error } = await query;
+      const { data: hubOrders, error } = await query;
 
       if (error) {
         throw error;
       }
 
-      setOrders(data || []);
+      // جلب التفاصيل من الجداول الأصلية
+      const ordersWithDetails = await Promise.all(
+        (hubOrders || []).map(async (hubOrder) => {
+          if (hubOrder.source === 'ecommerce') {
+            const { data: ecomOrder } = await supabase
+              .from('ecommerce_orders')
+              .select('*')
+              .eq('id', hubOrder.source_order_id)
+              .single();
+            
+            return {
+              id: hubOrder.id,
+              order_number: hubOrder.order_number,
+              status: hubOrder.status,
+              payment_status: hubOrder.payment_status,
+              total_sar: hubOrder.total_amount_sar,
+              customer_name: hubOrder.customer_name,
+              customer_phone: hubOrder.customer_phone,
+              customer_email: hubOrder.customer_email,
+              created_at: hubOrder.created_at,
+              shipped_at: ecomOrder?.shipped_at || null,
+              delivered_at: ecomOrder?.delivered_at || null,
+              tracking_number: ecomOrder?.tracking_number || null,
+              shipping_address: ecomOrder?.shipping_address || null,
+              notes: ecomOrder?.notes || null,
+              internal_notes: ecomOrder?.internal_notes || null,
+              shop_id: hubOrder.shop_id || ecomOrder?.shop_id,
+            };
+          } else if (hubOrder.source === 'simple') {
+            const { data: simpleOrder } = await supabase
+              .from('simple_orders')
+              .select('*')
+              .eq('id', hubOrder.source_order_id)
+              .single();
+            
+            return {
+              id: hubOrder.id,
+              order_number: hubOrder.order_number,
+              status: hubOrder.status,
+              payment_status: hubOrder.payment_status,
+              total_sar: hubOrder.total_amount_sar,
+              customer_name: hubOrder.customer_name,
+              customer_phone: hubOrder.customer_phone,
+              customer_email: hubOrder.customer_email,
+              created_at: hubOrder.created_at,
+              shipped_at: null,
+              delivered_at: null,
+              tracking_number: null,
+              shipping_address: simpleOrder?.shipping_address || null,
+              notes: null,
+              internal_notes: null,
+              shop_id: hubOrder.shop_id,
+            };
+          }
+          return null;
+        })
+      );
+
+      setOrders(ordersWithDetails.filter((order): order is Order => order !== null));
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast.error('حدث خطأ أثناء تحميل الطلبات');
@@ -121,16 +180,42 @@ const OrderManagement = () => {
 
   const fetchOrderItems = async (orderId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('ecommerce_order_items')
+      // جلب من order_hub أولاً
+      const { data: hubOrder, error: hubError } = await supabase
+        .from('order_hub')
         .select('*')
-        .eq('order_id', orderId);
+        .eq('id', orderId)
+        .single();
 
-      if (error) {
-        throw error;
+      if (hubError) throw hubError;
+
+      // جلب العناصر من الجدول الأصلي
+      if (hubOrder.source === 'ecommerce') {
+        const { data, error } = await supabase
+          .from('ecommerce_order_items')
+          .select('*')
+          .eq('order_id', hubOrder.source_order_id);
+
+        if (error) throw error;
+        setOrderItems(data || []);
+      } else if (hubOrder.source === 'simple') {
+        const { data, error } = await supabase
+          .from('simple_order_items')
+          .select('*')
+          .eq('order_id', hubOrder.source_order_id);
+
+        if (error) throw error;
+        // تحويل simple_order_items إلى OrderItem format
+        const mappedItems = (data || []).map(item => ({
+          id: item.id,
+          product_title: item.product_title,
+          quantity: item.quantity,
+          unit_price_sar: item.unit_price_sar,
+          total_price_sar: item.total_price_sar,
+          product_sku: null, // simple orders don't have SKU
+        }));
+        setOrderItems(mappedItems);
       }
-
-      setOrderItems(data || []);
     } catch (error) {
       console.error('Error fetching order items:', error);
       toast.error('حدث خطأ أثناء تحميل عناصر الطلب');
@@ -141,6 +226,28 @@ const OrderManagement = () => {
     if (!selectedOrder || !newStatus) return;
 
     try {
+      // جلب من order_hub أولاً
+      const { data: hubOrder, error: hubError } = await supabase
+        .from('order_hub')
+        .select('*')
+        .eq('id', selectedOrder.id)
+        .single();
+
+      if (hubError) throw hubError;
+
+      // تحديث order_hub
+      const { error: hubUpdateError } = await supabase
+        .from('order_hub')
+        .update({ 
+          status: newStatus,
+          payment_status: newStatus === 'DELIVERED' ? 'PAID' : hubOrder.payment_status,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', selectedOrder.id);
+
+      if (hubUpdateError) throw hubUpdateError;
+
+      // تحديث الجدول الأصلي
       const updates: any = { 
         status: newStatus,
         internal_notes: statusNotes || selectedOrder.internal_notes
@@ -166,24 +273,31 @@ const OrderManagement = () => {
           break;
       }
 
-      const { error } = await supabase
-        .from('ecommerce_orders')
-        .update(updates)
-        .eq('id', selectedOrder.id);
+      if (hubOrder.source === 'ecommerce') {
+        const { error } = await supabase
+          .from('ecommerce_orders')
+          .update(updates)
+          .eq('id', hubOrder.source_order_id);
 
-      if (error) {
-        throw error;
+        if (error) throw error;
+
+        // Add status history
+        await supabase
+          .from('order_status_history')
+          .insert({
+            order_id: hubOrder.source_order_id,
+            new_status: newStatus as any,
+            notes: statusNotes || null,
+            changed_by: profile?.id || ''
+          });
+      } else if (hubOrder.source === 'simple') {
+        const { error } = await supabase
+          .from('simple_orders')
+          .update({ order_status: newStatus })
+          .eq('id', hubOrder.source_order_id);
+
+        if (error) throw error;
       }
-
-      // Add status history
-      await supabase
-        .from('order_status_history')
-        .insert({
-          order_id: selectedOrder.id,
-          new_status: newStatus as any,
-          notes: statusNotes || null,
-          changed_by: profile?.id || ''
-        });
 
       toast.success('تم تحديث حالة الطلب بنجاح');
       setStatusUpdateDialog(false);

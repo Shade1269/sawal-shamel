@@ -110,47 +110,56 @@ const PaymentDashboard = () => {
 
   const fetchPaymentData = async () => {
     try {
-      // جلب الإحصائيات العامة
+      // جلب المعاملات من order_hub
       const { data: transactionsData } = await supabase
         .from('ecommerce_payment_transactions')
-        .select(`
-          *,
-          ecommerce_orders(customer_name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(50);
 
       if (transactionsData) {
-        const normalizedTransactions: Transaction[] = (transactionsData as any[]).map((transaction) => ({
-          ...transaction,
-          customer_name: transaction.ecommerce_orders?.customer_name || null,
-          net_amount_sar: transaction.amount_sar - (transaction.gateway_fee_sar || 0),
-        }));
+        // جلب اسماء العملاء من order_hub
+        const transactionsWithCustomers = await Promise.all(
+          transactionsData.map(async (transaction) => {
+            const { data: hubOrder } = await supabase
+              .from('order_hub')
+              .select('customer_name, source, source_order_id')
+              .eq('source', 'ecommerce')
+              .eq('source_order_id', transaction.order_id)
+              .maybeSingle();
 
-        setTransactions(normalizedTransactions);
+            return {
+              ...transaction,
+              customer_name: hubOrder?.customer_name || null,
+              net_amount_sar: transaction.amount_sar - (transaction.gateway_fee_sar || 0),
+            };
+          })
+        );
+
+        setTransactions(transactionsWithCustomers);
 
         // حساب الإحصائيات
-        const totalRevenue = normalizedTransactions
-          .filter(t => t.payment_status === 'PAID')
+        const totalRevenue = transactionsWithCustomers
+          .filter(t => t.payment_status === 'COMPLETED')
           .reduce((sum, t) => sum + (t.net_amount_sar || 0), 0);
 
         const thisMonth = new Date();
         thisMonth.setDate(1);
-        const monthlyRevenue = normalizedTransactions
-          .filter(t => t.payment_status === 'PAID' && new Date(t.created_at) >= thisMonth)
+        const monthlyRevenue = transactionsWithCustomers
+          .filter(t => t.payment_status === 'COMPLETED' && new Date(t.created_at) >= thisMonth)
           .reduce((sum, t) => sum + (t.net_amount_sar || 0), 0);
 
-        const gatewayFees = normalizedTransactions
+        const gatewayFees = transactionsWithCustomers
           .reduce((sum, t) => sum + (t.gateway_fee_sar || 0), 0);
 
         setStats({
           totalRevenue,
           monthlyRevenue,
-          pendingPayments: normalizedTransactions.filter(t => t.payment_status === 'PENDING').length,
-          completedPayments: normalizedTransactions.filter(t => t.payment_status === 'PAID').length,
-          failedPayments: normalizedTransactions.filter(t => t.payment_status === 'FAILED').length,
+          pendingPayments: transactionsWithCustomers.filter(t => t.payment_status === 'PENDING').length,
+          completedPayments: transactionsWithCustomers.filter(t => t.payment_status === 'COMPLETED').length,
+          failedPayments: transactionsWithCustomers.filter(t => t.payment_status === 'FAILED').length,
           refundAmount: 0, // سيتم جلبها من جدول المرتجعات
-          avgTransactionValue: totalRevenue / Math.max(normalizedTransactions.length, 1),
+          avgTransactionValue: totalRevenue / Math.max(transactionsWithCustomers.length, 1),
           gatewayFees
         });
       }
