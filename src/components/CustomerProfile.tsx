@@ -97,40 +97,48 @@ export const CustomerProfile: React.FC = () => {
     fetchAddresses();
   }, [customer?.id]);
 
-  // جلب الطلبات
+  // جلب الطلبات من order_hub الموحد
   useEffect(() => {
     if (!customer?.profile_id) return;
 
     const fetchOrders = async () => {
       try {
-        const { data: ecommerceOrders, error: ecommerceError } = await supabase
-          .from('ecommerce_orders')
-          .select(`
-            id,
-            order_number,
-            total_sar,
-            status,
-            created_at,
-            affiliate_stores (
-              store_name
-            )
-          `)
-          .eq('user_id', customer.profile_id)
+        // جلب الطلبات من order_hub
+        const { data: hubOrders, error: hubError } = await supabase
+          .from('order_hub')
+          .select('*')
           .order('created_at', { ascending: false })
           .limit(10);
 
-        if (ecommerceError) throw ecommerceError;
+        if (hubError) throw hubError;
 
-        const formattedOrders = ecommerceOrders?.map(order => ({
-          id: order.id,
-          order_number: order.order_number,
-          status: order.status,
-          total_sar: order.total_sar,
-          created_at: order.created_at,
-          store_name: (order as any)?.affiliate_stores?.store_name || null
-        })) || [];
+        // جلب أسماء المتاجر للطلبات التي لها affiliate_store_id
+        const ordersWithStores = await Promise.all(
+          (hubOrders || []).map(async (order) => {
+            let storeName = null;
+            
+            if (order.affiliate_store_id) {
+              const { data: store } = await supabase
+                .from('affiliate_stores')
+                .select('store_name')
+                .eq('id', order.affiliate_store_id)
+                .maybeSingle();
+              
+              storeName = store?.store_name || null;
+            }
 
-        setOrders(formattedOrders);
+            return {
+              id: order.id,
+              order_number: order.order_number,
+              status: order.status,
+              total_sar: order.total_amount_sar,
+              created_at: order.created_at,
+              store_name: storeName,
+            };
+          })
+        );
+
+        setOrders(ordersWithStores);
       } catch (error) {
         console.error('Error fetching orders:', error);
       } finally {

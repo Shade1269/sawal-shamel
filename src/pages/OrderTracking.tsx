@@ -62,28 +62,54 @@ const OrderTracking = () => {
 
     setLoading(true);
     try {
-      const { data: orderData, error } = await supabase
-        .from('ecommerce_orders')
+      // البحث في order_hub أولاً
+      const { data: hubOrder, error: hubError } = await supabase
+        .from('order_hub')
         .select('*')
         .eq('order_number', orderNumber.trim())
         .maybeSingle();
 
-      if (error) {
-        throw error;
-      }
+      if (hubError) throw hubError;
 
-      if (!orderData) {
+      if (!hubOrder) {
         toast.error('لم يتم العثور على الطلب');
         return;
       }
 
-      setOrder(orderData);
+      // جلب التفاصيل الإضافية من المصدر الأصلي
+      let additionalData: any = {};
+      if (hubOrder.source === 'ecommerce' && hubOrder.source_order_id) {
+        const { data: ecomOrder } = await supabase
+          .from('ecommerce_orders')
+          .select('tracking_number, shipping_address, shipped_at, delivered_at')
+          .eq('id', hubOrder.source_order_id)
+          .maybeSingle();
+        
+        if (ecomOrder) {
+          additionalData = ecomOrder;
+        }
+      }
 
-      // Fetch order status history
+      setOrder({
+        id: hubOrder.id,
+        order_number: hubOrder.order_number,
+        customer_name: hubOrder.customer_name,
+        customer_phone: hubOrder.customer_phone,
+        status: hubOrder.status,
+        payment_status: hubOrder.payment_status || 'PENDING',
+        total_sar: hubOrder.total_amount_sar,
+        created_at: hubOrder.created_at,
+        tracking_number: additionalData.tracking_number || null,
+        shipping_address: additionalData.shipping_address || {},
+        shipped_at: additionalData.shipped_at || null,
+        delivered_at: additionalData.delivered_at || null,
+      });
+
+      // Fetch order status history من order_hub
       const { data: historyData, error: historyError } = await supabase
         .from('order_status_history')
         .select('*')
-        .eq('order_id', orderData.id)
+        .eq('order_id', hubOrder.id)
         .order('created_at', { ascending: false });
 
       if (historyError) {

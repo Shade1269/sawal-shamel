@@ -56,45 +56,79 @@ const OrderConfirmation = () => {
 
   const fetchOrderDetails = async () => {
     try {
-      // Fetch order details
-      const { data: orderData, error: orderError } = await supabase
-        .from("ecommerce_orders")
-        .select(`
-          id,
-          order_number,
-          customer_name,
-          customer_phone,
-          payment_method,
-          payment_status,
-          shipping_address,
-          subtotal_sar,
-          total_sar,
-          tax_sar,
-          shipping_sar,
-          status,
-          created_at,
-          ecommerce_order_items (
-            id,
-            product_title,
-            product_image_url,
-            quantity,
-            unit_price_sar,
-            total_price_sar
-          )
-        `)
+      // جلب الطلب من order_hub أولاً
+      const { data: hubOrder, error: hubError } = await supabase
+        .from("order_hub")
+        .select("*")
         .eq("id", orderId)
         .maybeSingle();
 
-      if (orderError) throw orderError;
-      if (!orderData) {
+      if (hubError) throw hubError;
+      if (!hubOrder) {
         setOrder(null);
         setOrderItems([]);
         return;
       }
 
-      const { ecommerce_order_items, ...rest } = orderData as any;
-      setOrder(rest as Order);
-      setOrderItems((ecommerce_order_items as OrderItem[]) || []);
+      // جلب تفاصيل الطلب من المصدر الأصلي
+      if (hubOrder.source === 'ecommerce' && hubOrder.source_order_id) {
+        const { data: ecomOrder, error: ecomError } = await supabase
+          .from("ecommerce_orders")
+          .select(`
+            payment_method,
+            payment_status,
+            shipping_address,
+            subtotal_sar,
+            tax_sar,
+            shipping_sar,
+            ecommerce_order_items (
+              id,
+              product_title,
+              product_image_url,
+              quantity,
+              unit_price_sar,
+              total_price_sar
+            )
+          `)
+          .eq("id", hubOrder.source_order_id)
+          .maybeSingle();
+
+        if (!ecomError && ecomOrder) {
+          const { ecommerce_order_items, ...ecomRest } = ecomOrder as any;
+          
+          setOrder({
+            id: hubOrder.id,
+            order_number: hubOrder.order_number,
+            customer_name: hubOrder.customer_name,
+            customer_phone: hubOrder.customer_phone,
+            status: hubOrder.status,
+            total_sar: hubOrder.total_amount_sar,
+            created_at: hubOrder.created_at,
+            ...ecomRest,
+          } as Order);
+          
+          setOrderItems((ecommerce_order_items as OrderItem[]) || []);
+        }
+      } else {
+        // طلب من مصدر آخر، استخدم بيانات order_hub فقط
+        setOrder({
+          id: hubOrder.id,
+          order_number: hubOrder.order_number,
+          customer_name: hubOrder.customer_name,
+          customer_phone: hubOrder.customer_phone,
+          status: hubOrder.status,
+          total_sar: hubOrder.total_amount_sar,
+          created_at: hubOrder.created_at,
+          payment_method: 'CASH_ON_DELIVERY',
+          payment_status: hubOrder.payment_status || 'PENDING',
+          shipping_address: {},
+          subtotal_sar: hubOrder.total_amount_sar,
+          tax_sar: 0,
+          shipping_sar: 0,
+        } as Order);
+        
+        setOrderItems([]);
+      }
 
     } catch (error) {
       console.error("Error fetching order details:", error);

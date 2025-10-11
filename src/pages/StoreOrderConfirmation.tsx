@@ -76,50 +76,92 @@ const StoreOrderConfirmation = () => {
 
   const fetchOrderData = async () => {
     try {
-      // جلب بيانات الطلب
-      const { data: orderData, error: orderError } = await supabase
-        .from('ecommerce_orders')
-        .select(`
-          *,
-          ecommerce_order_items (
-            id,
-            product_title,
-            product_image_url,
-            quantity,
-            unit_price_sar,
-            total_price_sar
-          )
-        `)
+      // جلب بيانات الطلب من order_hub
+      const { data: hubOrder, error: hubError } = await supabase
+        .from('order_hub')
+        .select('*')
         .eq('id', orderId)
         .maybeSingle();
 
-      if (orderError) throw orderError;
+      if (hubError) throw hubError;
       
-      if (!orderData) {
+      if (!hubOrder) {
         toast.error('لم يتم العثور على الطلب');
         return;
       }
 
-      const { ecommerce_order_items, ...rest } = orderData as any;
-      setOrder(rest as Order);
-      setOrderItems((ecommerce_order_items as OrderItem[]) || []);
+      // جلب تفاصيل الطلب من المصدر الأصلي
+      let orderItems: OrderItem[] = [];
+      let additionalData: any = {};
+
+      if (hubOrder.source === 'ecommerce' && hubOrder.source_order_id) {
+        const { data: ecomOrder, error: ecomError } = await supabase
+          .from('ecommerce_orders')
+          .select(`
+            tracking_number,
+            shipping_address,
+            subtotal_sar,
+            shipping_sar,
+            tax_sar,
+            payment_method,
+            ecommerce_order_items (
+              id,
+              product_title,
+              product_image_url,
+              quantity,
+              unit_price_sar,
+              total_price_sar
+            )
+          `)
+          .eq('id', hubOrder.source_order_id)
+          .maybeSingle();
+
+        if (!ecomError && ecomOrder) {
+          const { ecommerce_order_items, ...rest } = ecomOrder as any;
+          orderItems = ecommerce_order_items || [];
+          additionalData = rest;
+        }
+      }
+
+      setOrder({
+        id: hubOrder.id,
+        order_number: hubOrder.order_number,
+        customer_name: hubOrder.customer_name,
+        customer_email: hubOrder.customer_email,
+        customer_phone: hubOrder.customer_phone,
+        status: hubOrder.status,
+        payment_status: hubOrder.payment_status || 'PENDING',
+        total_sar: hubOrder.total_amount_sar,
+        created_at: hubOrder.created_at,
+        affiliate_store_id: hubOrder.affiliate_store_id || '',
+        subtotal_sar: additionalData.subtotal_sar || hubOrder.total_amount_sar,
+        shipping_sar: additionalData.shipping_sar || 0,
+        tax_sar: additionalData.tax_sar || 0,
+        payment_method: additionalData.payment_method || 'CASH_ON_DELIVERY',
+        tracking_number: additionalData.tracking_number || null,
+        shipping_address: additionalData.shipping_address || {},
+      } as Order);
+
+      setOrderItems(orderItems);
 
       // جلب بيانات المتجر
-      const { data: storeData, error: storeError } = await supabase
-        .from('affiliate_stores')
-        .select(`
-          store_name,
-          store_slug,
-          profiles (
-            full_name,
-            phone
-          )
-        `)
-        .eq('id', orderData.affiliate_store_id)
-        .maybeSingle();
+      if (hubOrder.affiliate_store_id) {
+        const { data: storeData, error: storeError } = await supabase
+          .from('affiliate_stores')
+          .select(`
+            store_name,
+            store_slug,
+            profiles (
+              full_name,
+              phone
+            )
+          `)
+          .eq('id', hubOrder.affiliate_store_id)
+          .maybeSingle();
 
-      if (storeError) throw storeError;
-      setStore(storeData as Store);
+        if (storeError) throw storeError;
+        setStore(storeData as Store);
+      }
 
     } catch (error: any) {
       console.error('Error fetching order:', error);

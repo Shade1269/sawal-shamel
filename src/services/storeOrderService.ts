@@ -126,41 +126,49 @@ export const storeOrderService = {
         return { success: true, orders: [] };
       }
 
-      const { data: orders, error } = await supabase
-        .from('ecommerce_orders')
-        .select(`
-          id,
-          order_number,
-          customer_name,
-          customer_phone,
-          status,
-          total_sar,
-          created_at,
-          ecommerce_order_items (
-            id,
-            product_title,
-            product_image_url,
-            quantity,
-            unit_price_sar,
-            total_price_sar
-          )
-        `)
+      // جلب الطلبات من order_hub الموحد
+      const { data: hubOrders, error: hubError } = await supabase
+        .from('order_hub')
+        .select('*')
         .eq('affiliate_store_id', storeId)
-        .eq('buyer_session_id', sessionId)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (hubError) throw hubError;
 
-      const formattedOrders = (orders || []).map(order => ({
-        id: order.id,
-        order_number: order.order_number,
-        customer_name: order.customer_name,
-        customer_phone: order.customer_phone,
-        status: order.status,
-        total_sar: order.total_sar,
-        created_at: order.created_at,
-        items: order.ecommerce_order_items || [],
-      }));
+      // جلب تفاصيل كل طلب من المصدر الأصلي
+      const formattedOrders = await Promise.all(
+        (hubOrders || []).map(async (hubOrder) => {
+          let items: any[] = [];
+
+          // إذا كان المصدر ecommerce، جلب البيانات من ecommerce_order_items
+          if (hubOrder.source === 'ecommerce' && hubOrder.source_order_id) {
+            const { data: itemsData } = await supabase
+              .from('ecommerce_order_items')
+              .select('id, product_title, product_image_url, quantity, unit_price_sar, total_price_sar')
+              .eq('order_id', hubOrder.source_order_id);
+            items = itemsData || [];
+          }
+          // إذا كان المصدر simple، جلب البيانات من simple_order_items
+          else if (hubOrder.source === 'simple' && hubOrder.source_order_id) {
+            const { data: itemsData } = await supabase
+              .from('simple_order_items')
+              .select('id, product_title, product_image_url, quantity, unit_price_sar, total_price_sar')
+              .eq('order_id', hubOrder.source_order_id);
+            items = itemsData || [];
+          }
+
+          return {
+            id: hubOrder.id,
+            order_number: hubOrder.order_number,
+            customer_name: hubOrder.customer_name,
+            customer_phone: hubOrder.customer_phone,
+            status: hubOrder.status,
+            total_sar: hubOrder.total_amount_sar,
+            created_at: hubOrder.created_at,
+            items,
+          };
+        })
+      );
 
       return {
         success: true,
