@@ -64,31 +64,33 @@ export const usePlatformPhoneAuth = () => {
         return { success: false, error: errorMessage };
       }
 
-      console.log('✓ Phone validation passed, sending OTP to:', formattedPhone);
+      console.log('✓ Phone validation passed, sending OTP via Twilio');
 
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: formattedPhone,
-        options: {
-          channel: 'sms',
+      // استدعاء Edge Function لإرسال OTP عبر Twilio
+      const { data, error } = await supabase.functions.invoke('send-customer-otp', {
+        body: { 
+          phone: formattedPhone,
+          storeId: null // للمنصة الرئيسية
         }
       });
 
       if (error) {
-        console.error('Supabase OTP error:', error);
-        
-        let errorMessage = 'فشل في إرسال رمز التحقق';
-        if (error.message.includes('rate limit')) {
-          errorMessage = 'تم تجاوز حد الإرسال. حاول بعد دقائق.';
-        } else if (error.message.includes('invalid')) {
-          errorMessage = 'رقم الجوال غير صحيح';
-        }
-
+        console.error('Edge Function error:', error);
         toast.error('خطأ في الإرسال', {
-          description: errorMessage,
+          description: 'فشل في إرسال رمز التحقق',
         });
-
-        return { success: false, error: errorMessage };
+        return { success: false, error: error.message };
       }
+
+      if (!data?.success) {
+        console.error('OTP send failed:', data);
+        toast.error('خطأ في الإرسال', {
+          description: data?.error || 'فشل في إرسال رمز التحقق',
+        });
+        return { success: false, error: data?.error };
+      }
+
+      console.log('OTP sent successfully via Twilio');
 
       toast.success('تم الإرسال', {
         description: `تم إرسال رمز التحقق إلى ${formattedPhone}`,
@@ -116,20 +118,28 @@ export const usePlatformPhoneAuth = () => {
 
       console.log('Verifying OTP for:', formattedPhone);
 
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone: formattedPhone,
-        token: otp,
-        type: 'sms'
+      // استدعاء Edge Function للتحقق من OTP وإنشاء المستخدم
+      const { data, error } = await supabase.functions.invoke('verify-customer-otp', {
+        body: { 
+          phone: formattedPhone,
+          otp: otp
+        }
       });
 
       if (error) {
-        console.error('Supabase verify error:', error);
+        console.error('Edge Function error:', error);
+        toast.error('خطأ في التحقق', {
+          description: 'فشل في التحقق من الرمز',
+        });
+        return { success: false, error: error.message };
+      }
+
+      if (!data?.success || !data?.session) {
+        console.error('Verification failed:', data);
         
-        let errorMessage = 'رمز التحقق غير صحيح';
-        if (error.message.includes('expired')) {
+        let errorMessage = data?.error || 'رمز التحقق غير صحيح';
+        if (errorMessage.includes('expired') || errorMessage.includes('منتهي')) {
           errorMessage = 'انتهت صلاحية الرمز. اطلب رمزاً جديداً.';
-        } else if (error.message.includes('invalid')) {
-          errorMessage = 'رمز التحقق غير صحيح';
         }
 
         toast.error('خطأ في التحقق', {
@@ -139,15 +149,21 @@ export const usePlatformPhoneAuth = () => {
         return { success: false, error: errorMessage };
       }
 
-      if (!data.user) {
-        toast.error('خطأ', {
-          description: 'لم يتم التحقق من المستخدم',
-        });
-        return { success: false, error: 'لم يتم التحقق من المستخدم' };
-      }
+      console.log('OTP verified, setting session');
 
-      // التأكد من وجود profile
-      await ensureProfile(data.user.id, formattedPhone);
+      // تعيين الجلسة في Supabase Auth
+      const { error: sessionError } = await supabase.auth.setSession({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      });
+
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        toast.error('خطأ', {
+          description: 'فشل في تسجيل الدخول',
+        });
+        return { success: false, error: sessionError.message };
+      }
 
       toast.success('تم التحقق بنجاح!', {
         description: 'مرحباً بك في المنصة',
@@ -168,52 +184,6 @@ export const usePlatformPhoneAuth = () => {
     }
   };
 
-  const ensureProfile = async (userId: string, phone: string) => {
-    try {
-      // التحقق من وجود profile
-      const { data: existingProfile } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('auth_user_id', userId)
-        .maybeSingle();
-
-      if (existingProfile) {
-        console.log('Profile exists, updating activity');
-        // تحديث آخر نشاط
-        await supabase
-          .from('profiles')
-          .update({ 
-            last_activity_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
-          .eq('auth_user_id', userId);
-        return;
-      }
-
-      // إنشاء profile جديد
-      console.log('Creating new profile');
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          auth_user_id: userId,
-          phone: phone,
-          full_name: phone,
-          role: 'affiliate',
-          is_active: true,
-          points: 0,
-        });
-
-      if (profileError) {
-        console.error('Error creating profile:', profileError);
-        // لا نرمي خطأ لأن المصادقة نجحت
-      } else {
-        console.log('Profile created successfully');
-      }
-    } catch (error) {
-      console.error('Error ensuring profile:', error);
-      // لا نرمي خطأ لأن المصادقة نجحت
-    }
-  };
 
   const signOut = async () => {
     try {

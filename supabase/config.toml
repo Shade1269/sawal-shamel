@@ -47,6 +47,12 @@ inspector_port = 54330
 [functions.admin-actions]
 verify_jwt = true
 
+[functions.send-customer-otp]
+verify_jwt = false
+
+[functions.verify-customer-otp]
+verify_jwt = false
+
 [functions.send-whatsapp-otp]
 verify_jwt = false
 
@@ -64,9 +70,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.create-customer-otp-session]
-verify_jwt = false
-
-[functions.verify-customer-otp]
 verify_jwt = false
 
 [functions.get-store-orders-for-session]
