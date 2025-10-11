@@ -103,27 +103,64 @@ const SalesReports = () => {
         }
       }
 
-      // Fetch orders data
+      // Fetch orders data from order_hub
       let ordersQuery = supabase
-        .from('ecommerce_orders')
-        .select(`
-          *,
-          ecommerce_order_items(*)
-        `)
+        .from('order_hub')
+        .select('*, source, source_order_id')
         .gte('created_at', fromDate)
         .lte('created_at', toDate + 'T23:59:59');
 
-      if (shopFilter) {
-        ordersQuery = ordersQuery.or(shopFilter);
-      }
-
-      const { data: ordersData, error } = await ordersQuery;
+      const { data: hubOrders, error } = await ordersQuery;
       if (error) throw error;
 
+      // Apply shop filter
+      let ordersData = hubOrders || [];
+      if (selectedShop !== 'all') {
+        ordersData = ordersData.filter(o => o.shop_id === selectedShop);
+      } else if (profile.role === 'merchant' && shops.length > 0) {
+        const shopIds = shops.map(s => s.id);
+        ordersData = ordersData.filter(o => shopIds.includes(o.shop_id));
+      }
+
+      // Fetch items from source tables
+      const ordersWithItems = await Promise.all(
+        ordersData.map(async (order) => {
+          if (order.source === 'ecommerce') {
+            const { data: items } = await supabase
+              .from('ecommerce_order_items')
+              .select('*')
+              .eq('order_id', order.source_order_id);
+            return { ...order, ecommerce_order_items: items || [] };
+          } else if (order.source === 'simple') {
+            const { data: items } = await supabase
+              .from('simple_order_items')
+              .select('*')
+              .eq('order_id', order.source_order_id);
+            return { ...order, ecommerce_order_items: items || [] };
+          }
+          return { ...order, ecommerce_order_items: [] };
+        })
+      );
+
+      // Fetch payment method from source orders
+      const ordersWithPayment = await Promise.all(
+        ordersWithItems.map(async (order) => {
+          if (order.source === 'ecommerce') {
+            const { data } = await supabase
+              .from('ecommerce_orders')
+              .select('payment_method, total_sar')
+              .eq('id', order.source_order_id)
+              .single();
+            return { ...order, payment_method: data?.payment_method, total_sar: order.total_amount_sar };
+          }
+          return { ...order, payment_method: 'CASH_ON_DELIVERY', total_sar: order.total_amount_sar };
+        })
+      );
+
       // Calculate basic metrics
-      const totalSales = ordersData?.reduce((sum, order) => sum + (order.total_sar || 0), 0) || 0;
-      const totalOrders = ordersData?.length || 0;
-      const uniqueCustomers = new Set(ordersData?.map(o => o.customer_name)).size;
+      const totalSales = ordersWithPayment.reduce((sum, order) => sum + (order.total_sar || 0), 0);
+      const totalOrders = ordersWithPayment.length;
+      const uniqueCustomers = new Set(ordersWithPayment.map(o => o.customer_name)).size;
       const averageOrderValue = totalOrders > 0 ? totalSales / totalOrders : 0;
 
       // Generate sales by day
@@ -132,9 +169,9 @@ const SalesReports = () => {
         end: dateRange.to
       }).map(date => {
         const dateStr = formatDate(date, 'yyyy-MM-dd');
-        const dayOrders = ordersData?.filter(order => 
+        const dayOrders = ordersWithPayment.filter(order => 
           order.created_at.startsWith(dateStr)
-        ) || [];
+        );
 
         return {
           date: formatDate(date, 'MMM dd'),
@@ -145,19 +182,20 @@ const SalesReports = () => {
 
       // Calculate top products
       const productStats: Record<string, any> = {};
-      ordersData?.forEach(order => {
+      ordersWithPayment.forEach(order => {
         order.ecommerce_order_items?.forEach((item: any) => {
-          if (!productStats[item.product_title]) {
-            productStats[item.product_title] = {
-              name: item.product_title,
+          const title = item.product_title;
+          if (!productStats[title]) {
+            productStats[title] = {
+              name: title,
               sales: 0,
               revenue: 0,
               orders: 0
             };
           }
-          productStats[item.product_title].sales += item.quantity || 0;
-          productStats[item.product_title].revenue += item.total_price_sar || 0;
-          productStats[item.product_title].orders += 1;
+          productStats[title].sales += item.quantity || 0;
+          productStats[title].revenue += item.total_price_sar || 0;
+          productStats[title].orders += 1;
         });
       });
 
@@ -167,7 +205,7 @@ const SalesReports = () => {
 
       // Payment methods analysis
       const paymentStats: Record<string, any> = {};
-      ordersData?.forEach(order => {
+      ordersWithPayment.forEach(order => {
         const method = getPaymentMethodLabel(order.payment_method);
         if (!paymentStats[method]) {
           paymentStats[method] = {

@@ -112,19 +112,28 @@ const AnalyticsDashboard = () => {
         }
       }
 
-      // Fetch overview data
+      // Fetch overview data from order_hub
       const { data: ordersData, error: ordersError } = await supabase
-        .from('ecommerce_orders')
-        .select('total_sar, created_at, status, customer_name')
+        .from('order_hub')
+        .select('total_amount_sar, created_at, status, customer_name, shop_id')
         .gte('created_at', fromDate)
         .lte('created_at', toDate + 'T23:59:59');
 
       if (ordersError) throw ordersError;
 
+      // Apply shop filter
+      let filteredOrders = ordersData || [];
+      if (selectedShop !== 'all') {
+        filteredOrders = filteredOrders.filter(o => o.shop_id === selectedShop);
+      } else if (profile.role === 'merchant' && shops.length > 0) {
+        const shopIds = shops.map(s => s.id);
+        filteredOrders = filteredOrders.filter(o => shopIds.includes(o.shop_id));
+      }
+
       // Calculate overview metrics
-      const totalSales = ordersData?.reduce((sum, order) => sum + (order.total_sar || 0), 0) || 0;
-      const totalOrders = ordersData?.length || 0;
-      const uniqueCustomers = new Set(ordersData?.map(o => o.customer_name)).size;
+      const totalSales = filteredOrders.reduce((sum, order) => sum + (order.total_amount_sar || 0), 0);
+      const totalOrders = filteredOrders.length;
+      const uniqueCustomers = new Set(filteredOrders.map(o => o.customer_name)).size;
       
       // Fetch product count
       const { count: productsCount } = await supabase
@@ -136,13 +145,22 @@ const AnalyticsDashboard = () => {
       const prevToDate = format(subDays(dateRange.to, 30), 'yyyy-MM-dd');
 
       const { data: prevOrdersData } = await supabase
-        .from('ecommerce_orders')
-        .select('total_sar')
+        .from('order_hub')
+        .select('total_amount_sar, shop_id')
         .gte('created_at', prevFromDate)
         .lte('created_at', prevToDate + 'T23:59:59');
 
-      const prevTotalSales = prevOrdersData?.reduce((sum, order) => sum + (order.total_sar || 0), 0) || 0;
-      const prevTotalOrders = prevOrdersData?.length || 0;
+      // Apply shop filter to previous data
+      let prevFiltered = prevOrdersData || [];
+      if (selectedShop !== 'all') {
+        prevFiltered = prevFiltered.filter(o => o.shop_id === selectedShop);
+      } else if (profile.role === 'merchant' && shops.length > 0) {
+        const shopIds = shops.map(s => s.id);
+        prevFiltered = prevFiltered.filter(o => shopIds.includes(o.shop_id));
+      }
+
+      const prevTotalSales = prevFiltered.reduce((sum, order) => sum + (order.total_amount_sar || 0), 0);
+      const prevTotalOrders = prevFiltered.length;
 
       const salesGrowth = prevTotalSales > 0 ? ((totalSales - prevTotalSales) / prevTotalSales) * 100 : 0;
       const ordersGrowth = prevTotalOrders > 0 ? ((totalOrders - prevTotalOrders) / prevTotalOrders) * 100 : 0;
@@ -154,13 +172,13 @@ const AnalyticsDashboard = () => {
 
       while (currentDate <= endDate) {
         const dateStr = format(currentDate, 'yyyy-MM-dd');
-        const dayOrders = ordersData?.filter(order => 
+        const dayOrders = filteredOrders.filter(order => 
           order.created_at.startsWith(dateStr)
-        ) || [];
+        );
         
         salesData.push({
           date: format(currentDate, 'MMM dd'),
-          sales: dayOrders.reduce((sum, order) => sum + (order.total_sar || 0), 0),
+          sales: dayOrders.reduce((sum, order) => sum + (order.total_amount_sar || 0), 0),
           orders: dayOrders.length,
           customers: new Set(dayOrders.map(o => o.customer_name)).size
         });
@@ -221,7 +239,7 @@ const AnalyticsDashboard = () => {
 
       // Top customers (simplified)
       const customerStats: Record<string, any> = {};
-      ordersData?.forEach(order => {
+      filteredOrders.forEach(order => {
         if (!customerStats[order.customer_name]) {
           customerStats[order.customer_name] = {
             name: order.customer_name,
@@ -230,7 +248,7 @@ const AnalyticsDashboard = () => {
           };
         }
         customerStats[order.customer_name].totalOrders += 1;
-        customerStats[order.customer_name].totalSpent += order.total_sar || 0;
+        customerStats[order.customer_name].totalSpent += order.total_amount_sar || 0;
       });
 
       const topCustomers = Object.values(customerStats)
