@@ -11,12 +11,36 @@ export const usePlatformPhoneAuth = () => {
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
 
+  // Normalize phone to E.164 (KSA default). Examples:
+  // 0501234567 -> +966501234567, 966501234567 -> +966501234567, 00966501234567 -> +966501234567, +966501234567 -> +966501234567
+  const formatPhone = (input: string) => {
+    try {
+      const digits = input.replace(/\D/g, '');
+      // Already in international format with plus
+      if (input.startsWith('+')) return input;
+      // 00 -> +
+      if (digits.startsWith('00')) return `+${digits.slice(2)}`;
+      // Starts with country code 966
+      if (digits.startsWith('966')) {
+        const national = digits.slice(3);
+        const normalized = national.startsWith('0') ? national.slice(1) : national;
+        return `+966${normalized}`;
+      }
+      // Local format starting with 0 (e.g., 05...)
+      if (digits.startsWith('0')) {
+        return `+966${digits.slice(1)}`;
+      }
+      // Fallback: treat as national number without leading 0
+      return `+966${digits}`;
+    } catch {
+      return input;
+    }
+  };
   const sendOTP = async (phone: string): Promise<PhoneAuthResponse> => {
     setLoading(true);
     try {
       // تنسيق رقم الجوال
-      const cleanPhone = phone.replace(/\s|-/g, '');
-      const formattedPhone = cleanPhone.startsWith('+') ? cleanPhone : `+966${cleanPhone}`;
+      const formattedPhone = formatPhone(phone);
 
       console.log('Sending OTP to:', formattedPhone);
 
@@ -66,8 +90,7 @@ export const usePlatformPhoneAuth = () => {
   const verifyOTP = async (phone: string, otp: string): Promise<PhoneAuthResponse> => {
     setVerifying(true);
     try {
-      const cleanPhone = phone.replace(/\s|-/g, '');
-      const formattedPhone = cleanPhone.startsWith('+') ? cleanPhone : `+966${cleanPhone}`;
+      const formattedPhone = formatPhone(phone);
 
       console.log('Verifying OTP for:', formattedPhone);
 
