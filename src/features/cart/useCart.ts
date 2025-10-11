@@ -7,7 +7,9 @@ type CartItem = {
   cart_id: string;
   product_id: string;
   quantity: number;
-  price: number;
+  unit_price_sar: number;
+  total_price_sar: number;
+  selected_variants?: any;
 };
 
 export function useCart() {
@@ -47,7 +49,7 @@ export function useCart() {
       setLoading(false);
       throw itemsError;
     }
-    setItems(cartItems as CartItem[]);
+    setItems(cartItems);
     setLoading(false);
   }, []);
 
@@ -56,7 +58,7 @@ export function useCart() {
   }, [loadCart]);
 
   const addItem = useCallback(
-    async (product_id: string, price: number, quantity = 1) => {
+    async (product_id: string, unit_price_sar: number, quantity = 1) => {
       if (!cart) return;
       const existing = items.find((item) => item.product_id === product_id);
       if (existing) {
@@ -68,16 +70,16 @@ export function useCart() {
           .single();
         if (error) throw error;
         setItems((prev) =>
-          prev.map((item) => (item.id === existing.id ? (data as CartItem) : item))
+          prev.map((item) => (item.id === existing.id ? data : item))
         );
       } else {
         const { data, error } = await supabase
           .from('cart_items')
-          .insert({ cart_id: cart.id, product_id, quantity, price })
+          .insert({ cart_id: cart.id, product_id, quantity, unit_price_sar })
           .select()
           .single();
         if (error) throw error;
-        setItems((prev) => [...prev, data as CartItem]);
+        setItems((prev) => [...prev, data]);
       }
     },
     [cart, items]
@@ -92,7 +94,7 @@ export function useCart() {
       .single();
     if (error) throw error;
     setItems((prev) =>
-      prev.map((item) => (item.id === item_id ? (data as CartItem) : item))
+      prev.map((item) => (item.id === item_id ? data : item))
     );
   }, []);
 
@@ -115,7 +117,7 @@ export function useCart() {
     setItems([]);
   }, [cart]);
 
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = items.reduce((sum, item) => sum + item.unit_price_sar * item.quantity, 0);
 
   return {
     loading,

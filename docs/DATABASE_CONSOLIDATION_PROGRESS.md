@@ -141,6 +141,38 @@
 
 **نتيجة**: نظام شحن موحد مع تتبع تاريخي كامل ✅
 
+### المرحلة 4(ج): توحيد نظام الهوية
+**الحالة**: ✅ 100%
+
+#### حقول جديدة في profiles (4):
+- ✅ `avatar_url` - رابط الصورة الشخصية
+- ✅ `bio` - نبذة عن المستخدم
+- ✅ `level` - مستوى المستخدم
+- ✅ `total_earnings` - إجمالي الأرباح
+
+#### ترحيل البيانات:
+- ✅ نسخ البيانات من `user_profiles` إلى `profiles`
+- ✅ View للتوافق الخلفي (`user_profiles_compat`)
+
+#### Functions موحدة (2):
+- ✅ `get_user_profile()` - الحصول على بيانات مستخدم
+- ✅ `get_current_profile()` - الحصول على المستخدم الحالي
+- ✅ `check_profile_orphans()` - فحص البيانات اليتيمة
+
+#### الفهارس (5):
+- ✅ `idx_profiles_auth_user_id`
+- ✅ `idx_profiles_email`
+- ✅ `idx_profiles_phone`
+- ✅ `idx_profiles_role`
+- ✅ `idx_profiles_is_active`
+
+#### RLS Policies (3):
+- ✅ `profile_select_own` - قراءة الملف الشخصي
+- ✅ `profile_update_own` - تحديث الملف الشخصي
+- ✅ `profile_select_admin` - الإدمن يرى الكل
+
+**نتيجة**: `profiles` هو SSOT للهوية ✅
+
 ---
 
 ## 📊 الإحصائيات
@@ -227,15 +259,11 @@
 
 ## 🎯 الخطوات التالية المقترحة
 
-### خيار 1: المرحلة 4(ج) - الهوية (موصى به)
-**التقدير**: 3-4 ساعات  
-**التأثير**: عالي - مخاطر أمنية إذا لم يوحّد
-
-### خيار 2: المرحلة 4(د) - توحيد CMS
+### خيار 1: المرحلة 4(د) - توحيد CMS (موصى به)
 **التقدير**: 2-3 ساعات  
 **التأثير**: متوسط - تحديد نظام CMS رئيسي
 
-### خيار 3: استكمال المرحلة 4(أ) - ربط Orders القديمة
+### خيار 2: استكمال المرحلة 4(أ) - ربط Orders القديمة
 **التقدير**: 1-2 ساعات  
 **التأثير**: متوسط - ترحيل بيانات legacy orders إلى order_hub
 
@@ -243,13 +271,14 @@
 
 ## 📝 ملاحظات مهمة
 
-1. **التحذيرات الأمنية**: 44 تحذير أمني (29 Security Definer Views موجودة مسبقاً)
+1. **التحذيرات الأمنية**: 53 تحذير أمني (معظمها موجودة مسبقاً)
 2. **الأداء**: جميع FKs مُفهرسة لتجنب بطء الـ queries
 3. **سياسة الحذف**: 
    - `CASCADE` للتفاصيل التابعة (items, analytics, widgets, events)
    - `SET NULL` للمراجع الاختيارية (created_by, assigned_to)
 4. **Feature Flags**: `USE_UNIFIED_ORDERS=true` مفعّل حالياً
 5. **نظام الشحن**: يتم تسجيل جميع الأحداث تلقائياً عبر Triggers
+6. **نظام الهوية**: `profiles` هو SSOT الآن، مع view للتوافق الخلفي
 
 ---
 
@@ -258,6 +287,7 @@
 ```sql
 -- فحص البيانات اليتيمة
 SELECT * FROM check_order_hub_orphans();
+SELECT * FROM check_profile_orphans();
 
 -- فحص جودة البيانات
 SELECT * FROM check_data_quality();
@@ -275,6 +305,12 @@ SELECT * FROM get_shipment_history('SHIPMENT_UUID_HERE');
 
 -- آخر موقع لشحنة
 SELECT get_latest_shipment_location('SHIPMENT_UUID_HERE');
+
+-- الحصول على ملف مستخدم
+SELECT * FROM get_user_profile('USER_AUTH_UUID_HERE');
+
+-- المستخدم الحالي
+SELECT * FROM get_current_profile();
 ```
 
 ---
