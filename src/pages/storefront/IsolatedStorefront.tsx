@@ -46,19 +46,9 @@ interface StoreContextType {
   };
 }
 
-interface IsolatedStorefrontProps {
-  storeData?: {
-    id: string;
-    store_name: string;
-    store_slug: string;
-    shop_id?: string;
-  };
-}
-
-export const IsolatedStorefront: React.FC<IsolatedStorefrontProps> = ({ storeData }) => {
+export const IsolatedStorefront: React.FC = () => {
   const { storeSlug } = useParams<{ storeSlug: string }>();
-  const outletContext = useOutletContext<StoreContextType | null>();
-  const store = storeData || outletContext?.store;
+  const { store } = useOutletContext<StoreContextType>();
   const navigate = useNavigate();
   const { addToCart } = useIsolatedStoreCart(store?.id || '');
   
