@@ -36,13 +36,35 @@ export const usePlatformPhoneAuth = () => {
       return input;
     }
   };
+
+  // Validate Saudi phone number
+  const isValidSaudiPhone = (formatted: string): boolean => {
+    // Must be +966 followed by 9 digits starting with 5
+    const saudiPattern = /^\+9665\d{8}$/;
+    return saudiPattern.test(formatted);
+  };
   const sendOTP = async (phone: string): Promise<PhoneAuthResponse> => {
     setLoading(true);
     try {
       // تنسيق رقم الجوال
       const formattedPhone = formatPhone(phone);
 
-      console.log('Sending OTP to:', formattedPhone);
+      console.log('Original input:', phone);
+      console.log('Formatted phone:', formattedPhone);
+
+      // التحقق من صحة الرقم
+      if (!isValidSaudiPhone(formattedPhone)) {
+        const errorMessage = `رقم الجوال غير صالح. تأكد من الصيغة: ${formattedPhone}`;
+        console.error('Invalid phone format:', formattedPhone);
+        
+        toast.error('رقم غير صحيح', {
+          description: errorMessage,
+        });
+
+        return { success: false, error: errorMessage };
+      }
+
+      console.log('✓ Phone validation passed, sending OTP to:', formattedPhone);
 
       const { error } = await supabase.auth.signInWithOtp({
         phone: formattedPhone,
