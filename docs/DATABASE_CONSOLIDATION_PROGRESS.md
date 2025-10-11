@@ -1,7 +1,7 @@
 # تقرير التقدم: توحيد قاعدة البيانات
 
 **آخر تحديث**: 2025-10-11  
-**الحالة**: 🟢 المراحل 1-3 + 4(ب-ج-د) مكتملة (70% من الخطة الشاملة)
+**الحالة**: 🟢 المراحل 1-4 مكتملة (80% من الخطة الشاملة)
 
 ---
 
@@ -187,8 +187,8 @@
 - **1 جدول جديد** للشحنات (`shipment_events`)
 - **5 حقول جديدة** في `shipments`
 - **4 حقول جديدة** في `profiles` (avatar_url, bio, level, total_earnings)
-- **20 فهارس جديدة** للأداء (10 شحن + 5 profiles + 5 CMS)
-- **6 دوال جديدة** (3 هوية + 3 CMS)
+- **27 فهارس جديدة** للأداء (10 شحن + 5 profiles + 5 CMS + 7 order_hub)
+- **9 دوال جديدة** (3 هوية + 4 CMS + 3 orders)
 - **3 views جديدة** للتوافق (user_profiles_compat, store_pages_compat, page_builder_archive)
 
 ### الكود:
@@ -254,7 +254,7 @@
 - ✅ `idx_cms_pages_published` (partial)
 - ✅ `idx_cms_pages_homepage` (partial)
 
-#### Functions الموحدة (3):
+#### Functions الموحدة (4):
 - ✅ `get_store_cms_pages()` - صفحات متجر محدد
 - ✅ `get_page_with_widgets()` - صفحة مع widgets
 - ✅ `publish_cms_page()` - نشر صفحة مع revision
@@ -264,7 +264,34 @@
 
 ---
 
-## 🔜 المتبقي (Remaining - 30%)
+### المرحلة 4(أ): ربط Legacy Orders
+**الحالة**: ✅ 100%
+
+#### Indexes على order_hub (7):
+- ✅ `idx_order_hub_source_order_id` - مركب (source + source_order_id)
+- ✅ `idx_order_hub_customer_phone` (partial)
+- ✅ `idx_order_hub_customer_email` (partial)
+- ✅ `idx_order_hub_status`
+- ✅ `idx_order_hub_payment_status`
+- ✅ `idx_order_hub_affiliate_store_id` (partial)
+- ✅ `idx_order_hub_created_at` (DESC)
+
+#### Functions موحدة (3):
+- ✅ `get_unified_store_orders()` - طلبات موحدة مع items
+- ✅ `get_unified_order_stats()` - إحصائيات شاملة
+- ✅ `check_order_hub_sync_quality()` - جودة المزامنة
+
+#### نتائج المزامنة:
+- ✅ 39 طلب في order_hub (24 ecommerce + 13 legacy + 2 simple)
+- ✅ 0 طلبات مفقودة من ecommerce_orders
+- ✅ 0 طلبات مفقودة من simple_orders
+- ✅ 13 legacy orders محفوظة (متوقعة)
+
+**نتيجة**: المزامنة 100% صحيحة ✅
+
+---
+
+## 🔜 المتبقي (Remaining - 20%)
 
 ### المرحلة 5: طبقة الوصول للبيانات (DAL)
 - ❌ Repositories محايدة عن تغييرات الجدول

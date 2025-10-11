@@ -13169,6 +13169,14 @@ export type Database = {
           table_name: string
         }[]
       }
+      check_order_hub_sync_quality: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          check_name: string
+          details: Json
+          status: string
+        }[]
+      }
       check_profile_orphans: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -13389,6 +13397,25 @@ export type Database = {
         Args: { p_store_id: string }
         Returns: Json
       }
+      get_unified_order_stats: {
+        Args: {
+          p_affiliate_store_id?: string
+          p_end_date?: string
+          p_start_date?: string
+          p_store_id?: string
+        }
+        Returns: {
+          avg_order_value: number
+          by_payment_status: Json
+          by_source: Json
+          by_status: Json
+          cancelled_orders: number
+          completed_orders: number
+          pending_orders: number
+          total_orders: number
+          total_revenue: number
+        }[]
+      }
       get_unified_orders_with_items: {
         Args: {
           p_affiliate_store_id?: string
@@ -13406,6 +13433,28 @@ export type Database = {
           source_table: string
           status: string
           total: number
+        }[]
+      }
+      get_unified_store_orders: {
+        Args: {
+          p_affiliate_store_id?: string
+          p_limit?: number
+          p_offset?: number
+          p_store_id: string
+        }
+        Returns: {
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          items_count: number
+          items_json: Json
+          order_id: string
+          order_number: string
+          payment_status: string
+          source: string
+          status: string
+          total_amount_sar: number
         }[]
       }
       get_user_profile: {
