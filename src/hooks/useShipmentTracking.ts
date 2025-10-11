@@ -49,16 +49,26 @@ export const useShipmentTracking = () => {
   const fetchShipmentsByShop = async (shopId: string) => {
     setLoading(true);
     try {
+      // جلب الشحنات من خلال order_hub
+      const { data: hubOrders, error: hubError } = await supabase
+        .from('order_hub')
+        .select('source_order_id, source')
+        .eq('shop_id', shopId)
+        .eq('source', 'ecommerce');
+
+      if (hubError) throw hubError;
+
+      if (!hubOrders || hubOrders.length === 0) {
+        setShipments([]);
+        return;
+      }
+
+      const orderIds = hubOrders.map(o => o.source_order_id);
+
       const { data, error } = await supabase
         .from('shipments_tracking')
-        .select(`
-          *,
-          ecommerce_orders!inner(
-            id,
-            shop_id
-          )
-        `)
-        .eq('ecommerce_orders.shop_id', shopId)
+        .select('*')
+        .in('order_id', orderIds)
         .order('created_at', { ascending: false });
 
       if (error) throw error;

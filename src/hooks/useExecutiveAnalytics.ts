@@ -44,9 +44,9 @@ export const useExecutiveAnalytics = () => {
 
   const fetchKPIs = async () => {
     try {
-      // Fetch basic metrics
+      // Fetch from order_hub instead
       const [ordersResult, usersResult, productsResult] = await Promise.all([
-        supabase.from('ecommerce_orders').select('total_sar, created_at, customer_phone'),
+        supabase.from('order_hub').select('total_amount_sar, created_at, customer_phone'),
         supabase.from('profiles').select('id, created_at').eq('is_active', true),
         supabase.from('products').select('id').eq('is_active', true)
       ]);
@@ -59,7 +59,7 @@ export const useExecutiveAnalytics = () => {
       const users = usersResult.data || [];
       const products = productsResult.data || [];
 
-      const totalRevenue = orders.reduce((sum, order) => sum + (Number(order.total_sar) || 0), 0);
+      const totalRevenue = orders.reduce((sum, order) => sum + (Number(order.total_amount_sar) || 0), 0);
       const totalOrders = orders.length;
       const totalCustomers = users.length;
       const totalProducts = products.length;
@@ -79,8 +79,8 @@ export const useExecutiveAnalytics = () => {
         return orderDate.getMonth() === lastMonth && orderDate.getFullYear() === lastMonthYear;
       });
 
-      const thisMonthRevenue = thisMonthOrders.reduce((sum, order) => sum + (Number(order.total_sar) || 0), 0);
-      const lastMonthRevenue = lastMonthOrders.reduce((sum, order) => sum + (Number(order.total_sar) || 0), 0);
+      const thisMonthRevenue = thisMonthOrders.reduce((sum, order) => sum + (Number(order.total_amount_sar) || 0), 0);
+      const lastMonthRevenue = lastMonthOrders.reduce((sum, order) => sum + (Number(order.total_amount_sar) || 0), 0);
       const monthlyGrowth = lastMonthRevenue > 0 ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100 : 0;
 
       const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
@@ -115,18 +115,33 @@ export const useExecutiveAnalytics = () => {
   const fetchFinancialMetrics = async () => {
     try {
       const { data: orders, error } = await supabase
-        .from('ecommerce_orders')
-        .select('total_sar, created_at, payment_method');
+        .from('order_hub')
+        .select('total_amount_sar, created_at, source, source_order_id');
 
       if (error) throw error;
 
+      // جلب payment_method من الجداول الأصلية
+      const ordersWithPayment = await Promise.all(
+        (orders || []).map(async (order) => {
+          if (order.source === 'ecommerce') {
+            const { data } = await supabase
+              .from('ecommerce_orders')
+              .select('payment_method')
+              .eq('id', order.source_order_id)
+              .single();
+            return { ...order, payment_method: data?.payment_method || 'غير محدد' };
+          }
+          return { ...order, payment_method: 'CASH_ON_DELIVERY' };
+        })
+      );
+
       // Monthly revenue
-      const monthlyData = (orders || []).reduce((acc, order) => {
+      const monthlyData = ordersWithPayment.reduce((acc, order) => {
         const month = new Date(order.created_at).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long' });
         if (!acc[month]) {
           acc[month] = { revenue: 0, orders: 0 };
         }
-        acc[month].revenue += Number(order.total_sar) || 0;
+        acc[month].revenue += Number(order.total_amount_sar) || 0;
         acc[month].orders += 1;
         return acc;
       }, {} as Record<string, { revenue: number; orders: number }>);
@@ -136,12 +151,12 @@ export const useExecutiveAnalytics = () => {
         .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
 
       // Revenue by payment method
-      const paymentData = (orders || []).reduce((acc, order) => {
+      const paymentData = ordersWithPayment.reduce((acc, order) => {
         const method = order.payment_method || 'غير محدد';
         if (!acc[method]) {
           acc[method] = 0;
         }
-        acc[method] += Number(order.total_sar) || 0;
+        acc[method] += Number(order.total_amount_sar) || 0;
         return acc;
       }, {} as Record<string, number>);
 
@@ -174,7 +189,7 @@ export const useExecutiveAnalytics = () => {
   const fetchCustomerAnalytics = async () => {
     try {
       const [ordersResult, profilesResult] = await Promise.all([
-        supabase.from('ecommerce_orders').select('customer_phone, customer_name, total_sar, created_at'),
+        supabase.from('order_hub').select('customer_phone, customer_name, total_amount_sar, created_at'),
         supabase.from('profiles').select('id, created_at, total_earnings')
       ]);
 
@@ -202,7 +217,7 @@ export const useExecutiveAnalytics = () => {
           acc[phone] = { orders: 0, total: 0, name: order.customer_name };
         }
         acc[phone].orders += 1;
-        acc[phone].total += Number(order.total_sar) || 0;
+        acc[phone].total += Number(order.total_amount_sar) || 0;
         return acc;
       }, {} as Record<string, { orders: number; total: number; name: string }>);
 
@@ -265,7 +280,7 @@ export const useExecutiveAnalytics = () => {
     try {
       const [productsResult, ordersResult, shopsResult] = await Promise.all([
         supabase.from('products').select('id, title, sales_count').eq('is_active', true),
-        supabase.from('ecommerce_orders').select('total_sar, shop_id'),
+        supabase.from('order_hub').select('total_amount_sar, shop_id'),
         supabase.from('shops').select('id, display_name')
       ]);
 
@@ -293,7 +308,7 @@ export const useExecutiveAnalytics = () => {
         if (!acc[shopId]) {
           acc[shopId] = { revenue: 0, orders: 0 };
         }
-        acc[shopId].revenue += Number(order.total_sar) || 0;
+        acc[shopId].revenue += Number(order.total_amount_sar) || 0;
         acc[shopId].orders += 1;
         return acc;
       }, {} as Record<string, { revenue: number; orders: number }>);
