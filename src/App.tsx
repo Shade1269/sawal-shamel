@@ -25,6 +25,7 @@ import AuthPage from "./features/auth/components/AuthPage"
 const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
 const AuthCallbackPage = lazy(() => import("./pages/auth/AuthCallbackPage"));
 const StorefrontIntegration = lazy(() => import("./pages/public-storefront/StorefrontIntegration"));
+const StorefrontPage = lazy(() => import("./pages/public-storefront/StorefrontPage"));
 const StorefrontCheckout = lazy(() => import("./pages/storefront/StorefrontCheckout"));
 const ProductsBrowser = lazy(() => import("./pages/ProductsBrowser"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
@@ -149,7 +150,7 @@ const App = () => {
 
                {/* Store Routes - Unified under /:storeSlug */}
                <Route path="/:storeSlug" element={<IsolatedStoreLayout />}>
-                 <Route index element={<IsolatedStorefront />} />
+                 <Route index element={<StorefrontPage />} />
                  <Route path="p/:productId" element={<StorefrontIntegration />} />
                  <Route path="cart" element={<IsolatedStoreCart />} />
                  <Route path="checkout" element={<IsolatedStoreCheckout />} />
