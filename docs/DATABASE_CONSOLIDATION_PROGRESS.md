@@ -1,7 +1,7 @@
 # تقرير التقدم: توحيد قاعدة البيانات
 
 **آخر تحديث**: 2025-10-11  
-**الحالة**: 🟢 المراحل 1-4 مكتملة (80% من الخطة الشاملة)
+**الحالة**: 🟢 المراحل 1-5 مكتملة (90% من الخطة الشاملة)
 
 ---
 
@@ -198,6 +198,11 @@
 - ✅ 3 UI Components (Manager, List, Affiliate)
 - ✅ `OrdersRouter` مع Feature Flags
 - ✅ 7 Database Views موحدة
+- ✅ **Repository Layer** (3 repositories + 1 hook):
+  - `OrderRepository` - وصول موحد للطلبات
+  - `ProfileRepository` - وصول للملفات الشخصية  
+  - `ShipmentRepository` - وصول للشحنات
+  - `useOrderRepository` - Hook موحد مع React Query
 
 ---
 
@@ -291,11 +296,24 @@
 
 ---
 
-## 🔜 المتبقي (Remaining - 20%)
+## 🔜 المتبقي (Remaining - 10%)
 
 ### المرحلة 5: طبقة الوصول للبيانات (DAL)
-- ❌ Repositories محايدة عن تغييرات الجدول
-- ❌ Views للتوافق الخلفي
+**الحالة**: ✅ 100%
+
+#### Repository Services (3):
+- ✅ `OrderRepository` - طبقة وصول موحدة للطلبات
+- ✅ `ProfileRepository` - طبقة وصول للملفات الشخصية
+- ✅ `ShipmentRepository` - طبقة وصول للشحنات
+
+#### React Hooks (1):
+- ✅ `useOrderRepository` - Hook موحد للطلبات مع React Query
+
+**الفوائد**:
+- ✅ عزل منطق الوصول للبيانات عن UI
+- ✅ Type-safe operations
+- ✅ سهولة الاختبار والـ Mocking
+- ✅ مقاومة للتغييرات في بنية الجداول
 
 ### المرحلة 6: تنظيف البيانات
 - ❌ فحص وإصلاح أي orphans متبقية
