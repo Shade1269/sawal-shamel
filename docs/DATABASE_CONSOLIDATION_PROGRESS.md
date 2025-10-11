@@ -1,7 +1,7 @@
 # تقرير التقدم: توحيد قاعدة البيانات
 
 **آخر تحديث**: 2025-10-11  
-**الحالة**: 🟢 المراحل 1-5 مكتملة (90% من الخطة الشاملة)
+**الحالة**: 🟢 المراحل 1-6 مكتملة (95% من الخطة الشاملة)
 
 ---
 
@@ -188,7 +188,7 @@
 - **5 حقول جديدة** في `shipments`
 - **4 حقول جديدة** في `profiles` (avatar_url, bio, level, total_earnings)
 - **27 فهارس جديدة** للأداء (10 شحن + 5 profiles + 5 CMS + 7 order_hub)
-- **9 دوال جديدة** (3 هوية + 4 CMS + 3 orders)
+- **14 دالة جديدة** (3 هوية + 4 CMS + 3 orders + 5 cleanup)
 - **3 views جديدة** للتوافق (user_profiles_compat, store_pages_compat, page_builder_archive)
 
 ### الكود:
@@ -198,11 +198,12 @@
 - ✅ 3 UI Components (Manager, List, Affiliate)
 - ✅ `OrdersRouter` مع Feature Flags
 - ✅ 7 Database Views موحدة
-- ✅ **Repository Layer** (3 repositories + 1 hook):
+- ✅ **Repository Layer** (3 repositories + 2 hooks):
   - `OrderRepository` - وصول موحد للطلبات
   - `ProfileRepository` - وصول للملفات الشخصية  
   - `ShipmentRepository` - وصول للشحنات
   - `useOrderRepository` - Hook موحد مع React Query
+  - `useDataCleanup` - Hook لتنظيف البيانات
 
 ---
 
@@ -296,8 +297,6 @@
 
 ---
 
-## 🔜 المتبقي (Remaining - 10%)
-
 ### المرحلة 5: طبقة الوصول للبيانات (DAL)
 **الحالة**: ✅ 100%
 
@@ -314,6 +313,51 @@
 - ✅ Type-safe operations
 - ✅ سهولة الاختبار والـ Mocking
 - ✅ مقاومة للتغييرات في بنية الجداول
+
+---
+
+### المرحلة 6: تنظيف البيانات
+**الحالة**: ✅ 100%
+
+#### Database Functions (5):
+- ✅ `check_all_data_quality()` - فحص شامل لجودة البيانات
+- ✅ `auto_fix_missing_data()` - إصلاح تلقائي للبيانات المفقودة
+- ✅ `cleanup_expired_data()` - حذف البيانات المنتهية والقديمة
+- ✅ `backfill_statistics()` - تحديث الإحصائيات المفقودة
+- ✅ `run_full_cleanup()` - دالة شاملة للتنظيف الكامل
+
+#### React Hook (1):
+- ✅ `useDataCleanup` - Hook لإدارة تنظيف البيانات
+
+**ما يتم فحصه**:
+- ✅ البيانات اليتيمة في order_hub
+- ✅ البيانات اليتيمة في profiles
+- ✅ Shipments بدون order_hub_id
+- ✅ Invoices بدون order_hub_id
+- ✅ Products بدون shop_id
+- ✅ Affiliate stores بدون profile_id
+- ✅ Profiles بدون معلومات اتصال
+
+**ما يتم إصلاحه تلقائياً**:
+- ✅ Shipment numbers المفقودة
+- ✅ Invoice numbers المفقودة
+- ✅ Refund numbers المفقودة
+- ✅ Return numbers المفقودة
+- ✅ Profile names المفقودة
+- ✅ Order numbers المفقودة
+
+**ما يتم حذفه**:
+- ✅ Shopping carts القديمة (+30 يوم، للزوار فقط)
+- ✅ OTP sessions القديمة (+7 أيام)
+- ✅ WhatsApp OTP القديمة (+1 يوم)
+
+**ما يتم تحديثه**:
+- ✅ إحصائيات المتاجر (total_orders, total_sales)
+- ✅ نقاط المستخدمين من points_events
+
+---
+
+## 🔜 المتبقي (Remaining - 5%)
 
 ### المرحلة 6: تنظيف البيانات
 - ❌ فحص وإصلاح أي orphans متبقية

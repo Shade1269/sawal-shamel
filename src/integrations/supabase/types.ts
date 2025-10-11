@@ -13119,6 +13119,24 @@ export type Database = {
         Args: { p_custom_config?: Json; p_store_id: string; p_theme_id: string }
         Returns: boolean
       }
+      auto_fix_missing_data: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          details: Json
+          fix_category: string
+          fix_name: string
+          rows_affected: number
+        }[]
+      }
+      backfill_statistics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          details: Json
+          rows_updated: number
+          stat_category: string
+          stat_name: string
+        }[]
+      }
       calculate_final_price: {
         Args: {
           base_price: number
@@ -13144,6 +13162,16 @@ export type Database = {
       calculate_weekly_rankings: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      check_all_data_quality: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          check_category: string
+          check_name: string
+          details: Json
+          found_issues: number
+          status: string
+        }[]
       }
       check_cms_orphans: {
         Args: Record<PropertyKey, never>
@@ -13183,6 +13211,15 @@ export type Database = {
           check_type: string
           details: Json
           orphan_count: number
+        }[]
+      }
+      cleanup_expired_data: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          cleanup_category: string
+          cleanup_name: string
+          details: Json
+          rows_deleted: number
         }[]
       }
       cleanup_expired_otp: {
@@ -13559,6 +13596,10 @@ export type Database = {
       }
       publish_cms_page: {
         Args: { p_page_id: string }
+        Returns: Json
+      }
+      run_full_cleanup: {
+        Args: Record<PropertyKey, never>
         Returns: Json
       }
       update_customer_tier: {
