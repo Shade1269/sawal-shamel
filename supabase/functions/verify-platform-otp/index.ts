@@ -61,27 +61,74 @@ serve(async (req) => {
 
     console.log('OTP verified successfully');
 
-    // البحث عن مستخدم موجود في auth.users
-    const { data: authUsers } = await supabase.auth.admin.listUsers();
-    const existingAuthUser = authUsers?.users?.find(u => u.phone === phone);
-    
-    // البحث عن profile
+    // البحث عن profile أولاً
     const { data: existingProfile } = await supabase
       .from('profiles')
       .select('id, auth_user_id, phone')
       .eq('phone', phone)
       .maybeSingle();
 
+    // البحث عن مستخدم في auth.users
+    const { data: authUsers } = await supabase.auth.admin.listUsers();
+    let existingAuthUser = authUsers?.users?.find(u => u.phone === phone);
+
     let userId: string;
     let profileId: string;
     let session = null;
 
-    if (existingAuthUser) {
+    // **حالة خاصة**: إذا كان profile موجود بدون auth_user_id لكن auth user موجود
+    if (existingProfile && !existingProfile.auth_user_id && existingAuthUser) {
+      console.log('Linking orphaned profile to existing auth user');
+      userId = existingAuthUser.id;
+      profileId = existingProfile.id;
+      
+      // ربط الـ profile بالـ auth_user_id
+      await supabase
+        .from('profiles')
+        .update({ auth_user_id: userId })
+        .eq('id', profileId);
+
+      // تحديث أو إضافة الدور
+      await supabase
+        .from('user_roles')
+        .upsert({
+          user_id: profileId,
+          role: role,
+          is_active: true
+        }, {
+          onConflict: 'user_id,role'
+        });
+
+      // إنشاء جلسة
+      const tempEmail = existingAuthUser.email || `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
+      if (!existingAuthUser.email) {
+        await supabase.auth.admin.updateUserById(userId, {
+          email: tempEmail,
+          email_confirm: true,
+        });
+      }
+
+      const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+        type: 'magiclink',
+        email: tempEmail,
+      });
+
+      if (!linkError && linkData?.properties?.hashed_token) {
+        session = {
+          email: tempEmail,
+          token: linkData.properties.hashed_token,
+          email_otp: linkData.properties.email_otp
+        };
+      } else {
+        console.error('Failed to generate session token:', linkError);
+      }
+
+    } else if (existingAuthUser) {
       // المستخدم موجود في auth.users
       console.log('Existing auth user found:', existingAuthUser.id);
       userId = existingAuthUser.id;
       
-      // إنشاء profile إذا لم يكن موجوداً
+      // إنشاء أو تحديث profile
       if (!existingProfile) {
         console.log('Creating missing profile for existing user');
         const { data: newProfile, error: profileError } = await supabase
@@ -120,10 +167,8 @@ serve(async (req) => {
           onConflict: 'user_id,role'
         });
 
-      // إنشاء جلسة Supabase للمستخدم الموجود
+      // إنشاء جلسة
       const tempEmail = existingAuthUser.email || `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
-      
-      // التأكد من وجود إيميل للمستخدم
       if (!existingAuthUser.email) {
         await supabase.auth.admin.updateUserById(userId, {
           email: tempEmail,
@@ -131,14 +176,12 @@ serve(async (req) => {
         });
       }
 
-      // إنشاء session token باستخدام admin API
       const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
         type: 'magiclink',
         email: tempEmail,
       });
 
       if (!linkError && linkData?.properties?.hashed_token) {
-        // استخدام الـ hashed_token لإنشاء جلسة
         session = {
           email: tempEmail,
           token: linkData.properties.hashed_token,
@@ -149,10 +192,9 @@ serve(async (req) => {
       }
 
     } else {
-      // مستخدم جديد - إنشاء حساب
+      // مستخدم جديد تماماً - إنشاء حساب
       console.log('Creating new user account');
       
-      // إنشاء email مؤقت من رقم الجوال
       const tempEmail = `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
       const tempPassword = Math.random().toString(36).slice(-12) + 'A1!';
 
@@ -169,53 +211,15 @@ serve(async (req) => {
       });
 
       if (authError || !authData.user) {
-        // إذا كان الرقم مسجلاً سابقاً، عالج الحالة كـ مستخدم موجود
-        // ولا تُرجع خطأ للمستخدم
-        // نحاول إيجاد/إنشاء profile ثم نكمل بدون جلسة Supabase إن لم نتمكن من إنشائها
-        if (authError && (authError as any).code === 'phone_exists') {
-          console.error('Phone already exists, proceeding as existing user');
-
-          // حاول إيجاد profile لهذا الرقم
-          let ensuredProfileId = existingProfile?.id as string | undefined;
-          if (!ensuredProfileId) {
-            const { data: createdProfile, error: createProfileError } = await supabase
-              .from('profiles')
-              .insert({
-                phone: phone,
-                full_name: phone,
-                role: role,
-                is_active: true,
-                points: 0
-              })
-              .select()
-              .single();
-            if (createProfileError) {
-              console.error('Profile creation error (phone_exists path):', createProfileError);
-            } else {
-              ensuredProfileId = createdProfile.id;
-            }
-          }
-
-          if (ensuredProfileId) {
-            // تأكد من وجود الدور
-            await supabase
-              .from('user_roles')
-              .upsert({ user_id: ensuredProfileId, role: role, is_active: true }, { onConflict: 'user_id,role' });
-          }
-
-          profileId = ensuredProfileId || profileId;
-          userId = userId || '';
-        } else {
-          console.error('User creation error:', authError);
-          return new Response(
-            JSON.stringify({ success: false, error: 'فشل في إنشاء الحساب' }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-      } else {
-        userId = authData.user.id;
-        console.log('New user created:', userId);
+        console.error('User creation error:', authError);
+        return new Response(
+          JSON.stringify({ success: false, error: 'فشل في إنشاء الحساب: ' + (authError?.message || 'خطأ غير معروف') }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
+
+      userId = authData.user.id;
+      console.log('New user created:', userId);
 
       if (userId) {
         // إنشاء profile للمستخدم الجديد
