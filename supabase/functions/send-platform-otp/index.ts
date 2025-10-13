@@ -27,6 +27,36 @@ serve(async (req) => {
 
     console.log('Sending platform OTP to:', phone);
 
+    // التحقق من آخر محاولة إرسال (cooldown: 60 ثانية)
+    const { data: recentOtp } = await supabase
+      .from('whatsapp_otp')
+      .select('created_at')
+      .eq('phone', phone)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (recentOtp) {
+      const timeSinceLastOtp = Date.now() - new Date(recentOtp.created_at).getTime();
+      if (timeSinceLastOtp < 60000) { // 60 ثانية
+        const waitTime = Math.ceil((60000 - timeSinceLastOtp) / 1000);
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: `الرجاء الانتظار ${waitTime} ثانية قبل طلب رمز جديد` 
+          }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
+    // إلغاء OTPs القديمة غير المحققة لنفس الرقم
+    await supabase
+      .from('whatsapp_otp')
+      .update({ verified: true }) // نضعها كمحققة لإلغائها فعلياً
+      .eq('phone', phone)
+      .eq('verified', false);
+
     // توليد رمز OTP من 6 أرقام
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     console.log('Generated OTP:', otp);

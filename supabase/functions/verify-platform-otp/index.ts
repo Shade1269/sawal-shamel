@@ -50,7 +50,7 @@ serve(async (req) => {
 
     console.log('Verifying platform OTP for:', phone, 'with role:', role);
 
-    // التحقق من OTP
+    // التحقق من OTP مع التحقق من المحاولات
     const { data: otpRecord, error: otpError } = await supabase
       .from('whatsapp_otp')
       .select('*')
@@ -64,6 +64,41 @@ serve(async (req) => {
 
     if (otpError || !otpRecord) {
       console.error('OTP verification failed:', otpError);
+      
+      // زيادة عدد المحاولات الفاشلة
+      const { data: failedOtp } = await supabase
+        .from('whatsapp_otp')
+        .select('id, attempts')
+        .eq('phone', phone)
+        .eq('verified', false)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
+      if (failedOtp) {
+        const newAttempts = (failedOtp.attempts || 0) + 1;
+        await supabase
+          .from('whatsapp_otp')
+          .update({ attempts: newAttempts })
+          .eq('id', failedOtp.id);
+        
+        if (newAttempts >= 5) {
+          // إلغاء OTP بعد 5 محاولات فاشلة
+          await supabase
+            .from('whatsapp_otp')
+            .update({ verified: true })
+            .eq('id', failedOtp.id);
+          
+          return new Response(
+            JSON.stringify({ 
+              success: false, 
+              error: 'تم تجاوز الحد الأقصى للمحاولات. الرجاء طلب رمز جديد' 
+            }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+      
       return new Response(
         JSON.stringify({ success: false, error: 'رمز التحقق غير صحيح أو منتهي الصلاحية' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -98,11 +133,11 @@ serve(async (req) => {
         .update({ auth_user_id: userId })
         .eq('id', profileId);
 
-      // تحديث أو إضافة الدور
+      // تحديث أو إضافة الدور - استخدام userId (auth_user_id) وليس profileId
       await supabase
         .from('user_roles')
         .upsert({
-          user_id: profileId,
+          user_id: userId,
           role: role,
           is_active: true
         }, {
@@ -166,11 +201,11 @@ serve(async (req) => {
         profileId = existingProfile.id;
       }
 
-      // تحديث أو إضافة الدور
+      // تحديث أو إضافة الدور - استخدام userId (auth_user_id) وليس profileId
       await supabase
         .from('user_roles')
         .upsert({
-          user_id: profileId,
+          user_id: userId,
           role: role,
           is_active: true
         }, {
@@ -248,12 +283,10 @@ serve(async (req) => {
               profileId = existingProfile.id;
             }
 
-            // تحديث/إضافة الدور
-            if (profileId) {
-              await supabase
-                .from('user_roles')
-                .upsert({ user_id: profileId, role: role, is_active: true }, { onConflict: 'user_id,role' });
-            }
+            // تحديث/إضافة الدور - استخدام userId (auth_user_id)
+            await supabase
+              .from('user_roles')
+              .upsert({ user_id: userId, role: role, is_active: true }, { onConflict: 'user_id,role' });
 
             // إنشاء جلسة عبر magic link
             const tempEmail = existingAuthUser.email || `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
@@ -281,10 +314,10 @@ serve(async (req) => {
 
             if (profileWithAuth?.auth_user_id) {
               userId = profileWithAuth.auth_user_id;
-              // Ensure role entry exists
+              // Ensure role entry exists - استخدام userId (auth_user_id)
               await supabase
                 .from('user_roles')
-                .upsert({ user_id: profileWithAuth.auth_user_id, role: role, is_active: true }, { onConflict: 'user_id,role' });
+                .upsert({ user_id: userId, role: role, is_active: true }, { onConflict: 'user_id,role' });
 
               const tempEmail = `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
               // Try to set email and generate magic link
@@ -346,11 +379,11 @@ serve(async (req) => {
 
         profileId = newProfile.id;
 
-        // إضافة الدور في جدول user_roles
+        // إضافة الدور في جدول user_roles - استخدام userId (auth_user_id)
         await supabase
           .from('user_roles')
           .insert({
-            user_id: profileId,
+            user_id: userId,
             role: role,
             is_active: true
           });
