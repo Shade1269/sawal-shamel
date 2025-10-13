@@ -43,15 +43,15 @@ serve(async (req) => {
       // تحقق من وجود أسرار Twilio
       const twilioAccountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
       const twilioAuthToken = Deno.env.get('TWILIO_AUTH_TOKEN');
-      const twilioPhoneNumber = Deno.env.get('TWILIO_SMS_FROM');
+      const twilioMessagingServiceSid = Deno.env.get('TWILIO_MESSAGING_SERVICE_SID');
 
-      if (twilioAccountSid && twilioAuthToken && twilioPhoneNumber) {
-        // إرسال SMS باستخدام Twilio
+      if (twilioAccountSid && twilioAuthToken && twilioMessagingServiceSid) {
+        // إرسال SMS باستخدام Twilio Messaging Service
         const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
         const credentials = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
         
         const formData = new URLSearchParams();
-        formData.append('From', twilioPhoneNumber);
+        formData.append('MessagingServiceSid', twilioMessagingServiceSid);
         formData.append('To', phone.startsWith('+') ? phone : `+966${phone.replace(/^0/, '')}`);
         formData.append('Body', `كود التحقق الخاص بك هو: ${otpCode}`);
 
@@ -65,9 +65,10 @@ serve(async (req) => {
         });
 
         if (!twilioResponse.ok) {
-          console.error('Twilio SMS failed:', await twilioResponse.text());
+          const errorText = await twilioResponse.text();
+          console.error('Twilio SMS failed:', errorText);
         } else {
-          console.log('SMS sent successfully via Twilio');
+          console.log('SMS sent successfully via Twilio Messaging Service');
         }
       } else {
         console.log('Twilio credentials not configured, SMS not sent');
