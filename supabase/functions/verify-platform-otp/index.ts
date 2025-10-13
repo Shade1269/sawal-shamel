@@ -271,6 +271,43 @@ serve(async (req) => {
             }
           } else {
             console.error('Could not locate existing auth user after phone_exists');
+            // Fallback: try to find auth user via profiles table by phone
+            const { data: profileWithAuth } = await supabase
+              .from('profiles')
+              .select('auth_user_id')
+              .eq('phone', phone)
+              .not('auth_user_id', 'is', null)
+              .maybeSingle();
+
+            if (profileWithAuth?.auth_user_id) {
+              userId = profileWithAuth.auth_user_id;
+              // Ensure role entry exists
+              await supabase
+                .from('user_roles')
+                .upsert({ user_id: profileWithAuth.auth_user_id, role: role, is_active: true }, { onConflict: 'user_id,role' });
+
+              const tempEmail = `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
+              // Try to set email and generate magic link
+              try {
+                await supabase.auth.admin.updateUserById(userId, { email: tempEmail, email_confirm: true });
+              } catch (e) {
+                console.warn('Unable to update user email in fallback:', e);
+              }
+              const { data: linkData2, error: linkError2 } = await supabase.auth.admin.generateLink({
+                type: 'magiclink',
+                email: tempEmail,
+              });
+              if (!linkError2 && linkData2?.properties?.hashed_token) {
+                session = { email: tempEmail, token: linkData2.properties.hashed_token, email_otp: linkData2.properties.email_otp };
+              } else {
+                console.error('Failed to generate session token (profile fallback):', linkError2);
+              }
+            } else {
+              return new Response(
+                JSON.stringify({ success: false, error: 'تعذر إنشاء الجلسة للمستخدم الحالي' }),
+                { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+              );
+            }
           }
         } else {
           console.error('User creation error:', authError);
@@ -334,6 +371,15 @@ serve(async (req) => {
           console.error('Failed to generate session token for new user:', linkError);
         }
       }
+    }
+
+    // Ensure session exists
+    if (!session || !session.token) {
+      console.error('No session generated after OTP verification');
+      return new Response(
+        JSON.stringify({ success: false, error: 'فشل إنشاء الجلسة' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // تحديث OTP كمُحقق
