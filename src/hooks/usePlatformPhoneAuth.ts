@@ -150,41 +150,35 @@ export const usePlatformPhoneAuth = () => {
         return { success: false, error: error.message };
       }
 
-      if (!data?.success || !data?.session) {
+      // التحقق من نجاح العملية أولاً
+      if (!data?.success) {
         console.error('Verification failed:', data);
-        
         let errorMessage = data?.error || 'رمز التحقق غير صحيح';
-        if (errorMessage.includes('expired') || errorMessage.includes('منتهي')) {
+        if (typeof errorMessage === 'string' && (errorMessage.includes('expired') || errorMessage.includes('منتهي'))) {
           errorMessage = 'انتهت صلاحية الرمز. اطلب رمزاً جديداً.';
         }
-
-        toast.error('خطأ في التحقق', {
-          description: errorMessage,
-        });
-
+        toast.error('خطأ في التحقق', { description: errorMessage });
         return { success: false, error: errorMessage };
       }
 
-      console.log('OTP verified, setting session');
-
-      // تعيين الجلسة في Supabase Auth
-      const { error: sessionError } = await supabase.auth.setSession({
-        access_token: data.session.access_token,
-        refresh_token: data.session.refresh_token,
-      });
-
-      if (sessionError) {
-        console.error('Session error:', sessionError);
-        toast.error('خطأ', {
-          description: 'فشل في تسجيل الدخول',
+      // إذا أعادت الدالة جلسة كاملة من Supabase، سنقوم بتعيينها
+      if (data?.session?.access_token && data?.session?.refresh_token) {
+        console.log('OTP verified, setting Supabase auth session');
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
         });
-        return { success: false, error: sessionError.message };
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          toast.error('خطأ', { description: 'فشل في تسجيل الدخول' });
+          return { success: false, error: sessionError.message };
+        }
+      } else {
+        // لا توجد جلسة Supabase (مسار التحقق المخصص عبر Twilio)
+        console.log('OTP verified without Supabase session, sessionId:', data?.sessionId);
       }
 
-      toast.success('تم التحقق بنجاح!', {
-        description: 'مرحباً بك في المنصة',
-      });
-
+      toast.success('تم التحقق بنجاح!', { description: 'مرحباً بك في المنصة' });
       return { success: true };
     } catch (error: any) {
       console.error('Error verifying OTP:', error);
