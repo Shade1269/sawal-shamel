@@ -176,7 +176,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
     }
   };
 
-  // إرسال كود OTP عبر Firebase
+  // إرسال كود OTP عبر Supabase
   const sendOTP = async (phone: string, storeId?: string) => {
     try {
       setSession(prev => ({ ...prev, isLoading: true }));
@@ -196,33 +196,16 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         fullPhone = `+${digits}`;
       }
 
-      // استخدام مساعدات Firebase
-      const { setupRecaptcha, sendSMSOTP } = await import('@/lib/firebase');
-      
-      // إنشاء container لـ reCAPTCHA
-      const recaptchaContainer = 'customer-recaptcha-container';
-      let container = document.getElementById(recaptchaContainer);
-      
-      if (!container) {
-        container = document.createElement('div');
-        container.id = recaptchaContainer;
-        container.style.display = 'none';
-        document.body.appendChild(container);
-      }
-      
-      // إعداد reCAPTCHA
-      const verifier = await setupRecaptcha(recaptchaContainer);
-      
-      // إرسال OTP
-      const result = await sendSMSOTP(fullPhone, verifier);
-      
-      if (!result.success) {
-        throw new Error(result.error);
-      }
-      
-      // حفظ confirmationResult في sessionStorage
+      // إرسال OTP عبر Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke('send-customer-otp', {
+        body: { phone: fullPhone, storeId }
+      });
+
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'فشل في إرسال رمز التحقق');
+
+      // حفظ البيانات في sessionStorage
       sessionStorage.setItem('customer-otp-confirmation', JSON.stringify({
-        verificationId: result.confirmationResult.verificationId,
         phone: fullPhone,
         storeId
       }));
@@ -232,17 +215,11 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         description: `تم إرسال رمز التحقق إلى ${fullPhone}`,
       });
 
-      return { success: true };
+      return { success: true, otpCode: data.otp };
     } catch (error: any) {
       console.error('خطأ في إرسال OTP:', error);
       
-      let errorMessage = error.message || 'فشل في إرسال رمز التحقق';
-      
-      if (error.code === 'auth/invalid-phone-number') {
-        errorMessage = 'رقم الهاتف غير صحيح';
-      } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = 'تم تجاوز حد الإرسال. حاول لاحقاً';
-      }
+      const errorMessage = error.message || 'فشل في إرسال رمز التحقق';
       
       toast({
         title: "خطأ في إرسال الكود",
@@ -256,7 +233,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
     }
   };
 
-  // التحقق من كود OTP وتسجيل الدخول عبر Firebase
+  // التحقق من كود OTP وتسجيل الدخول عبر Supabase
   const verifyOTP = async (phone: string, otpCode: string, storeId?: string) => {
     try {
       setSession(prev => ({ ...prev, isLoading: true }));
@@ -267,30 +244,28 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         throw new Error('لم يتم العثور على جلسة التحقق');
       }
 
-      const { verificationId, phone: savedPhone, storeId: savedStoreId } = JSON.parse(confirmationData);
-      
-      // التحقق من الكود عبر Firebase
-      const { PhoneAuthProvider, signInWithCredential } = await import('firebase/auth');
-      const { getFirebaseAuth } = await import('@/lib/firebase');
-      
-      const auth = await getFirebaseAuth();
-      const credential = PhoneAuthProvider.credential(verificationId, otpCode);
-      await signInWithCredential(auth, credential);
+      const { phone: savedPhone, storeId: savedStoreId } = JSON.parse(confirmationData);
+
+      // التحقق من OTP عبر Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke('verify-customer-otp', {
+        body: { phone: savedPhone, otp: otpCode }
+      });
+
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'رمز التحقق غير صحيح');
 
       // تنظيف بيانات التحقق
       sessionStorage.removeItem('customer-otp-confirmation');
-      
-      // تنظيف reCAPTCHA
-      if (window.recaptchaVerifier) {
-        try {
-          await window.recaptchaVerifier.clear();
-          delete window.recaptchaVerifier;
-        } catch (e) {
-          console.log('Clearing reCAPTCHA:', e);
-        }
+
+      // حفظ الـ session في Supabase Auth
+      if (data.session) {
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token
+        });
       }
 
-      // إنشاء/تمديد جلسة المتجر المطلوبة لتخطي الحلقة في صفحة السلة/الدفع
+      // إنشاء/تمديد جلسة المتجر
       const targetStoreId = savedStoreId ?? storeId;
       if (targetStoreId) {
         try {
@@ -330,7 +305,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
               .insert({
                 store_id: targetStoreId,
                 phone: sanitizedPhone,
-                otp_code: 'firebase',
+                otp_code: 'verified',
                 verified: true,
                 verified_at: now.toISOString(),
                 expires_at: expiresAt,
@@ -341,7 +316,6 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
             sessionId = inserted.id as string;
           }
 
-          // تخزين الجلسة بالشكل الذي تتوقعه صفحات السلة/الدفع
           try {
             localStorage.setItem(
               `customer_session_${targetStoreId}`,
@@ -359,10 +333,9 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         }
       }
 
-      // جلب أو إنشاء بيانات العميل في Supabase
+      // جلب أو إنشاء بيانات العميل
       console.log('Fetching customer by phone:', savedPhone);
       const customerData = await fetchCustomerByPhone(savedPhone, targetStoreId);
-      
       
       if (customerData) {
         console.log('Customer data fetched successfully:', customerData.id);
@@ -381,13 +354,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
     } catch (error: any) {
       console.error('خطأ في التحقق:', error);
       
-      let errorMessage = error.message || 'فشل في التحقق من الكود';
-      
-      if (error.code === 'auth/invalid-verification-code') {
-        errorMessage = 'رمز التحقق غير صحيح';
-      } else if (error.code === 'auth/code-expired') {
-        errorMessage = 'انتهت صلاحية رمز التحقق';
-      }
+      const errorMessage = error.message || 'فشل في التحقق من الكود';
       
       toast({
         title: "خطأ في التحقق",
