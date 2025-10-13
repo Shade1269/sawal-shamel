@@ -44,21 +44,19 @@ export const usePlatformPhoneAuth = () => {
     }
   };
 
-  // Validate Saudi phone number
+  // Validate phone number in E.164 format (accepts international +country numbers)
   const isValidSaudiPhone = (formatted: string): boolean => {
-    // Must be +966 followed by 9 digits starting with 5
-    const saudiPattern = /^\+9665\d{8}$/;
-    const isValid = saudiPattern.test(formatted);
-    
+    const e164Pattern = /^\+\d{8,15}$/; // + and 8-15 digits
+    const isValid = e164Pattern.test(formatted);
+
     if (!isValid) {
       console.log('Phone validation failed:', {
         input: formatted,
-        pattern: 'Expected: +9665XXXXXXXX',
+        pattern: 'Expected E.164 like +9665XXXXXXXX',
         length: formatted.length,
-        expectedLength: 13
       });
     }
-    
+
     return isValid;
   };
   const sendOTP = async (phone: string): Promise<PhoneAuthResponse> => {
