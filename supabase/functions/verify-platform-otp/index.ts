@@ -61,7 +61,11 @@ serve(async (req) => {
 
     console.log('OTP verified successfully');
 
-    // البحث عن مستخدم موجود بنفس رقم الجوال
+    // البحث عن مستخدم موجود في auth.users
+    const { data: authUsers } = await supabase.auth.admin.listUsers();
+    const existingAuthUser = authUsers?.users?.find(u => u.phone === phone);
+    
+    // البحث عن profile
     const { data: existingProfile } = await supabase
       .from('profiles')
       .select('id, auth_user_id, phone')
@@ -72,11 +76,49 @@ serve(async (req) => {
     let profileId: string;
     let session = null;
 
-    if (existingProfile?.auth_user_id) {
-      // المستخدم موجود - إنشاء session
-      console.log('Existing user found:', existingProfile.auth_user_id);
-      userId = existingProfile.auth_user_id;
-      profileId = existingProfile.id;
+    if (existingAuthUser) {
+      // المستخدم موجود في auth.users
+      console.log('Existing auth user found:', existingAuthUser.id);
+      userId = existingAuthUser.id;
+      
+      // إنشاء profile إذا لم يكن موجوداً
+      if (!existingProfile) {
+        console.log('Creating missing profile for existing user');
+        const { data: newProfile, error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            auth_user_id: userId,
+            phone: phone,
+            full_name: phone,
+            role: role,
+            is_active: true,
+            points: 0
+          })
+          .select()
+          .single();
+          
+        if (profileError) {
+          console.error('Profile creation error:', profileError);
+          return new Response(
+            JSON.stringify({ success: false, error: 'فشل في إنشاء الملف الشخصي' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        profileId = newProfile.id;
+      } else {
+        profileId = existingProfile.id;
+      }
+
+      // تحديث أو إضافة الدور
+      await supabase
+        .from('user_roles')
+        .upsert({
+          user_id: profileId,
+          role: role,
+          is_active: true
+        }, {
+          onConflict: 'user_id,role'
+        });
 
       // إنشاء session للمستخدم
       const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
@@ -100,17 +142,6 @@ serve(async (req) => {
           };
         }
       }
-
-      // تحديث الدور إذا تغير
-      await supabase
-        .from('user_roles')
-        .upsert({
-          user_id: profileId,
-          role: role,
-          is_active: true
-        }, {
-          onConflict: 'user_id,role'
-        });
 
     } else {
       // مستخدم جديد - إنشاء حساب
