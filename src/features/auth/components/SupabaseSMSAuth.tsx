@@ -52,14 +52,10 @@ const SupabaseSMSAuth = () => {
 
     const result = await verifyOTP(fullPhone(), otp, selectedRole);
     if (result.success) {
-      // الانتقال للصفحة المناسبة حسب الدور
+      // إعادة تحميل الجلسة والانتقال للصفحة المناسبة
       setTimeout(() => {
-        if (selectedRole === 'affiliate') {
-          navigate('/affiliate');
-        } else {
-          navigate('/merchant');
-        }
-      }, 500);
+        window.location.href = selectedRole === 'affiliate' ? '/affiliate' : '/merchant';
+      }, 1000);
     }
   };
 
