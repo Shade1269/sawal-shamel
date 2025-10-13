@@ -50,50 +50,78 @@ serve(async (req) => {
       .update({ verified: true, verified_at: new Date().toISOString() })
       .eq('id', otpSession.id);
 
-    // 3. البحث عن مستخدم موجود بنفس الجوال أولاً
-    const { data: existingUsers } = await supabaseClient.auth.admin.listUsers();
-    const existingUser = existingUsers?.users.find(u => u.phone === phone);
-
+    // 3. محاولة إنشاء session للمستخدم مباشرة أولاً
     let userId: string;
     let session: any;
 
-    if (existingUser) {
-      // المستخدم موجود - إنشاء session مباشرة
-      console.log('Existing user found:', existingUser.id);
-      userId = existingUser.id;
-      
-      const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
-        user_id: userId,
-      });
+    try {
+      // محاولة البحث عن المستخدم الموجود أولاً
+      const { data: existingUsers } = await supabaseClient.auth.admin.listUsers();
+      const existingUser = existingUsers?.users.find(u => u.phone === phone);
 
-      if (sessionError) throw sessionError;
-      session = sessionData.session;
-    } else {
-      // لا يوجد مستخدم - إنشاء مستخدم جديد
-      console.log('No existing user found, creating new user for phone:', phone);
+      if (existingUser) {
+        console.log('Existing user found:', existingUser.id);
+        userId = existingUser.id;
+        
+        const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
+          user_id: userId,
+        });
+
+        if (sessionError) throw sessionError;
+        session = sessionData.session;
+      } else {
+        throw new Error('User not found, will create new one');
+      }
+    } catch (findError) {
+      // إذا لم نجد المستخدم، نحاول إنشاء واحد جديد
+      console.log('Creating new user for phone:', phone);
       
-      const { data: newUserData, error: createError } = await supabaseClient.auth.admin.createUser({
-        phone,
-        phone_confirm: true,
-        user_metadata: {
+      try {
+        const { data: newUserData, error: createError } = await supabaseClient.auth.admin.createUser({
           phone,
-          role: 'affiliate',
+          phone_confirm: true,
+          user_metadata: {
+            phone,
+            role: 'affiliate',
+          }
+        });
+
+        if (createError) {
+          // إذا فشل الإنشاء بسبب أن المستخدم موجود، نبحث عنه مرة أخرى
+          if (createError.message?.includes('already registered') || createError.code === 'phone_exists') {
+            console.log('Phone exists, searching again...');
+            const { data: retryUsers } = await supabaseClient.auth.admin.listUsers();
+            const foundUser = retryUsers?.users.find(u => u.phone === phone);
+            
+            if (foundUser) {
+              userId = foundUser.id;
+              const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
+                user_id: userId,
+              });
+              if (sessionError) throw sessionError;
+              session = sessionData.session;
+            } else {
+              throw new Error('لا يمكن العثور على المستخدم أو إنشاؤه');
+            }
+          } else {
+            throw createError;
+          }
+        } else {
+          if (!newUserData.user) throw new Error('فشل إنشاء المستخدم');
+
+          userId = newUserData.user.id;
+          console.log('New user created:', userId);
+
+          const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
+            user_id: userId,
+          });
+
+          if (sessionError) throw sessionError;
+          session = sessionData.session;
         }
-      });
-
-      if (createError) throw createError;
-      if (!newUserData.user) throw new Error('فشل إنشاء المستخدم');
-
-      userId = newUserData.user.id;
-      console.log('New user created:', userId);
-
-      // إنشاء session للمستخدم الجديد
-      const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
-        user_id: userId,
-      });
-
-      if (sessionError) throw sessionError;
-      session = sessionData.session;
+      } catch (createError) {
+        throw createError;
+      }
     }
 
     // 4. التأكد من وجود profile
