@@ -237,177 +237,208 @@ serve(async (req) => {
       }
 
     } else {
-      // مستخدم جديد تماماً - إنشاء حساب
-      console.log('Creating new user account');
+      // مستخدم جديد - التحقق أولاً من وجود حساب بالبريد المؤقت
+      console.log('Checking for existing user account');
       
       const tempEmail = `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
-      const tempPassword = Math.random().toString(36).slice(-12) + 'A1!';
-
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: tempEmail,
-        password: tempPassword,
-        phone: phone,
-        email_confirm: true,
-        phone_confirm: true,
-        user_metadata: {
-          phone: phone,
-          role: role
+      
+      // البحث عن مستخدم موجود بنفس البريد المؤقت
+      let existingUserByEmail = null;
+      for (let page = 1; page <= 5; page++) {
+        const { data: pageData } = await supabase.auth.admin.listUsers({ page, perPage: 200 });
+        const user = pageData?.users?.find((u: any) => u.email === tempEmail);
+        if (user) {
+          existingUserByEmail = user;
+          break;
         }
-      });
+        if (!pageData || !pageData.users || pageData.users.length === 0) break;
+      }
 
-      if (authError || !authData.user) {
-        if ((authError as any)?.code === 'phone_exists') {
-          console.error('Phone exists, finding existing auth user');
-          existingAuthUser = await findUserByPhone(supabase, phone);
-          if (existingAuthUser) {
-            userId = existingAuthUser.id;
-            // تأكيد/إنشاء profile
-            if (existingProfile && !existingProfile.auth_user_id) {
-              await supabase.from('profiles').update({ auth_user_id: userId }).eq('id', existingProfile.id);
-              profileId = existingProfile.id;
-            } else if (!existingProfile) {
-              const { data: createdProfile } = await supabase
-                .from('profiles')
-                .insert({
-                  auth_user_id: userId,
-                  phone: phone,
-                  full_name: phone,
-                  role: role,
-                  is_active: true,
-                  points: 0
-                })
-                .select()
-                .single();
-              profileId = createdProfile?.id || profileId;
-            } else {
-              profileId = existingProfile.id;
-            }
+      if (existingUserByEmail) {
+        // إعادة استخدام الحساب الموجود
+        console.log('Reusing existing user with temp email:', existingUserByEmail.id);
+        userId = existingUserByEmail.id;
+        
+        // تحديث رقم الجوال إذا لم يكن مسجلاً
+        if (!existingUserByEmail.phone) {
+          await supabase.auth.admin.updateUserById(userId, {
+            phone: phone,
+            phone_confirm: true,
+            user_metadata: { phone, role }
+          });
+        }
+      } else {
+        // إنشاء حساب جديد فقط إذا لم يكن موجوداً
+        console.log('Creating new user account');
+        const tempPassword = Math.random().toString(36).slice(-12) + 'A1!';
 
-            // تحديث/إضافة الدور - استخدام userId (auth_user_id)
-            await supabase
-              .from('user_roles')
-              .upsert({ user_id: userId, role: role, is_active: true }, { onConflict: 'user_id,role' });
+        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+          email: tempEmail,
+          password: tempPassword,
+          phone: phone,
+          email_confirm: true,
+          phone_confirm: true,
+          user_metadata: {
+            phone: phone,
+            role: role
+          }
+        });
 
-            // إنشاء جلسة عبر magic link
-            const tempEmail = existingAuthUser.email || `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
-            if (!existingAuthUser.email) {
-              await supabase.auth.admin.updateUserById(userId, { email: tempEmail, email_confirm: true });
-            }
-            const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
-              type: 'magiclink',
-              email: tempEmail,
-            });
-            if (!linkError && linkData?.properties?.hashed_token) {
-              session = { email: tempEmail, token: linkData.properties.hashed_token, email_otp: linkData.properties.email_otp };
-            } else {
-              console.error('Failed to generate session token (fallback):', linkError);
-            }
-          } else {
-            console.error('Could not locate existing auth user after phone_exists');
-            // Fallback: try to find auth user via profiles table by phone
-            const { data: profileWithAuth } = await supabase
-              .from('profiles')
-              .select('auth_user_id')
-              .eq('phone', phone)
-              .not('auth_user_id', 'is', null)
-              .maybeSingle();
 
-            if (profileWithAuth?.auth_user_id) {
-              userId = profileWithAuth.auth_user_id;
-              // Ensure role entry exists - استخدام userId (auth_user_id)
-              await supabase
-                .from('user_roles')
-                .upsert({ user_id: userId, role: role, is_active: true }, { onConflict: 'user_id,role' });
-
-              const tempEmail = `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
-              // Try to set email and generate magic link
-              try {
-                await supabase.auth.admin.updateUserById(userId, { email: tempEmail, email_confirm: true });
-              } catch (e) {
-                console.warn('Unable to update user email in fallback:', e);
-              }
-              const { data: linkData2, error: linkError2 } = await supabase.auth.admin.generateLink({
-                type: 'magiclink',
-                email: tempEmail,
-              });
-              if (!linkError2 && linkData2?.properties?.hashed_token) {
-                session = { email: tempEmail, token: linkData2.properties.hashed_token, email_otp: linkData2.properties.email_otp };
-              } else {
-                console.error('Failed to generate session token (profile fallback):', linkError2);
-              }
-            } else {
-              // لم نعثر على مستخدم Auth رغم وجود phone_exists -> إنشاء مستخدم جديد بالبريد فقط كحل أخير
-              console.warn('Fallback: creating email-only user since phone_exists and no auth user found');
-              const fallbackEmail = `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
-              const fallbackPassword = Math.random().toString(36).slice(-12) + 'Aa1!';
-              const { data: createdAuth, error: createErr } = await supabase.auth.admin.createUser({
-                email: fallbackEmail,
-                password: fallbackPassword,
-                email_confirm: true,
-                user_metadata: { phone, role }
-              });
-              if (createErr || !createdAuth?.user) {
-                console.error('Fallback create user failed:', createErr);
-                return new Response(
-                  JSON.stringify({ success: false, error: 'فشل إنشاء المستخدم الاحتياطي' }),
-                  { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-                );
-              }
-              userId = createdAuth.user.id;
-
-              // إنشاء/تحديث profile وربطه
+        if (authError || !authData.user) {
+          if ((authError as any)?.code === 'phone_exists') {
+            console.error('Phone exists, finding existing auth user');
+            existingAuthUser = await findUserByPhone(supabase, phone);
+            if (existingAuthUser) {
+              userId = existingAuthUser.id;
+              // تأكيد/إنشاء profile
               if (existingProfile && !existingProfile.auth_user_id) {
                 await supabase.from('profiles').update({ auth_user_id: userId }).eq('id', existingProfile.id);
                 profileId = existingProfile.id;
               } else if (!existingProfile) {
-                const { data: createdProfile, error: profErr } = await supabase
+                const { data: createdProfile } = await supabase
                   .from('profiles')
-                  .insert({ auth_user_id: userId, phone, full_name: phone, role, is_active: true, points: 0 })
+                  .insert({
+                    auth_user_id: userId,
+                    phone: phone,
+                    full_name: phone,
+                    role: role,
+                    is_active: true,
+                    points: 0
+                  })
                   .select()
                   .single();
-                if (profErr) {
-                  console.error('Fallback profile create failed:', profErr);
-                }
                 profileId = createdProfile?.id || profileId;
               } else {
                 profileId = existingProfile.id;
               }
 
-              // إضافة الدور (باستخدام userId)
+              // تحديث/إضافة الدور - استخدام userId (auth_user_id)
               await supabase
                 .from('user_roles')
-                .upsert({ user_id: userId, role, is_active: true }, { onConflict: 'user_id,role' });
+                .upsert({ user_id: userId, role: role, is_active: true }, { onConflict: 'user_id,role' });
 
-              // توليد magic link
-              const { data: linkData2, error: linkError2 } = await supabase.auth.admin.generateLink({
+              // إنشاء جلسة عبر magic link
+              const tempEmail = existingAuthUser.email || `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
+              if (!existingAuthUser.email) {
+                await supabase.auth.admin.updateUserById(userId, { email: tempEmail, email_confirm: true });
+              }
+              const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
                 type: 'magiclink',
-                email: fallbackEmail,
+                email: tempEmail,
               });
-              if (!linkError2 && (linkData2?.properties?.hashed_token || linkData2?.properties?.email_otp)) {
-                session = {
-                  email: fallbackEmail,
-                  token: linkData2.properties.hashed_token,
-                  email_otp: linkData2.properties.email_otp
-                };
+              if (!linkError && linkData?.properties?.hashed_token) {
+                session = { email: tempEmail, token: linkData.properties.hashed_token, email_otp: linkData.properties.email_otp };
               } else {
-                console.error('Failed to generate session token in fallback:', linkError2);
-                return new Response(
-                  JSON.stringify({ success: false, error: 'فشل إنشاء الجلسة' }),
-                  { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-                );
+                console.error('Failed to generate session token (fallback):', linkError);
+              }
+            } else {
+              console.error('Could not locate existing auth user after phone_exists');
+              // Fallback: try to find auth user via profiles table by phone
+              const { data: profileWithAuth } = await supabase
+                .from('profiles')
+                .select('auth_user_id')
+                .eq('phone', phone)
+                .not('auth_user_id', 'is', null)
+                .maybeSingle();
+
+              if (profileWithAuth?.auth_user_id) {
+                userId = profileWithAuth.auth_user_id;
+                // Ensure role entry exists - استخدام userId (auth_user_id)
+                await supabase
+                  .from('user_roles')
+                  .upsert({ user_id: userId, role: role, is_active: true }, { onConflict: 'user_id,role' });
+
+                const tempEmail = `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
+                // Try to set email and generate magic link
+                try {
+                  await supabase.auth.admin.updateUserById(userId, { email: tempEmail, email_confirm: true });
+                } catch (e) {
+                  console.warn('Unable to update user email in fallback:', e);
+                }
+                const { data: linkData2, error: linkError2 } = await supabase.auth.admin.generateLink({
+                  type: 'magiclink',
+                  email: tempEmail,
+                });
+                if (!linkError2 && linkData2?.properties?.hashed_token) {
+                  session = { email: tempEmail, token: linkData2.properties.hashed_token, email_otp: linkData2.properties.email_otp };
+                } else {
+                  console.error('Failed to generate session token (profile fallback):', linkError2);
+                }
+              } else {
+                // لم نعثر على مستخدم Auth رغم وجود phone_exists -> إنشاء مستخدم جديد بالبريد فقط كحل أخير
+                console.warn('Fallback: creating email-only user since phone_exists and no auth user found');
+                const fallbackEmail = `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
+                const fallbackPassword = Math.random().toString(36).slice(-12) + 'Aa1!';
+                const { data: createdAuth, error: createErr } = await supabase.auth.admin.createUser({
+                  email: fallbackEmail,
+                  password: fallbackPassword,
+                  email_confirm: true,
+                  user_metadata: { phone, role }
+                });
+                if (createErr || !createdAuth?.user) {
+                  console.error('Fallback create user failed:', createErr);
+                  return new Response(
+                    JSON.stringify({ success: false, error: 'فشل إنشاء المستخدم الاحتياطي' }),
+                    { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                  );
+                }
+                userId = createdAuth.user.id;
+
+                // إنشاء/تحديث profile وربطه
+                if (existingProfile && !existingProfile.auth_user_id) {
+                  await supabase.from('profiles').update({ auth_user_id: userId }).eq('id', existingProfile.id);
+                  profileId = existingProfile.id;
+                } else if (!existingProfile) {
+                  const { data: createdProfile, error: profErr } = await supabase
+                    .from('profiles')
+                    .insert({ auth_user_id: userId, phone, full_name: phone, role, is_active: true, points: 0 })
+                    .select()
+                    .single();
+                  if (profErr) {
+                    console.error('Fallback profile create failed:', profErr);
+                  }
+                  profileId = createdProfile?.id || profileId;
+                } else {
+                  profileId = existingProfile.id;
+                }
+
+                // إضافة الدور (باستخدام userId)
+                await supabase
+                  .from('user_roles')
+                  .upsert({ user_id: userId, role, is_active: true }, { onConflict: 'user_id,role' });
+
+                // توليد magic link
+                const { data: linkData2, error: linkError2 } = await supabase.auth.admin.generateLink({
+                  type: 'magiclink',
+                  email: fallbackEmail,
+                });
+                if (!linkError2 && (linkData2?.properties?.hashed_token || linkData2?.properties?.email_otp)) {
+                  session = {
+                    email: fallbackEmail,
+                    token: linkData2.properties.hashed_token,
+                    email_otp: linkData2.properties.email_otp
+                  };
+                } else {
+                  console.error('Failed to generate session token in fallback:', linkError2);
+                  return new Response(
+                    JSON.stringify({ success: false, error: 'فشل إنشاء الجلسة' }),
+                    { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                  );
+                }
               }
             }
+          } else {
+            console.error('User creation error:', authError);
+            return new Response(
+              JSON.stringify({ success: false, error: 'فشل في إنشاء الحساب: ' + (authError?.message || 'خطأ غير معروف') }),
+              { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
           }
         } else {
-          console.error('User creation error:', authError);
-          return new Response(
-            JSON.stringify({ success: false, error: 'فشل في إنشاء الحساب: ' + (authError?.message || 'خطأ غير معروف') }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
+          userId = authData.user.id;
+          console.log('New user created:', userId);
         }
-      } else {
-        userId = authData.user.id;
-        console.log('New user created:', userId);
       }
 
       if (userId) {
