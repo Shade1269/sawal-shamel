@@ -3,14 +3,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { MessageSquare, ArrowRight, ArrowLeft } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { MessageSquare, ArrowRight, ArrowLeft, Store, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { usePlatformPhoneAuth } from '@/hooks/usePlatformPhoneAuth';
 
 const SupabaseSMSAuth = () => {
-  const [step, setStep] = useState<'phone' | 'verify'>('phone');
+  const [step, setStep] = useState<'phone' | 'role' | 'verify'>('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+966');
+  const [selectedRole, setSelectedRole] = useState<'affiliate' | 'merchant'>('affiliate');
   const [otp, setOtp] = useState('');
   const navigate = useNavigate();
   
@@ -33,8 +35,12 @@ const SupabaseSMSAuth = () => {
 
     const result = await sendOTP(phone);
     if (result.success) {
-      setStep('verify');
+      setStep('role');
     }
+  };
+
+  const handleRoleSelection = () => {
+    setStep('verify');
   };
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
@@ -44,11 +50,15 @@ const SupabaseSMSAuth = () => {
       return;
     }
 
-    const result = await verifyOTP(fullPhone(), otp);
+    const result = await verifyOTP(fullPhone(), otp, selectedRole);
     if (result.success) {
-      // الانتقال للصفحة الرئيسية
+      // الانتقال للصفحة المناسبة حسب الدور
       setTimeout(() => {
-        navigate('/');
+        if (selectedRole === 'affiliate') {
+          navigate('/affiliate');
+        } else {
+          navigate('/merchant');
+        }
       }, 500);
     }
   };
@@ -58,8 +68,12 @@ const SupabaseSMSAuth = () => {
   };
 
   const handleBack = () => {
-    setStep('phone');
-    setOtp('');
+    if (step === 'verify') {
+      setStep('role');
+      setOtp('');
+    } else if (step === 'role') {
+      setStep('phone');
+    }
   };
 
   return (
@@ -72,6 +86,8 @@ const SupabaseSMSAuth = () => {
         <CardDescription>
           {step === 'phone' 
             ? 'أدخل رقم هاتفك لإرسال رمز التحقق'
+            : step === 'role'
+            ? 'اختر نوع حسابك'
             : 'أدخل الرمز المرسل إلى هاتفك'
           }
         </CardDescription>
@@ -79,7 +95,7 @@ const SupabaseSMSAuth = () => {
 
       <CardContent>
         {step === 'phone' ? (
-          <form onSubmit={handleSendOTP} className="space-y-4">
+          <form onSubmit={handleSendOTP} className="space-y-4" dir="rtl">
             <div className="space-y-2">
               <Label htmlFor="phone">رقم الهاتف</Label>
               <div className="flex gap-2" dir="ltr">
@@ -128,8 +144,54 @@ const SupabaseSMSAuth = () => {
               )}
             </Button>
           </form>
+        ) : step === 'role' ? (
+          <div className="space-y-4" dir="rtl">
+            <RadioGroup value={selectedRole} onValueChange={(value) => setSelectedRole(value as 'affiliate' | 'merchant')} className="space-y-3">
+              <div className="flex items-center space-x-2 space-x-reverse p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
+                <RadioGroupItem value="affiliate" id="affiliate" />
+                <Label htmlFor="affiliate" className="flex-1 cursor-pointer flex items-center gap-3">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                  <div>
+                    <div className="font-semibold">مسوق</div>
+                    <div className="text-sm text-muted-foreground">انضم كمسوق بالعمولة وابدأ في تسويق المنتجات</div>
+                  </div>
+                </Label>
+              </div>
+              
+              <div className="flex items-center space-x-2 space-x-reverse p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors">
+                <RadioGroupItem value="merchant" id="merchant" />
+                <Label htmlFor="merchant" className="flex-1 cursor-pointer flex items-center gap-3">
+                  <Store className="h-5 w-5 text-primary" />
+                  <div>
+                    <div className="font-semibold">تاجر</div>
+                    <div className="text-sm text-muted-foreground">أضف منتجاتك واعمل مع المسوقين</div>
+                  </div>
+                </Label>
+              </div>
+            </RadioGroup>
+
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={handleBack}
+              >
+                <ArrowRight className="ml-2 h-4 w-4" />
+                رجوع
+              </Button>
+              <Button
+                type="button"
+                className="flex-1"
+                onClick={handleRoleSelection}
+              >
+                متابعة
+                <ArrowLeft className="mr-2 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         ) : (
-          <form onSubmit={handleVerifyOTP} className="space-y-4">
+          <form onSubmit={handleVerifyOTP} className="space-y-4" dir="rtl">
             <div className="space-y-2">
               <Label htmlFor="otp">رمز التحقق</Label>
               <Input

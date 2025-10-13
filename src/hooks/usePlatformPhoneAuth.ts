@@ -82,11 +82,10 @@ export const usePlatformPhoneAuth = () => {
 
       console.log('✓ Phone validation passed, sending OTP via Twilio');
 
-      // استدعاء Edge Function لإرسال OTP عبر Twilio
-      const { data, error } = await supabase.functions.invoke('send-customer-otp', {
+      // استدعاء Edge Function لإرسال OTP للمنصة الرئيسية
+      const { data, error } = await supabase.functions.invoke('send-platform-otp', {
         body: { 
-          phone: formattedPhone,
-          storeId: null // للمنصة الرئيسية
+          phone: formattedPhone
         }
       });
 
@@ -127,18 +126,19 @@ export const usePlatformPhoneAuth = () => {
     }
   };
 
-  const verifyOTP = async (phone: string, otp: string): Promise<PhoneAuthResponse> => {
+  const verifyOTP = async (phone: string, otp: string, role: 'affiliate' | 'merchant'): Promise<PhoneAuthResponse> => {
     setVerifying(true);
     try {
       const formattedPhone = formatPhone(phone);
 
       console.log('Verifying OTP for:', formattedPhone);
 
-      // استدعاء Edge Function للتحقق من OTP وإنشاء المستخدم
-      const { data, error } = await supabase.functions.invoke('verify-customer-otp', {
+      // استدعاء Edge Function للتحقق من OTP للمنصة الرئيسية
+      const { data, error } = await supabase.functions.invoke('verify-platform-otp', {
         body: { 
           phone: formattedPhone,
-          otp: otp
+          otp: otp,
+          role: role
         }
       });
 
