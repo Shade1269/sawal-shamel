@@ -58,7 +58,7 @@ serve(async (req) => {
     let session: any;
 
     if (existingUser) {
-      // المستخدم موجود - إنشاء session
+      // المستخدم موجود - إنشاء session مباشرة
       console.log('Existing user found:', existingUser.id);
       userId = existingUser.id;
       
@@ -69,7 +69,7 @@ serve(async (req) => {
       if (sessionError) throw sessionError;
       session = sessionData.session;
     } else {
-      // إنشاء مستخدم جديد
+      // إنشاء مستخدم جديد فقط إذا لم يكن موجود
       console.log('Creating new user for phone:', phone);
       
       const { data: newUserData, error: createError } = await supabaseClient.auth.admin.createUser({
@@ -81,39 +81,19 @@ serve(async (req) => {
         }
       });
 
-      // إذا كان الخطأ "phone_exists" نبحث عن المستخدم الموجود
-      if (createError && createError.message?.includes('already registered')) {
-        console.log('Phone already exists, searching for user...');
-        const existingUserRetry = existingUsers?.users.find(u => u.phone === phone);
-        if (existingUserRetry) {
-          userId = existingUserRetry.id;
-          console.log('Found existing user on retry:', userId);
-          
-          const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
-            user_id: userId,
-          });
+      if (createError) throw createError;
+      if (!newUserData.user) throw new Error('فشل إنشاء المستخدم');
 
-          if (sessionError) throw sessionError;
-          session = sessionData.session;
-        } else {
-          throw new Error('المستخدم موجود لكن لا يمكن الوصول إليه');
-        }
-      } else if (createError) {
-        throw createError;
-      } else {
-        if (!newUserData.user) throw new Error('فشل إنشاء المستخدم');
+      userId = newUserData.user.id;
+      console.log('New user created:', userId);
 
-        userId = newUserData.user.id;
-        console.log('New user created:', userId);
+      // إنشاء session للمستخدم الجديد
+      const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
+        user_id: userId,
+      });
 
-        // إنشاء session للمستخدم الجديد
-        const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
-          user_id: userId,
-        });
-
-        if (sessionError) throw sessionError;
-        session = sessionData.session;
-      }
+      if (sessionError) throw sessionError;
+      session = sessionData.session;
     }
 
     // 4. التأكد من وجود profile
