@@ -161,15 +161,13 @@ export const usePlatformPhoneAuth = () => {
         return { success: false, error: errorMessage };
       }
 
-      // إنشاء جلسة Supabase باستخدام الـ token المُرسل من الـ Edge Function
-      if (data?.session?.email && data?.session?.token) {
-        console.log('OTP verified, creating Supabase session with magiclink token');
-        
-        // استخدام verifyOtp لإنشاء جلسة حقيقية
+      // إنشاء جلسة Supabase باستخدام بيانات الجلسة المُعادة من الـ Edge Function
+      if (data?.session?.email && data?.session?.email_otp) {
+        console.log('OTP verified, creating Supabase session via email_otp');
         const { data: authData, error: authError } = await supabase.auth.verifyOtp({
           email: data.session.email,
-          token: data.session.token,
-          type: 'email'
+          token: data.session.email_otp,
+          type: 'email',
         });
 
         if (authError) {
@@ -177,8 +175,21 @@ export const usePlatformPhoneAuth = () => {
           toast.error('خطأ', { description: 'فشل في تسجيل الدخول' });
           return { success: false, error: authError.message };
         }
-        
         console.log('Supabase session created successfully:', authData?.user?.id);
+      } else if (data?.session?.email && data?.session?.token) {
+        // احتياطي: في حال لم يتوفر email_otp لأي سبب
+        console.warn('email_otp missing, attempting with hashed token fallback');
+        const { data: authData, error: authError } = await supabase.auth.verifyOtp({
+          email: data.session.email,
+          token: data.session.token,
+          type: 'email',
+        });
+        if (authError) {
+          console.error('Failed to create session using fallback token:', authError);
+          toast.error('خطأ', { description: 'فشل في تسجيل الدخول' });
+          return { success: false, error: authError.message };
+        }
+        console.log('Supabase session created with fallback token:', authData?.user?.id);
       } else {
         console.error('No session data returned from verification');
         toast.error('خطأ', { description: 'فشل في إنشاء الجلسة' });
