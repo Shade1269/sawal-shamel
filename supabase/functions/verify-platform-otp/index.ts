@@ -336,10 +336,66 @@ serve(async (req) => {
                 console.error('Failed to generate session token (profile fallback):', linkError2);
               }
             } else {
-              return new Response(
-                JSON.stringify({ success: false, error: 'تعذر إنشاء الجلسة للمستخدم الحالي' }),
-                { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-              );
+              // لم نعثر على مستخدم Auth رغم وجود phone_exists -> إنشاء مستخدم جديد بالبريد فقط كحل أخير
+              console.warn('Fallback: creating email-only user since phone_exists and no auth user found');
+              const fallbackEmail = `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
+              const fallbackPassword = Math.random().toString(36).slice(-12) + 'Aa1!';
+              const { data: createdAuth, error: createErr } = await supabase.auth.admin.createUser({
+                email: fallbackEmail,
+                password: fallbackPassword,
+                email_confirm: true,
+                user_metadata: { phone, role }
+              });
+              if (createErr || !createdAuth?.user) {
+                console.error('Fallback create user failed:', createErr);
+                return new Response(
+                  JSON.stringify({ success: false, error: 'فشل إنشاء المستخدم الاحتياطي' }),
+                  { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                );
+              }
+              userId = createdAuth.user.id;
+
+              // إنشاء/تحديث profile وربطه
+              if (existingProfile && !existingProfile.auth_user_id) {
+                await supabase.from('profiles').update({ auth_user_id: userId }).eq('id', existingProfile.id);
+                profileId = existingProfile.id;
+              } else if (!existingProfile) {
+                const { data: createdProfile, error: profErr } = await supabase
+                  .from('profiles')
+                  .insert({ auth_user_id: userId, phone, full_name: phone, role, is_active: true, points: 0 })
+                  .select()
+                  .single();
+                if (profErr) {
+                  console.error('Fallback profile create failed:', profErr);
+                }
+                profileId = createdProfile?.id || profileId;
+              } else {
+                profileId = existingProfile.id;
+              }
+
+              // إضافة الدور (باستخدام userId)
+              await supabase
+                .from('user_roles')
+                .upsert({ user_id: userId, role, is_active: true }, { onConflict: 'user_id,role' });
+
+              // توليد magic link
+              const { data: linkData2, error: linkError2 } = await supabase.auth.admin.generateLink({
+                type: 'magiclink',
+                email: fallbackEmail,
+              });
+              if (!linkError2 && (linkData2?.properties?.hashed_token || linkData2?.properties?.email_otp)) {
+                session = {
+                  email: fallbackEmail,
+                  token: linkData2.properties.hashed_token,
+                  email_otp: linkData2.properties.email_otp
+                };
+              } else {
+                console.error('Failed to generate session token in fallback:', linkError2);
+                return new Response(
+                  JSON.stringify({ success: false, error: 'فشل إنشاء الجلسة' }),
+                  { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                );
+              }
             }
           }
         } else {
@@ -407,7 +463,7 @@ serve(async (req) => {
     }
 
     // Ensure session exists
-    if (!session || !session.token) {
+    if (!session || (!session.token && !session.email_otp)) {
       console.error('No session generated after OTP verification');
       return new Response(
         JSON.stringify({ success: false, error: 'فشل إنشاء الجلسة' }),
