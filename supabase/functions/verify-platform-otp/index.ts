@@ -120,28 +120,29 @@ serve(async (req) => {
           onConflict: 'user_id,role'
         });
 
-      // إنشاء session للمستخدم
-      const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
-        type: 'magiclink',
-        email: `${phone.replace(/\+/g, '')}@temp.anaqti.sa`,
-      });
+      // إنشاء رمز تحقق للبريد (سنتحقق منه في العميل للحصول على جلسة)
+      let emailForAuth = existingAuthUser.email || `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
 
-      if (sessionError) {
-        console.error('Session creation error:', sessionError);
-      } else if (sessionData?.properties?.action_link) {
-        // استخراج tokens من الرابط
-        const url = new URL(sessionData.properties.action_link);
-        const accessToken = url.searchParams.get('access_token');
-        const refreshToken = url.searchParams.get('refresh_token');
-        
-        if (accessToken && refreshToken) {
-          session = {
-            access_token: accessToken,
-            refresh_token: refreshToken,
-            user: { id: userId, phone }
-          };
+      if (!existingAuthUser.email) {
+        const { error: updateEmailErr } = await supabase.auth.admin.updateUserById(userId, {
+          email: emailForAuth,
+          email_confirm: true,
+        });
+        if (updateEmailErr) {
+          console.error('Failed to set temp email for user:', updateEmailErr);
         }
       }
+
+      const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+        type: 'magiclink',
+        email: emailForAuth,
+      });
+      if (linkErr) {
+        console.error('generateLink error:', linkErr);
+      }
+      const emailOtp = linkData?.properties?.email_otp || null;
+      // لا يمكننا إنشاء جلسة مباشرة من السيرفر. سنُعيد email + emailOtp ليقوم العميل بإنشاء الجلسة عبر verifyOtp
+      session = null;
 
     } else {
       // مستخدم جديد - إنشاء حساب
