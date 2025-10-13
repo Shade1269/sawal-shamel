@@ -48,39 +48,46 @@ serve(async (req) => {
 
     console.log('OTP verified successfully');
 
-    // 2. وضع علامة على OTP كـ verified
-    await supabaseClient
-      .from('customer_otp_sessions')
-      .update({ verified: true, verified_at: new Date().toISOString() })
-      .eq('id', otpSession.id);
-
-    // 3. محاولة إنشاء session للمستخدم مباشرة أولاً
+    // 3. محاولة إنشاء session للمستخدم
     let userId: string;
     let session: any;
 
     try {
-      // محاولة البحث عن المستخدم الموجود أولاً
-      const { data: existingUsers } = await supabaseClient.auth.admin.listUsers();
-      const existingUser = existingUsers?.users.find(u => u.phone === phone);
+      // 1. البحث عن المستخدم الموجود أولاً - باستخدام phone مباشرة
+      console.log('Searching for existing user with phone:', phone);
+      const { data: existingUsers, error: listError } = await supabaseClient.auth.admin.listUsers();
+      
+      if (listError) {
+        console.error('Error listing users:', listError);
+        throw new Error('خطأ في البحث عن المستخدمين');
+      }
+
+      console.log('Total users found:', existingUsers?.users?.length || 0);
+      const existingUser = existingUsers?.users.find(u => {
+        console.log('Checking user phone:', u.phone, 'against:', phone);
+        return u.phone === phone;
+      });
 
       if (existingUser) {
-        console.log('Existing user found:', existingUser.id);
+        console.log('✓ Existing user found:', existingUser.id);
         userId = existingUser.id;
         
+        // إنشاء جلسة للمستخدم الموجود
         const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
           user_id: userId,
         });
 
-        if (sessionError) throw sessionError;
+        if (sessionError) {
+          console.error('Session creation error for existing user:', sessionError);
+          throw sessionError;
+        }
+        
         session = sessionData.session;
+        console.log('✓ Session created for existing user');
       } else {
-        throw new Error('User not found, will create new one');
-      }
-    } catch (findError) {
-      // إذا لم نجد المستخدم، نحاول إنشاء واحد جديد
-      console.log('Creating new user for phone:', phone);
-      
-      try {
+        // 2. إنشاء مستخدم جديد إذا لم يكن موجوداً
+        console.log('No existing user found, creating new user...');
+        
         const { data: newUserData, error: createError } = await supabaseClient.auth.admin.createUser({
           phone,
           phone_confirm: true,
@@ -91,42 +98,77 @@ serve(async (req) => {
         });
 
         if (createError) {
-          // إذا فشل الإنشاء بسبب أن المستخدم موجود، نبحث عنه مرة أخرى
-          if (createError.message?.includes('already registered') || createError.code === 'phone_exists') {
-            console.log('Phone exists, searching again...');
+          console.error('User creation error:', createError);
+          
+          // إذا فشل بسبب وجود الرقم، نحاول البحث مرة أخرى
+          if (createError.message?.includes('already registered') || 
+              createError.message?.includes('phone') || 
+              createError.code === 'phone_exists' ||
+              createError.status === 422) {
+            
+            console.log('Phone exists error, retrying search...');
+            
+            // انتظر قليلاً ثم حاول مرة أخرى
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
             const { data: retryUsers } = await supabaseClient.auth.admin.listUsers();
             const foundUser = retryUsers?.users.find(u => u.phone === phone);
             
             if (foundUser) {
+              console.log('✓ User found on retry:', foundUser.id);
               userId = foundUser.id;
+              
               const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
                 user_id: userId,
               });
-              if (sessionError) throw sessionError;
+              
+              if (sessionError) {
+                console.error('Session error on retry:', sessionError);
+                throw sessionError;
+              }
+              
               session = sessionData.session;
+              console.log('✓ Session created on retry');
             } else {
-              throw new Error('لا يمكن العثور على المستخدم أو إنشاؤه');
+              console.error('User still not found after retry');
+              throw new Error('فشل في العثور على المستخدم بعد عدة محاولات');
             }
           } else {
             throw createError;
           }
         } else {
-          if (!newUserData.user) throw new Error('فشل إنشاء المستخدم');
+          if (!newUserData?.user) {
+            console.error('No user data returned after creation');
+            throw new Error('فشل إنشاء المستخدم - لا توجد بيانات');
+          }
 
           userId = newUserData.user.id;
-          console.log('New user created:', userId);
+          console.log('✓ New user created successfully:', userId);
 
+          // إنشاء جلسة للمستخدم الجديد
           const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
             user_id: userId,
           });
 
-          if (sessionError) throw sessionError;
+          if (sessionError) {
+            console.error('Session creation error for new user:', sessionError);
+            throw sessionError;
+          }
+          
           session = sessionData.session;
+          console.log('✓ Session created for new user');
         }
-      } catch (createError) {
-        throw createError;
       }
+    } catch (error: any) {
+      console.error('Critical error in user creation/session flow:', error);
+      throw new Error(error.message || 'لا يمكن العثور على المستخدم أو إنشاؤه');
     }
+
+    // 2. وضع علامة verified فقط بعد نجاح إنشاء الجلسة
+    await supabaseClient
+      .from('customer_otp_sessions')
+      .update({ verified: true, verified_at: new Date().toISOString() })
+      .eq('id', otpSession.id);
 
     // 4. التأكد من وجود profile
     const { data: existingProfile } = await supabaseClient
