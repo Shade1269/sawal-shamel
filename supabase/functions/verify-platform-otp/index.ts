@@ -411,38 +411,50 @@ serve(async (req) => {
       }
 
       if (userId) {
-        // إنشاء profile للمستخدم الجديد
-        const { data: newProfile, error: profileError } = await supabase
+        // الحصول على profile الذي ربما تم إنشاؤه تلقائياً عبر التريجر
+        const { data: existingByAuth } = await supabase
           .from('profiles')
-          .insert({
-            auth_user_id: userId,
-            phone: phone,
-            full_name: phone,
-            role: role,
-            is_active: true,
-            points: 0
-          })
-          .select()
-          .single();
+          .select('id, phone, role')
+          .eq('auth_user_id', userId)
+          .maybeSingle();
 
-        if (profileError) {
-          console.error('Profile creation error:', profileError);
-          return new Response(
-            JSON.stringify({ success: false, error: 'فشل في إنشاء الملف الشخصي' }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
+        if (existingByAuth?.id) {
+          profileId = existingByAuth.id;
+          // تحديث البيانات الأساسية لضمان الاتساق
+          await supabase
+            .from('profiles')
+            .update({ phone, full_name: phone, role, is_active: true, updated_at: new Date().toISOString() })
+            .eq('id', profileId);
+        } else {
+          // إنشاء profile فقط إذا لم يكن موجوداً
+          const { data: newProfile, error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              auth_user_id: userId,
+              phone: phone,
+              full_name: phone,
+              role: role,
+              is_active: true,
+              points: 0
+            })
+            .select()
+            .single();
+
+          if (profileError) {
+            console.error('Profile creation error:', profileError);
+            return new Response(
+              JSON.stringify({ success: false, error: 'فشل في إنشاء الملف الشخصي' }),
+              { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+
+          profileId = newProfile.id;
         }
 
-        profileId = newProfile.id;
-
-        // إضافة الدور في جدول user_roles - استخدام userId (auth_user_id)
+        // إضافة/تحديث الدور في جدول user_roles - استخدام userId (auth_user_id)
         await supabase
           .from('user_roles')
-          .insert({
-            user_id: userId,
-            role: role,
-            is_active: true
-          });
+          .upsert({ user_id: userId, role: role, is_active: true }, { onConflict: 'user_id,role' });
 
         // إنشاء session token للمستخدم الجديد
         const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
@@ -450,7 +462,7 @@ serve(async (req) => {
           email: tempEmail,
         });
 
-        if (!linkError && linkData?.properties?.hashed_token) {
+        if (!linkError && (linkData?.properties?.hashed_token || linkData?.properties?.email_otp)) {
           session = {
             email: tempEmail,
             token: linkData.properties.hashed_token,
