@@ -164,66 +164,106 @@ serve(async (req) => {
       });
 
       if (authError || !authData.user) {
-        console.error('User creation error:', authError);
-        return new Response(
-          JSON.stringify({ success: false, error: 'فشل في إنشاء الحساب' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        // إذا كان الرقم مسجلاً سابقاً، عالج الحالة كـ مستخدم موجود
+        // ولا تُرجع خطأ للمستخدم
+        // نحاول إيجاد/إنشاء profile ثم نكمل بدون جلسة Supabase إن لم نتمكن من إنشائها
+        if (authError && (authError as any).code === 'phone_exists') {
+          console.error('Phone already exists, proceeding as existing user');
+
+          // حاول إيجاد profile لهذا الرقم
+          let ensuredProfileId = existingProfile?.id as string | undefined;
+          if (!ensuredProfileId) {
+            const { data: createdProfile, error: createProfileError } = await supabase
+              .from('profiles')
+              .insert({
+                phone: phone,
+                full_name: phone,
+                role: role,
+                is_active: true,
+                points: 0
+              })
+              .select()
+              .single();
+            if (createProfileError) {
+              console.error('Profile creation error (phone_exists path):', createProfileError);
+            } else {
+              ensuredProfileId = createdProfile.id;
+            }
+          }
+
+          if (ensuredProfileId) {
+            // تأكد من وجود الدور
+            await supabase
+              .from('user_roles')
+              .upsert({ user_id: ensuredProfileId, role: role, is_active: true }, { onConflict: 'user_id,role' });
+          }
+
+          profileId = ensuredProfileId || profileId;
+          userId = userId || '';
+        } else {
+          console.error('User creation error:', authError);
+          return new Response(
+            JSON.stringify({ success: false, error: 'فشل في إنشاء الحساب' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      } else {
+        userId = authData.user.id;
+        console.log('New user created:', userId);
       }
 
-      userId = authData.user.id;
-      console.log('New user created:', userId);
+      if (userId) {
+        // إنشاء profile للمستخدم الجديد
+        const { data: newProfile, error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            auth_user_id: userId,
+            phone: phone,
+            full_name: phone,
+            role: role,
+            is_active: true,
+            points: 0
+          })
+          .select()
+          .single();
 
-      // إنشاء profile
-      const { data: newProfile, error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          auth_user_id: userId,
-          phone: phone,
-          full_name: phone,
-          role: role,
-          is_active: true,
-          points: 0
-        })
-        .select()
-        .single();
+        if (profileError) {
+          console.error('Profile creation error:', profileError);
+          return new Response(
+            JSON.stringify({ success: false, error: 'فشل في إنشاء الملف الشخصي' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
 
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-        return new Response(
-          JSON.stringify({ success: false, error: 'فشل في إنشاء الملف الشخصي' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
+        profileId = newProfile.id;
 
-      profileId = newProfile.id;
+        // إضافة الدور في جدول user_roles
+        await supabase
+          .from('user_roles')
+          .insert({
+            user_id: profileId,
+            role: role,
+            is_active: true
+          });
 
-      // إضافة الدور في جدول user_roles
-      await supabase
-        .from('user_roles')
-        .insert({
-          user_id: profileId,
-          role: role,
-          is_active: true
+        // إنشاء session
+        const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
+          type: 'magiclink',
+          email: tempEmail,
         });
 
-      // إنشاء session
-      const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
-        type: 'magiclink',
-        email: tempEmail,
-      });
-
-      if (!sessionError && sessionData?.properties?.action_link) {
-        const url = new URL(sessionData.properties.action_link);
-        const accessToken = url.searchParams.get('access_token');
-        const refreshToken = url.searchParams.get('refresh_token');
-        
-        if (accessToken && refreshToken) {
-          session = {
-            access_token: accessToken,
-            refresh_token: refreshToken,
-            user: { id: userId, phone }
-          };
+        if (!sessionError && sessionData?.properties?.action_link) {
+          const url = new URL(sessionData.properties.action_link);
+          const accessToken = url.searchParams.get('access_token');
+          const refreshToken = url.searchParams.get('refresh_token');
+          
+          if (accessToken && refreshToken) {
+            session = {
+              access_token: accessToken,
+              refresh_token: refreshToken,
+              user: { id: userId, phone }
+            };
+          }
         }
       }
     }
@@ -233,7 +273,7 @@ serve(async (req) => {
       .from('whatsapp_otp')
       .update({ 
         verified: true,
-        user_id: userId
+        ...(userId ? { user_id: userId } : {})
       })
       .eq('id', otpRecord.id);
 
@@ -244,10 +284,10 @@ serve(async (req) => {
         success: true,
         session: session,
         user: {
-          id: userId,
+          id: userId || null,
           phone: phone,
           role: role,
-          profileId: profileId
+          profileId: profileId || null
         }
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
