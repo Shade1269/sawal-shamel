@@ -63,9 +63,11 @@ serve(async (req) => {
       }
 
       console.log('Total users found:', existingUsers?.users?.length || 0);
+      const normalize = (p?: string) => (p || '').replace(/[^0-9]/g, '');
+      const target = normalize(phone);
       const existingUser = existingUsers?.users.find(u => {
         console.log('Checking user phone:', u.phone, 'against:', phone);
-        return u.phone === phone;
+        return normalize(u.phone) === target;
       });
 
       if (existingUser) {
@@ -112,7 +114,7 @@ serve(async (req) => {
             await new Promise(resolve => setTimeout(resolve, 500));
             
             const { data: retryUsers } = await supabaseClient.auth.admin.listUsers();
-            const foundUser = retryUsers?.users.find(u => u.phone === phone);
+            const foundUser = retryUsers?.users.find(u => normalize(u.phone) === target);
             
             if (foundUser) {
               console.log('✓ User found on retry:', foundUser.id);
