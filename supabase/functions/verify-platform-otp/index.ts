@@ -120,29 +120,33 @@ serve(async (req) => {
           onConflict: 'user_id,role'
         });
 
-      // إنشاء رمز تحقق للبريد (سنتحقق منه في العميل للحصول على جلسة)
-      let emailForAuth = existingAuthUser.email || `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
-
+      // إنشاء جلسة Supabase للمستخدم الموجود
+      const tempEmail = existingAuthUser.email || `${phone.replace(/\+/g, '')}@temp.anaqti.sa`;
+      
+      // التأكد من وجود إيميل للمستخدم
       if (!existingAuthUser.email) {
-        const { error: updateEmailErr } = await supabase.auth.admin.updateUserById(userId, {
-          email: emailForAuth,
+        await supabase.auth.admin.updateUserById(userId, {
+          email: tempEmail,
           email_confirm: true,
         });
-        if (updateEmailErr) {
-          console.error('Failed to set temp email for user:', updateEmailErr);
-        }
       }
 
-      const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+      // إنشاء session token باستخدام admin API
+      const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
         type: 'magiclink',
-        email: emailForAuth,
+        email: tempEmail,
       });
-      if (linkErr) {
-        console.error('generateLink error:', linkErr);
+
+      if (!linkError && linkData?.properties?.hashed_token) {
+        // استخدام الـ hashed_token لإنشاء جلسة
+        session = {
+          email: tempEmail,
+          token: linkData.properties.hashed_token,
+          email_otp: linkData.properties.email_otp
+        };
+      } else {
+        console.error('Failed to generate session token:', linkError);
       }
-      const emailOtp = linkData?.properties?.email_otp || null;
-      // لا يمكننا إنشاء جلسة مباشرة من السيرفر. سنُعيد email + emailOtp ليقوم العميل بإنشاء الجلسة عبر verifyOtp
-      session = null;
 
     } else {
       // مستخدم جديد - إنشاء حساب
@@ -247,24 +251,20 @@ serve(async (req) => {
             is_active: true
           });
 
-        // إنشاء session
-        const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
+        // إنشاء session token للمستخدم الجديد
+        const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
           type: 'magiclink',
           email: tempEmail,
         });
 
-        if (!sessionError && sessionData?.properties?.action_link) {
-          const url = new URL(sessionData.properties.action_link);
-          const accessToken = url.searchParams.get('access_token');
-          const refreshToken = url.searchParams.get('refresh_token');
-          
-          if (accessToken && refreshToken) {
-            session = {
-              access_token: accessToken,
-              refresh_token: refreshToken,
-              user: { id: userId, phone }
-            };
-          }
+        if (!linkError && linkData?.properties?.hashed_token) {
+          session = {
+            email: tempEmail,
+            token: linkData.properties.hashed_token,
+            email_otp: linkData.properties.email_otp
+          };
+        } else {
+          console.error('Failed to generate session token for new user:', linkError);
         }
       }
     }

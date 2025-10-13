@@ -161,21 +161,28 @@ export const usePlatformPhoneAuth = () => {
         return { success: false, error: errorMessage };
       }
 
-      // إذا أعادت الدالة جلسة كاملة من Supabase، سنقوم بتعيينها
-      if (data?.session?.access_token && data?.session?.refresh_token) {
-        console.log('OTP verified, setting Supabase auth session');
-        const { error: sessionError } = await supabase.auth.setSession({
-          access_token: data.session.access_token,
-          refresh_token: data.session.refresh_token,
+      // إنشاء جلسة Supabase باستخدام الـ token المُرسل من الـ Edge Function
+      if (data?.session?.email && data?.session?.token) {
+        console.log('OTP verified, creating Supabase session with magiclink token');
+        
+        // استخدام verifyOtp لإنشاء جلسة حقيقية
+        const { data: authData, error: authError } = await supabase.auth.verifyOtp({
+          email: data.session.email,
+          token: data.session.token,
+          type: 'email'
         });
-        if (sessionError) {
-          console.error('Session error:', sessionError);
+
+        if (authError) {
+          console.error('Failed to create session:', authError);
           toast.error('خطأ', { description: 'فشل في تسجيل الدخول' });
-          return { success: false, error: sessionError.message };
+          return { success: false, error: authError.message };
         }
+        
+        console.log('Supabase session created successfully:', authData?.user?.id);
       } else {
-        // لا توجد جلسة Supabase (مسار التحقق المخصص عبر Twilio)
-        console.log('OTP verified without Supabase session, sessionId:', data?.sessionId);
+        console.error('No session data returned from verification');
+        toast.error('خطأ', { description: 'فشل في إنشاء الجلسة' });
+        return { success: false, error: 'No session data' };
       }
 
       toast.success('تم التحقق بنجاح!', { description: 'مرحباً بك في المنصة' });
