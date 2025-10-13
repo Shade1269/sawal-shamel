@@ -75,9 +75,9 @@ serve(async (req) => {
         userId = existingUser.id;
         
         // إنشاء جلسة للمستخدم الموجود
-        const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
-          user_id: userId,
-        });
+        console.log('Skipping admin.createSession (not supported in supabase-js v2)');
+        const sessionData = { session: null } as any;
+        const sessionError = null;
 
         if (sessionError) {
           console.error('Session creation error for existing user:', sessionError);
@@ -120,9 +120,9 @@ serve(async (req) => {
               console.log('✓ User found on retry:', foundUser.id);
               userId = foundUser.id;
               
-              const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
-                user_id: userId,
-              });
+              console.log('Skipping admin.createSession (not supported in supabase-js v2)');
+              const sessionData = { session: null } as any;
+              const sessionError = null;
               
               if (sessionError) {
                 console.error('Session error on retry:', sessionError);
@@ -211,12 +211,14 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true,
-        session,
-        user: {
+        sessionId: otpSession.id,
+        phone,
+        role: userRole,
+        user: userId ? {
           id: userId,
           phone,
           role: userRole
-        }
+        } : null
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
