@@ -94,6 +94,11 @@ serve(async (req) => {
         const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
         const message = `رمز التحقق الخاص بك في منصة أناقتي: ${otp}\nصالح لمدة 5 دقائق`;
 
+        // إضافة بادئة whatsapp: للرقم
+        const whatsappPhone = phone.startsWith('whatsapp:') ? phone : `whatsapp:${phone}`;
+        
+        console.log('Sending WhatsApp to:', whatsappPhone);
+
         const twilioResponse = await fetch(twilioUrl, {
           method: 'POST',
           headers: {
@@ -101,7 +106,7 @@ serve(async (req) => {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
           body: new URLSearchParams({
-            To: phone,
+            To: whatsappPhone,
             MessagingServiceSid: twilioMessagingServiceSid,
             Body: message,
           }),
