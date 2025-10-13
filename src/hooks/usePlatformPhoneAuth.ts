@@ -62,11 +62,13 @@ export const usePlatformPhoneAuth = () => {
   const sendOTP = async (phone: string): Promise<PhoneAuthResponse> => {
     setLoading(true);
     try {
+      // تنسيق رقم الجوال
       const formattedPhone = formatPhone(phone);
 
       console.log('Original input:', phone);
       console.log('Formatted phone:', formattedPhone);
 
+      // التحقق من صحة الرقم
       if (!isValidSaudiPhone(formattedPhone)) {
         const errorMessage = `رقم الجوال غير صالح. تأكد من الصيغة: ${formattedPhone}`;
         console.error('Invalid phone format:', formattedPhone);
@@ -78,25 +80,33 @@ export const usePlatformPhoneAuth = () => {
         return { success: false, error: errorMessage };
       }
 
-      console.log('✓ Phone validation passed, sending OTP via Supabase Phone Auth');
+      console.log('✓ Phone validation passed, sending OTP via Twilio');
 
-      // استخدام Supabase Phone Auth بدلاً من Firebase/Twilio
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: formattedPhone,
-        options: {
-          channel: 'sms',
+      // استدعاء Edge Function لإرسال OTP عبر Twilio
+      const { data, error } = await supabase.functions.invoke('send-customer-otp', {
+        body: { 
+          phone: formattedPhone,
+          storeId: null // للمنصة الرئيسية
         }
       });
 
       if (error) {
-        console.error('Supabase Phone Auth error:', error);
+        console.error('Edge Function error:', error);
         toast.error('خطأ في الإرسال', {
-          description: error.message || 'فشل في إرسال رمز التحقق',
+          description: 'فشل في إرسال رمز التحقق',
         });
         return { success: false, error: error.message };
       }
 
-      console.log('OTP sent successfully via Supabase Phone Auth');
+      if (!data?.success) {
+        console.error('OTP send failed:', data);
+        toast.error('خطأ في الإرسال', {
+          description: data?.error || 'فشل في إرسال رمز التحقق',
+        });
+        return { success: false, error: data?.error };
+      }
+
+      console.log('OTP sent successfully via Twilio');
 
       toast.success('تم الإرسال', {
         description: `تم إرسال رمز التحقق إلى ${formattedPhone}`,
@@ -124,42 +134,51 @@ export const usePlatformPhoneAuth = () => {
 
       console.log('Verifying OTP for:', formattedPhone);
 
-      // التحقق من OTP باستخدام Supabase Phone Auth
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone: formattedPhone,
-        token: otp,
-        type: 'sms'
+      // استدعاء Edge Function للتحقق من OTP وإنشاء المستخدم
+      const { data, error } = await supabase.functions.invoke('verify-customer-otp', {
+        body: { 
+          phone: formattedPhone,
+          otp: otp
+        }
       });
 
       if (error) {
-        console.error('Supabase OTP verification error:', error);
-        let errorMessage = error.message;
-        if (errorMessage.includes('expired') || errorMessage.includes('منتهي')) {
-          errorMessage = 'انتهت صلاحية الرمز. اطلب رمزاً جديداً.';
-        } else if (errorMessage.includes('invalid')) {
-          errorMessage = 'رمز التحقق غير صحيح';
-        }
-        
-        toast.error('خطأ في التحقق', { 
-          description: errorMessage 
+        console.error('Edge Function error:', error);
+        toast.error('خطأ في التحقق', {
+          description: 'فشل في التحقق من الرمز',
         });
+        return { success: false, error: error.message };
+      }
+
+      // التحقق من نجاح العملية أولاً
+      if (!data?.success) {
+        console.error('Verification failed:', data);
+        let errorMessage = data?.error || 'رمز التحقق غير صحيح';
+        if (typeof errorMessage === 'string' && (errorMessage.includes('expired') || errorMessage.includes('منتهي'))) {
+          errorMessage = 'انتهت صلاحية الرمز. اطلب رمزاً جديداً.';
+        }
+        toast.error('خطأ في التحقق', { description: errorMessage });
         return { success: false, error: errorMessage };
       }
 
-      if (!data.session) {
-        console.error('No session returned from verification');
-        toast.error('خطأ في التحقق', { 
-          description: 'فشل في إنشاء الجلسة' 
+      // إذا أعادت الدالة جلسة كاملة من Supabase، سنقوم بتعيينها
+      if (data?.session?.access_token && data?.session?.refresh_token) {
+        console.log('OTP verified, setting Supabase auth session');
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
         });
-        return { success: false, error: 'No session created' };
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          toast.error('خطأ', { description: 'فشل في تسجيل الدخول' });
+          return { success: false, error: sessionError.message };
+        }
+      } else {
+        // لا توجد جلسة Supabase (مسار التحقق المخصص عبر Twilio)
+        console.log('OTP verified without Supabase session, sessionId:', data?.sessionId);
       }
 
-      console.log('OTP verified successfully, user logged in');
-
-      toast.success('تم التحقق بنجاح!', { 
-        description: 'مرحباً بك في المنصة' 
-      });
-      
+      toast.success('تم التحقق بنجاح!', { description: 'مرحباً بك في المنصة' });
       return { success: true };
     } catch (error: any) {
       console.error('Error verifying OTP:', error);
