@@ -17,11 +17,15 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { phone, otp } = await req.json();
+    const { phone, otp, role } = await req.json();
     
     if (!phone || !otp) {
       throw new Error('رقم الهاتف ورمز التحقق مطلوبان');
     }
+
+    // التحقق من صحة الدور (إذا تم توفيره)
+    const validRoles = ['affiliate', 'merchant', 'customer'];
+    const userRole = role && validRoles.includes(role) ? role : 'affiliate';
 
     console.log('Verifying OTP for phone:', phone);
 
@@ -82,7 +86,7 @@ serve(async (req) => {
           phone_confirm: true,
           user_metadata: {
             phone,
-            role: 'affiliate',
+            role: userRole,
           }
         });
 
@@ -139,7 +143,7 @@ serve(async (req) => {
           auth_user_id: userId,
           phone,
           full_name: phone,
-          role: 'affiliate',
+          role: userRole,
           is_active: true,
           points: 0,
         });
@@ -166,7 +170,8 @@ serve(async (req) => {
         session,
         user: {
           id: userId,
-          phone
+          phone,
+          role: userRole
         }
       }),
       { 

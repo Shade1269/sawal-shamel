@@ -31,7 +31,7 @@ interface CustomerAuthContextType {
   
   // وظائف المصادقة
   sendOTP: (phone: string, storeId?: string) => Promise<{ success: boolean; otpCode?: string; error?: string }>;
-  verifyOTP: (phone: string, otpCode: string, storeId?: string) => Promise<{ success: boolean; customer?: CustomerProfile; error?: string }>;
+  verifyOTP: (phone: string, otpCode: string, storeId?: string, role?: 'affiliate' | 'merchant' | 'customer') => Promise<{ success: boolean; customer?: CustomerProfile; error?: string }>;
   signInWithPassword: (phone: string, password: string) => Promise<{ success: boolean; customer?: CustomerProfile; error?: string }>;
   setPassword: (phone: string, otpCode: string, password: string) => Promise<{ success: boolean; error?: string }>;
   
@@ -234,7 +234,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
   };
 
   // التحقق من كود OTP وتسجيل الدخول عبر Supabase
-  const verifyOTP = async (phone: string, otpCode: string, storeId?: string) => {
+  const verifyOTP = async (phone: string, otpCode: string, storeId?: string, role?: 'affiliate' | 'merchant' | 'customer') => {
     try {
       setSession(prev => ({ ...prev, isLoading: true }));
 
@@ -248,7 +248,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
 
       // التحقق من OTP عبر Supabase Edge Function
       const { data, error } = await supabase.functions.invoke('verify-customer-otp', {
-        body: { phone: savedPhone, otp: otpCode }
+        body: { phone: savedPhone, otp: otpCode, role: role || 'affiliate' }
       });
 
       if (error) throw error;
