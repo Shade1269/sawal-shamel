@@ -50,7 +50,7 @@ serve(async (req) => {
       .update({ verified: true, verified_at: new Date().toISOString() })
       .eq('id', otpSession.id);
 
-    // 3. البحث عن مستخدم موجود بنفس الجوال
+    // 3. البحث عن مستخدم موجود بنفس الجوال أولاً
     const { data: existingUsers } = await supabaseClient.auth.admin.listUsers();
     const existingUser = existingUsers?.users.find(u => u.phone === phone);
 
@@ -69,8 +69,8 @@ serve(async (req) => {
       if (sessionError) throw sessionError;
       session = sessionData.session;
     } else {
-      // إنشاء مستخدم جديد فقط إذا لم يكن موجود
-      console.log('Creating new user for phone:', phone);
+      // لا يوجد مستخدم - إنشاء مستخدم جديد
+      console.log('No existing user found, creating new user for phone:', phone);
       
       const { data: newUserData, error: createError } = await supabaseClient.auth.admin.createUser({
         phone,
