@@ -4,6 +4,58 @@ import { useToast } from '@/hooks/use-toast';
 
 const CONFIRMATION_STORAGE_KEY = (storeId: string) => `customer-otp-confirmation:${storeId}`;
 
+const setVerificationSession = (key: string, value: string) => {
+  if (typeof window === 'undefined') return;
+
+  try {
+    sessionStorage.setItem(key, value);
+  } catch (error) {
+    console.warn('Unable to persist verification session in sessionStorage:', error);
+  }
+
+  try {
+    localStorage.setItem(key, value);
+  } catch (error) {
+    console.warn('Unable to persist verification session in localStorage:', error);
+  }
+};
+
+const getVerificationSession = (key: string) => {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const fromSession = sessionStorage.getItem(key);
+    if (fromSession) {
+      return fromSession;
+    }
+  } catch (error) {
+    console.warn('Unable to read verification session from sessionStorage:', error);
+  }
+
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    console.warn('Unable to read verification session from localStorage:', error);
+    return null;
+  }
+};
+
+const clearVerificationSession = (key: string) => {
+  if (typeof window === 'undefined') return;
+
+  try {
+    sessionStorage.removeItem(key);
+  } catch (error) {
+    console.warn('Unable to clear verification session from sessionStorage:', error);
+  }
+
+  try {
+    localStorage.removeItem(key);
+  } catch (error) {
+    console.warn('Unable to clear verification session from localStorage:', error);
+  }
+};
+
 const ensureRecaptchaContainer = (containerId: string) => {
   if (typeof window === 'undefined') return;
 
@@ -150,12 +202,13 @@ export const useCustomerOTP = (storeId: string) => {
         throw new Error(result.error || 'فشل في إرسال كود التحقق');
       }
 
-      sessionStorage.setItem(
+      setVerificationSession(
         CONFIRMATION_STORAGE_KEY(storeId),
         JSON.stringify({
           verificationId: result.confirmationResult.verificationId,
           phone: e164,
           storeId,
+          createdAt: new Date().toISOString(),
         })
       );
 
@@ -197,7 +250,7 @@ export const useCustomerOTP = (storeId: string) => {
           return { success: false, error: 'Invalid code format' };
         }
 
-        const confirmationRaw = sessionStorage.getItem(CONFIRMATION_STORAGE_KEY(storeId));
+        const confirmationRaw = getVerificationSession(CONFIRMATION_STORAGE_KEY(storeId));
         if (!confirmationRaw) {
           throw new Error('لم يتم العثور على جلسة التحقق');
         }
@@ -215,7 +268,7 @@ export const useCustomerOTP = (storeId: string) => {
         const credential = PhoneAuthProvider.credential(verificationId, cleanCode);
         await signInWithCredential(auth, credential);
 
-        sessionStorage.removeItem(CONFIRMATION_STORAGE_KEY(storeId));
+        clearVerificationSession(CONFIRMATION_STORAGE_KEY(storeId));
 
         if (window.recaptchaVerifier) {
           try {
