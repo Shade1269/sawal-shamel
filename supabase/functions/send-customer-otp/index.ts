@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,95 +12,144 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { phone, storeId } = await req.json();
-    
+
     if (!phone) {
-      throw new Error('رقم الهاتف مطلوب');
+      return new Response(
+        JSON.stringify({ success: false, error: 'رقم الجوال مطلوب' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    // توليد كود OTP
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    // حفظ جلسة OTP
-    const { error: otpError } = await supabaseClient
+    if (!storeId) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'معرف المتجر مطلوب' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Sending customer OTP to:', phone, 'for store:', storeId);
+
+    // التحقق من آخر محاولة إرسال (cooldown: 60 ثانية)
+    const { data: recentOtp } = await supabase
+      .from('customer_otp_sessions')
+      .select('created_at')
+      .eq('phone', phone)
+      .eq('store_id', storeId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (recentOtp) {
+      const timeSinceLastOtp = Date.now() - new Date(recentOtp.created_at).getTime();
+      if (timeSinceLastOtp < 60000) { // 60 ثانية
+        const waitTime = Math.ceil((60000 - timeSinceLastOtp) / 1000);
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: `الرجاء الانتظار ${waitTime} ثانية قبل طلب رمز جديد` 
+          }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
+    // إلغاء OTPs القديمة غير المحققة لنفس الرقم والمتجر
+    await supabase
+      .from('customer_otp_sessions')
+      .update({ verified: true })
+      .eq('phone', phone)
+      .eq('store_id', storeId)
+      .eq('verified', false);
+
+    // توليد رمز OTP من 6 أرقام
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log('Generated customer OTP:', otp);
+
+    // حفظ الـ OTP في قاعدة البيانات
+    const { data: otpData, error: otpError } = await supabase
       .from('customer_otp_sessions')
       .insert({
-        phone,
-        otp_code: otpCode,
+        phone: phone,
         store_id: storeId,
-        session_data: { timestamp: new Date().toISOString() }
-      });
+        otp_code: otp,
+        verified: false,
+        expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 دقائق
+        attempts: 0
+      })
+      .select()
+      .single();
 
-    if (otpError) throw otpError;
+    if (otpError) {
+      console.error('Database error:', otpError);
+      return new Response(
+        JSON.stringify({ success: false, error: 'فشل في حفظ رمز التحقق' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
-    // إرسال SMS حقيقي باستخدام Twilio
-    try {
-      // تحقق من وجود أسرار Twilio
-      const twilioAccountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
-      const twilioAuthToken = Deno.env.get('TWILIO_AUTH_TOKEN');
-      const twilioMessagingServiceSid = Deno.env.get('TWILIO_MESSAGING_SERVICE_SID');
+    console.log('Customer OTP saved to database:', otpData.id);
 
-      if (twilioAccountSid && twilioAuthToken && twilioMessagingServiceSid) {
-        // إرسال SMS باستخدام Twilio Messaging Service
+    // إرسال OTP عبر Twilio
+    const twilioAccountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
+    const twilioAuthToken = Deno.env.get('TWILIO_AUTH_TOKEN');
+    const twilioMessagingServiceSid = Deno.env.get('TWILIO_MESSAGING_SERVICE_SID');
+
+    if (twilioAccountSid && twilioAuthToken && twilioMessagingServiceSid) {
+      try {
         const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
-        const credentials = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
+        const message = `رمز التحقق الخاص بك: ${otp}\nصالح لمدة 5 دقائق`;
+
+        // إضافة بادئة whatsapp: للرقم
+        const whatsappPhone = phone.startsWith('whatsapp:') ? phone : `whatsapp:${phone}`;
         
-        const formData = new URLSearchParams();
-        formData.append('MessagingServiceSid', twilioMessagingServiceSid);
-        formData.append('To', phone.startsWith('+') ? phone : `+966${phone.replace(/^0/, '')}`);
-        formData.append('Body', `كود التحقق الخاص بك هو: ${otpCode}`);
+        console.log('Sending customer WhatsApp to:', whatsappPhone);
 
         const twilioResponse = await fetch(twilioUrl, {
           method: 'POST',
           headers: {
-            'Authorization': `Basic ${credentials}`,
+            'Authorization': 'Basic ' + btoa(`${twilioAccountSid}:${twilioAuthToken}`),
             'Content-Type': 'application/x-www-form-urlencoded',
           },
-          body: formData,
+          body: new URLSearchParams({
+            To: whatsappPhone,
+            MessagingServiceSid: twilioMessagingServiceSid,
+            Body: message,
+          }),
         });
 
-        if (!twilioResponse.ok) {
-          const errorText = await twilioResponse.text();
-          console.error('Twilio SMS failed:', errorText);
+        if (twilioResponse.ok) {
+          const twilioData = await twilioResponse.json();
+          console.log('WhatsApp sent successfully via Twilio:', twilioData.sid);
         } else {
-          console.log('SMS sent successfully via Twilio Messaging Service');
+          const errorData = await twilioResponse.text();
+          console.error('Twilio error:', errorData);
         }
-      } else {
-        console.log('Twilio credentials not configured, SMS not sent');
+      } catch (twilioError) {
+        console.error('Error sending WhatsApp via Twilio:', twilioError);
       }
-    } catch (smsError) {
-      console.error('SMS sending error:', smsError);
+    } else {
+      console.log('Twilio not configured - Customer OTP:', otp);
     }
-
-    // Log للتطوير (سيتم إزالته لاحقاً)
-    console.log(`OTP for ${phone}: ${otpCode}`);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'تم إرسال كود التحقق',
-        // في بيئة التطوير فقط
-        ...(Deno.env.get('ENVIRONMENT') === 'development' && { otp: otpCode })
+        message: 'تم إرسال رمز التحقق بنجاح عبر واتساب',
+        // في التطوير فقط - احذف في الإنتاج
+        ...(Deno.env.get('ENVIRONMENT') === 'development' && { otp })
       }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-
-  } catch (error: any) {
-    console.error('Error sending OTP:', error);
+  } catch (error) {
+    console.error('Error in send-customer-otp:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400 
-      }
+      JSON.stringify({ success: false, error: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

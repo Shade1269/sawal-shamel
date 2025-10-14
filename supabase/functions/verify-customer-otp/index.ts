@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,28 +12,27 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { phone, otp, role } = await req.json();
-    
-    if (!phone || !otp) {
-      throw new Error('رقم الهاتف ورمز التحقق مطلوبان');
+    const { phone, otp, storeId } = await req.json();
+
+    if (!phone || !otp || !storeId) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'جميع الحقول مطلوبة' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    // التحقق من صحة الدور (إذا تم توفيره)
-    const validRoles = ['affiliate', 'merchant', 'customer'];
-    const userRole = role && validRoles.includes(role) ? role : 'affiliate';
+    console.log('Verifying customer OTP for:', phone, 'store:', storeId);
 
-    console.log('Verifying OTP for phone:', phone);
-
-    // 1. التحقق من OTP في الجدول
-    const { data: otpSession, error: otpError } = await supabaseClient
+    // البحث عن OTP صالح
+    const { data: otpSession, error: otpError } = await supabase
       .from('customer_otp_sessions')
       .select('*')
       .eq('phone', phone)
+      .eq('store_id', storeId)
       .eq('otp_code', otp)
       .eq('verified', false)
       .gt('expires_at', new Date().toISOString())
@@ -41,202 +40,76 @@ serve(async (req) => {
       .limit(1)
       .maybeSingle();
 
-    if (otpError || !otpSession) {
-      console.error('OTP verification failed:', otpError);
-      throw new Error('رمز التحقق غير صحيح أو منتهي الصلاحية');
+    if (otpError) {
+      console.error('Database error:', otpError);
+      return new Response(
+        JSON.stringify({ success: false, error: 'خطأ في التحقق من الرمز' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    console.log('OTP verified successfully');
-
-    // 3. محاولة إنشاء session للمستخدم
-    let userId: string;
-    let session: any;
-
-    try {
-      // 1. البحث عن المستخدم الموجود أولاً - باستخدام phone مباشرة
-      console.log('Searching for existing user with phone:', phone);
-      const { data: existingUsers, error: listError } = await supabaseClient.auth.admin.listUsers();
-      
-      if (listError) {
-        console.error('Error listing users:', listError);
-        throw new Error('خطأ في البحث عن المستخدمين');
-      }
-
-      console.log('Total users found:', existingUsers?.users?.length || 0);
-      const normalize = (p?: string) => (p || '').replace(/[^0-9]/g, '');
-      const target = normalize(phone);
-      const existingUser = existingUsers?.users.find(u => {
-        console.log('Checking user phone:', u.phone, 'against:', phone);
-        return normalize(u.phone) === target;
-      });
-
-      if (existingUser) {
-        console.log('✓ Existing user found:', existingUser.id);
-        userId = existingUser.id;
-        
-        // إنشاء جلسة للمستخدم الموجود
-        console.log('Skipping admin.createSession (not supported in supabase-js v2)');
-        const sessionData = { session: null } as any;
-        const sessionError = null;
-
-        if (sessionError) {
-          console.error('Session creation error for existing user:', sessionError);
-          throw sessionError;
-        }
-        
-        session = sessionData.session;
-        console.log('✓ Session created for existing user');
-      } else {
-        // 2. إنشاء مستخدم جديد إذا لم يكن موجوداً
-        console.log('No existing user found, creating new user...');
-        
-        const { data: newUserData, error: createError } = await supabaseClient.auth.admin.createUser({
-          phone,
-          phone_confirm: true,
-          user_metadata: {
-            phone,
-            role: userRole,
-          }
-        });
-
-        if (createError) {
-          console.error('User creation error:', createError);
-          
-          // إذا فشل بسبب وجود الرقم، نحاول البحث مرة أخرى
-          if (createError.message?.includes('already registered') || 
-              createError.message?.includes('phone') || 
-              createError.code === 'phone_exists' ||
-              createError.status === 422) {
-            
-            console.log('Phone exists error, retrying search...');
-            
-            // انتظر قليلاً ثم حاول مرة أخرى
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            const { data: retryUsers } = await supabaseClient.auth.admin.listUsers();
-            const foundUser = retryUsers?.users.find(u => normalize(u.phone) === target);
-            
-            if (foundUser) {
-              console.log('✓ User found on retry:', foundUser.id);
-              userId = foundUser.id;
-              
-              console.log('Skipping admin.createSession (not supported in supabase-js v2)');
-              const sessionData = { session: null } as any;
-              const sessionError = null;
-              
-              if (sessionError) {
-                console.error('Session error on retry:', sessionError);
-                throw sessionError;
-              }
-              
-              session = sessionData.session;
-              console.log('✓ Session created on retry');
-            } else {
-              console.error('User still not found after retry');
-              throw new Error('فشل في العثور على المستخدم بعد عدة محاولات');
-            }
-          } else {
-            throw createError;
-          }
-        } else {
-          if (!newUserData?.user) {
-            console.error('No user data returned after creation');
-            throw new Error('فشل إنشاء المستخدم - لا توجد بيانات');
-          }
-
-          userId = newUserData.user.id;
-          console.log('✓ New user created successfully:', userId);
-
-          // إنشاء جلسة للمستخدم الجديد
-          const { data: sessionData, error: sessionError } = await supabaseClient.auth.admin.createSession({
-            user_id: userId,
-          });
-
-          if (sessionError) {
-            console.error('Session creation error for new user:', sessionError);
-            throw sessionError;
-          }
-          
-          session = sessionData.session;
-          console.log('✓ Session created for new user');
-        }
-      }
-    } catch (error: any) {
-      console.error('Critical error in user creation/session flow:', error);
-      throw new Error(error.message || 'لا يمكن العثور على المستخدم أو إنشاؤه');
+    if (!otpSession) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'رمز التحقق غير صحيح أو منتهي الصلاحية' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    // 2. وضع علامة verified فقط بعد نجاح إنشاء الجلسة
-    await supabaseClient
+    // تحديث الجلسة كمحققة وتمديد صلاحيتها
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 أيام
+
+    const { error: updateError } = await supabase
       .from('customer_otp_sessions')
-      .update({ verified: true, verified_at: new Date().toISOString() })
+      .update({
+        verified: true,
+        verified_at: new Date().toISOString(),
+        expires_at: expiresAt.toISOString(),
+        updated_at: new Date().toISOString()
+      })
       .eq('id', otpSession.id);
 
-    // 4. التأكد من وجود profile
-    const { data: existingProfile } = await supabaseClient
+    if (updateError) {
+      console.error('Error updating session:', updateError);
+      return new Response(
+        JSON.stringify({ success: false, error: 'فشل في تحديث الجلسة' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // التأكد من وجود سجل في جدول profiles (للدمج مع النظام الموجود)
+    const { data: existingProfile } = await supabase
       .from('profiles')
       .select('id')
-      .eq('auth_user_id', userId)
+      .eq('phone', phone)
       .maybeSingle();
 
     if (!existingProfile) {
-      console.log('Creating profile for user:', userId);
-      const { error: profileError } = await supabaseClient
+      // إنشاء profile جديد للعميل
+      await supabase
         .from('profiles')
         .insert({
-          auth_user_id: userId,
-          phone,
-          full_name: phone,
-          role: userRole,
+          phone: phone,
+          role: 'customer',
           is_active: true,
-          points: 0,
+          points: 0
         });
-
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-      }
-    } else {
-      // تحديث آخر نشاط
-      await supabaseClient
-        .from('profiles')
-        .update({ 
-          last_activity_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .eq('auth_user_id', userId);
     }
 
-    console.log('Verification complete, returning session');
+    console.log('Customer OTP verified successfully');
 
     return new Response(
       JSON.stringify({ 
         success: true,
         sessionId: otpSession.id,
-        phone,
-        role: userRole,
-        user: userId ? {
-          id: userId,
-          phone,
-          role: userRole
-        } : null
+        message: 'تم التحقق بنجاح'
       }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-
-  } catch (error: any) {
-    console.error('Error verifying OTP:', error);
+  } catch (error) {
+    console.error('Error in verify-customer-otp:', error);
     return new Response(
-      JSON.stringify({ 
-        success: false,
-        error: error.message 
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400 
-      }
+      JSON.stringify({ success: false, error: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

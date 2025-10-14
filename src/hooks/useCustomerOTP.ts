@@ -1,20 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { supabasePublic } from '@/integrations/supabase/publicClient';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-
-const CONFIRMATION_STORAGE_KEY = (storeId: string) => `customer-otp-confirmation:${storeId}`;
-
-const ensureRecaptchaContainer = (containerId: string) => {
-  if (typeof window === 'undefined') return;
-
-  let container = document.getElementById(containerId);
-  if (!container) {
-    container = document.createElement('div');
-    container.id = containerId;
-    container.style.display = 'none';
-    document.body.appendChild(container);
-  }
-};
 
 const normalizePhone = (phone: string) => {
   const digits = phone.replace(/\D/g, '');
@@ -39,69 +25,6 @@ const normalizePhone = (phone: string) => {
 };
 
 const sanitizeForStorage = (phone: string) => phone.replace(/\D/g, '');
-
-const createOrExtendSession = async (
-  storeId: string,
-  phoneFormats: { e164: string; national: string }
-) => {
-  if (!storeId) {
-    throw new Error('معرّف المتجر غير متوفر');
-  }
-
-  const phoneForStorage = phoneFormats.national || phoneFormats.e164;
-  const sanitizedPhone = sanitizeForStorage(phoneForStorage);
-  const now = new Date();
-  const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days
-
-  const { data: existingSession, error: fetchError } = await supabasePublic
-    .from('customer_otp_sessions')
-    .select('id, expires_at')
-    .eq('store_id', storeId)
-    .eq('phone', sanitizedPhone)
-    .eq('verified', true)
-    .order('verified_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (fetchError) {
-    console.warn('Failed to fetch existing customer session:', fetchError);
-  }
-
-  if (existingSession && existingSession.id) {
-    try {
-      await supabasePublic
-        .from('customer_otp_sessions')
-        .update({
-          expires_at: expiresAt.toISOString(),
-          updated_at: now.toISOString(),
-        })
-        .eq('id', existingSession.id);
-    } catch (updateError) {
-      console.warn('Failed to extend existing session:', updateError);
-    }
-
-    return existingSession.id as string;
-  }
-
-  const { data: insertedSession, error: insertError } = await supabasePublic
-    .from('customer_otp_sessions')
-    .insert({
-      store_id: storeId,
-      phone: sanitizedPhone,
-      otp_code: 'firebase',
-      verified: true,
-      verified_at: now.toISOString(),
-      expires_at: expiresAt.toISOString(),
-    })
-    .select('id')
-    .single();
-
-  if (insertError || !insertedSession) {
-    throw insertError || new Error('تعذر إنشاء جلسة العميل');
-  }
-
-  return insertedSession.id as string;
-};
 
 interface OTPResponse {
   success: boolean;
@@ -133,40 +56,33 @@ export const useCustomerOTP = (storeId: string) => {
         throw new Error('لا يمكن إرسال الكود بدون معرف المتجر');
       }
 
-      ensureRecaptchaContainer('storefront-customer-recaptcha');
+      // إرسال OTP عبر Edge Function (Twilio + WhatsApp)
+      const { data, error } = await supabase.functions.invoke('send-customer-otp', {
+        body: { phone: e164, storeId }
+      });
 
-      const { setupRecaptcha, sendSMSOTP } = await import('@/lib/firebase');
-      
-      let verifier;
-      try {
-        verifier = await setupRecaptcha('storefront-customer-recaptcha');
-      } catch (setupError: any) {
-        console.error('Failed to setup reCAPTCHA:', setupError);
-        throw new Error('خدمة التحقق غير متاحة حالياً، يرجى المحاولة لاحقاً');
+      if (error) {
+        throw new Error(error.message || 'فشل في إرسال كود التحقق');
       }
 
-      const result = await sendSMSOTP(e164, verifier);
-      if (!result.success) {
-        throw new Error(result.error || 'فشل في إرسال كود التحقق');
+      if (!data?.success) {
+        throw new Error(data?.error || 'فشل في إرسال كود التحقق');
       }
 
+      // حفظ رقم الهاتف للتحقق لاحقاً
       sessionStorage.setItem(
-        CONFIRMATION_STORAGE_KEY(storeId),
-        JSON.stringify({
-          verificationId: result.confirmationResult.verificationId,
-          phone: e164,
-          storeId,
-        })
+        `customer-otp-phone:${storeId}`,
+        JSON.stringify({ phone: e164, storeId })
       );
 
       toast({
         title: 'تم إرسال الكود',
-        description: `تم إرسال كود التحقق إلى ${e164}`,
+        description: `تم إرسال كود التحقق عبر واتساب إلى ${e164}`,
       });
 
       return { success: true };
     } catch (error: any) {
-      console.error('Error sending OTP via Firebase:', error);
+      console.error('Error sending customer OTP:', error);
       toast({
         title: 'خطأ في الإرسال',
         description: error.message || 'فشل في إرسال كود التحقق',
@@ -197,38 +113,31 @@ export const useCustomerOTP = (storeId: string) => {
           return { success: false, error: 'Invalid code format' };
         }
 
-        const confirmationRaw = sessionStorage.getItem(CONFIRMATION_STORAGE_KEY(storeId));
-        if (!confirmationRaw) {
+        const phoneDataRaw = sessionStorage.getItem(`customer-otp-phone:${storeId}`);
+        if (!phoneDataRaw) {
           throw new Error('لم يتم العثور على جلسة التحقق');
         }
 
-        const { verificationId, phone: storedPhone } = JSON.parse(confirmationRaw);
+        const { phone: storedPhone } = JSON.parse(phoneDataRaw);
+        const { e164 } = normalizePhone(storedPhone || phone);
 
-        const { PhoneAuthProvider, signInWithCredential } = await import('firebase/auth');
-        const { getFirebaseAuth } = await import('@/lib/firebase');
+        // التحقق من OTP عبر Edge Function
+        const { data, error } = await supabase.functions.invoke('verify-customer-otp', {
+          body: { phone: e164, otp: cleanCode, storeId }
+        });
 
-        const auth = await getFirebaseAuth();
-        if (!auth) {
-          throw new Error('خدمة Firebase غير متوفرة حالياً');
+        if (error) {
+          throw new Error(error.message || 'فشل في التحقق من الرمز');
         }
 
-        const credential = PhoneAuthProvider.credential(verificationId, cleanCode);
-        await signInWithCredential(auth, credential);
-
-        sessionStorage.removeItem(CONFIRMATION_STORAGE_KEY(storeId));
-
-        if (window.recaptchaVerifier) {
-          try {
-            await window.recaptchaVerifier.clear();
-            delete window.recaptchaVerifier;
-          } catch (recaptchaError) {
-            console.log('Error clearing reCAPTCHA:', recaptchaError);
-          }
+        if (!data?.success) {
+          throw new Error(data?.error || 'رمز التحقق غير صحيح');
         }
 
-        const phoneFormats = normalizePhone(storedPhone || phone);
-        const sessionId = await createOrExtendSession(storeId, phoneFormats);
+        const sessionId = data.sessionId;
 
+        // حفظ الجلسة محلياً
+        const phoneFormats = normalizePhone(e164);
         const customerSession = {
           sessionId,
           phone: phoneFormats.national || sanitizeForStorage(phoneFormats.e164),
@@ -238,6 +147,7 @@ export const useCustomerOTP = (storeId: string) => {
         };
 
         localStorage.setItem(`customer_session_${storeId}`, JSON.stringify(customerSession));
+        sessionStorage.removeItem(`customer-otp-phone:${storeId}`);
 
         toast({
           title: 'تم التحقق بنجاح',
@@ -246,7 +156,7 @@ export const useCustomerOTP = (storeId: string) => {
 
         return { success: true, sessionId };
       } catch (error: any) {
-        console.error('Error verifying OTP via Firebase:', error);
+        console.error('Error verifying customer OTP:', error);
         toast({
           title: 'خطأ في التحقق',
           description: error.message || 'كود التحقق غير صحيح أو منتهي الصلاحية',
