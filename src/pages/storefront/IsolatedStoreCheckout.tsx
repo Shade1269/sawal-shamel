@@ -37,22 +37,10 @@ interface OrderFormData {
 export const IsolatedStoreCheckout: React.FC = () => {
   const { storeSlug } = useParams<{ storeSlug: string }>();
   const navigate = useNavigate();
-  const context = useOutletContext<StoreContextType>();
-  const store = context?.store;
-  const { cart, loading: cartLoading, clearCart } = useIsolatedStoreCart(store?.id || '', storeSlug);
+  const { store } = useOutletContext<StoreContextType>();
+  const { cart, loading: cartLoading, clearCart } = useIsolatedStoreCart(store?.id || '');
   const { sessionId } = useStorefrontOtp({ storeSlug: storeSlug || '', storeId: store?.id });
   const { calculateShippingCost, loading: shippingLoading } = useShippingManagement();
-
-  // التحقق من وجود المتجر
-  if (!store && !cartLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-muted-foreground">جاري تحميل بيانات المتجر...</p>
-        </div>
-      </div>
-    );
-  }
 
   // التحقق من تسجيل دخول العميل
   useEffect(() => {
@@ -175,7 +163,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
       if (result.success) {
         toast.success('تم إنشاء الطلب بنجاح!');
         await clearCart();
-        navigate(`/store/${storeSlug}/order/${result.orderId}/confirmation`);
+        navigate(`/${storeSlug}/order/${result.orderId}/confirmation`);
       } else {
         toast.error(result.error || 'خطأ في إنشاء الطلب');
       }
