@@ -163,7 +163,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
       if (result.success) {
         toast.success('تم إنشاء الطلب بنجاح!');
         await clearCart();
-        navigate(`/${storeSlug}/order/${result.orderId}/confirmation`);
+        navigate(`/store/${storeSlug}/order/${result.orderId}/confirmation`);
       } else {
         toast.error(result.error || 'خطأ في إنشاء الطلب');
       }
