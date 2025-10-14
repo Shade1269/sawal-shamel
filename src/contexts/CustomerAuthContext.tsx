@@ -248,7 +248,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
 
       // التحقق من OTP عبر Supabase Edge Function
       const { data, error } = await supabase.functions.invoke('verify-customer-otp', {
-        body: { phone: savedPhone, otp: otpCode, role: role || 'affiliate' }
+        body: { phone: savedPhone, otp: otpCode, storeId: savedStoreId || storeId }
       });
 
       if (error) throw error;
