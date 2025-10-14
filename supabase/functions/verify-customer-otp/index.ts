@@ -76,23 +76,97 @@ serve(async (req) => {
       );
     }
 
-    // التأكد من وجود سجل في جدول profiles (للدمج مع النظام الموجود)
+    // إنشاء أو الحصول على profile للعميل (منفصل لكل متجر)
+    let profileId: string;
+    
     const { data: existingProfile } = await supabase
       .from('profiles')
       .select('id')
       .eq('phone', phone)
       .maybeSingle();
 
-    if (!existingProfile) {
+    if (existingProfile) {
+      profileId = existingProfile.id;
+    } else {
       // إنشاء profile جديد للعميل
-      await supabase
+      const { data: newProfile, error: profileError } = await supabase
         .from('profiles')
         .insert({
           phone: phone,
           role: 'customer',
           is_active: true,
           points: 0
+        })
+        .select('id')
+        .single();
+
+      if (profileError || !newProfile) {
+        console.error('Error creating profile:', profileError);
+        return new Response(
+          JSON.stringify({ success: false, error: 'فشل في إنشاء الحساب' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      profileId = newProfile.id;
+    }
+
+    // إنشاء أو الحصول على customer record
+    let customerId: string;
+    
+    const { data: existingCustomer } = await supabase
+      .from('customers')
+      .select('id')
+      .eq('profile_id', profileId)
+      .maybeSingle();
+
+    if (existingCustomer) {
+      customerId = existingCustomer.id;
+    } else {
+      const { data: newCustomer, error: customerError } = await supabase
+        .from('customers')
+        .insert({
+          profile_id: profileId
+        })
+        .select('id')
+        .single();
+
+      if (customerError || !newCustomer) {
+        console.error('Error creating customer:', customerError);
+        return new Response(
+          JSON.stringify({ success: false, error: 'فشل في إنشاء حساب العميل' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      customerId = newCustomer.id;
+    }
+
+    // ربط العميل بالمتجر المحدد (فصل البيانات)
+    const { data: existingStoreCustomer } = await supabase
+      .from('store_customers')
+      .select('id')
+      .eq('customer_id', customerId)
+      .eq('store_id', storeId)
+      .maybeSingle();
+
+    if (!existingStoreCustomer) {
+      const { error: storeCustomerError } = await supabase
+        .from('store_customers')
+        .insert({
+          store_id: storeId,
+          customer_id: customerId
         });
+
+      if (storeCustomerError) {
+        console.error('Error linking customer to store:', storeCustomerError);
+        return new Response(
+          JSON.stringify({ success: false, error: 'فشل في ربط العميل بالمتجر' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      console.log('Customer linked to store successfully');
     }
 
     console.log('Customer OTP verified successfully');
