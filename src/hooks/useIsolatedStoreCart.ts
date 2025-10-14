@@ -19,16 +19,18 @@ interface StoreCart {
   total: number;
 }
 
-export const useIsolatedStoreCart = (storeId: string) => {
+export const useIsolatedStoreCart = (storeId: string, storeSlug?: string) => {
   const [cart, setCart] = useState<StoreCart | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Get or create session-based cart
+  // Get or create session-based cart using unified key format
   const getSessionId = () => {
-    let sessionId = localStorage.getItem(`store_session_${storeId}`);
+    // Use storeSlug if available, otherwise fallback to storeId
+    const key = storeSlug ? `ea_session_${storeSlug}` : `store_session_${storeId}`;
+    let sessionId = localStorage.getItem(key);
     if (!sessionId) {
       sessionId = crypto.randomUUID();
-      localStorage.setItem(`store_session_${storeId}`, sessionId);
+      localStorage.setItem(key, sessionId);
     }
     return sessionId;
   };

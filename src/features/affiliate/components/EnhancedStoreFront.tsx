@@ -178,7 +178,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     refetchOnWindowFocus: false,
   });
 
-  // استخدام نظام السلة المحسّن
+  // استخدام نظام السلة المحسّن مع تمرير storeSlug
   const { 
     cart: isolatedCart, 
     loading: cartLoading, 
@@ -186,7 +186,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     updateQuantity: updateIsolatedQuantity,
     removeFromCart: removeFromIsolatedCart,
     clearCart
-  } = useIsolatedStoreCart(affiliateStore?.id || '');
+  } = useIsolatedStoreCart(affiliateStore?.id || '', storeSlug);
 
   // جلب المنتجات
   const { data: products, isLoading: productsLoading } = useQuery({
