@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Loader2, Phone, Lock, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
-import { RoleSelectionStep } from './RoleSelectionStep';
+
 
 interface CustomerAuthProps {
   storeId?: string;
@@ -15,7 +15,7 @@ interface CustomerAuthProps {
   onCancel?: () => void;
 }
 
-type AuthStep = 'phone' | 'role' | 'otp' | 'details';
+type AuthStep = 'phone' | 'otp';
 
 export const CustomerAuth: React.FC<CustomerAuthProps> = ({
   storeId,
@@ -27,12 +27,7 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
   
   const [step, setStep] = useState<AuthStep>('phone');
   const [phone, setPhone] = useState('');
-  const [role, setRole] = useState<'merchant' | 'affiliate'>('affiliate');
   const [otpCode, setOtpCode] = useState('');
-  const [customerDetails, setCustomerDetails] = useState({
-    fullName: '',
-    email: ''
-  });
   const [generatedOTP, setGeneratedOTP] = useState(''); // للاختبار فقط
 
   // إرسال كود التحقق
@@ -44,14 +39,8 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
     const result = await sendOTP(phone, storeId);
     if (result.success) {
       setGeneratedOTP(result.otpCode || ''); // للاختبار فقط
-      setStep('role'); // الانتقال لاختيار الدور
+      setStep('otp'); // الانتقال مباشرة لإدخال OTP
     }
-  };
-
-  // اختيار الدور والانتقال لإدخال OTP
-  const handleRoleSelect = (selectedRole: 'merchant' | 'affiliate') => {
-    setRole(selectedRole);
-    setStep('otp');
   };
 
   // التحقق من كود OTP
@@ -60,7 +49,8 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
     
     if (!otpCode.trim()) return;
 
-    const result = await verifyOTP(phone, otpCode, storeId, role);
+    // العملاء في متاجر المسوقين هم دائماً 'customer'
+    const result = await verifyOTP(phone, otpCode, storeId, 'customer');
     if (result.success && result.customer) {
       onSuccess?.(result.customer);
     }
@@ -68,50 +58,37 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
 
   // العودة للخطوة السابقة
   const handleBack = () => {
-    if (step === 'role') {
+    if (step === 'otp') {
       setStep('phone');
-    } else if (step === 'otp') {
-      setStep('role');
       setOtpCode('');
-    } else if (step === 'details') {
-      setStep('otp');
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
-      {step === 'role' ? (
-        <RoleSelectionStep
-          onRoleSelect={handleRoleSelect}
-          onBack={handleBack}
-        />
-      ) : (
-        <Card className="w-full max-w-md shadow-xl border-0 bg-card/80 backdrop-blur-sm">
-          <CardHeader className="text-center space-y-4">
-            <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-              <Phone className="w-8 h-8 text-primary" />
-            </div>
-            
-            <div>
-              <CardTitle className="text-2xl font-bold">
-                {step === 'phone' ? 'تسجيل الدخول' : 
-                 step === 'otp' ? 'التحقق من الهاتف' : 'إكمال البيانات'}
-              </CardTitle>
-              <CardDescription className="mt-2">
-                {storeName && (
-                  <div className="mb-2 text-primary font-medium">
-                    متجر {storeName}
-                  </div>
-                )}
-                {step === 'phone' ? 'أدخل رقم هاتفك للمتابعة' :
-                 step === 'otp' ? 'أدخل كود التحقق المرسل إليك' :
-                 'أكمل بياناتك الشخصية'}
-              </CardDescription>
-            </div>
-          </CardHeader>
+      <Card className="w-full max-w-md shadow-xl border-0 bg-card/80 backdrop-blur-sm">
+        <CardHeader className="text-center space-y-4">
+          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+            <Phone className="w-8 h-8 text-primary" />
+          </div>
+          
+          <div>
+            <CardTitle className="text-2xl font-bold">
+              {step === 'phone' ? 'تسجيل الدخول' : 'التحقق من الهاتف'}
+            </CardTitle>
+            <CardDescription className="mt-2">
+              {storeName && (
+                <div className="mb-2 text-primary font-medium">
+                  متجر {storeName}
+                </div>
+              )}
+              {step === 'phone' ? 'أدخل رقم هاتفك للمتابعة' : 'أدخل كود التحقق المرسل إليك'}
+            </CardDescription>
+          </div>
+        </CardHeader>
 
-          <CardContent className="space-y-6">
-            {step === 'phone' && (
+        <CardContent className="space-y-6">
+          {step === 'phone' && (
               <form onSubmit={handleSendOTP} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="text-right">رقم الجوال</Label>
@@ -142,10 +119,10 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
                   )}
                   إرسال كود التحقق
                 </Button>
-              </form>
-            )}
+            </form>
+          )}
 
-            {step === 'otp' && (
+          {step === 'otp' && (
               <form onSubmit={handleVerifyOTP} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="otp" className="text-right">كود التحقق</Label>
@@ -205,26 +182,25 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
                     إعادة إرسال الكود
                   </Button>
                 </div>
-              </form>
-            )}
+            </form>
+          )}
 
-            {onCancel && (
-              <>
-                <Separator />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={onCancel}
-                  className="w-full"
-                  disabled={isLoading}
-                >
-                  إلغاء
-                </Button>
-              </>
-            )}
-          </CardContent>
-        </Card>
-      )}
+          {onCancel && (
+            <>
+              <Separator />
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={onCancel}
+                className="w-full"
+                disabled={isLoading}
+              >
+                إلغاء
+              </Button>
+            </>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
