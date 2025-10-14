@@ -100,7 +100,8 @@ const App = () => {
           <Sonner />
           <SupabaseAuthProvider>
             <FirebaseAuthProvider>
-              <LanguageProvider>
+              <CustomerAuthProvider>
+                <LanguageProvider>
                 <DarkModeProvider>
                 <UserDataProvider>
                   <AdaptiveLayoutProvider>
@@ -226,7 +227,8 @@ const App = () => {
                   </AdaptiveLayoutProvider>
                 </UserDataProvider>
               </DarkModeProvider>
-            </LanguageProvider>
+              </LanguageProvider>
+              </CustomerAuthProvider>
             </FirebaseAuthProvider>
           </SupabaseAuthProvider>
         </TooltipProvider>
