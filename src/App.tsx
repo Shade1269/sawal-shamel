@@ -8,8 +8,6 @@ import { AdaptiveLayoutProvider, SmartNavigationProvider } from "@/components/la
 import { DarkModeProvider } from "@/shared/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
-import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
-import { UserDataProvider } from "@/contexts/UserDataContext";
 import { navigationItems } from "@/data/navigationItems";
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import { ProtectedRoute } from "@/shared/components/ProtectedRoute";
@@ -55,7 +53,6 @@ const OrdersRouter = lazy(() => import("./pages/admin/OrdersRouter"));
 const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminCustomersPage = lazy(() => import("./pages/admin/AdminCustomers"));
 const AdminLeaderboardPage = lazy(() => import("./pages/admin/AdminLeaderboard"));
-const AdminPage = lazy(() => import("./pages/Admin"));
 const InventoryPage = lazy(() => import("./pages/inventory/index"));
 const ShippingManagementPage = lazy(() => import("./pages/ShippingManagement"));
 const MerchantDashboard = lazy(() => import("./pages/merchant/MerchantDashboard"));
@@ -99,11 +96,9 @@ const App = () => {
           <Toaster />
           <Sonner />
           <SupabaseAuthProvider>
-            <FirebaseAuthProvider>
-              <CustomerAuthProvider>
-                <LanguageProvider>
+            <CustomerAuthProvider>
+              <LanguageProvider>
                 <DarkModeProvider>
-                <UserDataProvider>
                   <AdaptiveLayoutProvider>
                     <BrowserRouter>
                       <SmartNavigationProvider navigationItems={navigationItems}>
@@ -195,7 +190,6 @@ const App = () => {
                                 <Route path="analytics" element={<AdminAnalyticsPage />} />
                                 <Route path="leaderboard" element={<AdminLeaderboardPage />} />
                                 <Route path="customers" element={<AdminCustomersPage />} />
-                                <Route path="management" element={<AdminPage />} />
                                 <Route path="inventory" element={<InventoryPage />} />
                                 <Route path="shipping" element={<ShippingManagementPage />} />
                                 <Route path="withdrawals" element={<AdminWithdrawalsPage />} />
@@ -225,11 +219,9 @@ const App = () => {
                       </SmartNavigationProvider>
                     </BrowserRouter>
                   </AdaptiveLayoutProvider>
-                </UserDataProvider>
-              </DarkModeProvider>
+                </DarkModeProvider>
               </LanguageProvider>
-              </CustomerAuthProvider>
-            </FirebaseAuthProvider>
+            </CustomerAuthProvider>
           </SupabaseAuthProvider>
         </TooltipProvider>
       </QueryClientProvider>
