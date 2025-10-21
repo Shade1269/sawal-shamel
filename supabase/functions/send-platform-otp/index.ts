@@ -96,18 +96,18 @@ serve(async (req) => {
 
         console.log('Sending SMS to:', phone);
 
-        // تنسيق الرقم السعودي لـ Twilio (إزالة + وإضافة 966)
+        // تنسيق الرقم السعودي لـ Twilio (يحتاج + للصيغة E.164)
         let twilioPhone = phone;
         if (phone.startsWith('+966')) {
-          twilioPhone = phone.slice(1); // إزالة + من +966507988487
+          twilioPhone = phone; // +966507988487 - صحيح
         } else if (phone.startsWith('966')) {
-          twilioPhone = phone; // 966507988487
+          twilioPhone = `+${phone}`; // إضافة + لـ 966507988487
         } else {
-          twilioPhone = `966${phone}`; // إضافة 966 للرقم المحلي
+          twilioPhone = `+966${phone}`; // إضافة +966 للرقم المحلي
         }
 
         const requestBody = new URLSearchParams({
-          To: twilioPhone, // رقم سعودي بدون + لـ Twilio
+          To: twilioPhone, // رقم سعودي بصيغة E.164 مع + لـ Twilio
           From: twilioPhoneNumber, // رقم Twilio الأمريكي
           Body: message,
         });
@@ -119,7 +119,7 @@ serve(async (req) => {
           from: twilioPhoneNumber,
           message: message,
           body: requestBody.toString(),
-          note: 'Sending as SMS (not WhatsApp) - Saudi number formatted for Twilio'
+          note: 'Sending as SMS (not WhatsApp) - Saudi number in E.164 format for Twilio'
         });
 
         const twilioResponse = await fetch(twilioUrl, {
