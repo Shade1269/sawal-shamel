@@ -27,7 +27,7 @@ serve(async (req) => {
 
     console.log('Sending platform OTP to:', phone);
 
-    // التحقق من آخر محاولة إرسال (cooldown: 60 ثانية)
+    // التحقق من آخر محاولة إرسال (cooldown: 30 ثانية)
     const { data: recentOtp } = await supabase
       .from('whatsapp_otp')
       .select('created_at')
@@ -38,8 +38,8 @@ serve(async (req) => {
 
     if (recentOtp) {
       const timeSinceLastOtp = Date.now() - new Date(recentOtp.created_at).getTime();
-      if (timeSinceLastOtp < 60000) { // 60 ثانية
-        const waitTime = Math.ceil((60000 - timeSinceLastOtp) / 1000);
+      if (timeSinceLastOtp < 30000) { // 30 ثانية بدلاً من 60
+        const waitTime = Math.ceil((30000 - timeSinceLastOtp) / 1000);
         return new Response(
           JSON.stringify({ 
             success: false, 
@@ -96,19 +96,30 @@ serve(async (req) => {
 
         console.log('Sending SMS to:', phone);
 
+        // تنسيق الرقم السعودي لـ Twilio (إزالة + وإضافة 966)
+        let twilioPhone = phone;
+        if (phone.startsWith('+966')) {
+          twilioPhone = phone.slice(1); // إزالة + من +966507988487
+        } else if (phone.startsWith('966')) {
+          twilioPhone = phone; // 966507988487
+        } else {
+          twilioPhone = `966${phone}`; // إضافة 966 للرقم المحلي
+        }
+
         const requestBody = new URLSearchParams({
-          To: phone, // رقم عادي بدون whatsapp:
+          To: twilioPhone, // رقم سعودي بدون + لـ Twilio
           From: twilioPhoneNumber, // رقم Twilio الأمريكي
           Body: message,
         });
 
         console.log('Twilio request details:', {
           url: twilioUrl,
-          to: phone,
+          originalPhone: phone,
+          twilioPhone: twilioPhone,
           from: twilioPhoneNumber,
           message: message,
           body: requestBody.toString(),
-          note: 'Sending as SMS (not WhatsApp)'
+          note: 'Sending as SMS (not WhatsApp) - Saudi number formatted for Twilio'
         });
 
         const twilioResponse = await fetch(twilioUrl, {

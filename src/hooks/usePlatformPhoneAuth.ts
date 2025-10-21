@@ -106,9 +106,17 @@ export const usePlatformPhoneAuth = () => {
 
       if (error) {
         console.error('Edge Function error:', error);
-        toast.error('خطأ في الإرسال', {
-          description: 'فشل في إرسال رمز التحقق',
-        });
+        
+        // معالجة خطأ 429 (Too Many Requests)
+        if (error.message?.includes('429') || error.message?.includes('non-2xx')) {
+          toast.error('تم الطلب كثيراً', {
+            description: 'الرجاء الانتظار 30 ثانية قبل طلب رمز جديد',
+          });
+        } else {
+          toast.error('خطأ في الإرسال', {
+            description: 'فشل في إرسال رمز التحقق',
+          });
+        }
         return { success: false, error: error.message };
       }
 
