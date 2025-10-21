@@ -100,14 +100,15 @@ serve(async (req) => {
         let twilioPhone = phone;
         console.log('Phone formatting - Original:', phone);
         
-        if (phone.startsWith('+966')) {
-          twilioPhone = phone; // +966507988487 - صحيح
-          console.log('Phone formatting - Already has +966:', twilioPhone);
-        } else if (phone.startsWith('966')) {
-          twilioPhone = `+${phone}`; // إضافة + لـ 966507988487
+        // تنظيف الرقم من أي + مكرر
+        const cleanPhone = phone.replace(/^\+*/, ''); // إزالة جميع + من البداية
+        console.log('Phone formatting - Cleaned phone:', cleanPhone);
+        
+        if (cleanPhone.startsWith('966')) {
+          twilioPhone = `+${cleanPhone}`; // إضافة + لـ 966507988487
           console.log('Phone formatting - Added + to 966:', twilioPhone);
         } else {
-          twilioPhone = `+966${phone}`; // إضافة +966 للرقم المحلي
+          twilioPhone = `+966${cleanPhone}`; // إضافة +966 للرقم المحلي
           console.log('Phone formatting - Added +966 to local:', twilioPhone);
         }
         
