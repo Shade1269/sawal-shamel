@@ -27,7 +27,7 @@ serve(async (req) => {
 
     console.log('Sending platform OTP to:', phone);
 
-    // التحقق من آخر محاولة إرسال (cooldown: 30 ثانية)
+    // التحقق من آخر محاولة إرسال (cooldown: 10 ثواني للاختبار)
     const { data: recentOtp } = await supabase
       .from('whatsapp_otp')
       .select('created_at')
@@ -38,15 +38,21 @@ serve(async (req) => {
 
     if (recentOtp) {
       const timeSinceLastOtp = Date.now() - new Date(recentOtp.created_at).getTime();
-      if (timeSinceLastOtp < 30000) { // 30 ثانية بدلاً من 60
-        const waitTime = Math.ceil((30000 - timeSinceLastOtp) / 1000);
-        return new Response(
-          JSON.stringify({ 
-            success: false, 
-            error: `الرجاء الانتظار ${waitTime} ثانية قبل طلب رمز جديد` 
-          }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+      if (timeSinceLastOtp < 10000) { // 10 ثواني للاختبار
+        const waitTime = Math.ceil((10000 - timeSinceLastOtp) / 1000);
+        
+        // في وضع التطوير، نسمح بتجاوز الـ cooldown إذا لم يكن Twilio مُعد
+        if (!twilioAccountSid || !twilioAuthToken || !twilioPhoneNumber) {
+          console.log('Development mode: Skipping cooldown check');
+        } else {
+          return new Response(
+            JSON.stringify({ 
+              success: false, 
+              error: `الرجاء الانتظار ${waitTime} ثانية قبل طلب رمز جديد` 
+            }),
+            { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
       }
     }
 
