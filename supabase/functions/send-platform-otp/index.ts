@@ -117,7 +117,7 @@ serve(async (req) => {
         const cleanPhone = phone.replace(/^\+*/, ''); // إزالة جميع + من البداية
         console.log('Phone formatting - Cleaned phone:', cleanPhone);
         
-        // التحقق من أن الرقم سعودي فقط
+        // التحقق من نوع الرقم
         if (cleanPhone.startsWith('966')) {
           twilioPhone = `+${cleanPhone}`; // إضافة + لـ 966507988487
           console.log('Phone formatting - Added + to 966:', twilioPhone);
@@ -125,13 +125,17 @@ serve(async (req) => {
           // رقم سعودي محلي يبدأ بـ 0
           twilioPhone = `+966${cleanPhone.slice(1)}`; // إزالة 0 وإضافة +966
           console.log('Phone formatting - Added +966 to local Saudi:', twilioPhone);
+        } else if (cleanPhone.startsWith('1') && cleanPhone.length === 10) {
+          // رقم أمريكي للاختبار في وضع التطوير
+          twilioPhone = `+${cleanPhone}`; // إضافة + للرقم الأمريكي
+          console.log('Phone formatting - Added + to US number for testing:', twilioPhone);
         } else {
-          // رقم غير سعودي - لا يمكن إرساله عبر Twilio
-          console.log('Phone formatting - Non-Saudi number detected:', cleanPhone);
+          // رقم غير مدعوم
+          console.log('Phone formatting - Unsupported number detected:', cleanPhone);
           return new Response(
             JSON.stringify({ 
               success: false, 
-              error: 'نحن ندعم الأرقام السعودية فقط حالياً. الرجاء استخدام رقم سعودي يبدأ بـ 966 أو 05' 
+              error: 'نحن ندعم الأرقام السعودية فقط حالياً. للاختبار، يمكن استخدام رقم أمريكي يبدأ بـ 1' 
             }),
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
@@ -176,18 +180,40 @@ serve(async (req) => {
           console.error('Twilio status:', twilioResponse.status);
           
           // محاولة تحليل خطأ Twilio
+          let errorJson = null;
           try {
-            const errorJson = JSON.parse(errorData);
+            errorJson = JSON.parse(errorData);
             console.error('Twilio error details:', errorJson);
           } catch (e) {
             console.error('Could not parse Twilio error as JSON');
           }
           
+          // معالجة أخطاء Twilio المختلفة
+          let errorMessage = 'فشل في إرسال رمز التحقق';
+          let userMessage = 'فشل في إرسال رمز التحقق';
+          
+          if (errorJson) {
+            if (errorJson.code === 21612) {
+              errorMessage = 'Twilio account does not support international messaging to Saudi Arabia';
+              userMessage = 'حساب Twilio لا يدعم الإرسال الدولي للسعودية. يرجى التحقق من إعدادات الحساب أو استخدام رقم أمريكي للاختبار.';
+            } else if (errorJson.code === 21211) {
+              errorMessage = 'Invalid phone number format';
+              userMessage = 'تنسيق رقم الجوال غير صحيح';
+            } else if (errorJson.code === 21408) {
+              errorMessage = 'Permission to send SMS has not been enabled for the region';
+              userMessage = 'لا توجد صلاحية لإرسال رسائل SMS لهذه المنطقة';
+            } else {
+              errorMessage = errorJson.message || 'خطأ غير معروف من Twilio';
+              userMessage = 'فشل في إرسال رمز التحقق عبر Twilio';
+            }
+          }
+          
           return new Response(
             JSON.stringify({ 
               success: false, 
-              error: 'فشل في إرسال الرسالة',
-              details: errorData,
+              error: userMessage,
+              details: errorMessage,
+              twilioCode: errorJson?.code,
               status: twilioResponse.status
             }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
