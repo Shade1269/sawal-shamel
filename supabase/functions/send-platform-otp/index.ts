@@ -117,12 +117,24 @@ serve(async (req) => {
         const cleanPhone = phone.replace(/^\+*/, ''); // إزالة جميع + من البداية
         console.log('Phone formatting - Cleaned phone:', cleanPhone);
         
+        // التحقق من أن الرقم سعودي فقط
         if (cleanPhone.startsWith('966')) {
           twilioPhone = `+${cleanPhone}`; // إضافة + لـ 966507988487
           console.log('Phone formatting - Added + to 966:', twilioPhone);
+        } else if (cleanPhone.startsWith('0') && cleanPhone.length === 10) {
+          // رقم سعودي محلي يبدأ بـ 0
+          twilioPhone = `+966${cleanPhone.slice(1)}`; // إزالة 0 وإضافة +966
+          console.log('Phone formatting - Added +966 to local Saudi:', twilioPhone);
         } else {
-          twilioPhone = `+966${cleanPhone}`; // إضافة +966 للرقم المحلي
-          console.log('Phone formatting - Added +966 to local:', twilioPhone);
+          // رقم غير سعودي - لا يمكن إرساله عبر Twilio
+          console.log('Phone formatting - Non-Saudi number detected:', cleanPhone);
+          return new Response(
+            JSON.stringify({ 
+              success: false, 
+              error: 'نحن ندعم الأرقام السعودية فقط حالياً. الرجاء استخدام رقم سعودي يبدأ بـ 966 أو 05' 
+            }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
         }
         
         console.log('Phone formatting - Final twilioPhone:', twilioPhone);

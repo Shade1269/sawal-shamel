@@ -59,16 +59,18 @@ export const usePlatformPhoneAuth = () => {
     }
   };
 
-  // Validate phone number in E.164 format (accepts international +country numbers)
+  // Validate Saudi phone number in E.164 format
   const isValidSaudiPhone = (formatted: string): boolean => {
-    const e164Pattern = /^\+\d{8,15}$/; // + and 8-15 digits
-    const isValid = e164Pattern.test(formatted);
+    // Saudi numbers: +966 followed by 9 digits (total 13 characters)
+    const saudiPattern = /^\+966[5-9]\d{8}$/; // +966 + 5-9 + 8 digits
+    const isValid = saudiPattern.test(formatted);
 
     if (!isValid) {
-      console.log('Phone validation failed:', {
+      console.log('Saudi phone validation failed:', {
         input: formatted,
-        pattern: 'Expected E.164 like +9665XXXXXXXX',
+        pattern: 'Expected Saudi E.164 like +9665XXXXXXXX',
         length: formatted.length,
+        note: 'Saudi numbers must start with +966 followed by 5-9 and 8 more digits'
       });
     }
 
