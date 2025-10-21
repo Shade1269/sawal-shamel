@@ -12,11 +12,18 @@ serve(async (req) => {
   }
 
   try {
+    console.log('=== Edge Function Started ===');
+    console.log('Request method:', req.method);
+    console.log('Request headers:', Object.fromEntries(req.headers.entries()));
+    
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { phone } = await req.json();
+    const body = await req.json();
+    console.log('Request body:', body);
+    
+    const { phone } = body;
 
     if (!phone) {
       return new Response(
@@ -205,8 +212,17 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error('Error in send-platform-otp:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ 
+        success: false, 
+        error: 'خطأ في الخادم',
+        details: error.message 
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
