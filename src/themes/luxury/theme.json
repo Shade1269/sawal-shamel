@@ -1,0 +1,71 @@
+{
+  "colors": {
+    "background": "#0a0a0a",
+    "foreground": "#fafafa",
+    "card": "#111111",
+    "cardForeground": "#fafafa",
+    "popover": "#111111",
+    "popoverForeground": "#fafafa",
+    "primary": "#d4af37",
+    "primaryForeground": "#0a0a0a",
+    "secondary": "#1a1a1a",
+    "secondaryForeground": "#fafafa",
+    "muted": "#1a1a1a",
+    "mutedForeground": "#a1a1aa",
+    "accent": "#2a2a2a",
+    "accentForeground": "#d4af37",
+    "destructive": "#dc2626",
+    "destructiveForeground": "#fafafa",
+    "border": "#333333",
+    "input": "#1a1a1a",
+    "ring": "#d4af37",
+    "success": "#10b981",
+    "warning": "#f59e0b",
+    "info": "#06b6d4",
+    "luxury": "#d4af37",
+    "premium": "#8b5cf6",
+    "persian": "#059669",
+    "turquoise": "#06b6d4",
+    "bronze": "#cd7f32",
+    "olive": "#808000",
+    "coral": "#ff7f50",
+    "pearl": "#f8f8ff",
+    "jasmine": "#f4d03f"
+  },
+  "radii": {
+    "default": "0.75rem",
+    "sm": "0.5rem",
+    "md": "0.75rem",
+    "lg": "1rem",
+    "xl": "1.5rem"
+  },
+  "spacing": {
+    "xs": "0.5rem",
+    "sm": "1rem",
+    "md": "1.5rem",
+    "lg": "2rem",
+    "xl": "3rem"
+  },
+  "typography": {
+    "fontFamily": "Playfair Display, serif",
+    "fontSize": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
+      "4xl": "2.25rem"
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 600,
+      "bold": 700
+    }
+  },
+  "marketing": {
+    "ctaVariant": "cta-luxury",
+    "badgeVariant": "badge-luxury"
+  }
+}

@@ -1,0 +1,196 @@
+html[data-theme="damascus"],
+html[data-theme="damascene"] {
+  color-scheme: dark;
+
+  /* Damascus Heritage - Rich Dark Theme with Gold Accents */
+  /* Base HSL definitions */
+  --background-hsl: 0 0% 5%;
+  --foreground-hsl: 40 20% 98%;
+  --primary-hsl: 43 45% 48%;
+  --primary-foreground-hsl: 0 0% 5%;
+  --secondary-hsl: 0 0% 7%;
+  --secondary-foreground-hsl: 40 20% 98%;
+  --accent-hsl: 43 45% 55%;
+  --accent-foreground-hsl: 0 0% 5%;
+  --muted-hsl: 40 20% 65%;
+  --muted-foreground-hsl: 40 20% 80%;
+  --success-hsl: 158 50% 54%;
+  --warning-hsl: 41 73% 62%;
+  --danger-hsl: 0 69% 67%;
+  --info-hsl: 209 85% 65%;
+  --border-hsl: 30 30% 13%;
+  --card-hsl: 0 0% 7%;
+  --card-foreground-hsl: 40 20% 98%;
+  --popover-hsl: 0 0% 7%;
+  --popover-foreground-hsl: 40 20% 98%;
+  --chat-bg-hsl: 0 0% 5%;
+  --chat-sent-hsl: 43 45% 48%;
+  --chat-received-hsl: 0 0% 10%;
+  --status-online-hsl: 158 50% 54%;
+  --status-offline-hsl: 0 0% 40%;
+
+  /* Actual color tokens */
+  --background: hsl(var(--background-hsl));
+  --foreground: hsl(var(--foreground-hsl));
+  --primary: hsl(var(--primary-hsl));
+  --primary-fg: hsl(var(--primary-foreground-hsl));
+  --secondary: hsl(var(--secondary-hsl));
+  --secondary-fg: hsl(var(--secondary-foreground-hsl));
+  --accent: hsl(var(--accent-hsl));
+  --accent-fg: hsl(var(--accent-foreground-hsl));
+  --muted: hsl(var(--muted-hsl));
+  --muted-foreground: hsl(var(--muted-foreground-hsl));
+  --success: hsl(var(--success-hsl));
+  --warning: hsl(var(--warning-hsl));
+  --danger: hsl(var(--danger-hsl));
+  --info: hsl(var(--info-hsl));
+  --border: hsl(var(--border-hsl) / 0.55);
+  --card: hsl(var(--card-hsl) / 0.9);
+  --card-foreground: hsl(var(--card-foreground-hsl));
+  --popover: hsl(var(--popover-hsl) / 0.9);
+  --popover-foreground: hsl(var(--popover-foreground-hsl));
+  --chat-bg: hsl(var(--chat-bg-hsl));
+  --chat-sent: hsl(var(--chat-sent-hsl));
+  --chat-received: hsl(var(--chat-received-hsl));
+  --status-online: hsl(var(--status-online-hsl));
+  --status-offline: hsl(var(--status-offline-hsl));
+  --destructive: var(--danger);
+  --destructive-foreground: var(--foreground);
+
+  /* Extended palette - Damascus Gold Theme */
+  --damascus-gold-hsl: 43 45% 48%;
+  --damascus-gold: hsl(var(--damascus-gold-hsl));
+  --damascus-muted-hsl: 40 20% 65%;
+  --damascus-muted: hsl(var(--damascus-muted-hsl));
+  --damascus-border-hsl: 30 30% 13%;
+  --damascus-border: hsl(var(--damascus-border-hsl));
+  --damascus-panel-hsl: 0 0% 7%;
+  --damascus-panel: hsl(var(--damascus-panel-hsl));
+  
+  --luxury-hsl: 43 45% 48%;
+  --luxury: hsl(var(--luxury-hsl));
+  --luxury-foreground-hsl: 0 0% 5%;
+  --luxury-foreground: hsl(var(--luxury-foreground-hsl));
+  --premium-hsl: 43 45% 55%;
+  --premium: hsl(var(--premium-hsl));
+  --premium-foreground-hsl: 0 0% 5%;
+  --premium-foreground: hsl(var(--premium-foreground-hsl));
+  --persian-hsl: 43 45% 48%;
+  --persian: hsl(var(--persian-hsl));
+  --persian-foreground-hsl: 0 0% 5%;
+  --persian-foreground: hsl(var(--persian-foreground-hsl));
+  --turquoise-hsl: 43 45% 55%;
+  --turquoise: hsl(var(--turquoise-hsl));
+  --turquoise-foreground-hsl: 0 0% 5%;
+  --turquoise-foreground: hsl(var(--turquoise-foreground-hsl));
+  --bronze-hsl: 43 40% 42%;
+  --bronze: hsl(var(--bronze-hsl));
+  --bronze-foreground-hsl: 40 30% 90%;
+  --bronze-foreground: hsl(var(--bronze-foreground-hsl));
+  --olive-hsl: 36 29% 60%;
+  --olive: hsl(var(--olive-hsl));
+  --olive-foreground-hsl: 0 0% 5%;
+  --olive-foreground: hsl(var(--olive-foreground-hsl));
+  --coral-hsl: 10 70% 60%;
+  --coral: hsl(var(--coral-hsl));
+  --coral-foreground-hsl: 0 0% 5%;
+  --coral-foreground: hsl(var(--coral-foreground-hsl));
+  --pearl-hsl: 40 30% 90%;
+  --pearl: hsl(var(--pearl-hsl));
+  --pearl-foreground-hsl: 0 0% 10%;
+  --pearl-foreground: hsl(var(--pearl-foreground-hsl));
+  --jasmine-hsl: 41 73% 62%;
+  --jasmine: hsl(var(--jasmine-hsl));
+  --jasmine-foreground-hsl: 0 0% 10%;
+  --jasmine-foreground: hsl(var(--jasmine-foreground-hsl));
+
+  /* Glass & surface tokens - Damascus Style */
+  --bg: var(--background);
+  --fg: var(--foreground);
+  --surface: hsla(0, 0%, 7%, 0.9);
+  --surface-2: hsla(0, 0%, 10%, 0.95);
+  --glass-border: hsla(43, 45%, 48%, 0.3);
+  --shadow-glass-soft: 0 8px 24px hsla(0, 0%, 0%, 0.35);
+  --shadow-glass-strong: 0 12px 32px hsla(43, 45%, 48%, 0.15);
+  --damascus-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --damascus-shadow-hover: 0 12px 32px rgba(184, 154, 90, 0.15);
+  --damascus-gold-glow: 0 0 20px rgba(184, 154, 90, 0.3);
+  --glass-bg: var(--surface);
+  --glass-bg-strong: var(--surface-2);
+  --glass-fg: var(--fg);
+  --glass-backdrop: hsl(var(--background-hsl) / 0.8);
+
+  /* Spacing scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5625rem;
+  --space-md: 0.875rem;
+  --space-lg: 1.25rem;
+  --space-xl: 1.875rem;
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+
+  /* Radii */
+  --radius-xs: 0.375rem;
+  --radius-s: 0.75rem;
+  --radius-m: 1.25rem;
+  --radius-l: 1.75rem;
+  --radius-xl: 2rem;
+  --radius: var(--radius-m);
+  --radius-sm: var(--radius-s);
+  --radius-md: var(--radius-m);
+  --radius-lg: var(--radius-l);
+
+  /* Typography */
+  --font-sans: 'Noto Sans Arabic', 'Cairo', system-ui, sans-serif;
+  --font-size-sm: 0.9rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.2rem;
+  --font-size-xl: 1.45rem;
+  --font-line-height: 1.55;
+  --font-weight-regular: 400;
+  --font-weight-medium: 600;
+  --font-weight-bold: 700;
+
+  /* Interaction states - Damascus */
+  --state-hover-bg: hsla(43, 45%, 48%, 0.1);
+  --state-active-bg: hsla(43, 45%, 48%, 0.2);
+  --state-focus-ring: hsla(43, 45%, 48%, 0.5);
+  --state-disabled-bg: hsla(0, 0%, 10%, 0.6);
+  --state-disabled-fg: hsla(40, 20%, 65%, 0.5);
+  --state-disabled-border: hsla(30, 30%, 13%, 0.4);
+}
+
+/* Damascus Utility Classes */
+.damascus-card {
+  background: hsl(var(--damascus-panel-hsl));
+  border: 1px solid hsla(var(--damascus-gold-hsl), 0.3);
+  border-radius: var(--radius-l);
+  box-shadow: var(--damascus-shadow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.damascus-card:hover {
+  border-color: hsla(var(--damascus-gold-hsl), 0.6);
+  box-shadow: var(--damascus-shadow-hover);
+}
+
+.damascus-text {
+  color: var(--foreground);
+}
+
+.damascus-gold {
+  color: var(--damascus-gold);
+}
+
+.damascus-muted {
+  color: var(--damascus-muted);
+}
+
+html[data-theme="damascus"] body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}

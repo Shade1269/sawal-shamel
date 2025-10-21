@@ -1,0 +1,1 @@
+export { useSupabaseUserData as useUserData } from './useSupabaseUserData';

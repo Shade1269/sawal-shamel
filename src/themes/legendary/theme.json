@@ -1,0 +1,83 @@
+{
+  "id": "legendary",
+  "name": "Legendary Aurora",
+  "colors": {
+    "bg": "#0d0118",
+    "fg": "#f8fafc",
+    "primary": "#a855f7",
+    "primaryFg": "#ffffff",
+    "secondary": "#ec4899",
+    "secondaryFg": "#ffffff",
+    "muted": "#1e1b2e",
+    "mutedFg": "#a8a29e",
+    "success": "#22c55e",
+    "warning": "#eab308",
+    "danger": "#ef4444",
+    "info": "#06b6d4",
+    "border": "#27272a"
+  },
+  "radii": {
+    "sm": "12px",
+    "md": "20px",
+    "lg": "28px",
+    "xl": "40px"
+  },
+  "spacing": {
+    "xs": "6px",
+    "sm": "12px",
+    "md": "20px",
+    "lg": "28px",
+    "xl": "40px"
+  },
+  "typography": {
+    "fontFamily": "'Noto Sans Arabic', 'Rajdhani', 'sans-serif'",
+    "baseSize": 18,
+    "lineHeight": 1.7,
+    "weight": {
+      "normal": 400,
+      "medium": 600,
+      "bold": 700
+    }
+  },
+  "three": {
+    "background": "#050014",
+    "camera": {
+      "position": [0, 2, 3.8],
+      "fov": 40
+    },
+    "lights": [
+      { "type": "ambient", "intensity": 0.4 },
+      { "type": "directional", "intensity": 1.6, "position": [3, 4, 3], "color": "#c084fc" },
+      { "type": "point", "intensity": 1.2, "position": [-3, 3, 2], "color": "#a855f7" },
+      { "type": "point", "intensity": 1.0, "position": [2, 1, -2], "color": "#ec4899" },
+      { "type": "spot", "intensity": 1.4, "position": [0, 6, 0], "color": "#8b5cf6" }
+    ],
+    "model": {
+      "example": "legendary",
+      "scale": [1.6, 1.6, 1.6],
+      "position": [0, -0.2, 0],
+      "rotation": [0, 90, 0],
+      "autoRotate": true,
+      "rotationSpeed": 0.15
+    },
+    "effects": {
+      "bloom": { "enabled": true, "intensity": 1.5 },
+      "fog": { "color": "#050014", "near": 5, "far": 30 },
+      "shadow": { "enabled": true, "bias": -0.0001, "mapSize": [4096, 4096], "radius": 5 }
+    }
+  },
+  "components": {
+    "button": {
+      "radius": "xl",
+      "height": 52,
+      "paddingX": "2.5rem",
+      "variants": ["solid", "outline", "ghost"]
+    },
+    "card": {
+      "radius": "xl",
+      "shadow": "0 30px 60px rgba(168, 85, 247, 0.25)"
+    },
+    "input": { "radius": "xl" },
+    "badge": { "radius": "xl" }
+  }
+}

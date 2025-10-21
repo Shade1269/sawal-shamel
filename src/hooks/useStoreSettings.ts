@@ -1,0 +1,243 @@
+import { useEffect, useMemo, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { Json } from '@/integrations/supabase/types';
+
+export interface StoreCategoryBannerProduct {
+  id: string;
+  title: string;
+  image_url?: string | null;
+  category?: string | null;
+}
+
+export interface StoreCategory {
+  id: string;
+  name: string;
+  isActive: boolean;
+  productCount: number;
+  bannerProducts?: StoreCategoryBannerProduct[];
+}
+
+export interface StoreSettings {
+  id?: string;
+  store_id: string;
+  hero_image_url?: string | null;
+  hero_title?: string | null;
+  hero_subtitle?: string | null;
+  hero_description?: string | null;
+  hero_cta_text?: string | null;
+  hero_cta_color?: string | null;
+  category_display_style?: string | null;
+  featured_categories?: Json;
+  store_analytics?: Json;
+}
+
+export const useStoreSettings = (storeId: string) => {
+  const [settings, setSettings] = useState<StoreSettings | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchSettings = async () => {
+    if (!storeId) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('affiliate_store_settings')
+        .select('*')
+        .eq('store_id', storeId)
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+
+      setSettings(data);
+    } catch (error: any) {
+      console.error('Error fetching store settings:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في تحميل إعدادات المتجر",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateSettings = async (updates: Partial<StoreSettings>) => {
+    if (!storeId) return false;
+
+    try {
+      const payload: Partial<StoreSettings> & { store_id: string } = {
+        store_id: storeId,
+        ...(settings?.id ? { id: settings.id } : {}),
+        ...updates
+      };
+
+      const { data, error } = await supabase
+        .from('affiliate_store_settings')
+        .upsert(payload)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setSettings(data);
+      toast({
+        title: "تم الحفظ",
+        description: "تم حفظ الإعدادات بنجاح"
+      });
+      return true;
+    } catch (error: any) {
+      console.error('Error updating store settings:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في حفظ الإعدادات",
+        variant: "destructive"
+      });
+      return false;
+    }
+  };
+
+  const uploadImage = async (file: File, path: string) => {
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error('User not authenticated');
+
+      const fileName = `${user.user.id}/${path}/${Date.now()}_${file.name}`;
+      
+      const { data, error } = await supabase.storage
+        .from('store-assets')
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('store-assets')
+        .getPublicUrl(data.path);
+
+      return { success: true, url: publicUrl };
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل في رفع الصورة",
+        variant: "destructive"
+      });
+      return { success: false, error: error.message };
+    }
+  };
+
+  useEffect(() => {
+    fetchSettings();
+  }, [storeId]);
+
+  const parsedFeaturedCategories = useMemo(() => parseFeaturedCategories(settings?.featured_categories), [settings?.featured_categories]);
+
+  return {
+    settings,
+    loading,
+    updateSettings,
+    uploadImage,
+    refetch: fetchSettings,
+    featuredCategories: parsedFeaturedCategories,
+    // Compatibility aliases for other components
+    data: settings,
+    isLoading: loading
+  };
+};
+
+const normalizeBannerProduct = (product: any): StoreCategoryBannerProduct | null => {
+  if (!product || typeof product !== 'object') return null;
+
+  const id = typeof product.id === 'string' ? product.id : undefined;
+  const title = typeof product.title === 'string' ? product.title : undefined;
+
+  if (!id || !title) return null;
+
+  return {
+    id,
+    title,
+    image_url: typeof product.image_url === 'string' ? product.image_url : null,
+    category: typeof product.category === 'string' ? product.category : null
+  };
+};
+
+const normalizeFeaturedCategory = (category: any): StoreCategory | null => {
+  if (!category) return null;
+
+  const id = typeof category.id === 'string' ? category.id : typeof category.name === 'string' ? category.name : undefined;
+  const name = typeof category.name === 'string' ? category.name : undefined;
+
+  if (!id || !name) return null;
+
+  const rawBannerProducts = Array.isArray(category.bannerProducts)
+    ? category.bannerProducts
+    : Array.isArray(category.selectedProducts)
+      ? category.selectedProducts
+      : undefined;
+
+  const bannerProducts = rawBannerProducts
+    ?.map(normalizeBannerProduct)
+    .filter((product): product is StoreCategoryBannerProduct => Boolean(product));
+
+  return {
+    id,
+    name,
+    isActive: typeof category.isActive === 'boolean' ? category.isActive : true,
+    productCount: typeof category.productCount === 'number' ? category.productCount : 0,
+    bannerProducts
+  };
+};
+
+export const parseFeaturedCategories = (
+  data: StoreSettings['featured_categories']
+): StoreCategory[] => {
+  if (!data) return [];
+
+  let raw: unknown = data;
+
+  if (typeof raw === 'string') {
+    try {
+      raw = JSON.parse(raw);
+    } catch (error) {
+      console.error('Failed to parse featured categories JSON string', error);
+      return [];
+    }
+  }
+
+  if (Array.isArray(raw)) {
+    return raw.map(normalizeFeaturedCategory).filter((category): category is StoreCategory => Boolean(category));
+  }
+
+  if (raw && typeof raw === 'object' && 'categories' in raw) {
+    const categories = (raw as { categories?: unknown }).categories;
+    if (Array.isArray(categories)) {
+      return categories
+        .map(normalizeFeaturedCategory)
+        .filter((category): category is StoreCategory => Boolean(category));
+    }
+  }
+
+  return [];
+};
+
+// Helper functions for payment and shipping methods
+export const getEnabledPaymentMethods = (settings: StoreSettings | null) => {
+  if (!settings?.store_analytics) return [];
+  const analytics = typeof settings.store_analytics === 'string' 
+    ? JSON.parse(settings.store_analytics) 
+    : settings.store_analytics;
+  return analytics?.paymentMethods || [];
+};
+
+export const getEnabledShippingMethods = (settings: StoreSettings | null) => {
+  if (!settings?.store_analytics) return [];
+  const analytics = typeof settings.store_analytics === 'string' 
+    ? JSON.parse(settings.store_analytics) 
+    : settings.store_analytics;
+  return analytics?.shippingMethods || [];
+};

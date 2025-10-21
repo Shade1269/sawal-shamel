@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Cache npm
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Configure npm registry (if token provided)
+        if: ${{ secrets.NPM_TOKEN != '' }}
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm config set //registry.npmjs.org/:_authToken="$NPM_TOKEN"
+          npm config set registry https://registry.npmjs.org/
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Print tool versions
+        run: |
+          node -v
+          npm -v
+          supabase --version || true
+          psql --version || true
+
+      - name: Run database migrations
+        if: ${{ env.SUPABASE_DB_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '' }}
+        env:
+          SUPABASE_DB_URL: ${{ env.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          supabase db push --db-url "$SUPABASE_DB_URL" || {
+            echo "::warning::supabase db push failed; applying SQL files via psql"
+            if ! command -v psql >/dev/null 2>&1; then
+              sudo apt-get update && sudo apt-get install -y postgresql-client
+            fi
+            for file in sql/*.sql; do
+              [ -f "$file" ] && psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$file"
+            done
+          }
+
+      - name: Skip migrations (secrets not provided)
+        if: ${{ !(env.SUPABASE_DB_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '') }}
+        run: echo "::warning::Skipping DB migrations: secrets not provided"
+
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Test
+        run: npm test --if-present
+
+      - name: Build
+        run: npm run build --if-present

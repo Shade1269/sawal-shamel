@@ -1,0 +1,7 @@
+project_id = "uewuiiopkctdtaexmtxu"
+
+[functions.send-customer-otp]
+verify_jwt = false
+
+[functions.verify-customer-otp]
+verify_jwt = false

@@ -1,0 +1,236 @@
+html[data-theme="default"] {
+  /* Base HSL definitions */
+  --background-hsl: 216 28% 7%;
+  --foreground-hsl: 210 20% 98%;
+  --primary-hsl: 212 100% 67%;
+  --primary-foreground-hsl: 209 77% 7%;
+  --secondary-hsl: 216 84% 52%;
+  --secondary-foreground-hsl: 0 0% 100%;
+  --accent-hsl: 269 100% 83%;
+  --accent-foreground-hsl: 208 30% 15%;
+  --muted-hsl: 215 18% 13%;
+  --muted-foreground-hsl: 213 17% 80%;
+  --success-hsl: 128 49% 49%;
+  --warning-hsl: 41 72% 48%;
+  --danger-hsl: 3 93% 63%;
+  --info-hsl: 208 100% 74%;
+  --border-hsl: 212 12% 21%;
+  --card-hsl: 215 20% 9%;
+  --card-foreground-hsl: 210 20% 98%;
+  --popover-hsl: 215 20% 9%;
+  --popover-foreground-hsl: 210 20% 98%;
+  --chat-bg-hsl: 216 28% 7%;
+  --chat-sent-hsl: 212 100% 67%;
+  --chat-received-hsl: 213 15% 16%;
+  --status-online-hsl: 128 49% 49%;
+  --status-offline-hsl: 210 10% 50%;
+
+  /* Actual color tokens */
+  --background: hsl(var(--background-hsl));
+  --foreground: hsl(var(--foreground-hsl));
+  --primary: hsl(var(--primary-hsl));
+  --primary-fg: hsl(var(--primary-foreground-hsl));
+  --secondary: hsl(var(--secondary-hsl));
+  --secondary-fg: hsl(var(--secondary-foreground-hsl));
+  --accent: hsl(var(--accent-hsl));
+  --accent-fg: hsl(var(--accent-foreground-hsl));
+  --muted: hsl(var(--muted-hsl));
+  --muted-foreground: hsl(var(--muted-foreground-hsl));
+  --success: hsl(var(--success-hsl));
+  --warning: hsl(var(--warning-hsl));
+  --danger: hsl(var(--danger-hsl));
+  --info: hsl(var(--info-hsl));
+  --border: hsl(var(--border-hsl) / 0.6);
+  --card: hsl(var(--card-hsl) / 0.92);
+  --card-foreground: hsl(var(--card-foreground-hsl));
+  --popover: hsl(var(--popover-hsl) / 0.92);
+  --popover-foreground: hsl(var(--popover-foreground-hsl));
+  --chat-bg: hsl(var(--chat-bg-hsl));
+  --chat-sent: hsl(var(--chat-sent-hsl));
+  --chat-received: hsl(var(--chat-received-hsl));
+  --status-online: hsl(var(--status-online-hsl));
+  --status-offline: hsl(var(--status-offline-hsl));
+  --destructive: var(--danger);
+  --destructive-foreground: var(--foreground);
+
+  /* Extended palette */
+  --luxury-hsl: 0 70% 35%;
+  --luxury: hsl(var(--luxury-hsl));
+  --luxury-foreground-hsl: 0 0% 100%;
+  --luxury-foreground: hsl(var(--luxury-foreground-hsl));
+  --premium-hsl: 35 70% 45%;
+  --premium: hsl(var(--premium-hsl));
+  --premium-foreground-hsl: 0 0% 100%;
+  --premium-foreground: hsl(var(--premium-foreground-hsl));
+  --persian-hsl: 0 75% 30%;
+  --persian: hsl(var(--persian-hsl));
+  --persian-foreground-hsl: 0 0% 100%;
+  --persian-foreground: hsl(var(--persian-foreground-hsl));
+  --turquoise-hsl: 180 60% 35%;
+  --turquoise: hsl(var(--turquoise-hsl));
+  --turquoise-foreground-hsl: 0 0% 100%;
+  --turquoise-foreground: hsl(var(--turquoise-foreground-hsl));
+  --bronze-hsl: 35 60% 40%;
+  --bronze: hsl(var(--bronze-hsl));
+  --bronze-foreground-hsl: 0 0% 100%;
+  --bronze-foreground: hsl(var(--bronze-foreground-hsl));
+  --olive-hsl: 75 30% 30%;
+  --olive: hsl(var(--olive-hsl));
+  --olive-foreground-hsl: 0 0% 100%;
+  --olive-foreground: hsl(var(--olive-foreground-hsl));
+  --coral-hsl: 12 70% 62%;
+  --coral: hsl(var(--coral-hsl));
+  --coral-foreground-hsl: 0 0% 100%;
+  --coral-foreground: hsl(var(--coral-foreground-hsl));
+  --pearl-hsl: 45 40% 88%;
+  --pearl: hsl(var(--pearl-hsl));
+  --pearl-foreground-hsl: 0 0% 20%;
+  --pearl-foreground: hsl(var(--pearl-foreground-hsl));
+  --jasmine-hsl: 45 90% 72%;
+  --jasmine: hsl(var(--jasmine-hsl));
+  --jasmine-foreground-hsl: 0 0% 18%;
+  --jasmine-foreground: hsl(var(--jasmine-foreground-hsl));
+
+  /* Glass & surface tokens */
+  --bg: var(--background);
+  --fg: var(--foreground);
+  --surface: hsla(215, 22%, 14%, 0.82);
+  --surface-2: hsla(215, 26%, 20%, 0.9);
+  --glass-border: hsla(212, 18%, 42%, 0.35);
+  --shadow-glass-soft: 0 18px 40px hsla(212, 65%, 12%, 0.45);
+  --shadow-glass-strong: 0 28px 64px hsla(212, 65%, 12%, 0.6);
+  --glass-bg: var(--surface);
+  --glass-bg-strong: var(--surface-2);
+  --glass-fg: var(--fg);
+  --glass-backdrop: hsl(var(--background-hsl) / 0.62);
+
+  /* Spacing scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+
+  /* Radii */
+  --radius-xs: 0.375rem;
+  --radius-s: 0.5rem;
+  --radius-m: 0.625rem;
+  --radius-l: 1rem;
+  --radius-xl: 1.375rem;
+  --radius: var(--radius-m);
+  --radius-sm: var(--radius-s);
+  --radius-md: var(--radius-m);
+  --radius-lg: var(--radius-l);
+
+  /* Typography */
+  --font-sans: 'Noto Sans Arabic', 'Inter', system-ui, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-line-height: 1.5;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* Interaction states */
+  --state-hover-bg: hsla(210, 67%, 96%, 0.08);
+  --state-active-bg: hsla(210, 67%, 96%, 0.16);
+  --state-focus-ring: hsla(212, 100%, 67%, 0.45);
+  --state-disabled-bg: hsla(215, 18%, 16%, 0.6);
+  --state-disabled-fg: hsla(213, 17%, 66%, 0.45);
+  --state-disabled-border: hsla(212, 12%, 25%, 0.35);
+}
+
+html[data-theme="default"] body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Dark Mode Colors (default) */
+html[data-theme="default"].dark {
+  /* Ensure dark mode colors are applied */
+  color-scheme: dark;
+  
+  /* Base HSL definitions for dark mode */
+  --background-hsl: 216 28% 7%;
+  --foreground-hsl: 210 67% 96%;
+  --primary-hsl: 212 100% 67%;
+  --primary-foreground-hsl: 209 77% 7%;
+  --secondary-hsl: 216 84% 52%;
+  --secondary-foreground-hsl: 0 0% 100%;
+  --accent-hsl: 269 100% 83%;
+  --accent-foreground-hsl: 208 30% 15%;
+  --muted-hsl: 215 18% 13%;
+  --muted-foreground-hsl: 213 17% 66%;
+  --border-hsl: 212 12% 21%;
+  --card-hsl: 215 20% 9%;
+  --card-foreground-hsl: 210 67% 96%;
+  
+  /* Glass & surface tokens for dark mode */
+  --surface: hsla(215, 22%, 14%, 0.82);
+  --surface-2: hsla(215, 26%, 20%, 0.9);
+  --glass-border: hsla(212, 18%, 42%, 0.35);
+  --shadow-glass-soft: 0 18px 40px hsla(212, 65%, 12%, 0.45);
+  --shadow-glass-strong: 0 28px 64px hsla(212, 65%, 12%, 0.6);
+  --glass-backdrop: hsl(216 28% 7% / 0.62);
+  
+  /* Interaction states for dark mode */
+  --state-hover-bg: hsla(210, 67%, 96%, 0.08);
+  --state-active-bg: hsla(210, 67%, 96%, 0.16);
+  --state-disabled-bg: hsla(215, 18%, 16%, 0.6);
+  --state-disabled-fg: hsla(213, 17%, 66%, 0.45);
+  --state-disabled-border: hsla(212, 12%, 25%, 0.35);
+}
+
+/* Light Mode Colors */
+html[data-theme="default"]:not(.dark) {
+  color-scheme: light;
+  /* Base HSL definitions for light mode */
+  --background-hsl: 0 0% 100%;
+  --foreground-hsl: 222 47% 11%;
+  --primary-hsl: 212 100% 50%;
+  --primary-foreground-hsl: 0 0% 100%;
+  --secondary-hsl: 216 84% 92%;
+  --secondary-foreground-hsl: 222 47% 11%;
+  --accent-hsl: 269 100% 70%;
+  --accent-foreground-hsl: 0 0% 100%;
+  --muted-hsl: 210 40% 96%;
+  --muted-foreground-hsl: 215 16% 47%;
+  --success-hsl: 128 49% 49%;
+  --warning-hsl: 41 72% 48%;
+  --danger-hsl: 3 93% 63%;
+  --info-hsl: 208 100% 74%;
+  --border-hsl: 214 32% 91%;
+  --card-hsl: 0 0% 100%;
+  --card-foreground-hsl: 222 47% 11%;
+  --popover-hsl: 0 0% 100%;
+  --popover-foreground-hsl: 222 47% 11%;
+  --chat-bg-hsl: 0 0% 100%;
+  --chat-sent-hsl: 212 100% 50%;
+  --chat-received-hsl: 210 40% 96%;
+  --status-online-hsl: 128 49% 49%;
+  --status-offline-hsl: 215 16% 47%;
+  
+  /* Glass & surface tokens for light mode */
+  --surface: hsla(0, 0%, 100%, 0.82);
+  --surface-2: hsla(210, 40%, 98%, 0.9);
+  --glass-border: hsla(214, 32%, 91%, 0.6);
+  --shadow-glass-soft: 0 4px 24px hsla(215, 25%, 27%, 0.08);
+  --shadow-glass-strong: 0 8px 40px hsla(215, 25%, 27%, 0.12);
+  --glass-backdrop: hsl(0 0% 100% / 0.62);
+  
+  /* Interaction states for light mode */
+  --state-hover-bg: hsla(222, 47%, 11%, 0.05);
+  --state-active-bg: hsla(222, 47%, 11%, 0.1);
+  --state-focus-ring: hsla(212, 100%, 50%, 0.45);
+  --state-disabled-bg: hsla(210, 40%, 96%, 0.6);
+  --state-disabled-fg: hsla(215, 16%, 47%, 0.45);
+  --state-disabled-border: hsla(214, 32%, 91%, 0.6);
+}

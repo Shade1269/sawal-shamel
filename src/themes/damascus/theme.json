@@ -1,0 +1,86 @@
+{
+  "colors": {
+    "background": "#0a1016",
+    "foreground": "#f4f4f0",
+    "card": "#101c20",
+    "cardForeground": "#f4f4f0",
+    "popover": "#101c20",
+    "popoverForeground": "#f4f4f0",
+    "primary": "#d4af37",
+    "primaryForeground": "#0a1016",
+    "secondary": "#1a2632",
+    "secondaryForeground": "#f4f4f0",
+    "muted": "#1a2632",
+    "mutedForeground": "#9ca3af",
+    "accent": "#c19b2b",
+    "accentForeground": "#0a1016",
+    "destructive": "#dc2626",
+    "destructiveForeground": "#fafafa",
+    "border": "#3f5765",
+    "input": "#1a2632",
+    "ring": "#d4af37"
+  },
+  "radii": {
+    "default": "0.75rem",
+    "sm": "0.5rem",
+    "md": "0.75rem",
+    "lg": "1rem",
+    "xl": "1.5rem"
+  },
+  "spacing": {
+    "xs": "0.5rem",
+    "sm": "1rem",
+    "md": "1.5rem",
+    "lg": "2rem",
+    "xl": "3rem"
+  },
+  "typography": {
+    "fontFamily": "Cairo, sans-serif",
+    "fontSize": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem",
+      "4xl": "2.25rem"
+    },
+    "fontWeight": {
+      "normal": 400,
+      "medium": 600,
+      "bold": 700
+    }
+  },
+  "marketing": {
+    "ctaVariant": "cta-damascus",
+    "badgeVariant": "badge-damascus"
+  },
+  "components": {
+    "button": {
+      "damascusGold": "bg-gradient-to-r from-[#d4af37] to-[#c19b2b] text-[#0a1016] hover:from-[#c19b2b] hover:to-[#b8941f] shadow-lg hover:shadow-xl transition-all duration-300",
+      "damascusSecondary": "bg-[#1a2632] text-[#f4f4f0] border border-[#3f5765] hover:bg-[#2a3642] transition-all duration-300"
+    },
+    "card": {
+      "damascusStyle": "bg-gradient-to-br from-[#101c20] to-[#0f1a1e] border border-[#3f5765] shadow-2xl backdrop-blur-sm"
+    },
+    "badge": {
+      "damascusGold": "bg-[#d4af37] text-[#0a1016] border-[#c19b2b]",
+      "damascusSecondary": "bg-[#1a2632] text-[#f4f4f0] border-[#3f5765]"
+    },
+    "input": {
+      "damascusStyle": "bg-[#1a2632] border-[#3f5765] text-[#f4f4f0] focus:border-[#d4af37] focus:ring-[#d4af37]"
+    },
+    "navigation": {
+      "damascusStyle": "bg-[#101c20]/90 backdrop-blur-md border-[#3f5765]"
+    },
+    "hero": {
+      "damascusGradient": "bg-gradient-to-br from-[#0a1016] via-[#101c20] to-[#1a2632]"
+    },
+    "text": {
+      "damascusGold": "text-transparent bg-clip-text bg-gradient-to-r from-[#d4af37] to-[#c19b2b]",
+      "damascusAccent": "text-[#d4af37]",
+      "damascusMuted": "text-[#9ca3af]"
+    }
+  }
+}

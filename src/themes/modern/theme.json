@@ -1,0 +1,81 @@
+{
+  "id": "modern",
+  "name": "Modern Edge",
+  "colors": {
+    "bg": "#fafafa",
+    "fg": "#1a1a1a",
+    "primary": "#000000",
+    "primaryFg": "#ffffff",
+    "secondary": "#6b7280",
+    "secondaryFg": "#ffffff",
+    "muted": "#f3f4f6",
+    "mutedFg": "#6b7280",
+    "success": "#10b981",
+    "warning": "#f59e0b",
+    "danger": "#ef4444",
+    "info": "#3b82f6",
+    "border": "#e5e7eb"
+  },
+  "radii": {
+    "sm": "4px",
+    "md": "8px",
+    "lg": "12px",
+    "xl": "16px"
+  },
+  "spacing": {
+    "xs": "4px",
+    "sm": "8px",
+    "md": "16px",
+    "lg": "24px",
+    "xl": "32px"
+  },
+  "typography": {
+    "fontFamily": "'Noto Sans Arabic', 'Inter', 'system-ui', 'sans-serif'",
+    "baseSize": 16,
+    "lineHeight": 1.5,
+    "weight": {
+      "normal": 400,
+      "medium": 500,
+      "bold": 600
+    }
+  },
+  "three": {
+    "background": "#ffffff",
+    "camera": {
+      "position": [0, 1, 4],
+      "fov": 50
+    },
+    "lights": [
+      { "type": "ambient", "intensity": 0.7 },
+      { "type": "directional", "intensity": 1.0, "position": [3, 3, 2], "color": "#ffffff" },
+      { "type": "point", "intensity": 0.5, "position": [-2, 2, 1], "color": "#6b7280" }
+    ],
+    "model": {
+      "example": "cube",
+      "scale": [1.5, 1.5, 1.5],
+      "position": [0, 0, 0],
+      "rotation": [0, 45, 0],
+      "autoRotate": true,
+      "rotationSpeed": 0.5
+    },
+    "effects": {
+      "bloom": { "enabled": false },
+      "fog": { "color": "#ffffff", "near": 6, "far": 20 },
+      "shadow": { "enabled": true, "bias": -0.0005, "mapSize": [2048, 2048], "radius": 1 }
+    }
+  },
+  "components": {
+    "button": {
+      "radius": "md",
+      "height": 40,
+      "paddingX": "1.5rem",
+      "variants": ["solid", "outline", "ghost"]
+    },
+    "card": {
+      "radius": "lg",
+      "shadow": "0 1px 3px rgba(0, 0, 0, 0.1)"
+    },
+    "input": { "radius": "md" },
+    "badge": { "radius": "sm" }
+  }
+}
