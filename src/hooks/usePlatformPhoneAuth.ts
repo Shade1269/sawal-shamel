@@ -96,6 +96,7 @@ export const usePlatformPhoneAuth = () => {
       }
 
       console.log('✓ Phone validation passed, sending OTP via Twilio');
+      console.log('Sending to Edge Function - formattedPhone:', formattedPhone);
 
       // استدعاء Edge Function لإرسال OTP للمنصة الرئيسية
       const { data, error } = await supabase.functions.invoke('send-platform-otp', {

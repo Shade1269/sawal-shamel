@@ -98,13 +98,20 @@ serve(async (req) => {
 
         // تنسيق الرقم السعودي لـ Twilio (يحتاج + للصيغة E.164)
         let twilioPhone = phone;
+        console.log('Phone formatting - Original:', phone);
+        
         if (phone.startsWith('+966')) {
           twilioPhone = phone; // +966507988487 - صحيح
+          console.log('Phone formatting - Already has +966:', twilioPhone);
         } else if (phone.startsWith('966')) {
           twilioPhone = `+${phone}`; // إضافة + لـ 966507988487
+          console.log('Phone formatting - Added + to 966:', twilioPhone);
         } else {
           twilioPhone = `+966${phone}`; // إضافة +966 للرقم المحلي
+          console.log('Phone formatting - Added +966 to local:', twilioPhone);
         }
+        
+        console.log('Phone formatting - Final twilioPhone:', twilioPhone);
 
         const requestBody = new URLSearchParams({
           To: twilioPhone, // رقم سعودي بصيغة E.164 مع + لـ Twilio
