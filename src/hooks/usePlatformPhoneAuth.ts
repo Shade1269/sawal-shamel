@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 interface PhoneAuthResponse {
   success: boolean;
   error?: string;
+  code?: 'COOLDOWN' | 'INSUFFICIENT_BALANCE' | 'GENERIC';
+  cooldownSeconds?: number;
 }
 
 export const usePlatformPhoneAuth = () => {
@@ -109,26 +111,42 @@ export const usePlatformPhoneAuth = () => {
 
       if (error) {
         console.error('Edge Function error:', error);
-        
-        // معالجة خطأ 429 (Too Many Requests)
-        if (error.message?.includes('429') || error.message?.includes('non-2xx')) {
+        const status = (error as any)?.status;
+        const message = (error as any)?.message || '';
+
+        if (status === 429 || /too\s*many\s*requests/i.test(message) || /non-2xx/i.test(message)) {
           toast.error('تم الطلب كثيراً', {
             description: 'الرجاء الانتظار 30 ثانية قبل طلب رمز جديد',
           });
-        } else {
-          toast.error('خطأ في الإرسال', {
-            description: 'فشل في إرسال رمز التحقق',
-          });
+          return { success: false, error: 'Cooldown', code: 'COOLDOWN', cooldownSeconds: 30 };
         }
-        return { success: false, error: error.message };
+
+        if (status === 402 || /insufficient_balance|insufficient balance|لا توجد رصيد/i.test(message)) {
+          toast.error('الخدمة غير متاحة مؤقتاً', {
+            description: 'نفدت رصيد رسائل SMS حالياً. استخدم تسجيل الدخول بالبريد الإلكتروني أو حاول لاحقاً.',
+          });
+          return { success: false, error: 'Insufficient balance', code: 'INSUFFICIENT_BALANCE' };
+        }
+        
+        toast.error('خطأ في الإرسال', {
+          description: 'فشل في إرسال رمز التحقق',
+        });
+        return { success: false, error: message || 'send error', code: 'GENERIC' }; 
       }
 
       if (!data?.success) {
         console.error('OTP send failed:', data);
+        const errText: string = data?.error || 'فشل في إرسال رمز التحقق';
+        const match = /الرجاء\s+الانتظار\s+(\d+)\s*ثانية/i.exec(errText);
+        if (match) {
+          const secs = parseInt(match[1], 10) || 30;
+          toast.error('تم الطلب كثيراً', { description: `الرجاء الانتظار ${secs} ثانية قبل طلب رمز جديد` });
+          return { success: false, error: 'Cooldown', code: 'COOLDOWN', cooldownSeconds: secs };
+        }
         toast.error('خطأ في الإرسال', {
-          description: data?.error || 'فشل في إرسال رمز التحقق',
+          description: errText,
         });
-        return { success: false, error: data?.error };
+        return { success: false, error: errText, code: 'GENERIC' };
       }
 
       console.log('OTP sent successfully via Twilio');

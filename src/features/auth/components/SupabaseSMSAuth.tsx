@@ -14,9 +14,18 @@ const SupabaseSMSAuth = () => {
   const [countryCode, setCountryCode] = useState('+966');
   const [selectedRole, setSelectedRole] = useState<'affiliate' | 'merchant'>('affiliate');
   const [otp, setOtp] = useState('');
+  const [cooldown, setCooldown] = useState(0);
+  const [inlineError, setInlineError] = useState<string | null>(null);
   const navigate = useNavigate();
   
   const { sendOTP, verifyOTP, loading, verifying } = usePlatformPhoneAuth();
+
+  // Countdown effect
+  React.useEffect(() => {
+    if (cooldown <= 0) return;
+    const id = setInterval(() => setCooldown((c) => (c > 0 ? c - 1 : 0)), 1000);
+    return () => clearInterval(id);
+  }, [cooldown]);
 
   const sanitizePhone = (raw: string) => raw.replace(/\s|-/g, '');
 
@@ -35,7 +44,18 @@ const SupabaseSMSAuth = () => {
 
     const result = await sendOTP(phone);
     if (result.success) {
+      setInlineError(null);
       setStep('role');
+    } else {
+      if (result.code === 'COOLDOWN') {
+        const secs = result.cooldownSeconds || 30;
+        setCooldown(secs);
+        setInlineError(`تم إنشاء طلبات عديدة. الرجاء الانتظار ${secs} ثانية قبل طلب رمز جديد`);
+      } else if (result.code === 'INSUFFICIENT_BALANCE') {
+        setInlineError('الخدمة غير متاحة مؤقتاً (نفاد رصيد الرسائل). استخدم تسجيل الدخول بالبريد الإلكتروني مؤقتاً.');
+      } else {
+        setInlineError(result.error || 'حدث خطأ أثناء إرسال الرمز');
+      }
     }
   };
 
