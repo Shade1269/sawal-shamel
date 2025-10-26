@@ -43,7 +43,7 @@ const AuthCallbackPage = () => {
 
         if (authUser?.id) {
           const { data: profile } = await supabase
-            .from('user_profiles')
+            .from('profiles')
             .select('role')
             .eq('auth_user_id', authUser.id)
             .maybeSingle();
