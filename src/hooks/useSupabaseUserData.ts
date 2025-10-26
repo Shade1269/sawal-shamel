@@ -72,36 +72,7 @@ export const useSupabaseUserData = () => {
 
     if (data) return data;
 
-    // إذا لم نجد، نبحث بالهاتف (للمستخدمين الذين سجلوا عبر Firebase SMS)
-    try {
-      const { getUserFromFirestore } = await import('@/lib/firestore');
-      const firebaseUserResult = await getUserFromFirestore(user.id);
-      
-      if (firebaseUserResult?.success && firebaseUserResult.user?.phone) {
-        const { data: phoneProfile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('phone', firebaseUserResult.user.phone)
-          .maybeSingle();
-          
-        if (phoneProfile) {
-          // تحديث auth_user_id ليربط Firebase user بـ Supabase profile
-          await supabase
-            .from('profiles')
-            .update({ auth_user_id: user.id })
-            .eq('id', phoneProfile.id);
-            
-          return { ...phoneProfile, auth_user_id: user.id };
-        }
-      }
-    } catch (error) {
-      console.error('Error checking Firebase user data:', error);
-    }
-
-    if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching user profile:', error);
-    }
-
+    // Return null if no profile found
     return null;
   };
 
