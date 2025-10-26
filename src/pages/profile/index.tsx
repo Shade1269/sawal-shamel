@@ -36,7 +36,7 @@ import {
 import useUserProfile, { type UserProfileHookValue } from "@/hooks/useUserProfile";
 import { THEMES } from "@/themes/registry";
 import { PaymentInfoTab } from "@/components/profile/PaymentInfoTab";
-
+import { getHomeRouteForRoleRuntime as getHomeRouteForRole } from "@/hooks/getHomeRouteForRoleRuntime";
 const roleLabels: Record<string, string> = {
   admin: "مدير النظام",
   affiliate: "مسوق",
@@ -377,9 +377,14 @@ const ProfilePageBody: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => 
   }, []);
   
   const handleBack = () => {
-    navigate(-1);
+    const hasHistory = typeof window !== 'undefined' && window.history.length > 1 && document.referrer !== '';
+    if (hasHistory) {
+      navigate(-1);
+    } else {
+      const to = getHomeRouteForRole(hook.profile.role as any);
+      navigate(to, { replace: true });
+    }
   };
-  
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 lg:py-8" data-page="profile">
       <SkipLink targetId="profile-main" label="تخطي إلى محتوى الملف الشخصي" />
