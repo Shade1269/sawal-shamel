@@ -8,6 +8,8 @@ import { AdaptiveLayoutProvider, SmartNavigationProvider } from "@/components/la
 import { DarkModeProvider } from "@/shared/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
+import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
+import { UserDataProvider } from "@/contexts/UserDataContext";
 import { navigationItems } from "@/data/navigationItems";
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import { ProtectedRoute } from "@/shared/components/ProtectedRoute";
@@ -16,8 +18,9 @@ import AffiliateLayout from "@/layouts/ModernAffiliateLayout";
 import AdminLayout from "@/layouts/AdminLayout";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
+import { CustomerAuthProvider } from "@/contexts/CustomerAuthContext";
 
-const HomePage = () => <Navigate to="/affiliate" replace />;
+const HomePage = lazy(() => import("./pages/Index"));
 import AuthPage from "./features/auth/components/AuthPage"
 const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
 const AuthCallbackPage = lazy(() => import("./pages/auth/AuthCallbackPage"));
@@ -48,6 +51,11 @@ const LuxuryShowcase = lazy(() => import("./pages/LuxuryShowcase"));
 const AdminHomePage = lazy(() => import("./pages/home/AdminHome"));
 const AdminWithdrawalsPage = lazy(() => import("./pages/admin/AdminWithdrawalsPage"));
 const AdminProductApproval = lazy(() => import("./pages/admin/AdminProductApproval"));
+const OrdersRouter = lazy(() => import("./pages/admin/OrdersRouter"));
+const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalytics"));
+const AdminCustomersPage = lazy(() => import("./pages/admin/AdminCustomers"));
+const AdminLeaderboardPage = lazy(() => import("./pages/admin/AdminLeaderboard"));
+const AdminPage = lazy(() => import("./pages/Admin"));
 const InventoryPage = lazy(() => import("./pages/inventory/index"));
 const ShippingManagementPage = lazy(() => import("./pages/ShippingManagement"));
 const MerchantDashboard = lazy(() => import("./pages/merchant/MerchantDashboard"));
@@ -91,12 +99,14 @@ const App = () => {
           <Toaster />
           <Sonner />
           <SupabaseAuthProvider>
-            <LanguageProvider>
-              <DarkModeProvider>
-                <AdaptiveLayoutProvider>
-                  <BrowserRouter>
-                    <SmartNavigationProvider navigationItems={navigationItems}>
-                      <Suspense fallback={<LoadingFallback />}>
+            <FirebaseAuthProvider>
+              <LanguageProvider>
+                <DarkModeProvider>
+                <UserDataProvider>
+                  <AdaptiveLayoutProvider>
+                    <BrowserRouter>
+                      <SmartNavigationProvider navigationItems={navigationItems}>
+                        <Suspense fallback={<LoadingFallback />}>
                           <DomainManager>
                             <Routes>
                               <Route path="/" element={<HomePage />} />
@@ -180,6 +190,11 @@ const App = () => {
                               >
                                 <Route index element={<Navigate to="dashboard" replace />} />
                                 <Route path="dashboard" element={<AdminHomePage />} />
+                                <Route path="orders" element={<OrdersRouter />} />
+                                <Route path="analytics" element={<AdminAnalyticsPage />} />
+                                <Route path="leaderboard" element={<AdminLeaderboardPage />} />
+                                <Route path="customers" element={<AdminCustomersPage />} />
+                                <Route path="management" element={<AdminPage />} />
                                 <Route path="inventory" element={<InventoryPage />} />
                                 <Route path="shipping" element={<ShippingManagementPage />} />
                                 <Route path="withdrawals" element={<AdminWithdrawalsPage />} />
@@ -209,9 +224,11 @@ const App = () => {
                       </SmartNavigationProvider>
                     </BrowserRouter>
                   </AdaptiveLayoutProvider>
-                </DarkModeProvider>
-              </LanguageProvider>
-            </SupabaseAuthProvider>
+                </UserDataProvider>
+              </DarkModeProvider>
+            </LanguageProvider>
+            </FirebaseAuthProvider>
+          </SupabaseAuthProvider>
         </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>
