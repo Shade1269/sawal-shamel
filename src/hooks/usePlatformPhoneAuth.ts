@@ -192,7 +192,17 @@ export const usePlatformPhoneAuth = () => {
         return { success: false, error: errorMessage };
       }
 
-      // إنشاء جلسة Supabase باستخدام بيانات الجلسة المُعادة من الـ Edge Function
+      // التحقق الناجح - استخدام magic_link للمصادقة
+      if (data?.magic_link || data?.redirect_url) {
+        const authUrl = data.magic_link || data.redirect_url;
+        console.log('OTP verified, redirecting to auth URL:', authUrl);
+        
+        // إعادة التوجيه للرابط السحري لإكمال المصادقة
+        window.location.href = authUrl;
+        return { success: true };
+      } 
+      
+      // Fallback: للتوافق مع البنية القديمة
       if (data?.session?.email && data?.session?.email_otp) {
         console.log('OTP verified, creating Supabase session via email_otp');
         const { data: authData, error: authError } = await supabase.auth.verifyOtp({
@@ -207,25 +217,13 @@ export const usePlatformPhoneAuth = () => {
           return { success: false, error: authError.message };
         }
         console.log('Supabase session created successfully:', authData?.user?.id);
-      } else if (data?.session?.email && data?.session?.token) {
-        // احتياطي: في حال لم يتوفر email_otp لأي سبب
-        console.warn('email_otp missing, attempting with hashed token fallback');
-        const { data: authData, error: authError } = await supabase.auth.verifyOtp({
-          email: data.session.email,
-          token: data.session.token,
-          type: 'email',
-        });
-        if (authError) {
-          console.error('Failed to create session using fallback token:', authError);
-          toast.error('خطأ', { description: 'فشل في تسجيل الدخول' });
-          return { success: false, error: authError.message };
-        }
-        console.log('Supabase session created with fallback token:', authData?.user?.id);
-      } else {
-        console.error('No session data returned from verification');
-        toast.error('خطأ', { description: 'فشل في إنشاء الجلسة' });
-        return { success: false, error: 'No session data' };
+        return { success: true };
       }
+      
+      // لم يتم إرجاع بيانات جلسة صالحة
+      console.error('No valid session data returned from verification');
+      toast.error('خطأ', { description: 'فشل في إنشاء الجلسة' });
+      return { success: false, error: 'No session data' };
 
       toast.success('تم التحقق بنجاح!', { description: 'مرحباً بك في المنصة' });
       return { success: true };
