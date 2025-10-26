@@ -383,16 +383,18 @@ const ProfilePageBody: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 lg:py-8" data-page="profile">
       <SkipLink targetId="profile-main" label="تخطي إلى محتوى الملف الشخصي" />
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleBack}
-        leftIcon={<ArrowRight className="h-4 w-4" />}
-        className="mb-4"
-        aria-label="العودة للصفحة السابقة"
-      >
-        العودة
-      </Button>
+      <div className="flex items-center gap-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleBack}
+          leftIcon={<ArrowRight className="h-4 w-4" />}
+          aria-label="العودة للصفحة السابقة"
+          className="hover:bg-accent/10"
+        >
+          العودة
+        </Button>
+      </div>
       <OverviewSection hook={hook} onOpenNotifications={handleOpenNotifications} />
       <Tabs defaultValue="overview" className="space-y-6" data-section="profile-tabs">
         <TabsList aria-label="أقسام الملف الشخصي" className="grid gap-2 md:grid-cols-4">
