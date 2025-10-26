@@ -115,26 +115,26 @@ const App = () => {
                               <Route path="/auth/callback" element={<AuthCallbackPage />} />
                               <Route path="/ui" element={<UiShowcasePage />} />
                               <Route path="/luxury-showcase" element={<LuxuryShowcase />} />
-                              <Route
-                                path="/profile"
-                                element={(
-                                  <ProtectedRoute requiredRole={["affiliate", "marketer", "admin"]}>
-                                    <AuthenticatedLayout>
-                                      <ProfilePage />
-                                    </AuthenticatedLayout>
-                                  </ProtectedRoute>
-                                )}
-                              />
-                              <Route
-                                path="/notifications"
-                                element={(
-                                  <ProtectedRoute requiredRole={["affiliate", "marketer", "admin"]}>
-                                    <AuthenticatedLayout>
-                                      <NotificationsPage />
-                                    </AuthenticatedLayout>
-                                  </ProtectedRoute>
-                                )}
-                              />
+              <Route
+                path="/profile"
+                element={(
+                  <ProtectedRoute requiredRole={["affiliate", "marketer", "admin", "merchant"]}>
+                    <AuthenticatedLayout>
+                      <ProfilePage />
+                    </AuthenticatedLayout>
+                  </ProtectedRoute>
+                )}
+              />
+              <Route
+                path="/notifications"
+                element={(
+                  <ProtectedRoute requiredRole={["affiliate", "marketer", "admin", "merchant"]}>
+                    <AuthenticatedLayout>
+                      <NotificationsPage />
+                    </AuthenticatedLayout>
+                  </ProtectedRoute>
+                )}
+              />
 
                               {/* Products browsing - MUST come before /:slug */}
                               <Route 
