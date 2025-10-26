@@ -14,6 +14,37 @@ const AuthCallbackPage = () => {
   const [message, setMessage] = useState<string>('جاري التحقق من الجلسة...');
 
   useEffect(() => {
+    // 1) استمع لحالة المصادقة أولاً لمنع فقدان الأحداث
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        setState('success');
+        setMessage('تم التحقق من الجلسة بنجاح. جارٍ توجيهك...');
+
+        // لا تنفّذ استعلامات Supabase مباشرة داخل callback
+        setTimeout(async () => {
+          try {
+            const authUser = session.user;
+            let role: string | null = authUser?.user_metadata?.role ?? null;
+
+            if (authUser?.id) {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('auth_user_id', authUser.id)
+                .maybeSingle();
+              role = profile?.role ?? role;
+            }
+
+            const redirect = getHomeRouteForRole(role as any);
+            navigate(redirect, { replace: true });
+          } catch (e) {
+            console.error('Post-auth redirect error:', e);
+            navigate('/', { replace: true });
+          }
+        }, 0);
+      }
+    });
+
     const completeSignIn = async () => {
       const params = new URLSearchParams(window.location.search);
       const errorDescription = params.get('error_description') || params.get('error');
@@ -25,45 +56,54 @@ const AuthCallbackPage = () => {
         return;
       }
 
-      if (!code) {
-        setState('error');
-        setMessage('لم يتم العثور على رمز التحقق. الرجاء إعادة المحاولة.');
+      // 2) دعم تدفق Magic Link: رموز الوصول داخل الـ hash
+      if (window.location.hash && window.location.hash.includes('access_token')) {
+        const hashParams = new URLSearchParams(window.location.hash.slice(1));
+        const access_token = hashParams.get('access_token');
+        const refresh_token = hashParams.get('refresh_token');
+        if (access_token && refresh_token) {
+          try {
+            await supabase.auth.setSession({ access_token, refresh_token });
+            // تنظيف الرابط من الرموز
+            window.history.replaceState({}, document.title, window.location.pathname);
+            return; // سيتم متابعة التوجيه عبر onAuthStateChange
+          } catch (e: any) {
+            console.error('setSession failed:', e);
+          }
+        }
+      }
+
+      // 3) تدفق OAuth (code)
+      if (code) {
+        try {
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) throw error;
+          return; // سيتم متابعة التوجيه عبر onAuthStateChange
+        } catch (error: any) {
+          console.error('exchangeCodeForSession error:', error);
+          setState('error');
+          setMessage(error?.message ?? 'حدث خطأ أثناء إكمال تسجيل الدخول.');
+          return;
+        }
+      }
+
+      // 4) محاولة أخيرة: هل هناك جلسة محفوظة بالفعل؟
+      const { data: sess } = await supabase.auth.getSession();
+      if (sess.session) {
+        setState('success');
+        setMessage('تم التحقق من الجلسة بنجاح. جارٍ توجيهك...');
         return;
       }
 
-      try {
-        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-
-        if (error) {
-          throw error;
-        }
-
-        const authUser = data.user;
-        let role: string | null = authUser?.user_metadata?.role ?? null;
-
-        if (authUser?.id) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('auth_user_id', authUser.id)
-            .maybeSingle();
-
-          role = profile?.role ?? role;
-        }
-
-        setState('success');
-        setMessage('تم التحقق من الجلسة بنجاح. جارٍ توجيهك...');
-
-        const redirect = getHomeRouteForRole(role as any);
-        navigate(redirect, { replace: true });
-      } catch (error: any) {
-        console.error('Auth callback error:', error);
-        setState('error');
-        setMessage(error?.message ?? 'حدث خطأ أثناء إكمال تسجيل الدخول.');
-      }
+      setState('error');
+      setMessage('لم يتم العثور على رمز التحقق. الرجاء إعادة المحاولة.');
     };
 
     completeSignIn();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   const handleBackHome = () => {
