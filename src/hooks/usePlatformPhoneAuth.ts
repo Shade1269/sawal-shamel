@@ -111,11 +111,14 @@ export const usePlatformPhoneAuth = () => {
         }
       });
 
+      console.log('Edge Function response:', { data, error });
+
       // التحقق من البيانات أولاً (حتى مع وجود error، قد تكون data موجودة)
       if (data && !data.success) {
-        console.error('OTP send failed:', data);
+        console.error('OTP send failed from data:', data);
         const errText: string = data?.error || 'فشل في إرسال رمز التحقق';
-        const details = data?.details ? ` (${data.details})` : '';
+        const details = data?.details || data?.twilioCode || '';
+        const fullError = details ? `${errText} - ${details}` : errText;
         
         // التحقق من cooldown
         const match = /الرجاء\s+الانتظار\s+(\d+)\s*ثانية/i.exec(errText);
@@ -126,15 +129,18 @@ export const usePlatformPhoneAuth = () => {
         }
         
         toast.error('خطأ في الإرسال', {
-          description: errText + details,
+          description: fullError,
         });
-        return { success: false, error: errText, code: 'GENERIC' };
+        return { success: false, error: fullError, code: 'GENERIC' };
       }
 
       if (error) {
-        console.error('Edge Function error:', error);
+        console.error('Edge Function error object:', error);
         const status = (error as any)?.status;
         const message = (error as any)?.message || '';
+        const context = (error as any)?.context || {};
+
+        console.log('Error details:', { status, message, context });
 
         // فقط عند 429 الحقيقي نعرض cooldown
         if (status === 429 || /too\s*many\s*requests/i.test(message)) {
@@ -151,8 +157,20 @@ export const usePlatformPhoneAuth = () => {
           return { success: false, error: 'Insufficient balance', code: 'INSUFFICIENT_BALANCE' };
         }
         
-        // عرض الخطأ الحقيقي للمستخدم
-        const displayError = message || 'فشل في إرسال رمز التحقق';
+        // محاولة استخراج التفاصيل من context أو error
+        let displayError = 'فشل في إرسال رمز التحقق';
+        
+        if (message && !message.includes('non-2xx')) {
+          displayError = message;
+        } else if (context && typeof context === 'object') {
+          displayError = context.error || context.message || displayError;
+        }
+        
+        // إضافة حالة الخطأ إذا كانت متوفرة
+        if (status && status !== 200) {
+          displayError = `${displayError} (${status})`;
+        }
+        
         toast.error('خطأ في الإرسال', {
           description: displayError,
         });
