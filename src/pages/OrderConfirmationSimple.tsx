@@ -7,6 +7,7 @@ import {
   Home,
   Package,
   Receipt,
+  RotateCcw,
   Share2,
   ShoppingBag,
 } from "lucide-react";
@@ -19,6 +20,7 @@ import Skeleton from "@/ui/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { VisuallyHidden } from "@/components/app-shell/VisuallyHidden";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { ReturnRequestDialog } from "@/components/orders";
 
 interface OrderItem {
   id: string;
@@ -120,6 +122,7 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
   const params = useParams<{ orderId?: string; slug?: string }>();
   const orderId = searchParams.get("orderId") ?? params.orderId ?? "";
   const storeSlug = searchParams.get("slug") ?? params.slug ?? undefined;
+  const [showReturnDialog, setShowReturnDialog] = useState(false);
 
   const overrideProvided = typeof orderOverride !== "undefined";
   const [order, setOrder] = useState<OrderDetails | null>(orderOverride ?? null);
@@ -430,6 +433,16 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
             <Button variant="ghost" size="sm" leftIcon={<Home className="h-4 w-4" aria-hidden />} onClick={() => navigate("/")}>
               الرئيسية
             </Button>
+            {order.status === 'DELIVERED' && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                leftIcon={<RotateCcw className="h-4 w-4" aria-hidden />} 
+                onClick={() => setShowReturnDialog(true)}
+              >
+                طلب إرجاع
+              </Button>
+            )}
           </div>
         </Card>
       </section>
@@ -443,6 +456,14 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
           {error}
         </div>
       ) : null}
+
+      {/* Return Request Dialog */}
+      <ReturnRequestDialog
+        open={showReturnDialog}
+        onOpenChange={setShowReturnDialog}
+        orderId={order.id}
+        orderAmount={order.total_sar}
+      />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { ReturnRequestDialog } from '@/components/orders';
 import { 
   Package, 
   Clock, 
@@ -17,7 +18,8 @@ import {
   Loader2,
   ShoppingBag,
   Phone,
-  MapPin
+  MapPin,
+  RotateCcw
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
@@ -55,6 +57,7 @@ const CustomerOrders: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { isAuthenticated, customer, isLoading: authLoading } = useCustomerAuthContext();
+  const [selectedOrderForReturn, setSelectedOrderForReturn] = useState<{ id: string; amount: number } | null>(null);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -278,6 +281,21 @@ const CustomerOrders: React.FC = () => {
                         </div>
                       </>
                     )}
+
+                    {/* Return Request Button */}
+                    {order.payment_status === 'DELIVERED' && (
+                      <>
+                        <Separator />
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => setSelectedOrderForReturn({ id: order.id, amount: order.total_amount_sar })}
+                        >
+                          <RotateCcw className="w-4 h-4 ml-2" />
+                          طلب إرجاع الطلب
+                        </Button>
+                      </>
+                    )}
                   </CardContent>
                 </Card>
               );
@@ -303,6 +321,16 @@ const CustomerOrders: React.FC = () => {
           </Card>
         )}
       </main>
+
+      {/* Return Request Dialog */}
+      {selectedOrderForReturn && (
+        <ReturnRequestDialog
+          open={!!selectedOrderForReturn}
+          onOpenChange={(open) => !open && setSelectedOrderForReturn(null)}
+          orderId={selectedOrderForReturn.id}
+          orderAmount={selectedOrderForReturn.amount}
+        />
+      )}
     </div>
   );
 };
