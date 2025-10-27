@@ -15,6 +15,8 @@ interface Product {
   title: string;
   description: string;
   price_sar: number;
+  merchant_base_price_sar?: number;
+  catalog_price_sar?: number;
   category: string;
   images: any;
   approval_status: 'pending' | 'approved' | 'rejected';
@@ -228,14 +230,38 @@ const MerchantProducts = () => {
                         <p className="text-sm text-muted-foreground line-clamp-2">
                           {product.description}
                         </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-primary">
-                            {product.price_sar} ر.س
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            المخزون: {product.stock}
-                          </span>
+                        
+                        {/* معلومات التسعير */}
+                        <div className="space-y-1 pt-2 border-t">
+                          {product.merchant_base_price_sar ? (
+                            <>
+                              <div className="flex items-center justify-between text-sm">
+                                <span className="text-muted-foreground">سعرك الأساسي:</span>
+                                <span className="font-bold text-green-600">
+                                  {product.merchant_base_price_sar.toFixed(2)} ر.س
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-muted-foreground">سعر الكتالوج:</span>
+                                <span className="font-medium">
+                                  {product.catalog_price_sar?.toFixed(2) || (product.merchant_base_price_sar * 1.25).toFixed(2)} ر.س
+                                </span>
+                              </div>
+                            </>
+                          ) : (
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-muted-foreground">السعر:</span>
+                              <span className="text-lg font-bold text-primary">
+                                {product.price_sar} ر.س
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between text-xs pt-1">
+                            <span className="text-muted-foreground">المخزون:</span>
+                            <span className="font-medium">{product.stock}</span>
+                          </div>
                         </div>
+
                         {product.approval_notes && (
                           <div className="text-xs text-muted-foreground bg-muted p-2 rounded">
                             <strong>ملاحظات الأدمن:</strong> {product.approval_notes}

@@ -15,7 +15,7 @@ import { useQueryClient } from '@tanstack/react-query';
 const productSchema = z.object({
   title: z.string().min(1, 'اسم المنتج مطلوب'),
   sku: z.string().min(1, 'رمز المنتج مطلوب'),
-  price_sar: z.number().min(0, 'السعر يجب أن يكون رقم موجب'),
+  merchant_base_price_sar: z.number().min(0, 'السعر يجب أن يكون رقم موجب'),
   description: z.string().optional(),
 });
 
@@ -46,10 +46,14 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
     defaultValues: {
       title: '',
       sku: '',
-      price_sar: 0,
+      merchant_base_price_sar: 0,
       description: '',
     },
   });
+
+  // حساب سعر الكتالوج تلقائياً
+  const merchantBasePrice = form.watch('merchant_base_price_sar') || 0;
+  const catalogPrice = merchantBasePrice * 1.25;
 
   const addVariant = () => {
     setVariants([...variants, { color: '', size: '', quantity: 0 }]);
@@ -164,7 +168,8 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
       const productData = {
         title: data.title,
         sku: data.sku,
-        price_sar: data.price_sar,
+        merchant_base_price_sar: data.merchant_base_price_sar,
+        price_sar: data.merchant_base_price_sar * 1.25, // سعر الكتالوج (سعر التاجر + 25%)
         description: data.description,
         image_urls: imageUrls,
         is_active: true,
@@ -220,7 +225,7 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
               quantity_reserved: 0,
               quantity_on_order: 0,
               reorder_level: 5,
-              unit_cost: data.price_sar * 0.7, // تكلفة تقديرية
+              unit_cost: data.merchant_base_price_sar * 0.7, // تكلفة تقديرية
             });
           }
         }
@@ -258,6 +263,32 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
       </CardHeader>
       <CardContent className="space-y-6">
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* شرح نظام التسعير */}
+          <div className="p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg space-y-2">
+            <h3 className="font-semibold text-blue-900 dark:text-blue-100 flex items-center gap-2">
+              <span className="text-lg">ℹ️</span>
+              كيف يعمل نظام التسعير؟
+            </h3>
+            <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+              <p>• <strong>سعرك الأساسي:</strong> المبلغ الذي تحصل عليه مباشرة من كل بيعة</p>
+              <p>• <strong>سعر الكتالوج:</strong> سعرك + 25% (نصيب المنصة) = {catalogPrice.toFixed(2)} ريال</p>
+              <p>• <strong>السعر النهائي:</strong> المسوق يحدده ويحصل على الفرق كعمولة</p>
+            </div>
+            {merchantBasePrice > 0 && (
+              <div className="mt-3 p-3 bg-white dark:bg-blue-900/30 rounded border border-blue-300 dark:border-blue-700">
+                <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">
+                  مثال على منتجك:
+                </p>
+                <div className="text-xs text-blue-700 dark:text-blue-300 mt-2 space-y-1">
+                  <p>✓ أنت تحصل على: <strong>{merchantBasePrice.toFixed(2)} ريال</strong></p>
+                  <p>✓ المنصة تحصل على: <strong>{(merchantBasePrice * 0.25).toFixed(2)} ريال</strong></p>
+                  <p>✓ سعر الكتالوج: <strong>{catalogPrice.toFixed(2)} ريال</strong></p>
+                  <p>✓ إذا باع المسوق بـ 1500 ريال، عمولته: <strong>{(1500 - catalogPrice).toFixed(2)} ريال</strong></p>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* معلومات المنتج الأساسية */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -285,17 +316,20 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price_sar">السعر (ريال سعودي) *</Label>
+              <Label htmlFor="merchant_base_price_sar">سعرك الأساسي (ريال سعودي) *</Label>
               <Input
-                id="price_sar"
+                id="merchant_base_price_sar"
                 type="number"
                 step="0.01"
-                {...form.register('price_sar', { valueAsNumber: true })}
+                {...form.register('merchant_base_price_sar', { valueAsNumber: true })}
                 placeholder="0.00"
               />
-              {form.formState.errors.price_sar && (
-                <p className="text-sm text-destructive">{form.formState.errors.price_sar.message}</p>
+              {form.formState.errors.merchant_base_price_sar && (
+                <p className="text-sm text-destructive">{form.formState.errors.merchant_base_price_sar.message}</p>
               )}
+              <p className="text-xs text-muted-foreground">
+                المبلغ الذي ستحصل عليه من كل مبيعة
+              </p>
             </div>
 
             <div className="space-y-2">
