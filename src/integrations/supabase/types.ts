@@ -6658,7 +6658,7 @@ export type Database = {
           old_data: Json | null
           product_id: string | null
           user_agent: string | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           action_type: string
@@ -6669,7 +6669,7 @@ export type Database = {
           old_data?: Json | null
           product_id?: string | null
           user_agent?: string | null
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           action_type?: string
@@ -6680,7 +6680,7 @@ export type Database = {
           old_data?: Json | null
           product_id?: string | null
           user_agent?: string | null
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
