@@ -110,14 +110,14 @@ serve(async (req) => {
     
     console.log('User check:', { isExistingUser, existingRole });
 
-    // إرسال OTP عبر Ding
-    const dingApiKey = Deno.env.get('DING_API_KEY');
+    // إرسال OTP عبر Prelude (Ding v2 API)
+    const preludeApiKey = Deno.env.get('DING_API_KEY');
 
-    if (dingApiKey) {
+    if (preludeApiKey) {
       try {
-        const dingUrl = 'https://api.ding.live/v1/authentication';
+        const preludeUrl = 'https://api.prelude.so/v2/verification';
 
-        console.log('Sending OTP via Ding to:', phone);
+        console.log('Sending OTP via Prelude to:', phone);
 
         // تنسيق الرقم للتأكد من وجود + في البداية
         let formattedPhone = phone;
@@ -125,57 +125,60 @@ serve(async (req) => {
           formattedPhone = `+${phone}`;
         }
         
-        console.log('Ding phone format:', formattedPhone);
+        console.log('Prelude phone format:', formattedPhone);
 
-        const dingResponse = await fetch(dingUrl, {
+        const preludeResponse = await fetch(preludeUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': dingApiKey,
+            'Authorization': `Bearer ${preludeApiKey}`,
           },
           body: JSON.stringify({
-            phone_number: formattedPhone,
-            locale: 'ar-SA', // اللغة العربية - السعودية
+            target: {
+              type: 'phone_number',
+              value: formattedPhone
+            },
+            locale: 'ar-SA'
           }),
         });
 
-        if (dingResponse.ok) {
-          const dingData = await dingResponse.json();
-          console.log('OTP sent successfully via Ding:', dingData);
-          console.log('Authentication UUID:', dingData.authentication_uuid);
-          console.log('Status:', dingData.status);
+        if (preludeResponse.ok) {
+          const preludeData = await preludeResponse.json();
+          console.log('OTP sent successfully via Prelude:', preludeData);
+          console.log('Verification ID:', preludeData.id);
+          console.log('Status:', preludeData.status);
           
-          // حفظ authentication_uuid في قاعدة البيانات للتحقق لاحقاً
+          // حفظ verification_id في قاعدة البيانات للتحقق لاحقاً
           await supabase
             .from('whatsapp_otp')
             .update({ 
-              external_id: dingData.authentication_uuid 
+              external_id: preludeData.id 
             })
             .eq('id', otpData.id);
         } else {
-          const errorData = await dingResponse.text();
-          console.error('Ding error response:', errorData);
-          console.error('Ding status:', dingResponse.status);
+          const errorData = await preludeResponse.text();
+          console.error('Prelude error response:', errorData);
+          console.error('Prelude status:', preludeResponse.status);
           
-          // محاولة تحليل خطأ Ding
+          // محاولة تحليل خطأ Prelude
           let errorJson = null;
           try {
             errorJson = JSON.parse(errorData);
-            console.error('Ding error details:', errorJson);
+            console.error('Prelude error details:', errorJson);
           } catch (e) {
-            console.error('Could not parse Ding error as JSON');
+            console.error('Could not parse Prelude error as JSON');
           }
           
-          // معالجة أخطاء Ding المختلفة
+          // معالجة أخطاء Prelude المختلفة
           let userMessage = 'فشل في إرسال رمز التحقق';
-          let errorMessage = errorJson?.message || 'خطأ غير معروف من Ding';
+          let errorMessage = errorJson?.message || 'خطأ غير معروف';
           
-          if (dingResponse.status === 400) {
+          if (preludeResponse.status === 400) {
             userMessage = 'تنسيق رقم الجوال غير صحيح';
-          } else if (dingResponse.status === 401) {
+          } else if (preludeResponse.status === 401) {
             userMessage = 'خطأ في مفتاح API';
             errorMessage = 'Invalid API key';
-          } else if (dingResponse.status === 429) {
+          } else if (preludeResponse.status === 429) {
             userMessage = 'تم تجاوز عدد الطلبات المسموح بها';
             errorMessage = 'Rate limit exceeded';
           }
@@ -185,20 +188,20 @@ serve(async (req) => {
               success: false, 
               error: userMessage,
               details: errorMessage,
-              status: dingResponse.status
+              status: preludeResponse.status
             }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
-      } catch (dingError) {
-        console.error('Error sending OTP via Ding:', dingError);
+      } catch (preludeError) {
+        console.error('Error sending OTP via Prelude:', preludeError);
         return new Response(
           JSON.stringify({ success: false, error: 'خطأ في إرسال الرسالة' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
     } else {
-      console.log('Ding not configured - OTP:', otp);
+      console.log('Prelude not configured - OTP:', otp);
       // في التطوير، نعيد OTP للاختبار
       return new Response(
         JSON.stringify({ 

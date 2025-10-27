@@ -89,54 +89,53 @@ serve(async (req) => {
     }
 
     let otpVerified = false;
-    const dingApiKey = Deno.env.get('DING_API_KEY');
+    const preludeApiKey = Deno.env.get('DING_API_KEY');
 
-    // إذا كان external_id موجوداً، استخدم Ding API للتحقق
-    if (otpRecord.external_id && dingApiKey) {
+    // إذا كان external_id موجوداً، استخدم Prelude API للتحقق
+    if (otpRecord.external_id && preludeApiKey) {
       try {
-        console.log('Verifying OTP via Ding API');
-        const dingCheckUrl = 'https://api.ding.live/v1/check';
+        console.log('Verifying OTP via Prelude API');
+        const preludeCheckUrl = `https://api.prelude.so/v2/verification/${otpRecord.external_id}/check`;
         
-        const dingCheckResponse = await fetch(dingCheckUrl, {
+        const preludeCheckResponse = await fetch(preludeCheckUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': dingApiKey,
+            'Authorization': `Bearer ${preludeApiKey}`,
           },
           body: JSON.stringify({
-            authentication_uuid: otpRecord.external_id,
-            check_code: otp,
+            code: otp,
           }),
         });
 
-        if (dingCheckResponse.ok) {
-          const dingCheckData = await dingCheckResponse.json();
-          console.log('Ding verification response:', dingCheckData);
+        if (preludeCheckResponse.ok) {
+          const preludeCheckData = await preludeCheckResponse.json();
+          console.log('Prelude verification response:', preludeCheckData);
           
-          if (dingCheckData.status === 'valid') {
+          if (preludeCheckData.status === 'valid' || preludeCheckData.status === 'succeeded') {
             otpVerified = true;
-            console.log('OTP verified successfully via Ding');
+            console.log('OTP verified successfully via Prelude');
           } else {
-            console.log('OTP verification failed via Ding:', dingCheckData.status);
+            console.log('OTP verification failed via Prelude:', preludeCheckData.status);
           }
         } else {
-          console.error('Ding check failed:', dingCheckResponse.status);
-          // إذا فشل Ding API، نستخدم التحقق المحلي كـ fallback
+          console.error('Prelude check failed:', preludeCheckResponse.status);
+          // إذا فشل Prelude API، نستخدم التحقق المحلي كـ fallback
           if (otpRecord.code === otp) {
             otpVerified = true;
             console.log('OTP verified via local fallback');
           }
         }
-      } catch (dingError) {
-        console.error('Error checking OTP via Ding:', dingError);
+      } catch (preludeError) {
+        console.error('Error checking OTP via Prelude:', preludeError);
         // استخدام التحقق المحلي كـ fallback
         if (otpRecord.code === otp) {
           otpVerified = true;
-          console.log('OTP verified via local fallback after Ding error');
+          console.log('OTP verified via local fallback after Prelude error');
         }
       }
     } else {
-      // لا يوجد external_id أو Ding API، استخدام التحقق المحلي
+      // لا يوجد external_id أو Prelude API، استخدام التحقق المحلي
       if (otpRecord.code === otp) {
         otpVerified = true;
         console.log('OTP verified via local check');
