@@ -5518,6 +5518,57 @@ export type Database = {
           },
         ]
       }
+      order_returns: {
+        Row: {
+          affiliate_id: string | null
+          created_at: string
+          customer_id: string | null
+          id: string
+          notes: string | null
+          order_id: string
+          processed_at: string | null
+          processed_by: string | null
+          refund_amount_sar: number | null
+          return_reason: string
+          return_status: string
+          returned_items: Json
+          source_table: string
+          updated_at: string
+        }
+        Insert: {
+          affiliate_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          notes?: string | null
+          order_id: string
+          processed_at?: string | null
+          processed_by?: string | null
+          refund_amount_sar?: number | null
+          return_reason: string
+          return_status?: string
+          returned_items?: Json
+          source_table: string
+          updated_at?: string
+        }
+        Update: {
+          affiliate_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          notes?: string | null
+          order_id?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          refund_amount_sar?: number | null
+          return_reason?: string
+          return_status?: string
+          returned_items?: Json
+          source_table?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_status_history: {
         Row: {
           change_reason: string | null
@@ -11115,6 +11166,81 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      wallet_balances: {
+        Row: {
+          affiliate_profile_id: string
+          available_balance_sar: number
+          created_at: string
+          id: string
+          lifetime_earnings_sar: number
+          minimum_withdrawal_sar: number
+          pending_balance_sar: number
+          total_withdrawn_sar: number
+          updated_at: string
+        }
+        Insert: {
+          affiliate_profile_id: string
+          available_balance_sar?: number
+          created_at?: string
+          id?: string
+          lifetime_earnings_sar?: number
+          minimum_withdrawal_sar?: number
+          pending_balance_sar?: number
+          total_withdrawn_sar?: number
+          updated_at?: string
+        }
+        Update: {
+          affiliate_profile_id?: string
+          available_balance_sar?: number
+          created_at?: string
+          id?: string
+          lifetime_earnings_sar?: number
+          minimum_withdrawal_sar?: number
+          pending_balance_sar?: number
+          total_withdrawn_sar?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      wallet_transactions: {
+        Row: {
+          affiliate_profile_id: string
+          amount_sar: number
+          balance_after_sar: number
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          reference_id: string | null
+          reference_type: string | null
+          transaction_type: string
+        }
+        Insert: {
+          affiliate_profile_id: string
+          amount_sar: number
+          balance_after_sar: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          reference_id?: string | null
+          reference_type?: string | null
+          transaction_type: string
+        }
+        Update: {
+          affiliate_profile_id?: string
+          amount_sar?: number
+          balance_after_sar?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          reference_id?: string | null
+          reference_type?: string | null
+          transaction_type?: string
+        }
+        Relationships: []
       }
       warehouse_products: {
         Row: {
