@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { Bell, Search, User, Package, ShoppingCart, Home, Store } from "lucide-react"
+import { Bell, Search, User, Package, ShoppingCart, Home, Store, Wallet } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { 
@@ -46,6 +46,11 @@ const menuItems = [
     title: "الطلبات",
     url: "/merchant/orders",
     icon: ShoppingCart
+  },
+  {
+    title: "المحفظة المالية",
+    url: "/merchant/wallet",
+    icon: Wallet
   }
 ];
 

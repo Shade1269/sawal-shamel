@@ -62,7 +62,10 @@ const ShippingManagementPage = lazy(() => import("./pages/ShippingManagement"));
 const MerchantDashboard = lazy(() => import("./pages/merchant/MerchantDashboard"));
 const MerchantProducts = lazy(() => import("./pages/merchant/MerchantProducts"));
 const MerchantOrders = lazy(() => import("./pages/merchant/MerchantOrders"));
+const MerchantWalletPage = lazy(() => import("./pages/MerchantWalletPage"));
 const MerchantLayout = lazy(() => import("./layouts/MerchantLayout"));
+const AdminMerchantWithdrawalsPage = lazy(() => import("./pages/AdminMerchantWithdrawalsPage"));
+const AdminPlatformRevenuePage = lazy(() => import("./pages/AdminPlatformRevenuePage"));
 const UiShowcasePage = lazy(() => import("./pages/UiShowcase"));
 const ProfilePage = lazy(() => import("./pages/profile"));
 const NotificationsPage = lazy(() => import("./pages/notifications"));
@@ -199,6 +202,8 @@ const App = () => {
                                 <Route path="inventory" element={<InventoryPage />} />
                                 <Route path="shipping" element={<ShippingManagementPage />} />
                                 <Route path="withdrawals" element={<AdminWithdrawalsPage />} />
+                                <Route path="merchant-withdrawals" element={<AdminMerchantWithdrawalsPage />} />
+                                <Route path="platform-revenue" element={<AdminPlatformRevenuePage />} />
                                 <Route path="returns" element={<AdminReturnsPage />} />
                                 <Route path="products/approval" element={<AdminProductApproval />} />
                                 <Route path="testing" element={<TestingPage />} />
@@ -217,6 +222,7 @@ const App = () => {
                                 <Route index element={<MerchantDashboard />} />
                                 <Route path="products" element={<MerchantProducts />} />
                                 <Route path="orders" element={<MerchantOrders />} />
+                                <Route path="wallet" element={<MerchantWalletPage />} />
                               </Route>
 
                               <Route path="*" element={<Navigate to="/" replace />} />

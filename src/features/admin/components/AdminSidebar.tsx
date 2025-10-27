@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { BarChart3, ShoppingCart, TrendingUp, Database, Crown, Wallet, CheckCircle } from "lucide-react";
+import { BarChart3, ShoppingCart, TrendingUp, Database, Crown, Wallet, CheckCircle, DollarSign, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const mainMenuItems = [
@@ -30,9 +30,19 @@ const managementItems = [
     icon: ShoppingCart
   },
   {
-    title: "إدارة السحوبات",
+    title: "سحوبات المسوقين",
     url: "/admin/withdrawals",
     icon: Wallet
+  },
+  {
+    title: "سحوبات التجار",
+    url: "/admin/merchant-withdrawals",
+    icon: Building2
+  },
+  {
+    title: "أرباح المنصة",
+    url: "/admin/platform-revenue",
+    icon: DollarSign
   },
   {
     title: "موافقة المنتجات",
