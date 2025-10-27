@@ -38,10 +38,19 @@ export const useWallet = () => {
     queryFn: async () => {
       if (!user) return null;
       
+      // Get profile ID first
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single();
+
+      if (!profile) throw new Error('Profile not found');
+
       const { data, error } = await supabase
         .from('wallet_balances')
         .select('*')
-        .eq('affiliate_profile_id', user.id)
+        .eq('affiliate_profile_id', profile.id)
         .maybeSingle();
 
       if (error) throw error;
@@ -51,7 +60,7 @@ export const useWallet = () => {
         const { data: newWallet, error: createError } = await supabase
           .from('wallet_balances')
           .insert({
-            affiliate_profile_id: user.id,
+            affiliate_profile_id: profile.id,
             available_balance_sar: 0,
             pending_balance_sar: 0,
             lifetime_earnings_sar: 0,
@@ -76,10 +85,19 @@ export const useWallet = () => {
     queryFn: async () => {
       if (!user) return [];
       
+      // Get profile ID first
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single();
+
+      if (!profile) return [];
+      
       const { data, error } = await supabase
         .from('wallet_transactions')
         .select('*')
-        .eq('affiliate_profile_id', user.id)
+        .eq('affiliate_profile_id', profile.id)
         .order('created_at', { ascending: false })
         .limit(50);
 
