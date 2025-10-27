@@ -50,12 +50,11 @@ serve(async (req) => {
 
     console.log('Verifying platform OTP for:', phone, 'with role:', role);
 
-    // التحقق من OTP مع التحقق من المحاولات
+    // الحصول على سجل OTP من قاعدة البيانات
     const { data: otpRecord, error: otpError } = await supabase
       .from('whatsapp_otp')
       .select('*')
       .eq('phone', phone)
-      .eq('code', otp)
       .eq('verified', false)
       .gt('expires_at', new Date().toISOString())
       .order('created_at', { ascending: false })
@@ -63,41 +62,103 @@ serve(async (req) => {
       .maybeSingle();
 
     if (otpError || !otpRecord) {
-      console.error('OTP verification failed:', otpError);
-      
-      // زيادة عدد المحاولات الفاشلة
-      const { data: failedOtp } = await supabase
+      console.error('OTP record not found:', otpError);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'رمز التحقق غير صحيح أو منتهي الصلاحية' 
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // التحقق من عدد المحاولات
+    if (otpRecord.attempts >= 5) {
+      await supabase
         .from('whatsapp_otp')
-        .select('id, attempts')
-        .eq('phone', phone)
-        .eq('verified', false)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .update({ verified: true })
+        .eq('id', otpRecord.id);
       
-      if (failedOtp) {
-        const newAttempts = (failedOtp.attempts || 0) + 1;
-        await supabase
-          .from('whatsapp_otp')
-          .update({ attempts: newAttempts })
-          .eq('id', failedOtp.id);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'تم تجاوز الحد الأقصى للمحاولات. الرجاء طلب رمز جديد' 
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    let otpVerified = false;
+    const dingApiKey = Deno.env.get('DING_API_KEY');
+
+    // إذا كان external_id موجوداً، استخدم Ding API للتحقق
+    if (otpRecord.external_id && dingApiKey) {
+      try {
+        console.log('Verifying OTP via Ding API');
+        const dingCheckUrl = 'https://api.ding.live/v1/check';
         
-        if (newAttempts >= 5) {
-          // إلغاء OTP بعد 5 محاولات فاشلة
-          await supabase
-            .from('whatsapp_otp')
-            .update({ verified: true })
-            .eq('id', failedOtp.id);
+        const dingCheckResponse = await fetch(dingCheckUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': dingApiKey,
+          },
+          body: JSON.stringify({
+            authentication_uuid: otpRecord.external_id,
+            check_code: otp,
+          }),
+        });
+
+        if (dingCheckResponse.ok) {
+          const dingCheckData = await dingCheckResponse.json();
+          console.log('Ding verification response:', dingCheckData);
           
-          return new Response(
-            JSON.stringify({ 
-              success: false, 
-              error: 'تم تجاوز الحد الأقصى للمحاولات. الرجاء طلب رمز جديد' 
-            }),
-            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
+          if (dingCheckData.status === 'valid') {
+            otpVerified = true;
+            console.log('OTP verified successfully via Ding');
+          } else {
+            console.log('OTP verification failed via Ding:', dingCheckData.status);
+          }
+        } else {
+          console.error('Ding check failed:', dingCheckResponse.status);
+          // إذا فشل Ding API، نستخدم التحقق المحلي كـ fallback
+          if (otpRecord.code === otp) {
+            otpVerified = true;
+            console.log('OTP verified via local fallback');
+          }
+        }
+      } catch (dingError) {
+        console.error('Error checking OTP via Ding:', dingError);
+        // استخدام التحقق المحلي كـ fallback
+        if (otpRecord.code === otp) {
+          otpVerified = true;
+          console.log('OTP verified via local fallback after Ding error');
         }
       }
+    } else {
+      // لا يوجد external_id أو Ding API، استخدام التحقق المحلي
+      if (otpRecord.code === otp) {
+        otpVerified = true;
+        console.log('OTP verified via local check');
+      }
+    }
+
+    if (!otpVerified) {
+      // زيادة عدد المحاولات الفاشلة
+      const newAttempts = (otpRecord.attempts || 0) + 1;
+      await supabase
+        .from('whatsapp_otp')
+        .update({ attempts: newAttempts })
+        .eq('id', otpRecord.id);
+      
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'رمز التحقق غير صحيح' 
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
       
       return new Response(
         JSON.stringify({ success: false, error: 'رمز التحقق غير صحيح أو منتهي الصلاحية' }),

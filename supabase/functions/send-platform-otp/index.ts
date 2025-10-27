@@ -144,6 +144,14 @@ serve(async (req) => {
           console.log('OTP sent successfully via Ding:', dingData);
           console.log('Authentication UUID:', dingData.authentication_uuid);
           console.log('Status:', dingData.status);
+          
+          // حفظ authentication_uuid في قاعدة البيانات للتحقق لاحقاً
+          await supabase
+            .from('whatsapp_otp')
+            .update({ 
+              external_id: dingData.authentication_uuid 
+            })
+            .eq('id', otpData.id);
         } else {
           const errorData = await dingResponse.text();
           console.error('Ding error response:', errorData);
