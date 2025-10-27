@@ -16,6 +16,7 @@ const SupabaseSMSAuth = () => {
   const [otp, setOtp] = useState('');
   const [cooldown, setCooldown] = useState(0);
   const [inlineError, setInlineError] = useState<string | null>(null);
+  const [isExistingUser, setIsExistingUser] = useState(false); // تتبع ما إذا كان المستخدم موجوداً
   const navigate = useNavigate();
   
   const { sendOTP, verifyOTP, loading, verifying } = usePlatformPhoneAuth();
@@ -48,10 +49,12 @@ const SupabaseSMSAuth = () => {
       
       // إذا كان المستخدم موجود، نتخطى خطوة اختيار الدور
       if (result.isExistingUser && result.existingRole) {
+        setIsExistingUser(true);
         setSelectedRole(result.existingRole);
         setStep('verify');
       } else {
         // مستخدم جديد - نذهب لاختيار الدور
+        setIsExistingUser(false);
         setStep('role');
       }
     } else {
@@ -93,7 +96,9 @@ const SupabaseSMSAuth = () => {
 
   const handleBack = () => {
     if (step === 'verify') {
-      setStep('role');
+      // إذا كان المستخدم موجوداً، نرجع للهاتف مباشرة
+      // إذا كان مستخدم جديد، نرجع لاختيار الدور
+      setStep(isExistingUser ? 'phone' : 'role');
       setOtp('');
     } else if (step === 'role') {
       setStep('phone');
@@ -112,6 +117,8 @@ const SupabaseSMSAuth = () => {
             ? 'أدخل رقم هاتفك لإرسال رمز التحقق'
             : step === 'role'
             ? 'اختر نوع حسابك'
+            : isExistingUser
+            ? 'مرحباً بك مرة أخرى! أدخل الرمز المرسل إلى هاتفك'
             : 'أدخل الرمز المرسل إلى هاتفك'
           }
         </CardDescription>
