@@ -179,6 +179,19 @@ serve(async (req) => {
           console.log('Verification ID:', preludeData.id);
           console.log('Status:', preludeData.status);
           
+          // معالجة حالة "blocked" بسبب المحاولات المتكررة
+          if (preludeData.status === 'blocked' && preludeData.reason === 'repeated_attempts') {
+            return new Response(
+              JSON.stringify({ 
+                success: false, 
+                error: 'تم حظر إرسال الرموز مؤقتاً بسبب كثرة المحاولات. الرجاء الانتظار 5 دقائق قبل المحاولة مرة أخرى.',
+                code: 'RATE_LIMIT',
+                cooldownSeconds: 300
+              }),
+              { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+          
           // حفظ verification_id في قاعدة البيانات للتحقق لاحقاً
           await supabase
             .from('whatsapp_otp')

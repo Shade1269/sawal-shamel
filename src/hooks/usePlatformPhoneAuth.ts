@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 interface PhoneAuthResponse {
   success: boolean;
   error?: string;
-  code?: 'COOLDOWN' | 'INSUFFICIENT_BALANCE' | 'GENERIC';
+  code?: 'COOLDOWN' | 'INSUFFICIENT_BALANCE' | 'RATE_LIMIT' | 'GENERIC';
   cooldownSeconds?: number;
   isExistingUser?: boolean;
   existingRole?: 'affiliate' | 'merchant' | null;
@@ -120,7 +120,18 @@ export const usePlatformPhoneAuth = () => {
         const details = data?.details || data?.twilioCode || '';
         const fullError = details ? `${errText} - ${details}` : errText;
         
-        // التحقق من cooldown
+        // التحقق من RATE_LIMIT (محاولات متكررة)
+        if (data.code === 'RATE_LIMIT') {
+          const secs = data.cooldownSeconds || 300;
+          const mins = Math.ceil(secs / 60);
+          toast.error('تم حظر الإرسال مؤقتاً', { 
+            description: `تم حظر إرسال الرموز بسبب كثرة المحاولات. الرجاء الانتظار ${mins} دقيقة.`,
+            duration: 5000 
+          });
+          return { success: false, error: errText, code: 'RATE_LIMIT', cooldownSeconds: secs };
+        }
+        
+        // التحقق من cooldown العادي
         const match = /الرجاء\s+الانتظار\s+(\d+)\s*ثانية/i.exec(errText);
         if (match) {
           const secs = parseInt(match[1], 10) || 30;
