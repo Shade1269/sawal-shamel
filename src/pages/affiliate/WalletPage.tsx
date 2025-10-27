@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WalletCard } from '@/components/wallet/WalletCard';
+import { WalletStats } from '@/components/wallet/WalletStats';
 import { WithdrawalRequestForm } from '@/components/wallet/WithdrawalRequestForm';
 import { useWallet } from '@/hooks/useWallet';
 import { useWithdrawals } from '@/hooks/useWithdrawals';
+import { exportToExcel } from '@/utils/exportToExcel';
 import { 
   Wallet, 
   ArrowDownToLine, 
@@ -14,10 +16,12 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  TrendingUp
+  TrendingUp,
+  Download
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
+import { toast } from 'sonner';
 
 const transactionTypeIcons = {
   COMMISSION: TrendingUp,
@@ -66,6 +70,51 @@ export default function WalletPage() {
   const { balance, transactions, isLoading: walletLoading } = useWallet();
   const { withdrawals, isLoading: withdrawalsLoading } = useWithdrawals();
 
+  const handleExportTransactions = () => {
+    if (transactions.length === 0) {
+      toast.error('لا توجد معاملات للتصدير');
+      return;
+    }
+
+    const data = {
+      headers: ['التاريخ', 'النوع', 'الوصف', 'المبلغ', 'الرصيد بعد المعاملة'],
+      rows: transactions.map(t => [
+        format(new Date(t.created_at), 'dd/MM/yyyy HH:mm'),
+        transactionTypeLabels[t.transaction_type],
+        t.description || '-',
+        `${Number(t.amount_sar).toFixed(2)} ر.س`,
+        `${Number(t.balance_after_sar).toFixed(2)} ر.س`
+      ]),
+      filename: `transactions-${format(new Date(), 'yyyy-MM-dd')}`
+    };
+
+    exportToExcel(data);
+    toast.success('تم تصدير المعاملات بنجاح');
+  };
+
+  const handleExportWithdrawals = () => {
+    if (withdrawals.length === 0) {
+      toast.error('لا توجد طلبات سحب للتصدير');
+      return;
+    }
+
+    const data = {
+      headers: ['التاريخ', 'المبلغ', 'الحالة', 'طريقة الدفع', 'تاريخ المعالجة'],
+      rows: withdrawals.map(w => [
+        format(new Date(w.created_at), 'dd/MM/yyyy HH:mm'),
+        `${Number(w.amount_sar).toFixed(2)} ر.س`,
+        withdrawalStatusLabels[w.status],
+        w.payment_method === 'BANK_TRANSFER' ? 'تحويل بنكي' : 
+        w.payment_method === 'WALLET' ? 'محفظة إلكترونية' : 'نقداً',
+        w.processed_at ? format(new Date(w.processed_at), 'dd/MM/yyyy HH:mm') : '-'
+      ]),
+      filename: `withdrawals-${format(new Date(), 'yyyy-MM-dd')}`
+    };
+
+    exportToExcel(data);
+    toast.success('تم تصدير طلبات السحب بنجاح');
+  };
+
   if (walletLoading || withdrawalsLoading) {
     return (
       <div className="container mx-auto py-8">
@@ -90,6 +139,9 @@ export default function WalletPage() {
         </p>
       </div>
 
+      {/* Stats */}
+      <WalletStats />
+
       {/* Wallet Card */}
       <WalletCard onWithdrawClick={() => setShowWithdrawalForm(true)} />
 
@@ -107,8 +159,18 @@ export default function WalletPage() {
         {/* Transactions Tab */}
         <TabsContent value="transactions" className="space-y-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>سجل المعاملات</CardTitle>
+              {transactions.length > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleExportTransactions}
+                >
+                  <Download className="h-4 w-4 ml-2" />
+                  تصدير Excel
+                </Button>
+              )}
             </CardHeader>
             <CardContent>
               {transactions.length === 0 ? (
@@ -167,8 +229,18 @@ export default function WalletPage() {
         {/* Withdrawals Tab */}
         <TabsContent value="withdrawals" className="space-y-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>طلبات السحب</CardTitle>
+              {withdrawals.length > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleExportWithdrawals}
+                >
+                  <Download className="h-4 w-4 ml-2" />
+                  تصدير Excel
+                </Button>
+              )}
             </CardHeader>
             <CardContent>
               {withdrawals.length === 0 ? (
