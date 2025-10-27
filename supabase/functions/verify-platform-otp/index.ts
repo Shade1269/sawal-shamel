@@ -95,7 +95,7 @@ serve(async (req) => {
     if (otpRecord.external_id && preludeApiKey) {
       try {
         console.log('Verifying OTP via Prelude API');
-        const preludeCheckUrl = `https://api.prelude.so/v2/verification/${otpRecord.external_id}/check`;
+        const preludeCheckUrl = `https://api.prelude.dev/v2/verification/${otpRecord.external_id}/check`;
         
         const preludeCheckResponse = await fetch(preludeCheckUrl, {
           method: 'POST',
