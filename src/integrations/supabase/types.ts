@@ -13644,7 +13644,26 @@ export type Database = {
         }
         Returns: Json
       }
+      process_withdrawal_request: {
+        Args: {
+          p_admin_notes?: string
+          p_status: string
+          p_withdrawal_id: string
+        }
+        Returns: boolean
+      }
       publish_cms_page: { Args: { p_page_id: string }; Returns: Json }
+      record_wallet_transaction: {
+        Args: {
+          p_affiliate_id: string
+          p_amount_sar: number
+          p_description?: string
+          p_reference_id?: string
+          p_reference_type?: string
+          p_transaction_type: string
+        }
+        Returns: string
+      }
       run_full_cleanup: { Args: never; Returns: Json }
       update_customer_tier: {
         Args: { loyalty_record_id: string }
