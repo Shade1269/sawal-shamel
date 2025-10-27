@@ -97,11 +97,15 @@ serve(async (req) => {
 
     console.log('Comparing OTP - Input:', cleanOtp, 'Stored:', cleanStoredOtp);
 
-    // إذا كان external_id موجوداً، استخدم Prelude API للتحقق
-    if (otpRecord.external_id && preludeApiKey) {
+    // تحقق عبر Prelude API باستخدام target+code
+    if (preludeApiKey) {
       try {
         console.log('Verifying OTP via Prelude API');
-        const preludeCheckUrl = `https://api.prelude.dev/v2/verification/${otpRecord.external_id}/check`;
+        const preludeCheckUrl = 'https://api.prelude.dev/v2/verification/check';
+        let formattedPhone = phone;
+        if (!formattedPhone.startsWith('+')) {
+          formattedPhone = `+${formattedPhone}`;
+        }
         
         const preludeCheckResponse = await fetch(preludeCheckUrl, {
           method: 'POST',
@@ -110,6 +114,10 @@ serve(async (req) => {
             'Authorization': `Bearer ${preludeApiKey}`,
           },
           body: JSON.stringify({
+            target: {
+              type: 'phone_number',
+              value: formattedPhone
+            },
             code: cleanOtp,
           }),
         });
@@ -118,7 +126,7 @@ serve(async (req) => {
           const preludeCheckData = await preludeCheckResponse.json();
           console.log('Prelude verification response:', preludeCheckData);
           
-          if (preludeCheckData.status === 'valid' || preludeCheckData.status === 'succeeded') {
+          if (preludeCheckData.status === 'valid' || preludeCheckData.status === 'succeeded' || preludeCheckData.status === 'success') {
             otpVerified = true;
             console.log('OTP verified successfully via Prelude');
           } else {
