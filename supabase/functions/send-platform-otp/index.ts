@@ -98,17 +98,45 @@ serve(async (req) => {
 
     console.log('OTP saved to database:', otpData.id);
 
-    // التحقق من وجود مستخدم بهذا الرقم
-    const { data: existingProfile } = await supabase
-      .from('profiles')
-      .select('id, role')
-      .eq('phone', phone)
-      .maybeSingle();
+    // التحقق من وجود مستخدم بهذا الرقم (مع معالجة تنسيقات متعددة)
+    const digits = String(phone).replace(/\D/g, '');
+    const national = digits.startsWith('966') ? digits.slice(3) : digits;
+    const normalizedNational = national.startsWith('0') ? national.slice(1) : national;
+    const withPlus = `+966${normalizedNational}`;
+    const withoutPlus = `966${normalizedNational}`;
+    const localWith0 = `0${normalizedNational}`;
+    const withPlusExtra0 = `+9660${normalizedNational}`;
 
-    const isExistingUser = !!existingProfile;
-    const existingRole = existingProfile?.role || null;
+    const variantsSet = new Set<string>([
+      phone,
+      withPlus,
+      withoutPlus,
+      localWith0,
+      withPlusExtra0,
+      normalizedNational,
+    ]);
+    const variants = Array.from(variantsSet).filter(Boolean);
+    console.log('Phone variants for lookup:', variants);
+
+    // استخدم or مع in لمطابقة كل الاحتمالات في حقلي phone و whatsapp
+    const csv = variants.map((v) => `"${v}"`).join(',');
+    const { data: profileList, error: profileErr } = await supabase
+      .from('profiles')
+      .select('id, role, phone, whatsapp')
+      .or(`phone.in.(${csv}),whatsapp.in.(${csv})`)
+      .limit(1);
+
+    const profileMatch = Array.isArray(profileList) ? profileList[0] : (profileList as any);
+
+    if (profileErr) {
+      console.warn('Profile lookup warning:', profileErr);
+    }
+
+    const isExistingUser = !!profileMatch;
+    const existingRole = profileMatch?.role || null;
+    const mappedRole = (existingRole === 'affiliate' || existingRole === 'merchant') ? existingRole : null;
     
-    console.log('User check:', { isExistingUser, existingRole });
+    console.log('User check:', { isExistingUser, existingRole, mappedRole, matchedPhone: profileMatch?.phone, matchedWhatsapp: profileMatch?.whatsapp });
 
     // إرسال OTP عبر Prelude (Ding v2 API)
     const preludeApiKey = Deno.env.get('DING_API_KEY');
