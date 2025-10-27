@@ -136,11 +136,23 @@ export const usePlatformPhoneAuth = () => {
 
       if (error) {
         console.error('Edge Function error object:', error);
-        const status = (error as any)?.status;
+        const context = (error as any)?.context;
+        
+        // محاولة قراءة Response body من context
+        let responseData: any = null;
+        if (context && context instanceof Response) {
+          try {
+            responseData = await context.json();
+            console.log('Response body:', responseData);
+          } catch (e) {
+            console.error('Failed to parse response:', e);
+          }
+        }
+        
+        const status = context?.status || (error as any)?.status;
         const message = (error as any)?.message || '';
-        const context = (error as any)?.context || {};
 
-        console.log('Error details:', { status, message, context });
+        console.log('Error details:', { status, message, responseData });
 
         // فقط عند 429 الحقيقي نعرض cooldown
         if (status === 429 || /too\s*many\s*requests/i.test(message)) {
@@ -157,18 +169,22 @@ export const usePlatformPhoneAuth = () => {
           return { success: false, error: 'Insufficient balance', code: 'INSUFFICIENT_BALANCE' };
         }
         
-        // محاولة استخراج التفاصيل من context أو error
+        // استخراج الخطأ الحقيقي من response body
         let displayError = 'فشل في إرسال رمز التحقق';
         
-        if (message && !message.includes('non-2xx')) {
+        if (responseData?.error) {
+          displayError = responseData.error;
+          // إضافة التفاصيل إن وجدت
+          if (responseData.details) {
+            displayError += ` - ${responseData.details}`;
+          }
+        } else if (message && !message.includes('non-2xx')) {
           displayError = message;
-        } else if (context && typeof context === 'object') {
-          displayError = context.error || context.message || displayError;
         }
         
-        // إضافة حالة الخطأ إذا كانت متوفرة
+        // إضافة حالة الخطأ
         if (status && status !== 200) {
-          displayError = `${displayError} (${status})`;
+          displayError += ` (HTTP ${status})`;
         }
         
         toast.error('خطأ في الإرسال', {
