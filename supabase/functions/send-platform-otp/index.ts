@@ -97,6 +97,18 @@ serve(async (req) => {
 
     console.log('OTP saved to database:', otpData.id);
 
+    // التحقق من وجود مستخدم بهذا الرقم
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('id, role')
+      .eq('phone', phone)
+      .maybeSingle();
+
+    const isExistingUser = !!existingProfile;
+    const existingRole = existingProfile?.role || null;
+    
+    console.log('User check:', { isExistingUser, existingRole });
+
     // إرسال OTP عبر Twilio
     const twilioAccountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
     const twilioAuthToken = Deno.env.get('TWILIO_AUTH_TOKEN');
@@ -233,6 +245,8 @@ serve(async (req) => {
         JSON.stringify({ 
           success: true, 
           message: 'تم إرسال رمز التحقق بنجاح (وضع التطوير)',
+          is_existing_user: isExistingUser,
+          existing_role: existingRole,
           otp: otp // إرجاع OTP للاختبار
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -243,6 +257,8 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         message: 'تم إرسال رمز التحقق بنجاح',
+        is_existing_user: isExistingUser,
+        existing_role: existingRole,
         // في التطوير فقط - احذف في الإنتاج
         ...(Deno.env.get('ENVIRONMENT') === 'development' && { otp })
       }),

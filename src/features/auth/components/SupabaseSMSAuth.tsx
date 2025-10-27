@@ -45,7 +45,15 @@ const SupabaseSMSAuth = () => {
     const result = await sendOTP(phone);
     if (result.success) {
       setInlineError(null);
-      setStep('role');
+      
+      // إذا كان المستخدم موجود، نتخطى خطوة اختيار الدور
+      if (result.isExistingUser && result.existingRole) {
+        setSelectedRole(result.existingRole);
+        setStep('verify');
+      } else {
+        // مستخدم جديد - نذهب لاختيار الدور
+        setStep('role');
+      }
     } else {
       if (result.code === 'COOLDOWN') {
         const secs = result.cooldownSeconds || 30;

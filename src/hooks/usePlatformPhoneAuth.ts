@@ -7,6 +7,8 @@ interface PhoneAuthResponse {
   error?: string;
   code?: 'COOLDOWN' | 'INSUFFICIENT_BALANCE' | 'GENERIC';
   cooldownSeconds?: number;
+  isExistingUser?: boolean;
+  existingRole?: 'affiliate' | 'merchant' | null;
 }
 
 export const usePlatformPhoneAuth = () => {
@@ -160,7 +162,11 @@ export const usePlatformPhoneAuth = () => {
         description: otpMessage,
       });
 
-      return { success: true };
+      return { 
+        success: true, 
+        isExistingUser: data?.is_existing_user || false,
+        existingRole: data?.existing_role || null
+      };
     } catch (error: any) {
       console.error('Error sending OTP:', error);
       const errorMessage = error?.message || 'حدث خطأ غير متوقع';
