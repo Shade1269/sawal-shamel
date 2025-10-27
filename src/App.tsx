@@ -50,6 +50,7 @@ const StoreOrderConfirmation = lazy(() => import("./pages/StoreOrderConfirmation
 const LuxuryShowcase = lazy(() => import("./pages/LuxuryShowcase"));
 const AdminHomePage = lazy(() => import("./pages/home/AdminHome"));
 const AdminWithdrawalsPage = lazy(() => import("./pages/admin/AdminWithdrawalsPage"));
+const AdminReturnsPage = lazy(() => import("./pages/admin/AdminReturnsPage"));
 const AdminProductApproval = lazy(() => import("./pages/admin/AdminProductApproval"));
 const OrdersRouter = lazy(() => import("./pages/admin/OrdersRouter"));
 const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalytics"));
@@ -198,6 +199,7 @@ const App = () => {
                                 <Route path="inventory" element={<InventoryPage />} />
                                 <Route path="shipping" element={<ShippingManagementPage />} />
                                 <Route path="withdrawals" element={<AdminWithdrawalsPage />} />
+                                <Route path="returns" element={<AdminReturnsPage />} />
                                 <Route path="products/approval" element={<AdminProductApproval />} />
                                 <Route path="testing" element={<TestingPage />} />
                                 <Route path="documentation" element={<DocumentationPage />} />

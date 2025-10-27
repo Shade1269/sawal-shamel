@@ -107,6 +107,27 @@ const {
 } = useWithdrawals();
 ```
 
+### useOrderReturns() (للعملاء)
+```typescript
+const {
+  returns,        // جميع طلبات الإرجاع للعميل
+  isLoading,
+  createReturn,   // إنشاء طلب إرجاع جديد
+  isCreating
+} = useOrderReturns();
+```
+
+### useAdminOrderReturns() (للأدمن)
+```typescript
+const {
+  returns,         // جميع طلبات الإرجاع
+  stats,          // إحصائيات الإرجاعات
+  isLoading,
+  processReturn,  // معالجة طلب إرجاع
+  isProcessing
+} = useAdminOrderReturns();
+```
+
 ## Components
 
 ### WalletCard
@@ -130,6 +151,17 @@ const {
 <WithdrawalManagement />
 ```
 
+### ReturnRequestDialog
+نموذج طلب إرجاع للعملاء:
+```tsx
+<ReturnRequestDialog
+  open={showDialog}
+  onOpenChange={setShowDialog}
+  orderId="uuid"
+  orderAmount={150.00}
+/>
+```
+
 ## الصفحات
 
 ### 1. WalletPage (للمسوقات)
@@ -149,6 +181,16 @@ const {
 - قائمة الطلبات حسب الحالة
 - الموافقة/الرفض على الطلبات
 - إضافة ملاحظات إدارية
+
+### 3. AdminReturnsPage (للإدارة)
+**المسار**: `/admin/returns`
+
+تحتوي على:
+- إحصائيات الإرجاعات
+- قائمة طلبات الإرجاع حسب الحالة
+- الموافقة/الرفض على الإرجاعات
+- تأكيد إتمام الإرجاع
+- خصم العمولة تلقائياً عند الموافقة
 
 ## سير العمل التلقائي
 
