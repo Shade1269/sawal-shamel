@@ -13092,6 +13092,10 @@ export type Database = {
       }
     }
     Functions: {
+      _confirm_commissions_on_delivery: {
+        Args: { p_order_id: string }
+        Returns: undefined
+      }
       add_affiliate_product:
         | {
             Args: {
