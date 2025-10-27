@@ -43,31 +43,35 @@ import {
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
-interface WithdrawalRequest {
-  id: string;
-  amount_sar: number;
-  status: 'pending' | 'approved' | 'rejected' | 'completed';
-  payment_method: string;
-  requested_at: string;
-  processed_at: string | null;
-  admin_notes: string | null;
-}
+import { WithdrawalRequest } from '@/hooks/useWithdrawals';
 
-const statusIcons = {
+const statusIcons: Record<string, any> = {
+  PENDING: Clock,
+  APPROVED: CheckCircle,
+  REJECTED: XCircle,
+  COMPLETED: CheckCircle,
   pending: Clock,
   approved: CheckCircle,
   rejected: XCircle,
   completed: CheckCircle,
 };
 
-const statusColors = {
+const statusColors: Record<string, "default" | "secondary" | "destructive"> = {
+  PENDING: "default",
+  APPROVED: "secondary",
+  REJECTED: "destructive",
+  COMPLETED: "default",
   pending: "default",
   approved: "secondary",
   rejected: "destructive",
   completed: "default",
-} as const;
+};
 
-const statusLabels = {
+const statusLabels: Record<string, string> = {
+  PENDING: "قيد المراجعة",
+  APPROVED: "موافق عليه",
+  REJECTED: "مرفوض",
+  COMPLETED: "مكتمل",
   pending: "قيد المراجعة",
   approved: "موافق عليه",
   rejected: "مرفوض",
@@ -124,20 +128,20 @@ export default function AffiliateWalletPage() {
   });
 
   const { data: withdrawalRequests, isLoading: loadingRequests } = useQuery({
-    queryKey: ['withdrawal-requests', profile?.id],
+    queryKey: ['withdrawal-requests', user?.id],
     queryFn: async () => {
-      if (!profile) return [];
+      if (!user) return [];
       
       const { data, error } = await supabase
         .from('withdrawal_requests')
         .select('*')
-        .eq('user_id', profile.id)
-        .order('requested_at', { ascending: false });
+        .eq('affiliate_profile_id', user.id)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data as WithdrawalRequest[];
     },
-    enabled: !!profile
+    enabled: !!user
   });
 
   const { data: minWithdrawalSetting } = useQuery({
@@ -253,11 +257,11 @@ export default function AffiliateWalletPage() {
       return;
     }
 
+    const bankDetails: any = {};
     const withdrawalData: any = {
-      user_id: profile?.id,
-      user_type: 'affiliate',
+      affiliate_profile_id: user?.id,
       amount_sar: amount,
-      payment_method: paymentMethod,
+      payment_method: paymentMethod.toUpperCase(),
       notes,
     };
 
@@ -270,10 +274,10 @@ export default function AffiliateWalletPage() {
         });
         return;
       }
-      withdrawalData.bank_name = bankName;
-      withdrawalData.bank_account_name = accountName;
-      withdrawalData.bank_account_number = accountNumber;
-      withdrawalData.iban = iban;
+      bankDetails.bank_name = bankName;
+      bankDetails.account_holder = accountName;
+      bankDetails.account_number = accountNumber;
+      bankDetails.iban = iban;
     } else if (paymentMethod === 'stc_pay' || paymentMethod === 'wallet') {
       if (!phoneNumber) {
         toast({
@@ -283,8 +287,10 @@ export default function AffiliateWalletPage() {
         });
         return;
       }
-      withdrawalData.phone_number = phoneNumber;
+      bankDetails.phone_number = phoneNumber;
     }
+    
+    withdrawalData.bank_details = bankDetails;
 
     createWithdrawalMutation.mutate(withdrawalData);
   };
@@ -440,10 +446,14 @@ export default function AffiliateWalletPage() {
                           {request.amount_sar.toFixed(2)} ر.س
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {format(new Date(request.requested_at), 'dd MMMM yyyy - HH:mm', { locale: ar })}
+                          {format(new Date(request.created_at), 'dd MMMM yyyy - HH:mm', { locale: ar })}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          طريقة الدفع: {request.payment_method === 'bank_transfer' ? 'تحويل بنكي' : request.payment_method === 'stc_pay' ? 'STC Pay' : 'محفظة'}
+                          طريقة الدفع: {
+                            request.payment_method === 'BANK_TRANSFER' ? 'تحويل بنكي' : 
+                            request.payment_method === 'WALLET' ? 'محفظة' : 
+                            request.payment_method === 'CASH' ? 'نقداً' : 'أخرى'
+                          }
                         </p>
                         {request.admin_notes && (
                           <p className="text-sm text-muted-foreground mt-1">

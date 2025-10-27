@@ -42,41 +42,46 @@ import { ar } from 'date-fns/locale';
 
 interface WithdrawalRequest {
   id: string;
-  user_id: string;
-  user_type: 'affiliate' | 'merchant';
+  affiliate_profile_id: string;
   amount_sar: number;
-  status: 'pending' | 'approved' | 'rejected' | 'completed';
+  status: string;
   payment_method: string;
-  bank_name: string | null;
-  bank_account_name: string | null;
-  bank_account_number: string | null;
-  iban: string | null;
-  phone_number: string | null;
+  bank_details: any;
   notes: string | null;
   admin_notes: string | null;
-  requested_at: string;
+  processed_by: string | null;
   processed_at: string | null;
-  profiles: {
-    full_name: string | null;
-    email: string | null;
-  };
+  created_at: string;
+  updated_at: string;
 }
 
-const statusIcons = {
+const statusIcons: Record<string, any> = {
+  PENDING: Clock,
+  APPROVED: CheckCircle,
+  REJECTED: XCircle,
+  COMPLETED: CheckCircle,
   pending: Clock,
   approved: CheckCircle,
   rejected: XCircle,
   completed: CheckCircle,
 };
 
-const statusColors = {
+const statusColors: Record<string, "default" | "secondary" | "destructive"> = {
+  PENDING: "default",
+  APPROVED: "secondary",
+  REJECTED: "destructive",
+  COMPLETED: "default",
   pending: "default",
   approved: "secondary",
   rejected: "destructive",
   completed: "default",
-} as const;
+};
 
-const statusLabels = {
+const statusLabels: Record<string, string> = {
+  PENDING: "قيد المراجعة",
+  APPROVED: "موافق عليه",
+  REJECTED: "مرفوض",
+  COMPLETED: "مكتمل",
   pending: "قيد المراجعة",
   approved: "موافق عليه",
   rejected: "مرفوض",
@@ -97,14 +102,8 @@ export default function AdminWithdrawalsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('withdrawal_requests')
-        .select(`
-          *,
-          profiles:user_id (
-            full_name,
-            email
-          )
-        `)
-        .order('requested_at', { ascending: false });
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data as WithdrawalRequest[];
@@ -162,10 +161,10 @@ export default function AdminWithdrawalsPage() {
     }
   });
 
-  const pendingRequests = withdrawalRequests?.filter(r => r.status === 'pending') || [];
-  const approvedRequests = withdrawalRequests?.filter(r => r.status === 'approved') || [];
-  const completedRequests = withdrawalRequests?.filter(r => r.status === 'completed') || [];
-  const rejectedRequests = withdrawalRequests?.filter(r => r.status === 'rejected') || [];
+  const pendingRequests = withdrawalRequests?.filter(r => r.status === 'PENDING' || r.status === 'pending') || [];
+  const approvedRequests = withdrawalRequests?.filter(r => r.status === 'APPROVED' || r.status === 'approved') || [];
+  const completedRequests = withdrawalRequests?.filter(r => r.status === 'COMPLETED' || r.status === 'completed') || [];
+  const rejectedRequests = withdrawalRequests?.filter(r => r.status === 'REJECTED' || r.status === 'rejected') || [];
 
   const totalPending = pendingRequests.reduce((sum, r) => sum + Number(r.amount_sar), 0);
   const totalApproved = approvedRequests.reduce((sum, r) => sum + Number(r.amount_sar), 0);
@@ -181,7 +180,7 @@ export default function AdminWithdrawalsPage() {
   const handleSubmitReview = () => {
     if (!selectedRequest) return;
 
-    const newStatus = reviewAction === 'approve' ? 'approved' : 'rejected';
+    const newStatus = reviewAction === 'approve' ? 'APPROVED' : 'REJECTED';
     
     updateWithdrawalMutation.mutate({
       id: selectedRequest.id,
@@ -212,10 +211,7 @@ export default function AdminWithdrawalsPage() {
             <div>
               <p className="font-medium text-lg">{request.amount_sar.toFixed(2)} ر.س</p>
               <p className="text-sm text-muted-foreground">
-                {request.profiles?.full_name || request.profiles?.email || 'مستخدم'}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {request.user_type === 'affiliate' ? 'مسوقة' : 'تاجر'}
+                مسوقة - {request.affiliate_profile_id.substring(0, 8)}
               </p>
             </div>
           </div>
@@ -226,44 +222,43 @@ export default function AdminWithdrawalsPage() {
 
         <div className="text-sm space-y-1">
           <p className="text-muted-foreground">
-            <span className="font-medium">تاريخ الطلب:</span> {format(new Date(request.requested_at), 'dd MMMM yyyy - HH:mm', { locale: ar })}
+            <span className="font-medium">تاريخ الطلب:</span> {format(new Date(request.created_at), 'dd MMMM yyyy - HH:mm', { locale: ar })}
           </p>
           <p className="text-muted-foreground">
             <span className="font-medium">طريقة الدفع:</span> {
-              request.payment_method === 'bank_transfer' ? 'تحويل بنكي' : 
-              request.payment_method === 'stc_pay' ? 'STC Pay' : 'محفظة'
+              request.payment_method === 'BANK_TRANSFER' || request.payment_method === 'bank_transfer' ? 'تحويل بنكي' : 
+              request.payment_method === 'WALLET' || request.payment_method === 'wallet' ? 'محفظة' : 'نقداً'
             }
           </p>
           
-          {request.payment_method === 'bank_transfer' && (
+          {request.bank_details && typeof request.bank_details === 'object' && (
             <>
-              {request.bank_name && (
+              {request.bank_details.bank_name && (
                 <p className="text-muted-foreground">
-                  <span className="font-medium">البنك:</span> {request.bank_name}
+                  <span className="font-medium">البنك:</span> {request.bank_details.bank_name}
                 </p>
               )}
-              {request.bank_account_name && (
+              {request.bank_details.account_holder && (
                 <p className="text-muted-foreground">
-                  <span className="font-medium">اسم الحساب:</span> {request.bank_account_name}
+                  <span className="font-medium">اسم الحساب:</span> {request.bank_details.account_holder}
                 </p>
               )}
-              {request.bank_account_number && (
+              {request.bank_details.account_number && (
                 <p className="text-muted-foreground">
-                  <span className="font-medium">رقم الحساب:</span> {request.bank_account_number}
+                  <span className="font-medium">رقم الحساب:</span> {request.bank_details.account_number}
                 </p>
               )}
-              {request.iban && (
+              {request.bank_details.iban && (
                 <p className="text-muted-foreground">
-                  <span className="font-medium">IBAN:</span> {request.iban}
+                  <span className="font-medium">IBAN:</span> {request.bank_details.iban}
+                </p>
+              )}
+              {request.bank_details.phone_number && (
+                <p className="text-muted-foreground">
+                  <span className="font-medium">رقم الهاتف:</span> {request.bank_details.phone_number}
                 </p>
               )}
             </>
-          )}
-          
-          {(request.payment_method === 'stc_pay' || request.payment_method === 'wallet') && request.phone_number && (
-            <p className="text-muted-foreground">
-              <span className="font-medium">رقم الهاتف:</span> {request.phone_number}
-            </p>
           )}
 
           {request.notes && (
@@ -285,7 +280,7 @@ export default function AdminWithdrawalsPage() {
           )}
         </div>
 
-        {request.status === 'pending' && (
+        {(request.status === 'PENDING' || request.status === 'pending') && (
           <div className="flex gap-2 pt-2">
             <Button 
               onClick={() => handleReview(request, 'approve')}
