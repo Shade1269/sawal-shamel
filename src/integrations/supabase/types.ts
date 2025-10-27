@@ -5037,6 +5037,238 @@ export type Database = {
           },
         ]
       }
+      merchant_transactions: {
+        Row: {
+          amount_sar: number
+          balance_after_sar: number
+          created_at: string
+          description: string | null
+          id: string
+          merchant_id: string
+          reference_id: string | null
+          reference_type: string | null
+          transaction_type: string
+        }
+        Insert: {
+          amount_sar: number
+          balance_after_sar: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          merchant_id: string
+          reference_id?: string | null
+          reference_type?: string | null
+          transaction_type: string
+        }
+        Update: {
+          amount_sar?: number
+          balance_after_sar?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          merchant_id?: string
+          reference_id?: string | null
+          reference_type?: string | null
+          transaction_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "merchant_transactions_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_transactions_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_transactions_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_transactions_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      merchant_wallet_balances: {
+        Row: {
+          available_balance_sar: number
+          created_at: string
+          id: string
+          lifetime_earnings_sar: number
+          merchant_id: string
+          minimum_withdrawal_sar: number
+          pending_balance_sar: number
+          total_withdrawn_sar: number
+          updated_at: string
+        }
+        Insert: {
+          available_balance_sar?: number
+          created_at?: string
+          id?: string
+          lifetime_earnings_sar?: number
+          merchant_id: string
+          minimum_withdrawal_sar?: number
+          pending_balance_sar?: number
+          total_withdrawn_sar?: number
+          updated_at?: string
+        }
+        Update: {
+          available_balance_sar?: number
+          created_at?: string
+          id?: string
+          lifetime_earnings_sar?: number
+          merchant_id?: string
+          minimum_withdrawal_sar?: number
+          pending_balance_sar?: number
+          total_withdrawn_sar?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "merchant_wallet_balances_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_wallet_balances_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: true
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_wallet_balances_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: true
+            referencedRelation: "user_profiles_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_wallet_balances_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: true
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      merchant_withdrawal_requests: {
+        Row: {
+          admin_notes: string | null
+          amount_sar: number
+          bank_details: Json | null
+          created_at: string
+          id: string
+          merchant_id: string
+          payment_method: string
+          processed_at: string | null
+          processed_by: string | null
+          requested_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount_sar: number
+          bank_details?: Json | null
+          created_at?: string
+          id?: string
+          merchant_id: string
+          payment_method?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          requested_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount_sar?: number
+          bank_details?: Json | null
+          created_at?: string
+          id?: string
+          merchant_id?: string
+          payment_method?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          requested_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "merchant_withdrawal_requests_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_withdrawal_requests_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_withdrawal_requests_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_withdrawal_requests_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_withdrawal_requests_processed_by_fkey"
+            columns: ["processed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_withdrawal_requests_processed_by_fkey"
+            columns: ["processed_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_withdrawal_requests_processed_by_fkey"
+            columns: ["processed_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchant_withdrawal_requests_processed_by_fkey"
+            columns: ["processed_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       merchants: {
         Row: {
           business_name: string | null
@@ -6195,6 +6427,108 @@ export type Database = {
           },
         ]
       }
+      platform_revenue: {
+        Row: {
+          affiliate_commission_sar: number | null
+          affiliate_id: string | null
+          confirmed_at: string | null
+          created_at: string
+          final_sale_price_sar: number
+          id: string
+          merchant_base_price_sar: number
+          merchant_id: string
+          order_id: string
+          order_item_id: string | null
+          platform_share_sar: number
+          status: string
+        }
+        Insert: {
+          affiliate_commission_sar?: number | null
+          affiliate_id?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          final_sale_price_sar: number
+          id?: string
+          merchant_base_price_sar: number
+          merchant_id: string
+          order_id: string
+          order_item_id?: string | null
+          platform_share_sar: number
+          status?: string
+        }
+        Update: {
+          affiliate_commission_sar?: number | null
+          affiliate_id?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          final_sale_price_sar?: number
+          id?: string
+          merchant_base_price_sar?: number
+          merchant_id?: string
+          order_id?: string
+          order_item_id?: string | null
+          platform_share_sar?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_revenue_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "platform_revenue_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "platform_revenue_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "platform_revenue_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "platform_revenue_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "platform_revenue_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "platform_revenue_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "platform_revenue_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       platform_settings: {
         Row: {
           created_at: string
@@ -7266,6 +7600,7 @@ export type Database = {
           approved_by: string | null
           attributes_schema: Json | null
           brand_id: string | null
+          catalog_price_sar: number | null
           category: string | null
           category_id: string | null
           commission_rate: number | null
@@ -7280,6 +7615,7 @@ export type Database = {
           is_active: boolean
           last_viewed_at: string | null
           max_order_quantity: number | null
+          merchant_base_price_sar: number | null
           merchant_id: string
           meta_keywords: string[] | null
           min_order_quantity: number | null
@@ -7304,6 +7640,7 @@ export type Database = {
           approved_by?: string | null
           attributes_schema?: Json | null
           brand_id?: string | null
+          catalog_price_sar?: number | null
           category?: string | null
           category_id?: string | null
           commission_rate?: number | null
@@ -7318,6 +7655,7 @@ export type Database = {
           is_active?: boolean
           last_viewed_at?: string | null
           max_order_quantity?: number | null
+          merchant_base_price_sar?: number | null
           merchant_id: string
           meta_keywords?: string[] | null
           min_order_quantity?: number | null
@@ -7342,6 +7680,7 @@ export type Database = {
           approved_by?: string | null
           attributes_schema?: Json | null
           brand_id?: string | null
+          catalog_price_sar?: number | null
           category?: string | null
           category_id?: string | null
           commission_rate?: number | null
@@ -7356,6 +7695,7 @@ export type Database = {
           is_active?: boolean
           last_viewed_at?: string | null
           max_order_quantity?: number | null
+          merchant_base_price_sar?: number | null
           merchant_id?: string
           meta_keywords?: string[] | null
           min_order_quantity?: number | null
@@ -13644,6 +13984,14 @@ export type Database = {
         }
         Returns: Json
       }
+      process_merchant_withdrawal: {
+        Args: {
+          p_admin_notes?: string
+          p_status: string
+          p_withdrawal_id: string
+        }
+        Returns: boolean
+      }
       process_withdrawal_request: {
         Args: {
           p_admin_notes?: string
@@ -13653,6 +14001,17 @@ export type Database = {
         Returns: boolean
       }
       publish_cms_page: { Args: { p_page_id: string }; Returns: Json }
+      record_merchant_transaction: {
+        Args: {
+          p_amount_sar: number
+          p_description?: string
+          p_merchant_id: string
+          p_reference_id?: string
+          p_reference_type?: string
+          p_transaction_type: string
+        }
+        Returns: string
+      }
       record_wallet_transaction: {
         Args: {
           p_affiliate_id: string
