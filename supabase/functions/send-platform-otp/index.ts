@@ -48,8 +48,9 @@ serve(async (req) => {
       if (timeSinceLastOtp < 10000) { // 10 ثواني للاختبار
         const waitTime = Math.ceil((10000 - timeSinceLastOtp) / 1000);
         
-        // في وضع التطوير، نسمح بتجاوز الـ cooldown إذا لم يكن Twilio مُعد
-        if (!twilioAccountSid || !twilioAuthToken || !twilioPhoneNumber) {
+        // في وضع التطوير، نسمح بتجاوز الـ cooldown إذا لم يكن Ding مُعد
+        const dingApiKey = Deno.env.get('DING_API_KEY');
+        if (!dingApiKey) {
           console.log('Development mode: Skipping cooldown check');
         } else {
           return new Response(
@@ -109,115 +110,66 @@ serve(async (req) => {
     
     console.log('User check:', { isExistingUser, existingRole });
 
-    // إرسال OTP عبر Twilio
-    const twilioAccountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
-    const twilioAuthToken = Deno.env.get('TWILIO_AUTH_TOKEN');
-    const twilioPhoneNumber = Deno.env.get('TWILIO_PHONE_NUMBER');
+    // إرسال OTP عبر Ding
+    const dingApiKey = Deno.env.get('DING_API_KEY');
 
-    if (twilioAccountSid && twilioAuthToken && twilioPhoneNumber) {
+    if (dingApiKey) {
       try {
-        const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
-        const message = `رمز التحقق الخاص بك في منصة أتلانتس: ${otp}\nصالح لمدة 5 دقائق`;
+        const dingUrl = 'https://api.ding.live/v1/authentication';
 
-        console.log('Sending SMS to:', phone);
+        console.log('Sending OTP via Ding to:', phone);
 
-        // تنسيق الرقم السعودي لـ Twilio (يحتاج + للصيغة E.164)
-        let twilioPhone = phone;
-        console.log('Phone formatting - Original:', phone);
-        
-        // تنظيف الرقم من أي + مكرر
-        const cleanPhone = phone.replace(/^\+*/, ''); // إزالة جميع + من البداية
-        console.log('Phone formatting - Cleaned phone:', cleanPhone);
-        
-        // التحقق من نوع الرقم
-        if (cleanPhone.startsWith('966')) {
-          twilioPhone = `+${cleanPhone}`; // إضافة + لـ 966507988487
-          console.log('Phone formatting - Added + to 966:', twilioPhone);
-        } else if (cleanPhone.startsWith('0') && cleanPhone.length === 10) {
-          // رقم سعودي محلي يبدأ بـ 0
-          twilioPhone = `+966${cleanPhone.slice(1)}`; // إزالة 0 وإضافة +966
-          console.log('Phone formatting - Added +966 to local Saudi:', twilioPhone);
-        } else if (cleanPhone.startsWith('1') && cleanPhone.length === 10) {
-          // رقم أمريكي للاختبار في وضع التطوير
-          twilioPhone = `+${cleanPhone}`; // إضافة + للرقم الأمريكي
-          console.log('Phone formatting - Added + to US number for testing:', twilioPhone);
-        } else {
-          // رقم غير مدعوم
-          console.log('Phone formatting - Unsupported number detected:', cleanPhone);
-          return new Response(
-            JSON.stringify({ 
-              success: false, 
-              error: 'نحن ندعم الأرقام السعودية فقط حالياً. للاختبار، يمكن استخدام رقم أمريكي يبدأ بـ 1' 
-            }),
-            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
+        // تنسيق الرقم للتأكد من وجود + في البداية
+        let formattedPhone = phone;
+        if (!phone.startsWith('+')) {
+          formattedPhone = `+${phone}`;
         }
         
-        console.log('Phone formatting - Final twilioPhone:', twilioPhone);
+        console.log('Ding phone format:', formattedPhone);
 
-        const requestBody = new URLSearchParams({
-          To: twilioPhone, // رقم سعودي بصيغة E.164 مع + لـ Twilio
-          From: twilioPhoneNumber, // رقم Twilio الأمريكي
-          Body: message,
-        });
-
-        console.log('Twilio request details:', {
-          url: twilioUrl,
-          originalPhone: phone,
-          twilioPhone: twilioPhone,
-          from: twilioPhoneNumber,
-          message: message,
-          body: requestBody.toString(),
-          note: 'Sending as SMS (not WhatsApp) - Saudi number in E.164 format for Twilio'
-        });
-
-        const twilioResponse = await fetch(twilioUrl, {
+        const dingResponse = await fetch(dingUrl, {
           method: 'POST',
           headers: {
-            'Authorization': 'Basic ' + btoa(`${twilioAccountSid}:${twilioAuthToken}`),
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json',
+            'x-api-key': dingApiKey,
           },
-          body: requestBody,
+          body: JSON.stringify({
+            phone_number: formattedPhone,
+            locale: 'ar-SA', // اللغة العربية - السعودية
+          }),
         });
 
-        if (twilioResponse.ok) {
-          const twilioData = await twilioResponse.json();
-          console.log('SMS sent successfully via Twilio:', twilioData.sid);
-          console.log('Twilio response:', twilioData);
-          console.log('Message status:', twilioData.status);
-          console.log('Message direction:', twilioData.direction);
+        if (dingResponse.ok) {
+          const dingData = await dingResponse.json();
+          console.log('OTP sent successfully via Ding:', dingData);
+          console.log('Authentication UUID:', dingData.authentication_uuid);
+          console.log('Status:', dingData.status);
         } else {
-          const errorData = await twilioResponse.text();
-          console.error('Twilio error response:', errorData);
-          console.error('Twilio status:', twilioResponse.status);
+          const errorData = await dingResponse.text();
+          console.error('Ding error response:', errorData);
+          console.error('Ding status:', dingResponse.status);
           
-          // محاولة تحليل خطأ Twilio
+          // محاولة تحليل خطأ Ding
           let errorJson = null;
           try {
             errorJson = JSON.parse(errorData);
-            console.error('Twilio error details:', errorJson);
+            console.error('Ding error details:', errorJson);
           } catch (e) {
-            console.error('Could not parse Twilio error as JSON');
+            console.error('Could not parse Ding error as JSON');
           }
           
-          // معالجة أخطاء Twilio المختلفة
-          let errorMessage = 'فشل في إرسال رمز التحقق';
+          // معالجة أخطاء Ding المختلفة
           let userMessage = 'فشل في إرسال رمز التحقق';
+          let errorMessage = errorJson?.message || 'خطأ غير معروف من Ding';
           
-          if (errorJson) {
-            if (errorJson.code === 21612) {
-              errorMessage = 'Twilio account does not support international messaging to Saudi Arabia';
-              userMessage = 'حساب Twilio لا يدعم الإرسال الدولي للسعودية. يرجى التحقق من إعدادات الحساب أو استخدام رقم أمريكي للاختبار.';
-            } else if (errorJson.code === 21211) {
-              errorMessage = 'Invalid phone number format';
-              userMessage = 'تنسيق رقم الجوال غير صحيح';
-            } else if (errorJson.code === 21408) {
-              errorMessage = 'Permission to send SMS has not been enabled for the region';
-              userMessage = 'لا توجد صلاحية لإرسال رسائل SMS لهذه المنطقة';
-            } else {
-              errorMessage = errorJson.message || 'خطأ غير معروف من Twilio';
-              userMessage = 'فشل في إرسال رمز التحقق عبر Twilio';
-            }
+          if (dingResponse.status === 400) {
+            userMessage = 'تنسيق رقم الجوال غير صحيح';
+          } else if (dingResponse.status === 401) {
+            userMessage = 'خطأ في مفتاح API';
+            errorMessage = 'Invalid API key';
+          } else if (dingResponse.status === 429) {
+            userMessage = 'تم تجاوز عدد الطلبات المسموح بها';
+            errorMessage = 'Rate limit exceeded';
           }
           
           return new Response(
@@ -225,21 +177,20 @@ serve(async (req) => {
               success: false, 
               error: userMessage,
               details: errorMessage,
-              twilioCode: errorJson?.code,
-              status: twilioResponse.status
+              status: dingResponse.status
             }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
-      } catch (twilioError) {
-        console.error('Error sending SMS via Twilio:', twilioError);
+      } catch (dingError) {
+        console.error('Error sending OTP via Ding:', dingError);
         return new Response(
           JSON.stringify({ success: false, error: 'خطأ في إرسال الرسالة' }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
     } else {
-      console.log('Twilio not configured - OTP:', otp);
+      console.log('Ding not configured - OTP:', otp);
       // في التطوير، نعيد OTP للاختبار
       return new Response(
         JSON.stringify({ 
