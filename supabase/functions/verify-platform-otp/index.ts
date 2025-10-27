@@ -91,6 +91,12 @@ serve(async (req) => {
     let otpVerified = false;
     const preludeApiKey = Deno.env.get('DING_API_KEY');
 
+    // تنظيف الـ OTP المُدخل
+    const cleanOtp = otp.trim();
+    const cleanStoredOtp = otpRecord.code?.trim();
+
+    console.log('Comparing OTP - Input:', cleanOtp, 'Stored:', cleanStoredOtp);
+
     // إذا كان external_id موجوداً، استخدم Prelude API للتحقق
     if (otpRecord.external_id && preludeApiKey) {
       try {
@@ -104,7 +110,7 @@ serve(async (req) => {
             'Authorization': `Bearer ${preludeApiKey}`,
           },
           body: JSON.stringify({
-            code: otp,
+            code: cleanOtp,
           }),
         });
 
@@ -121,7 +127,7 @@ serve(async (req) => {
         } else {
           console.error('Prelude check failed:', preludeCheckResponse.status);
           // إذا فشل Prelude API، نستخدم التحقق المحلي كـ fallback
-          if (otpRecord.code === otp) {
+          if (cleanStoredOtp === cleanOtp) {
             otpVerified = true;
             console.log('OTP verified via local fallback');
           }
@@ -129,16 +135,20 @@ serve(async (req) => {
       } catch (preludeError) {
         console.error('Error checking OTP via Prelude:', preludeError);
         // استخدام التحقق المحلي كـ fallback
-        if (otpRecord.code === otp) {
+        if (cleanStoredOtp === cleanOtp) {
           otpVerified = true;
           console.log('OTP verified via local fallback after Prelude error');
+        } else {
+          console.log('Local fallback failed - OTP mismatch');
         }
       }
     } else {
       // لا يوجد external_id أو Prelude API، استخدام التحقق المحلي
-      if (otpRecord.code === otp) {
+      if (cleanStoredOtp === cleanOtp) {
         otpVerified = true;
         console.log('OTP verified via local check');
+      } else {
+        console.log('Local check failed - OTP mismatch');
       }
     }
 
