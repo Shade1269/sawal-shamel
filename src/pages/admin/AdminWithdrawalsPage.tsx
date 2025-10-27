@@ -1,69 +1,43 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { 
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent
-} from '@/components/ui/index';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle,
+import {
+  Dialog,
+  DialogContent,
   DialogDescription,
-  DialogFooter 
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
-import { 
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
-import { 
-  Wallet, 
-  Clock, 
-  CheckCircle, 
+import { useAdminWithdrawals } from '@/hooks/useAdminWithdrawals';
+import {
+  Wallet,
+  Clock,
+  CheckCircle,
   XCircle,
-  DollarSign,
-  Users,
   TrendingUp,
-  AlertCircle
+  ArrowDownToLine,
+  Phone,
+  User,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
-interface WithdrawalRequest {
-  id: string;
-  affiliate_profile_id: string;
-  amount_sar: number;
-  status: string;
-  payment_method: string;
-  bank_details: any;
-  notes: string | null;
-  admin_notes: string | null;
-  processed_by: string | null;
-  processed_at: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-const statusIcons: Record<string, any> = {
+const statusIcons = {
   PENDING: Clock,
   APPROVED: CheckCircle,
   REJECTED: XCircle,
   COMPLETED: CheckCircle,
-  pending: Clock,
-  approved: CheckCircle,
-  rejected: XCircle,
-  completed: CheckCircle,
+};
+
+const statusLabels = {
+  PENDING: 'قيد المراجعة',
+  APPROVED: 'موافق عليه',
+  REJECTED: 'مرفوض',
+  COMPLETED: 'مكتمل',
 };
 
 const statusColors: Record<string, "default" | "secondary" | "destructive"> = {
@@ -71,122 +45,31 @@ const statusColors: Record<string, "default" | "secondary" | "destructive"> = {
   APPROVED: "secondary",
   REJECTED: "destructive",
   COMPLETED: "default",
-  pending: "default",
-  approved: "secondary",
-  rejected: "destructive",
-  completed: "default",
-};
-
-const statusLabels: Record<string, string> = {
-  PENDING: "قيد المراجعة",
-  APPROVED: "موافق عليه",
-  REJECTED: "مرفوض",
-  COMPLETED: "مكتمل",
-  pending: "قيد المراجعة",
-  approved: "موافق عليه",
-  rejected: "مرفوض",
-  completed: "مكتمل",
 };
 
 export default function AdminWithdrawalsPage() {
-  const { user } = useSupabaseAuth();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [selectedRequest, setSelectedRequest] = useState<WithdrawalRequest | null>(null);
-  const [showReviewDialog, setShowReviewDialog] = useState(false);
+  const { withdrawals, stats, isLoading, processWithdrawal, isProcessing } = useAdminWithdrawals();
+  const [selectedWithdrawal, setSelectedWithdrawal] = useState<any>(null);
   const [adminNotes, setAdminNotes] = useState('');
-  const [reviewAction, setReviewAction] = useState<'approve' | 'reject'>('approve');
+  const [processingStatus, setProcessingStatus] = useState<'APPROVED' | 'REJECTED' | 'COMPLETED' | null>(null);
 
-  const { data: withdrawalRequests, isLoading } = useQuery({
-    queryKey: ['admin-withdrawal-requests'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('withdrawal_requests')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return data as WithdrawalRequest[];
-    },
-  });
-
-  const { data: profile } = useQuery({
-    queryKey: ['profile', user?.id],
-    queryFn: async () => {
-      if (!user) return null;
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('auth_user_id', user.id)
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user
-  });
-
-  const updateWithdrawalMutation = useMutation({
-    mutationFn: async ({ id, status, notes }: { id: string; status: string; notes: string }) => {
-      const { error } = await supabase
-        .from('withdrawal_requests')
-        .update({
-          status,
-          admin_notes: notes,
-          processed_at: new Date().toISOString(),
-          processed_by: profile?.id
-        })
-        .eq('id', id);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-withdrawal-requests'] });
-      toast({
-        title: "تم التحديث",
-        description: "تم تحديث حالة الطلب بنجاح.",
-      });
-      setShowReviewDialog(false);
-      setSelectedRequest(null);
-      setAdminNotes('');
-    },
-    onError: (error) => {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تحديث الطلب. يرجى المحاولة مرة أخرى.",
-        variant: "destructive",
-      });
-      console.error('Error updating withdrawal request:', error);
-    }
-  });
-
-  const pendingRequests = withdrawalRequests?.filter(r => r.status === 'PENDING' || r.status === 'pending') || [];
-  const approvedRequests = withdrawalRequests?.filter(r => r.status === 'APPROVED' || r.status === 'approved') || [];
-  const completedRequests = withdrawalRequests?.filter(r => r.status === 'COMPLETED' || r.status === 'completed') || [];
-  const rejectedRequests = withdrawalRequests?.filter(r => r.status === 'REJECTED' || r.status === 'rejected') || [];
-
-  const totalPending = pendingRequests.reduce((sum, r) => sum + Number(r.amount_sar), 0);
-  const totalApproved = approvedRequests.reduce((sum, r) => sum + Number(r.amount_sar), 0);
-  const totalCompleted = completedRequests.reduce((sum, r) => sum + Number(r.amount_sar), 0);
-
-  const handleReview = (request: WithdrawalRequest, action: 'approve' | 'reject') => {
-    setSelectedRequest(request);
-    setReviewAction(action);
+  const handleProcess = (status: 'APPROVED' | 'REJECTED' | 'COMPLETED') => {
+    if (!selectedWithdrawal) return;
+    
+    processWithdrawal({
+      withdrawalId: selectedWithdrawal.id,
+      status,
+      adminNotes
+    });
+    
+    setSelectedWithdrawal(null);
     setAdminNotes('');
-    setShowReviewDialog(true);
+    setProcessingStatus(null);
   };
 
-  const handleSubmitReview = () => {
-    if (!selectedRequest) return;
-
-    const newStatus = reviewAction === 'approve' ? 'APPROVED' : 'REJECTED';
-    
-    updateWithdrawalMutation.mutate({
-      id: selectedRequest.id,
-      status: newStatus,
-      notes: adminNotes
-    });
+  const openProcessDialog = (withdrawal: any, status: 'APPROVED' | 'REJECTED' | 'COMPLETED') => {
+    setSelectedWithdrawal(withdrawal);
+    setProcessingStatus(status);
   };
 
   if (isLoading) {
@@ -194,289 +77,344 @@ export default function AdminWithdrawalsPage() {
       <div className="container mx-auto py-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري تحميل طلبات السحب...</p>
+          <p className="text-muted-foreground">جاري التحميل...</p>
         </div>
       </div>
     );
   }
 
-  const renderWithdrawalCard = (request: WithdrawalRequest) => {
-    const StatusIcon = statusIcons[request.status];
-    
-    return (
-      <div key={request.id} className="p-4 border rounded-lg space-y-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <StatusIcon className="h-5 w-5 text-muted-foreground" />
-            <div>
-              <p className="font-medium text-lg">{request.amount_sar.toFixed(2)} ر.س</p>
-              <p className="text-sm text-muted-foreground">
-                مسوقة - {request.affiliate_profile_id.substring(0, 8)}
-              </p>
-            </div>
-          </div>
-          <Badge variant={statusColors[request.status]}>
-            {statusLabels[request.status]}
-          </Badge>
-        </div>
-
-        <div className="text-sm space-y-1">
-          <p className="text-muted-foreground">
-            <span className="font-medium">تاريخ الطلب:</span> {format(new Date(request.created_at), 'dd MMMM yyyy - HH:mm', { locale: ar })}
-          </p>
-          <p className="text-muted-foreground">
-            <span className="font-medium">طريقة الدفع:</span> {
-              request.payment_method === 'BANK_TRANSFER' || request.payment_method === 'bank_transfer' ? 'تحويل بنكي' : 
-              request.payment_method === 'WALLET' || request.payment_method === 'wallet' ? 'محفظة' : 'نقداً'
-            }
-          </p>
-          
-          {request.bank_details && typeof request.bank_details === 'object' && (
-            <>
-              {request.bank_details.bank_name && (
-                <p className="text-muted-foreground">
-                  <span className="font-medium">البنك:</span> {request.bank_details.bank_name}
-                </p>
-              )}
-              {request.bank_details.account_holder && (
-                <p className="text-muted-foreground">
-                  <span className="font-medium">اسم الحساب:</span> {request.bank_details.account_holder}
-                </p>
-              )}
-              {request.bank_details.account_number && (
-                <p className="text-muted-foreground">
-                  <span className="font-medium">رقم الحساب:</span> {request.bank_details.account_number}
-                </p>
-              )}
-              {request.bank_details.iban && (
-                <p className="text-muted-foreground">
-                  <span className="font-medium">IBAN:</span> {request.bank_details.iban}
-                </p>
-              )}
-              {request.bank_details.phone_number && (
-                <p className="text-muted-foreground">
-                  <span className="font-medium">رقم الهاتف:</span> {request.bank_details.phone_number}
-                </p>
-              )}
-            </>
-          )}
-
-          {request.notes && (
-            <p className="text-muted-foreground">
-              <span className="font-medium">ملاحظات المستخدم:</span> {request.notes}
-            </p>
-          )}
-          
-          {request.admin_notes && (
-            <p className="text-muted-foreground">
-              <span className="font-medium">ملاحظات الإدارة:</span> {request.admin_notes}
-            </p>
-          )}
-
-          {request.processed_at && (
-            <p className="text-muted-foreground">
-              <span className="font-medium">تاريخ المعالجة:</span> {format(new Date(request.processed_at), 'dd MMMM yyyy - HH:mm', { locale: ar })}
-            </p>
-          )}
-        </div>
-
-        {(request.status === 'PENDING' || request.status === 'pending') && (
-          <div className="flex gap-2 pt-2">
-            <Button 
-              onClick={() => handleReview(request, 'approve')}
-              size="sm"
-              className="flex-1"
-            >
-              <CheckCircle className="h-4 w-4 mr-2" />
-              موافقة
-            </Button>
-            <Button 
-              onClick={() => handleReview(request, 'reject')}
-              variant="destructive"
-              size="sm"
-              className="flex-1"
-            >
-              <XCircle className="h-4 w-4 mr-2" />
-              رفض
-            </Button>
-          </div>
-        )}
-      </div>
-    );
-  };
+  const pendingWithdrawals = withdrawals.filter(w => w.status === 'PENDING');
+  const approvedWithdrawals = withdrawals.filter(w => w.status === 'APPROVED');
+  const completedWithdrawals = withdrawals.filter(w => w.status === 'COMPLETED');
+  const rejectedWithdrawals = withdrawals.filter(w => w.status === 'REJECTED');
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-8">
+    <div className="container mx-auto py-8 space-y-6">
+      {/* Header */}
+      <div>
         <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
           <Wallet className="h-8 w-8" />
-          إدارة طلبات السحب
+          إدارة السحوبات
         </h1>
         <p className="text-muted-foreground">
-          مراجعة والموافقة على طلبات السحب من المسوقات والتجار
+          مراجعة ومعالجة طلبات السحب من المسوقات
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">قيد المراجعة</CardTitle>
-            <AlertCircle className="h-4 w-4 text-yellow-600" />
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Clock className="h-4 w-4 text-amber-500" />
+              قيد الانتظار
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{totalPending.toFixed(2)} ر.س</div>
-            <p className="text-xs text-muted-foreground">
-              {pendingRequests.length} طلب
+            <div className="text-2xl font-bold">{stats.totalPending}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {stats.pendingAmount.toFixed(2)} ر.س
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">موافق عليها</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-600" />
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-green-500" />
+              موافق عليها
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{totalApproved.toFixed(2)} ر.س</div>
-            <p className="text-xs text-muted-foreground">
-              {approvedRequests.length} طلب
+            <div className="text-2xl font-bold">{stats.totalApproved}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-blue-500" />
+              مكتملة
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalCompleted}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {stats.completedAmount.toFixed(2)} ر.س
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">مكتملة</CardTitle>
-            <DollarSign className="h-4 w-4 text-blue-600" />
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <XCircle className="h-4 w-4 text-red-500" />
+              مرفوضة
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{totalCompleted.toFixed(2)} ر.س</div>
-            <p className="text-xs text-muted-foreground">
-              {completedRequests.length} طلب
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي الطلبات</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{withdrawalRequests?.length || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              جميع الطلبات
-            </p>
+            <div className="text-2xl font-bold">{stats.totalRejected}</div>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
-        <CardContent className="pt-6">
-          <Tabs defaultValue="pending">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="pending">
-                قيد المراجعة ({pendingRequests.length})
-              </TabsTrigger>
-              <TabsTrigger value="approved">
-                موافق عليها ({approvedRequests.length})
-              </TabsTrigger>
-              <TabsTrigger value="completed">
-                مكتملة ({completedRequests.length})
-              </TabsTrigger>
-              <TabsTrigger value="rejected">
-                مرفوضة ({rejectedRequests.length})
-              </TabsTrigger>
-            </TabsList>
+      {/* Tabs */}
+      <Tabs defaultValue="pending" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="pending">
+            قيد الانتظار ({pendingWithdrawals.length})
+          </TabsTrigger>
+          <TabsTrigger value="approved">
+            موافق عليها ({approvedWithdrawals.length})
+          </TabsTrigger>
+          <TabsTrigger value="completed">
+            مكتملة ({completedWithdrawals.length})
+          </TabsTrigger>
+          <TabsTrigger value="rejected">
+            مرفوضة ({rejectedWithdrawals.length})
+          </TabsTrigger>
+        </TabsList>
 
-            <TabsContent value="pending" className="space-y-4 mt-4">
-              {pendingRequests.length === 0 ? (
+        {/* Pending Tab */}
+        <TabsContent value="pending" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>الطلبات المعلقة</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {pendingWithdrawals.length === 0 ? (
                 <div className="text-center py-12">
                   <Clock className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">لا توجد طلبات معلقة</h3>
-                  <p className="text-muted-foreground">
-                    جميع الطلبات تمت مراجعتها
-                  </p>
+                  <p className="text-muted-foreground">لا توجد طلبات معلقة</p>
                 </div>
               ) : (
-                pendingRequests.map(renderWithdrawalCard)
-              )}
-            </TabsContent>
-
-            <TabsContent value="approved" className="space-y-4 mt-4">
-              {approvedRequests.length === 0 ? (
-                <div className="text-center py-12">
-                  <CheckCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">لا توجد طلبات موافق عليها</h3>
+                <div className="space-y-4">
+                  {pendingWithdrawals.map((withdrawal) => (
+                    <WithdrawalCard
+                      key={withdrawal.id}
+                      withdrawal={withdrawal}
+                      onProcess={openProcessDialog}
+                    />
+                  ))}
                 </div>
-              ) : (
-                approvedRequests.map(renderWithdrawalCard)
               )}
-            </TabsContent>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-            <TabsContent value="completed" className="space-y-4 mt-4">
-              {completedRequests.length === 0 ? (
-                <div className="text-center py-12">
-                  <DollarSign className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">لا توجد طلبات مكتملة</h3>
-                </div>
-              ) : (
-                completedRequests.map(renderWithdrawalCard)
-              )}
-            </TabsContent>
+        {/* Other tabs similar structure */}
+        {[
+          { value: 'approved', data: approvedWithdrawals, title: 'الموافق عليها' },
+          { value: 'completed', data: completedWithdrawals, title: 'المكتملة' },
+          { value: 'rejected', data: rejectedWithdrawals, title: 'المرفوضة' }
+        ].map(({ value, data, title }) => (
+          <TabsContent key={value} value={value} className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {data.length === 0 ? (
+                  <div className="text-center py-12">
+                    <ArrowDownToLine className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">لا توجد طلبات</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {data.map((withdrawal) => (
+                      <WithdrawalCard
+                        key={withdrawal.id}
+                        withdrawal={withdrawal}
+                        onProcess={value === 'approved' ? openProcessDialog : undefined}
+                      />
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        ))}
+      </Tabs>
 
-            <TabsContent value="rejected" className="space-y-4 mt-4">
-              {rejectedRequests.length === 0 ? (
-                <div className="text-center py-12">
-                  <XCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">لا توجد طلبات مرفوضة</h3>
-                </div>
-              ) : (
-                rejectedRequests.map(renderWithdrawalCard)
-              )}
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-
-      <Dialog open={showReviewDialog} onOpenChange={setShowReviewDialog}>
+      {/* Process Dialog */}
+      <Dialog open={!!selectedWithdrawal} onOpenChange={() => setSelectedWithdrawal(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {reviewAction === 'approve' ? 'الموافقة على' : 'رفض'} طلب السحب
+              {processingStatus === 'APPROVED' && 'الموافقة على الطلب'}
+              {processingStatus === 'REJECTED' && 'رفض الطلب'}
+              {processingStatus === 'COMPLETED' && 'تأكيد إتمام التحويل'}
             </DialogTitle>
             <DialogDescription>
-              المبلغ: {selectedRequest?.amount_sar.toFixed(2)} ر.س
+              {selectedWithdrawal && (
+                <>
+                  المبلغ: {Number(selectedWithdrawal.amount_sar).toFixed(2)} ر.س
+                  <br />
+                  المسوقة: {selectedWithdrawal.affiliate?.full_name || 'غير محدد'}
+                </>
+              )}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
             <div>
-              <Label htmlFor="admin_notes">ملاحظات - اختياري</Label>
+              <label className="text-sm font-medium mb-2 block">
+                ملاحظات الإدارة {processingStatus === 'REJECTED' && '(مطلوب)'}
+              </label>
               <Textarea
-                id="admin_notes"
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
-                placeholder="أضف ملاحظات للمستخدم..."
+                placeholder="أضف ملاحظاتك هنا..."
                 rows={4}
               />
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowReviewDialog(false)}>
+            <Button variant="outline" onClick={() => setSelectedWithdrawal(null)}>
               إلغاء
             </Button>
-            <Button 
-              onClick={handleSubmitReview}
-              disabled={updateWithdrawalMutation.isPending}
-              variant={reviewAction === 'reject' ? 'destructive' : 'default'}
+            <Button
+              onClick={() => processingStatus && handleProcess(processingStatus)}
+              disabled={isProcessing || (processingStatus === 'REJECTED' && !adminNotes)}
+              variant={processingStatus === 'REJECTED' ? 'destructive' : 'default'}
             >
-              {updateWithdrawalMutation.isPending ? 'جاري التحديث...' : 'تأكيد'}
+              {isProcessing ? 'جاري المعالجة...' : 'تأكيد'}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+// Withdrawal Card Component
+interface WithdrawalCardProps {
+  withdrawal: any;
+  onProcess?: (withdrawal: any, status: 'APPROVED' | 'REJECTED' | 'COMPLETED') => void;
+}
+
+function WithdrawalCard({ withdrawal, onProcess }: WithdrawalCardProps) {
+  const StatusIcon = statusIcons[withdrawal.status as keyof typeof statusIcons];
+
+  return (
+    <div className="p-4 border rounded-lg space-y-4">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <StatusIcon className="h-5 w-5 text-muted-foreground" />
+          <div>
+            <p className="font-medium text-lg">
+              {Number(withdrawal.amount_sar).toFixed(2)} ر.س
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {format(new Date(withdrawal.created_at), 'dd MMMM yyyy - HH:mm', { locale: ar })}
+            </p>
+          </div>
+        </div>
+        <Badge variant={statusColors[withdrawal.status]}>
+          {statusLabels[withdrawal.status as keyof typeof statusLabels]}
+        </Badge>
+      </div>
+
+      {/* Affiliate Info */}
+      <div className="bg-muted/50 rounded-lg p-3 space-y-2">
+        <div className="flex items-center gap-2 text-sm">
+          <User className="h-4 w-4 text-muted-foreground" />
+          <span className="font-medium">المسوقة:</span>
+          <span>{withdrawal.affiliate?.full_name || 'غير محدد'}</span>
+        </div>
+        {withdrawal.affiliate?.phone && (
+          <div className="flex items-center gap-2 text-sm">
+            <Phone className="h-4 w-4 text-muted-foreground" />
+            <span className="font-medium">الهاتف:</span>
+            <span>{withdrawal.affiliate.phone}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Payment Details */}
+      <div className="text-sm space-y-1">
+        <p className="text-muted-foreground">
+          <span className="font-medium">طريقة الدفع:</span>{' '}
+          {withdrawal.payment_method === 'BANK_TRANSFER' ? 'تحويل بنكي' :
+           withdrawal.payment_method === 'WALLET' ? 'محفظة إلكترونية' : 'نقداً'}
+        </p>
+
+        {withdrawal.bank_details && typeof withdrawal.bank_details === 'object' && (
+          <>
+            {withdrawal.bank_details.bank_name && (
+              <p className="text-muted-foreground">
+                <span className="font-medium">البنك:</span> {withdrawal.bank_details.bank_name}
+              </p>
+            )}
+            {withdrawal.bank_details.iban && (
+              <p className="text-muted-foreground">
+                <span className="font-medium">IBAN:</span> {withdrawal.bank_details.iban}
+              </p>
+            )}
+            {withdrawal.bank_details.account_number && (
+              <p className="text-muted-foreground">
+                <span className="font-medium">رقم الحساب:</span> {withdrawal.bank_details.account_number}
+              </p>
+            )}
+          </>
+        )}
+
+        {withdrawal.notes && (
+          <p className="text-muted-foreground">
+            <span className="font-medium">ملاحظات المسوقة:</span> {withdrawal.notes}
+          </p>
+        )}
+
+        {withdrawal.admin_notes && (
+          <p className="text-muted-foreground">
+            <span className="font-medium">ملاحظة الإدارة:</span> {withdrawal.admin_notes}
+          </p>
+        )}
+
+        {withdrawal.processed_at && (
+          <p className="text-muted-foreground">
+            <span className="font-medium">تاريخ المعالجة:</span>{' '}
+            {format(new Date(withdrawal.processed_at), 'dd MMMM yyyy - HH:mm', { locale: ar })}
+          </p>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      {onProcess && withdrawal.status === 'PENDING' && (
+        <div className="flex gap-2">
+          <Button
+            onClick={() => onProcess(withdrawal, 'APPROVED')}
+            variant="default"
+            size="sm"
+            className="flex-1"
+          >
+            <CheckCircle className="h-4 w-4 mr-2" />
+            موافقة
+          </Button>
+          <Button
+            onClick={() => onProcess(withdrawal, 'REJECTED')}
+            variant="destructive"
+            size="sm"
+            className="flex-1"
+          >
+            <XCircle className="h-4 w-4 mr-2" />
+            رفض
+          </Button>
+        </div>
+      )}
+
+      {onProcess && withdrawal.status === 'APPROVED' && (
+        <Button
+          onClick={() => onProcess(withdrawal, 'COMPLETED')}
+          variant="default"
+          size="sm"
+          className="w-full"
+        >
+          <CheckCircle className="h-4 w-4 mr-2" />
+          تأكيد إتمام التحويل
+        </Button>
+      )}
     </div>
   );
 }

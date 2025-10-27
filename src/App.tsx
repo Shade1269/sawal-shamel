@@ -43,7 +43,6 @@ const IsolatedStoreLayout = lazy(() => import("@/components/store/IsolatedStoreL
 const IsolatedStorefront = lazy(() => import("./pages/storefront/IsolatedStorefront").then(m => ({ default: m.IsolatedStorefront })));
 const IsolatedStoreCart = lazy(() => import("./pages/storefront/IsolatedStoreCart").then(m => ({ default: m.IsolatedStoreCart })));
 const IsolatedStoreCheckout = lazy(() => import("./pages/storefront/IsolatedStoreCheckout").then(m => ({ default: m.IsolatedStoreCheckout })));
-const AffiliateWalletPage = lazy(() => import("./pages/affiliate/AffiliateWalletPage"));
 const WalletPage = lazy(() => import("./pages/affiliate/WalletPage"));
 const UnifiedAffiliateOrders = lazy(() => import("./pages/unified/UnifiedAffiliateOrders"));
 const StorefrontMyOrders = lazy(() => import("./pages/storefront/StorefrontMyOrders"));
