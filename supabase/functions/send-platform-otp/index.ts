@@ -115,7 +115,7 @@ serve(async (req) => {
 
     if (preludeApiKey) {
       try {
-        const preludeUrl = 'https://api.prelude.so/v2/verification';
+        const preludeUrl = 'https://api.prelude.dev/v2/verification';
 
         console.log('Sending OTP via Prelude to:', phone);
 
@@ -138,7 +138,10 @@ serve(async (req) => {
               type: 'phone_number',
               value: formattedPhone
             },
-            locale: 'ar-SA'
+            options: {
+              locale: 'ar-SA',
+              preferred_channel: 'sms'
+            }
           }),
         });
 
