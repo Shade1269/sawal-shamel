@@ -41,14 +41,15 @@
     --sidebar-accent-foreground: var(--primary-fg);
     
     /* Modern Sidebar Variables - Light Mode */
-    --sidebar-bg: 0 0% 98%;
-    --sidebar-glass-bg: 0 0% 100%;
-    --sidebar-glass-opacity: 0.8;
-    --sidebar-text: 222 47% 11%;
-    --sidebar-text-secondary: 215 16% 47%;
-    --sidebar-hover: 210 40% 96%;
+    --sidebar-bg: 220 15% 95%;
+    --sidebar-glass-bg: 220 15% 97%;
+    --sidebar-glass-opacity: 0.85;
+    --sidebar-text: 222 47% 15%;
+    --sidebar-text-secondary: 215 16% 40%;
+    --sidebar-hover: 220 20% 92%;
     --sidebar-active: 221 83% 53%;
     --sidebar-active-glow: 221 83% 53%;
+    --sidebar-border: 220 15% 85%;
     
     /* Section Colors - Light Mode */
     --sidebar-wallet: 142 76% 36%;
