@@ -1,0 +1,186 @@
+import {
+  Home,
+  ShoppingCart,
+  BarChart3,
+  Users,
+  Settings,
+  Package,
+  TrendingUp,
+  Wallet,
+  FileText,
+  Truck,
+  RefreshCw,
+  CheckSquare,
+  TestTube,
+  BookOpen,
+  Rocket
+} from 'lucide-react';
+
+export const adminNavigationSections = [
+  {
+    id: 'main',
+    title: 'الرئيسية',
+    icon: <Home className="h-4 w-4" />,
+    items: [
+      {
+        id: 'dashboard',
+        title: 'لوحة التحكم',
+        href: '/admin/dashboard',
+        icon: Home,
+      },
+    ],
+  },
+  {
+    id: 'orders',
+    title: 'إدارة الطلبات',
+    icon: <ShoppingCart className="h-4 w-4" />,
+    color: '262 83% 58%',
+    items: [
+      {
+        id: 'orders-list',
+        title: 'الطلبات',
+        href: '/admin/orders',
+        icon: ShoppingCart,
+        color: '262 83% 58%',
+      },
+      {
+        id: 'returns',
+        title: 'المرتجعات',
+        href: '/admin/returns',
+        icon: RefreshCw,
+        color: '262 83% 58%',
+      },
+    ],
+  },
+  {
+    id: 'analytics',
+    title: 'التحليلات والإحصائيات',
+    icon: <BarChart3 className="h-4 w-4" />,
+    color: '24 95% 53%',
+    items: [
+      {
+        id: 'analytics',
+        title: 'التحليلات',
+        href: '/admin/analytics',
+        icon: BarChart3,
+        color: '24 95% 53%',
+      },
+      {
+        id: 'leaderboard',
+        title: 'المتصدرين',
+        href: '/admin/leaderboard',
+        icon: TrendingUp,
+        color: '24 95% 53%',
+      },
+    ],
+  },
+  {
+    id: 'users',
+    title: 'إدارة المستخدمين',
+    icon: <Users className="h-4 w-4" />,
+    color: '221 83% 53%',
+    items: [
+      {
+        id: 'customers',
+        title: 'العملاء',
+        href: '/admin/customers',
+        icon: Users,
+        color: '221 83% 53%',
+      },
+      {
+        id: 'management',
+        title: 'الإدارة',
+        href: '/admin/management',
+        icon: Settings,
+        color: '221 83% 53%',
+      },
+    ],
+  },
+  {
+    id: 'inventory',
+    title: 'المخزون والشحن',
+    icon: <Package className="h-4 w-4" />,
+    color: '142 76% 36%',
+    items: [
+      {
+        id: 'inventory',
+        title: 'المخزون',
+        href: '/admin/inventory',
+        icon: Package,
+        color: '142 76% 36%',
+      },
+      {
+        id: 'shipping',
+        title: 'الشحن',
+        href: '/admin/shipping',
+        icon: Truck,
+        color: '142 76% 36%',
+      },
+      {
+        id: 'product-approval',
+        title: 'الموافقة على المنتجات',
+        href: '/admin/products/approval',
+        icon: CheckSquare,
+        color: '142 76% 36%',
+      },
+    ],
+  },
+  {
+    id: 'finance',
+    title: 'المالية',
+    icon: <Wallet className="h-4 w-4" />,
+    color: '142 76% 36%',
+    items: [
+      {
+        id: 'withdrawals',
+        title: 'سحوبات المسوقين',
+        href: '/admin/withdrawals',
+        icon: Wallet,
+        color: '142 76% 36%',
+      },
+      {
+        id: 'merchant-withdrawals',
+        title: 'سحوبات التجار',
+        href: '/admin/merchant-withdrawals',
+        icon: Wallet,
+        color: '142 76% 36%',
+      },
+      {
+        id: 'platform-revenue',
+        title: 'إيرادات المنصة',
+        href: '/admin/platform-revenue',
+        icon: FileText,
+        color: '142 76% 36%',
+      },
+    ],
+  },
+  {
+    id: 'system',
+    title: 'النظام',
+    icon: <Settings className="h-4 w-4" />,
+    color: '215 16% 47%',
+    items: [
+      {
+        id: 'testing',
+        title: 'الاختبار',
+        href: '/admin/testing',
+        icon: TestTube,
+        color: '215 16% 47%',
+      },
+      {
+        id: 'documentation',
+        title: 'التوثيق',
+        href: '/admin/documentation',
+        icon: BookOpen,
+        color: '215 16% 47%',
+      },
+      {
+        id: 'rollout',
+        title: 'الإطلاق',
+        href: '/admin/rollout',
+        icon: Rocket,
+        color: '215 16% 47%',
+      },
+    ],
+  },
+];

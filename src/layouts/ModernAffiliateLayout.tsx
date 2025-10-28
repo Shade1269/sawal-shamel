@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { Bell, Search, User, Store, Package, ShoppingBag, BarChart3, Settings, Home, Wallet, PanelLeft, Sun, Moon } from "lucide-react"
+import { Bell, Search, User, Sun, Moon, PanelLeft, Settings } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { BottomNavMobile } from "@/components/app-shell/BottomNavMobile"
@@ -14,137 +14,19 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useFastAuth } from "@/hooks/useFastAuth"
-import { useNavigate, NavLink, useLocation } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { useDarkMode } from "@/shared/components/DarkModeProvider"
+import { AffiliateSidebar } from "@/components/navigation"
+import { Home, BarChart3, Package, Wallet } from "lucide-react";
 
-const affiliateMenuItems = [
-  {
-    title: "نظرة عامة",
-    url: "/affiliate",
-    icon: BarChart3,
-    exact: true,
-  },
-  {
-    title: "واجهة المتجر",
-    url: "/affiliate/storefront",
-    icon: Package,
-  },
-  {
-    title: "الطلبات",
-    url: "/affiliate/orders",
-    icon: ShoppingBag,
-  },
-  {
-    title: "التحليلات",
-    url: "/affiliate/analytics",
-    icon: BarChart3,
-  },
-  {
-    title: "المحفظة",
-    url: "/affiliate/wallet",
-    icon: Wallet,
-  },
+const bottomNavItems = [
+  { to: '/affiliate', label: 'الرئيسية', icon: Home },
+  { to: '/affiliate/storefront', label: 'المتجر', icon: Package },
+  { to: '/affiliate/analytics', label: 'التحليلات', icon: BarChart3 },
+  { to: '/affiliate/wallet', label: 'المحفظة', icon: Wallet },
 ];
-
-function AffiliateSidebar() {
-  const location = useLocation();
-  const { isDarkMode } = useDarkMode();
-
-  const getNavClassName = (url: string, exact?: boolean) => {
-    const isActive = exact 
-      ? location.pathname === url 
-      : location.pathname.startsWith(url);
-    
-    return `flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-200 ${
-      isActive 
-        ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 font-medium shadow-sm" 
-        : isDarkMode 
-          ? "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-          : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-    }`;
-  };
-
-  return (
-    <aside className={`w-64 h-screen flex-shrink-0 border-r backdrop-blur-xl transition-colors duration-500 ${
-      isDarkMode 
-        ? 'border-border/30 bg-gradient-to-b from-slate-800/80 to-slate-900/60 shadow-[var(--shadow-glass-soft)]' 
-        : 'border-slate-200/50 bg-gradient-to-b from-white/90 to-slate-50/80 shadow-lg'
-    }`}>
-      <div className="px-3 py-5 h-full flex flex-col gap-4">
-        {/* Logo/Header */}
-        <div className="px-2 mb-2">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-[var(--shadow-glass-soft)]">
-              <Store className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h2 className={`heading-ar text-lg font-extrabold tracking-tight ${
-                isDarkMode 
-                  ? 'bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent'
-                  : 'text-slate-800'
-              }`}>
-                لوحة المسوق
-              </h2>
-              <p className={`elegant-text text-xs transition-colors duration-500 ${
-                isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
-              }`}>نظام إدارة متقدم</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Menu Sections */}
-        <div className="space-y-3 flex-1">
-          <div className="space-y-2">
-            <div className={`px-2 text-[10px] font-semibold uppercase tracking-wider transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
-            }`}>
-              المسوق
-            </div>
-            <div className="space-y-1.5">
-              {affiliateMenuItems.map((item) => (
-                <NavLink 
-                  key={item.url} 
-                  to={item.url} 
-                  end={item.exact}
-                  className={`${getNavClassName(item.url, item.exact)} group relative overflow-hidden`}
-                >
-                  <item.icon className="h-5 w-5 transition-transform duration-200 group-hover:scale-110" />
-                  <span className="flex-1 premium-text">{item.title}</span>
-                  <span className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-                </NavLink>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Status Indicator */}
-        <div className="mt-auto px-2">
-          <div className={`p-3 rounded-xl border transition-colors duration-500 ${
-            isDarkMode 
-              ? 'bg-gradient-to-r from-green-500/10 to-emerald-500/10 border-green-200/20 shadow-[var(--shadow-soft)]'
-              : 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200/40 shadow-sm'
-          }`}>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-              <span className={`text-xs font-medium transition-colors duration-500 ${
-                isDarkMode ? 'text-green-400' : 'text-green-700'
-              }`}>
-                المتجر نشط
-              </span>
-            </div>
-            <p className={`text-xs mt-1 elegant-text transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
-            }`}>
-              جميع الخدمات متاحة
-            </p>
-          </div>
-        </div>
-      </div>
-    </aside>
-  );
-}
 
 export default function ModernAffiliateLayout() {
   const { profile, user } = useFastAuth()

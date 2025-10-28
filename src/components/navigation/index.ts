@@ -13,8 +13,10 @@ export { NavigationSearch } from './NavigationSearch';
 
 // Modern Sidebar v4.0
 export { ModernSidebar } from './ModernSidebar';
+export { AffiliateSidebar } from './AffiliateSidebar';
+export { AdminSidebarModern } from './AdminSidebarModern';
+export { MerchantSidebarModern } from './MerchantSidebarModern';
 export { SidebarSearch } from './SidebarSearch';
 export { SidebarSection } from './SidebarSection';
 export { SidebarItem } from './SidebarItem';
-export { ModernSidebarExample } from './ModernSidebarExample';
 export type { SidebarItemData } from './SidebarItem';

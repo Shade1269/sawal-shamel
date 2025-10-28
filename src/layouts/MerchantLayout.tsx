@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { MerchantSidebarModern } from '@/components/navigation';
 import { Button } from "@/components/ui/button"
 import { Bell, Search, User, Package, ShoppingCart, Home, Store, Wallet } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -17,128 +18,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useFastAuth } from "@/hooks/useFastAuth"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
-import {
-  Sidebar as SidebarComponent,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar";
-import { NavLink, useLocation } from "react-router-dom";
-
-const menuItems = [
-  {
-    title: "لوحة التحكم",
-    url: "/merchant",
-    icon: Home,
-    exact: true
-  },
-  {
-    title: "إدارة المنتجات",
-    url: "/merchant/products",
-    icon: Package
-  },
-  {
-    title: "الطلبات",
-    url: "/merchant/orders",
-    icon: ShoppingCart
-  },
-  {
-    title: "المحفظة المالية",
-    url: "/merchant/wallet",
-    icon: Wallet
-  }
-];
-
-function MerchantSidebar() {
-  const { state } = useSidebar();
-  const location = useLocation();
-  const isCollapsed = state === "collapsed";
-
-  const getNavClassName = (url: string, exact?: boolean) => {
-    const isActive = exact 
-      ? location.pathname === url 
-      : location.pathname.startsWith(url);
-    
-    return `group flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-300 hover:scale-[1.02] ${
-      isActive 
-        ? "bg-gradient-to-r from-primary/25 via-primary/15 to-primary/10 text-primary border border-primary/30 font-semibold shadow-lg shadow-primary/10 backdrop-blur-sm" 
-        : "text-muted-foreground hover:bg-gradient-to-r hover:from-accent/50 hover:to-accent/30 hover:text-accent-foreground hover:shadow-md hover:backdrop-blur-sm"
-    }`;
-  };
-
-  return (
-    <SidebarComponent className="border-l border-gradient-to-b from-primary/20 via-primary/10 to-transparent bg-gradient-to-br from-card/95 via-card/90 to-card/85 backdrop-blur-2xl shadow-2xl shadow-primary/5 sidebar-enhanced">
-      <SidebarContent className="px-3 py-6">
-        {/* Logo/Header */}
-        <div className={`px-3 mb-8 ${isCollapsed ? "text-center" : ""}`}>
-          {!isCollapsed ? (
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg shadow-primary/25 ring-2 ring-primary/20">
-                <Store className="h-6 w-6 text-white drop-shadow-sm" />
-              </div>
-              <div>
-                <h2 className="text-xl font-black bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent tracking-tight">
-                  لوحة التاجر
-                </h2>
-                <p className="text-sm text-muted-foreground/80 font-medium">إدارة منتجاتك بذكاء</p>
-              </div>
-            </div>
-          ) : (
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center mx-auto shadow-lg shadow-primary/25 ring-2 ring-primary/20">
-              <Store className="h-6 w-6 text-white drop-shadow-sm" />
-            </div>
-          )}
-        </div>
-
-        {/* Menu */}
-        <SidebarGroup>
-          <SidebarGroupLabel className={`text-xs font-bold text-muted-foreground/70 uppercase tracking-widest mb-4 ${isCollapsed ? "sr-only" : ""}`}>
-            القائمة الرئيسية
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-2">
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild className="p-0">
-                    <NavLink 
-                      to={item.url} 
-                      end={item.exact}
-                      className={`${getNavClassName(item.url, item.exact)} nav-item`}
-                    >
-                      {!isCollapsed && (
-                        <span className="flex-1 text-right font-semibold text-sm">{item.title}</span>
-                      )}
-                      <item.icon className={`h-5 w-5 ${isCollapsed ? "mx-auto" : ""} transition-transform duration-200 group-hover:scale-110`} />
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Status Indicator */}
-        {!isCollapsed && (
-          <div className="mt-8 px-3">
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-green-500/10 to-teal-500/15 border border-emerald-200/30 shadow-lg shadow-emerald-500/10 backdrop-blur-sm">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 animate-pulse shadow-sm"></div>
-                <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
-                  متصل
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-      </SidebarContent>
-    </SidebarComponent>
-  );
-}
 
 export default function MerchantLayout() {
   const { profile, user, hasRole } = useFastAuth()
@@ -296,7 +175,7 @@ export default function MerchantLayout() {
         </div>
 
         {/* Sidebar - Right Side */}
-        <MerchantSidebar />
+        <MerchantSidebarModern />
       </div>
     </SidebarProvider>
   )

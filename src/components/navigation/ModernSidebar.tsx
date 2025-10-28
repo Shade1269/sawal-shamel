@@ -1,12 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
-  Wallet,
-  Store,
-  ShoppingCart,
-  BarChart3,
-  Settings,
-  Home,
   Clock,
   Star,
   Menu,
@@ -20,119 +14,17 @@ import { SidebarItem, SidebarItemData } from './SidebarItem';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-// Navigation Configuration
-const navigationSections: Array<{
-  id: string;
-  title: string;
-  icon?: any;
-  color?: string;
-  items: SidebarItemData[];
-}> = [
-  {
-    id: 'main',
-    title: 'الرئيسية',
-    icon: <Home className="h-4 w-4" />,
-    items: [
-      {
-        id: 'dashboard',
-        title: 'لوحة التحكم',
-        href: '/dashboard',
-        icon: Home,
-      },
-    ],
-  },
-  {
-    id: 'wallet',
-    title: 'المحفظة',
-    icon: <Wallet className="h-4 w-4" />,
-    color: '142 76% 36%', // green
-    items: [
-      {
-        id: 'wallet-overview',
-        title: 'نظرة عامة',
-        href: '/affiliate/wallet',
-        icon: Wallet,
-        color: '142 76% 36%',
-      },
-      {
-        id: 'wallet-transactions',
-        title: 'المعاملات',
-        href: '/affiliate/wallet/transactions',
-        icon: ShoppingCart,
-        color: '142 76% 36%',
-      },
-    ],
-  },
-  {
-    id: 'store',
-    title: 'المتجر',
-    icon: <Store className="h-4 w-4" />,
-    color: '221 83% 53%', // blue
-    items: [
-      {
-        id: 'storefront',
-        title: 'واجهة المتجر',
-        href: '/affiliate/storefront',
-        icon: Store,
-        color: '221 83% 53%',
-      },
-      {
-        id: 'products',
-        title: 'المنتجات',
-        href: '/affiliate/products',
-        icon: ShoppingCart,
-        color: '221 83% 53%',
-      },
-    ],
-  },
-  {
-    id: 'orders',
-    title: 'الطلبات',
-    icon: <ShoppingCart className="h-4 w-4" />,
-    color: '262 83% 58%', // purple
-    items: [
-      {
-        id: 'orders-list',
-        title: 'قائمة الطلبات',
-        href: '/affiliate/orders',
-        icon: ShoppingCart,
-        color: '262 83% 58%',
-      },
-    ],
-  },
-  {
-    id: 'analytics',
-    title: 'التحليلات',
-    icon: <BarChart3 className="h-4 w-4" />,
-    color: '24 95% 53%', // orange
-    items: [
-      {
-        id: 'analytics-overview',
-        title: 'نظرة عامة',
-        href: '/affiliate/analytics',
-        icon: BarChart3,
-        color: '24 95% 53%',
-      },
-    ],
-  },
-  {
-    id: 'settings',
-    title: 'الإعدادات',
-    icon: <Settings className="h-4 w-4" />,
-    color: '215 16% 47%', // gray
-    items: [
-      {
-        id: 'settings-general',
-        title: 'عام',
-        href: '/settings',
-        icon: Settings,
-        color: '215 16% 47%',
-      },
-    ],
-  },
-];
+interface ModernSidebarProps {
+  navigationSections: Array<{
+    id: string;
+    title: string;
+    icon?: any;
+    color?: string;
+    items: SidebarItemData[];
+  }>;
+}
 
-export function ModernSidebar() {
+export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
   const {
     state,
     toggleCollapse,

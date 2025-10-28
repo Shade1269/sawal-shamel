@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AdminSidebar } from '@/features/admin';
+import { AdminSidebarModern } from '@/components/navigation';
 import { Button } from "@/components/ui/button"
 import { Bell, Search, User } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -124,7 +124,7 @@ export default function AdminLayout() {
         </div>
 
         {/* Sidebar - Right Side */}
-        <AdminSidebar />
+        <AdminSidebarModern />
       </div>
     </SidebarProvider>
   )
