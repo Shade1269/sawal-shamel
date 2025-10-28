@@ -77,7 +77,7 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed right-0 top-0 z-40 h-screen transition-all duration-300 ease-in-out",
+        "fixed right-0 top-16 z-40 h-[calc(100vh-4rem)] transition-all duration-300 ease-in-out",
         "backdrop-blur-xl",
         state.isCollapsed ? "w-16" : "w-64"
       )}
