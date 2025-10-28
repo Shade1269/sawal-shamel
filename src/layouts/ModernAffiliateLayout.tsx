@@ -20,7 +20,6 @@ import { useToast } from "@/hooks/use-toast"
 import { useDarkMode } from "@/shared/components/DarkModeProvider"
 import { AffiliateSidebar } from "@/components/navigation"
 import { Home, BarChart3, Package, Wallet } from "lucide-react";
-import { useSidebarState } from "@/hooks/useSidebarState";
 
 const bottomNavItems = [
   { to: '/affiliate', label: 'الرئيسية', icon: Home },
@@ -34,7 +33,6 @@ export default function ModernAffiliateLayout() {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { isDarkMode, toggleDarkMode } = useDarkMode()
-  const { state: sidebarState } = useSidebarState()
 
   const handleSignOut = async () => {
     try {
@@ -67,7 +65,7 @@ export default function ModernAffiliateLayout() {
       <AffiliateSidebar />
 
       {/* Main Content - Dynamic margin based on sidebar state */}
-        <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 bg-gradient-to-br from-blue-50/30 via-white/50 to-purple-50/30 ${sidebarState.isCollapsed ? 'mr-16' : 'mr-64'}`}>
+        <div className="flex-1 flex flex-col min-w-0 mr-64 transition-all duration-300 bg-gradient-to-br from-blue-50/30 via-white/50 to-purple-50/30">
         {/* Header */}
         <header className="h-16 border-b border-border/40 bg-background/60 backdrop-blur-xl sticky top-0 z-40 shadow-sm">
           <div className="flex h-16 items-center gap-4 px-4 lg:px-6">
