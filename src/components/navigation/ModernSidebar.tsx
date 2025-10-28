@@ -46,7 +46,13 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const sidebar = document.querySelector('[data-sidebar="true"]');
+      const toggleButton = document.querySelector('[data-sidebar-toggle="true"]');
       const isSmallScreen = window.innerWidth < 768; // md breakpoint
+      
+      // Don't close if clicking the toggle button itself
+      if (toggleButton && (toggleButton.contains(target) || toggleButton === target)) {
+        return;
+      }
       
       if (isSmallScreen && !state.isCollapsed && sidebar && !sidebar.contains(target)) {
         toggleCollapse();
