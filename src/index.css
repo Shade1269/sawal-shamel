@@ -39,6 +39,23 @@
     --sidebar-border: color-mix(in srgb, var(--border) 80%, transparent);
     --sidebar-accent: var(--primary);
     --sidebar-accent-foreground: var(--primary-fg);
+    
+    /* Modern Sidebar Variables - Light Mode */
+    --sidebar-bg: 0 0% 98%;
+    --sidebar-glass-bg: 0 0% 100%;
+    --sidebar-glass-opacity: 0.8;
+    --sidebar-text: 222 47% 11%;
+    --sidebar-text-secondary: 215 16% 47%;
+    --sidebar-hover: 210 40% 96%;
+    --sidebar-active: 221 83% 53%;
+    --sidebar-active-glow: 221 83% 53%;
+    
+    /* Section Colors - Light Mode */
+    --sidebar-wallet: 142 76% 36%;
+    --sidebar-store: 221 83% 53%;
+    --sidebar-orders: 262 83% 58%;
+    --sidebar-analytics: 24 95% 53%;
+    --sidebar-settings: 215 16% 47%;
     --gradient-primary: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 60%, var(--accent) 40%));
     --gradient-hero: linear-gradient(135deg, var(--primary), var(--accent), var(--premium, var(--secondary)));
     --gradient-luxury: linear-gradient(135deg, var(--luxury, var(--primary)), color-mix(in srgb, var(--premium, var(--accent)) 65%, var(--luxury, var(--primary)) 35%));
@@ -63,6 +80,16 @@
 
   html.dark {
     color-scheme: dark;
+    
+    /* Modern Sidebar Variables - Dark Mode */
+    --sidebar-bg: 222 47% 11%;
+    --sidebar-glass-bg: 222 47% 11%;
+    --sidebar-glass-opacity: 0.7;
+    --sidebar-text: 210 40% 98%;
+    --sidebar-text-secondary: 215 20% 65%;
+    --sidebar-hover: 217 33% 17%;
+    --sidebar-active: 221 83% 53%;
+    --sidebar-active-glow: 221 83% 53%;
   }
 
   html:not(.dark) {

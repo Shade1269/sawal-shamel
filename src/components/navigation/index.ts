@@ -10,3 +10,11 @@ export { DesktopSidebarNavigation } from './DesktopSidebarNavigation';
 // Navigation Utilities
 export { NavigationShortcuts } from './NavigationShortcuts';
 export { NavigationSearch } from './NavigationSearch';
+
+// Modern Sidebar v4.0
+export { ModernSidebar } from './ModernSidebar';
+export { SidebarSearch } from './SidebarSearch';
+export { SidebarSection } from './SidebarSection';
+export { SidebarItem } from './SidebarItem';
+export { ModernSidebarExample } from './ModernSidebarExample';
+export type { SidebarItemData } from './SidebarItem';
