@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button"
 import { Bell, Search, User, Sun, Moon, PanelLeft, Settings } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { BottomNavMobile } from "@/components/app-shell/BottomNavMobile"
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -19,22 +18,14 @@ import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { useDarkMode } from "@/shared/components/DarkModeProvider"
 import { AffiliateSidebar } from "@/components/navigation"
-import { Home, BarChart3, Package, Wallet } from "lucide-react";
-import { useSidebarState } from "@/hooks/useSidebarState";
-
-const bottomNavItems = [
-  { to: '/affiliate', label: 'الرئيسية', icon: Home },
-  { to: '/affiliate/storefront', label: 'المتجر', icon: Package },
-  { to: '/affiliate/analytics', label: 'التحليلات', icon: BarChart3 },
-  { to: '/affiliate/wallet', label: 'المحفظة', icon: Wallet },
-];
+import { useSidebarState } from "@/hooks/useSidebarState"
 
 export default function ModernAffiliateLayout() {
   const { profile, user } = useFastAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
   const { isDarkMode, toggleDarkMode } = useDarkMode()
-  const { state: sidebarState } = useSidebarState()
+  const { state: sidebarState, toggleCollapse } = useSidebarState()
 
   const handleSignOut = async () => {
     try {
@@ -66,12 +57,17 @@ export default function ModernAffiliateLayout() {
       {/* Sidebar */}
       <AffiliateSidebar />
 
-      {/* Main Content - Dynamic margin based on sidebar state */}
-        <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 bg-gradient-to-br from-blue-50/30 via-white/50 to-purple-50/30 ${sidebarState.isCollapsed ? 'mr-16' : 'mr-64'}`}>
+      {/* Main Content - Dynamic margin based on sidebar state (desktop only) */}
+        <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 bg-gradient-to-br from-blue-50/30 via-white/50 to-purple-50/30 ${sidebarState.isCollapsed ? 'md:mr-16' : 'md:mr-64'}`}>
         {/* Header */}
         <header className="h-16 border-b border-border/40 bg-background/60 backdrop-blur-xl sticky top-0 z-40 shadow-sm">
           <div className="flex h-16 items-center gap-4 px-4 lg:px-6">
-            <Button variant="ghost" size="sm" className="lg:hidden">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="md:hidden"
+              onClick={toggleCollapse}
+            >
               <PanelLeft className="h-5 w-5" />
             </Button>
               
@@ -157,14 +153,12 @@ export default function ModernAffiliateLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto pb-24 bg-background/50">
-          <div className="w-full p-6">
+        <main className="flex-1 overflow-auto bg-background/50">
+          <div className="w-full p-4 md:p-6">
             <Outlet />
           </div>
         </main>
       </div>
-      
-      <BottomNavMobile items={bottomNavItems} />
     </div>
   )
 }

@@ -41,6 +41,30 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
     addRecentPage(location.pathname);
   }, [location.pathname, addRecentPage]);
 
+  // Close sidebar on mobile when clicking outside or navigating
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const sidebar = document.querySelector('[data-sidebar="true"]');
+      const isSmallScreen = window.innerWidth < 768; // md breakpoint
+      
+      if (isSmallScreen && !state.isCollapsed && sidebar && !sidebar.contains(target)) {
+        toggleCollapse();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [state.isCollapsed, toggleCollapse]);
+
+  // Close on navigation (mobile)
+  useEffect(() => {
+    const isSmallScreen = window.innerWidth < 768;
+    if (isSmallScreen && !state.isCollapsed) {
+      toggleCollapse();
+    }
+  }, [location.pathname]);
+
   // Filter items based on search
   const filteredSections = state.searchQuery
     ? navigationSections.map(section => ({
@@ -74,19 +98,36 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
     })
     .filter(Boolean) as SidebarItemData[];
 
+  const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
-    <aside
-      className={cn(
-        "fixed right-0 top-16 z-40 h-[calc(100vh-4rem)] transition-all duration-300 ease-in-out",
-        "backdrop-blur-xl",
-        state.isCollapsed ? "w-16" : "w-64"
+    <>
+      {/* Overlay for mobile */}
+      {!state.isCollapsed && isSmallScreen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm"
+          onClick={toggleCollapse}
+        />
       )}
-      style={{
-        backgroundColor: `hsl(var(--sidebar-glass-bg) / var(--sidebar-glass-opacity))`,
-        borderLeft: `1px solid hsl(var(--sidebar-border))`,
-      }}
-    >
-      <div className="flex flex-col h-full">
+      
+      <aside
+        data-sidebar="true"
+        className={cn(
+          "fixed right-0 top-0 z-40 h-screen transition-all duration-300 ease-in-out",
+          "backdrop-blur-xl shadow-2xl",
+          // Mobile: full overlay drawer
+          "md:top-16 md:h-[calc(100vh-4rem)]",
+          // Collapsed state
+          state.isCollapsed 
+            ? "translate-x-full md:translate-x-0 md:w-16" 
+            : "translate-x-0 w-80 md:w-64"
+        )}
+        style={{
+          backgroundColor: `hsl(var(--sidebar-glass-bg) / var(--sidebar-glass-opacity))`,
+          borderLeft: `1px solid hsl(var(--sidebar-border))`,
+        }}
+      >
+        <div className="flex flex-col h-full">
         {/* Header with Logo & Toggle */}
         <div className="flex items-center justify-between p-4 border-b border-[hsl(var(--sidebar-border))]">
           {!state.isCollapsed && (
@@ -182,15 +223,16 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
           ))}
         </ScrollArea>
 
-        {/* Footer - User Info (if needed) */}
-        {!state.isCollapsed && (
-          <div className="p-4 border-t border-[hsl(var(--sidebar-border))]">
-            <p className="text-xs text-[hsl(var(--sidebar-text-secondary))] text-center">
-              © 2025 عناقتي
-            </p>
-          </div>
-        )}
-      </div>
-    </aside>
+          {/* Footer - User Info (if needed) */}
+          {!state.isCollapsed && (
+            <div className="p-4 border-t border-[hsl(var(--sidebar-border))]">
+              <p className="text-xs text-[hsl(var(--sidebar-text-secondary))] text-center">
+                © 2025 عناقتي
+              </p>
+            </div>
+          )}
+        </div>
+      </aside>
+    </>
   );
 }

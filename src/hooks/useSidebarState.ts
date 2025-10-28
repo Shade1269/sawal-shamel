@@ -75,8 +75,11 @@ export function useSidebarState() {
 }
 
 function getDefaultState(): SidebarState {
+  // On mobile, start collapsed (closed)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  
   return {
-    isCollapsed: false,
+    isCollapsed: isMobile, // Start collapsed on mobile
     expandedSections: [],
     recentPages: [],
     favorites: [],
