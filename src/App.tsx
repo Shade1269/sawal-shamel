@@ -30,6 +30,7 @@ const StorefrontCheckout = lazy(() => import("./pages/storefront/StorefrontCheck
 const ProductsBrowser = lazy(() => import("./pages/ProductsBrowser"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const OrderConfirmationPage = lazy(() => import("./pages/OrderConfirmationSimple"));
+const PaymentCallback = lazy(() => import("./pages/PaymentCallback").then(m => ({ default: m.PaymentCallback })));
 const MarketerHomePage = lazy(() => import("./pages/home/MarketerHome"));
 const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
 const AffiliateStoreSettingsPage = lazy(() => import("./pages/affiliate/store/Settings"));
@@ -165,6 +166,7 @@ const App = () => {
 
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/order/confirmation" element={<OrderConfirmationPage />} />
+              <Route path="/payment/callback" element={<PaymentCallback />} />
 
               <Route
                 path="/affiliate/*"

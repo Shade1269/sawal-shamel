@@ -31,6 +31,8 @@ import { useFastAuth } from "@/hooks/useFastAuth";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useShoppingCart } from "@/hooks/useShoppingCart";
 import { VisuallyHidden } from "@/components/app-shell/VisuallyHidden";
+import { GeideaPayment } from "@/components/payment/GeideaPayment";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const PaymentSection = React.lazy(() => import("./checkout/CheckoutPaymentSection"));
 const SummaryExtras = React.lazy(() => import("./checkout/CheckoutSummaryExtras"));
@@ -58,6 +60,12 @@ const PAYMENT_METHODS = [
     title: "الدفع عند الاستلام",
     description: "سدد المبلغ نقداً عند استلام الطلب",
     icon: <Banknote className="h-4 w-4" aria-hidden />,
+  },
+  {
+    id: "geidea",
+    title: "الدفع الإلكتروني - Geidea",
+    description: "ادفع بأمان عبر بطاقة الائتمان أو مدى",
+    icon: <CreditCard className="h-4 w-4" aria-hidden />,
   },
   {
     id: "card",
@@ -141,6 +149,8 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [showGeideaPayment, setShowGeideaPayment] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
 
   const quantityState = useState<Record<string, number>>({});
   const [quantities, setQuantities] = quantityState;
@@ -328,6 +338,16 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
       if (!data?.order) throw new Error("missing order response");
 
       const order = data.order;
+
+      // إذا كانت طريقة الدفع Geidea، افتح نافذة الدفع
+      if (paymentMethod === 'geidea') {
+        setCurrentOrderId(order.id);
+        setShowGeideaPayment(true);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // للطرق الأخرى، امسح العربة وانتقل للتأكيد
       await clearCart();
 
       if (!prefersReducedMotion) {
@@ -788,6 +808,37 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
           </Suspense>
         </aside>
       </main>
+
+      {/* Geidea Payment Dialog */}
+      <Dialog open={showGeideaPayment} onOpenChange={setShowGeideaPayment}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>إتمام الدفع</DialogTitle>
+          </DialogHeader>
+          {currentOrderId && (
+            <GeideaPayment
+              amount={grandTotal}
+              orderId={currentOrderId}
+              customerName={customerInfo.name}
+              customerEmail={customerInfo.email}
+              customerPhone={customerInfo.phone}
+              onSuccess={async () => {
+                setShowGeideaPayment(false);
+                await clearCart();
+                navigate(`/order/confirmation?orderId=${currentOrderId}`);
+              }}
+              onError={(error) => {
+                console.error('Payment error:', error);
+                setErrorMessage(`فشل الدفع: ${error}`);
+                setShowGeideaPayment(false);
+              }}
+              onCancel={() => {
+                setShowGeideaPayment(false);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
