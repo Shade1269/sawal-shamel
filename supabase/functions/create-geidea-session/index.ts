@@ -14,6 +14,7 @@ interface GeideaSessionRequest {
   customerName?: string;
   customerPhone?: string;
   callbackUrl: string;
+  webhookUrl?: string;
   merchantReferenceId: string;
 }
 
@@ -50,7 +51,7 @@ serve(async (req) => {
       amount: requestData.amount,
       currency: requestData.currency,
       merchantReferenceId: requestData.merchantReferenceId,
-      callbackUrl: requestData.callbackUrl,
+      callbackUrl: requestData.webhookUrl || requestData.callbackUrl, // استخدام webhook URL للإشعارات
       signature: signature,
       billingAddress: {
         countryCode: 'SAU',

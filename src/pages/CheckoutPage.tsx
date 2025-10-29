@@ -303,45 +303,38 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
       // استخدام Edge Function الموحد
       const { data, error } = await supabaseClient.functions.invoke('create-ecommerce-order', {
         body: {
+          cart_id: cart?.id || null,
           shop_id: shopId,
           affiliate_store_id: affiliateStoreId,
-          user_id: profile?.id ?? null,
-          customer_name: customerInfo.name,
-          customer_email: customerInfo.email || null,
-          customer_phone: customerInfo.phone,
-          shipping_address: {
-            street: customerInfo.street,
-            city: customerInfo.city,
-            district: customerInfo.district,
-            postal_code: customerInfo.postalCode,
-            country: customerInfo.country,
-            notes,
+          buyer_session_id: null,
+          customer: {
+            name: customerInfo.name,
+            email: customerInfo.email || null,
+            phone: customerInfo.phone,
+            address: {
+              street: customerInfo.street,
+              city: customerInfo.city,
+              district: customerInfo.district,
+              postalCode: customerInfo.postalCode,
+              notes: notes,
+            }
           },
-          subtotal_sar: subtotal,
-          shipping_sar: shippingCost,
-          tax_sar: taxAmount,
-          total_sar: grandTotal,
+          shipping: {
+            cost_sar: shippingCost,
+            notes: notes || null,
+          },
           payment_method: paymentMethod || 'CASH_ON_DELIVERY',
-          notes: notes || null,
-          order_items: computedItems.map((item) => ({
-            product_id: item.product_id,
-            product_title: item.product_title,
-            product_image_url: item.product_image_url,
-            quantity: item.quantity,
-            unit_price_sar: item.unit_price_sar,
-            total_price_sar: item.total,
-          }))
         }
       });
 
       if (error) throw error;
-      if (!data?.order) throw new Error("missing order response");
+      if (!data?.success || !data?.order_id) throw new Error("missing order response");
 
-      const order = data.order;
+      const orderId = data.order_id;
 
       // إذا كانت طريقة الدفع Geidea، افتح نافذة الدفع
       if (paymentMethod === 'geidea') {
-        setCurrentOrderId(order.id);
+        setCurrentOrderId(orderId);
         setShowGeideaPayment(true);
         setIsSubmitting(false);
         return;
@@ -354,7 +347,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
         void import("./OrderConfirmationSimple");
       }
 
-      navigate(`/order/confirmation?orderId=${order.id}`);
+      navigate(`/order/confirmation?orderId=${orderId}`);
     } catch (error) {
       console.error("failed to place order", error);
       setErrorMessage("حدث خطأ أثناء معالجة الطلب. حاول مجدداً خلال لحظات.");

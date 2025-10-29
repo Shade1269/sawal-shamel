@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.create-geidea-session]
 verify_jwt = false
+
+[functions.geidea-webhook]
+verify_jwt = false

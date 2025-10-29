@@ -74,6 +74,7 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
     setLoading(true);
     try {
       const callbackUrl = `${window.location.origin}/payment/callback`;
+      const webhookUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/geidea-webhook`;
       
       const { data, error } = await supabase.functions.invoke('create-geidea-session', {
         body: {
@@ -84,6 +85,7 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
           customerName: customerName,
           customerPhone: customerPhone,
           callbackUrl: callbackUrl,
+          webhookUrl: webhookUrl,
           merchantReferenceId: `ORDER_${orderId}_${Date.now()}`,
         },
       });
