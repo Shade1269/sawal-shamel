@@ -28,8 +28,40 @@ export function useSidebarState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
 
+  // Sync state across components/tabs
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY && e.newValue) {
+        try {
+          const next = JSON.parse(e.newValue) as SidebarState;
+          setState(next);
+        } catch {}
+      }
+    };
+
+    const onCustom = (e: Event) => {
+      try {
+        const ce = e as CustomEvent<SidebarState>;
+        if (ce.detail) setState(ce.detail);
+      } catch {}
+    };
+
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('sidebar-state', onCustom as EventListener);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('sidebar-state', onCustom as EventListener);
+    };
+  }, []);
+
   const toggleCollapse = () => {
-    setState(prev => ({ ...prev, isCollapsed: !prev.isCollapsed }));
+    setState(prev => {
+      const next = { ...prev, isCollapsed: !prev.isCollapsed };
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
+      // Broadcast to same tab listeners
+      try { window.dispatchEvent(new CustomEvent('sidebar-state', { detail: next })); } catch {}
+      return next;
+    });
   };
 
   const toggleSection = (sectionId: string) => {
