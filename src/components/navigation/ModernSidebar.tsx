@@ -49,8 +49,8 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
       const toggleButton = document.querySelector('[data-sidebar-toggle="true"]');
       const isSmallScreen = window.innerWidth < 768; // md breakpoint
       
-      // Don't close if clicking the toggle button itself
-      if (toggleButton && (toggleButton.contains(target) || toggleButton === target)) {
+      // Don't close if clicking the toggle button or any of its children
+      if (toggleButton && (toggleButton.contains(target) || target.closest('[data-sidebar-toggle="true"]'))) {
         return;
       }
       

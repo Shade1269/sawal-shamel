@@ -66,7 +66,10 @@ export default function ModernAffiliateLayout() {
               variant="ghost" 
               size="sm" 
               className="md:hidden"
-              onClick={toggleCollapse}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleCollapse();
+              }}
               data-sidebar-toggle="true"
             >
               <PanelLeft className="h-5 w-5" />
