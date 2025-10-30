@@ -36,6 +36,29 @@ serve(async (req) => {
 
     console.log('Creating Geidea session for order:', requestData.orderId);
 
+    // Generate timestamp
+    const timestamp = new Date().toISOString();
+
+    // Generate signature using HMAC-SHA256
+    const amountStr = requestData.amount.toFixed(2);
+    const signatureString = `${MERCHANT_PUBLIC_KEY}${amountStr}${requestData.currency}${requestData.merchantReferenceId}${timestamp}`;
+    
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(API_PASSWORD);
+    const messageData = encoder.encode(signatureString);
+    
+    const cryptoKey = await crypto.subtle.importKey(
+      'raw',
+      keyData,
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+    
+    const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
+    const signatureArray = Array.from(new Uint8Array(signatureBuffer));
+    const signature = btoa(String.fromCharCode(...signatureArray));
+
     // Create Basic Authentication header
     const authString = `${MERCHANT_PUBLIC_KEY}:${API_PASSWORD}`;
     const encodedAuth = btoa(authString);
@@ -45,6 +68,8 @@ serve(async (req) => {
       amount: requestData.amount,
       currency: requestData.currency,
       merchantReferenceId: requestData.merchantReferenceId,
+      timestamp: timestamp,
+      signature: signature,
       callbackUrl: requestData.callbackUrl,
       billingAddress: {
         countryCode: 'SAU',
@@ -52,7 +77,7 @@ serve(async (req) => {
       customerEmail: requestData.customerEmail || '',
       paymentOperation: 'Pay',
       initiatedBy: 'Internet',
-      paymentMethods: ['Card', 'ApplePay'], // تفعيل Apple Pay + بطاقات الائتمان
+      paymentMethods: ['Card', 'ApplePay'],
       ...(requestData.customerName && { cardOnFile: requestData.customerName }),
     };
 
