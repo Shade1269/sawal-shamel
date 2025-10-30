@@ -50,8 +50,8 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
     }
 
     const script = document.createElement('script');
-    // SDK URL based on region - use production SDK even with test keys
-    script.src = 'https://www.merchant.geidea.net/hpp/geideaCheckout.min.js'; // Egypt region
+    // SDK URL for KSA region - matches API endpoint
+    script.src = 'https://www.ksamerchant.geidea.net/hpp/geideaCheckout.min.js';
     script.async = true;
     script.onload = () => {
       console.log('Geidea SDK loaded');
