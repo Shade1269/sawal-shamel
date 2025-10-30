@@ -78,18 +78,16 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
     setLoading(true);
     try {
       const callbackUrl = `${window.location.origin}/payment/callback`;
-      const webhookUrl = `https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/geidea-webhook`;
       const { data, error } = await supabase.functions.invoke('create-geidea-session', {
         body: {
-          amount: amount, // decimal SAR as per Checkout docs
+          amount: amount,
           currency: 'SAR',
           orderId: orderId,
           customerEmail: customerEmail,
           customerName: customerName,
           customerPhone: customerPhone,
           callbackUrl: callbackUrl,
-          webhookUrl: webhookUrl,
-          merchantReferenceId: `ORDER_${orderId}_${Date.now()}`,
+          merchantReferenceId: orderId,
         },
       });
 
