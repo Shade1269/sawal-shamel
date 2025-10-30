@@ -25,8 +25,8 @@ serve(async (req) => {
   }
 
   try {
-    const MERCHANT_PUBLIC_KEY = Deno.env.get('GEIDEA_MERCHANT_PUBLIC_KEY');
-    const API_PASSWORD = Deno.env.get('GEIDEA_API_PASSWORD');
+    const MERCHANT_PUBLIC_KEY = (Deno.env.get('GEIDEA_MERCHANT_PUBLIC_KEY') || '').trim();
+    const API_PASSWORD = (Deno.env.get('GEIDEA_API_PASSWORD') || '').trim();
 
     if (!MERCHANT_PUBLIC_KEY || !API_PASSWORD) {
       throw new Error('Geidea credentials not configured');
@@ -118,7 +118,8 @@ serve(async (req) => {
     }
 
     if (!geideaResponse || !geideaResponse.ok) {
-      throw new Error(lastError?.responseMessage || 'Failed to create payment session');
+      const msg = `${lastError?.responseMessage || 'Failed to create payment session'}${lastError?.detailedResponseCode ? ` [${lastError?.detailedResponseCode}] ${lastError?.detailedResponseMessage || ''}` : ''}`;
+      throw new Error(msg);
     }
 
     // Return session data to frontend
