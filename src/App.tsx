@@ -38,6 +38,7 @@ const StoreSetup = lazy(() => import("./pages/affiliate/store/StoreSetup"));
 const StoreAuth = lazy(() => import("./pages/StoreAuth"));
 const CustomerOrders = lazy(() => import("./pages/customer/CustomerOrders"));
 const AffiliateAnalyticsPage = lazy(() => import("./pages/affiliate/AffiliateCommissionsPage"));
+const AffiliateSubscriptionPage = lazy(() => import("./pages/affiliate/Subscription"));
 
 // Isolated Store Components
 const IsolatedStoreLayout = lazy(() => import("@/components/store/IsolatedStoreLayout").then(m => ({ default: m.IsolatedStoreLayout })));
@@ -184,6 +185,7 @@ const App = () => {
                 <Route path="orders" element={<UnifiedAffiliateOrders />} />
                 <Route path="analytics" element={<AffiliateAnalyticsPage />} />
                 <Route path="wallet" element={<WalletPage />} />
+                <Route path="subscription" element={<AffiliateSubscriptionPage />} />
               </Route>
 
                               <Route

@@ -5,7 +5,8 @@ import {
   ShoppingCart,
   BarChart3,
   Settings,
-  Package
+  Package,
+  CreditCard
 } from 'lucide-react';
 
 export const affiliateNavigationSections = [
@@ -93,6 +94,21 @@ export const affiliateNavigationSections = [
         href: '/affiliate/wallet',
         icon: Wallet,
         color: '142 76% 36%',
+      },
+    ],
+  },
+  {
+    id: 'subscription',
+    title: 'الاشتراك',
+    icon: <CreditCard className="h-4 w-4" />,
+    color: '271 91% 65%',
+    items: [
+      {
+        id: 'subscription-manage',
+        title: 'اشتراك المنصة',
+        href: '/affiliate/subscription',
+        icon: CreditCard,
+        color: '271 91% 65%',
       },
     ],
   },
