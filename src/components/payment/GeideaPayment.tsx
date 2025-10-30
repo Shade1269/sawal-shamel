@@ -17,9 +17,12 @@ interface GeideaPaymentProps {
 
 declare global {
   interface Window {
-    GeideaCheckout?: {
-      configure: (config: any) => void;
-      startPayment: (sessionId: string, containerId: string) => void;
+    GeideaCheckout?: new (
+      onSuccess: (response: any) => void,
+      onError: (error: any) => void,
+      onCancel: (data: any) => void
+    ) => {
+      startPayment: (sessionId: string) => void;
     };
   }
 }
@@ -47,7 +50,7 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
     }
 
     const script = document.createElement('script');
-    script.src = 'https://api.merchant.geidea.net/hpp/geideapay.min.js';
+    script.src = 'https://www.merchant.geidea.net/hpp/geideaCheckout.min.js';
     script.async = true;
     script.onload = () => {
       console.log('Geidea SDK loaded');
@@ -75,13 +78,9 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
     try {
       const callbackUrl = `${window.location.origin}/payment/callback`;
       const webhookUrl = `https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/geidea-webhook`;
-      
-      // Convert amount to fils (Saudi Arabia: 1 SAR = 100 fils)
-      const amountInFils = Math.round(amount * 100);
-      
       const { data, error } = await supabase.functions.invoke('create-geidea-session', {
         body: {
-          amount: amountInFils,
+          amount: amount, // decimal SAR as per Checkout docs
           currency: 'SAR',
           orderId: orderId,
           customerEmail: customerEmail,
