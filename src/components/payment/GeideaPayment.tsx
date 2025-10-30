@@ -50,7 +50,7 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
     }
 
     const script = document.createElement('script');
-    script.src = 'https://www.merchant.geidea.net/hpp/geideaCheckout.min.js';
+    script.src = 'https://www.merchant.staging.geidea.net/hpp/geideaCheckout.min.js';
     script.async = true;
     script.onload = () => {
       console.log('Geidea SDK loaded');

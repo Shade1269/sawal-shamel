@@ -83,8 +83,8 @@ serve(async (req) => {
 
     console.log('Calling Geidea API...');
 
-    // Call Geidea API (Saudi Arabia endpoint)
-    const geideaResponse = await fetch('https://api.merchant.geidea.net/payment-intent/api/v2/direct/session', {
+    // Call Geidea API (Sandbox endpoint for test keys)
+    const geideaResponse = await fetch('https://api-merchant.staging.geidea.net/payment-intent/api/v2/direct/session', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
