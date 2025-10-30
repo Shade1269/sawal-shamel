@@ -44,7 +44,7 @@ serve(async (req) => {
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const signature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-    // Prepare Geidea API payload
+    // Prepare Geidea API payload with Apple Pay enabled
     const geideaPayload = {
       merchantPublicKey: MERCHANT_PUBLIC_KEY,
       apiPassword: API_PASSWORD,
@@ -59,6 +59,7 @@ serve(async (req) => {
       customerEmail: requestData.customerEmail || '',
       paymentOperation: 'Pay',
       initiatedBy: 'Internet',
+      paymentMethods: ['Card', 'ApplePay'], // تفعيل Apple Pay + بطاقات الائتمان
       ...(requestData.customerName && { cardOnFile: requestData.customerName }),
     };
 
