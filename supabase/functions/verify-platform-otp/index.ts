@@ -41,9 +41,14 @@ serve(async (req) => {
       );
     }
 
-    if (!role || !['affiliate', 'merchant'].includes(role)) {
+    // التحقق من الدور: للمستخدمين الجدد يجب اختيار affiliate أو merchant
+    // للمستخدمين الموجودين، نقبل أي دور (customer, affiliate, merchant)
+    const validNewUserRoles = ['affiliate', 'merchant'];
+    const validExistingUserRoles = ['affiliate', 'merchant', 'customer', 'admin', 'moderator'];
+    
+    if (!role || !validExistingUserRoles.includes(role)) {
       return new Response(
-        JSON.stringify({ success: false, error: 'يجب اختيار الدور (مسوق أو تاجر)' }),
+        JSON.stringify({ success: false, error: 'دور غير صالح' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
