@@ -135,12 +135,30 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
 
     } catch (error) {
       console.error('Error creating payment session:', error);
+      // حاول استخراج رسالة الخطأ المفصلة من Edge Function
+      const e: any = error;
+      let details = error instanceof Error ? error.message : 'فشل في إنشاء جلسة الدفع';
+      const serverBody = e?.context?.body;
+      try {
+        const parsed = typeof serverBody === 'string' ? JSON.parse(serverBody) : serverBody;
+        const serverMsg = parsed?.error || parsed?.message;
+        if (serverMsg) details = serverMsg;
+      } catch {}
+
+      // توضيح أخطاء Geidea الشائعة
+      if (details.includes('[023]')) {
+        details += ' — فشل توثيق التاجر: تحقق من Merchant Public Key وAPI Password وفعالية حساب KSA.';
+      }
+      if (details.includes('[036]')) {
+        details += ' — لا يوجد تهيئة للبوابة: فعّل Checkout v2 Direct Session لهذه المفاتيح ومنطقة KSA.';
+      }
+
       toast({
         title: 'خطأ',
-        description: error instanceof Error ? error.message : 'فشل في إنشاء جلسة الدفع',
+        description: details,
         variant: 'destructive',
       });
-      onError(error instanceof Error ? error.message : 'Unknown error');
+      onError(details);
     } finally {
       setLoading(false);
     }
