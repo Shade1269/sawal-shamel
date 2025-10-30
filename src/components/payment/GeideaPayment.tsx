@@ -100,13 +100,10 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
 
       setSessionId(data.sessionId);
       
-      // Initialize Geidea Checkout with Apple Pay enabled
+      // Initialize Geidea Checkout
       if (window.GeideaCheckout && sdkLoaded) {
-        window.GeideaCheckout.configure({
-          merchantKey: data.sessionData?.merchantPublicKey,
-          enableApplePay: true, // تفعيل Apple Pay
-          applePayDisplayName: 'متجرك', // اسم يظهر في Apple Pay
-          onSuccess: (response: any) => {
+        const checkout = new window.GeideaCheckout(
+          (response: any) => {
             console.log('Payment successful:', response);
             toast({
               title: 'تم الدفع بنجاح',
@@ -114,7 +111,7 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
             });
             onSuccess(response);
           },
-          onError: (error: any) => {
+          (error: any) => {
             console.error('Payment error:', error);
             toast({
               title: 'خطأ في الدفع',
@@ -123,18 +120,18 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
             });
             onError(error.message || 'Payment failed');
           },
-          onCancel: () => {
+          () => {
             console.log('Payment cancelled by user');
             toast({
               title: 'تم الإلغاء',
               description: 'تم إلغاء عملية الدفع',
             });
             if (onCancel) onCancel();
-          },
-        });
+          }
+        );
 
-        // Start payment with modal
-        window.GeideaCheckout.startPayment(data.sessionId, 'geidea-container');
+        // Start payment
+        checkout.startPayment(data.sessionId);
       }
 
     } catch (error) {
