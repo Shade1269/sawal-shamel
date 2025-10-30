@@ -36,23 +36,16 @@ serve(async (req) => {
 
     console.log('Creating Geidea session for order:', requestData.orderId);
 
-    // Generate signature (SHA-256 hash of merchant key + amount + currency + order ID)
-    const signatureString = `${MERCHANT_PUBLIC_KEY}${requestData.amount}${requestData.currency}${requestData.merchantReferenceId}`;
-    const encoder = new TextEncoder();
-    const data = encoder.encode(signatureString);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const signature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    // Create Basic Authentication header
+    const authString = `${MERCHANT_PUBLIC_KEY}:${API_PASSWORD}`;
+    const encodedAuth = btoa(authString);
 
     // Prepare Geidea API payload with Apple Pay enabled
     const geideaPayload = {
-      merchantPublicKey: MERCHANT_PUBLIC_KEY,
-      apiPassword: API_PASSWORD,
       amount: requestData.amount,
       currency: requestData.currency,
       merchantReferenceId: requestData.merchantReferenceId,
-      callbackUrl: requestData.webhookUrl || requestData.callbackUrl, // استخدام webhook URL للإشعارات
-      signature: signature,
+      callbackUrl: requestData.callbackUrl,
       billingAddress: {
         countryCode: 'SAU',
       },
@@ -71,6 +64,7 @@ serve(async (req) => {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'Authorization': `Basic ${encodedAuth}`,
       },
       body: JSON.stringify(geideaPayload),
     });
