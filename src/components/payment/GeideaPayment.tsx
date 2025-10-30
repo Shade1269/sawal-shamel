@@ -74,11 +74,14 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
     setLoading(true);
     try {
       const callbackUrl = `${window.location.origin}/payment/callback`;
-      const webhookUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/geidea-webhook`;
+      const webhookUrl = `https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/geidea-webhook`;
+      
+      // Convert amount to fils (Saudi Arabia: 1 SAR = 100 fils)
+      const amountInFils = Math.round(amount * 100);
       
       const { data, error } = await supabase.functions.invoke('create-geidea-session', {
         body: {
-          amount: amount,
+          amount: amountInFils,
           currency: 'SAR',
           orderId: orderId,
           customerEmail: customerEmail,
@@ -163,10 +166,7 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
           <div className="flex justify-between text-sm">
             <span className="text-[color:var(--fg-muted)]">المبلغ المطلوب:</span>
             <span className="font-semibold text-[color:var(--glass-fg)]">
-              {new Intl.NumberFormat('ar-SA', {
-                style: 'currency',
-                currency: 'SAR',
-              }).format(amount)}
+              {amount.toFixed(2)} ريال سعودي
             </span>
           </div>
 
