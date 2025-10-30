@@ -74,7 +74,7 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
     setLoading(true);
     try {
       const callbackUrl = `${window.location.origin}/payment/callback`;
-      const webhookUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/geidea-webhook`;
+      const webhookUrl = `https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/geidea-webhook`;
       
       const { data, error } = await supabase.functions.invoke('create-geidea-session', {
         body: {
@@ -100,10 +100,9 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
       
       // Initialize Geidea Checkout with Apple Pay enabled
       if (window.GeideaCheckout && sdkLoaded) {
-        window.GeideaCheckout.configure({
-          merchantKey: data.sessionData?.merchantPublicKey,
-          enableApplePay: true, // تفعيل Apple Pay
-          applePayDisplayName: 'متجرك', // اسم يظهر في Apple Pay
+        const config: any = {
+          enableApplePay: true,
+          applePayDisplayName: 'متجرك',
           onSuccess: (response: any) => {
             console.log('Payment successful:', response);
             toast({
@@ -129,7 +128,14 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
             });
             if (onCancel) onCancel();
           },
-        });
+        };
+
+        // إضافة merchantKey فقط إذا كان موجود
+        if (data.sessionData?.merchantPublicKey) {
+          config.merchantKey = data.sessionData.merchantPublicKey;
+        }
+
+        window.GeideaCheckout.configure(config);
 
         // Start payment with modal
         window.GeideaCheckout.startPayment(data.sessionId, 'geidea-container');
