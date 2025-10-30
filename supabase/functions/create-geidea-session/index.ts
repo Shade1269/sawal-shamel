@@ -83,24 +83,42 @@ serve(async (req) => {
 
     console.log('Calling Geidea API...');
 
-    // Call Geidea API (KSA/Saudi Production - test keys work here with test cards)
-    const geideaResponse = await fetch('https://api.ksamerchant.geidea.net/payment-intent/api/v2/direct/session', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Basic ${encodedAuth}`,
-      },
-      body: JSON.stringify(geideaPayload),
-    });
+    const endpoints = [
+      'https://api.ksamerchant.geidea.net',
+      'https://api.merchant.geidea.net',
+      'https://api.geidea.ae'
+    ];
 
-    const geideaData = await geideaResponse.json();
+    let geideaResponse: Response | null = null;
+    let geideaData: any = null;
+    let lastError: any = null;
 
-    console.log('Geidea API response status:', geideaResponse.status);
+    for (const base of endpoints) {
+      const url = `${base}/payment-intent/api/v2/direct/session`;
+      console.log('Trying Geidea endpoint:', url);
+      geideaResponse = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Basic ${encodedAuth}`,
+        },
+        body: JSON.stringify(geideaPayload),
+      });
 
-    if (!geideaResponse.ok) {
-      console.error('Geidea API error:', geideaData);
-      throw new Error(geideaData.responseMessage || 'Failed to create payment session');
+      geideaData = await geideaResponse.json().catch(() => null);
+      console.log('Geidea API response status:', geideaResponse.status);
+
+      if (geideaResponse.ok && geideaData?.session?.id) {
+        break;
+      } else {
+        console.error('Geidea API error on endpoint:', url, geideaData);
+        lastError = geideaData;
+      }
+    }
+
+    if (!geideaResponse || !geideaResponse.ok) {
+      throw new Error(lastError?.responseMessage || 'Failed to create payment session');
     }
 
     // Return session data to frontend
