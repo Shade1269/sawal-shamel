@@ -202,6 +202,17 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       });
 
       if (error) throw error;
+      
+      // معالجة حالة الحظر
+      if (data?.blocked) {
+        toast({
+          title: "تم حظر إرسال الرمز مؤقتاً",
+          description: data.error || 'تم تجاوز عدد المحاولات المسموحة. الرجاء المحاولة بعد 5 دقائق',
+          variant: "destructive",
+        });
+        return { success: false, error: data.error };
+      }
+      
       if (!data?.success) throw new Error(data?.error || 'فشل في إرسال رمز التحقق');
 
       // حفظ البيانات في sessionStorage
@@ -360,10 +371,10 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       console.log('Fetching customer by phone:', fullPhone);
       
       // إذا حصلنا على بيانات العميل من edge function، استخدمها
-      if (data?.customer && data.customer.id) {
+      if (data?.customer && data.customer.id && data?.customerId) {
         const customer: CustomerProfile = {
-          id: data.sessionId || 'temp_' + Date.now(),
-          profile_id: data.customer.id,
+          id: data.customerId,  // استخدام customers.id الصحيح
+          profile_id: data.customer.id,  // profiles.id
           phone: fullPhone,
           email: data.customer.email,
           full_name: data.customer.full_name || fullPhone,

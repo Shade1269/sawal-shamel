@@ -75,7 +75,8 @@ serve(async (req) => {
       );
     }
 
-    // التأكد من وجود سجل في جدول profiles (للدمج مع النظام الموجود)
+    // التأكد من وجود سجل في جدول profiles
+    let profileId: string;
     const { data: existingProfile } = await supabase
       .from('profiles')
       .select('id')
@@ -84,23 +85,95 @@ serve(async (req) => {
 
     if (!existingProfile) {
       // إنشاء profile جديد للعميل
-      await supabase
+      const { data: newProfile, error: profileError } = await supabase
         .from('profiles')
         .insert({
           phone: phone,
           full_name: phone,
           role: 'customer'
+        })
+        .select('id')
+        .single();
+      
+      if (profileError) {
+        console.error('Error creating profile:', profileError);
+        return new Response(
+          JSON.stringify({ success: false, error: 'فشل في إنشاء الملف الشخصي' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      profileId = newProfile.id;
+      console.log('Created new profile:', profileId);
+    } else {
+      profileId = existingProfile.id;
+      console.log('Using existing profile:', profileId);
+    }
+
+    // التأكد من وجود سجل في جدول customers
+    let customerId: string;
+    const { data: existingCustomer } = await supabase
+      .from('customers')
+      .select('id')
+      .eq('profile_id', profileId)
+      .maybeSingle();
+
+    if (!existingCustomer) {
+      // إنشاء سجل عميل جديد
+      const { data: newCustomer, error: customerError } = await supabase
+        .from('customers')
+        .insert({
+          profile_id: profileId
+        })
+        .select('id')
+        .single();
+      
+      if (customerError) {
+        console.error('Error creating customer:', customerError);
+        return new Response(
+          JSON.stringify({ success: false, error: 'فشل في إنشاء سجل العميل' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      customerId = newCustomer.id;
+      console.log('Created new customer:', customerId);
+    } else {
+      customerId = existingCustomer.id;
+      console.log('Using existing customer:', customerId);
+    }
+
+    // ربط العميل بالمتجر في store_customers
+    const { data: existingStoreCustomer } = await supabase
+      .from('store_customers')
+      .select('id')
+      .eq('store_id', storeId)
+      .eq('customer_id', customerId)
+      .maybeSingle();
+
+    if (!existingStoreCustomer) {
+      const { error: storeCustomerError } = await supabase
+        .from('store_customers')
+        .insert({
+          store_id: storeId,
+          customer_id: customerId,
+          first_purchase_at: new Date().toISOString()
         });
+      
+      if (storeCustomerError) {
+        console.error('Error linking customer to store:', storeCustomerError);
+        // نواصل حتى لو فشل الربط
+      } else {
+        console.log('Linked customer to store');
+      }
     }
 
     console.log('Customer OTP verified successfully');
 
-    // جلب معلومات العميل الكاملة من profiles
+    // جلب معلومات العميل الكاملة
     const { data: customerProfile, error: profileError } = await supabase
       .from('profiles')
       .select('id, phone, email, full_name')
-      .eq('phone', phone)
-      .maybeSingle();
+      .eq('id', profileId)
+      .single();
 
     if (profileError) {
       console.error('Error fetching customer profile:', profileError);
@@ -110,7 +183,8 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true,
         sessionId: otpSession.id,
-        customer: customerProfile || { id: existingProfile?.id, phone, full_name: phone },
+        customerId: customerId,
+        customer: customerProfile || { id: profileId, phone, full_name: phone },
         message: 'تم التحقق بنجاح'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

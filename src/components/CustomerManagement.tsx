@@ -94,12 +94,12 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
             total_orders,
             total_spent_sar,
             customer_status,
-            customers (
+            customers!customer_id (
               profile_id,
               total_orders,
               total_spent_sar,
               loyalty_points,
-              profiles (
+              profiles!customers_profile_id_fkey (
                 full_name,
                 phone,
                 email,

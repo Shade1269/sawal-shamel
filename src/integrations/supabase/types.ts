@@ -3075,6 +3075,13 @@ export type Database = {
             referencedRelation: "affiliate_stores"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_customer_otp_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
         ]
       }
       customer_segments: {
@@ -3192,6 +3199,34 @@ export type Database = {
           },
           {
             foreignKeyName: "customers_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_customers_profile"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_customers_profile"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_customers_profile"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "user_profiles_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_customers_profile"
             columns: ["profile_id"]
             isOneToOne: true
             referencedRelation: "v_user_stats"
@@ -10479,6 +10514,20 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_store_customers_customer"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_store_customers_store"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "store_customers_customer_id_fkey"
             columns: ["customer_id"]
