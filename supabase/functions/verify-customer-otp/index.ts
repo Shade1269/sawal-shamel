@@ -96,22 +96,18 @@ serve(async (req) => {
 
     console.log('Customer OTP verified successfully');
 
-    // جلب معلومات العميل الكاملة من profiles
-    const { data: customerProfile, error: profileError } = await supabase
+    // إرجاع معلومات العميل مع الجلسة
+    const { data: customerProfile } = await supabase
       .from('profiles')
       .select('id, phone, email, full_name')
       .eq('phone', phone)
-      .maybeSingle();
-
-    if (profileError) {
-      console.error('Error fetching customer profile:', profileError);
-    }
+      .single();
 
     return new Response(
       JSON.stringify({ 
         success: true,
         sessionId: otpSession.id,
-        customer: customerProfile || { id: existingProfile?.id, phone, full_name: phone },
+        customer: customerProfile,
         message: 'تم التحقق بنجاح'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
