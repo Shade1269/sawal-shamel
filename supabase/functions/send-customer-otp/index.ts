@@ -113,7 +113,10 @@ serve(async (req) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            to: formattedPhone,
+            target: {
+              type: "phone_number",
+              value: formattedPhone
+            },
             code: otp,
             language: 'ar'
           }),
