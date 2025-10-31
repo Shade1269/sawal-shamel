@@ -94,54 +94,70 @@ serve(async (req) => {
 
     console.log('Customer OTP saved to database:', otpData.id);
 
-    // إرسال OTP عبر Twilio
-    const twilioAccountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
-    const twilioAuthToken = Deno.env.get('TWILIO_AUTH_TOKEN');
-    const twilioMessagingServiceSid = Deno.env.get('TWILIO_MESSAGING_SERVICE_SID');
-
-    if (twilioAccountSid && twilioAuthToken && twilioMessagingServiceSid) {
+    // إرسال OTP عبر Prelude (نفس المنصة الرئيسية)
+    const preludeApiKey = Deno.env.get('PRELUDE_API_KEY');
+    
+    if (preludeApiKey) {
       try {
-        const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
-        const message = `رمز التحقق الخاص بك: ${otp}\nصالح لمدة 5 دقائق`;
-
-        // إضافة بادئة whatsapp: للرقم
-        const whatsappPhone = phone.startsWith('whatsapp:') ? phone : `whatsapp:${phone}`;
+        const preludeUrl = 'https://api.prelude.dev/v2/verification';
         
-        console.log('Sending customer WhatsApp to:', whatsappPhone);
+        console.log('Sending customer OTP via Prelude to:', phone);
 
-        const twilioResponse = await fetch(twilioUrl, {
+        // تنسيق الرقم للتأكد من وجود + في البداية
+        const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
+
+        const preludeResponse = await fetch(preludeUrl, {
           method: 'POST',
           headers: {
-            'Authorization': 'Basic ' + btoa(`${twilioAccountSid}:${twilioAuthToken}`),
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Bearer ${preludeApiKey}`,
+            'Content-Type': 'application/json',
           },
-          body: new URLSearchParams({
-            To: whatsappPhone,
-            MessagingServiceSid: twilioMessagingServiceSid,
-            Body: message,
+          body: JSON.stringify({
+            to: formattedPhone,
+            code: otp,
+            language: 'ar'
           }),
         });
 
-        if (twilioResponse.ok) {
-          const twilioData = await twilioResponse.json();
-          console.log('WhatsApp sent successfully via Twilio:', twilioData.sid);
+        if (preludeResponse.ok) {
+          const preludeData = await preludeResponse.json();
+          console.log('Customer OTP sent successfully via Prelude:', preludeData);
         } else {
-          const errorData = await twilioResponse.text();
-          console.error('Twilio error:', errorData);
+          const errorText = await preludeResponse.text();
+          console.error('Prelude error response:', errorText);
+          
+          // نجاح جزئي - OTP محفوظ لكن الإرسال فشل
+          return new Response(
+            JSON.stringify({ 
+              success: true,
+              message: 'تم حفظ رمز التحقق، ولكن حدث خطأ في الإرسال',
+              otp: otp // للاختبار فقط
+            }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
         }
-      } catch (twilioError) {
-        console.error('Error sending WhatsApp via Twilio:', twilioError);
+      } catch (preludeError) {
+        console.error('Error sending customer OTP via Prelude:', preludeError);
+        
+        // نجاح جزئي - OTP محفوظ لكن الإرسال فشل
+        return new Response(
+          JSON.stringify({ 
+            success: true,
+            message: 'تم حفظ رمز التحقق، ولكن حدث خطأ في الإرسال',
+            otp: otp // للاختبار فقط
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
     } else {
-      console.log('Twilio not configured - Customer OTP:', otp);
+      console.log('Prelude not configured - Customer OTP:', otp);
     }
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'تم إرسال رمز التحقق بنجاح عبر واتساب',
-        // في التطوير فقط - احذف في الإنتاج
-        ...(Deno.env.get('ENVIRONMENT') === 'development' && { otp })
+        message: 'تم إرسال رمز التحقق بنجاح',
+        otp: otp // للاختبار - سيظهر في console.log وللعميل
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
