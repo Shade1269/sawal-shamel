@@ -202,28 +202,26 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       });
 
       if (error) throw error;
-      
-      // معالجة حالة الحظر
+
+      // إذا تم الحظر من المزود لكن أعاد الخادم كوداً للاختبار، نعرض تنبيه ونواصل
       if (data?.blocked) {
         toast({
-          title: "تم حظر إرسال الرمز مؤقتاً",
-          description: data.error || 'تم تجاوز عدد المحاولات المسموحة. الرجاء المحاولة بعد 5 دقائق',
-          variant: "destructive",
+          title: "تم إرسال كود للاختبار",
+          description: data?.message || 'مزود الرسائل حظر الإرسال مؤقتاً. يمكنك استخدام الكود الظاهر الآن للتجربة',
         });
-        return { success: false, error: data.error };
       }
-      
-      if (!data?.success) throw new Error(data?.error || 'فشل في إرسال رمز التحقق');
+
+      if (!data?.success && !data?.otp) throw new Error(data?.error || 'فشل في إرسال رمز التحقق');
 
       // حفظ البيانات في sessionStorage
       sessionStorage.setItem('customer-otp-confirmation', JSON.stringify({
         phone: fullPhone,
         storeId
       }));
-      
+
       toast({
         title: "تم إرسال كود التحقق",
-        description: `تم إرسال رمز التحقق إلى ${fullPhone}`,
+        description: `تم إرسال رمز التحقق إلى ${fullPhone}${data?.blocked ? ' (اختبار)' : ''}`,
       });
 
       return { success: true, otpCode: data.otp };

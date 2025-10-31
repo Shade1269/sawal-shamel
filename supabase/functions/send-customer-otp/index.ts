@@ -129,13 +129,15 @@ serve(async (req) => {
           // التحقق من حالة الحظر
           if (preludeData.status === 'blocked') {
             console.error('Prelude blocked due to:', preludeData.reason);
+            // السماح بالاختبار بإرجاع الرمز مع إشارة الحظر
             return new Response(
               JSON.stringify({ 
-                success: false,
-                error: 'تم حظر إرسال الرمز مؤقتاً. الرجاء المحاولة بعد 5 دقائق',
-                blocked: true
+                success: true,
+                message: 'تم حفظ رمز التحقق، ولكن مزود الرسائل حظر الإرسال مؤقتاً',
+                blocked: true,
+                otp: otp
               }),
-              { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+              { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
             );
           }
         } else {
