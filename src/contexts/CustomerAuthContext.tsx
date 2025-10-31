@@ -430,7 +430,9 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       // استخدم الدالة الآمنة في قاعدة البيانات لإنشاء/جلب العميل
       const { data: result, error } = await supabase.rpc('create_customer_account', {
         p_phone: e164,
-        p_store_id: storeId ?? null
+        p_store_id: storeId ?? null,
+        p_full_name: null,
+        p_email: null
       });
 
       if (error) throw error;
