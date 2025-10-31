@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 import { StoreThemeProvider } from '@/components/store/ThemeProvider';
+import { CustomerAuthProvider } from '@/contexts/CustomerAuthContext';
 
 interface StoreData {
   id: string;
@@ -89,7 +90,8 @@ export const IsolatedStoreLayout: React.FC = () => {
   const cartItemsCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   return (
-    <StoreThemeProvider storeId={store.id}>
+    <CustomerAuthProvider>
+      <StoreThemeProvider storeId={store.id}>
       <div className="min-h-screen bg-background">
         {/* Store Header */}
         <header className="border-b bg-card">
@@ -168,5 +170,6 @@ export const IsolatedStoreLayout: React.FC = () => {
         )}
       </div>
     </StoreThemeProvider>
+    </CustomerAuthProvider>
   );
 };
