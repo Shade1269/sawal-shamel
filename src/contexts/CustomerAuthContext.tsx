@@ -238,17 +238,36 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
     try {
       setSession(prev => ({ ...prev, isLoading: true }));
 
-      // استرجاع بيانات التحقق
-      const confirmationData = sessionStorage.getItem('customer-otp-confirmation');
-      if (!confirmationData) {
-        throw new Error('لم يتم العثور على جلسة التحقق');
+      // تنظيف رقم الهاتف وتحويله إلى E.164
+      const digits = phone.replace(/\D/g, '');
+      let fullPhone = '';
+      if (digits.startsWith('966')) {
+        fullPhone = `+${digits}`;
+      } else if (digits.startsWith('0')) {
+        fullPhone = `+966${digits.replace(/^0+/, '')}`;
+      } else if (digits.startsWith('5') && digits.length === 9) {
+        fullPhone = `+966${digits}`;
+      } else if (phone.startsWith('+')) {
+        fullPhone = phone;
+      } else {
+        fullPhone = `+${digits}`;
       }
 
-      const { phone: savedPhone, storeId: savedStoreId } = JSON.parse(confirmationData);
+      // استرجاع storeId من sessionStorage إن لم يُمرر
+      let targetStoreId = storeId;
+      if (!targetStoreId) {
+        try {
+          const confirmationData = sessionStorage.getItem('customer-otp-confirmation');
+          if (confirmationData) {
+            const { storeId: savedStoreId } = JSON.parse(confirmationData);
+            targetStoreId = savedStoreId;
+          }
+        } catch {}
+      }
 
       // التحقق من OTP عبر Supabase Edge Function
       const { data, error } = await supabase.functions.invoke('verify-customer-otp', {
-        body: { phone: savedPhone, otp: otpCode, storeId: savedStoreId || storeId }
+        body: { phone: fullPhone, otp: otpCode, storeId: targetStoreId }
       });
 
       if (error) throw error;
@@ -266,18 +285,16 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       }
 
       // إنشاء/تمديد جلسة المتجر
-      const targetStoreId = savedStoreId ?? storeId;
       if (targetStoreId) {
         try {
-          const digits = (savedPhone || phone || '').replace(/\D/g, '');
-          const normalized = digits.startsWith('966')
-            ? digits
-            : digits.startsWith('0')
-            ? `966${digits.replace(/^0+/, '')}`
-            : (digits.startsWith('5') && digits.length === 9)
-            ? `966${digits}`
-            : digits;
-          const sanitizedPhone = normalized.replace(/\D/g, '');
+          const phoneDigits = fullPhone.replace(/\D/g, '');
+          const sanitizedPhone = phoneDigits.startsWith('966') 
+            ? phoneDigits 
+            : phoneDigits.startsWith('0')
+            ? `966${phoneDigits.replace(/^0+/, '')}`
+            : (phoneDigits.startsWith('5') && phoneDigits.length === 9)
+            ? `966${phoneDigits}`
+            : phoneDigits;
 
           const now = new Date();
           const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -334,8 +351,8 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       }
 
       // جلب أو إنشاء بيانات العميل
-      console.log('Fetching customer by phone:', savedPhone);
-      const customerData = await fetchCustomerByPhone(savedPhone, targetStoreId);
+      console.log('Fetching customer by phone:', fullPhone);
+      const customerData = await fetchCustomerByPhone(fullPhone, targetStoreId);
       
       if (customerData) {
         console.log('Customer data fetched successfully:', customerData.id);
