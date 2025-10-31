@@ -38,7 +38,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
   const { storeSlug } = useParams<{ storeSlug: string }>();
   const navigate = useNavigate();
   const { store } = useOutletContext<StoreContextType>();
-  const { cart, loading: cartLoading, clearCart } = useIsolatedStoreCart(store?.id || '');
+  const { cart, loading: cartLoading, clearCart } = useIsolatedStoreCart(store?.id || '', storeSlug);
   const { sessionId } = useStorefrontOtp({ storeSlug: storeSlug || '', storeId: store?.id });
   const { calculateShippingCost, loading: shippingLoading } = useShippingManagement();
 
