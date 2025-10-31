@@ -270,14 +270,8 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         body: { phone: fullPhone, otp: otpCode, storeId: targetStoreId }
       });
 
-      if (error) {
-        console.error('Edge function error:', error);
-        throw error;
-      }
-      if (!data?.success) {
-        console.error('Verification failed:', data?.error);
-        throw new Error(data?.error || 'رمز التحقق غير صحيح');
-      }
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'رمز التحقق غير صحيح');
 
       // تنظيف بيانات التحقق
       sessionStorage.removeItem('customer-otp-confirmation');
@@ -358,34 +352,6 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
 
       // جلب أو إنشاء بيانات العميل
       console.log('Fetching customer by phone:', fullPhone);
-      
-      // إذا حصلنا على بيانات العميل من edge function، استخدمها
-      if (data?.customer && data.customer.id) {
-        const customer: CustomerProfile = {
-          id: data.sessionId || 'temp_' + Date.now(),
-          profile_id: data.customer.id,
-          phone: fullPhone,
-          email: data.customer.email,
-          full_name: data.customer.full_name || fullPhone,
-          loyalty_points: 0,
-          total_orders: 0,
-          total_spent_sar: 0,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-        
-        console.log('Using customer data from edge function:', customer.id);
-        saveSession(customer);
-
-        toast({
-          title: "تم تسجيل الدخول بنجاح",
-          description: `مرحباً ${customer.full_name}`,
-        });
-
-        return { success: true, customer };
-      }
-
-      // Fallback: جلب بيانات العميل من قاعدة البيانات
       const customerData = await fetchCustomerByPhone(fullPhone, targetStoreId);
       
       if (customerData) {
@@ -464,15 +430,10 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       // استخدم الدالة الآمنة في قاعدة البيانات لإنشاء/جلب العميل
       const { data: result, error } = await supabase.rpc('create_customer_account', {
         p_phone: e164,
-        p_store_id: storeId ?? null,
-        p_full_name: null,
-        p_email: null
+        p_store_id: storeId ?? null
       });
 
-      if (error) {
-        console.error('RPC create_customer_account error:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       const profileId = (result as any)?.profile_id ?? (result as any)?.profileId;
       const customerId = (result as any)?.customer_id ?? (result as any)?.customerId;

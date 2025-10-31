@@ -89,25 +89,18 @@ serve(async (req) => {
         .from('profiles')
         .insert({
           phone: phone,
-          full_name: phone,
-          role: 'customer'
+          role: 'customer',
+          is_active: true,
+          points: 0
         });
     }
 
     console.log('Customer OTP verified successfully');
 
-    // إرجاع معلومات العميل مع الجلسة
-    const { data: customerProfile } = await supabase
-      .from('profiles')
-      .select('id, phone, email, full_name')
-      .eq('phone', phone)
-      .single();
-
     return new Response(
       JSON.stringify({ 
         success: true,
         sessionId: otpSession.id,
-        customer: customerProfile,
         message: 'تم التحقق بنجاح'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
