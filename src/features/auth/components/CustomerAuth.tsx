@@ -44,7 +44,15 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
     const result = await sendOTP(phone, storeId);
     if (result.success) {
       setGeneratedOTP(result.otpCode || ''); // للاختبار فقط
-      setStep('role'); // الانتقال لاختيار الدور
+      
+      // إذا كنا في سياق متجر (storeId موجود)، تخطي خطوة اختيار الدور
+      // والانتقال مباشرة لإدخال OTP كـ customer
+      if (storeId) {
+        setRole('affiliate'); // سيتم تجاهل هذا، verifyOTP سيستخدم 'customer'
+        setStep('otp');
+      } else {
+        setStep('role'); // الانتقال لاختيار الدور (للمستخدمين خارج المتجر)
+      }
     }
   };
 
@@ -60,7 +68,10 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
     
     if (!otpCode.trim()) return;
 
-    const result = await verifyOTP(phone, otpCode, storeId, role);
+    // إذا كنا في سياق متجر، فرض role = 'customer'
+    const finalRole = storeId ? 'customer' : role;
+    
+    const result = await verifyOTP(phone, otpCode, storeId, finalRole);
     if (result.success && result.customer) {
       onSuccess?.(result.customer);
     }
@@ -71,7 +82,12 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
     if (step === 'role') {
       setStep('phone');
     } else if (step === 'otp') {
-      setStep('role');
+      // إذا كنا في سياق متجر، نعود للهاتف مباشرة (لأننا تخطينا خطوة الدور)
+      if (storeId) {
+        setStep('phone');
+      } else {
+        setStep('role');
+      }
       setOtpCode('');
     } else if (step === 'details') {
       setStep('otp');
