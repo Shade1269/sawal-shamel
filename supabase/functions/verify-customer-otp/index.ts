@@ -63,8 +63,7 @@ serve(async (req) => {
       .update({
         verified: true,
         verified_at: new Date().toISOString(),
-        expires_at: expiresAt.toISOString(),
-        updated_at: new Date().toISOString()
+        expires_at: expiresAt.toISOString()
       })
       .eq('id', otpSession.id);
 

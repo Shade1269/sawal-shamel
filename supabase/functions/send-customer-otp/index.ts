@@ -125,6 +125,19 @@ serve(async (req) => {
         if (preludeResponse.ok) {
           const preludeData = await preludeResponse.json();
           console.log('Customer OTP sent successfully via Prelude:', preludeData);
+          
+          // التحقق من حالة الحظر
+          if (preludeData.status === 'blocked') {
+            console.error('Prelude blocked due to:', preludeData.reason);
+            return new Response(
+              JSON.stringify({ 
+                success: false,
+                error: 'تم حظر إرسال الرمز مؤقتاً. الرجاء المحاولة بعد 5 دقائق',
+                blocked: true
+              }),
+              { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
         } else {
           const errorText = await preludeResponse.text();
           console.error('Prelude error response:', errorText);
