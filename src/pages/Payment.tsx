@@ -23,6 +23,7 @@ import { Database } from "@/integrations/supabase/types";
 import { useStoreSettings, getEnabledPaymentMethods, getEnabledShippingMethods } from "@/hooks/useStoreSettings";
 import { safeJsonParse } from "@/lib/utils";
 import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
+import { GeideaPayment } from "@/components/payment/GeideaPayment";
 
 interface CartItem {
   id: string;
@@ -70,13 +71,18 @@ const Payment = () => {
   // Fetch shop data to get store settings
   const { data: storeSettings, isLoading: settingsLoading } = useStoreSettings(shop?.id);
   
-  // استخدام الدفع عند الاستلام فقط حاليا
   const paymentMethods = [
     {
       id: 'cod',
       name: 'الدفع عند الاستلام',
       description: 'ادفع نقداً عند وصول الطلب إليك',
       icon: <Banknote className="h-5 w-5" />
+    },
+    {
+      id: 'geidea',
+      name: 'الدفع الإلكتروني',
+      description: 'ادفع باستخدام بطاقة الائتمان أو Apple Pay عبر Geidea',
+      icon: <CreditCard className="h-5 w-5" />
     }
   ];
   
@@ -145,6 +151,12 @@ const Payment = () => {
       return;
     }
 
+    // إذا كان الدفع عبر Geidea، لا نحتاج لإنشاء الطلب هنا
+    // سيتم إنشاؤه بعد نجاح الدفع عبر GeideaPayment component
+    if (selectedPayment === 'geidea') {
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -203,6 +215,37 @@ const Payment = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGeideaSuccess = async (paymentData: any) => {
+    console.log('Geidea payment success:', paymentData);
+    toast.success("تم الدفع بنجاح!");
+    
+    // Clear cart and saved data
+    localStorage.removeItem(`cart_${slug}`);
+    localStorage.removeItem(`customer_info_${slug}`);
+    localStorage.removeItem(`shipping_method_${slug}`);
+
+    // Extract order ID from merchant reference or use the order ID from paymentData
+    const orderId = paymentData.merchantReferenceId || paymentData.orderId;
+    
+    // Navigate to payment callback to process the payment
+    if (orderId) {
+      navigate(`/payment-callback?orderId=${orderId}&status=success`);
+    } else {
+      // Fallback to store page if no order ID
+      navigate(`/store/${slug}`);
+    }
+  };
+
+  const handleGeideaError = (error: string) => {
+    toast.error(`فشل الدفع: ${error}`);
+    setLoading(false);
+  };
+
+  const handleGeideaCancel = () => {
+    toast.info("تم إلغاء عملية الدفع");
+    setLoading(false);
   };
 
   const handleBackToShipping = () => {
@@ -270,6 +313,22 @@ const Payment = () => {
                     <p className="text-sm text-muted-foreground mt-2">يرجى التواصل مع المتجر</p>
                   </div>
                 )}
+
+                {/* Geidea Payment Component */}
+                {selectedPayment === 'geidea' && shop && customerInfo && (
+                  <div className="mt-6 p-4 border rounded-lg bg-muted/50">
+                    <GeideaPayment
+                      amount={getTotal()}
+                      orderId={`${shop.id}_${Date.now()}`}
+                      customerEmail={customerInfo.email}
+                      customerName={customerInfo.name}
+                      customerPhone={customerInfo.phone}
+                      onSuccess={handleGeideaSuccess}
+                      onError={handleGeideaError}
+                      onCancel={handleGeideaCancel}
+                    />
+                  </div>
+                )}
               </EnhancedCardContent>
             </EnhancedCard>
           </div>
@@ -306,14 +365,16 @@ const Payment = () => {
                   </div>
                 </div>
 
-                <Button 
-                  className="w-full" 
-                  size="lg"
-                  onClick={handleCompleteOrder}
-                  disabled={loading}
-                >
-                  {loading ? "جاري إنشاء الطلب..." : "تأكيد الطلب"}
-                </Button>
+                {selectedPayment !== 'geidea' && (
+                  <Button 
+                    className="w-full" 
+                    size="lg"
+                    onClick={handleCompleteOrder}
+                    disabled={loading || !selectedPayment}
+                  >
+                    {loading ? "جاري إنشاء الطلب..." : "تأكيد الطلب"}
+                  </Button>
+                )}
               </EnhancedCardContent>
             </EnhancedCard>
           </div>
