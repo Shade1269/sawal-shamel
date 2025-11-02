@@ -22,7 +22,7 @@ serve(async (req) => {
     console.log('Geidea webhook received:', JSON.stringify(webhookData, null, 2));
 
     // استخراج معلومات الدفع من Geidea
-    const paymentStatus = webhookData.responseCode === '000' ? 'success' : 'failed';
+    const paymentStatus = webhookData.responseCode === '000' ? 'COMPLETED' : 'FAILED';
     const orderId = webhookData.merchantReferenceId?.split('_')[1]; // ORDER_{orderId}_{timestamp}
     const transactionId = webhookData.orderId; // Geidea transaction ID
     const amount = webhookData.amount;
@@ -33,13 +33,13 @@ serve(async (req) => {
 
     console.log('Processing payment for order:', orderId, 'Status:', paymentStatus);
 
-    if (paymentStatus === 'success') {
-      // 1. تحديث حالة الطلب إلى PAID
+    if (paymentStatus === 'COMPLETED') {
+      // 1. تحديث حالة الطلب إلى COMPLETED
       const { data: order, error: orderError } = await supabaseClient
         .from('ecommerce_orders')
         .update({
-          payment_status: 'PAID',
-          payment_method: 'GEIDEA_CARD',
+          payment_status: 'COMPLETED',
+          payment_method: 'CREDIT_CARD',
           updated_at: new Date().toISOString(),
         })
         .eq('id', orderId)
@@ -55,13 +55,13 @@ serve(async (req) => {
 
       // 2. إنشاء سجل معاملة الدفع
       const { error: transactionError } = await supabaseClient
-        .from('payment_transactions')
+        .from('ecommerce_payment_transactions')
         .insert({
           order_id: orderId,
           amount_sar: amount,
-          payment_method: 'GEIDEA_CARD',
+          payment_method: 'CREDIT_CARD',
           transaction_id: transactionId,
-          status: 'COMPLETED',
+          payment_status: 'COMPLETED',
           gateway_response: webhookData,
           processed_at: new Date().toISOString(),
         });
@@ -103,13 +103,13 @@ serve(async (req) => {
 
       // تسجيل المعاملة الفاشلة
       await supabaseClient
-        .from('payment_transactions')
+        .from('ecommerce_payment_transactions')
         .insert({
           order_id: orderId,
           amount_sar: amount,
-          payment_method: 'GEIDEA_CARD',
+          payment_method: 'CREDIT_CARD',
           transaction_id: transactionId,
-          status: 'FAILED',
+          payment_status: 'FAILED',
           gateway_response: webhookData,
           processed_at: new Date().toISOString(),
         });

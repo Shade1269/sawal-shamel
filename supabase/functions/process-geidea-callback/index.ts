@@ -43,11 +43,11 @@ serve(async (req) => {
     let orderStatus: string;
     
     if (status === 'SUCCESS' || status === 'success') {
-      paymentStatus = 'PAID';
+      paymentStatus = 'COMPLETED';
       orderStatus = 'CONFIRMED';
     } else if (status === 'FAILED' || status === 'failed') {
       paymentStatus = 'FAILED';
-      orderStatus = 'CANCELLED';
+      orderStatus = 'CANCELED';
     } else {
       paymentStatus = 'PENDING';
       orderStatus = 'PENDING';
@@ -80,7 +80,7 @@ serve(async (req) => {
       .update({
         payment_status: paymentStatus,
         status: orderStatus,
-        payment_method: 'geidea',
+        payment_method: 'CREDIT_CARD',
         updated_at: new Date().toISOString(),
       })
       .eq('id', order.id);
@@ -125,7 +125,7 @@ serve(async (req) => {
         orderId: order.order_number,
         status: paymentStatus,
         orderStatus: orderStatus,
-        message: paymentStatus === 'PAID' ? 'تم الدفع بنجاح' : 'فشل الدفع',
+        message: paymentStatus === 'COMPLETED' ? 'تم الدفع بنجاح' : 'فشل الدفع',
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
