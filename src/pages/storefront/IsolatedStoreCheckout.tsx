@@ -12,6 +12,8 @@ import { LuxuryCardV2, LuxuryCardHeader, LuxuryCardTitle, LuxuryCardContent } fr
 import { motion } from 'framer-motion';
 import { useStorefrontOtp } from '@/hooks/useStorefrontOtp';
 import { useShippingManagement } from '@/hooks/useShippingManagement';
+import { GeideaPayment } from '@/components/payment/GeideaPayment';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface StoreContextType {
   store: {
@@ -78,6 +80,9 @@ export const IsolatedStoreCheckout: React.FC = () => {
     cost: number;
   } | null>(null);
   const [calculatingShipping, setCalculatingShipping] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'geidea'>('cod');
+  const [showGeideaPayment, setShowGeideaPayment] = useState(false);
+  const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
 
   // حساب تكلفة الشحن عند إدخال المدينة
   useEffect(() => {
@@ -162,8 +167,16 @@ export const IsolatedStoreCheckout: React.FC = () => {
 
       if (result.success) {
         toast.success('تم إنشاء الطلب بنجاح!');
-        await clearCart();
-        navigate(`/${storeSlug}/order/${result.orderId}/confirmation`);
+        
+        // إذا اختار الدفع عبر Geidea، افتح نافذة الدفع
+        if (paymentMethod === 'geidea') {
+          setCreatedOrderId(result.orderId);
+          setShowGeideaPayment(true);
+        } else {
+          // إذا اختار الدفع عند الاستلام، انتقل مباشرة لصفحة التأكيد
+          await clearCart();
+          navigate(`/${storeSlug}/order/${result.orderId}/confirmation`);
+        }
       } else {
         toast.error(result.error || 'خطأ في إنشاء الطلب');
       }
@@ -173,6 +186,23 @@ export const IsolatedStoreCheckout: React.FC = () => {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleGeideaSuccess = async (paymentData: any) => {
+    console.log('Geidea payment successful:', paymentData);
+    await clearCart();
+    navigate(`/${storeSlug}/order/${createdOrderId}/confirmation`);
+  };
+
+  const handleGeideaError = (error: string) => {
+    console.error('Geidea payment error:', error);
+    toast.error('فشل الدفع: ' + error);
+    setShowGeideaPayment(false);
+  };
+
+  const handleGeideaCancel = () => {
+    toast.info('تم إلغاء عملية الدفع');
+    setShowGeideaPayment(false);
   };
 
   if (cartLoading) {
@@ -427,6 +457,68 @@ export const IsolatedStoreCheckout: React.FC = () => {
               </LuxuryCardContent>
             </LuxuryCardV2>
           </motion.div>
+
+          {/* خيارات الدفع */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <LuxuryCardV2 variant="glass" hover="lift" className="border-red-600/20">
+              <LuxuryCardHeader className="border-b border-red-600/15">
+                <LuxuryCardTitle className="text-xl">طريقة الدفع</LuxuryCardTitle>
+              </LuxuryCardHeader>
+              <LuxuryCardContent className="space-y-4 pt-6">
+                <RadioGroup value={paymentMethod} onValueChange={(value) => setPaymentMethod(value as 'cod' | 'geidea')}>
+                  {/* الدفع عند الاستلام */}
+                  <div
+                    onClick={() => setPaymentMethod('cod')}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      paymentMethod === 'cod'
+                        ? 'border-red-600 bg-red-950/20'
+                        : 'border-slate-700/50 bg-slate-900/50 hover:border-red-600/50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <RadioGroupItem value="cod" id="cod" className="border-red-600" />
+                        <div>
+                          <Label htmlFor="cod" className="font-semibold text-white cursor-pointer">
+                            الدفع عند الاستلام
+                          </Label>
+                          <p className="text-xs text-slate-400">ادفع نقداً عند وصول الطلب</p>
+                        </div>
+                      </div>
+                      <CreditCard className="h-5 w-5 text-red-400" />
+                    </div>
+                  </div>
+
+                  {/* الدفع الإلكتروني عبر Geidea */}
+                  <div
+                    onClick={() => setPaymentMethod('geidea')}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      paymentMethod === 'geidea'
+                        ? 'border-red-600 bg-red-950/20'
+                        : 'border-slate-700/50 bg-slate-900/50 hover:border-red-600/50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <RadioGroupItem value="geidea" id="geidea" className="border-red-600" />
+                        <div>
+                          <Label htmlFor="geidea" className="font-semibold text-white cursor-pointer">
+                            الدفع الإلكتروني
+                          </Label>
+                          <p className="text-xs text-slate-400">بطاقة ائتمان / مدى / Apple Pay</p>
+                        </div>
+                      </div>
+                      <CreditCard className="h-5 w-5 text-red-400" />
+                    </div>
+                  </div>
+                </RadioGroup>
+              </LuxuryCardContent>
+            </LuxuryCardV2>
+          </motion.div>
         </div>
 
         <div className="lg:col-span-1">
@@ -480,10 +572,14 @@ export const IsolatedStoreCheckout: React.FC = () => {
                 <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 rounded-xl p-4 border border-red-600/10">
                   <div className="flex items-center gap-3 mb-2">
                     <CreditCard className="h-5 w-5 text-red-400" />
-                    <span className="font-semibold text-white">الدفع عند الاستلام</span>
+                    <span className="font-semibold text-white">
+                      {paymentMethod === 'cod' ? 'الدفع عند الاستلام' : 'الدفع الإلكتروني'}
+                    </span>
                   </div>
                   <p className="text-xs text-slate-400">
-                    ادفع نقداً عند وصول الطلب
+                    {paymentMethod === 'cod' 
+                      ? 'ادفع نقداً عند وصول الطلب' 
+                      : 'سيتم توجيهك لصفحة الدفع بعد تأكيد الطلب'}
                   </p>
                 </div>
 
@@ -514,6 +610,37 @@ export const IsolatedStoreCheckout: React.FC = () => {
           </motion.div>
         </div>
       </form>
+
+      {/* نافذة الدفع عبر Geidea */}
+      {showGeideaPayment && createdOrderId && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 rounded-2xl border border-red-600/20 shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-red-600/20 flex items-center justify-between sticky top-0 bg-slate-900 z-10">
+              <h2 className="text-2xl font-bold text-white">إتمام الدفع</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowGeideaPayment(false)}
+                className="text-slate-400 hover:text-white"
+              >
+                إلغاء
+              </Button>
+            </div>
+            <div className="p-6">
+              <GeideaPayment
+                amount={total}
+                orderId={createdOrderId}
+                customerName={formData.customerName}
+                customerEmail={formData.customerEmail}
+                customerPhone={formData.customerPhone}
+                onSuccess={handleGeideaSuccess}
+                onError={handleGeideaError}
+                onCancel={handleGeideaCancel}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
