@@ -80,7 +80,7 @@ serve(async (req) => {
       paymentMethods: ['Card', 'ApplePay']
     };
 
-    console.log('Calling Geidea API...');
+    console.log('Calling Geidea API with payload:', JSON.stringify(geideaPayload, null, 2));
 
     const endpoints = [
       'https://api.ksamerchant.geidea.net',
@@ -107,6 +107,7 @@ serve(async (req) => {
 
       geideaData = await geideaResponse.json().catch(() => null);
       console.log('Geidea API response status:', geideaResponse.status);
+      console.log('Geidea API full response:', JSON.stringify(geideaData, null, 2));
 
       if (geideaResponse.ok && geideaData?.session?.id) {
         break;
