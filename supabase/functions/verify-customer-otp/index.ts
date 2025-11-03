@@ -27,13 +27,12 @@ serve(async (req) => {
 
     console.log('Verifying customer OTP for:', phone, 'store:', storeId);
 
-    // البحث عن OTP صالح
+    // البحث عن آخر جلسة OTP غير محققة
     const { data: otpSession, error: otpError } = await supabase
       .from('customer_otp_sessions')
       .select('*')
       .eq('phone', phone)
       .eq('store_id', storeId)
-      .eq('otp_code', otp)
       .eq('verified', false)
       .gt('expires_at', new Date().toISOString())
       .order('created_at', { ascending: false })
@@ -41,14 +40,75 @@ serve(async (req) => {
       .maybeSingle();
 
     if (otpError) {
-      console.error('Database error:', otpError);
+      console.error('Error fetching OTP session:', otpError);
       return new Response(
-        JSON.stringify({ success: false, error: 'خطأ في التحقق من الرمز' }),
+        JSON.stringify({ success: false, error: 'حدث خطأ أثناء التحقق من الرمز' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     if (!otpSession) {
+      console.log('No valid OTP session found');
+      return new Response(
+        JSON.stringify({ success: false, error: 'لم يتم العثور على جلسة تحقق صالحة' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // التحقق من الكود عبر Prelude API
+    const preludeApiKey = Deno.env.get('PRELUDE_API_KEY');
+    
+    if (!preludeApiKey) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'خدمة التحقق غير مفعلة' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    try {
+      const verificationId = otpSession.otp_code; // هذا هو verification_id من Prelude
+      const preludeUrl = 'https://api.prelude.dev/v2/verification/check';
+      
+      console.log('Checking OTP with Prelude, verification_id:', verificationId);
+
+      const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
+
+      const preludeResponse = await fetch(preludeUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${preludeApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          target: {
+            type: "phone_number",
+            value: formattedPhone
+          },
+          code: otp
+        }),
+      });
+
+      if (!preludeResponse.ok) {
+        const errorText = await preludeResponse.text();
+        console.error('Prelude check error:', errorText);
+        return new Response(
+          JSON.stringify({ success: false, error: 'رمز التحقق غير صحيح' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const checkResult = await preludeResponse.json();
+      console.log('Prelude check result:', checkResult);
+
+      // التحقق من نجاح التحقق
+      if (checkResult.status !== 'success') {
+        return new Response(
+          JSON.stringify({ success: false, error: 'رمز التحقق غير صحيح' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    } catch (error) {
+      console.error('Prelude verification failed:', error);
       return new Response(
         JSON.stringify({ success: false, error: 'رمز التحقق غير صحيح أو منتهي الصلاحية' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

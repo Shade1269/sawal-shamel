@@ -66,119 +66,94 @@ serve(async (req) => {
       .eq('store_id', storeId)
       .eq('verified', false);
 
-    // توليد رمز OTP من 6 أرقام
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log('Generated customer OTP:', otp);
-
-    // حفظ الـ OTP في قاعدة البيانات
-    const { data: otpData, error: otpError } = await supabase
-      .from('customer_otp_sessions')
-      .insert({
-        phone: phone,
-        store_id: storeId,
-        otp_code: otp,
-        verified: false,
-        expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 دقائق
-        attempts: 0
-      })
-      .select()
-      .single();
-
-    if (otpError) {
-      console.error('Database error:', otpError);
+    // إرسال OTP عبر Prelude - سيولد الكود تلقائياً
+    const preludeApiKey = Deno.env.get('PRELUDE_API_KEY');
+    
+    if (!preludeApiKey) {
       return new Response(
-        JSON.stringify({ success: false, error: 'فشل في حفظ رمز التحقق' }),
+        JSON.stringify({ success: false, error: 'خدمة إرسال الرسائل غير مفعلة' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('Customer OTP saved to database:', otpData.id);
+    try {
+      const preludeUrl = 'https://api.prelude.dev/v2/verification';
+      
+      console.log('Sending customer OTP via Prelude to:', phone);
 
-    // إرسال OTP عبر Prelude (نفس المنصة الرئيسية)
-    const preludeApiKey = Deno.env.get('PRELUDE_API_KEY');
-    
-    if (preludeApiKey) {
-      try {
-        const preludeUrl = 'https://api.prelude.dev/v2/verification';
-        
-        console.log('Sending customer OTP via Prelude to:', phone);
+      // تنسيق الرقم للتأكد من وجود + في البداية
+      const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
 
-        // تنسيق الرقم للتأكد من وجود + في البداية
-        const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
-
-        const preludeResponse = await fetch(preludeUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${preludeApiKey}`,
-            'Content-Type': 'application/json',
+      // إرسال طلب لـ Prelude - سيولد ويرسل الكود تلقائياً
+      const preludeResponse = await fetch(preludeUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${preludeApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          target: {
+            type: "phone_number",
+            value: formattedPhone
           },
-          body: JSON.stringify({
-            target: {
-              type: "phone_number",
-              value: formattedPhone
-            },
-            code: otp,
-            language: 'ar'
-          }),
-        });
+          language: 'ar'
+        }),
+      });
 
-        if (preludeResponse.ok) {
-          const preludeData = await preludeResponse.json();
-          console.log('Customer OTP sent successfully via Prelude:', preludeData);
-          
-          // التحقق من حالة الحظر
-          if (preludeData.status === 'blocked') {
-            console.error('Prelude blocked due to:', preludeData.reason);
-            // السماح بالاختبار بإرجاع الرمز مع إشارة الحظر
-            return new Response(
-              JSON.stringify({ 
-                success: true,
-                message: 'تم حفظ رمز التحقق، ولكن مزود الرسائل حظر الإرسال مؤقتاً',
-                blocked: true,
-                otp: otp
-              }),
-              { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
-          }
-        } else {
-          const errorText = await preludeResponse.text();
-          console.error('Prelude error response:', errorText);
-          
-          // نجاح جزئي - OTP محفوظ لكن الإرسال فشل
-          return new Response(
-            JSON.stringify({ 
-              success: true,
-              message: 'تم حفظ رمز التحقق، ولكن حدث خطأ في الإرسال',
-              otp: otp // للاختبار فقط
-            }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-      } catch (preludeError) {
-        console.error('Error sending customer OTP via Prelude:', preludeError);
-        
-        // نجاح جزئي - OTP محفوظ لكن الإرسال فشل
-        return new Response(
-          JSON.stringify({ 
-            success: true,
-            message: 'تم حفظ رمز التحقق، ولكن حدث خطأ في الإرسال',
-            otp: otp // للاختبار فقط
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+      if (!preludeResponse.ok) {
+        const errorText = await preludeResponse.text();
+        console.error('Prelude error response:', errorText);
+        throw new Error('فشل في إرسال رمز التحقق عبر Prelude');
       }
-    } else {
-      console.log('Prelude not configured - Customer OTP:', otp);
-    }
 
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: 'تم إرسال رمز التحقق بنجاح',
-        otp: otp // للاختبار - سيظهر في console.log وللعميل
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+      const preludeData = await preludeResponse.json();
+      console.log('Customer OTP sent successfully via Prelude:', preludeData);
+      
+      // التحقق من حالة الحظر
+      if (preludeData.status === 'blocked') {
+        console.error('Prelude blocked due to:', preludeData.reason);
+        throw new Error('تم حظر إرسال الرسائل لهذا الرقم مؤقتاً');
+      }
+
+      // حفظ verification_id من Prelude في قاعدة البيانات
+      const { data: otpData, error: otpError } = await supabase
+        .from('customer_otp_sessions')
+        .insert({
+          phone: phone,
+          store_id: storeId,
+          otp_code: preludeData.id, // نحفظ verification_id بدلاً من الكود
+          verified: false,
+          expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 دقائق
+          attempts: 0
+        })
+        .select()
+        .single();
+
+      if (otpError) {
+        console.error('Database error:', otpError);
+        throw new Error('فشل في حفظ جلسة التحقق');
+      }
+
+      console.log('Customer OTP session saved to database:', otpData.id);
+
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: 'تم إرسال رمز التحقق بنجاح عبر رسالة نصية'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (preludeError) {
+      console.error('Error sending customer OTP via Prelude:', preludeError);
+      
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: preludeError.message || 'فشل في إرسال رمز التحقق'
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
   } catch (error) {
     console.error('Error in send-customer-otp:', error);
     return new Response(
