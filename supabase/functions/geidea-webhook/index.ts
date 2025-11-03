@@ -51,7 +51,7 @@ serve(async (req) => {
         throw orderError;
       }
 
-      console.log('Order updated to PAID:', order.id);
+      console.log('Order updated to COMPLETED:', order.id);
 
       // 2. إنشاء سجل معاملة الدفع
       const { error: transactionError } = await supabaseClient
