@@ -284,10 +284,10 @@ serve(async (req) => {
       console.warn("[create-ecommerce-order] Insert payment tx warning", txError);
     }
 
-    // إضافة الطلب إلى order_hub الموحد
+    // إضافة الطلب إلى order_hub الموحد (مع منع التكرار)
     const { error: hubError } = await supabase
       .from("order_hub")
-      .insert({
+      .upsert({
         source: "ecommerce",
         source_order_id: order.id,
         order_number: order.order_number ?? orderNumber,
@@ -299,6 +299,9 @@ serve(async (req) => {
         payment_status: "PENDING",
         affiliate_store_id,
         shop_id: resolvedShopId,
+      }, {
+        onConflict: 'source,source_order_id',
+        ignoreDuplicates: true
       });
 
     if (hubError) {
