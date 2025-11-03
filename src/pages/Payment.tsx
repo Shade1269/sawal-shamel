@@ -326,12 +326,12 @@ const Payment = () => {
                   </div>
                 )}
 
-                {/* Geidea Payment Component */}
-                {selectedPayment === 'geidea' && shop && customerInfo && (
+                {/* Geidea Payment Component - Only show after order is created */}
+                {selectedPayment === 'geidea' && shop && customerInfo && localStorage.getItem(`pending_order_${slug}`) && (
                   <div className="mt-6 p-4 border rounded-lg bg-muted/50">
                     <GeideaPayment
                       amount={getTotal()}
-                      orderId={localStorage.getItem(`pending_order_${slug}`) || `${shop.id}_${Date.now()}`}
+                      orderId={localStorage.getItem(`pending_order_${slug}`)!}
                       customerEmail={customerInfo.email}
                       customerName={customerInfo.name}
                       customerPhone={customerInfo.phone}
