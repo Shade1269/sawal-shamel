@@ -56,7 +56,7 @@ const Payment = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [selectedShipping, setSelectedShipping] = useState<string>("");
-  const [selectedPayment, setSelectedPayment] = useState<string>("");
+  const [selectedPayment, setSelectedPayment] = useState<string>("geidea");
   const [loading, setLoading] = useState(false);
   const [shop, setShop] = useState<any>(null);
 
@@ -107,11 +107,11 @@ const Payment = () => {
 
   useEffect(() => {
     const fetchShopAndLoadData = async () => {
-      // Fetch shop data first
+      // Fetch affiliate store (not merchant shop) by slug
       const { data: shopData } = await supabase
-        .from("shops")
-        .select("*")
-        .eq("slug", slug)
+        .from("affiliate_stores")
+        .select("id, store_slug, store_name")
+        .eq("store_slug", slug)
         .maybeSingle();
       
       setShop(shopData);
