@@ -168,12 +168,6 @@ const Payment = () => {
       return;
     }
 
-    // إذا كان الدفع عبر Geidea، لا نحتاج لإنشاء الطلب هنا
-    // سيتم إنشاؤه بعد نجاح الدفع عبر GeideaPayment component
-    if (selectedPayment === 'geidea') {
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -181,7 +175,7 @@ const Payment = () => {
         throw new Error("المتجر غير موجود");
       }
 
-      // استخدام Edge Function الموحد
+      // استخدام Edge Function الموحد لإنشاء الطلب
       const { data, error } = await supabase.functions.invoke('create-ecommerce-order', {
         body: {
           shop_id: shop.id,
@@ -200,7 +194,7 @@ const Payment = () => {
           shipping_sar: getShippingCost(),
           tax_sar: 0,
           total_sar: getTotal(),
-          payment_method: selectedPayment || 'CASH_ON_DELIVERY',
+          payment_method: selectedPayment === 'geidea' ? 'CREDIT_CARD' : 'CASH_ON_DELIVERY',
           notes: customerInfo?.notes || null,
           order_items: cartItems.map(item => ({
             product_id: item.id,
@@ -218,12 +212,19 @@ const Payment = () => {
 
       const order = data.order;
 
-      // Clear cart and saved data
+      // إذا كان الدفع عبر Geidea، احفظ order_id ولا تمسح السلة بعد
+      if (selectedPayment === 'geidea') {
+        // احفظ order ID في localStorage لاستخدامه في GeideaPayment
+        localStorage.setItem(`pending_order_${slug}`, order.id);
+        setLoading(false);
+        return; // GeideaPayment سيكمل العملية
+      }
+
+      // للدفع عند الاستلام، امسح السلة وانتقل
       localStorage.removeItem(`cart_${slug}`);
       localStorage.removeItem(`customer_info_${slug}`);
       localStorage.removeItem(`shipping_method_${slug}`);
 
-      // Navigate to order confirmation
       navigate(`/store/${slug}/order-confirmation/${order.id}`);
 
     } catch (error) {
@@ -242,15 +243,14 @@ const Payment = () => {
     localStorage.removeItem(`cart_${slug}`);
     localStorage.removeItem(`customer_info_${slug}`);
     localStorage.removeItem(`shipping_method_${slug}`);
-
-    // Extract order ID from merchant reference or use the order ID from paymentData
-    const orderId = paymentData.merchantReferenceId || paymentData.orderId;
     
-    // Navigate to payment callback to process the payment
+    // Get order ID from localStorage
+    const orderId = localStorage.getItem(`pending_order_${slug}`);
+    localStorage.removeItem(`pending_order_${slug}`);
+    
     if (orderId) {
-      navigate(`/payment-callback?orderId=${orderId}&status=success`);
+      navigate(`/payment/callback?orderId=${orderId}&status=success`);
     } else {
-      // Fallback to store page if no order ID
       navigate(`/store/${slug}`);
     }
   };
@@ -336,7 +336,7 @@ const Payment = () => {
                   <div className="mt-6 p-4 border rounded-lg bg-muted/50">
                     <GeideaPayment
                       amount={getTotal()}
-                      orderId={`${shop.id}_${Date.now()}`}
+                      orderId={localStorage.getItem(`pending_order_${slug}`) || `${shop.id}_${Date.now()}`}
                       customerEmail={customerInfo.email}
                       customerName={customerInfo.name}
                       customerPhone={customerInfo.phone}
@@ -390,6 +390,17 @@ const Payment = () => {
                     disabled={loading || !selectedPayment}
                   >
                     {loading ? "جاري إنشاء الطلب..." : "تأكيد الطلب"}
+                  </Button>
+                )}
+                
+                {selectedPayment === 'geidea' && (
+                  <Button 
+                    className="w-full" 
+                    size="lg"
+                    onClick={handleCompleteOrder}
+                    disabled={loading || !selectedPayment}
+                  >
+                    {loading ? "جاري إنشاء الطلب..." : "متابعة للدفع"}
                   </Button>
                 )}
               </EnhancedCardContent>

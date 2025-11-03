@@ -63,7 +63,7 @@ export const PaymentCallback: React.FC = () => {
         console.log('Callback processed:', data);
 
         if (data.success) {
-          if (data.status === 'PAID') {
+          if (data.status === 'COMPLETED' || data.status === 'PAID') {
             setStatus('success');
             setMessage('تم الدفع بنجاح! شكراً لك.');
           } else {

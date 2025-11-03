@@ -53,11 +53,11 @@ serve(async (req) => {
       orderStatus = 'PENDING';
     }
 
-    // البحث عن الطلب في ecommerce_orders
+    // البحث عن الطلب في ecommerce_orders باستخدام ID مباشرة
     const { data: order, error: orderError } = await supabase
       .from('ecommerce_orders')
       .select('id, order_number, total_amount_sar, payment_status, status')
-      .eq('order_number', orderId)
+      .eq('id', orderId)
       .single();
 
     if (orderError || !order) {
