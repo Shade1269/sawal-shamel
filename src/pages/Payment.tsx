@@ -180,42 +180,37 @@ const Payment = () => {
         body: {
           shop_id: shop.id,
           affiliate_store_id: shop.id,
-          customer_name: customerInfo?.name || '',
-          customer_email: customerInfo?.email || null,
-          customer_phone: customerInfo?.phone || '',
-          shipping_address: {
+          customer: {
+            name: customerInfo?.name || '',
+            email: customerInfo?.email || null,
+            phone: customerInfo?.phone || '',
             address: customerInfo?.address,
             city: customerInfo?.city,
-            email: customerInfo?.email || null,
             notes: customerInfo?.notes || null,
-            shipping_method: selectedShipping
           },
-          subtotal_sar: getSubtotal(),
-          shipping_sar: getShippingCost(),
-          tax_sar: 0,
-          total_sar: getTotal(),
+          shipping: {
+            cost_sar: getShippingCost(),
+            provider_name: selectedShipping,
+            notes: customerInfo?.notes || null,
+          },
           payment_method: selectedPayment === 'geidea' ? 'CREDIT_CARD' : 'CASH_ON_DELIVERY',
-          notes: customerInfo?.notes || null,
-          order_items: cartItems.map(item => ({
-            product_id: item.id,
-            product_title: item.name,
-            product_image_url: item.image || null,
+          items: cartItems.map(item => ({
+            id: item.id,
             quantity: item.quantity,
-            unit_price_sar: item.price,
-            total_price_sar: item.price * item.quantity
+            price: item.price,
           }))
         }
       });
 
       if (error) throw error;
-      if (!data?.order) throw new Error("missing order response");
+      if (!data?.success || !data?.order_id) throw new Error("فشل إنشاء الطلب");
 
-      const order = data.order;
+      const orderId = data.order_id;
 
       // إذا كان الدفع عبر Geidea، احفظ order_id ولا تمسح السلة بعد
       if (selectedPayment === 'geidea') {
         // احفظ order ID في localStorage لاستخدامه في GeideaPayment
-        localStorage.setItem(`pending_order_${slug}`, order.id);
+        localStorage.setItem(`pending_order_${slug}`, orderId);
         setLoading(false);
         return; // GeideaPayment سيكمل العملية
       }
@@ -225,7 +220,7 @@ const Payment = () => {
       localStorage.removeItem(`customer_info_${slug}`);
       localStorage.removeItem(`shipping_method_${slug}`);
 
-      navigate(`/store/${slug}/order-confirmation/${order.id}`);
+      navigate(`/store/${slug}/order-confirmation/${orderId}`);
 
     } catch (error) {
       console.error("Error creating order:", error);
