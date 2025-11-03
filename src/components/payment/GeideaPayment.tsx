@@ -77,7 +77,7 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
   const createPaymentSession = async () => {
     setLoading(true);
     try {
-      const callbackUrl = `${window.location.origin}/payment/callback`;
+      const callbackUrl = 'https://atlantiss.tech/payment-callback';
       const { data, error } = await supabase.functions.invoke('create-geidea-session', {
         body: {
           amount: amount,
