@@ -14230,6 +14230,7 @@ export type Database = {
         | "FAILED"
         | "CANCELLED"
         | "REFUNDED"
+        | "PAID"
       payment_status_enum:
         | "PENDING"
         | "PROCESSING"
@@ -14466,6 +14467,7 @@ export const Constants = {
         "FAILED",
         "CANCELLED",
         "REFUNDED",
+        "PAID",
       ],
       payment_status_enum: [
         "PENDING",
