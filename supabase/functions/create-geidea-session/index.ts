@@ -63,7 +63,7 @@ serve(async (req) => {
     const authString = `${MERCHANT_PUBLIC_KEY}:${API_PASSWORD}`;
     const encodedAuth = btoa(authString);
 
-    // Prepare Geidea API payload with Apple Pay enabled
+    // Prepare Geidea API payload (minimal, valid fields only)
     const geideaPayload = {
       amount: requestData.amount,
       currency: requestData.currency,
@@ -71,14 +71,10 @@ serve(async (req) => {
       timestamp: timestamp,
       signature: signature,
       callbackUrl: requestData.callbackUrl,
-      billingAddress: {
-        countryCode: 'SAU',
-      },
       customerEmail: requestData.customerEmail || '',
       paymentOperation: 'Pay',
       initiatedBy: 'Internet',
-      paymentMethods: ['Card', 'ApplePay'],
-      ...(requestData.customerName && { cardOnFile: requestData.customerName }),
+      paymentMethods: ['Card']
     };
 
     console.log('Calling Geidea API...');
