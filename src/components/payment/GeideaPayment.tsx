@@ -99,7 +99,11 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
 
       setSessionId(data.sessionId);
       
-      // Initialize Geidea Checkout
+      // Prefer SDK checkout when available
+      const payload = data as any;
+      const sid: string = payload?.sessionId;
+      const sessionData = payload?.sessionData;
+
       if (window.GeideaCheckout && sdkLoaded) {
         const checkout = new window.GeideaCheckout(
           (response: any) => {
@@ -129,8 +133,33 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
           }
         );
 
-        // Start payment
-        checkout.startPayment(data.sessionId);
+        // Start payment via SDK (embedded/overlay)
+        checkout.startPayment(sid);
+        return;
+      }
+
+      // Fallback: redirect to Hosted Payment Page if SDK not available
+      const redirectCandidates = [
+        sessionData?.session?.redirectUrl,
+        sessionData?.redirectUrl,
+        sessionData?.session?.checkoutUrl,
+        sessionData?.checkoutUrl,
+        sessionData?.paymentLink,
+        sessionData?.session?.url,
+      ];
+      const redirectUrl = redirectCandidates.find((u: any) => typeof u === 'string' && u.length > 0);
+
+      if (redirectUrl) {
+        console.log('SDK not loaded, redirecting to HPP:', redirectUrl);
+        window.location.href = redirectUrl as string;
+      } else {
+        console.warn('No SDK and no redirect URL found in session data', sessionData);
+        toast({
+          title: 'تم إنشاء جلسة الدفع',
+          description: 'تعذر تحميل مكون الدفع تلقائياً. حاول مرة أخرى أو استخدم متصفحاً آخر.',
+          variant: 'destructive',
+        });
+        onError('Geidea SDK not available and no redirect URL provided');
       }
 
     } catch (error) {
@@ -188,17 +217,12 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
               variant="solid"
               className="w-full"
               onClick={createPaymentSession}
-              disabled={loading || !sdkLoaded}
+              disabled={loading}
             >
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 ml-2 animate-spin" />
                   جاري التحضير...
-                </>
-              ) : !sdkLoaded ? (
-                <>
-                  <Loader2 className="h-4 w-4 ml-2 animate-spin" />
-                  جاري التحميل...
                 </>
               ) : (
                 <>
