@@ -71,6 +71,9 @@ const Payment = () => {
   // Fetch shop data to get store settings
   const { data: storeSettings, isLoading: settingsLoading } = useStoreSettings(shop?.id);
   
+  // Get enabled payment methods from store settings
+  const enabledPaymentMethods = getEnabledPaymentMethods(storeSettings);
+  
   const paymentMethods = [
     {
       id: 'cod',
@@ -84,7 +87,21 @@ const Payment = () => {
       description: 'ادفع باستخدام بطاقة الائتمان أو Apple Pay عبر Geidea',
       icon: <CreditCard className="h-5 w-5" />
     }
-  ];
+  ].filter(method => {
+    // If no settings configured, show all payment methods by default
+    if (!enabledPaymentMethods || enabledPaymentMethods.length === 0) {
+      return true;
+    }
+    
+    // Filter based on enabled payment methods from store settings
+    if (method.id === 'cod') {
+      return enabledPaymentMethods.some(m => m.id === 'cash_on_delivery');
+    }
+    if (method.id === 'geidea') {
+      return enabledPaymentMethods.some(m => m.id === 'geidea');
+    }
+    return true;
+  });
   
   const shippingMethods = getEnabledShippingMethods(storeSettings);
 
