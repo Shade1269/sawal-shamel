@@ -12,7 +12,6 @@ verify_jwt = false
 [functions.geidea-webhook]
 verify_jwt = false
 
-# Platform-wide phone OTP (for /auth)
 [functions.send-platform-otp]
 verify_jwt = false
 
