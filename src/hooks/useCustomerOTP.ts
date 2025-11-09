@@ -1,30 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-
-const normalizePhone = (phone: string) => {
-  const digits = phone.replace(/\D/g, '');
-  if (!digits) {
-    return { e164: '', national: '' };
-  }
-
-  if (digits.startsWith('966')) {
-    return { e164: `+${digits}`, national: `0${digits.slice(3)}` };
-  }
-
-  if (digits.startsWith('0')) {
-    const core = digits.replace(/^0+/, '');
-    return { e164: `+966${core}`, national: `0${core}` };
-  }
-
-  if (digits.startsWith('5') && digits.length === 9) {
-    return { e164: `+966${digits}`, national: `0${digits}` };
-  }
-
-  return { e164: digits.startsWith('+') ? digits : `+${digits}`, national: digits };
-};
-
-const sanitizeForStorage = (phone: string) => phone.replace(/\D/g, '');
+import { normalizePhone, sanitizePhone } from '@/utils/phoneUtils';
 
 interface OTPResponse {
   success: boolean;
@@ -136,15 +113,15 @@ export const useCustomerOTP = (storeId: string) => {
 
         const sessionId = data.sessionId;
 
-        // حفظ الجلسة محلياً
-        const phoneFormats = normalizePhone(e164);
-        const customerSession = {
-          sessionId,
-          phone: phoneFormats.national || sanitizeForStorage(phoneFormats.e164),
-          storeId,
-          verifiedAt: new Date().toISOString(),
-          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        };
+      // حفظ الجلسة محلياً
+      const phoneFormats = normalizePhone(e164);
+      const customerSession = {
+        sessionId,
+        phone: phoneFormats.national || sanitizePhone(phoneFormats.e164),
+        storeId,
+        verifiedAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      };
 
         localStorage.setItem(`customer_session_${storeId}`, JSON.stringify(customerSession));
         sessionStorage.removeItem(`customer-otp-phone:${storeId}`);
