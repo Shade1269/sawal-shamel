@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { toast } from 'sonner';
-import { useCustomerOTP } from '@/hooks/useCustomerOTP';
+import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 
 interface UseStorefrontOtpProps {
   storeSlug: string;
@@ -15,25 +15,22 @@ export const useStorefrontOtp = ({ storeSlug, storeId }: UseStorefrontOtpProps) 
   const [otp, setOtp] = useState('');
   const [sessionId, setSessionId] = useState<string | null>(null);
 
-  const {
-    sendOTP,
-    verifyOTP,
-    getCustomerSession,
-    clearCustomerSession,
-    loading: sending,
-    verifying,
-  } = useCustomerOTP(storeId || '');
+  const { sendOTP, verifyOTP, isLoading } = useCustomerAuth();
 
   useEffect(() => {
     if (!storeId) return;
 
-    const savedSession = getCustomerSession();
-    if (savedSession?.sessionId) {
-      setSessionId(savedSession.sessionId);
-      setPhone(savedSession.phone || '');
-      setStep('orders');
+    const sessionKey = `customer_session_${storeId}`;
+    const sessionData = localStorage.getItem(sessionKey);
+    if (sessionData) {
+      const session = JSON.parse(sessionData);
+      if (new Date(session.expiresAt) > new Date()) {
+        setSessionId(session.sessionId);
+        setPhone(session.phone || '');
+        setStep('orders');
+      }
     }
-  }, [storeId, getCustomerSession]);
+  }, [storeId]);
 
   const handleSendOtp = async () => {
     if (!storeId) {
@@ -43,7 +40,7 @@ export const useStorefrontOtp = ({ storeSlug, storeId }: UseStorefrontOtpProps) 
       return;
     }
 
-    const result = await sendOTP(phone);
+    const result = await sendOTP(phone, storeId);
     if (result.success) {
       setStep('otp');
     }
@@ -57,13 +54,19 @@ export const useStorefrontOtp = ({ storeSlug, storeId }: UseStorefrontOtpProps) 
       return;
     }
 
-    const result = await verifyOTP(phone, otp);
-    if (result.success && result.sessionId) {
-      setSessionId(result.sessionId);
-      if (storeSlug) {
-        localStorage.setItem(`sf:${storeSlug}:cust_sess`, result.sessionId);
+    const result = await verifyOTP(phone, otp, storeId, 'customer');
+    if (result.success) {
+      // استخراج sessionId من localStorage
+      const sessionKey = `customer_session_${storeId}`;
+      const sessionData = localStorage.getItem(sessionKey);
+      if (sessionData) {
+        const session = JSON.parse(sessionData);
+        setSessionId(session.sessionId);
+        if (storeSlug) {
+          localStorage.setItem(`sf:${storeSlug}:cust_sess`, session.sessionId);
+        }
+        setStep('orders');
       }
-      setStep('orders');
     }
   };
 
@@ -85,10 +88,13 @@ export const useStorefrontOtp = ({ storeSlug, storeId }: UseStorefrontOtpProps) 
   });
 
   const handleLogout = () => {
+    if (storeId) {
+      const sessionKey = `customer_session_${storeId}`;
+      localStorage.removeItem(sessionKey);
+    }
     if (storeSlug) {
       localStorage.removeItem(`sf:${storeSlug}:cust_sess`);
     }
-    clearCustomerSession();
     setSessionId(null);
     setPhone('');
     setOtp('');
@@ -106,11 +112,11 @@ export const useStorefrontOtp = ({ storeSlug, storeId }: UseStorefrontOtpProps) 
     ordersLoading,
     sendOtpMutation: {
       mutate: handleSendOtp,
-      isPending: sending,
+      isPending: isLoading,
     },
     verifyOtpMutation: {
       mutate: handleVerifyOtp,
-      isPending: verifying,
+      isPending: isLoading,
     },
     refetchOrders,
     handleLogout

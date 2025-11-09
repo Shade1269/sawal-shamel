@@ -1,6 +1,5 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
 import { useFastAuth } from '@/hooks/useFastAuth';
 
 interface PlatformRouteGuardProps {

@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Package, Phone, MessageCircle, RefreshCw, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
-import { useCustomerOTP } from '@/hooks/useCustomerOTP';
+import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 
 interface StoreData {
   id: string;
@@ -46,8 +46,8 @@ const StorefrontMyOrders = () => {
   const [loading, setLoading] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(false);
 
-  // استخدام hook إدارة OTP
-  const otpManager = useCustomerOTP(store?.id || '');
+  // استخدام hook إدارة المصادقة
+  const { sendOTP, verifyOTP, refreshSession } = useCustomerAuth();
 
   // جلب بيانات المتجر
   useEffect(() => {
@@ -73,11 +73,17 @@ const StorefrontMyOrders = () => {
         setStore(storeData);
         
         // التحقق من جلسة عميل موجودة
-        const existingSession = otpManager.getCustomerSession();
-        if (existingSession) {
-          setIsVerified(true);
-          setPhone(existingSession.phone);
-          await fetchOrders(existingSession.sessionId);
+        const sessionKey = `customer_session_${storeData.id}`;
+        const sessionData = localStorage.getItem(sessionKey);
+        if (sessionData) {
+          const session = JSON.parse(sessionData);
+          if (new Date(session.expiresAt) > new Date()) {
+            setIsVerified(true);
+            setPhone(session.phone);
+            await fetchOrders(session.sessionId);
+          } else {
+            localStorage.removeItem(sessionKey);
+          }
         }
 
       } catch (error: any) {
@@ -106,7 +112,7 @@ const StorefrontMyOrders = () => {
       return;
     }
 
-    const result = await otpManager.sendOTP(phone);
+    const result = await sendOTP(phone, store.id);
     if (result.success) {
       setShowOTPInput(true);
     }
@@ -114,7 +120,7 @@ const StorefrontMyOrders = () => {
 
   // التحقق من كود OTP
   const handleVerifyOTP = async () => {
-    if (!otpCode.trim()) {
+    if (!store || !otpCode.trim()) {
       toast({
         title: "الكود مطلوب",
         description: "يرجى إدخال كود التحقق",
@@ -123,11 +129,18 @@ const StorefrontMyOrders = () => {
       return;
     }
 
-    const result = await otpManager.verifyOTP(phone, otpCode);
-    if (result.success && result.sessionId) {
+    const result = await verifyOTP(phone, otpCode, store.id, 'customer');
+    if (result.success) {
       setIsVerified(true);
       setShowOTPInput(false);
-      await fetchOrders(result.sessionId);
+      
+      // جلب sessionId من localStorage
+      const sessionKey = `customer_session_${store.id}`;
+      const sessionData = localStorage.getItem(sessionKey);
+      if (sessionData) {
+        const session = JSON.parse(sessionData);
+        await fetchOrders(session.sessionId);
+      }
     }
   };
 
@@ -163,15 +176,20 @@ const StorefrontMyOrders = () => {
 
   // تحديث الطلبات
   const handleRefreshOrders = () => {
-    const session = otpManager.getCustomerSession();
-    if (session) {
+    if (!store) return;
+    const sessionKey = `customer_session_${store.id}`;
+    const sessionData = localStorage.getItem(sessionKey);
+    if (sessionData) {
+      const session = JSON.parse(sessionData);
       fetchOrders(session.sessionId);
     }
   };
 
   // تسجيل الخروج
   const handleLogout = () => {
-    otpManager.clearCustomerSession();
+    if (!store) return;
+    const sessionKey = `customer_session_${store.id}`;
+    localStorage.removeItem(sessionKey);
     setIsVerified(false);
     setPhone('');
     setOtpCode('');
@@ -294,21 +312,19 @@ const StorefrontMyOrders = () => {
               <div className="flex flex-col gap-2">
                 {!showOTPInput ? (
                   <Button 
-                    onClick={handleSendOTP} 
-                    disabled={otpManager.loading}
+                    onClick={handleSendOTP}
                     className="w-full"
                   >
                     <MessageCircle className="h-4 w-4 ml-2" />
-                    {otpManager.loading ? 'جاري الإرسال...' : 'إرسال كود التحقق'}
+                    إرسال كود التحقق
                   </Button>
                 ) : (
                   <div className="flex gap-2">
                     <Button 
-                      onClick={handleVerifyOTP} 
-                      disabled={otpManager.verifying}
+                      onClick={handleVerifyOTP}
                       className="flex-1"
                     >
-                      {otpManager.verifying ? 'جاري التحقق...' : 'تحقق'}
+                      تحقق
                     </Button>
                     <Button 
                       variant="outline" 

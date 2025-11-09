@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
+import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -56,7 +56,7 @@ const statusConfig = {
 const CustomerOrders: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { isAuthenticated, customer, isLoading: authLoading } = useCustomerAuthContext();
+  const { isAuthenticated, customer, isLoading: authLoading } = useCustomerAuth();
   const [selectedOrderForReturn, setSelectedOrderForReturn] = useState<{ id: string; amount: number } | null>(null);
 
   // Redirect if not authenticated

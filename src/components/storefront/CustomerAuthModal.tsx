@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Phone, Lock, CheckCircle, Loader2 } from 'lucide-react';
-import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
+import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 
 interface CustomerAuthModalProps {
   isOpen: boolean;
@@ -26,7 +26,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
   storeSlug,
   storeName
 }) => {
-  const { isLoading, sendOTP, verifyOTP, isAuthenticated } = useCustomerAuthContext();
+  const { isLoading, sendOTP, verifyOTP, isAuthenticated } = useCustomerAuth();
   const [step, setStep] = useState<'phone' | 'otp' | 'authenticated'>('phone');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');

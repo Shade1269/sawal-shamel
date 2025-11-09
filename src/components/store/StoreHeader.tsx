@@ -20,13 +20,13 @@ import {
   MapPin,
   Clock
 } from "lucide-react";
-import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
+import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 import { useState } from 'react';
 
 const StoreHeader = () => {
   const { storeSlug } = useParams<{ storeSlug: string }>();
   const navigate = useNavigate();
-  const { customer, isAuthenticated, signOut } = useCustomerAuthContext();
+  const { customer, isAuthenticated, signOut } = useCustomerAuth();
   const [cartItemsCount, setCartItemsCount] = useState(0);
 
   // جلب بيانات المتجر

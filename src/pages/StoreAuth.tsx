@@ -14,7 +14,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Store, ArrowRight, Loader2, Home } from "lucide-react";
 import { CustomerAuth } from '@/features/auth';
-import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
+import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 import { useFastAuth } from '@/hooks/useFastAuth';
 
@@ -36,7 +36,7 @@ const StoreAuth: React.FC = () => {
   const [searchParams] = useSearchParams();
   const returnUrl = searchParams.get('returnUrl') || `/${slug}/orders`;
   
-  const { isAuthenticated, checkStoredSession } = useCustomerAuthContext();
+  const { isAuthenticated, checkStoredSession } = useCustomerAuth();
   const { goToUserHome } = useSmartNavigation();
   const { profile } = useFastAuth();
 

@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Loader2, Phone, Lock, ArrowRight, ArrowLeft } from 'lucide-react';
-import { useCustomerAuthContext } from '@/contexts/CustomerAuthContext';
+import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 import { RoleSelectionStep } from './RoleSelectionStep';
 
 interface CustomerAuthProps {
@@ -23,7 +23,7 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
   onSuccess,
   onCancel
 }) => {
-  const { sendOTP, verifyOTP, isLoading } = useCustomerAuthContext();
+  const { sendOTP, verifyOTP, isLoading } = useCustomerAuth();
   
   const [step, setStep] = useState<AuthStep>('phone');
   const [phone, setPhone] = useState('');

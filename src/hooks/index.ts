@@ -55,7 +55,6 @@ export { useAffiliateOrders } from './useAffiliateOrders';
 export { useAffiliateStore } from './useAffiliateStore';
 export { useAutoMigration } from './useAutoMigration';
 export { useCustomerAuth } from './useCustomerAuth';
-export { useCustomerOTP } from './useCustomerOTP';
 export { useExecutiveAnalytics } from './useExecutiveAnalytics';
 export { useFastAuth } from './useFastAuth';
 export { useFirebaseUserData } from './useFirebaseUserData';

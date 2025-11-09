@@ -51,7 +51,7 @@ import { CustomerAuthModal } from "@/components/storefront/CustomerAuthModal";
 import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CustomerChatWidget } from "@/components/customer-service/CustomerChatWidget";
-import { useCustomerAuthContext } from "@/contexts/CustomerAuthContext";
+import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 import { LuxuryCardV2, LuxuryCardContent } from "@/components/luxury/LuxuryCardV2";
 
 interface Product {
@@ -139,7 +139,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const storeSlug = propStoreSlug || paramStoreSlug;
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { customer, isAuthenticated } = useCustomerAuthContext();
+  const { customer, isAuthenticated } = useCustomerAuth();
   
   // States
   const [showCart, setShowCart] = useState(false);
