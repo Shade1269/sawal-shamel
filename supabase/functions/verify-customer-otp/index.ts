@@ -6,6 +6,48 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// نظام موحد لمعالجة أرقام الهواتف
+interface PhoneFormats {
+  e164: string;
+  national: string;
+  sanitized: string;
+}
+
+function normalizePhone(phone: string): PhoneFormats {
+  const digits = phone.replace(/\D/g, '');
+  
+  if (!digits) {
+    return { e164: '', national: '', sanitized: '' };
+  }
+
+  let e164: string;
+  let national: string;
+
+  if (digits.startsWith('966')) {
+    e164 = `+${digits}`;
+    national = `0${digits.slice(3)}`;
+  } else if (digits.startsWith('0')) {
+    const core = digits.slice(1);
+    e164 = `+966${core}`;
+    national = digits;
+  } else if (digits.startsWith('5') && digits.length === 9) {
+    e164 = `+966${digits}`;
+    national = `0${digits}`;
+  } else if (phone.startsWith('+')) {
+    e164 = phone;
+    national = digits.startsWith('966') ? `0${digits.slice(3)}` : digits;
+  } else {
+    e164 = digits.startsWith('+') ? digits : `+${digits}`;
+    national = digits;
+  }
+
+  return {
+    e164,
+    national,
+    sanitized: e164.replace(/\D/g, ''),
+  };
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -25,13 +67,17 @@ serve(async (req) => {
       );
     }
 
-    console.log('Verifying customer OTP for:', phone, 'store:', storeId);
+    // توحيد تنسيق رقم الهاتف
+    const phoneFormats = normalizePhone(phone);
+    const normalizedPhone = phoneFormats.e164;
+
+    console.log('Verifying customer OTP for:', normalizedPhone, 'store:', storeId);
 
     // البحث عن آخر جلسة OTP غير محققة
     const { data: otpSession, error: otpError } = await supabase
       .from('customer_otp_sessions')
       .select('*')
-      .eq('phone', phone)
+      .eq('phone', normalizedPhone)
       .eq('store_id', storeId)
       .eq('verified', false)
       .gt('expires_at', new Date().toISOString())
@@ -71,8 +117,6 @@ serve(async (req) => {
       
       console.log('Checking OTP with Prelude, verification_id:', verificationId);
 
-      const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
-
       const preludeResponse = await fetch(preludeUrl, {
         method: 'POST',
         headers: {
@@ -82,7 +126,7 @@ serve(async (req) => {
         body: JSON.stringify({
           target: {
             type: "phone_number",
-            value: formattedPhone
+            value: normalizedPhone
           },
           code: otp
         }),
@@ -140,7 +184,7 @@ serve(async (req) => {
     const { data: existingProfile } = await supabase
       .from('profiles')
       .select('id')
-      .eq('phone', phone)
+      .eq('phone', normalizedPhone)
       .maybeSingle();
 
     if (!existingProfile) {
@@ -148,8 +192,8 @@ serve(async (req) => {
       const { data: newProfile, error: profileError } = await supabase
         .from('profiles')
         .insert({
-          phone: phone,
-          full_name: phone,
+          phone: normalizedPhone,
+          full_name: phoneFormats.national,
           role: 'customer'
         })
         .select('id')
@@ -244,7 +288,7 @@ serve(async (req) => {
         success: true,
         sessionId: otpSession.id,
         customerId: customerId,
-        customer: customerProfile || { id: profileId, phone, full_name: phone },
+        customer: customerProfile || { id: profileId, phone: normalizedPhone, full_name: phoneFormats.national },
         message: 'تم التحقق بنجاح'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -6,6 +6,48 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// نظام موحد لمعالجة أرقام الهواتف
+interface PhoneFormats {
+  e164: string;
+  national: string;
+  sanitized: string;
+}
+
+function normalizePhone(phone: string): PhoneFormats {
+  const digits = phone.replace(/\D/g, '');
+  
+  if (!digits) {
+    return { e164: '', national: '', sanitized: '' };
+  }
+
+  let e164: string;
+  let national: string;
+
+  if (digits.startsWith('966')) {
+    e164 = `+${digits}`;
+    national = `0${digits.slice(3)}`;
+  } else if (digits.startsWith('0')) {
+    const core = digits.slice(1);
+    e164 = `+966${core}`;
+    national = digits;
+  } else if (digits.startsWith('5') && digits.length === 9) {
+    e164 = `+966${digits}`;
+    national = `0${digits}`;
+  } else if (phone.startsWith('+')) {
+    e164 = phone;
+    national = digits.startsWith('966') ? `0${digits.slice(3)}` : digits;
+  } else {
+    e164 = digits.startsWith('+') ? digits : `+${digits}`;
+    national = digits;
+  }
+
+  return {
+    e164,
+    national,
+    sanitized: e164.replace(/\D/g, ''),
+  };
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -32,13 +74,17 @@ serve(async (req) => {
       );
     }
 
-    console.log('Sending customer OTP to:', phone, 'for store:', storeId);
+    // توحيد تنسيق رقم الهاتف
+    const phoneFormats = normalizePhone(phone);
+    const normalizedPhone = phoneFormats.e164;
+
+    console.log('Sending customer OTP to:', normalizedPhone, 'for store:', storeId);
 
     // التحقق من آخر محاولة إرسال (cooldown: 60 ثانية)
     const { data: recentOtp } = await supabase
       .from('customer_otp_sessions')
       .select('created_at')
-      .eq('phone', phone)
+      .eq('phone', normalizedPhone)
       .eq('store_id', storeId)
       .order('created_at', { ascending: false })
       .limit(1)
@@ -62,7 +108,7 @@ serve(async (req) => {
     await supabase
       .from('customer_otp_sessions')
       .update({ verified: true })
-      .eq('phone', phone)
+      .eq('phone', normalizedPhone)
       .eq('store_id', storeId)
       .eq('verified', false);
 
@@ -79,10 +125,7 @@ serve(async (req) => {
     try {
       const preludeUrl = 'https://api.prelude.dev/v2/verification';
       
-      console.log('Sending customer OTP via Prelude to:', phone);
-
-      // تنسيق الرقم للتأكد من وجود + في البداية
-      const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
+      console.log('Sending customer OTP via Prelude to:', normalizedPhone);
 
       // إرسال طلب لـ Prelude - سيولد ويرسل الكود تلقائياً
       const preludeResponse = await fetch(preludeUrl, {
@@ -94,7 +137,7 @@ serve(async (req) => {
         body: JSON.stringify({
           target: {
             type: "phone_number",
-            value: formattedPhone
+            value: normalizedPhone
           },
           language: 'ar'
         }),
@@ -119,7 +162,7 @@ serve(async (req) => {
       const { data: otpData, error: otpError } = await supabase
         .from('customer_otp_sessions')
         .insert({
-          phone: phone,
+          phone: normalizedPhone,
           store_id: storeId,
           otp_code: preludeData.id, // نحفظ verification_id بدلاً من الكود
           verified: false,
