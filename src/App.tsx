@@ -74,6 +74,7 @@ const NotificationsPage = lazy(() => import("./pages/notifications"));
 const TestingPage = lazy(() => import("./pages/Testing"));
 const DocumentationPage = lazy(() => import("./pages/Documentation"));
 const RolloutPage = lazy(() => import("./pages/Rollout"));
+const ZohoCallback = lazy(() => import("./pages/ZohoCallback"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -119,6 +120,7 @@ const App = () => {
                               <Route path="/auth" element={<AuthPage />} />
                               <Route path="/auth/reset" element={<ResetPasswordPage />} />
                               <Route path="/auth/callback" element={<AuthCallbackPage />} />
+                              <Route path="/zoho/callback" element={<ZohoCallback />} />
                               <Route path="/ui" element={<UiShowcasePage />} />
                               <Route path="/luxury-showcase" element={<LuxuryShowcase />} />
               <Route

@@ -12,9 +12,11 @@ serve(async (req) => {
   }
 
   try {
+    // قراءة البيانات من body (عند الاستدعاء من الصفحة)
+    const body = await req.json().catch(() => ({}));
     const url = new URL(req.url);
-    const code = url.searchParams.get('code');
-    const error = url.searchParams.get('error');
+    const code = body.code || url.searchParams.get('code');
+    const error = body.error || url.searchParams.get('error');
 
     // التحقق من وجود خطأ من Zoho
     if (error) {
