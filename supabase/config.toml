@@ -1,5 +1,8 @@
 project_id = "uewuiiopkctdtaexmtxu"
 
+[functions.zoho-callback]
+verify_jwt = false
+
 [functions.send-customer-otp]
 verify_jwt = false
 
