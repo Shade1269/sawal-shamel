@@ -1073,8 +1073,8 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
           {/* Payment Providers Section */}
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/25 ring-2 ring-green-500/20">
-                <Settings className="h-6 w-6 text-white drop-shadow-sm" />
+              <div className="w-12 h-12 rounded-2xl bg-gradient-success flex items-center justify-center shadow-elegant ring-2 ring-success/20">
+                <Settings className="h-6 w-6 text-primary-foreground drop-shadow-sm" />
               </div>
               <div>
                 <h2 className="text-3xl font-black admin-card">المدفوعات</h2>
@@ -1186,8 +1186,8 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
           {/* Shipping Companies Section */}
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-lg shadow-orange-500/25 ring-2 ring-orange-500/20">
-                <Package className="h-6 w-6 text-white drop-shadow-sm" />
+              <div className="w-12 h-12 rounded-2xl bg-gradient-warning flex items-center justify-center shadow-elegant ring-2 ring-warning/20">
+                <Package className="h-6 w-6 text-primary-foreground drop-shadow-sm" />
               </div>
               <div>
                 <h2 className="text-3xl font-black admin-card">شركات الشحن</h2>
@@ -1358,8 +1358,8 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
             {/* Channel Management Section */}
             <div className="space-y-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-500/25">
-                  <MessageSquare className="h-5 w-5 text-white" />
+                <div className="w-10 h-10 rounded-xl bg-gradient-premium flex items-center justify-center shadow-elegant">
+                  <MessageSquare className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <h3 className="text-2xl font-black admin-card">إدارة الغرف</h3>
               </div>
@@ -1439,8 +1439,8 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
             {/* User & Moderator Management Section */}
             <div className="space-y-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center shadow-lg shadow-yellow-500/25">
-                  <Crown className="h-5 w-5 text-white" />
+                <div className="w-10 h-10 rounded-xl bg-gradient-warning flex items-center justify-center shadow-elegant">
+                  <Crown className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <h3 className="text-2xl font-black admin-card">إدارة المشرفين</h3>
               </div>

@@ -1720,17 +1720,17 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                       <span>الشحن:</span>
                       <span>يتم حسابه عند الدفع</span>
                     </div>
-                    <div className="h-px bg-gradient-to-r from-transparent via-red-600/20 to-transparent my-3" />
+                    <div className="h-px bg-gradient-muted my-3" />
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-bold text-white">المجموع:</span>
-                      <span className="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                      <span className="text-2xl font-bold bg-gradient-danger bg-clip-text text-transparent">
                         {cartTotal.toFixed(0)} ريال
                       </span>
                     </div>
                   </div>
                   
                   <Button 
-                    className="w-full h-14 text-lg bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 border border-red-500/20 transition-all duration-500 group" 
+                    className="w-full h-14 text-lg bg-gradient-danger hover:opacity-90 shadow-elegant border border-danger/20 transition-all duration-500 group"
                     onClick={handleCheckoutClick}
                   >
                     <ArrowRight className="h-5 w-5 mr-2 group-hover:translate-x-1 transition-transform" />

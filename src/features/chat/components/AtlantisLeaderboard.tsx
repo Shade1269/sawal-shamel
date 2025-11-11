@@ -73,11 +73,11 @@ export const AtlantisLeaderboard = () => {
         </Card>
 
         {/* Castle Controller Card */}
-        <Card className="bg-gradient-to-r from-yellow-500/10 to-yellow-600/5 border-yellow-200">
+        <Card className="bg-gradient-warning/10 border-warning/20">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Crown className="h-5 w-5 text-yellow-600" />
-              <CardTitle className="text-yellow-800">سيطرة القلعة</CardTitle>
+              <Crown className="h-5 w-5 text-warning" />
+              <CardTitle className="text-foreground">سيطرة القلعة</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -99,11 +99,11 @@ export const AtlantisLeaderboard = () => {
 
       {/* Current Challenge */}
       {currentChallenge && (
-        <Card className="bg-gradient-to-r from-purple-500/10 to-purple-600/5 border-purple-200">
+        <Card className="bg-gradient-luxury/10 border-luxury/20">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-purple-600" />
-              <CardTitle className="text-purple-800">التحدي الأسبوعي</CardTitle>
+              <Target className="h-5 w-5 text-luxury" />
+              <CardTitle className="text-foreground">التحدي الأسبوعي</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
