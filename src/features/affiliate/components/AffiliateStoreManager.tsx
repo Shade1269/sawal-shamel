@@ -662,7 +662,7 @@ export const AffiliateStoreManager = ({
         <TabsList className={`hidden md:grid w-full grid-cols-11 transition-colors duration-500 ${
           isDarkMode 
             ? 'bg-slate-800/50 border-slate-700/50' 
-            : 'bg-gradient-to-r from-slate-100 via-white to-slate-100 border-slate-300/60 shadow-lg'
+            : 'bg-gradient-subtle border-border shadow-lg'
         }`}>
           <TabsTrigger value="general" className={`transition-colors duration-500 ${
             isDarkMode 

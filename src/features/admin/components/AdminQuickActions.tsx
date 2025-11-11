@@ -111,7 +111,7 @@ export const AdminQuickActions = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="w-full bg-gradient-to-r from-primary to-primary/80 hover:opacity-90 group-hover:scale-105 transition-all duration-200">
+                <Button className="w-full bg-gradient-primary hover:opacity-90 group-hover:scale-105 transition-all duration-200">
                   الانتقال
                 </Button>
               </CardContent>

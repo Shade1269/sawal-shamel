@@ -197,7 +197,7 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={user.avatar_url} />
-                          <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20">
+                          <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20">
                             {user.full_name?.charAt(0) || 'U'}
                           </AvatarFallback>
                         </Avatar>

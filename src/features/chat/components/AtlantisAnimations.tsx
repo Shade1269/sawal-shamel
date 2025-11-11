@@ -17,10 +17,10 @@ export const AtlantisAnimations = ({
 }: AtlantisAnimationsProps) => {
   const getLevelColor = (level: string) => {
     switch (level) {
-      case 'legendary': return 'from-purple-500 to-purple-600';
-      case 'gold': return 'from-yellow-400 to-yellow-600';
-      case 'silver': return 'from-gray-300 to-gray-500';
-      default: return 'from-orange-400 to-orange-600';
+      case 'legendary': return 'from-premium to-premium/80';
+      case 'gold': return 'from-premium to-premium/70';
+      case 'silver': return 'from-muted-foreground to-muted-foreground/70';
+      default: return 'from-bronze to-bronze/80';
     }
   };
 
@@ -58,7 +58,7 @@ export const AtlantisAnimations = ({
           </motion.div>
           
           <motion.h2 
-            className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
+            className="text-3xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
