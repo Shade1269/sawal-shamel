@@ -296,7 +296,7 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
                         index <= currentStep
-                          ? 'bg-primary border-primary text-white'
+                          ? 'bg-primary border-primary text-primary-foreground'
                           : 'border-muted text-muted-foreground'
                       }`}
                     >

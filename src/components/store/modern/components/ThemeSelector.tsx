@@ -38,7 +38,7 @@ const themes: ExtendedTheme[] = [
     name: "Default",
     colors: { primary: "#2563eb", bg: "#ffffff" },
     icon: <Palette className="h-5 w-5" />,
-    preview: "bg-gradient-to-br from-blue-600 to-blue-800",
+    preview: "bg-gradient-primary",
     description: "ثيم كلاسيكي أنيق ومتوازن للاستخدام العام"
   },
   {
@@ -66,7 +66,7 @@ const themes: ExtendedTheme[] = [
   {
     ...nightTheme,
     icon: <Moon className="h-5 w-5" />,
-    preview: "bg-gradient-to-br from-purple-900 to-gray-900",
+    preview: "bg-gradient-premium",
     description: "ثيم ليلي داكن مع إضاءة أرجوانية"
   },
   {
@@ -182,20 +182,20 @@ export const ThemeSelector = ({ storeId, currentTheme, onThemeChange }: ThemeSel
                   <div className={`w-full h-full ${theme.preview}`}>
                     <div className="absolute inset-0 bg-black/20"></div>
                     <div className="absolute bottom-3 left-3 right-3">
-                      <div className="bg-white/90 backdrop-blur-sm rounded-md p-2">
-                        <div className="flex items-center justify-between text-xs">
-                          <div className="flex items-center gap-1">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                            <span className="text-gray-600">معاينة المتجر</span>
+                        <div className="bg-card/90 backdrop-blur-sm rounded-md p-2 border border-border">
+                          <div className="flex items-center justify-between text-xs">
+                            <div className="flex items-center gap-1">
+                              <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
+                              <span className="text-muted-foreground">معاينة المتجر</span>
+                            </div>
+                            <div className="w-4 h-4 bg-primary/20 rounded"></div>
                           </div>
-                          <div className="w-4 h-4 bg-primary/20 rounded"></div>
+                          <div className="mt-1 flex gap-1">
+                            <div className="flex-1 h-1 bg-muted rounded"></div>
+                            <div className="flex-1 h-1 bg-muted rounded"></div>
+                            <div className="w-8 h-1 bg-primary/40 rounded"></div>
+                          </div>
                         </div>
-                        <div className="mt-1 flex gap-1">
-                          <div className="flex-1 h-1 bg-gray-200 rounded"></div>
-                          <div className="flex-1 h-1 bg-gray-200 rounded"></div>
-                          <div className="w-8 h-1 bg-primary/40 rounded"></div>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>

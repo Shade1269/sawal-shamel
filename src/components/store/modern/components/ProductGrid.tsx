@@ -136,7 +136,7 @@ export const ProductGrid = ({
                   </Badge>
                 )}
                 {product.stock === 0 && (
-                  <Badge variant="secondary" className="bg-gray-100 text-gray-700">
+                  <Badge variant="secondary">
                     نفد المخزون
                   </Badge>
                 )}
