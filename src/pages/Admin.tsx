@@ -573,14 +573,14 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
         <div className="flex items-center gap-6">
           <BackButton />
           <div>
-            <h1 className="text-4xl font-black bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent tracking-tight">
+            <h1 className="text-4xl font-black bg-gradient-primary bg-clip-text text-transparent tracking-tight">
               لوحة الإدارة
             </h1>
             <p className="text-lg text-muted-foreground/80 font-medium mt-2">نظام إدارة شامل ومتطور</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg shadow-primary/25 ring-2 ring-primary/20">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow ring-2 ring-primary/20">
             <Shield className="h-6 w-6 text-white drop-shadow-sm" />
           </div>
         </div>
@@ -592,7 +592,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
           <CardHeader className="pb-6">
             <CardTitle id="inventory-integration-admin" className="text-3xl font-black admin-card">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/25">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-success to-success/80 flex items-center justify-center shadow-glow">
                   <Package className="h-5 w-5 text-white" />
                 </div>
                 نظام المخزون الداخلي
@@ -604,7 +604,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20 border border-emerald-200/50 dark:border-emerald-800/50 rounded-xl p-6">
+            <div className="bg-gradient-to-r from-success/10 to-success/5 border border-success/20 rounded-xl p-6">
               <p className="admin-text text-emerald-800 dark:text-emerald-200">
                 تأكد من تطبيق الملف <code className="text-xs bg-emerald-100 dark:bg-emerald-900/50 px-3 py-1 rounded-md font-mono">sql/05_internal_inventory.sql</code> وضبط المتغير <code className="text-xs bg-emerald-100 dark:bg-emerald-900/50 px-3 py-1 rounded-md font-mono">DEFAULT_WAREHOUSE_CODE</code> ليشير إلى المستودع الأساسي.
               </p>
@@ -622,7 +622,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
           <CardHeader className="pb-6">
             <CardTitle id="cron-monitoring" className="text-3xl font-black admin-card">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-info to-info/80 flex items-center justify-center shadow-glow">
                   <Clock className="h-5 w-5 text-white" />
                 </div>
                 سجل المهام التلقائية (Cron Jobs)

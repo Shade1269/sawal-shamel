@@ -769,7 +769,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // Loading states
   if (storeLoading || productsLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent mx-auto"></div>
           <div className="space-y-2">
@@ -956,7 +956,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5" />
+                <div className="w-full h-full bg-gradient-subtle" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-background/30 to-background/10 backdrop-blur-sm" />
             </div>
@@ -964,7 +964,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             {/* Content */}
             <div className="relative z-10 py-20 px-8 text-center space-y-6">
               {storeSettings.hero_title && (
-                <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent drop-shadow-lg">
+                <h2 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent drop-shadow-lg">
                   {storeSettings.hero_title}
                 </h2>
               )}
