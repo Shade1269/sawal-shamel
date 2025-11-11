@@ -271,7 +271,7 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
                   <div className={`
                     w-12 h-12 rounded-full flex items-center justify-center border-2 transition-colors
                     ${isActive ? 'bg-primary text-primary-foreground border-primary' : 
-                      isCompleted ? 'bg-green-500 text-white border-green-500' : 
+                      isCompleted ? 'bg-success text-success-foreground border-success' : 
                       'bg-muted text-muted-foreground border-muted'}
                   `}>
                     <StepIcon className="h-6 w-6" />
@@ -286,7 +286,7 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
                 {index < steps.length - 1 && (
                   <div className={`
                     flex-1 h-0.5 mx-4 transition-colors
-                    ${isCompleted ? 'bg-green-500' : 'bg-muted'}
+                    ${isCompleted ? 'bg-success' : 'bg-muted'}
                   `} />
                 )}
               </div>
@@ -349,18 +349,18 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
                 </div>
                 
                 {appliedCoupon ? (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="bg-success/10 border border-success/20 rounded-lg p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                          <CheckCircle className="h-6 w-6 text-white" />
+                        <div className="w-10 h-10 bg-success rounded-full flex items-center justify-center">
+                          <CheckCircle className="h-6 w-6 text-success-foreground" />
                         </div>
                         <div>
-                          <p className="font-semibold text-green-900">{appliedCoupon.coupon_name}</p>
-                          <p className="text-sm text-green-700">
+                          <p className="font-semibold text-foreground">{appliedCoupon.coupon_name}</p>
+                          <p className="text-sm text-muted-foreground">
                             كود: {appliedCoupon.coupon_code}
                           </p>
-                          <p className="text-sm font-medium text-green-800">
+                          <p className="text-sm font-medium text-success">
                             خصم {appliedCoupon.discount_type === 'percentage' 
                               ? `${appliedCoupon.discount_value}%` 
                               : `${appliedCoupon.discount_value} ريال`}
@@ -371,7 +371,7 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
                         variant="ghost"
                         size="sm"
                         onClick={removeCoupon}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
                         <X className="h-4 w-4 ml-1" />
                         إزالة
@@ -411,7 +411,7 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
                   <span>{subtotal.toFixed(2)} ر.س</span>
                 </div>
                 {appliedCoupon && discountAmount > 0 && (
-                  <div className="flex justify-between text-base text-green-600 font-medium">
+                  <div className="flex justify-between text-base text-success font-medium">
                     <span>الخصم ({appliedCoupon.coupon_code}):</span>
                     <span>- {discountAmount.toFixed(2)} ر.س</span>
                   </div>
