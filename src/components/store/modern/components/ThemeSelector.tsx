@@ -46,7 +46,7 @@ const themes: ExtendedTheme[] = [
     name: "Luxury", 
     colors: { primary: "#d4af37", bg: "#0c0c0c" },
     icon: <Crown className="h-5 w-5" />,
-    preview: "bg-gradient-to-br from-yellow-600 to-amber-800",
+    preview: "bg-gradient-luxury",
     description: "ثيم فاخر بألوان ذهبية للمنتجات الراقية"
   },
   {
@@ -54,7 +54,7 @@ const themes: ExtendedTheme[] = [
     name: "Damascus",
     colors: { primary: "#d4af37", bg: "#0a1016" },
     icon: <Sparkles className="h-5 w-5" />,
-    preview: "bg-gradient-to-br from-teal-600 to-cyan-800",
+    preview: "bg-gradient-persian",
     description: "ثيم دمشقي تراثي بلمسة عصرية"
   },
   {
@@ -72,7 +72,7 @@ const themes: ExtendedTheme[] = [
   {
     ...legendaryTheme,
     icon: <Crown className="h-5 w-5 text-yellow-400" />,
-    preview: "bg-gradient-to-br from-violet-800 to-purple-900",
+    preview: "bg-gradient-premium",
     description: "ثيم أسطوري حصري للمسوقات المتميزات",
     isPremium: true,
     requiresLevel: "gold"
@@ -180,7 +180,7 @@ export const ThemeSelector = ({ storeId, currentTheme, onThemeChange }: ThemeSel
                 {/* Theme Preview */}
                 <div className="relative h-32 rounded-lg overflow-hidden">
                   <div className={`w-full h-full ${theme.preview}`}>
-                    <div className="absolute inset-0 bg-black/20"></div>
+                    <div className="absolute inset-0 bg-foreground/10"></div>
                     <div className="absolute bottom-3 left-3 right-3">
                         <div className="bg-card/90 backdrop-blur-sm rounded-md p-2 border border-border">
                           <div className="flex items-center justify-between text-xs">

@@ -666,58 +666,58 @@ export const AffiliateStoreManager = ({
         }`}>
           <TabsTrigger value="general" className={`transition-colors duration-500 ${
             isDarkMode 
-              ? 'text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-white' 
-              : 'text-slate-700 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg'
+              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
+              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
           }`}>الإعدادات العامة</TabsTrigger>
           <TabsTrigger value="appearance" className={`transition-colors duration-500 ${
             isDarkMode 
-              ? 'text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-white' 
-              : 'text-slate-700 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg'
+              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
+              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
           }`}>المظهر</TabsTrigger>
           <TabsTrigger value="hero" className={`transition-colors duration-500 ${
             isDarkMode 
-              ? 'text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-white' 
-              : 'text-slate-700 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg'
+              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
+              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
           }`}>القسم الرئيسي</TabsTrigger>
           <TabsTrigger value="banners" className={`transition-colors duration-500 ${
             isDarkMode 
-              ? 'text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-white' 
-              : 'text-slate-700 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg'
+              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
+              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
           }`}>البانرات</TabsTrigger>
           <TabsTrigger value="categories" className={`transition-colors duration-500 ${
             isDarkMode 
-              ? 'text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-white' 
-              : 'text-slate-700 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg'
+              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
+              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
           }`}>الفئات</TabsTrigger>
           <TabsTrigger value="products" className={`transition-colors duration-500 ${
             isDarkMode 
-              ? 'text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-white' 
-              : 'text-slate-700 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg'
+              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
+              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
           }`}>المنتجات</TabsTrigger>
           <TabsTrigger value="coupons" className={`transition-colors duration-500 ${
             isDarkMode 
-              ? 'text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-white' 
-              : 'text-slate-700 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg'
+              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
+              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
           }`}>الكوبونات</TabsTrigger>
           <TabsTrigger value="reviews" className={`transition-colors duration-500 ${
             isDarkMode 
-              ? 'text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-white' 
-              : 'text-slate-700 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg'
+              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
+              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
           }`}>المراجعات</TabsTrigger>
           <TabsTrigger value="chat" className={`transition-colors duration-500 ${
             isDarkMode 
-              ? 'text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-white' 
-              : 'text-slate-700 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg'
+              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
+              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
           }`}>الدردشة</TabsTrigger>
           <TabsTrigger value="sharing" className={`transition-colors duration-500 ${
             isDarkMode 
-              ? 'text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-white' 
-              : 'text-slate-700 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg'
+              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
+              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
           }`}>المشاركة</TabsTrigger>
           <TabsTrigger value="analytics" className={`transition-colors duration-500 ${
             isDarkMode 
-              ? 'text-slate-400 data-[state=active]:bg-slate-700 data-[state=active]:text-white' 
-              : 'text-slate-700 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg'
+              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
+              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
           }`}>الإحصائيات</TabsTrigger>
         </TabsList>
 

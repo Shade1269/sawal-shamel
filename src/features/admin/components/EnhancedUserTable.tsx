@@ -102,17 +102,17 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
       case 'merchant':
         return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 border-green-200';
       case 'moderator': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400 border-purple-200';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400 border-gray-200';
+      default: return 'bg-muted text-muted-foreground border-border';
     }
   };
 
   const getLevelColor = (level: string) => {
     switch (level) {
-      case 'bronze': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400 border-orange-200';
-      case 'silver': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400 border-gray-200';
-      case 'gold': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400 border-yellow-200';
-      case 'legendary': return 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 dark:from-purple-900/20 dark:to-pink-900/20 dark:text-purple-400 border-purple-200';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400 border-gray-200';
+      case 'bronze': return 'bg-bronze/10 text-bronze border-bronze/20';
+      case 'silver': return 'bg-muted text-muted-foreground border-border';
+      case 'gold': return 'bg-premium/10 text-premium border-premium/20';
+      case 'legendary': return 'bg-gradient-premium text-primary-foreground border-premium/20';
+      default: return 'bg-muted text-muted-foreground border-border';
     }
   };
 

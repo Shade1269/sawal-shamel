@@ -141,8 +141,8 @@ export function AdminSidebar() {
         <div className={`px-3 mb-8 ${isCollapsed ? "text-center" : ""}`}>
           {!isCollapsed ? (
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg shadow-primary/25 ring-2 ring-primary/20">
-                <Crown className="h-6 w-6 text-white drop-shadow-sm" />
+              <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow ring-2 ring-primary/20">
+                <Crown className="h-6 w-6 text-primary-foreground drop-shadow-sm" />
               </div>
               <div>
                 <h2 className="text-xl font-black bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent tracking-tight">
@@ -152,8 +152,8 @@ export function AdminSidebar() {
               </div>
             </div>
           ) : (
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center mx-auto shadow-lg shadow-primary/25 ring-2 ring-primary/20">
-              <Crown className="h-6 w-6 text-white drop-shadow-sm" />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto shadow-glow ring-2 ring-primary/20">
+              <Crown className="h-6 w-6 text-primary-foreground drop-shadow-sm" />
             </div>
           )}
         </div>
