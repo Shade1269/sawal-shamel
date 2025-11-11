@@ -5,6 +5,7 @@
 @import './themes/damascus/tokens.css';
 @import './themes/ferrari/tokens.css';
 @import './ui/styles.css';
+@import './styles/design-system.css';
 
 @tailwind base;
 @tailwind components;

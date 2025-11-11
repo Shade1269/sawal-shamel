@@ -1,0 +1,357 @@
+/**
+ * Unified Design System - Core Styles
+ * Centralized design tokens and utilities for consistent styling
+ */
+
+/* ============================================
+   GRADIENT SYSTEM - Unified Gradients
+   ============================================ */
+
+.gradient-primary {
+  background: linear-gradient(135deg, 
+    hsl(var(--primary-hsl)), 
+    color-mix(in srgb, hsl(var(--primary-hsl)) 60%, hsl(var(--accent-hsl)) 40%)
+  );
+}
+
+.gradient-hero {
+  background: linear-gradient(135deg, 
+    hsl(var(--primary-hsl)), 
+    hsl(var(--accent-hsl)), 
+    hsl(var(--premium-hsl, var(--secondary-hsl)))
+  );
+}
+
+.gradient-luxury {
+  background: linear-gradient(135deg, 
+    hsl(var(--luxury-hsl, var(--primary-hsl))), 
+    color-mix(in srgb, hsl(var(--premium-hsl, var(--accent-hsl))) 65%, hsl(var(--luxury-hsl, var(--primary-hsl))) 35%)
+  );
+}
+
+.gradient-premium {
+  background: linear-gradient(135deg, 
+    hsl(var(--premium-hsl, var(--secondary-hsl))), 
+    hsl(var(--primary-hsl))
+  );
+}
+
+.gradient-persian {
+  background: linear-gradient(135deg, 
+    hsl(var(--persian-hsl, var(--primary-hsl))), 
+    hsl(var(--turquoise-hsl, var(--accent-hsl)))
+  );
+}
+
+.gradient-commerce {
+  background: linear-gradient(135deg, 
+    hsl(var(--success-hsl)), 
+    hsl(var(--accent-hsl))
+  );
+}
+
+.gradient-heritage {
+  background: linear-gradient(135deg, 
+    hsl(var(--bronze-hsl, var(--secondary-hsl))), 
+    hsl(var(--olive-hsl, var(--primary-hsl)))
+  );
+}
+
+.gradient-sunset {
+  background: linear-gradient(135deg, 
+    hsl(12 70% 62%), 
+    hsl(0 79% 63%)
+  );
+}
+
+.gradient-ocean {
+  background: linear-gradient(135deg, 
+    hsl(195 86% 64%), 
+    hsl(199 89% 48%)
+  );
+}
+
+.gradient-forest {
+  background: linear-gradient(135deg, 
+    hsl(135 59% 57%), 
+    hsl(142 71% 45%)
+  );
+}
+
+.gradient-purple {
+  background: linear-gradient(135deg, 
+    hsl(269 100% 70%), 
+    hsl(269 100% 83%)
+  );
+}
+
+.gradient-gold {
+  background: linear-gradient(135deg, 
+    hsl(45 86% 62%), 
+    hsl(46 65% 52%)
+  );
+}
+
+/* Background gradients for sections */
+.gradient-bg-primary {
+  background: radial-gradient(circle at center,
+    color-mix(in srgb, hsl(var(--bg-hsl, var(--background-hsl))) 92%, transparent) 0%,
+    color-mix(in srgb, hsl(var(--muted-hsl)) 60%, transparent) 55%,
+    color-mix(in srgb, hsl(var(--bg-hsl, var(--background-hsl))) 96%, transparent) 100%
+  );
+}
+
+.gradient-glass {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, hsl(var(--surface-hsl, 215 22% 14%)) 72%, transparent),
+    color-mix(in srgb, hsl(var(--surface-2-hsl, 215 26% 20%)) 82%, transparent)
+  );
+}
+
+/* ============================================
+   SHADOW SYSTEM - Consistent Shadows
+   ============================================ */
+
+.shadow-soft {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.shadow-glow {
+  box-shadow: 0 0 20px color-mix(in srgb, hsl(var(--primary-hsl)) 30%, transparent), 
+              0 0 40px color-mix(in srgb, hsl(var(--primary-hsl)) 10%, transparent);
+}
+
+.shadow-luxury {
+  box-shadow: 0 8px 32px color-mix(in srgb, hsl(var(--luxury-hsl, var(--primary-hsl))) 30%, transparent), 
+              0 0 20px color-mix(in srgb, hsl(var(--luxury-hsl, var(--primary-hsl))) 20%, transparent);
+}
+
+.shadow-glass {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.shadow-elegant {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-persian {
+  box-shadow: 0 8px 32px color-mix(in srgb, hsl(var(--persian-hsl, var(--primary-hsl))) 30%, transparent), 
+              0 0 20px color-mix(in srgb, hsl(var(--persian-hsl, var(--primary-hsl))) 20%, transparent);
+}
+
+.shadow-premium {
+  box-shadow: 0 8px 32px color-mix(in srgb, hsl(var(--premium-hsl, var(--accent-hsl))) 30%, transparent), 
+              0 0 20px color-mix(in srgb, hsl(var(--premium-hsl, var(--accent-hsl))) 20%, transparent);
+}
+
+/* ============================================
+   GLASS EFFECTS - Modern Glass Morphism
+   ============================================ */
+
+.glass-card {
+  background: color-mix(in srgb, hsl(var(--surface-hsl, 215 22% 14%)) 80%, transparent);
+  backdrop-filter: blur(20px);
+  border: 1px solid color-mix(in srgb, hsl(var(--border-hsl)) 65%, transparent);
+  box-shadow: var(--shadow-glass-soft, 0 18px 40px rgba(0, 0, 0, 0.45));
+}
+
+.glass-card-strong {
+  background: color-mix(in srgb, hsl(var(--surface-2-hsl, 215 26% 20%)) 90%, transparent);
+  backdrop-filter: blur(24px);
+  border: 1px solid color-mix(in srgb, hsl(var(--border-hsl)) 75%, transparent);
+  box-shadow: var(--shadow-glass-strong, 0 28px 64px rgba(0, 0, 0, 0.6));
+}
+
+.glass-button {
+  background: color-mix(in srgb, hsl(var(--surface-hsl, 215 22% 14%)) 70%, transparent);
+  backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, hsl(var(--border-hsl)) 50%, transparent);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-button:hover {
+  background: color-mix(in srgb, hsl(var(--surface-2-hsl, 215 26% 20%)) 80%, transparent);
+  border-color: color-mix(in srgb, hsl(var(--primary-hsl)) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, hsl(var(--primary-hsl)) 25%, transparent),
+              var(--shadow-glass-soft, 0 18px 40px rgba(0, 0, 0, 0.45));
+}
+
+/* ============================================
+   INTERACTIVE STATES - Hover, Focus, Active
+   ============================================ */
+
+.interactive-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.interactive-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glass-strong, 0 28px 64px rgba(0, 0, 0, 0.6));
+}
+
+.interactive-glow {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.interactive-glow:hover {
+  box-shadow: 0 0 0 1px color-mix(in srgb, hsl(var(--primary-hsl)) 25%, transparent),
+              var(--shadow-glass-soft, 0 18px 40px rgba(0, 0, 0, 0.45));
+  transform: translateY(-2px);
+}
+
+.interactive-scale {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.interactive-scale:hover {
+  transform: scale(1.05);
+}
+
+.interactive-scale:active {
+  transform: scale(0.97);
+}
+
+/* ============================================
+   TYPOGRAPHY UTILITIES
+   ============================================ */
+
+.heading-ar {
+  font-family: 'Noto Sans Arabic', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.body-ar {
+  font-family: 'Noto Sans Arabic', system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.premium-text {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.elegant-text {
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+}
+
+/* ============================================
+   ANIMATION UTILITIES
+   ============================================ */
+
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px color-mix(in srgb, hsl(var(--primary-hsl)) 35%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 36px color-mix(in srgb, hsl(var(--primary-hsl)) 55%, transparent);
+  }
+}
+
+/* ============================================
+   SPACING UTILITIES
+   ============================================ */
+
+.section-spacing {
+  padding-top: var(--space-xl, 2.5rem);
+  padding-bottom: var(--space-xl, 2.5rem);
+}
+
+.container-spacing {
+  padding-left: var(--space-md, 1rem);
+  padding-right: var(--space-md, 1rem);
+}
+
+.card-spacing {
+  padding: var(--space-lg, 1.5rem);
+}
+
+.compact-spacing {
+  padding: var(--space-sm, 0.5rem);
+}
+
+/* ============================================
+   LAYOUT UTILITIES
+   ============================================ */
+
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-lg, 1.5rem);
+}
+
+.grid-auto-fill {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-lg, 1.5rem);
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ============================================
+   BORDER RADIUS UTILITIES
+   ============================================ */
+
+.rounded-card {
+  border-radius: var(--radius-lg, 1rem);
+}
+
+.rounded-button {
+  border-radius: var(--radius-md, 0.625rem);
+}
+
+.rounded-input {
+  border-radius: var(--radius-sm, 0.5rem);
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
