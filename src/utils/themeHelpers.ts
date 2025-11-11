@@ -86,7 +86,7 @@ export function getCardClasses(variant: 'default' | 'elevated' | 'bordered' = 'd
 /**
  * Get gradient classes using semantic tokens
  */
-export function getGradientClasses(type: 'primary' | 'hero' | 'luxury' | 'premium' | 'persian' | 'commerce' = 'primary') {
+export function getGradientClasses(type: 'primary' | 'hero' | 'luxury' | 'premium' | 'persian' | 'commerce' | 'muted' | 'info' | 'success' | 'warning' | 'danger' = 'primary') {
   const gradients = {
     primary: 'bg-gradient-primary',
     hero: 'bg-gradient-hero',
@@ -94,6 +94,11 @@ export function getGradientClasses(type: 'primary' | 'hero' | 'luxury' | 'premiu
     premium: 'bg-gradient-premium',
     persian: 'bg-gradient-persian',
     commerce: 'bg-gradient-commerce',
+    muted: 'bg-gradient-muted',
+    info: 'bg-gradient-info',
+    success: 'bg-gradient-success',
+    warning: 'bg-gradient-warning',
+    danger: 'bg-gradient-danger',
   };
   return gradients[type];
 }
