@@ -274,7 +274,7 @@ const ProductManagement = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20">
+          <Card className="bg-gradient-to-br from-success/10 to-success/5 border-success/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -298,7 +298,7 @@ const ProductManagement = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-red-500/10 to-red-500/5 border-red-500/20">
+          <Card className="bg-gradient-to-br from-danger/10 to-danger/5 border-danger/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
