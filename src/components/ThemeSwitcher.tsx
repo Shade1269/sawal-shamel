@@ -58,10 +58,10 @@ export function ThemeSwitcher() {
             >
               <div className="flex items-center justify-between gap-[var(--spacing-sm)]">
                 <div className="flex flex-col text-right">
-                  <span className="text-sm font-semibold text-[color:var(--fg,#111827)]">{option.label}</span>
-                  <span className="text-xs text-[color:var(--muted-foreground,#6b7280)]">{option.description}</span>
+                  <span className="text-sm font-semibold text-foreground">{option.label}</span>
+                  <span className="text-xs text-muted-foreground">{option.description}</span>
                 </div>
-                <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--glass-border,rgba(15,23,42,0.08))] bg-[color:var(--glass-bg,var(--surface))]/80">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card/80">
                   <span
                     className="block h-6 w-6 rounded-full shadow-inner"
                     style={{
@@ -73,7 +73,7 @@ export function ThemeSwitcher() {
                 </span>
               </div>
               <span
-                className="relative block h-16 w-full overflow-hidden rounded-[var(--radius-sm)] border border-dashed border-[color:var(--glass-border,rgba(15,23,42,0.08))] bg-[color:var(--glass-bg,var(--surface))]"
+                className="relative block h-16 w-full overflow-hidden rounded-[var(--radius-sm)] border border-dashed border-border bg-card"
                 aria-hidden="true"
               >
                 <span

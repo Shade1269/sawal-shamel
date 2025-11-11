@@ -43,7 +43,7 @@ export const Header: React.FC<HeaderProps> = React.memo(
 
     return (
       <header
-        className="sticky top-0 z-40 border-b border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/88 backdrop-blur-2xl"
+        className="sticky top-0 z-40 border-b border-border bg-card/88 backdrop-blur-2xl"
         data-component="app-shell-header"
       >
         <div className="flex items-center gap-4 px-4 py-3">
@@ -52,19 +52,19 @@ export const Header: React.FC<HeaderProps> = React.memo(
               variant="ghost"
               size="icon"
               aria-label="فتح القائمة الجانبية"
-              className={`h-10 w-10 border border-transparent text-[color:var(--glass-fg)] hover:border-[color:var(--glass-border)] hover:bg-[color:var(--glass-bg-strong, var(--surface-2))] lg:hidden ${motionClass}`}
+              className={`h-10 w-10 border border-transparent text-card-foreground hover:border-border hover:bg-muted lg:hidden ${motionClass}`}
               onClick={onToggleSidebar}
             >
               <Menu className="h-5 w-5" aria-hidden />
             </Button>
 
-            <div className="flex items-center gap-2 rounded-full border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)] px-3 py-1.5 shadow-[var(--shadow-glass-soft)]">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[color:var(--primary)]/12 text-[color:var(--primary)] text-sm font-bold">
+            <div className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 shadow-soft">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/12 text-primary text-sm font-bold">
                 أ
               </span>
               <div className="hidden sm:flex flex-col">
-                <span className="text-xs text-[color:var(--muted-foreground)]">منصة أناقتي</span>
-                <span className="text-sm font-semibold text-[color:var(--glass-fg)]">لوحة التحكم الزجاجية</span>
+                <span className="text-xs text-muted-foreground">منصة أناقتي</span>
+                <span className="text-sm font-semibold text-card-foreground">لوحة التحكم الزجاجية</span>
               </div>
             </div>
           </div>
@@ -73,7 +73,7 @@ export const Header: React.FC<HeaderProps> = React.memo(
             <input
               type="search"
               placeholder="ابحث عن المنتجات أو الطلبات أو الشركاء..."
-              className={`w-full rounded-full border border-[color:var(--glass-border)] bg-[color:var(--glass-bg-strong, var(--surface-2))] px-4 py-2 text-sm text-[color:var(--glass-fg)] placeholder:text-[color:var(--muted-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--glass-bg)] ${motionClass}`}
+              className={`w-full rounded-full border border-border bg-muted px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card ${motionClass}`}
               aria-label="بحث"
             />
           </div>
@@ -81,12 +81,12 @@ export const Header: React.FC<HeaderProps> = React.memo(
           <div className="ml-auto flex items-center gap-3">
             {isOffline ? (
               <span
-                className="inline-flex items-center gap-2 rounded-full border border-[color:var(--warning)] bg-[color:var(--glass-bg)]/85 px-3 py-1 text-xs font-semibold text-[color:var(--warning)] shadow-[var(--shadow-glass-soft)]"
+                className="inline-flex items-center gap-2 rounded-full border border-warning bg-card/85 px-3 py-1 text-xs font-semibold text-warning shadow-soft"
                 role="status"
                 aria-live="polite"
                 data-testid="header-offline-indicator"
               >
-                <span className="inline-flex h-2 w-2 rounded-full bg-[color:var(--warning)]" aria-hidden />
+                <span className="inline-flex h-2 w-2 rounded-full bg-warning" aria-hidden />
                 <span>وضع غير متصل</span>
               </span>
             ) : null}
@@ -97,7 +97,7 @@ export const Header: React.FC<HeaderProps> = React.memo(
               size="icon"
               asChild
               aria-label="عرض الإشعارات"
-              className={`relative h-10 w-10 border border-transparent text-[color:var(--glass-fg)] hover:border-[color:var(--glass-border)] hover:bg-[color:var(--glass-bg-strong, var(--surface-2))] ${motionClass}`}
+              className={`relative h-10 w-10 border border-transparent text-card-foreground hover:border-border hover:bg-muted ${motionClass}`}
             >
               <Link to="/notifications" aria-label="فتح مركز الإشعارات" className="flex h-full w-full items-center justify-center">
                 <Bell className="h-5 w-5" aria-hidden />
@@ -119,16 +119,16 @@ export const Header: React.FC<HeaderProps> = React.memo(
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className={`flex items-center gap-2 rounded-full border border-transparent px-2 py-1.5 text-[color:var(--glass-fg)] hover:border-[color:var(--glass-border)] hover:bg-[color:var(--glass-bg-strong, var(--surface-2))] ${motionClass}`}
+                  className={`flex items-center gap-2 rounded-full border border-transparent px-2 py-1.5 text-card-foreground hover:border-border hover:bg-muted ${motionClass}`}
                 >
                   <Avatar className="h-9 w-9">
-                    <AvatarFallback className="bg-[color:var(--primary)]/15 text-[color:var(--primary)] text-sm font-bold">
+                    <AvatarFallback className="bg-primary/15 text-primary text-sm font-bold">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
                   <div className="hidden sm:flex flex-col items-start text-right">
                     <span className="text-sm font-semibold leading-tight">{userName}</span>
-                    <span className="text-[11px] text-[color:var(--muted-foreground)]">{userRole ?? 'عضو'}</span>
+                    <span className="text-[11px] text-muted-foreground">{userRole ?? 'عضو'}</span>
                   </div>
                 </Button>
               </DropdownMenuTrigger>
