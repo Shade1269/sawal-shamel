@@ -51,6 +51,7 @@ const UnifiedAffiliateOrders = lazy(() => import("./pages/unified/UnifiedAffilia
 const StorefrontMyOrders = lazy(() => import("./pages/storefront/StorefrontMyOrders"));
 const StoreOrderConfirmation = lazy(() => import("./pages/StoreOrderConfirmation"));
 const LuxuryShowcase = lazy(() => import("./pages/LuxuryShowcase"));
+const DesignSystemShowcase = lazy(() => import("./pages/DesignSystemShowcase"));
 const AdminHomePage = lazy(() => import("./pages/home/AdminHome"));
 const AdminWithdrawalsPage = lazy(() => import("./pages/admin/AdminWithdrawalsPage"));
 const AdminReturnsPage = lazy(() => import("./pages/admin/AdminReturnsPage"));
@@ -125,6 +126,7 @@ const App = () => {
                               <Route path="/zoho/callback" element={<ZohoCallback />} />
                               <Route path="/ui" element={<UiShowcasePage />} />
                               <Route path="/luxury-showcase" element={<LuxuryShowcase />} />
+                              <Route path="/design-system" element={<DesignSystemShowcase />} />
               <Route
                 path="/profile"
                 element={(

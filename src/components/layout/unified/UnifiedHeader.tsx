@@ -27,6 +27,7 @@ import { useFastAuth } from '@/hooks/useFastAuth';
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { ThemeSwitcher } from '@/components/theme';
 
 /**
  * Unified Header Component
@@ -44,6 +45,8 @@ interface UnifiedHeaderProps {
   notificationCount?: number;
   /** Show dark mode toggle */
   showDarkModeToggle?: boolean;
+  /** Show theme switcher */
+  showThemeSwitcher?: boolean;
   /** Additional actions to show in header */
   actions?: React.ReactNode;
   /** Custom logo/brand element */
@@ -60,6 +63,7 @@ export const UnifiedHeader: React.FC<UnifiedHeaderProps> = ({
   showNotifications = true,
   notificationCount = 0,
   showDarkModeToggle = true,
+  showThemeSwitcher = true,
   actions,
   logo,
   onSidebarToggle,
@@ -143,6 +147,9 @@ export const UnifiedHeader: React.FC<UnifiedHeaderProps> = ({
 
         {/* Actions */}
         {actions && <div className="flex items-center gap-2">{actions}</div>}
+
+        {/* Theme Switcher */}
+        {showThemeSwitcher && <ThemeSwitcher variant="icon" />}
 
         {/* Dark Mode Toggle */}
         {showDarkModeToggle && (
