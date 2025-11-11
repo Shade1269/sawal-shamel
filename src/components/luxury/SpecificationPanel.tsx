@@ -73,14 +73,14 @@ export function SpecificationPanel({
   return (
     <Card
       className={cn(
-        "border border-red-600/15 bg-gradient-to-br from-slate-900/98 via-slate-900/96 to-slate-800/98 backdrop-blur-sm shadow-lg shadow-black/30 hover:shadow-xl hover:shadow-red-600/15 hover:border-red-600/25 transition-all duration-500",
+        "border border-primary/15 bg-gradient-subtle backdrop-blur-sm shadow-lg shadow-black/30 hover:shadow-glow hover:border-primary/25 transition-all duration-500",
         className
       )}
     >
       <CardHeader className="pb-5">
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+            <CardTitle className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
               <Info className="h-6 w-6 text-red-500" />
               {title}
             </CardTitle>
@@ -119,7 +119,7 @@ export function SpecificationPanel({
                     <IconComponent className="h-5 w-5 text-red-400" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white">
+                    <h3 className="text-lg font-semibold text-foreground">
                       {group.title}
                     </h3>
                     <p className="text-xs text-slate-400">
@@ -197,7 +197,7 @@ export function SpecificationPanel({
                                 <span
                                   className={cn(
                                     "text-base font-semibold",
-                                    spec.highlight ? "text-white" : "text-slate-200"
+                                    spec.highlight ? "text-foreground" : "text-muted-foreground"
                                   )}
                                 >
                                   {spec.value}
@@ -210,8 +210,8 @@ export function SpecificationPanel({
                                       className={cn(
                                         "h-2",
                                         spec.highlight
-                                          ? "[&>div]:bg-gradient-to-r [&>div]:from-red-600 [&>div]:to-red-500"
-                                          : "[&>div]:bg-slate-600"
+                                          ? "[&>div]:bg-gradient-primary"
+                                          : "[&>div]:bg-muted"
                                       )}
                                     />
                                     <span className="text-xs text-slate-400 mt-1">
