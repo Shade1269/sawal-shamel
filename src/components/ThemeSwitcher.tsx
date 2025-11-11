@@ -36,7 +36,7 @@ export function ThemeSwitcher() {
 
   return (
     <div className="space-y-[var(--spacing-sm)]" aria-label="تبديل الثيمات">
-      <span className="text-sm font-semibold text-[color:var(--fg,#111827)]">اختر الثيم</span>
+      <span className="text-sm font-semibold text-foreground">اختر الثيم</span>
       <div className="grid gap-[var(--spacing-sm)] sm:grid-cols-3">
         {options.map((option) => {
           const isActive = option.id === themeId;
@@ -50,10 +50,10 @@ export function ThemeSwitcher() {
               aria-label={`تفعيل ثيم ${option.label}`}
               data-theme-option={option.id}
               className={cn(
-                'group relative flex h-full flex-col gap-[var(--spacing-sm)] rounded-[var(--radius-md)] border px-[var(--spacing-md)] py-[var(--spacing-sm)] text-right transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--glass-bg,var(--surface))]',
+                'group relative flex h-full flex-col gap-[var(--spacing-sm)] rounded-[var(--radius-md)] border px-[var(--spacing-md)] py-[var(--spacing-sm)] text-right transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-card',
                 isActive
-                  ? 'border-[color:var(--accent)] bg-[color:var(--glass-bg-strong,var(--surface-2))] shadow-[var(--shadow-glass-strong,0_20px_45px_rgba(15,23,42,0.18))]'
-                  : 'border-[color:var(--glass-border,rgba(15,23,42,0.08))] bg-[color:var(--glass-bg,var(--surface))]/70 shadow-[var(--shadow-glass-soft,0_12px_32px_rgba(15,23,42,0.12))] hover:border-[color:var(--accent)]'
+                  ? 'border-accent bg-muted shadow-lg'
+                  : 'border-border bg-card/70 shadow-md hover:border-accent'
               )}
             >
               <div className="flex items-center justify-between gap-[var(--spacing-sm)]">

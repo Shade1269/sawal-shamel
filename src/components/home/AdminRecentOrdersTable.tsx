@@ -32,24 +32,24 @@ export const AdminRecentOrdersTable: React.FC<AdminRecentOrdersTableProps> = ({ 
   return (
     <section
       className={cn(
-        'rounded-[var(--radius-l)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/88 shadow-[var(--shadow-glass-soft)] backdrop-blur-xl',
+        'rounded-[var(--radius-l)] border border-border bg-card/88 shadow-md backdrop-blur-xl',
         className
       )}
       aria-label="أحدث الطلبات"
       data-component="admin-recent-orders"
     >
-      <header className="flex items-center justify-between border-b border-[color:var(--glass-border)] px-[var(--spacing-lg)] py-[var(--spacing-md)]">
+      <header className="flex items-center justify-between border-b border-border px-[var(--spacing-lg)] py-[var(--spacing-md)]">
         <div>
-          <h2 className="text-sm font-semibold text-[color:var(--glass-fg)]">آخر 5 طلبات</h2>
-          <p className="text-xs text-[color:var(--muted-foreground)]">متابعة الحالات الحرجة فوراً</p>
+          <h2 className="text-sm font-semibold text-foreground">آخر 5 طلبات</h2>
+          <p className="text-xs text-muted-foreground">متابعة الحالات الحرجة فوراً</p>
         </div>
-        <span className="rounded-full bg-[color:var(--glass-bg-strong, var(--surface-2))] px-3 py-1 text-xs text-[color:var(--muted-foreground)]">
+        <span className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
           {orders.length} طلبات
         </span>
       </header>
       <div className="overflow-x-auto">
         <table className="min-w-full border-separate border-spacing-y-2 px-[var(--spacing-lg)] py-[var(--spacing-md)] text-right">
-          <thead className="text-xs uppercase tracking-wide text-[color:var(--muted-foreground)]">
+          <thead className="text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th scope="col" className="px-[var(--spacing-sm)] py-[var(--spacing-xs)] font-medium">
                 رقم الطلب
@@ -72,14 +72,14 @@ export const AdminRecentOrdersTable: React.FC<AdminRecentOrdersTableProps> = ({ 
             {orders.map((order) => (
               <tr
                 key={order.id}
-                className="rounded-[var(--radius-m)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg-strong, var(--surface-2))] text-sm text-[color:var(--glass-fg)] shadow-[var(--shadow-glass-soft)] transition-colors hover:bg-[color:var(--glass-bg)]"
+                className="rounded-[var(--radius-m)] border border-border bg-muted text-sm text-foreground shadow-sm transition-colors hover:bg-card"
               >
                 <td className="px-[var(--spacing-sm)] py-[var(--spacing-sm)] font-mono text-xs">#{order.id}</td>
                 <td className="px-[var(--spacing-sm)] py-[var(--spacing-sm)] font-medium">{order.customer}</td>
-                <td className="px-[var(--spacing-sm)] py-[var(--spacing-sm)] text-[color:var(--accent)]">{order.total}</td>
+                <td className="px-[var(--spacing-sm)] py-[var(--spacing-sm)] text-accent">{order.total}</td>
                 <td className="px-[var(--spacing-sm)] py-[var(--spacing-sm)]">
                   <span
-                    className="inline-flex items-center gap-2 rounded-full border border-[color:var(--glass-border)] px-3 py-1 text-xs font-medium"
+                    className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-medium"
                     style={{ color: statusColor[order.status] }}
                   >
                     <span className="relative flex h-2 w-2">
@@ -95,7 +95,7 @@ export const AdminRecentOrdersTable: React.FC<AdminRecentOrdersTableProps> = ({ 
                     {statusCopy[order.status]}
                   </span>
                 </td>
-                <td className="px-[var(--spacing-sm)] py-[var(--spacing-sm)] text-[color:var(--muted-foreground)]">{order.createdAt}</td>
+                <td className="px-[var(--spacing-sm)] py-[var(--spacing-sm)] text-muted-foreground">{order.createdAt}</td>
               </tr>
             ))}
           </tbody>

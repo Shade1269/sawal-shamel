@@ -33,15 +33,15 @@ export const SystemAlertsWidget: React.FC<SystemAlertsWidgetProps> = ({ alerts, 
   return (
     <aside
       className={cn(
-        'flex h-full flex-col gap-[var(--spacing-md)] rounded-[var(--radius-l)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/88 p-[var(--spacing-lg)] shadow-[var(--shadow-glass-soft)] backdrop-blur-xl',
+        'flex h-full flex-col gap-[var(--spacing-md)] rounded-[var(--radius-l)] border border-border bg-card/88 p-[var(--spacing-lg)] shadow-md backdrop-blur-xl',
         className
       )}
       data-component="system-alerts"
       aria-label="تنبيهات النظام"
     >
       <div>
-        <h2 className="text-sm font-semibold text-[color:var(--glass-fg)]">تنبيهات النظام</h2>
-        <p className="text-xs text-[color:var(--muted-foreground)]">إجراءات مطلوبة لضمان الاستقرار</p>
+        <h2 className="text-sm font-semibold text-foreground">تنبيهات النظام</h2>
+        <p className="text-xs text-muted-foreground">إجراءات مطلوبة لضمان الاستقرار</p>
       </div>
       <ul className="flex flex-col gap-[var(--spacing-sm)]">
         {alerts.map((alert) => {
@@ -50,7 +50,7 @@ export const SystemAlertsWidget: React.FC<SystemAlertsWidgetProps> = ({ alerts, 
           return (
             <li
               key={alert.id}
-              className="rounded-[var(--radius-m)] border border-[color:var(--glass-border)] p-[var(--spacing-md)]"
+              className="rounded-[var(--radius-m)] border border-border p-[var(--spacing-md)]"
               style={{
                 backgroundColor: tones.bg,
                 color: tones.color,
@@ -58,19 +58,19 @@ export const SystemAlertsWidget: React.FC<SystemAlertsWidgetProps> = ({ alerts, 
             >
               <div className="flex items-start justify-between gap-[var(--spacing-sm)]">
                 <div className="flex items-center gap-[var(--spacing-sm)]">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[color:var(--glass-border)] bg-[color:var(--glass-bg-strong, var(--surface-2))]">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-muted">
                     <Icon className="h-4 w-4" aria-hidden />
                   </span>
                   <div>
-                    <p className="text-sm font-semibold" style={{ color: 'var(--glass-fg)' }}>
+                    <p className="text-sm font-semibold text-foreground">
                       {alert.title}
                     </p>
-                    <p className="text-xs" style={{ color: 'var(--fg-muted, var(--muted-foreground))' }}>
+                    <p className="text-xs text-muted-foreground">
                       {alert.description}
                     </p>
                   </div>
                 </div>
-                <time className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
+                <time className="text-xs text-muted-foreground">
                   {alert.timestamp}
                 </time>
               </div>

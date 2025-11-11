@@ -46,7 +46,7 @@ export const KpiCard: React.FC<KpiCardProps> = React.memo(
           'relative flex flex-col gap-[var(--spacing-md)] rounded-[var(--radius-l)] p-[var(--spacing-lg)] backdrop-blur-xl overflow-hidden transition-all duration-500',
           'hover:-translate-y-0.5 focus-within:outline-none focus-within:ring-2',
           isDarkMode 
-            ? 'border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 shadow-[var(--shadow-glass-soft)] hover:shadow-[var(--shadow-glass-strong)] focus-within:shadow-[var(--shadow-glass-strong)]' 
+            ? 'border border-border bg-card/90 shadow-md hover:shadow-lg focus-within:shadow-lg' 
             : 'border border-slate-300/60 bg-white/95 shadow-xl hover:shadow-2xl focus-within:shadow-2xl',
           className
         )}
