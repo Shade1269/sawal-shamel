@@ -105,8 +105,8 @@ export const RecentOrders = ({ orders, loading }: RecentOrdersProps) => {
                 variant={filter === option.key ? 'default' : 'outline'}
                 className={
                   filter === option.key
-                    ? 'rounded-full bg-[color:var(--anaqti-primary,#c64262)] text-white'
-                    : 'rounded-full border-[color:var(--anaqti-border,rgba(209,168,142,0.35))] text-[color:var(--anaqti-text,#3d2b2b)]'
+                    ? 'rounded-full bg-primary text-primary-foreground'
+                    : 'rounded-full border-border text-foreground'
                 }
                 onClick={() => setFilter(option.key)}
               >
@@ -124,7 +124,7 @@ export const RecentOrders = ({ orders, loading }: RecentOrdersProps) => {
             ))}
           </div>
         ) : filteredOrders.length === 0 ? (
-          <div className="rounded-xl bg-white/70 p-6 text-sm text-[color:var(--anaqti-muted,rgba(61,43,43,0.45))]">
+          <div className="rounded-xl bg-card/70 p-6 text-sm text-muted-foreground">
             لا توجد طلبات مطابقة حالياً. عندما يتم تسجيل طلب جديد سيظهر هنا مباشرة.
           </div>
         ) : (
@@ -136,18 +136,18 @@ export const RecentOrders = ({ orders, loading }: RecentOrdersProps) => {
               return (
                 <div
                   key={order.id}
-                  className="flex flex-col gap-3 rounded-2xl border border-[color:var(--anaqti-border,rgba(209,168,142,0.35))] bg-white/75 p-4 shadow-sm"
+                  className="flex flex-col gap-3 rounded-2xl border border-border bg-card/75 p-4 shadow-sm"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <p className="text-base font-semibold text-[color:var(--anaqti-text,#3d2b2b)]">{order.orderNumber}</p>
+                      <p className="text-base font-semibold text-foreground">{order.orderNumber}</p>
                       <p className="text-xs anaqti-muted flex items-center gap-1">
                         <Clock className="h-3.5 w-3.5" />
                         {formatDate(order.createdAt)}
                       </p>
                     </div>
                     <div className="text-left">
-                      <p className="text-sm font-semibold text-[color:var(--anaqti-text,#3d2b2b)]">{currencyFormatter.format(order.total)}</p>
+                      <p className="text-sm font-semibold text-foreground">{currencyFormatter.format(order.total)}</p>
                       <p className="text-xs anaqti-muted">{order.customerName}</p>
                     </div>
                   </div>
