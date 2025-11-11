@@ -8,6 +8,7 @@ import { AdaptiveLayoutProvider, SmartNavigationProvider } from "@/components/la
 import { DarkModeProvider } from "@/shared/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
 import { navigationItems } from "@/data/navigationItems";
@@ -105,11 +106,12 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <SupabaseAuthProvider>
-            <FirebaseAuthProvider>
-              <LanguageProvider>
-                <DarkModeProvider>
-                <UserDataProvider>
+          <ThemeProvider>
+            <SupabaseAuthProvider>
+              <FirebaseAuthProvider>
+                <LanguageProvider>
+                  <DarkModeProvider>
+                  <UserDataProvider>
                   <AdaptiveLayoutProvider>
                     <BrowserRouter>
                       <SmartNavigationProvider navigationItems={navigationItems}>
@@ -238,11 +240,12 @@ const App = () => {
                       </SmartNavigationProvider>
                     </BrowserRouter>
                   </AdaptiveLayoutProvider>
-                </UserDataProvider>
-              </DarkModeProvider>
-            </LanguageProvider>
-            </FirebaseAuthProvider>
-          </SupabaseAuthProvider>
+                  </UserDataProvider>
+                </DarkModeProvider>
+              </LanguageProvider>
+              </FirebaseAuthProvider>
+            </SupabaseAuthProvider>
+          </ThemeProvider>
         </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>
