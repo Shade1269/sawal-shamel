@@ -114,7 +114,7 @@ export const IsolatedStoreCart: React.FC = () => {
           <ArrowLeft className="h-4 w-4 mr-2" />
           العودة للمتجر
         </Button>
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-gradient-danger bg-clip-text text-transparent">
           سلة التسوق
         </h1>
       </div>
@@ -196,7 +196,7 @@ export const IsolatedStoreCart: React.FC = () => {
                           </div>
 
                           <div className="flex items-center gap-4">
-                            <span className="font-bold text-2xl bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                            <span className="font-bold text-2xl bg-gradient-danger bg-clip-text text-transparent">
                               {item.total_price_sar.toFixed(0)} ر.س
                             </span>
                             
@@ -227,7 +227,7 @@ export const IsolatedStoreCart: React.FC = () => {
             className="sticky top-4"
           >
             <CardHeader className="border-b border-red-600/15">
-              <CardTitle className="text-2xl bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+              <CardTitle className="text-2xl bg-gradient-danger bg-clip-text text-transparent">
                 ملخص الطلب
               </CardTitle>
             </CardHeader>
@@ -244,7 +244,7 @@ export const IsolatedStoreCart: React.FC = () => {
                 <div className="h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent" />
                 <div className="flex justify-between items-center py-2">
                   <span className="text-xl font-bold text-white">المجموع الكلي</span>
-                  <span className="text-3xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                  <span className="text-3xl font-bold bg-gradient-danger bg-clip-text text-transparent">
                     {total.toFixed(0)} ر.س
                   </span>
                 </div>

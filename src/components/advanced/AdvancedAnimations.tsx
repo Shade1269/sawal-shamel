@@ -148,7 +148,7 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
               <Label htmlFor="physics">فيزياء متقدمة</Label>
             </div>
             
-            <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+            <Badge className="bg-gradient-premium text-primary-foreground">
               <Zap className="w-3 h-3 mr-1" />
               محرك متطور
             </Badge>
@@ -271,7 +271,7 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                   {Array.from({ length: 6 }, (_, i) => (
                     <div
                       key={i}
-                      className={`absolute w-3 h-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full animate-pulse`}
+                      className={`absolute w-3 h-3 bg-gradient-premium rounded-full animate-pulse`}
                       style={{
                         left: `${20 + i * 12}%`,
                         top: `${30 + Math.sin(i) * 20}%`,
@@ -291,7 +291,7 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
 
                 <Button
                   onClick={() => runCustomAnimation('pulse')}
-                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                  className="w-full bg-gradient-premium hover:opacity-90"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
                   تفعيل التأثير المركب
@@ -313,10 +313,10 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                 <CardDescription>رسوم متحركة طبيعية مع فيزياء واقعية</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-center h-32 bg-gradient-to-br from-green-500/10 to-blue-500/10 rounded-lg relative">
+                <div className="flex items-center justify-center h-32 bg-gradient-success/10 rounded-lg relative">
                   <div
                     ref={springRef as React.RefObject<HTMLDivElement>}
-                    className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 rounded-lg flex items-center justify-center text-white font-bold transition-transform"
+                    className="w-12 h-12 bg-gradient-success rounded-lg flex items-center justify-center text-primary-foreground font-bold transition-transform"
                     style={{
                       transform: `translate(${springValues.x}px, ${springValues.y}px) scale(${springValues.scale}) rotate(${springValues.rotation}deg)`
                     }}
@@ -397,9 +397,9 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
               <CardContent className="space-y-4">
                 <div 
                   ref={mouseRef as React.RefObject<HTMLDivElement>}
-                  className="flex items-center justify-center h-32 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-lg cursor-pointer relative overflow-hidden"
+                  className="flex items-center justify-center h-32 bg-gradient-warning/10 rounded-lg cursor-pointer relative overflow-hidden"
                 >
-                  <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-16 h-16 bg-gradient-warning rounded-full flex items-center justify-center text-primary-foreground font-bold">
                     M
                   </div>
                   

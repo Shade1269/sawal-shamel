@@ -125,7 +125,7 @@ export function TemplatesLibrarySection() {
                     {/* Premium Badge */}
                     {template.is_premium && (
                       <div className="absolute top-2 right-2">
-                        <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white gap-1">
+                        <Badge className="bg-gradient-warning text-primary-foreground gap-1">
                           <Crown className="h-3 w-3" />
                           مميز
                         </Badge>

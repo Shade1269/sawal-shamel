@@ -219,7 +219,7 @@ export const AtlantisAnimations = ({
           </motion.div>
           
           <motion.h2 
-            className="text-3xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent"
+            className="text-3xl font-bold mb-4 bg-gradient-warning bg-clip-text text-transparent"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}

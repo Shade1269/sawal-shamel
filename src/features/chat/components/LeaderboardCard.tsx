@@ -57,13 +57,13 @@ export const LeaderboardCard = ({ entry, position }: LeaderboardCardProps) => {
   const getLevelBadgeColor = (level: string) => {
     switch (level) {
       case 'legendary':
-        return 'bg-gradient-to-r from-purple-500 to-pink-500 text-white';
+        return 'bg-gradient-luxury text-primary-foreground';
       case 'gold':
-        return 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-white';
+        return 'bg-gradient-warning text-primary-foreground';
       case 'silver':
-        return 'bg-gradient-to-r from-gray-300 to-gray-500 text-white';
+        return 'bg-gradient-muted text-foreground';
       default:
-        return 'bg-gradient-to-r from-amber-600 to-amber-800 text-white';
+        return 'bg-gradient-commerce text-primary-foreground';
     }
   };
 
