@@ -88,7 +88,7 @@ export const IsolatedStoreCart: React.FC = () => {
             </p>
             <Button 
               onClick={() => navigate(`/${storeSlug}`)}
-              className="bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 border border-red-500/20"
+              className="bg-gradient-danger hover:opacity-90 shadow-lg shadow-destructive/25 hover:shadow-xl hover:shadow-destructive/35 border border-destructive/20"
               size="lg"
             >
               تسوق الآن
@@ -251,7 +251,7 @@ export const IsolatedStoreCart: React.FC = () => {
               </div>
 
               <Button 
-                className="w-full h-14 text-lg bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 border border-red-500/20 transition-all duration-500 group"
+                className="w-full h-14 text-lg bg-gradient-danger hover:opacity-90 shadow-lg shadow-destructive/25 hover:shadow-xl hover:shadow-destructive/35 border border-destructive/20 transition-all duration-500 group"
                 size="lg"
                 onClick={() => navigate(`/${storeSlug}/checkout`)}
               >

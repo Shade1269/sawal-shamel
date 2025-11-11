@@ -266,7 +266,7 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                 <CardDescription>رسوم متحركة معقدة ومركبة</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-center h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-lg relative overflow-hidden">
+                <div className="flex items-center justify-center h-32 bg-gradient-premium/10 rounded-lg relative overflow-hidden">
                   {/* Floating Elements */}
                   {Array.from({ length: 6 }, (_, i) => (
                     <div
@@ -282,7 +282,7 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                   ))}
                   
                   <div className="text-center">
-                    <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    <div className="text-2xl font-bold bg-gradient-premium bg-clip-text text-transparent">
                       تفاعلي
                     </div>
                     <div className="text-sm text-muted-foreground">رسوم متحركة ذكية</div>
@@ -432,13 +432,13 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                 <CardDescription>تأثيرات بصرية تفاعلية</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-32 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-lg relative overflow-hidden">
+                <div className="h-32 bg-gradient-premium/10 rounded-lg relative overflow-hidden">
                   {/* Interactive Grid */}
                   <div className="absolute inset-0 grid grid-cols-8 grid-rows-4 gap-1 p-2">
                     {Array.from({ length: 32 }, (_, i) => (
                       <div
                         key={i}
-                        className="bg-gradient-to-br from-indigo-400 to-purple-400 rounded-sm opacity-20 transition-all duration-300 hover:opacity-60 hover:scale-110"
+                        className="bg-gradient-premium rounded-sm opacity-20 transition-all duration-300 hover:opacity-60 hover:scale-110"
                       />
                     ))}
                   </div>
