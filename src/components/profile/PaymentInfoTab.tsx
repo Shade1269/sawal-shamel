@@ -149,10 +149,10 @@ export const PaymentInfoTab: React.FC = () => {
   return (
     <Card variant="glass" padding="lg" className="space-y-6">
       <div>
-        <h2 className="text-base font-semibold text-[color:var(--glass-fg)] mb-2">
+        <h2 className="text-base font-semibold text-foreground mb-2">
           بيانات السحب
         </h2>
-        <p className="text-sm text-[color:var(--muted-foreground)]">
+        <p className="text-sm text-muted-foreground">
           قم بحفظ بيانات السحب الخاصة بك لاستخدامها تلقائياً عند طلب سحب الأموال
         </p>
       </div>

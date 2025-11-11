@@ -372,16 +372,16 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     return (
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-6 px-4 text-center">
         <Card
-          className="w-full max-w-xl border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]"
+          className="w-full max-w-xl border border-border bg-card/85 p-[var(--spacing-xl)] shadow-md"
           data-checkout-empty
         >
           <div className="space-y-[var(--spacing-md)]">
             <div className="flex flex-col items-center gap-[var(--spacing-sm)]">
-              <Trash2 className="h-10 w-10 text-[color:var(--fg-muted)]" aria-hidden />
-              <h1 className="text-2xl font-semibold text-[color:var(--glass-fg)]">
+              <Trash2 className="h-10 w-10 text-muted-foreground" aria-hidden />
+              <h1 className="text-2xl font-semibold text-foreground">
                 العربة فارغة حالياً
               </h1>
-              <p className="max-w-md text-[color:var(--fg-muted)]">
+              <p className="max-w-md text-muted-foreground">
                 احفظت منتجاتك السابقة. يمكنك العودة للمتجر العام ومتابعة التصفح متى شئت.
               </p>
             </div>
@@ -418,8 +418,8 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
             العودة
           </Button>
           <div>
-            <h1 className="text-2xl font-semibold text-[color:var(--glass-fg)]">إتمام الشراء</h1>
-            <p className="text-sm text-[color:var(--fg-muted)]">
+            <h1 className="text-2xl font-semibold text-foreground">إتمام الشراء</h1>
+            <p className="text-sm text-muted-foreground">
               راجع منتجاتك، أدخل بياناتك، واختر طريقة الدفع المفضلة.
             </p>
           </div>
@@ -432,7 +432,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
       <VisuallyHidden aria-live="polite">{totalsAnnouncement}</VisuallyHidden>
       {errorMessage ? (
         <div
-          className="rounded-[var(--radius-lg)] border border-[color:var(--danger-border, rgba(220, 38, 38, 0.35))] bg-[color:var(--danger-bg, rgba(248, 113, 113, 0.08))] p-[var(--spacing-md)] text-sm text-[color:var(--danger-fg, #b91c1c)]"
+          className="rounded-[var(--radius-lg)] border border-destructive/35 bg-destructive/8 p-[var(--spacing-md)] text-sm text-destructive"
           role="alert"
           aria-live="assertive"
           data-testid="checkout-error"
@@ -589,12 +589,12 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
             </div>
           </Card>
 
-          <Card className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]">
+          <Card className="space-y-[var(--spacing-md)] border border-border bg-card/90 p-[var(--spacing-xl)] shadow-md">
             <header className="flex items-center gap-[var(--spacing-sm)]">
-              <MapPin className="h-5 w-5 text-[color:var(--accent)]" aria-hidden />
+              <MapPin className="h-5 w-5 text-accent" aria-hidden />
               <div>
-                <h2 className="text-lg font-semibold text-[color:var(--glass-fg)]">اختيار الشحن</h2>
-                <p className="text-sm text-[color:var(--fg-muted)]">حدد سرعة الشحن المناسبة لك.</p>
+                <h2 className="text-lg font-semibold text-foreground">اختيار الشحن</h2>
+                <p className="text-sm text-muted-foreground">حدد سرعة الشحن المناسبة لك.</p>
               </div>
             </header>
 
@@ -607,18 +607,18 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     type="button"
                     onClick={() => setShippingMethod(option.id)}
                     data-selected={selected ? "true" : undefined}
-                    className="flex items-center justify-between rounded-[var(--radius-lg)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/75 px-[var(--spacing-lg)] py-[var(--spacing-md)] text-start transition-colors data-[selected=true]:border-[color:var(--accent)] data-[selected=true]:bg-[color:var(--accent)]/10"
+                    className="flex items-center justify-between rounded-[var(--radius-lg)] border border-border bg-card/75 px-[var(--spacing-lg)] py-[var(--spacing-md)] text-start transition-colors data-[selected=true]:border-accent data-[selected=true]:bg-accent/10"
                   >
                     <div className="flex items-center gap-[var(--spacing-md)]">
-                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--glass-border)] bg-[color:var(--surface-2)] text-[color:var(--accent)]">
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-muted text-accent">
                         {option.icon}
                       </span>
                       <div>
-                        <p className="font-medium text-[color:var(--glass-fg)]">{option.label}</p>
-                        <p className="text-xs text-[color:var(--fg-muted)]">{option.description}</p>
+                        <p className="font-medium text-foreground">{option.label}</p>
+                        <p className="text-xs text-muted-foreground">{option.description}</p>
                       </div>
                     </div>
-                    <span className="text-sm font-medium text-[color:var(--accent)]">
+                    <span className="text-sm font-medium text-accent">
                       {formatCurrency(option.cost)}
                     </span>
                   </button>
@@ -627,12 +627,12 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
             </div>
           </Card>
 
-          <Card className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]">
+          <Card className="space-y-[var(--spacing-md)] border border-border bg-card/90 p-[var(--spacing-xl)] shadow-md">
             <header className="flex items-center gap-[var(--spacing-sm)]">
-              <CreditCard className="h-5 w-5 text-[color:var(--accent)]" aria-hidden />
+              <CreditCard className="h-5 w-5 text-accent" aria-hidden />
               <div>
-                <h2 className="text-lg font-semibold text-[color:var(--glass-fg)]">طرق الدفع</h2>
-                <p className="text-sm text-[color:var(--fg-muted)]">اختر طريقة الدفع المفضلة لديك.</p>
+                <h2 className="text-lg font-semibold text-foreground">طرق الدفع</h2>
+                <p className="text-sm text-muted-foreground">اختر طريقة الدفع المفضلة لديك.</p>
               </div>
             </header>
 

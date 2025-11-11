@@ -205,7 +205,7 @@ export const ShareTools = ({ store, shareUrl, products }: ShareToolsProps) => {
         <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_240px]">
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[color:var(--anaqti-text,#3d2b2b)]" htmlFor="affiliate-share-link">
+              <label className="text-sm font-medium text-foreground" htmlFor="affiliate-share-link">
                 رابط المتجر
               </label>
               <div className="flex flex-col gap-2 sm:flex-row">
@@ -241,7 +241,7 @@ export const ShareTools = ({ store, shareUrl, products }: ShareToolsProps) => {
             <div className="flex flex-wrap gap-3">
               <Button
                 onClick={handleShare}
-                className="rounded-full bg-[color:var(--anaqti-primary,#c64262)] text-white hover:bg-[color:var(--anaqti-primary-dark,#8f1e3a)]"
+                className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
                 disabled={!shareUrl}
               >
                 <Share2 className="ml-2 h-4 w-4" />
@@ -259,17 +259,17 @@ export const ShareTools = ({ store, shareUrl, products }: ShareToolsProps) => {
             </div>
 
             {Array.isArray(products) && products.length > 0 ? (
-              <div className="space-y-3 rounded-[var(--radius-l)] border border-[color:var(--glass-border,rgba(15,23,42,0.08))] bg-[color:var(--glass-bg,var(--surface-2))]/70 p-[var(--spacing-md)] shadow-[var(--shadow-glass-soft,0_18px_40px_rgba(15,23,42,0.1))]">
-                <h3 className="text-sm font-semibold text-[color:var(--anaqti-text,#3d2b2b)]">أفضل المنتجات استعدادًا للمشاركة</h3>
+              <div className="space-y-3 rounded-[var(--radius-l)] border border-border bg-card/70 p-[var(--spacing-md)] shadow-md">
+                <h3 className="text-sm font-semibold text-foreground">أفضل المنتجات استعدادًا للمشاركة</h3>
                 <ul className="space-y-2">
                   {products.slice(0, 3).map((product) => (
                     <li
                       key={product.productId}
-                      className="flex items-center justify-between gap-3 rounded-[var(--radius-m)] bg-[color:var(--glass-bg-strong,var(--surface-2))] px-[var(--spacing-md)] py-[var(--spacing-sm)] text-sm text-[color:var(--anaqti-text,#3d2b2b)]"
+                      className="flex items-center justify-between gap-3 rounded-[var(--radius-m)] bg-muted px-[var(--spacing-md)] py-[var(--spacing-sm)] text-sm text-foreground"
                     >
                       <div className="flex flex-col text-right">
                         <span className="font-medium">{product.title}</span>
-                        <span className="text-xs text-[color:var(--anaqti-muted,rgba(61,43,43,0.45))]">
+                        <span className="text-xs text-muted-foreground">
                           {currencyFormatter.format(product.revenue)} · {product.quantity} قطعة مباعة
                         </span>
                       </div>
@@ -288,7 +288,7 @@ export const ShareTools = ({ store, shareUrl, products }: ShareToolsProps) => {
               ref={canvasRef}
               width={220}
               height={220}
-              className="rounded-3xl border border-[color:var(--anaqti-border,rgba(209,168,142,0.35))] bg-white"
+              className="rounded-3xl border border-border bg-card"
             />
             <p className="text-xs anaqti-muted text-center">
               {qrReady ? 'امسح الرمز للوصول المباشر إلى المتجر' : 'سيتم توليد رمز QR تلقائيًا عند توفر الرابط'}

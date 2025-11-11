@@ -84,7 +84,7 @@ export const ProductVariantSelector: React.FC<VariantSelectorProps> = ({
     <div className={`space-y-4 ${className}`} dir="rtl">
       {sizes.length > 0 && (
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[color:var(--fg)]">
+          <label className="text-sm font-medium text-foreground">
             المقاس
           </label>
           <div className="flex flex-wrap gap-2">
@@ -118,7 +118,7 @@ export const ProductVariantSelector: React.FC<VariantSelectorProps> = ({
 
       {colors.length > 0 && (
         <div className="space-y-2">
-          <label className="text-sm font-medium text-[color:var(--fg)]">
+          <label className="text-sm font-medium text-foreground">
             اللون
           </label>
           <div className="flex flex-wrap gap-2">
