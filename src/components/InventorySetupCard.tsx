@@ -12,7 +12,7 @@ export const InventorySetupCard: React.FC = () => {
   }
 
   return (
-    <Card className="border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10">
+    <Card className="border-2 border-dashed gradient-card-primary">
       <CardContent className="p-8 text-center">
         <div className="flex justify-center mb-6">
           <div className="p-4 bg-primary/20 rounded-full">

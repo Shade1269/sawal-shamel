@@ -478,14 +478,14 @@ export const SuppliersManagement: React.FC = () => {
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {supplier.payment_terms && (
-                      <div className="text-center p-4 bg-gradient-to-br from-accent/10 to-accent/5 rounded-lg border border-accent/20">
+                      <div className="text-center p-4 gradient-card-accent rounded-lg">
                         <div className="text-sm font-medium text-accent mb-1">شروط الدفع</div>
                         <div className="text-lg font-bold text-foreground">{supplier.payment_terms}</div>
                       </div>
                     )}
                     
                     {supplier.credit_limit && (
-                      <div className="text-center p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg border border-primary/20">
+                      <div className="text-center p-4 gradient-card-primary rounded-lg">
                         <div className="text-sm font-medium text-primary mb-1">حد الائتمان</div>
                         <div className="text-lg font-bold text-foreground">
                           {supplier.credit_limit.toLocaleString('ar')} ريال
@@ -494,7 +494,7 @@ export const SuppliersManagement: React.FC = () => {
                     )}
                     
                     {supplier.tax_id && (
-                      <div className="text-center p-4 bg-gradient-to-br from-muted/50 to-muted/20 rounded-lg border border-muted-foreground/20">
+                      <div className="text-center p-4 gradient-card-muted rounded-lg">
                         <div className="text-sm font-medium text-muted-foreground mb-1">الرقم الضريبي</div>
                         <div className="text-sm font-mono text-foreground">{supplier.tax_id}</div>
                       </div>
