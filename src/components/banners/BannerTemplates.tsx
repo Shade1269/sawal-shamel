@@ -451,7 +451,7 @@ export const BannerTemplates: React.FC<BannerTemplatesProps> = ({
                   
                   {template.premium && (
                     <div className="absolute top-2 right-2">
-                      <Badge variant="secondary" className="bg-yellow-500 text-white">
+                      <Badge variant="secondary" className="bg-warning text-warning-foreground">
                         <Crown className="h-3 w-3 mr-1" />
                         مميز
                       </Badge>
@@ -459,7 +459,7 @@ export const BannerTemplates: React.FC<BannerTemplatesProps> = ({
                   )}
                   
                   <div className="absolute top-2 left-2">
-                    <Badge variant="outline" className="bg-white/90">
+                    <Badge variant="outline" className="bg-card/90">
                       <Star className="h-3 w-3 mr-1" />
                       {template.popularity}%
                     </Badge>

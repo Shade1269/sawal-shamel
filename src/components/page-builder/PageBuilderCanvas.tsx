@@ -135,7 +135,7 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
                 <p className="text-xl mb-6 opacity-90">
                   احصل على خصم 50% على جميع المنتجات
                 </p>
-                <Button variant="secondary" size="lg" className="bg-white text-primary hover:bg-white/90">
+                <Button variant="secondary" size="lg" className="bg-card text-primary hover:bg-card/90">
                   احصل على العرض
                 </Button>
               </motion.div>

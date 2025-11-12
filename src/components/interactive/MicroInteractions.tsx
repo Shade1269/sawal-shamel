@@ -325,10 +325,10 @@ const FloatingFeedback: React.FC<FloatingFeedbackProps> = ({
   };
 
   const variantClasses = {
-    success: 'bg-green-500 text-white',
-    error: 'bg-red-500 text-white',
-    info: 'bg-blue-500 text-white',
-    warning: 'bg-yellow-500 text-black'
+    success: 'bg-success text-success-foreground',
+    error: 'bg-destructive text-destructive-foreground',
+    info: 'bg-info text-info-foreground',
+    warning: 'bg-warning text-warning-foreground'
   };
 
   if (!show) return null;

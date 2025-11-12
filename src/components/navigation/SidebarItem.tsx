@@ -48,7 +48,7 @@ export function SidebarItem({
           "hover:scale-[1.02] active:scale-[0.98]",
           isActive && [
             "bg-gradient-to-l from-[hsl(var(--sidebar-active))] to-[hsl(var(--sidebar-active-glow))]",
-            "text-white font-medium shadow-lg",
+            "text-primary-foreground font-medium shadow-lg",
             "shadow-[hsl(var(--sidebar-active-glow))]/30"
           ],
           isCollapsed && "justify-center px-2",
@@ -121,7 +121,7 @@ export function SidebarItem({
 
       {/* Active Indicator */}
       {isActive && !isCollapsed && (
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-lg" />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full shadow-lg" />
       )}
     </div>
   );

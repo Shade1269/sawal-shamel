@@ -39,7 +39,7 @@ export const UserProgressCard = () => {
             <Award className="h-5 w-5 text-primary" />
             تقدمك في أتلانتس
           </CardTitle>
-          <Badge className={`${getLevelGradient(userLevel.current_level)} text-white`}>
+          <Badge className={`${getLevelGradient(userLevel.current_level)} text-primary-foreground`}>
             {getLevelName(userLevel.current_level)}
           </Badge>
         </div>
@@ -61,7 +61,7 @@ export const UserProgressCard = () => {
           )}
           {isMaxLevel && (
             <div className="text-center py-2">
-              <Badge className={`${getLevelGradient('legendary')} text-white px-4 py-2`}>
+              <Badge className={`${getLevelGradient('legendary')} text-primary-foreground px-4 py-2`}>
                 🏆 وصلت للمستوى الأقصى!
               </Badge>
             </div>

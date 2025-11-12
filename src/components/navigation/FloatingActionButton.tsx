@@ -13,8 +13,8 @@ const fabVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90",
-        luxury: "luxury-effect text-white hover:shadow-luxury",
-        persian: "persian-effect text-white hover:shadow-persian",
+        luxury: "luxury-effect text-luxury-foreground hover:shadow-luxury",
+        persian: "persian-effect text-persian-foreground hover:shadow-persian",
         glass: "glass-effect backdrop-blur-xl border border-border/30"
       },
       size: {

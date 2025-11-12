@@ -92,7 +92,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = ({ store, productsCount }
               <div className="flex items-start gap-3 sm:gap-6">
                 {/* صورة المتجر */}
                 <div className="relative">
-                  <Avatar className="h-16 w-16 sm:h-24 sm:w-24 border-2 sm:border-4 border-white shadow-lg">
+                  <Avatar className="h-16 w-16 sm:h-24 sm:w-24 border-2 sm:border-4 border-card shadow-lg">
                     <AvatarImage 
                       src={store.logo_url || store.profiles?.avatar_url} 
                       alt={store.store_name} 
@@ -106,7 +106,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = ({ store, productsCount }
                   <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2">
                     <Badge 
                       variant="secondary" 
-                      className={`${getLevelGradient(store.profiles?.level || 'bronze')} text-white border-0 text-xs`}
+                      className={`${getLevelGradient(store.profiles?.level || 'bronze')} text-primary-foreground border-0 text-xs`}
                     >
                       {getLevelIcon(store.profiles?.level || 'bronze')}
                     </Badge>

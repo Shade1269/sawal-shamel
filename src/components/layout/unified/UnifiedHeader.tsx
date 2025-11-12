@@ -197,7 +197,7 @@ export const UnifiedHeader: React.FC<UnifiedHeaderProps> = ({
             >
               <Avatar className="h-9 w-9 ring-2 ring-primary/20">
                 <AvatarImage src="" />
-                <AvatarFallback className="bg-gradient-primary text-white font-bold text-sm">
+                <AvatarFallback className="bg-gradient-primary text-primary-foreground font-bold text-sm">
                   {getUserInitial()}
                 </AvatarFallback>
               </Avatar>

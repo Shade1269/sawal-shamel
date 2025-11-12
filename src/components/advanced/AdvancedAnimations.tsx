@@ -231,7 +231,7 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                 <div className="flex items-center justify-center h-32 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg">
                   <div
                     ref={customRef as React.RefObject<HTMLDivElement>}
-                    className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold"
+                    className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-primary-foreground font-bold"
                   >
                     AI
                   </div>
@@ -405,7 +405,7 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                   
                   {/* Mouse Trail Effect */}
                   <div 
-                    className="absolute w-2 h-2 bg-white/30 rounded-full pointer-events-none transition-all duration-150"
+                    className="absolute w-2 h-2 bg-primary-foreground/30 rounded-full pointer-events-none transition-all duration-150"
                     style={{
                       left: `${50 + mousePosition.x * 0.1}%`,
                       top: `${50 + mousePosition.y * 0.1}%`
