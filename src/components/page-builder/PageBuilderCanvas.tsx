@@ -86,14 +86,14 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
                   className="p-6 border-2 border-dashed border-muted-foreground/20 rounded-lg hover:border-primary/50 transition-colors cursor-pointer"
                   onClick={() => onElementSelect?.({ type: 'hero', id: 'hero-1' })}
                 >
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">
+                  <h1 className="text-4xl font-bold gradient-text-accent mb-4">
                     مرحباً بك في متجرنا
                   </h1>
                   <p className="text-xl text-muted-foreground mb-6">
                     اكتشف أفضل المنتجات بأسعار لا تُقاوم
                   </p>
                   <div className="flex gap-4 justify-center">
-                    <Button size="lg" className="bg-gradient-to-r from-primary to-accent">
+                    <Button size="lg" className="gradient-btn-accent">
                       تسوق الآن
                     </Button>
                     <Button variant="outline" size="lg">

@@ -154,3 +154,34 @@ html[data-theme="luxury"] body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+/* Dark Mode Colors (luxury) */
+html[data-theme="luxury"].dark {
+  color-scheme: dark;
+  /* Already optimized for dark mode - no changes needed */
+}
+
+/* Light Mode Colors */
+html[data-theme="luxury"]:not(.dark) {
+  color-scheme: light;
+  --background-hsl: 45 40% 98%;
+  --foreground-hsl: 19 52% 8%;
+  --primary-hsl: 46 65% 45%;
+  --primary-foreground-hsl: 0 0% 100%;
+  --secondary-hsl: 19 42% 92%;
+  --secondary-foreground-hsl: 19 52% 8%;
+  --accent-hsl: 40 89% 65%;
+  --accent-foreground-hsl: 19 45% 14%;
+  --muted-hsl: 35 40% 92%;
+  --muted-foreground-hsl: 28 30% 45%;
+  --border-hsl: 35 30% 85%;
+  --card-hsl: 0 0% 100%;
+  --card-foreground-hsl: 19 52% 8%;
+  --surface: hsla(45, 30%, 98%, 0.85);
+  --surface-2: hsla(40, 25%, 95%, 0.92);
+  --glass-border: hsla(30, 40%, 75%, 0.35);
+  --shadow-glass-soft: 0 4px 24px hsla(20, 30%, 50%, 0.12);
+  --shadow-glass-strong: 0 8px 40px hsla(20, 30%, 50%, 0.18);
+  --state-hover-bg: hsla(19, 52%, 8%, 0.05);
+  --state-active-bg: hsla(19, 52%, 8%, 0.1);
+}
