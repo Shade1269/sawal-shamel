@@ -53,14 +53,31 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
   fullWidth = false,
 }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
 
   const toggleSidebar = () => {
     setSidebarCollapsed((prev) => !prev);
   };
 
+  const toggleMobileSidebar = () => {
+    setMobileSidebarOpen((prev) => !prev);
+  };
+
+  const closeMobileSidebar = () => {
+    setMobileSidebarOpen(false);
+  };
+
   return (
     <div className="min-h-screen flex w-full bg-background">
-      {/* Sidebar - Desktop */}
+      {/* Mobile Sidebar Overlay */}
+      {mobileSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden"
+          onClick={closeMobileSidebar}
+        />
+      )}
+
+      {/* Sidebar - Desktop & Mobile Drawer */}
       {showSidebar && sidebarSections.length > 0 && (
         <UnifiedSidebar
           sections={sidebarSections}
@@ -68,6 +85,8 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
           onToggleCollapse={toggleSidebar}
           header={sidebarHeader}
           footer={sidebarFooter}
+          mobileOpen={mobileSidebarOpen}
+          onMobileClose={closeMobileSidebar}
         />
       )}
 
@@ -82,7 +101,8 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
       >
         {/* Header */}
         <UnifiedHeader
-          onSidebarToggle={showSidebar ? toggleSidebar : undefined}
+          onSidebarToggle={showSidebar ? toggleMobileSidebar : undefined}
+          onDesktopSidebarToggle={showSidebar ? toggleSidebar : undefined}
           {...header}
         />
 
