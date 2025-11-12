@@ -373,7 +373,7 @@ const ShippingManager: React.FC<ShippingManagerProps> = ({
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="text-center p-3 bg-white rounded-lg border">
+            <div className="text-center p-3 bg-card rounded-lg border">
               <Scale className="h-6 w-6 mx-auto mb-2 text-primary" />
               <p className="text-sm font-medium">الوزن</p>
               <p className="text-lg font-bold text-primary">
@@ -381,7 +381,7 @@ const ShippingManager: React.FC<ShippingManagerProps> = ({
               </p>
             </div>
 
-            <div className="text-center p-3 bg-white rounded-lg border">
+            <div className="text-center p-3 bg-card rounded-lg border">
               <Ruler className="h-6 w-6 mx-auto mb-2 text-primary" />
               <p className="text-sm font-medium">الأبعاد</p>
               <p className="text-lg font-bold text-primary">
@@ -391,7 +391,7 @@ const ShippingManager: React.FC<ShippingManagerProps> = ({
               </p>
             </div>
 
-            <div className="text-center p-3 bg-white rounded-lg border">
+            <div className="text-center p-3 bg-card rounded-lg border">
               <Clock className="h-6 w-6 mx-auto mb-2 text-primary" />
               <p className="text-sm font-medium">مدة التحضير</p>
               <p className="text-lg font-bold text-primary">
@@ -399,7 +399,7 @@ const ShippingManager: React.FC<ShippingManagerProps> = ({
               </p>
             </div>
 
-            <div className="text-center p-3 bg-white rounded-lg border">
+            <div className="text-center p-3 bg-card rounded-lg border">
               <Truck className="h-6 w-6 mx-auto mb-2 text-primary" />
               <p className="text-sm font-medium">تكلفة تقديرية</p>
               <p className="text-lg font-bold text-primary">

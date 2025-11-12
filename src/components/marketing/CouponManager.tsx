@@ -458,8 +458,8 @@ const CouponManager = () => {
                 {coupons.slice(0, 3).map((coupon, index) => (
                   <div key={coupon.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex items-center gap-3">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
-                        index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-orange-500'
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-primary-foreground ${
+                        index === 0 ? 'bg-warning' : index === 1 ? 'bg-muted' : 'bg-secondary'
                       }`}>
                         {index + 1}
                       </div>

@@ -1008,7 +1008,7 @@ const ChatInterface = () => {
                         {canDeleteMessage(msg.id, msg.sender_id) && (
                           <button
                             onClick={() => deleteMessage(msg.id)}
-                            className="absolute top-1 left-1 opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 text-white p-1 rounded text-xs hover:bg-red-600"
+                            className="absolute top-1 left-1 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive text-destructive-foreground p-1 rounded text-xs hover:bg-destructive/90"
                           >
                             <Trash2 className="h-3 w-3" />
                           </button>

@@ -31,15 +31,15 @@ const ThemePreview = ({ theme, isActive = false }: { theme: StoreTheme; isActive
       {/* معاينة الألوان */}
       <div className="flex gap-2 mb-3">
         <div 
-          className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+          className="w-6 h-6 rounded-full border-2 border-card shadow-sm"
           style={{ backgroundColor: config?.colors?.primary }}
         />
         <div 
-          className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+          className="w-6 h-6 rounded-full border-2 border-card shadow-sm"
           style={{ backgroundColor: config?.colors?.secondary }}
         />
         <div 
-          className="w-6 h-6 rounded-full border-2 border-white shadow-sm"
+          className="w-6 h-6 rounded-full border-2 border-card shadow-sm"
           style={{ backgroundColor: config?.colors?.accent }}
         />
       </div>

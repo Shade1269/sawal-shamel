@@ -189,7 +189,7 @@ const ResponsiveLayout = React.forwardRef<HTMLDivElement, ResponsiveLayoutProps>
 
         {/* Development Helper - Show current breakpoint */}
         {process.env.NODE_ENV === 'development' && (
-          <div className="fixed bottom-4 left-4 z-50 px-2 py-1 bg-black/80 text-white text-xs rounded">
+          <div className="fixed bottom-4 left-4 z-50 px-2 py-1 bg-background/80 text-foreground text-xs rounded border border-border">
             {isMobile ? 'Mobile' : isTablet ? 'Tablet' : 'Desktop'}
           </div>
         )}

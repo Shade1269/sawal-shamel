@@ -156,7 +156,7 @@ export const PaymentIntegration: React.FC<PaymentIntegrationProps> = ({
       >
         {processing ? (
           <>
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-foreground mr-2"></div>
             جاري المعالجة...
           </>
         ) : (
