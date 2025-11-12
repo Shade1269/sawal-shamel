@@ -94,8 +94,9 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
       <div
         className={cn(
           'flex-1 flex flex-col min-w-0 transition-all duration-300',
-          showSidebar && (sidebarCollapsed ? 'mr-16' : 'mr-64'),
-          'max-md:mr-0', // No margin on mobile
+          // Apply sidebar margin only on desktop to avoid mobile gap (RTL safe)
+          showSidebar && (sidebarCollapsed ? 'md:mr-16' : 'md:mr-64'),
+          'mr-0',
           className
         )}
       >
