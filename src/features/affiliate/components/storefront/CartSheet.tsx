@@ -8,7 +8,7 @@ import { LuxuryCardV2, LuxuryCardContent } from "@/components/luxury/LuxuryCardV
 interface CartItem {
   id: string;
   product_title: string;
-  product_image_url: string;
+  product_image_url?: string;
   quantity: number;
   unit_price_sar: number;
   total_price_sar: number;
