@@ -21,13 +21,13 @@ import { ContentBlocksSection } from './ContentBlocksSection';
 
 export function ContentManagementDashboard() {
   return (
-    <div className="min-h-screen gradient-header p-6">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold gradient-text-primary">
+              <h1 className="text-3xl font-bold bg-gradient-to-l from-primary to-primary/80 bg-clip-text text-transparent">
                 نظام إدارة المحتوى
               </h1>
               <p className="text-muted-foreground mt-1">

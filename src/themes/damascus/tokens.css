@@ -189,42 +189,8 @@ html[data-theme="damascene"] {
   color: var(--damascus-muted);
 }
 
-html[data-theme="damascus"] body,
-html[data-theme="damascene"] body {
+html[data-theme="damascus"] body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-}
-
-/* Dark Mode Colors (damascus) */
-html[data-theme="damascus"].dark,
-html[data-theme="damascene"].dark {
-  color-scheme: dark;
-  /* Already optimized for dark mode - no changes needed */
-}
-
-/* Light Mode Colors */
-html[data-theme="damascus"]:not(.dark),
-html[data-theme="damascene"]:not(.dark) {
-  color-scheme: light;
-  --background-hsl: 40 30% 98%;
-  --foreground-hsl: 0 0% 5%;
-  --primary-hsl: 43 45% 40%;
-  --primary-foreground-hsl: 40 20% 98%;
-  --secondary-hsl: 0 0% 93%;
-  --secondary-foreground-hsl: 0 0% 5%;
-  --accent-hsl: 43 45% 48%;
-  --accent-foreground-hsl: 0 0% 5%;
-  --muted-hsl: 40 20% 90%;
-  --muted-foreground-hsl: 40 20% 40%;
-  --border-hsl: 30 30% 85%;
-  --card-hsl: 0 0% 100%;
-  --card-foreground-hsl: 0 0% 5%;
-  --surface: hsla(40, 20%, 98%, 0.9);
-  --surface-2: hsla(40, 15%, 95%, 0.95);
-  --glass-border: hsla(43, 45%, 75%, 0.3);
-  --shadow-glass-soft: 0 4px 20px hsla(0, 0%, 0%, 0.08);
-  --shadow-glass-strong: 0 8px 28px hsla(43, 45%, 48%, 0.12);
-  --state-hover-bg: hsla(43, 45%, 48%, 0.08);
-  --state-active-bg: hsla(43, 45%, 48%, 0.15);
 }

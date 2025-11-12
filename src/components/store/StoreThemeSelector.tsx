@@ -247,7 +247,7 @@ export const StoreThemeSelector: React.FC<StoreThemeSelectorProps> = ({
       </div>
 
       {currentTheme && (
-        <Card className="gradient-bg-accent border-primary/20">
+        <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5" />

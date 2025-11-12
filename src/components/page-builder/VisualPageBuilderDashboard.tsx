@@ -39,7 +39,7 @@ export const VisualPageBuilderDashboard: React.FC = () => {
                   <Layout className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold gradient-text-accent">
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                     منشئ الصفحات المرئي
                   </h1>
                   <p className="text-muted-foreground">صمم صفحات تفاعلية بسهولة</p>
@@ -67,7 +67,7 @@ export const VisualPageBuilderDashboard: React.FC = () => {
                 مشاركة
               </Button>
               
-              <Button className="gap-2 gradient-btn-accent">
+              <Button className="gap-2 bg-gradient-to-r from-primary to-accent">
                 <Save className="w-4 h-4" />
                 حفظ ونشر
               </Button>
