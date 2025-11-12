@@ -119,7 +119,7 @@ export const AllianceManager = () => {
     <div className="space-y-6">
       {/* Current Alliance Status */}
       {userAlliance && userMembership ? (
-        <Card className="bg-gradient-to-r from-primary/10 to-primary/5">
+        <Card className="gradient-card-primary">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -341,7 +341,7 @@ export const AllianceManager = () => {
 
       {/* User Level Info */}
       {userLevel && (
-        <Card className="bg-gradient-to-r from-premium/10 to-premium/5">
+        <Card className="gradient-card-secondary">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5" />

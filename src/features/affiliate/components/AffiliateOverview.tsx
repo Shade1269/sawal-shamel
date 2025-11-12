@@ -99,7 +99,7 @@ export const AffiliateOverview = ({
     <div className="space-y-6">
       {/* Store Info Card */}
       {affiliateStore && (
-        <Card className="border-0 bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-sm">
+        <Card className="border-0 gradient-card-accent backdrop-blur-sm">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-2">

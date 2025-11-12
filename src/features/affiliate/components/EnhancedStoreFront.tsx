@@ -784,7 +784,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // Error state
   if (storeError) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-destructive/5 to-destructive/10">
+      <div className="min-h-screen flex items-center justify-center gradient-danger-light">
         <div className="text-center max-w-md mx-auto p-8">
           <div className="w-24 h-24 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Store className="h-12 w-12 text-destructive" />
@@ -805,7 +805,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // تطبيق الثيم إذا كان المتجر محمل
   if (!affiliateStore) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-destructive/5 to-destructive/10">
+      <div className="min-h-screen flex items-center justify-center gradient-danger-light">
         <div className="text-center max-w-md mx-auto p-8">
           <div className="w-24 h-24 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Store className="h-12 w-12 text-destructive" />
@@ -958,7 +958,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               ) : (
                 <div className="w-full h-full bg-gradient-subtle" />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-background/30 to-background/10 backdrop-blur-sm" />
+              <div className="absolute inset-0 gradient-fade-down backdrop-blur-sm" />
             </div>
 
             {/* Content */}
@@ -1003,7 +1003,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm p-8 rounded-3xl border-2 border-primary/10 shadow-2xl"
+          className="gradient-glass backdrop-blur-sm p-8 rounded-3xl border-2 border-primary/10 shadow-2xl"
         >
           <div className="space-y-6">
             {/* Search Bar */}
@@ -1322,7 +1322,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                               )}
                             </div>
                           ) : (
-                            <div className="h-40 w-full bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center text-sm text-muted-foreground">
+                            <div className="h-40 w-full gradient-icon-wrapper flex items-center justify-center text-sm text-muted-foreground">
                               لا توجد صورة متاحة
                             </div>
                           )}
@@ -1406,7 +1406,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-20">
               <div className="space-y-6">
-                <div className="w-32 h-32 bg-gradient-to-br from-muted to-muted/50 rounded-full flex items-center justify-center mx-auto">
+                <div className="w-32 h-32 gradient-bg-muted rounded-full flex items-center justify-center mx-auto">
                   <Search className="h-16 w-16 text-muted-foreground" />
                 </div>
                 <div>
@@ -1445,7 +1445,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                 >
                   <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 bg-card rounded-2xl">
                     {/* Product Image */}
-                    <div className="aspect-square relative overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10">
+                    <div className="aspect-square relative overflow-hidden gradient-bg-muted">
                       {product.image_urls && product.image_urls.length > 0 ? (
                         <img
                           src={product.image_urls[0]}
@@ -1468,7 +1468,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                       )}
 
                       {/* Quick Actions Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-2 md:gap-3">
+                      <div className="absolute inset-0 gradient-overlay opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-2 md:gap-3">
                         <Button 
                           size="sm" 
                           variant="secondary"
@@ -1566,7 +1566,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                       {/* Add to Cart Button */}
                       <Button 
                         onClick={() => handleProductAddToCart(product)}
-                        className="w-full group/btn bg-gradient-to-r from-primary via-primary to-primary/90 hover:from-primary/95 hover:via-primary/90 hover:to-primary/85 transition-all duration-300 shadow-lg hover:shadow-xl rounded-xl font-semibold"
+                        className="w-full group/btn gradient-btn-primary transition-all duration-300 shadow-lg hover:shadow-xl rounded-xl font-semibold"
                         size="lg"
                         disabled={product.stock === 0}
                       >
@@ -1642,7 +1642,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                                   alt={item.product_title}
                                   className="w-20 h-20 object-cover rounded-lg border border-red-600/20 group-hover:border-red-600/40 transition-all duration-300"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute inset-0 gradient-overlay rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
                               </div>
                               
                               <div className="flex-1 min-w-0 space-y-2">
@@ -1862,7 +1862,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                   {/* Actions */}
                   <div className="space-y-3">
                     <Button
-                      className="w-full h-14 text-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-lg"
+                      className="w-full h-14 text-lg gradient-btn-primary shadow-lg"
                       onClick={() => {
                         const requiresVariant = (selectedProduct.variants && selectedProduct.variants.length > 0);
                         if (requiresVariant && !selectedVariant) {

@@ -35,11 +35,11 @@
 }
 
 .gradient-bg-secondary {
-  @apply bg-gradient-to-br from-secondary/5 to-secondary/10;
+  @apply bg-gradient-to-br from-secondary/5 via-background to-secondary/5;
 }
 
 .gradient-bg-accent {
-  @apply bg-gradient-to-br from-primary/5 to-accent/10;
+  @apply bg-gradient-to-br from-primary/5 via-background to-accent/5;
 }
 
 .gradient-bg-card {
@@ -82,7 +82,7 @@
 
 /* === Header & Hero Gradients === */
 .gradient-header {
-  @apply bg-gradient-to-br from-background to-secondary/20;
+  @apply bg-gradient-to-r from-muted/50 to-background;
 }
 
 .gradient-hero {

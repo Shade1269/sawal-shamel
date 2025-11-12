@@ -27,7 +27,7 @@ const badgeVariants = cva(
         
         // Style Variants
         glass: "border-white/20 bg-white/10 backdrop-blur-sm text-foreground hover:bg-white/20",
-        gradient: "border-transparent bg-gradient-to-r from-primary to-accent text-white hover:scale-105",
+        gradient: "border-transparent gradient-btn-accent text-white hover:scale-105",
         glow: "border-transparent bg-primary text-primary-foreground shadow-glow animate-pulse-glow",
         
         // Size-specific variants

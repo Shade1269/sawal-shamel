@@ -85,8 +85,8 @@ export function AdminSidebar() {
     
     return `group flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-300 hover:scale-[1.02] ${
       isActive 
-        ? "bg-gradient-to-r from-primary/25 via-primary/15 to-primary/10 text-primary border border-primary/30 font-semibold shadow-glow ring-2 ring-primary/20 backdrop-blur-sm" 
-        : "text-muted-foreground hover:bg-gradient-to-r hover:from-accent/50 hover:to-accent/30 hover:text-accent-foreground hover:shadow-md hover:backdrop-blur-sm"
+        ? "bg-primary/20 text-primary border border-primary/30 font-semibold shadow-glow ring-2 ring-primary/20 backdrop-blur-sm" 
+        : "text-muted-foreground hover:bg-accent/40 hover:text-accent-foreground hover:shadow-md hover:backdrop-blur-sm"
     }`;
   };
 
@@ -171,9 +171,9 @@ export function AdminSidebar() {
         {/* Status Indicator */}
         {!isCollapsed && (
           <div className="mt-8 px-3">
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-success/15 via-success/10 to-success/15 border border-success/30 shadow-glow backdrop-blur-sm">
+            <div className="p-4 rounded-2xl gradient-card-success border border-success/30 shadow-glow backdrop-blur-sm">
               <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-gradient-to-r from-success to-success/80 animate-pulse shadow-sm"></div>
+                <div className="w-3 h-3 rounded-full gradient-success animate-pulse shadow-sm"></div>
                 <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
                   النظام يعمل بطلاقة
                 </span>

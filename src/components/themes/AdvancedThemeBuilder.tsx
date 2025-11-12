@@ -166,7 +166,7 @@ export const AdvancedThemeBuilder: React.FC<AdvancedThemeBuilderProps> = ({
             </Button>
           )}
           
-          <Button onClick={handleApply} className="gap-2 bg-gradient-to-r from-primary to-accent">
+          <Button onClick={handleApply} className="gap-2 gradient-btn-accent">
             <Zap className="w-4 h-4" />
             تطبيق الثيم
           </Button>
@@ -176,7 +176,7 @@ export const AdvancedThemeBuilder: React.FC<AdvancedThemeBuilderProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-200px)]">
         {/* Templates Gallery */}
         <Card className="col-span-1 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-muted/50 to-background">
+          <CardHeader className="gradient-header">
             <CardTitle className="flex items-center gap-2">
               <Layers className="w-5 h-5" />
               مكتبة القوالب
@@ -223,7 +223,7 @@ export const AdvancedThemeBuilder: React.FC<AdvancedThemeBuilderProps> = ({
                         }`}
                         onClick={() => setSelectedTemplate(template)}
                       >
-                        <div className="p-4 bg-gradient-to-br from-card to-card/80 rounded-xl">
+                        <div className="p-4 gradient-bg-card rounded-xl">
                           <div className="flex items-start justify-between mb-3">
                             <div>
                               <h3 className="font-semibold flex items-center gap-2">
@@ -279,7 +279,7 @@ export const AdvancedThemeBuilder: React.FC<AdvancedThemeBuilderProps> = ({
 
         {/* Customization Panel */}
         <Card className="col-span-1 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-muted/50 to-background">
+          <CardHeader className="gradient-header">
             <CardTitle className="flex items-center gap-2">
               <Settings className="w-5 h-5" />
               التخصيص المتقدم
@@ -529,7 +529,7 @@ export const AdvancedThemeBuilder: React.FC<AdvancedThemeBuilderProps> = ({
 
         {/* Preview & Actions */}
         <Card className="col-span-1 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-muted/50 to-background">
+          <CardHeader className="gradient-header">
             <CardTitle className="flex items-center gap-2">
               <Eye className="w-5 h-5" />
               المعاينة والحفظ

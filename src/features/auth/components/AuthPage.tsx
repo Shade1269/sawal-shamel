@@ -129,9 +129,9 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen gradient-bg-accent flex items-center justify-center p-4 relative overflow-hidden">
       {/* Enhanced Background decorative elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-accent/3"></div>
+      <div className="absolute inset-0 gradient-overlay"></div>
       <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-hero opacity-8 rounded-full blur-3xl animate-persian-float"></div>
       <div className="absolute bottom-20 right-20 w-56 h-56 bg-gradient-luxury opacity-12 rounded-full blur-2xl animate-persian-float" style={{ animationDelay: '2s' }}></div>
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-ocean opacity-5 rounded-full blur-3xl animate-persian-float" style={{ animationDelay: '4s' }}></div>
@@ -168,7 +168,7 @@ const AuthPage = () => {
         <EnhancedCard variant="glass" className="backdrop-blur-xl bg-card/70 border border-white/30 shadow-luxury animate-slide-up hover:shadow-2xl transition-all duration-500 overflow-hidden">
           <Tabs defaultValue="signin" className="w-full">
             <div className="px-8 pt-8">
-              <TabsList className="grid w-full grid-cols-3 mb-10 bg-gradient-to-r from-muted/20 to-muted/10 backdrop-blur-sm p-1.5 rounded-2xl border border-white/20 shadow-soft">
+              <TabsList className="grid w-full grid-cols-3 mb-10 gradient-bg-muted backdrop-blur-sm p-1.5 rounded-2xl border border-white/20 shadow-soft">
                 <TabsTrigger value="signin" className="gap-2 data-[state=active]:bg-gradient-ocean data-[state=active]:text-white data-[state=active]:shadow-ocean transition-all duration-500 rounded-xl py-3 font-bold text-sm group">
                   <LogIn className="h-4 w-4 group-data-[state=active]:scale-110 transition-transform duration-300" />
                 تسجيل دخول
@@ -222,7 +222,7 @@ const AuthPage = () => {
                     />
                   </div>
                   
-                  <div className="flex items-center space-x-4 space-x-reverse justify-end p-6 bg-gradient-to-r from-ocean/5 to-primary/5 rounded-2xl border border-ocean/20 shadow-soft">
+                  <div className="flex items-center space-x-4 space-x-reverse justify-end p-6 gradient-card-primary rounded-2xl border border-ocean/20 shadow-soft">
                     <Checkbox 
                       id="remember-me"
                       checked={signInForm.rememberMe}
@@ -319,8 +319,8 @@ const AuthPage = () => {
                           onClick={() => setSignUpForm(prev => ({...prev, role: 'affiliate'}))}
                           className={`p-6 rounded-2xl border-2 transition-all duration-500 group hover:scale-105 ${
                             signUpForm.role === 'affiliate'
-                              ? 'border-sunset bg-gradient-to-br from-sunset/10 to-warning/5 shadow-sunset'
-                              : 'border-border hover:border-sunset/50 bg-gradient-to-br from-muted/20 to-muted/10'
+                              ? 'border-sunset gradient-card-secondary shadow-sunset'
+                              : 'border-border hover:border-sunset/50 gradient-bg-muted'
                           }`}
                         >
                           <div className="text-center">
@@ -334,8 +334,8 @@ const AuthPage = () => {
                           onClick={() => setSignUpForm(prev => ({...prev, role: 'merchant'}))}
                           className={`p-6 rounded-2xl border-2 transition-all duration-500 group hover:scale-105 ${
                             signUpForm.role === 'merchant'
-                              ? 'border-sunset bg-gradient-to-br from-sunset/10 to-warning/5 shadow-sunset'
-                              : 'border-border hover:border-sunset/50 bg-gradient-to-br from-muted/20 to-muted/10'
+                              ? 'border-sunset gradient-card-secondary shadow-sunset'
+                              : 'border-border hover:border-sunset/50 gradient-bg-muted'
                           }`}
                         >
                           <div className="text-center">
@@ -359,7 +359,7 @@ const AuthPage = () => {
                       {isLoading ? 'جاري المعالجة...' : 'متابعة التسجيل'}
                     </EnhancedButton>
 
-                    <div className="text-center text-lg text-muted-foreground/80 bg-gradient-to-r from-sunset/5 via-warning/5 to-sunset/5 p-6 rounded-2xl border border-sunset/20 shadow-soft elegant-text">
+                    <div className="text-center text-lg text-muted-foreground/80 gradient-card-secondary p-6 rounded-2xl border border-sunset/20 shadow-soft elegant-text">
                       ستحتاج لاختيار اسم المستخدم في الخطوة التالية
                     </div>
                   </form>
