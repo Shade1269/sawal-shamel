@@ -145,3 +145,4 @@
    See: src/styles/animations.css for all keyframes
    ============================================ */
 @import './styles/animations.css';
+@import './styles/gradients.css';

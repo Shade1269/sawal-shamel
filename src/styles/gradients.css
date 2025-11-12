@@ -1,0 +1,134 @@
+/**
+ * Unified Gradient System
+ * Replaces 216+ inline gradient declarations
+ * All gradients use semantic tokens for theme compatibility
+ */
+
+/* === Card & Surface Gradients === */
+.gradient-card-primary {
+  @apply bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20;
+}
+
+.gradient-card-secondary {
+  @apply bg-gradient-to-r from-secondary/10 to-secondary/5 border-secondary/20;
+}
+
+.gradient-card-accent {
+  @apply bg-gradient-to-r from-accent/10 to-accent/5 border-accent/20;
+}
+
+.gradient-card-muted {
+  @apply bg-gradient-to-r from-muted/50 to-muted/20 border-muted-foreground/20;
+}
+
+.gradient-card-destructive {
+  @apply bg-gradient-to-r from-destructive/10 to-destructive/5 border-destructive/20;
+}
+
+.gradient-card-success {
+  @apply bg-gradient-to-br from-success/10 to-success/5 border-success/20;
+}
+
+/* === Background Gradients === */
+.gradient-bg-primary {
+  @apply bg-gradient-to-br from-primary/5 to-primary/10;
+}
+
+.gradient-bg-secondary {
+  @apply bg-gradient-to-br from-secondary/5 to-secondary/10;
+}
+
+.gradient-bg-accent {
+  @apply bg-gradient-to-br from-primary/5 to-accent/10;
+}
+
+.gradient-bg-card {
+  @apply bg-gradient-to-br from-card/90 to-card;
+}
+
+.gradient-bg-muted {
+  @apply bg-gradient-to-br from-muted/20 to-muted/40;
+}
+
+/* === Button Gradients === */
+.gradient-btn-primary {
+  @apply bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70;
+}
+
+.gradient-btn-accent {
+  @apply bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90;
+}
+
+.gradient-btn-luxury {
+  @apply bg-gradient-to-r from-luxury to-luxury/80 hover:from-luxury/90 hover:to-luxury/70;
+}
+
+.gradient-btn-premium {
+  @apply bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70;
+}
+
+/* === Text Gradients === */
+.gradient-text-primary {
+  @apply bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent;
+}
+
+.gradient-text-accent {
+  @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+}
+
+.gradient-text-luxury {
+  @apply bg-gradient-to-r from-luxury to-premium bg-clip-text text-transparent;
+}
+
+/* === Header & Hero Gradients === */
+.gradient-header {
+  @apply bg-gradient-to-br from-background to-secondary/20;
+}
+
+.gradient-hero {
+  @apply bg-gradient-to-r from-primary to-primary-dark;
+}
+
+/* === Hover Effects === */
+.gradient-hover-primary {
+  @apply hover:bg-gradient-to-r hover:from-primary/5 hover:to-primary/10;
+}
+
+.gradient-hover-accent {
+  @apply hover:bg-gradient-to-r hover:from-accent/5 hover:to-accent/10;
+}
+
+/* === Utility Gradients === */
+.gradient-glass {
+  @apply bg-gradient-to-br from-card/20 via-transparent to-card/10;
+}
+
+.gradient-shimmer {
+  @apply bg-gradient-to-r from-transparent via-foreground/20 to-transparent;
+}
+
+.gradient-fade-down {
+  @apply bg-gradient-to-b from-background to-transparent;
+}
+
+.gradient-icon-wrapper {
+  @apply bg-gradient-to-br from-primary/20 to-accent/20;
+}
+
+/* === Info Cards === */
+.gradient-info {
+  @apply bg-gradient-to-r from-info/5 to-info/10 border-info/20;
+}
+
+.gradient-warning {
+  @apply bg-gradient-to-r from-warning/5 to-warning/10 border-warning/20;
+}
+
+/* === Complex Gradients === */
+.gradient-page-bg {
+  @apply bg-gradient-to-br from-background to-secondary/20;
+}
+
+.gradient-overlay {
+  @apply bg-gradient-to-br from-primary-foreground/20 to-transparent;
+}

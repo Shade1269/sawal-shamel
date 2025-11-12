@@ -173,10 +173,10 @@ export const InventoryMovements: React.FC = () => {
 
   const getMovementCardClass = (type: string) => {
     switch (type) {
-      case 'IN': return 'bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20';
-      case 'OUT': return 'bg-gradient-to-r from-destructive/10 to-destructive/5 border-destructive/20';
-      case 'ADJUSTMENT': return 'bg-gradient-to-r from-accent/10 to-accent/5 border-accent/20';
-      case 'TRANSFER': return 'bg-gradient-to-r from-muted/50 to-muted/20 border-muted-foreground/20';
+      case 'IN': return 'gradient-card-primary';
+      case 'OUT': return 'gradient-card-destructive';
+      case 'ADJUSTMENT': return 'gradient-card-accent';
+      case 'TRANSFER': return 'gradient-card-muted';
       default: return 'bg-card border-border/50';
     }
   };

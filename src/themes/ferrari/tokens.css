@@ -179,3 +179,34 @@ html[data-theme="ferrari"] body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+/* Dark Mode Colors (ferrari) */
+html[data-theme="ferrari"].dark {
+  color-scheme: dark;
+  /* Already optimized for dark mode - no changes needed */
+}
+
+/* Light Mode Colors */
+html[data-theme="ferrari"]:not(.dark) {
+  color-scheme: light;
+  --background-hsl: 0 0% 100%;
+  --foreground-hsl: 220 50% 11%;
+  --primary-hsl: 349 69% 55%;
+  --primary-foreground-hsl: 0 0% 100%;
+  --secondary-hsl: 220 40% 92%;
+  --secondary-foreground-hsl: 220 50% 11%;
+  --accent-hsl: 349 69% 55%;
+  --accent-foreground-hsl: 0 0% 100%;
+  --muted-hsl: 220 20% 92%;
+  --muted-foreground-hsl: 220 20% 40%;
+  --border-hsl: 220 30% 88%;
+  --card-hsl: 0 0% 100%;
+  --card-foreground-hsl: 220 50% 11%;
+  --surface: hsla(220, 20%, 98%, 1.0);
+  --surface-2: hsla(220, 15%, 95%, 1.0);
+  --glass-border: hsla(220, 30%, 80%, 0.3);
+  --shadow-glass-soft: 0 4px 24px hsla(220, 50%, 50%, 0.08);
+  --shadow-glass-strong: 0 8px 40px hsla(220, 50%, 50%, 0.12);
+  --state-hover-bg: hsla(349, 69%, 45%, 0.05);
+  --state-active-bg: hsla(349, 69%, 45%, 0.1);
+}

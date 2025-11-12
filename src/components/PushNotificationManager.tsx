@@ -332,7 +332,7 @@ export const PushNotificationManager: React.FC = () => {
           </div>
         )}
 
-        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg border interactive-glow">
+        <div className="flex items-center justify-between p-4 gradient-bg-accent rounded-lg border interactive-glow">
           <div className="flex items-center gap-3">
             <div className="relative">
               <Smartphone className="h-8 w-8 text-primary animate-pulse-slow" />
