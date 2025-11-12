@@ -41,21 +41,25 @@ export const IsolatedStoreCheckout: React.FC = () => {
   const navigate = useNavigate();
   const { store } = useOutletContext<StoreContextType>();
   const { cart, loading: cartLoading, clearCart } = useIsolatedStoreCart(store?.id || '', storeSlug);
-  const { sessionId } = useStorefrontOtp({ storeSlug: storeSlug || '', storeId: store?.id });
+  const { sessionId, isReady } = useStorefrontOtp({ storeSlug: storeSlug || '', storeId: store?.id });
   const { calculateShippingCost, loading: shippingLoading } = useShippingManagement();
+  
+  const hasRedirectedRef = React.useRef(false);
 
   // التحقق من تسجيل دخول العميل
   useEffect(() => {
-    // انتظر حتى يتم تحميل بيانات المتجر قبل التحقق
-    if (!store?.id || cartLoading) return;
+    // انتظر حتى يتم تحميل جميع البيانات المطلوبة
+    if (!isReady || !store?.id || cartLoading) return;
     
-    if (!sessionId) {
+    // تحقق من الجلسة فقط بعد اكتمال التحميل
+    if (!sessionId && !hasRedirectedRef.current) {
+      hasRedirectedRef.current = true;
       toast.info('يجب تسجيل الدخول أولاً لإتمام الطلب');
       // توجيه العميل لصفحة التسجيل مع حفظ مسار العودة
       const returnUrl = encodeURIComponent(`/${storeSlug}/checkout`);
       navigate(`/${storeSlug}/auth?returnUrl=${returnUrl}`, { replace: true });
     }
-  }, [sessionId, cartLoading, storeSlug, navigate, store?.id]);
+  }, [sessionId, isReady, cartLoading, storeSlug, navigate, store?.id]);
 
   const [formData, setFormData] = useState<OrderFormData>({
     customerName: '',
@@ -208,7 +212,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
     setShowGeideaPayment(false);
   };
 
-  if (cartLoading) {
+  if (cartLoading || !isReady) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
         <div className="text-center">

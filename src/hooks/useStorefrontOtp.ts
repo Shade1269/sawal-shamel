@@ -14,23 +14,53 @@ export const useStorefrontOtp = ({ storeSlug, storeId }: UseStorefrontOtpProps) 
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
   const { sendOTP, verifyOTP, isLoading } = useCustomerAuth();
 
   useEffect(() => {
-    if (!storeId) return;
-
-    const sessionKey = `customer_session_${storeId}`;
-    const sessionData = localStorage.getItem(sessionKey);
-    if (sessionData) {
-      const session = JSON.parse(sessionData);
-      if (new Date(session.expiresAt) > new Date()) {
-        setSessionId(session.sessionId);
-        setPhone(session.phone || '');
-        setStep('orders');
+    const checkSession = async () => {
+      if (!storeId) {
+        setIsReady(true);
+        return;
       }
-    }
-  }, [storeId]);
+
+      try {
+        // فحص المفتاح الأساسي
+        const sessionKey = `customer_session_${storeId}`;
+        let sessionData = localStorage.getItem(sessionKey);
+        
+        // فحص المفتاح البديل
+        if (!sessionData && storeSlug) {
+          const altKey = `sf:${storeSlug}:cust_sess`;
+          const altSessionId = localStorage.getItem(altKey);
+          if (altSessionId) {
+            // محاولة المزامنة من المفتاح البديل
+            sessionData = JSON.stringify({
+              sessionId: altSessionId,
+              expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+            });
+            localStorage.setItem(sessionKey, sessionData);
+          }
+        }
+
+        if (sessionData) {
+          const session = JSON.parse(sessionData);
+          if (session.expiresAt && new Date(session.expiresAt) > new Date()) {
+            setSessionId(session.sessionId);
+            setPhone(session.phone || '');
+            setStep('orders');
+          }
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      } finally {
+        setIsReady(true);
+      }
+    };
+
+    checkSession();
+  }, [storeId, storeSlug]);
 
   const handleSendOtp = async () => {
     if (!storeId) {
@@ -108,6 +138,7 @@ export const useStorefrontOtp = ({ storeSlug, storeId }: UseStorefrontOtpProps) 
     otp,
     setOtp,
     sessionId,
+    isReady,
     orders,
     ordersLoading,
     sendOtpMutation: {
