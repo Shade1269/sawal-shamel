@@ -119,9 +119,9 @@ export const LeadManagementSection: React.FC = () => {
 
   const getInterestColor = (level: Lead['interest_level']) => {
     const colors = {
-      low: 'text-muted-foreground',
-      medium: 'text-info',
-      high: 'text-destructive'
+      low: 'text-gray-600',
+      medium: 'text-blue-600',
+      high: 'text-red-600'
     };
     return colors[level];
   };
@@ -282,7 +282,7 @@ export const LeadManagementSection: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-warning">{leadStats.avgScore}</p>
+            <p className="text-2xl font-bold text-orange-600">{leadStats.avgScore}</p>
             <p className="text-sm text-muted-foreground">متوسط النقاط</p>
           </CardContent>
         </Card>

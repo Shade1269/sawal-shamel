@@ -101,7 +101,7 @@ export const SmartNotificationsSection: React.FC = () => {
       failed: 'bg-red-100 text-red-800',
       bounced: 'bg-red-100 text-red-800'
     };
-    return colors[status as keyof typeof colors] || 'bg-muted text-muted-foreground';
+    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
 
   const getStatusIcon = (status: string) => {

@@ -71,8 +71,8 @@ export const AdvancedMarketingDashboard: React.FC = () => {
       value: recentInsights,
       icon: Brain,
       description: 'رؤية تنبؤية حديثة',
-      color: 'text-warning',
-      bgColor: 'bg-warning/10'
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50'
     }
   ];
 

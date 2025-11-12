@@ -173,8 +173,8 @@ export const AdvancedAnalyticsSection: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <Clock className="h-6 w-6 text-warning mx-auto mb-2" />
-            <p className="text-2xl font-bold text-warning">{formatDuration(analyticsData.overview.avg_session_duration)}</p>
+            <Clock className="h-6 w-6 text-orange-600 mx-auto mb-2" />
+            <p className="text-2xl font-bold text-orange-600">{formatDuration(analyticsData.overview.avg_session_duration)}</p>
             <p className="text-sm text-muted-foreground">متوسط مدة الجلسة</p>
           </CardContent>
         </Card>

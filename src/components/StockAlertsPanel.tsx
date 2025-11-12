@@ -28,7 +28,7 @@ export function StockAlertsPanel() {
               {alerts.map((alert) => (
                 <div key={alert.id} className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex items-center gap-4">
-                    <AlertTriangle className="h-4 w-4 text-warning" />
+                    <AlertTriangle className="h-4 w-4 text-orange-500" />
                     <div>
                       <p className="text-sm font-medium">{alert.title || alert.message}</p>
                       <p className="text-xs text-muted-foreground">{alert.alert_type}</p>
@@ -40,7 +40,7 @@ export function StockAlertsPanel() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <CheckCircle className="h-12 w-12 mx-auto text-success mb-4" />
+              <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-4" />
               <p className="text-muted-foreground">لا توجد تنبيهات</p>
             </div>
           )}

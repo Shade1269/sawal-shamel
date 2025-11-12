@@ -43,20 +43,20 @@ export const PredictiveInsightsSection: React.FC = () => {
 
   const getInsightColor = (type: PredictiveInsight['insight_type']) => {
     const colors = {
-      sales_forecast: 'text-success',
-      customer_churn: 'text-destructive',
-      product_demand: 'text-info',
-      seasonal_trends: 'text-accent',
-      customer_lifetime_value: 'text-warning'
+      sales_forecast: 'text-green-600',
+      customer_churn: 'text-red-600',
+      product_demand: 'text-blue-600',
+      seasonal_trends: 'text-purple-600',
+      customer_lifetime_value: 'text-orange-600'
     };
     return colors[type];
   };
 
   const getConfidenceColor = (score?: number) => {
-    if (!score) return 'text-muted-foreground';
-    if (score >= 0.8) return 'text-success';
-    if (score >= 0.6) return 'text-warning';
-    return 'text-destructive';
+    if (!score) return 'text-gray-500';
+    if (score >= 0.8) return 'text-green-600';
+    if (score >= 0.6) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
   const getConfidenceLabel = (score?: number) => {
@@ -156,8 +156,8 @@ export const PredictiveInsightsSection: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <AlertTriangle className="h-8 w-8 text-warning mx-auto mb-2" />
-            <p className="text-2xl font-bold text-warning">
+            <AlertTriangle className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+            <p className="text-2xl font-bold text-orange-600">
               {displayInsights.filter(i => i.insight_type === 'customer_churn').length}
             </p>
             <p className="text-sm text-muted-foreground">تنبيهات هامة</p>
