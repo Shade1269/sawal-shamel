@@ -104,7 +104,7 @@ const MessageActions: React.FC<MessageActionsProps> = ({
           {canDelete && (
             <DropdownMenuItem 
               onClick={() => onDelete(message.id)} 
-              className="arabic-text cursor-pointer text-red-600 focus:text-red-600"
+              className="arabic-text cursor-pointer text-destructive focus:text-destructive"
             >
               <Trash2 className="h-4 w-4 ml-2" />
               حذف الرسالة

@@ -119,10 +119,10 @@ const EnhancedAffiliateDashboard = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'bg-blue-100 text-blue-800';
-      case 'shipped': return 'bg-yellow-100 text-yellow-800';
-      case 'delivered': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'confirmed': return 'bg-info/10 text-info';
+      case 'shipped': return 'bg-warning/10 text-warning';
+      case 'delivered': return 'bg-success/10 text-success';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -137,10 +137,10 @@ const EnhancedAffiliateDashboard = () => {
 
   const getLevelIcon = (level: string) => {
     switch (level) {
-      case 'bronze': return <Award className="h-5 w-5 text-amber-600" />;
-      case 'silver': return <Star className="h-5 w-5 text-gray-500" />;
-      case 'gold': return <Crown className="h-5 w-5 text-yellow-500" />;
-      case 'legendary': return <Sparkles className="h-5 w-5 text-purple-500" />;
+      case 'bronze': return <Award className="h-5 w-5 text-warning" />;
+      case 'silver': return <Star className="h-5 w-5 text-muted-foreground" />;
+      case 'gold': return <Crown className="h-5 w-5 text-warning" />;
+      case 'legendary': return <Sparkles className="h-5 w-5 text-accent" />;
       default: return <Award className="h-5 w-5" />;
     }
   };
@@ -296,21 +296,21 @@ const EnhancedAffiliateDashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-orange-500">
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-warning">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">عمولة الشهر</p>
-                <p className="text-2xl font-bold text-orange-600">
+                <p className="text-2xl font-bold text-warning">
                   {formatCurrency(stats.monthlyEarnings)}
                 </p>
                 <div className="flex items-center gap-1 mt-1">
-                  <Zap className="h-3 w-3 text-orange-500" />
-                  <span className="text-xs text-orange-500">متوسط الطلب {formatCurrency(stats.averageOrderValue)}</span>
+                  <Zap className="h-3 w-3 text-warning" />
+                  <span className="text-xs text-warning">متوسط الطلب {formatCurrency(stats.averageOrderValue)}</span>
                 </div>
               </div>
-              <div className="p-3 bg-orange-100 rounded-full">
-                <TrendingUp className="h-6 w-6 text-orange-600" />
+              <div className="p-3 bg-warning/10 rounded-full">
+                <TrendingUp className="h-6 w-6 text-warning" />
               </div>
             </div>
           </CardContent>

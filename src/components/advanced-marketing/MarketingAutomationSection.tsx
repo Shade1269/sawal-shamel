@@ -89,12 +89,12 @@ export const MarketingAutomationSection: React.FC = () => {
 
   const getCampaignTypeColor = (type: MarketingCampaign['campaign_type']) => {
     const colors = {
-      email_sequence: 'bg-blue-100 text-blue-800',
-      abandoned_cart: 'bg-orange-100 text-orange-800',
-      post_purchase: 'bg-green-100 text-green-800',
-      welcome_series: 'bg-purple-100 text-purple-800',
-      re_engagement: 'bg-yellow-100 text-yellow-800',
-      birthday_campaign: 'bg-pink-100 text-pink-800'
+      email_sequence: 'bg-info/10 text-info',
+      abandoned_cart: 'bg-warning/10 text-warning',
+      post_purchase: 'bg-success/10 text-success',
+      welcome_series: 'bg-accent/10 text-accent',
+      re_engagement: 'bg-warning/10 text-warning',
+      birthday_campaign: 'bg-accent/10 text-accent'
     };
     return colors[type];
   };
@@ -248,7 +248,7 @@ export const MarketingAutomationSection: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-orange-600">{campaignStats.totalConverted}</p>
+            <p className="text-2xl font-bold text-warning">{campaignStats.totalConverted}</p>
             <p className="text-sm text-muted-foreground">تحويلات</p>
           </CardContent>
         </Card>
