@@ -2,63 +2,59 @@ html[data-theme="ferrari"] {
   color-scheme: dark;
 
   /* Ferrari Luxury Theme - Navy Blue + Ferrari Red */
-  /* Base HSL definitions - Enhanced for better visibility and consistency */
+  /* Base HSL definitions - Enhanced for better visibility */
   --background-hsl: 220 50% 11%;
-  --foreground-hsl: 0 0% 98%;
-  --primary-hsl: 349 69% 50%;
+  --foreground-hsl: 0 0% 100%;
+  --primary-hsl: 349 69% 45%;
   --primary-foreground-hsl: 0 0% 100%;
-  --secondary-hsl: 220 40% 25%;
-  --secondary-foreground-hsl: 0 0% 98%;
-  --accent-hsl: 349 69% 50%;
+  --secondary-hsl: 220 40% 22%;
+  --secondary-foreground-hsl: 0 0% 100%;
+  --accent-hsl: 349 69% 45%;
   --accent-foreground-hsl: 0 0% 100%;
-  --muted-hsl: 220 25% 35%;
-  --muted-foreground-hsl: 0 0% 85%;
+  --muted-hsl: 220 20% 40%;
+  --muted-foreground-hsl: 0 0% 100%;
   --success-hsl: 142 71% 45%;
   --warning-hsl: 38 92% 50%;
   --danger-hsl: 0 84% 60%;
   --info-hsl: 199 89% 48%;
-  --border-hsl: 220 40% 30%;
-  --input-hsl: 220 45% 16%;
-  --ring-hsl: 349 69% 50%;
-  --card-hsl: 220 45% 15%;
-  --card-foreground-hsl: 0 0% 98%;
-  --popover-hsl: 220 45% 15%;
-  --popover-foreground-hsl: 0 0% 98%;
+  --border-hsl: 220 30% 25%;
+  --card-hsl: 220 45% 14%;
+  --card-foreground-hsl: 0 0% 100%;
+  --popover-hsl: 220 45% 14%;
+  --popover-foreground-hsl: 0 0% 100%;
   --chat-bg-hsl: 220 50% 8%;
-  --chat-sent-hsl: 349 69% 50%;
-  --chat-received-hsl: 220 35% 18%;
+  --chat-sent-hsl: 349 69% 45%;
+  --chat-received-hsl: 220 35% 16%;
   --status-online-hsl: 142 71% 45%;
   --status-offline-hsl: 220 15% 60%;
 
-  /* Actual color tokens - All using HSL */
+  /* Actual color tokens */
   --background: hsl(var(--background-hsl));
   --foreground: hsl(var(--foreground-hsl));
   --primary: hsl(var(--primary-hsl));
-  --primary-foreground: hsl(var(--primary-foreground-hsl));
+  --primary-fg: hsl(var(--primary-foreground-hsl));
   --secondary: hsl(var(--secondary-hsl));
-  --secondary-foreground: hsl(var(--secondary-foreground-hsl));
+  --secondary-fg: hsl(var(--secondary-foreground-hsl));
   --accent: hsl(var(--accent-hsl));
-  --accent-foreground: hsl(var(--accent-foreground-hsl));
+  --accent-fg: hsl(var(--accent-foreground-hsl));
   --muted: hsl(var(--muted-hsl));
   --muted-foreground: hsl(var(--muted-foreground-hsl));
   --success: hsl(var(--success-hsl));
   --warning: hsl(var(--warning-hsl));
   --danger: hsl(var(--danger-hsl));
   --info: hsl(var(--info-hsl));
-  --border: hsl(var(--border-hsl));
-  --input: hsl(var(--input-hsl));
-  --ring: hsl(var(--ring-hsl));
-  --card: hsl(var(--card-hsl));
+  --border: hsl(var(--border-hsl) / 0.85);
+  --card: hsl(var(--card-hsl) / 0.92);
   --card-foreground: hsl(var(--card-foreground-hsl));
-  --popover: hsl(var(--popover-hsl));
+  --popover: hsl(var(--popover-hsl) / 0.92);
   --popover-foreground: hsl(var(--popover-foreground-hsl));
   --chat-bg: hsl(var(--chat-bg-hsl));
   --chat-sent: hsl(var(--chat-sent-hsl));
   --chat-received: hsl(var(--chat-received-hsl));
   --status-online: hsl(var(--status-online-hsl));
   --status-offline: hsl(var(--status-offline-hsl));
-  --destructive: hsl(var(--danger-hsl));
-  --destructive-foreground: hsl(var(--foreground-hsl));
+  --destructive: var(--danger);
+  --destructive-foreground: var(--foreground);
 
   /* Extended palette - Ferrari Colors */
   --ferrari-red-hsl: 349 69% 45%;
@@ -120,15 +116,15 @@ html[data-theme="ferrari"] {
   /* Glass & surface tokens - Ferrari Premium Style (Enhanced for Visibility) */
   --bg: var(--background);
   --fg: var(--foreground);
-  --surface: hsl(220 45% 15%);
-  --surface-2: hsl(220 40% 25%);
-  --glass-border: hsl(0 0% 100% / 0.15);
-  --shadow-glass-soft: 0 12px 32px hsl(220 50% 6% / 0.45);
-  --shadow-glass-strong: 0 20px 48px hsl(220 50% 6% / 0.6);
-  --ferrari-shadow: 0 4px 16px hsl(349 69% 45% / 0.25);
-  --ferrari-glow: 0 0 16px hsl(349 69% 50% / 0.3), 0 0 32px hsl(349 69% 50% / 0.15);
-  --ferrari-glow-strong: 0 0 20px hsl(349 69% 50% / 0.45), 0 0 40px hsl(349 69% 50% / 0.25);
-  --navy-glow: 0 0 32px hsl(220 50% 11% / 0.7);
+  --surface: hsla(220, 45%, 14%, 1.0);
+  --surface-2: hsla(220, 40%, 22%, 1.0);
+  --glass-border: hsla(0, 0%, 100%, 0.3);
+  --shadow-glass-soft: 0 12px 32px hsla(220, 50%, 6%, 0.45);
+  --shadow-glass-strong: 0 20px 48px hsla(220, 50%, 6%, 0.6);
+  --ferrari-shadow: 0 4px 16px rgba(196, 30, 58, 0.18);
+  --ferrari-glow: 0 0 16px rgba(196, 30, 58, 0.25), 0 0 32px rgba(196, 30, 58, 0.12);
+  --ferrari-glow-strong: 0 0 20px rgba(196, 30, 58, 0.4), 0 0 40px rgba(196, 30, 58, 0.2);
+  --navy-glow: 0 0 32px rgba(10, 14, 26, 0.6);
   --glass-bg: var(--surface);
   --glass-bg-strong: var(--surface-2);
   --glass-fg: var(--fg);
@@ -170,12 +166,12 @@ html[data-theme="ferrari"] {
   --font-weight-bold: 700;
 
   /* Interaction states - Ferrari Responsive (Refined) */
-  --state-hover-bg: hsl(349 69% 50% / 0.1);
-  --state-active-bg: hsl(349 69% 50% / 0.18);
-  --state-focus-ring: hsl(349 69% 50% / 0.5);
-  --state-disabled-bg: hsl(220 35% 12% / 0.5);
-  --state-disabled-fg: hsl(210 15% 75% / 0.4);
-  --state-disabled-border: hsl(220 30% 18% / 0.3);
+  --state-hover-bg: hsla(349, 69%, 45%, 0.08);
+  --state-active-bg: hsla(349, 69%, 45%, 0.15);
+  --state-focus-ring: hsla(349, 69%, 45%, 0.4);
+  --state-disabled-bg: hsla(220, 35%, 12%, 0.5);
+  --state-disabled-fg: hsla(210, 15%, 75%, 0.4);
+  --state-disabled-border: hsla(220, 30%, 18%, 0.3);
 }
 
 html[data-theme="ferrari"] body {
