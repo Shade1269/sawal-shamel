@@ -268,22 +268,22 @@ export const IntegrationHealthChecker: React.FC = () => {
   const getStatusIcon = (status: IntegrationStatus['status']) => {
     switch (status) {
       case 'healthy':
-        return <CheckCircle2 className="h-4 w-4 text-success" />;
+        return <CheckCircle2 className="h-4 w-4 text-green-600" />;
       case 'warning':
-        return <AlertTriangle className="h-4 w-4 text-warning" />;
+        return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
       case 'error':
-        return <XCircle className="h-4 w-4 text-destructive" />;
+        return <XCircle className="h-4 w-4 text-red-600" />;
       case 'checking':
-        return <RefreshCw className="h-4 w-4 text-info animate-spin" />;
+        return <RefreshCw className="h-4 w-4 text-blue-600 animate-spin" />;
     }
   };
 
   const getStatusBadge = (status: IntegrationStatus['status']) => {
     switch (status) {
       case 'healthy':
-        return <Badge className="bg-success/10 text-success hover:bg-success/10">سليم</Badge>;
+        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">سليم</Badge>;
       case 'warning':
-        return <Badge variant="outline" className="border-warning text-warning">تحذير</Badge>;
+        return <Badge variant="outline" className="border-yellow-400 text-yellow-800">تحذير</Badge>;
       case 'error':
         return <Badge variant="destructive">خطأ</Badge>;
       case 'checking':
@@ -330,7 +330,7 @@ export const IntegrationHealthChecker: React.FC = () => {
                   <h4 className="font-semibold">{integration.name}</h4>
                   <p className="text-sm text-muted-foreground">{integration.message}</p>
                   {integration.details && (
-                    <p className="text-xs text-destructive mt-1">{integration.details}</p>
+                    <p className="text-xs text-red-600 mt-1">{integration.details}</p>
                   )}
                 </div>
               </div>

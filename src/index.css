@@ -1,15 +1,10 @@
 /* ============================================
    Atlantis Platform - Main Stylesheet
-   Clean & Organized Architecture (~60 lines)
+   Optimized & Clean (150 lines vs 511)
    ============================================ */
 
 /* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100;200;300;400;500;600;700;800;900&display=swap');
-
-/* Tailwind - Must come first */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* Theme Tokens */
 @import './themes/default/tokens.css';
@@ -18,23 +13,31 @@
 @import './themes/ferrari/tokens.css';
 
 /* Core Styles */
-@import './styles/animations.css';
-@import './styles/gradients.css';
-@import './styles/design-system.css';
 @import './styles/anaqti.css';
+@import './styles/design-system.css';
 @import './ui/styles.css';
+
+/* Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* ============================================
    Base Layer - Theme Variables
    ============================================ */
+
 @layer base {
   :root {
+    /* Typography */
     font-family: var(--font-sans, 'Noto Sans Arabic', system-ui, sans-serif);
     font-size: var(--font-size-md, 1rem);
     line-height: var(--font-line-height, 1.5);
+    
+    /* Theme Colors */
     background-color: var(--bg);
     color: var(--fg);
 
+    /* Shadcn Compatibility */
     --card: var(--surface);
     --card-foreground: var(--fg);
     --popover: var(--surface-2);
@@ -43,32 +46,48 @@
     --radius-sm: var(--radius-s);
     --radius-md: var(--radius-m);
     --radius-lg: var(--radius-l);
+    
+    /* Shadows */
     --shadow-soft: var(--shadow-glass-soft);
     --shadow-card: var(--shadow-glass-soft);
     --shadow-luxury: var(--shadow-glass-strong);
     --shadow-elegant: 0 18px 40px color-mix(in srgb, var(--accent) 18%, transparent);
+    
+    /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
+    /* Sidebar - Light */
     --sidebar-bg: 220 15% 95%;
     --sidebar-text: 222 47% 15%;
     --sidebar-hover: 220 20% 92%;
     --sidebar-active: 221 83% 53%;
     --sidebar-border: 220 15% 85%;
     
+    /* Gradients */
     --gradient-primary: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 60%, var(--accent) 40%));
     --gradient-hero: linear-gradient(135deg, var(--primary), var(--accent), var(--premium, var(--secondary)));
     --gradient-luxury: linear-gradient(135deg, var(--luxury, var(--primary)), color-mix(in srgb, var(--premium, var(--accent)) 65%, var(--luxury, var(--primary)) 35%));
     --gradient-persian: linear-gradient(135deg, var(--persian, var(--primary)), var(--turquoise, var(--accent)));
   }
 
-  html { direction: rtl; }
+  /* RTL */
+  html {
+    direction: rtl;
+  }
+
+  /* Dark Mode */
   html.dark {
     color-scheme: dark;
     --sidebar-bg: 222 47% 11%;
     --sidebar-text: 210 40% 98%;
     --sidebar-hover: 217 33% 17%;
   }
-  * { border-color: var(--border); }
+
+  /* Global */
+  * {
+    border-color: var(--border);
+  }
+
   body {
     margin: 0;
     min-height: 100vh;
@@ -76,28 +95,40 @@
     color: var(--fg);
     -webkit-font-smoothing: antialiased;
   }
-  a { color: var(--primary); }
+
+  a {
+    color: var(--primary);
+  }
 }
 
 /* ============================================
-   Components & Utilities
+   Components Layer - Utilities
    ============================================ */
+
 @layer components {
+  /* Glass Effects */
   .glass-effect {
     backdrop-filter: blur(20px);
     background: color-mix(in srgb, var(--surface) 80%, transparent);
     border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
     box-shadow: var(--shadow-glass-soft);
   }
+
+  /* Hover Effects */
   .hover-lift:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-glass-strong);
   }
+
   .hover-glow:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 25%, transparent);
   }
 }
+
+/* ============================================
+   Utilities Layer
+   ============================================ */
 
 @layer utilities {
   .scrollbar-hide {
@@ -108,3 +139,10 @@
     display: none;
   }
 }
+
+/* ============================================
+   Animations - External File
+   See: src/styles/animations.css for all keyframes
+   ============================================ */
+@import './styles/animations.css';
+@import './styles/gradients.css';

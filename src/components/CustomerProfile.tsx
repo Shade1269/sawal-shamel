@@ -236,7 +236,7 @@ export const CustomerProfile: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={signOut}
-                className="text-destructive hover:text-destructive/80 text-xs sm:text-sm"
+                className="text-red-600 hover:text-red-700 text-xs sm:text-sm"
               >
                 <LogOut className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline ml-1">خروج</span>
@@ -298,7 +298,7 @@ export const CustomerProfile: React.FC = () => {
           
           <Card>
             <CardContent className="p-4 sm:p-6 text-center">
-              <CreditCard className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-success mb-2" />
+              <CreditCard className="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-green-600 mb-2" />
               <div className="text-lg sm:text-2xl font-bold">{customer.total_spent_sar.toFixed(2)} ر.س</div>
               <div className="text-xs sm:text-sm text-muted-foreground">إجمالي المشتريات</div>
             </CardContent>
@@ -306,7 +306,7 @@ export const CustomerProfile: React.FC = () => {
           
           <Card>
             <CardContent className="p-6 text-center">
-              <Award className="w-8 h-8 mx-auto text-warning mb-2" />
+              <Award className="w-8 h-8 mx-auto text-yellow-600 mb-2" />
               <div className="text-2xl font-bold">{customer.loyalty_points}</div>
               <div className="text-sm text-muted-foreground">نقاط الولاء</div>
             </CardContent>
