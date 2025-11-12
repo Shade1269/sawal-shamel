@@ -252,7 +252,7 @@ const AtlantisChat = () => {
   }
 
   return (
-    <div className="min-h-screen gradient-page-bg">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
       {/* Header */}
       <div className="border-b bg-card/80 backdrop-blur-md shadow-sm">
         <div className="container mx-auto px-4 py-4">
@@ -269,7 +269,7 @@ const AtlantisChat = () => {
               </Button>
               
               <div className="flex items-center gap-3">
-                <div className="p-2 gradient-icon-wrapper rounded-lg">
+                <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg">
                   <Hash className="h-5 w-5 text-primary" />
                 </div>
                 <div>
@@ -535,7 +535,7 @@ const AtlantisChat = () => {
               <Button
                 onClick={handleSendMessage}
                 disabled={!message.trim()}
-                className="gradient-btn-primary"
+                className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               >
                 <Send className="h-4 w-4" />
               </Button>

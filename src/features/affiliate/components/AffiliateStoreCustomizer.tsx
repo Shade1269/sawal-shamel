@@ -151,7 +151,7 @@ const AffiliateStoreCustomizer = ({ store, onUpdateStore }: StoreCustomizerProps
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="border-0 gradient-card-accent">
+      <Card className="border-0 bg-gradient-to-r from-primary/10 to-accent/10">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

@@ -10,9 +10,9 @@ const counterVariants = cva(
         default: "text-foreground",
         primary: "text-primary",
         accent: "text-accent-foreground",
-        luxury: "gradient-text-luxury",
-        persian: "text-persian gradient-text-primary",
-        gradient: "gradient-text-accent"
+        luxury: "text-luxury bg-gradient-to-r from-luxury to-luxury/80 bg-clip-text text-transparent",
+        persian: "text-persian bg-gradient-to-r from-persian to-persian/80 bg-clip-text text-transparent",
+        gradient: "bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
       },
       size: {
         sm: "text-lg",

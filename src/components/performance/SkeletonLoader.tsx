@@ -23,7 +23,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   
   const animationClasses = {
     pulse: 'animate-pulse',
-    wave: 'animate-shimmer gradient-shimmer bg-size-200',
+    wave: 'animate-shimmer bg-gradient-to-r from-muted via-muted/50 to-muted bg-size-200',
     none: ''
   };
 

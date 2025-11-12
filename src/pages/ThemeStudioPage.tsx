@@ -77,7 +77,7 @@ const ThemeStudioPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen gradient-bg-primary">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b shadow-sm">
         <div className="container mx-auto px-6 py-4">
@@ -94,11 +94,11 @@ const ThemeStudioPage: React.FC = () => {
               </Button>
               
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl gradient-btn-accent shadow-lg">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg">
                   <Palette className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold gradient-text-accent">
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                     استوديو الثيمات
                   </h1>
                   <p className="text-muted-foreground">صمم متجرك بطريقة احترافية</p>
@@ -125,7 +125,7 @@ const ThemeStudioPage: React.FC = () => {
                 مشاركة
               </Button>
               
-              <Button className="gap-2 gradient-btn-accent">
+              <Button className="gap-2 bg-gradient-to-r from-primary to-accent">
                 <Save className="w-4 h-4" />
                 حفظ ونشر
               </Button>

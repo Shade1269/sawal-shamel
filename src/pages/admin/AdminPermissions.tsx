@@ -186,7 +186,7 @@ const AdminPermissions = () => {
               <CardHeader className="p-4 md:pb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 md:gap-3">
-                    <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg gradient-bg-muted flex items-center justify-center`}>
+                    <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-background to-muted flex items-center justify-center`}>
                       <Icon className={`h-4 w-4 md:h-5 md:w-5 ${role.color}`} />
                     </div>
                     <div>

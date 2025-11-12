@@ -253,7 +253,7 @@ const AdminActivity = () => {
               const Icon = getActivityIcon(activity.type);
               return (
                 <div key={activity.id} className="flex items-center gap-4 p-4 rounded-lg border bg-background/50 hover:bg-muted/50 transition-colors">
-                  <div className="w-10 h-10 rounded-full gradient-card-primary flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
                     <Icon className="h-5 w-5 text-primary" />
                   </div>
                   

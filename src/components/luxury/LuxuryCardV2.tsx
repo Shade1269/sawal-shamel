@@ -8,13 +8,13 @@ const luxuryCardVariants = cva(
   {
     variants: {
       variant: {
-        default: "border border-primary/15 gradient-bg-card backdrop-blur-sm shadow-lg shadow-black/30 hover:shadow-glow hover:border-primary/25",
+        default: "border border-primary/15 bg-gradient-subtle backdrop-blur-sm shadow-lg shadow-black/30 hover:shadow-glow hover:border-primary/25",
         
-        glass: "border border-border/10 gradient-glass backdrop-blur-md shadow-lg shadow-black/40 hover:shadow-xl hover:shadow-border/10",
+        glass: "border border-border/10 bg-gradient-to-br from-card/70 via-card/60 to-card/70 backdrop-blur-md shadow-lg shadow-black/40 hover:shadow-xl hover:shadow-border/10",
         
-        glow: "border border-primary/20 gradient-bg-card backdrop-blur-sm shadow-lg shadow-primary/25 hover:shadow-glow animate-ferrari-glow",
+        glow: "border border-primary/20 bg-gradient-subtle backdrop-blur-sm shadow-lg shadow-primary/25 hover:shadow-glow animate-ferrari-glow",
         
-        metallic: "border border-border/20 gradient-bg-card shadow-lg shadow-black/40 hover:shadow-xl hover:shadow-border/20",
+        metallic: "border border-border/20 bg-gradient-to-br from-card via-muted to-card shadow-lg shadow-black/40 hover:shadow-xl hover:shadow-border/20",
         
         solid: "border border-border bg-card shadow-lg hover:shadow-xl hover:shadow-black/50"
       },

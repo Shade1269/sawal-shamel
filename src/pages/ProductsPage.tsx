@@ -328,7 +328,7 @@ const ProductsPage = () => {
         {filteredProducts.map((product: any) => (
           <Card key={product.id} className="group border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300 overflow-hidden">
             <div className="relative">
-              <div className="aspect-square gradient-card-accent flex items-center justify-center">
+              <div className="aspect-square bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
                 {product.image_urls && product.image_urls.length > 0 ? (
                   <img 
                     src={product.image_urls[0]} 

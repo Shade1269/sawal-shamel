@@ -51,10 +51,8 @@ interface UnifiedHeaderProps {
   actions?: React.ReactNode;
   /** Custom logo/brand element */
   logo?: React.ReactNode;
-  /** Mobile sidebar toggle handler */
+  /** Sidebar toggle handler */
   onSidebarToggle?: () => void;
-  /** Desktop sidebar toggle handler */
-  onDesktopSidebarToggle?: () => void;
   /** Custom className */
   className?: string;
 }
@@ -69,7 +67,6 @@ export const UnifiedHeader: React.FC<UnifiedHeaderProps> = ({
   actions,
   logo,
   onSidebarToggle,
-  onDesktopSidebarToggle,
   className,
 }) => {
   const navigate = useNavigate();
@@ -104,25 +101,13 @@ export const UnifiedHeader: React.FC<UnifiedHeaderProps> = ({
       )}
     >
       <div className="flex h-16 items-center gap-4 px-4 lg:px-6">
-        {/* Mobile Sidebar Toggle */}
+        {/* Sidebar Toggle */}
         {onSidebarToggle && (
           <Button
             variant="ghost"
             size="icon"
             onClick={onSidebarToggle}
-            className="md:hidden rounded-xl hover:bg-accent transition-all duration-200 hover:scale-105"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-        )}
-        
-        {/* Desktop Sidebar Toggle */}
-        {onDesktopSidebarToggle && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onDesktopSidebarToggle}
-            className="hidden md:flex rounded-xl hover:bg-accent transition-all duration-200 hover:scale-105"
+            className="rounded-xl hover:bg-accent transition-all duration-200 hover:scale-105"
           >
             <Menu className="h-5 w-5" />
           </Button>

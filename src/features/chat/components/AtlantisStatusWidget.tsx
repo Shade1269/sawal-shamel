@@ -60,7 +60,7 @@ export const AtlantisStatusWidget = ({ compact = false }: AtlantisStatusWidgetPr
   if (compact) {
     return (
       <Card 
-        className="cursor-pointer hover:shadow-md transition-shadow gradient-card-accent border-primary/20"
+        className="cursor-pointer hover:shadow-md transition-shadow bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20"
         onClick={() => navigate('/atlantis')}
       >
         <CardContent className="p-4">
@@ -86,7 +86,7 @@ export const AtlantisStatusWidget = ({ compact = false }: AtlantisStatusWidgetPr
   }
 
   return (
-    <Card className="gradient-bg-card backdrop-blur-sm">
+    <Card className="bg-gradient-to-br from-card/90 to-card backdrop-blur-sm">
       <CardContent className="p-6">
         <div className="space-y-4">
           {/* Header */}

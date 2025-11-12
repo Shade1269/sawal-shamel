@@ -166,7 +166,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
 
   return (
     <div className={className}>
-      <Card className="border border-border/30 gradient-glass backdrop-blur-sm shadow-elegant">
+      <Card className="border border-border/30 bg-gradient-to-br from-card/60 to-card backdrop-blur-sm shadow-elegant">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl font-bold bg-gradient-persian bg-clip-text text-transparent flex items-center gap-2">

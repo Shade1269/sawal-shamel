@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 export default function Navbar() {
   return (
     <header className="sticky top-0 z-40">
-      <div className="h-0.5 bg-gradient-primary" />
+      <div className="h-0.5 bg-gradient-to-r from-primary-400 via-emerald-400/60 to-primary-400" />
       <nav className="bg-glass backdrop-blur px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex h-16 items-center justify-between">
           <Link to="/" className="text-lg font-semibold tracking-wide">

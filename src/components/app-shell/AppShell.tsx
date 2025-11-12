@@ -466,7 +466,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       <div className="flex min-h-screen flex-col lg:flex-row">
         <SidebarDesktop groups={sidebarGroups} />
 
-        <div className="flex min-h-screen w-full flex-1 flex-col gradient-glass px-4 pb-24 pt-4 md:px-6 lg:pb-8 min-w-0">
+        <div className="flex min-h-screen w-full flex-1 flex-col bg-gradient-to-br from-card/20 via-transparent to-card/10 px-4 pb-24 pt-4 md:px-6 lg:pb-8 min-w-0">
           <Header
             notificationsCount={notificationsCount}
             onToggleSidebar={() => setDrawerOpen(true)}

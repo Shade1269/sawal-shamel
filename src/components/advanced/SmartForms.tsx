@@ -423,7 +423,7 @@ export const SmartForms: React.FC<SmartFormsProps> = ({
             <Button
               type="submit"
               disabled={!isFormValid() || isSubmitting}
-              className="gradient-btn-accent"
+              className="bg-gradient-to-r from-primary to-accent"
             >
               {isSubmitting ? (
                 <>

@@ -302,25 +302,25 @@ const About = () => {
           </div>
 
           <div className="grid md:grid-cols-4 gap-8">
-            <div className="text-center p-6 rounded-2xl gradient-card-primary">
+            <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5">
               <div className="text-4xl font-bold text-primary mb-2">1000+</div>
               <div className="text-lg font-medium mb-1">تاجر نشط</div>
               <div className="text-sm text-muted-foreground">يثقون في منصتنا</div>
             </div>
 
-            <div className="text-center p-6 rounded-2xl bg-luxury/10 border border-luxury/20">
+            <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-luxury/10 to-luxury/5">
               <div className="text-4xl font-bold text-luxury mb-2">50K+</div>
               <div className="text-lg font-medium mb-1">منتج متاح</div>
               <div className="text-sm text-muted-foreground">في جميع الفئات</div>
             </div>
 
-            <div className="text-center p-6 rounded-2xl bg-premium/10 border border-premium/20">
+            <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-premium/10 to-premium/5">
               <div className="text-4xl font-bold text-premium mb-2">99.9%</div>
               <div className="text-lg font-medium mb-1">وقت تشغيل</div>
               <div className="text-sm text-muted-foreground">خدمة موثوقة</div>
             </div>
 
-            <div className="text-center p-6 rounded-2xl bg-heritage/10 border border-heritage/20">
+            <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-heritage/10 to-heritage/5">
               <div className="text-4xl font-bold text-heritage mb-2">24/7</div>
               <div className="text-lg font-medium mb-1">دعم فني</div>
               <div className="text-sm text-muted-foreground">في خدمتكم دائماً</div>
@@ -332,7 +332,7 @@ const About = () => {
       {/* CTA Section */}
       <section className="py-20 px-4 bg-background/50">
         <div className="container mx-auto max-w-4xl text-center">
-          <Card className="border-0 gradient-card-accent backdrop-blur-sm">
+          <Card className="border-0 bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-sm">
             <CardContent className="p-12">
               <div className="space-y-6">
                 <h2 className="text-3xl font-bold">

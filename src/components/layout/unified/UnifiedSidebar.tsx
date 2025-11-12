@@ -40,10 +40,6 @@ interface UnifiedSidebarProps {
   footer?: React.ReactNode;
   /** Custom className */
   className?: string;
-  /** Mobile drawer open state */
-  mobileOpen?: boolean;
-  /** Mobile drawer close handler */
-  onMobileClose?: () => void;
 }
 
 export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
@@ -53,8 +49,6 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
   header,
   footer,
   className,
-  mobileOpen = false,
-  onMobileClose,
 }) => {
   const location = useLocation();
   const [expandedGroups, setExpandedGroups] = React.useState<string[]>([]);
@@ -82,21 +76,11 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
     return colors[color || 'primary'] || colors.primary;
   };
 
-  const handleItemClick = () => {
-    // Close mobile sidebar when item is clicked
-    if (onMobileClose && mobileOpen) {
-      onMobileClose();
-    }
-  };
-
   return (
     <aside
       className={cn(
         'fixed right-0 top-0 z-50 h-screen border-l glass-card-strong transition-all duration-300',
         collapsed ? 'w-16' : 'w-64',
-        // Mobile drawer behavior
-        'max-md:transform max-md:translate-x-0',
-        !mobileOpen && 'max-md:translate-x-full',
         className
       )}
     >
@@ -171,7 +155,7 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
                             )}
                           </Button>
                         ) : (
-                          <Link to={item.href} onClick={handleItemClick}>
+                          <Link to={item.href}>
                             <Button
                               variant="ghost"
                               className={cn(
@@ -212,7 +196,7 @@ export const UnifiedSidebar: React.FC<UnifiedSidebarProps> = ({
                               const childActive = isActive(child.href);
 
                               return (
-                                <Link key={child.id} to={child.href} onClick={handleItemClick}>
+                                <Link key={child.id} to={child.href}>
                                   <Button
                                     variant="ghost"
                                     size="sm"

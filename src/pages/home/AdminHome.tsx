@@ -1,19 +1,32 @@
-import React, { useMemo } from 'react';
+import React, { Suspense, lazy, useMemo } from 'react';
+import { CreditCard, ShoppingBag, BarChart3 } from 'lucide-react';
+import { KpiCard } from '@/components/home/KpiCard';
+import type { KpiCardProps } from '@/components/home/KpiCard';
 import SystemAlertsWidget, { type SystemAlert } from '@/components/home/SystemAlertsWidget';
 import type { RecentOrder } from '@/components/home/AdminRecentOrdersTable';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useUserDataContext } from '@/contexts/UserDataContext';
+import { Skeleton } from '@/ui/Skeleton';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useAdminAnalytics } from '@/hooks/useAdminAnalytics';
-import { AdminStatistics } from '@/components/admin/AdminStatistics';
-import { AdminCharts } from '@/components/admin/AdminCharts';
-import { AdminRecentOrders } from '@/components/admin/AdminRecentOrders';
+
+const MiniChart = lazy(() => import('@/components/home/MiniChart'));
+const AdminRecentOrdersTable = lazy(() => import('@/components/home/AdminRecentOrdersTable'));
 
 const currencyFormatter = new Intl.NumberFormat('ar-SA', {
   style: 'currency',
   currency: 'SAR',
   maximumFractionDigits: 0,
 });
+
+const numberFormatter = new Intl.NumberFormat('ar-EG');
+
+const formatMetric = (value: number, unit: 'currency' | 'count') => {
+  if (unit === 'currency') {
+    return currencyFormatter.format(value);
+  }
+  return numberFormatter.format(value);
+};
 
 const getFallbackOrders = (): RecentOrder[] => [
   { id: '98231', customer: 'عمر السالمي', total: currencyFormatter.format(1840), status: 'pending', createdAt: 'منذ 12 دقيقة' },
@@ -74,6 +87,67 @@ const AdminHome: React.FC<AdminHomeProps> = ({ statisticsOverride, alertsOverrid
     }, {});
   }, [analyticsMetrics]);
 
+  const metrics = useMemo((): KpiCardProps[] => {
+    const dayMetric = metricById['sales-day'];
+    const weekMetric = metricById['sales-week'];
+    const monthMetric = metricById['sales-month'];
+    const pendingMetric = metricById['orders-count'];
+
+    const fallbackMetrics = {
+      revenueToday: typeof userStatistics?.revenueToday === 'number' ? userStatistics.revenueToday : 45200,
+      revenueWeek: typeof userStatistics?.revenueWeek === 'number' ? userStatistics.revenueWeek : 318000,
+      revenueMonth: typeof userStatistics?.revenueMonth === 'number' ? userStatistics.revenueMonth : 1689000,
+      pendingPayments: typeof userStatistics?.pendingPayments === 'number' ? userStatistics.pendingPayments : 9,
+    };
+
+    return [
+      {
+        title: 'مبيعات اليوم',
+        value: formatMetric(dayMetric?.value ?? fallbackMetrics.revenueToday, dayMetric?.unit ?? 'currency'),
+        icon: CreditCard,
+        delta:
+          dayMetric?.changeDirection
+            ? { value: Math.abs(dayMetric.change), trend: dayMetric.changeDirection === 'down' ? 'down' : 'up', label: 'مقارنة بالأمس' }
+            : { value: 8.4, trend: 'up', label: 'مقارنة بالأمس' },
+        footer: 'أعلى قناة مبيعاً: المتجر العام',
+        accent: 'accent',
+      },
+      {
+        title: 'آخر 7 أيام',
+        value: formatMetric(weekMetric?.value ?? fallbackMetrics.revenueWeek, weekMetric?.unit ?? 'currency'),
+        icon: BarChart3,
+        delta:
+          weekMetric?.changeDirection
+            ? { value: Math.abs(weekMetric.change), trend: weekMetric.changeDirection === 'down' ? 'down' : 'up', label: 'مقارنة بالأسبوع الماضي' }
+            : { value: 11.2, trend: 'up', label: 'مقارنة بالأسبوع الماضي' },
+        footer: 'يشمل المتجر العام وقنوات المسوّقات',
+        accent: 'primary',
+      },
+      {
+        title: 'آخر 30 يوم',
+        value: formatMetric(monthMetric?.value ?? fallbackMetrics.revenueMonth, monthMetric?.unit ?? 'currency'),
+        icon: ShoppingBag,
+        delta:
+          monthMetric?.changeDirection
+            ? { value: Math.abs(monthMetric.change), trend: monthMetric.changeDirection === 'down' ? 'down' : 'up', label: 'مقارنة بالشهر السابق' }
+            : { value: 6.8, trend: 'up', label: 'مقارنة بالشهر السابق' },
+        footer: 'الميزانية الشهرية المتوقعة',
+        accent: 'success',
+      },
+      {
+        title: 'طلبات بانتظار الدفع',
+        value: formatMetric(pendingMetric?.value ?? fallbackMetrics.pendingPayments, pendingMetric?.unit ?? 'count'),
+        icon: ShoppingBag,
+        delta:
+          pendingMetric?.changeDirection
+            ? { value: Math.abs(pendingMetric.change), trend: pendingMetric.changeDirection === 'down' ? 'down' : 'up', label: 'مقارنة باليوم السابق' }
+            : { value: 4.6, trend: 'down', label: 'مقارنة باليوم السابق' },
+        footer: 'تحتاج متابعة فريق التحصيل',
+        accent: 'warning',
+      },
+    ];
+  }, [metricById, userStatistics]);
+
   const chartData = useMemo(() => {
     if (analyticsTrend.length > 0) {
       return analyticsTrend.map((point) => point.orders);
@@ -113,16 +187,70 @@ const AdminHome: React.FC<AdminHomeProps> = ({ statisticsOverride, alertsOverrid
 
   return (
     <div className="space-y-[var(--spacing-lg)]">
-      <AdminStatistics metricById={metricById} userStatistics={userStatistics} />
+      <section className="grid gap-[var(--spacing-lg)] lg:grid-cols-4">
+        {metrics.map((metric) => (
+          <KpiCard key={metric.title} {...metric} />
+        ))}
+      </section>
 
       <section className="grid gap-[var(--spacing-lg)] lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <AdminCharts chartData={chartData} chartLabels={chartLabels} />
+        <Suspense
+          fallback={
+            <div
+              className="flex h-full flex-col justify-between rounded-[var(--radius-l)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/80 p-[var(--spacing-lg)] shadow-[var(--shadow-glass-soft)]"
+              aria-busy="true"
+              aria-live="polite"
+            >
+              <div className="space-y-[var(--spacing-sm)] text-[color:var(--muted-foreground)]">
+                <p className="text-sm font-medium text-[color:var(--glass-fg)]">المبيعات اليومية</p>
+                <p className="text-xs">جاري توليد الرسم البياني...</p>
+              </div>
+              <Skeleton className="mt-[var(--spacing-lg)] h-32 w-full rounded-[var(--radius-m)] bg-[color:var(--glass-bg-strong, var(--surface-2))]" />
+            </div>
+          }
+        >
+          <MiniChart
+            title="المبيعات اليومية"
+            data={chartData}
+            labels={chartLabels}
+            trend={chartData[chartData.length - 1] >= chartData[0] ? 'up' : 'down'}
+            accent={chartData[chartData.length - 1] >= chartData[0] ? 'success' : 'warning'}
+          />
+        </Suspense>
+
         <SystemAlertsWidget alerts={alerts} />
       </section>
 
-      <AdminRecentOrders orders={recentOrders} />
+      <section>
+        <Suspense
+          fallback={
+            <div
+              className="rounded-[var(--radius-l)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/80 p-[var(--spacing-lg)] shadow-[var(--shadow-glass-soft)]"
+              aria-busy="true"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-[color:var(--glass-fg)]">آخر 5 طلبات</p>
+                  <p className="text-xs text-[color:var(--muted-foreground)]">جاري تحميل أحدث البيانات...</p>
+                </div>
+                <Skeleton className="h-6 w-16 rounded-full bg-[color:var(--glass-bg-strong, var(--surface-2))]" />
+              </div>
+              <div className="mt-[var(--spacing-lg)] space-y-[var(--spacing-sm)]">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <Skeleton
+                    key={`order-skeleton-${index}`}
+                    className="h-10 w-full rounded-[var(--radius-m)] bg-[color:var(--glass-bg-strong, var(--surface-2))]"
+                  />
+                ))}
+              </div>
+            </div>
+          }
+        >
+          <AdminRecentOrdersTable orders={recentOrders} />
+        </Suspense>
+      </section>
 
-      <footer className="flex flex-wrap items-center justify-between gap-[var(--spacing-md)] text-xs text-muted-foreground">
+      <footer className="flex flex-wrap items-center justify-between gap-[var(--spacing-md)] text-xs text-[color:var(--muted-foreground)]">
         <span>
           أهلاً {(nameOverride ?? profile?.full_name)?.split(' ')[0] ?? 'بك'} — تم تحديث البيانات آخر مرة عند
           الساعة 09:20 صباحاً.

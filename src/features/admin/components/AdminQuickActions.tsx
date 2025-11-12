@@ -21,7 +21,7 @@ export const AdminQuickActions = () => {
       title: "لوحة التحكم",
       description: "نظرة شاملة على أداء المنصة",
       icon: Crown,
-      color: "gradient-primary",
+      color: "from-indigo-500 to-indigo-600",
       action: () => navigate('/admin/dashboard'),
       badge: "محدث"
     },
@@ -29,7 +29,7 @@ export const AdminQuickActions = () => {
       title: "إدارة الطلبات",
       description: "متابعة ومعالجة طلبات العملاء",
       icon: ShoppingBag,
-      color: "gradient-success",
+      color: "from-emerald-500 to-emerald-600",
       action: () => navigate('/admin/orders'),
       badge: "8 جديدة"
     },
@@ -37,7 +37,7 @@ export const AdminQuickActions = () => {
       title: "إدارة المخزون",
       description: "ضبط مستويات المنتجات وتوفرها",
       icon: Package,
-      color: "gradient-warning",
+      color: "from-amber-500 to-amber-600",
       action: () => navigate('/admin/inventory'),
       badge: "تنبيه"
     }
@@ -94,9 +94,9 @@ export const AdminQuickActions = () => {
               onClick={action.action}
             >
               <CardHeader className="relative">
-                <div className={`absolute top-0 right-0 w-24 h-24 ${action.color} opacity-10 rounded-full -translate-y-8 translate-x-8 group-hover:scale-110 transition-transform duration-300`}></div>
+                <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${action.color} opacity-10 rounded-full -translate-y-8 translate-x-8 group-hover:scale-110 transition-transform duration-300`}></div>
                 <div className="flex items-start justify-between relative z-10">
-                  <div className={`w-12 h-12 rounded-xl ${action.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
                     <action.icon className="h-6 w-6 text-primary-foreground" />
                   </div>
                   {action.badge && (

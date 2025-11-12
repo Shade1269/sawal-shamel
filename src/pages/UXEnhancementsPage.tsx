@@ -76,11 +76,11 @@ export default function UXEnhancementsPage() {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="p-3 rounded-xl gradient-icon-wrapper">
+          <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-purple-500/20">
             <Sparkles className="h-8 w-8 text-primary" />
           </div>
           <div>
-            <h1 className="text-4xl font-bold gradient-text-accent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
               تحسينات تجربة المستخدم
             </h1>
             <p className="text-lg text-muted-foreground">
@@ -144,7 +144,7 @@ export default function UXEnhancementsPage() {
               activeTab === feature.tab ? 'ring-2 ring-primary' : ''
             }`}>
               <CardHeader className="text-center">
-                <div className="mx-auto p-3 rounded-xl gradient-card-primary w-fit">
+                <div className="mx-auto p-3 rounded-xl bg-gradient-to-br from-primary/10 to-purple-500/10 w-fit">
                   <feature.icon className={`h-8 w-8 ${feature.color}`} />
                 </div>
                 <CardTitle className="text-lg">{feature.title}</CardTitle>

@@ -207,7 +207,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
 
   if (cartLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-card-muted">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4" />
           <p className="text-slate-400">جاري تحميل...</p>
@@ -218,7 +218,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="space-y-6 p-6 min-h-screen bg-gradient-card-muted">
+      <div className="space-y-6 p-6 min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
         <LuxuryCardV2 variant="glass" hover="none" className="max-w-md mx-auto">
           <CardContent className="text-center py-16">
             <h3 className="text-2xl font-bold mb-3 text-white">السلة فارغة</h3>
@@ -241,7 +241,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
   const total = cart.total + shipping;
 
   return (
-    <div className="space-y-6 min-h-screen bg-gradient-card-muted p-4 md:p-6">
+    <div className="space-y-6 min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-4 md:p-6">
       <div className="flex items-center gap-4">
         <Button 
           variant="ghost" 
@@ -549,7 +549,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="h-px gradient-fade-down" />
+                <div className="h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent" />
 
                 <div className="space-y-3">
                   <div className="flex justify-between text-base text-slate-300">
@@ -560,7 +560,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                     <span>الشحن</span>
                     <span className="font-semibold text-white">{shipping} ر.س</span>
                   </div>
-                  <div className="h-px gradient-fade-down" />
+                  <div className="h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent" />
                   <div className="flex justify-between items-center py-2">
                     <span className="text-xl font-bold text-white">المجموع الكلي</span>
                     <span className="text-3xl font-bold bg-gradient-danger bg-clip-text text-transparent">
@@ -569,7 +569,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gradient-card-muted rounded-xl p-4 border border-red-600/10">
+                <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 rounded-xl p-4 border border-red-600/10">
                   <div className="flex items-center gap-3 mb-2">
                     <CreditCard className="h-5 w-5 text-red-400" />
                     <span className="font-semibold text-white">

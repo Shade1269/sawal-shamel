@@ -35,11 +35,11 @@
 }
 
 .gradient-bg-secondary {
-  @apply bg-gradient-to-br from-secondary/5 via-background to-secondary/5;
+  @apply bg-gradient-to-br from-secondary/5 to-secondary/10;
 }
 
 .gradient-bg-accent {
-  @apply bg-gradient-to-br from-primary/5 via-background to-accent/5;
+  @apply bg-gradient-to-br from-primary/5 to-accent/10;
 }
 
 .gradient-bg-card {
@@ -82,7 +82,7 @@
 
 /* === Header & Hero Gradients === */
 .gradient-header {
-  @apply bg-gradient-to-r from-muted/50 to-background;
+  @apply bg-gradient-to-br from-background to-secondary/20;
 }
 
 .gradient-hero {
@@ -122,26 +122,6 @@
 
 .gradient-warning {
   @apply bg-gradient-to-r from-warning/5 to-warning/10 border-warning/20;
-}
-
-.gradient-success {
-  @apply bg-gradient-to-r from-success/5 to-success/10 border-success/20;
-}
-
-.gradient-danger {
-  @apply bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/90 hover:to-destructive/70;
-}
-
-.gradient-danger-muted {
-  @apply bg-gradient-to-r from-destructive/20 to-destructive/10 border-destructive/20;
-}
-
-.gradient-danger-light {
-  @apply bg-gradient-to-br from-destructive/5 to-destructive/10;
-}
-
-.gradient-warning-light {
-  @apply bg-gradient-to-br from-warning/5 to-warning/10;
 }
 
 /* === Complex Gradients === */

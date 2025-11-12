@@ -2,12 +2,12 @@ export const ferrariComponents = {
   button: {
     base: "inline-flex items-center justify-center rounded-xl text-sm font-semibold transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 transform hover:scale-[1.01]",
     variants: {
-      default: "bg-gradient-danger text-white shadow-lg shadow-danger/25 hover:shadow-xl hover:shadow-danger/35 border border-danger/20",
-      destructive: "bg-gradient-danger text-white shadow-lg shadow-danger/25 hover:shadow-xl hover:shadow-danger/35 brightness-90",
-      outline: "border-2 border-danger/80 text-danger bg-slate-900/80 backdrop-blur-sm hover:bg-danger/5 hover:border-danger",
-      secondary: "bg-gradient-muted text-slate-200 shadow-lg shadow-muted/20 hover:shadow-xl hover:shadow-muted/30 border border-muted/20",
-      ghost: "text-danger hover:bg-danger/5 hover:text-danger transition-all duration-300",
-      link: "text-danger underline-offset-4 hover:underline hover:text-danger font-medium"
+      default: "bg-gradient-to-r from-red-700 via-red-600 to-red-700 text-white shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 hover:from-red-600 hover:to-red-600 border border-red-500/20",
+      destructive: "bg-gradient-to-r from-red-800 to-red-900 text-white shadow-lg shadow-red-800/25 hover:shadow-xl hover:shadow-red-800/35",
+      outline: "border-2 border-red-600/80 text-red-600 bg-slate-900/80 backdrop-blur-sm hover:bg-red-950/20 hover:border-red-600",
+      secondary: "bg-gradient-to-r from-slate-700 to-slate-800 text-slate-200 shadow-lg shadow-slate-700/20 hover:shadow-xl hover:shadow-slate-700/30 border border-slate-600/20",
+      ghost: "text-red-500 hover:bg-red-950/15 hover:text-red-400 transition-all duration-300",
+      link: "text-red-500 underline-offset-4 hover:underline hover:text-red-400 font-medium"
     },
     sizes: {
       default: "h-12 px-8 py-3.5 text-base",

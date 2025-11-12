@@ -97,7 +97,7 @@ export function TemplatesLibrarySection() {
               {filteredTemplates.map((template) => (
                 <Card key={template.id} className="group hover:shadow-lg transition-shadow overflow-hidden">
                   {/* Template Preview */}
-                  <div className="aspect-video gradient-card-secondary relative overflow-hidden">
+                  <div className="aspect-video bg-gradient-to-br from-primary/5 to-secondary/5 relative overflow-hidden">
                     {template.preview_image_url ? (
                       <img 
                         src={template.preview_image_url} 

@@ -42,7 +42,7 @@ const AtlantisGuide = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="space-y-8">
           {/* Welcome Message */}
-          <Card className="gradient-info border-info/20">
+          <Card className="bg-gradient-to-r from-info/10 to-info/5 border-info/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-blue-800">
                 <Lightbulb className="h-6 w-6" />

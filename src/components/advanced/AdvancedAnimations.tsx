@@ -228,10 +228,10 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                 <CardDescription>رسوم متحركة مبنية على Web Animations API</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-center h-32 gradient-bg-primary rounded-lg">
+                <div className="flex items-center justify-center h-32 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg">
                   <div
                     ref={customRef as React.RefObject<HTMLDivElement>}
-                    className="w-16 h-16 gradient-btn-accent rounded-full flex items-center justify-center text-primary-foreground font-bold"
+                    className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-primary-foreground font-bold"
                   >
                     AI
                   </div>
@@ -266,12 +266,12 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                 <CardDescription>رسوم متحركة معقدة ومركبة</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-center h-32 bg-premium/10 rounded-lg relative overflow-hidden">
+                <div className="flex items-center justify-center h-32 bg-gradient-premium/10 rounded-lg relative overflow-hidden">
                   {/* Floating Elements */}
                   {Array.from({ length: 6 }, (_, i) => (
                     <div
                       key={i}
-                      className={`absolute w-3 h-3 bg-premium rounded-full animate-pulse`}
+                      className={`absolute w-3 h-3 bg-gradient-premium rounded-full animate-pulse`}
                       style={{
                         left: `${20 + i * 12}%`,
                         top: `${30 + Math.sin(i) * 20}%`,
@@ -282,7 +282,7 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                   ))}
                   
                   <div className="text-center">
-                    <div className="text-2xl font-bold gradient-text-luxury">
+                    <div className="text-2xl font-bold bg-gradient-premium bg-clip-text text-transparent">
                       تفاعلي
                     </div>
                     <div className="text-sm text-muted-foreground">رسوم متحركة ذكية</div>
@@ -291,7 +291,7 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
 
                 <Button
                   onClick={() => runCustomAnimation('pulse')}
-                  className="w-full gradient-btn-premium hover:opacity-90"
+                  className="w-full bg-gradient-premium hover:opacity-90"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
                   تفعيل التأثير المركب
@@ -313,10 +313,10 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                 <CardDescription>رسوم متحركة طبيعية مع فيزياء واقعية</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-center h-32 gradient-card-success rounded-lg relative">
+                <div className="flex items-center justify-center h-32 bg-gradient-success/10 rounded-lg relative">
                   <div
                     ref={springRef as React.RefObject<HTMLDivElement>}
-                    className="w-12 h-12 bg-success rounded-lg flex items-center justify-center text-primary-foreground font-bold transition-transform"
+                    className="w-12 h-12 bg-gradient-success rounded-lg flex items-center justify-center text-primary-foreground font-bold transition-transform"
                     style={{
                       transform: `translate(${springValues.x}px, ${springValues.y}px) scale(${springValues.scale}) rotate(${springValues.rotation}deg)`
                     }}
@@ -353,22 +353,22 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                 <div className="space-y-3">
                   <div>
                     <Label className="text-sm">التوتر (Tension)</Label>
-                    <div className="bg-success/30 h-2 rounded-full mt-1">
-                      <div className="bg-success h-full w-3/4 rounded-full"></div>
+                    <div className="bg-gradient-to-r from-green-200 to-green-400 h-2 rounded-full mt-1">
+                      <div className="bg-green-600 h-full w-3/4 rounded-full"></div>
                     </div>
                   </div>
                   
                   <div>
                     <Label className="text-sm">الاحتكاك (Friction)</Label>
-                    <div className="bg-info/30 h-2 rounded-full mt-1">
-                      <div className="bg-info h-full w-1/2 rounded-full"></div>
+                    <div className="bg-gradient-to-r from-blue-200 to-blue-400 h-2 rounded-full mt-1">
+                      <div className="bg-blue-600 h-full w-1/2 rounded-full"></div>
                     </div>
                   </div>
                   
                   <div>
                     <Label className="text-sm">الكتلة (Mass)</Label>
-                    <div className="bg-premium/30 h-2 rounded-full mt-1">
-                      <div className="bg-premium h-full w-2/3 rounded-full"></div>
+                    <div className="bg-gradient-to-r from-purple-200 to-purple-400 h-2 rounded-full mt-1">
+                      <div className="bg-purple-600 h-full w-2/3 rounded-full"></div>
                     </div>
                   </div>
                 </div>

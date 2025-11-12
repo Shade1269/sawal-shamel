@@ -129,7 +129,7 @@ export const StoreHeader = ({ store, cartItemsCount, onCartClick, onWishlistClic
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mt-4 p-3 gradient-card-accent rounded-xl"
+          className="mt-4 p-3 bg-gradient-to-r from-primary/5 to-accent/10 rounded-xl border border-primary/20"
         >
           <div className="flex items-center justify-center gap-8 text-sm">
             <div className="flex items-center gap-2 text-muted-foreground">

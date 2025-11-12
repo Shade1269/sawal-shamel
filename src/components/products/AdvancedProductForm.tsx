@@ -267,7 +267,7 @@ const AdvancedProductForm: React.FC<AdvancedProductFormProps> = ({ mode }) => {
   }
 
   return (
-    <div className="min-h-screen gradient-page-bg">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
       {/* Header */}
       <div className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
@@ -283,7 +283,7 @@ const AdvancedProductForm: React.FC<AdvancedProductFormProps> = ({ mode }) => {
               </Button>
               
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 gradient-btn-primary rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
                   <Package className="h-5 w-5 text-white" />
                 </div>
                 <div>

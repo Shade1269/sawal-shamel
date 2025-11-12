@@ -3,12 +3,12 @@ export const luxuryComponents = {
   button: {
     base: "inline-flex items-center justify-center rounded-2xl text-sm font-semibold transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 transform hover:scale-105",
     variants: {
-      default: "bg-gradient-luxury text-luxury-foreground shadow-2xl shadow-luxury/30 hover:shadow-3xl hover:shadow-luxury/50 border border-luxury/50 transform hover:scale-105",
-      destructive: "bg-gradient-danger text-white shadow-2xl shadow-danger/30",
-      outline: "border-2 border-luxury text-luxury bg-black/5 backdrop-blur-md hover:bg-luxury/5 hover:shadow-xl shadow-lg",
-      secondary: "bg-gradient-premium text-white shadow-2xl shadow-premium/30 hover:shadow-3xl hover:shadow-premium/50",
-      ghost: "text-luxury hover:bg-luxury/5 hover:text-luxury backdrop-blur-sm",
-      link: "text-luxury underline-offset-4 hover:underline hover:text-luxury font-medium"
+      default: "bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 text-black shadow-2xl shadow-yellow-500/30 hover:shadow-3xl hover:shadow-yellow-500/50 hover:from-yellow-500 hover:to-yellow-400 border border-yellow-400/50",
+      destructive: "bg-gradient-to-r from-red-700 to-red-800 text-white shadow-2xl shadow-red-700/30",
+      outline: "border-2 border-yellow-600 text-yellow-600 bg-black/5 backdrop-blur-md hover:bg-yellow-50 hover:shadow-xl shadow-lg",
+      secondary: "bg-gradient-to-r from-amber-700 to-orange-700 text-white shadow-2xl shadow-amber-700/30 hover:shadow-3xl hover:shadow-amber-700/50",
+      ghost: "text-yellow-600 hover:bg-yellow-50/50 hover:text-yellow-700 backdrop-blur-sm",
+      link: "text-yellow-600 underline-offset-4 hover:underline hover:text-yellow-700 font-medium"
     },
     sizes: {
       default: "h-14 px-8 py-4 text-base",

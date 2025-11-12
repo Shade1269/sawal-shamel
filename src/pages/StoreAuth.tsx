@@ -124,7 +124,7 @@ const StoreAuth: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen gradient-page-bg">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       {/* رأس الصفحة مع معلومات المتجر */}
       <div className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">

@@ -28,14 +28,14 @@ export const VisualPageBuilderDashboard: React.FC = () => {
   const [previewMode, setPreviewMode] = useState(false);
 
   return (
-    <div className="min-h-screen gradient-page-bg">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b shadow-sm">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl gradient-btn-accent shadow-lg">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg">
                   <Layout className="w-6 h-6 text-white" />
                 </div>
                 <div>

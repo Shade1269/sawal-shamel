@@ -576,7 +576,7 @@ export const AffiliateStoreManager = ({
   return (
     <div className="space-y-4 md:space-y-6">
       {/* Store Header */}
-      <Card className="border-0 gradient-card-accent rounded-none md:rounded-xl">
+      <Card className="border-0 bg-gradient-to-r from-primary/10 to-accent/10 rounded-none md:rounded-xl">
         <CardContent className="p-4 md:p-6">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div className="flex items-start gap-3 md:gap-4">

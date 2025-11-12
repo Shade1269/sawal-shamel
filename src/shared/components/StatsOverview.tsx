@@ -44,39 +44,39 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({
   const getColorClasses = (color: StatItem['color']) => {
     const colorMap = {
       primary: {
-        bg: 'gradient-card-primary',
+        bg: 'bg-gradient-to-br from-primary/10 to-primary/5',
         border: 'border-primary/20',
         icon: 'bg-gradient-primary text-white',
         text: 'text-primary'
       },
       luxury: {
-        bg: 'gradient-card-secondary',
+        bg: 'bg-gradient-to-br from-luxury/10 to-luxury/5',
         border: 'border-luxury/20',
         icon: 'bg-gradient-luxury text-white',
         text: 'text-luxury'
       },
       premium: {
-        bg: 'gradient-card-secondary',
+        bg: 'bg-gradient-to-br from-premium/10 to-premium/5',
         border: 'border-premium/20',
         icon: 'bg-gradient-premium text-white',
         text: 'text-premium'
       },
       persian: {
-        bg: 'gradient-card-accent',
+        bg: 'bg-gradient-to-br from-persian/10 to-persian/5',
         border: 'border-persian/20',
         icon: 'bg-gradient-persian text-white',
         text: 'text-persian'
       },
       success: {
-        bg: 'gradient-card-success',
+        bg: 'bg-gradient-to-br from-green-500/10 to-green-500/5',
         border: 'border-green-500/20',
-        icon: 'bg-gradient-success text-white',
+        icon: 'bg-gradient-to-r from-green-500 to-green-600 text-white',
         text: 'text-green-600'
       },
       warning: {
-        bg: 'gradient-warning',
+        bg: 'bg-gradient-to-br from-amber-500/10 to-amber-500/5',
         border: 'border-amber-500/20',
-        icon: 'bg-gradient-warning text-white',
+        icon: 'bg-gradient-to-r from-amber-500 to-amber-600 text-white',
         text: 'text-amber-600'
       }
     };

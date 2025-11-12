@@ -53,31 +53,14 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
   fullWidth = false,
 }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
-  const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
 
   const toggleSidebar = () => {
     setSidebarCollapsed((prev) => !prev);
   };
 
-  const toggleMobileSidebar = () => {
-    setMobileSidebarOpen((prev) => !prev);
-  };
-
-  const closeMobileSidebar = () => {
-    setMobileSidebarOpen(false);
-  };
-
   return (
     <div className="min-h-screen flex w-full bg-background">
-      {/* Mobile Sidebar Overlay */}
-      {mobileSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden"
-          onClick={closeMobileSidebar}
-        />
-      )}
-
-      {/* Sidebar - Desktop & Mobile Drawer */}
+      {/* Sidebar - Desktop */}
       {showSidebar && sidebarSections.length > 0 && (
         <UnifiedSidebar
           sections={sidebarSections}
@@ -85,8 +68,6 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
           onToggleCollapse={toggleSidebar}
           header={sidebarHeader}
           footer={sidebarFooter}
-          mobileOpen={mobileSidebarOpen}
-          onMobileClose={closeMobileSidebar}
         />
       )}
 
@@ -94,16 +75,14 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
       <div
         className={cn(
           'flex-1 flex flex-col min-w-0 transition-all duration-300',
-          // Apply sidebar margin only on desktop to avoid mobile gap (RTL safe)
-          showSidebar && (sidebarCollapsed ? 'md:mr-16' : 'md:mr-64'),
-          'mr-0',
+          showSidebar && (sidebarCollapsed ? 'mr-16' : 'mr-64'),
+          'max-md:mr-0', // No margin on mobile
           className
         )}
       >
         {/* Header */}
         <UnifiedHeader
-          onSidebarToggle={showSidebar ? toggleMobileSidebar : undefined}
-          onDesktopSidebarToggle={showSidebar ? toggleSidebar : undefined}
+          onSidebarToggle={showSidebar ? toggleSidebar : undefined}
           {...header}
         />
 

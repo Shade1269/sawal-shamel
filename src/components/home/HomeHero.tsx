@@ -16,7 +16,7 @@ export const HomeHero = ({ isDarkMode }: HomeHeroProps) => {
     >
       <div className="flex items-center justify-center mb-8">
         <div className="glass-button-strong px-6 py-3 rounded-full shadow-glow animate-pulse premium-text relative overflow-hidden">
-          <div className="absolute inset-0 gradient-shimmer animate-shimmer"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
           <span className="relative z-10 text-sm font-bold">🚀 منصة حية مع بيانات حقيقية</span>
         </div>
       </div>
