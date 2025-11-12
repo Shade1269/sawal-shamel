@@ -22,8 +22,8 @@ const paginationVariants = cva(
         default: "bg-background border border-border rounded-lg p-4",
         minimal: "",
         glass: "glass-effect backdrop-blur-sm border border-border/30 rounded-lg p-4",
-        luxury: "luxury-effect text-luxury-foreground rounded-lg p-4",
-        persian: "persian-effect text-persian-foreground rounded-lg p-4"
+        luxury: "luxury-effect text-white rounded-lg p-4",
+        persian: "persian-effect text-white rounded-lg p-4"
       },
       size: {
         sm: "text-sm gap-2 p-2",

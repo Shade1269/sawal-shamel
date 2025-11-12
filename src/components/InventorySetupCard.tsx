@@ -46,7 +46,7 @@ export const InventorySetupCard: React.FC = () => {
         >
           {isInitializing ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
               جاري الإعداد...
             </>
           ) : (

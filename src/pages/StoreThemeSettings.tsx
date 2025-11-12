@@ -61,7 +61,7 @@ const StoreThemeSettings: React.FC = () => {
           {/* Advanced Theme Studio Button */}
           <Button 
             onClick={() => navigate('/theme-studio')}
-            className="bg-gradient-premium hover:opacity-90"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
           >
             <Sparkles className="w-4 h-4 mr-2" />
             الاستوديو المتقدم
@@ -69,7 +69,7 @@ const StoreThemeSettings: React.FC = () => {
         </div>
 
         {/* Info Alert */}
-        <Alert className="mb-8 bg-gradient-info border-info/20">
+        <Alert className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
           <Info className="h-4 w-4 text-blue-600" />
           <AlertDescription className="text-blue-800">
             <strong>نصيحة:</strong> يمكنك تغيير ثيم متجرك في أي وقت. سيتم تطبيق التغييرات فوراً على جميع صفحات متجرك.

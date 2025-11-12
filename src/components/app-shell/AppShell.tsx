@@ -459,14 +459,14 @@ export const AppShell: React.FC<AppShellProps> = ({
   return (
     <div
       dir={direction}
-      className="relative min-h-screen bg-background text-foreground"
+      className="relative min-h-screen bg-[color:var(--bg)] text-[color:var(--fg)]"
       data-component="app-shell"
     >
       <SkipToContent />
       <div className="flex min-h-screen flex-col lg:flex-row">
         <SidebarDesktop groups={sidebarGroups} />
 
-        <div className="flex min-h-screen w-full flex-1 flex-col bg-gradient-to-br from-card/20 via-transparent to-card/10 px-4 pb-24 pt-4 md:px-6 lg:pb-8 min-w-0">
+        <div className="flex min-h-screen w-full flex-1 flex-col bg-gradient-to-br from-[color:var(--glass-bg)]/20 via-transparent to-[color:var(--glass-bg-strong, var(--surface-2))]/10 px-4 pb-24 pt-4 md:px-6 lg:pb-8 min-w-0">
           <Header
             notificationsCount={notificationsCount}
             onToggleSidebar={() => setDrawerOpen(true)}
@@ -495,7 +495,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       <Modal
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        className="h-full max-h-full w-full max-w-xs translate-x-0 overflow-y-auto rounded-none border-0 bg-card/95 px-0 py-6 text-card-foreground shadow-elegant backdrop-blur-2xl lg:hidden"
+        className="h-full max-h-full w-full max-w-xs translate-x-0 overflow-y-auto rounded-none border-0 bg-[color:var(--glass-bg)]/95 px-0 py-6 text-[color:var(--glass-fg)] shadow-[var(--shadow-glass-strong)] backdrop-blur-2xl lg:hidden"
         closeOnOverlay
         showCloseButton
         size="lg"

@@ -18,15 +18,15 @@ const unifiedButtonVariants = cva(
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-soft',
         
         // Special Styles
-        luxury: 'gradient-luxury text-luxury-foreground shadow-luxury hover:shadow-luxury hover:scale-105',
-        persian: 'gradient-persian text-persian-foreground shadow-persian hover:shadow-persian hover:scale-105',
-        premium: 'gradient-premium text-premium-foreground shadow-premium hover:shadow-premium hover:scale-105',
-        hero: 'gradient-hero text-primary-foreground shadow-glow hover:shadow-glow hover:scale-105',
+        luxury: 'gradient-luxury text-white shadow-luxury hover:shadow-luxury hover:scale-105',
+        persian: 'gradient-persian text-white shadow-persian hover:shadow-persian hover:scale-105',
+        premium: 'gradient-premium text-white shadow-premium hover:shadow-premium hover:scale-105',
+        hero: 'gradient-hero text-white shadow-glow hover:shadow-glow hover:scale-105',
         
         // Status Colors
-        success: 'bg-success text-success-foreground hover:bg-success/90 shadow-soft',
-        warning: 'bg-warning text-warning-foreground hover:bg-warning/90 shadow-soft',
-        danger: 'bg-danger text-danger-foreground hover:bg-danger/90 shadow-soft',
+        success: 'bg-success text-white hover:bg-success/90 shadow-soft',
+        warning: 'bg-warning text-white hover:bg-warning/90 shadow-soft',
+        danger: 'bg-danger text-white hover:bg-danger/90 shadow-soft',
         
         // Neutral Styles
         outline: 'border-2 border-primary bg-transparent text-primary hover:bg-primary/10',

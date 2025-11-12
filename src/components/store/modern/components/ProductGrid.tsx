@@ -93,7 +93,7 @@ export const ProductGrid = ({
               </div>
 
               {/* Overlay Actions */}
-              <div className="absolute inset-0 bg-transparent group-hover:bg-foreground/10 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                 <div className="flex gap-2">
                   <Button
                     size="sm"
@@ -102,7 +102,7 @@ export const ProductGrid = ({
                       e.stopPropagation();
                       onProductClick(product);
                     }}
-                    className="bg-background/90 hover:bg-background shadow-lg backdrop-blur-sm"
+                    className="bg-white/90 hover:bg-white text-black shadow-lg backdrop-blur-sm"
                   >
                     <Eye className="h-4 w-4 mr-1" />
                     عرض
@@ -136,7 +136,7 @@ export const ProductGrid = ({
                   </Badge>
                 )}
                 {product.stock === 0 && (
-                  <Badge variant="secondary">
+                  <Badge variant="secondary" className="bg-gray-100 text-gray-700">
                     نفد المخزون
                   </Badge>
                 )}
@@ -150,10 +150,10 @@ export const ProductGrid = ({
                   e.stopPropagation();
                   onToggleWishlist(product.id);
                 }}
-                className="absolute top-3 right-3 p-2 h-auto bg-background/80 hover:bg-background shadow-lg backdrop-blur-sm"
+                className="absolute top-3 right-3 p-2 h-auto bg-white/80 hover:bg-white shadow-lg backdrop-blur-sm"
               >
                 <Heart 
-                  className={`h-4 w-4 ${wishlist.includes(product.id) ? 'fill-destructive text-destructive' : 'text-muted-foreground'} transition-colors`} 
+                  className={`h-4 w-4 ${wishlist.includes(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-600'} transition-colors`} 
                 />
               </Button>
             </div>

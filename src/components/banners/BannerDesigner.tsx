@@ -329,7 +329,7 @@ export const BannerDesigner: React.FC<BannerDesignerProps> = ({
                 className={`relative ${isPreviewMode && design.animation.enabled ? 'animate-pulse' : ''}`}
               >
                 {/* Background Overlay */}
-                <div className="absolute inset-0 bg-background/20 rounded-lg" />
+                <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg" />
                 
                 {/* Content */}
                 <div className="relative z-10 text-center">

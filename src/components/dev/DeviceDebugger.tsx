@@ -59,7 +59,7 @@ export function DeviceDebugger({
       <div className={`${positionClasses[position]} z-50`}>
         <Badge 
           variant="outline" 
-          className={`${getDeviceColor()} text-primary-foreground border-0 flex items-center gap-2`}
+          className={`${getDeviceColor()} text-white border-0 flex items-center gap-2`}
         >
           {getDeviceIcon()}
           <span className="capitalize">{device.deviceType}</span>
@@ -85,7 +85,7 @@ export function DeviceDebugger({
           {/* Primary Device Type */}
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Type:</span>
-            <Badge variant="outline" className={`${getDeviceColor()} text-primary-foreground border-0`}>
+            <Badge variant="outline" className={`${getDeviceColor()} text-white border-0`}>
               {device.deviceType}
             </Badge>
           </div>

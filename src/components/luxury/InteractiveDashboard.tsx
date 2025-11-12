@@ -82,7 +82,7 @@ export function InteractiveDashboard({
       {(title || subtitle) && (
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-foreground mb-1 flex items-center gap-2">
+            <h2 className="text-3xl font-bold text-white mb-1 flex items-center gap-2">
               <Activity className="h-8 w-8 text-red-500" />
               {title}
             </h2>
@@ -113,7 +113,7 @@ export function InteractiveDashboard({
               transition={{ delay: index * 0.1 }}
               whileHover={{ y: -2, scale: 1.01 }}
             >
-              <Card className="border border-primary/15 bg-gradient-subtle backdrop-blur-sm shadow-lg shadow-black/30 hover:shadow-glow hover:border-primary/25 transition-all duration-500 h-full">
+              <Card className="border border-red-600/15 bg-gradient-to-br from-slate-900/98 via-slate-900/96 to-slate-800/98 backdrop-blur-sm shadow-lg shadow-black/30 hover:shadow-xl hover:shadow-red-600/15 hover:border-red-600/25 transition-all duration-500 h-full">
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -145,7 +145,7 @@ export function InteractiveDashboard({
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex items-baseline justify-between">
-                      <span className="text-3xl font-bold text-foreground">
+                      <span className="text-3xl font-bold text-white">
                         {typeof widget.value === 'number' 
                           ? widget.value.toLocaleString('ar')
                           : widget.value
@@ -175,7 +175,7 @@ export function InteractiveDashboard({
                         </div>
                         <Progress
                           value={widget.progress}
-                          className="h-2 [&>div]:bg-gradient-primary"
+                          className="h-2 [&>div]:bg-gradient-to-r [&>div]:from-red-600 [&>div]:to-red-500"
                         />
                         {widget.target && (
                           <p className="text-xs text-slate-400">
@@ -216,9 +216,9 @@ export function InteractiveDashboard({
       </div>
 
       {quickActions.length > 0 && (
-        <Card className="border border-primary/15 bg-gradient-subtle backdrop-blur-sm shadow-lg shadow-black/30">
+        <Card className="border border-red-600/15 bg-gradient-to-br from-slate-900/98 via-slate-900/96 to-slate-800/98 backdrop-blur-sm shadow-lg shadow-black/30">
           <CardHeader>
-            <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2">
+            <CardTitle className="text-xl font-bold text-white flex items-center gap-2">
               <Zap className="h-5 w-5 text-red-500" />
               إجراءات سريعة
             </CardTitle>
@@ -255,7 +255,7 @@ export function InteractiveDashboard({
                         )} />
                       </div>
                       <div className="space-y-1 text-right w-full">
-                        <div className="font-semibold text-foreground text-sm">
+                        <div className="font-semibold text-white text-sm">
                           {action.title}
                         </div>
                         <div className="text-xs text-slate-400">

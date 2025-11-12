@@ -222,7 +222,7 @@ export const ReviewSubmissionDialog: React.FC<ReviewSubmissionDialogProps> = ({
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
-                        className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                       >
                         <X className="h-4 w-4" />
                       </button>

@@ -85,13 +85,13 @@ const ThemePreview = ({ theme }: { theme: StoreTheme }) => {
           خلفية
         </div>
         <div 
-          className="flex-1 flex items-center justify-center text-xs font-medium text-primary-foreground"
+          className="flex-1 flex items-center justify-center text-xs font-medium text-white"
           style={{ backgroundColor: colors.primary }}
         >
           أساسي
         </div>
         <div 
-          className="flex-1 flex items-center justify-center text-xs font-medium text-primary-foreground"
+          className="flex-1 flex items-center justify-center text-xs font-medium text-white"
           style={{ backgroundColor: colors.accent }}
         >
           مميز
@@ -169,7 +169,7 @@ export const StoreThemeSelector: React.FC<StoreThemeSelectorProps> = ({
                   </div>
                   
                   {theme.is_premium && (
-                    <Badge variant="secondary" className="bg-gradient-warning text-primary-foreground">
+                    <Badge variant="secondary" className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
                       <Crown className="w-3 h-3 mr-1" />
                       مميز
                     </Badge>

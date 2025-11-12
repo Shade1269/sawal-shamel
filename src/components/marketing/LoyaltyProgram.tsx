@@ -307,8 +307,8 @@ const LoyaltyProgram = () => {
                 {topCustomers.map((customer, index) => (
                   <div key={customer.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center gap-4">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-primary-foreground ${
-                        index === 0 ? 'bg-warning' : index === 1 ? 'bg-muted' : 'bg-secondary'
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white ${
+                        index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-orange-500'
                       }`}>
                         {index + 1}
                       </div>

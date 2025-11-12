@@ -45,7 +45,7 @@ export const MyScoreCard = ({ scope = 'users', summary, loading, storeName }: My
           <CardTitle className="anaqti-section-title text-lg">
             <span className="anaqti-gradient-title">نقاطي هذا الشهر</span>
           </CardTitle>
-          <Badge className="anaqti-soft-badge bg-transparent text-primary border border-transparent">
+          <Badge className="anaqti-soft-badge bg-transparent text-[color:var(--anaqti-primary-dark,#8f1e3a)] border border-transparent">
             <Sparkles className="h-4 w-4" />
             {storeName ? `متجر ${storeName}` : 'برنامج النقاط'}
           </Badge>
@@ -63,17 +63,17 @@ export const MyScoreCard = ({ scope = 'users', summary, loading, storeName }: My
         ) : resolved ? (
           <div className="space-y-4">
             <div className="flex items-baseline gap-3">
-              <span className="text-4xl font-black text-primary">
+              <span className="text-4xl font-black text-[color:var(--anaqti-primary,#c64262)]">
                 {formatPoints(resolved.totalPoints)}
               </span>
               <span className="text-sm anaqti-muted">نقطة</span>
             </div>
-            <div className="flex items-center gap-3 rounded-2xl bg-card/60 px-4 py-3 shadow-sm">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <Trophy className="h-5 w-5 text-primary" />
+            <div className="flex items-center gap-3 rounded-2xl bg-white/60 px-4 py-3 shadow-sm">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--anaqti-primary,#c64262)]/10">
+                <Trophy className="h-5 w-5 text-[color:var(--anaqti-primary-dark,#8f1e3a)]" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">
+                <p className="text-sm font-semibold text-[color:var(--anaqti-text,#3d2b2b)]">
                   الترتيب الحالي
                 </p>
                 <p className="text-xs anaqti-muted">

@@ -128,14 +128,14 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
               {/* CTA Section */}
               <motion.div
                 whileHover={{ scale: 1.01 }}
-                className="p-8 bg-gradient-to-r from-primary to-accent rounded-lg text-primary-foreground text-center border-2 border-dashed border-transparent hover:border-primary-foreground/30 transition-all cursor-pointer"
+                className="p-8 bg-gradient-to-r from-primary to-accent rounded-lg text-white text-center border-2 border-dashed border-transparent hover:border-white/30 transition-all cursor-pointer"
                 onClick={() => onElementSelect?.({ type: 'cta', id: 'cta-1' })}
               >
                 <h2 className="text-3xl font-bold mb-4">عرض خاص محدود!</h2>
                 <p className="text-xl mb-6 opacity-90">
                   احصل على خصم 50% على جميع المنتجات
                 </p>
-                <Button variant="secondary" size="lg" className="bg-card text-primary hover:bg-card/90">
+                <Button variant="secondary" size="lg" className="bg-white text-primary hover:bg-white/90">
                   احصل على العرض
                 </Button>
               </motion.div>

@@ -136,7 +136,7 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
             <Label htmlFor="ai-enabled" className="text-sm">تفعيل الذكاء الاصطناعي</Label>
           </div>
           
-          <Badge className="bg-gradient-premium text-primary-foreground text-xs">
+          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs">
             <Brain className="w-3 h-3 mr-1" />
             AI مدعوم
           </Badge>

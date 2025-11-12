@@ -280,7 +280,7 @@ const RealtimeNotifications: React.FC = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
-                className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full min-w-[20px] h-5 text-xs flex items-center justify-center font-medium"
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full min-w-[20px] h-5 text-xs flex items-center justify-center font-medium"
               >
                 {unreadCount > 99 ? '99+' : unreadCount}
               </motion.div>

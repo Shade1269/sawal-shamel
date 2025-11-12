@@ -418,7 +418,7 @@ export const UserAnalytics = () => {
                       </div>
                       <div className="w-full bg-muted rounded-full h-2">
                         <div
-                          className="bg-gradient-bronze h-2 rounded-full transition-all"
+                          className="bg-gradient-to-r from-orange-400 to-yellow-500 h-2 rounded-full transition-all"
                           style={{ width: `${percentage}%` }}
                         />
                       </div>

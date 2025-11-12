@@ -262,7 +262,7 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-background/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
       <motion.div
@@ -296,7 +296,7 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
                         index <= currentStep
-                          ? 'bg-primary border-primary text-primary-foreground'
+                          ? 'bg-primary border-primary text-white'
                           : 'border-muted text-muted-foreground'
                       }`}
                     >

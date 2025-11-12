@@ -469,7 +469,7 @@ export const BannerPositioning: React.FC<BannerPositioningProps> = ({
             <CardContent>
               <div className="bg-gray-100 p-4 rounded-lg min-h-[400px] relative">
                 {/* Mock Website Layout */}
-                <div className="bg-card rounded shadow-sm">
+                <div className="bg-white rounded shadow-sm">
                   {/* Header */}
                   <div className="h-12 bg-gray-200 rounded-t flex items-center px-4">
                     <div className="text-sm text-gray-600">شريط التنقل</div>
@@ -516,7 +516,7 @@ export const BannerPositioning: React.FC<BannerPositioningProps> = ({
                     )}
                     
                     {position.position === 'popup' && (
-                      <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                         <div className={`w-64 h-32 rounded-lg flex items-center justify-center ${selectedPositionType?.preview}`}>
                           <span className="text-sm font-medium">البنر سيظهر هنا</span>
                         </div>

@@ -161,7 +161,7 @@ export const RealtimeThemePreview: React.FC<RealtimeThemePreviewProps> = ({
       {/* Preview Frame */}
       <div 
         ref={previewRef}
-        className="preview-frame relative w-full h-[600px] bg-card rounded-lg border-2 border-muted shadow-lg overflow-hidden"
+        className="preview-frame relative w-full h-[600px] bg-white rounded-lg border-2 border-muted shadow-lg overflow-hidden"
         style={{
           fontFamily: 'var(--preview-font, Inter)',
           fontSize: 'var(--preview-font-size, 14px)',

@@ -25,8 +25,8 @@ const loaderVariants = cva(
       variant: {
         default: "bg-background border border-border rounded-lg p-4",
         glass: "glass-effect backdrop-blur-sm border border-border/30 rounded-lg p-4",
-        luxury: "luxury-effect text-luxury-foreground rounded-lg p-4 shadow-luxury",
-        persian: "persian-effect text-persian-foreground rounded-lg p-4 shadow-persian",
+        luxury: "luxury-effect text-white rounded-lg p-4 shadow-luxury",
+        persian: "persian-effect text-white rounded-lg p-4 shadow-persian",
         minimal: "bg-transparent p-2"
       },
       size: {

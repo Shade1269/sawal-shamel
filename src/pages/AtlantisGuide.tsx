@@ -22,11 +22,11 @@ const AtlantisGuide = () => {
           <div className="flex items-center gap-4">
             <BackButton fallbackRoute="/affiliate" />
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-info rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-info bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   دليل أتلانتس
                 </h1>
                 <p className="text-muted-foreground">
@@ -42,7 +42,7 @@ const AtlantisGuide = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="space-y-8">
           {/* Welcome Message */}
-          <Card className="bg-gradient-to-r from-info/10 to-info/5 border-info/20">
+          <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-blue-800">
                 <Lightbulb className="h-6 w-6" />
@@ -128,7 +128,7 @@ const AtlantisGuide = () => {
                 <Button 
                   onClick={() => navigate('/atlantis')}
                   size="lg"
-                  className="bg-gradient-premium hover:opacity-90"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                 >
                   دخول نظام أتلانتس
                 </Button>

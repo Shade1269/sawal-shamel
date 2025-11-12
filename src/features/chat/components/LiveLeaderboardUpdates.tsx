@@ -153,7 +153,7 @@ export const LiveLeaderboardUpdates = () => {
   };
 
   return (
-    <Card className="bg-gradient-success border-success/20">
+    <Card className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-green-800">

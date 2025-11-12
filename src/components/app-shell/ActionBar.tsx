@@ -25,7 +25,7 @@ export const ActionBar: React.FC<ActionBarProps> = React.memo(
         <Button
           size="sm"
           onClick={onCreate}
-          className={`bg-primary text-primary-foreground border border-border shadow-soft hover:bg-primary/90 ${motionClass}`}
+          className={`bg-[color:var(--primary)] text-[color:var(--primary-fg)] border border-[color:var(--glass-border)] shadow-[var(--shadow-glass-soft)] hover:bg-[color:var(--primary)]/90 ${motionClass}`}
         >
           <Plus className="h-4 w-4" aria-hidden />
           <span className="ml-2">{createLabel}</span>
@@ -34,7 +34,7 @@ export const ActionBar: React.FC<ActionBarProps> = React.memo(
           size="sm"
           variant="outline"
           onClick={onQuickAction}
-          className={`border-border bg-card text-card-foreground hover:bg-muted ${motionClass}`}
+          className={`border-[color:var(--glass-border)] bg-[color:var(--glass-bg)] text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg-strong, var(--surface-2))] ${motionClass}`}
         >
           <Sparkles className="h-4 w-4" aria-hidden />
           <span className="ml-2">{quickActionLabel}</span>

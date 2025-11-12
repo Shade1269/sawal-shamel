@@ -328,8 +328,8 @@ export function UserActivityTracker() {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-xl bg-gradient-premium/20">
-            <Activity className="h-6 w-6 text-primary" />
+          <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20">
+            <Activity className="h-6 w-6 text-purple-500" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">تتبع نشاط المستخدم</h1>

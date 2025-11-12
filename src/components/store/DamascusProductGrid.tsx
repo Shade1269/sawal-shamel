@@ -136,7 +136,7 @@ export const DamascusProductGridContainer: React.FC<{
             {title && (
               <h1 className="text-[rgb(var(--damascus-text))] text-3xl md:text-4xl font-bold mb-3 relative inline-block">
                 {title}
-                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-[rgb(var(--damascus-gold))] to-transparent opacity-80" />
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-[rgb(var(--damascus-gold))] to-transparent" />
               </h1>
             )}
             {description && (

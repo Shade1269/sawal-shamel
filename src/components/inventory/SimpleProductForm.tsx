@@ -275,7 +275,7 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
               <p>• <strong>السعر النهائي:</strong> المسوق يحدده ويحصل على الفرق كعمولة</p>
             </div>
             {merchantBasePrice > 0 && (
-              <div className="mt-3 p-3 bg-card dark:bg-info/30 rounded border border-info/30 dark:border-info/70">
+              <div className="mt-3 p-3 bg-white dark:bg-blue-900/30 rounded border border-blue-300 dark:border-blue-700">
                 <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">
                   مثال على منتجك:
                 </p>

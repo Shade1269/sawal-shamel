@@ -258,8 +258,8 @@ export function PerformanceOptimizer() {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-xl bg-gradient-premium/20">
-            <Zap className="h-6 w-6 text-primary" />
+          <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20">
+            <Zap className="h-6 w-6 text-blue-500" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">محسّن الأداء</h1>
@@ -293,7 +293,7 @@ export function PerformanceOptimizer() {
         transition={{ delay: 0.1 }}
       >
         <Card className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-premium/5" />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5" />
           <CardHeader className="text-center">
             <CardTitle>نقاط الأداء</CardTitle>
             <div className="relative">

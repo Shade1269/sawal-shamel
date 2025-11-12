@@ -341,7 +341,7 @@ export const AllianceManager = () => {
 
       {/* User Level Info */}
       {userLevel && (
-        <Card className="bg-gradient-to-r from-premium/10 to-premium/5">
+        <Card className="bg-gradient-to-r from-purple-500/10 to-purple-600/5">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5" />

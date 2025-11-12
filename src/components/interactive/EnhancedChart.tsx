@@ -26,8 +26,8 @@ const chartVariants = cva(
       variant: {
         default: "bg-card border border-border rounded-lg",
         glass: "glass-effect backdrop-blur-sm border border-border/30 rounded-lg",
-        luxury: "luxury-effect text-luxury-foreground rounded-lg shadow-luxury",
-        persian: "persian-effect text-persian-foreground rounded-lg shadow-persian",
+        luxury: "luxury-effect text-white rounded-lg shadow-luxury",
+        persian: "persian-effect text-white rounded-lg shadow-persian",
         minimal: "bg-transparent"
       },
       size: {

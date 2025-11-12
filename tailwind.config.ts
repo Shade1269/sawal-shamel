@@ -183,33 +183,22 @@ export default {
                                 }
 			},
 			backgroundImage: {
-				// Primary gradients using CSS variables for theme support
-				'gradient-primary': 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%)',
-				'gradient-secondary': 'linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--secondary) / 0.8) 100%)',
-				'gradient-accent': 'linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--accent) / 0.8) 100%)',
-				
-				// Semantic gradients
-				'gradient-hero': 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 50%, hsl(var(--luxury)) 100%)',
-				'gradient-luxury': 'linear-gradient(135deg, hsl(var(--luxury)) 0%, hsl(var(--premium)) 100%)',
-				'gradient-premium': 'linear-gradient(135deg, hsl(var(--premium)) 0%, hsl(var(--premium) / 0.7) 100%)',
-				'gradient-persian': 'linear-gradient(135deg, hsl(var(--persian)) 0%, hsl(var(--turquoise)) 100%)',
-				'gradient-commerce': 'linear-gradient(135deg, hsl(var(--turquoise)) 0%, hsl(var(--turquoise) / 0.7) 100%)',
-				
-				// Status gradients
-				'gradient-success': 'linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--success) / 0.7) 100%)',
-				'gradient-warning': 'linear-gradient(135deg, hsl(var(--warning)) 0%, hsl(var(--warning) / 0.7) 100%)',
-				'gradient-danger': 'linear-gradient(135deg, hsl(var(--danger)) 0%, hsl(var(--danger) / 0.7) 100%)',
-				'gradient-info': 'linear-gradient(135deg, hsl(var(--info)) 0%, hsl(var(--info) / 0.7) 100%)',
-				
-				// Glass & subtle effects
-				'gradient-glass': 'linear-gradient(135deg, hsl(var(--card) / 0.1) 0%, hsl(var(--card) / 0.05) 100%)',
-				'gradient-glass-light': 'linear-gradient(to bottom, hsl(var(--background) / 0) 0%, hsl(var(--background) / 0.6) 100%)',
-				'gradient-muted': 'linear-gradient(135deg, hsl(var(--muted)) 0%, hsl(var(--muted) / 0.5) 100%)',
-				
-				// Special effects
-				'gradient-shimmer': 'linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.1) 50%, transparent 100%)',
-				'gradient-fade': 'linear-gradient(to bottom, hsl(var(--background)) 0%, transparent 100%)',
-				'gradient-radial': 'radial-gradient(circle at center, hsl(var(--primary) / 0.2) 0%, transparent 70%)',
+				'gradient-primary': 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%)',
+				'gradient-hero': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #d4af37 100%)',
+				'gradient-luxury': 'linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #ffd700 100%)',
+				'gradient-premium': 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #c084fc 100%)',
+				'gradient-persian': 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)',
+				'gradient-commerce': 'linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%)',
+				'gradient-heritage': 'linear-gradient(135deg, #cd7f32 0%, #d4af37 50%, #f4d03f 100%)',
+				'gradient-persian-bg': 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+				'gradient-chat': 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)',
+				'gradient-landing': 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+				'gradient-glass': 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+				'gradient-sunset': 'linear-gradient(135deg, #ff7f50 0%, #ff6b6b 50%, #ee5a24 100%)',
+				'gradient-ocean': 'linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%)',
+				'gradient-forest': 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)',
+				'gradient-purple': 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #c084fc 100%)',
+				'gradient-gold': 'linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #ffd700 100%)',
 			},
 			boxShadow: {
 				'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',

@@ -62,7 +62,7 @@ export default function ZohoCallback() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-premium flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8">
         {/* Zoho Logo */}
         <div className="flex justify-center mb-6">

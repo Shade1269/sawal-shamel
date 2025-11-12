@@ -30,7 +30,7 @@ export const AdvancedThemeStudioButton: React.FC<AdvancedThemeStudioButtonProps>
       onClick={handleClick}
       variant={variant}
       size={size}
-      className={`bg-gradient-premium hover:opacity-90 transition-opacity ${className}`}
+      className={`bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 ${className}`}
     >
       <Sparkles className="w-4 h-4 mr-2" />
       الاستوديو المتقدم

@@ -32,9 +32,9 @@ const widgetVariants = cva(
     variants: {
       variant: {
         default: "bg-card border border-border hover:border-primary/30",
-        glass: "glass-effect backdrop-blur-sm border border-border/30 hover:border-border/60",
-        luxury: "luxury-effect text-luxury-foreground hover:shadow-luxury-glow",
-        persian: "persian-effect text-persian-foreground hover:shadow-persian-glow",
+        glass: "glass-effect backdrop-blur-sm border border-border/30 hover:border-white/40",
+        luxury: "luxury-effect text-white hover:shadow-luxury-glow",
+        persian: "persian-effect text-white hover:shadow-persian-glow",
         gradient: "bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/30"
       },
       size: {

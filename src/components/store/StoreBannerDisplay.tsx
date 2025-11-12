@@ -66,7 +66,7 @@ export const StoreBannerDisplay: React.FC<StoreBannerDisplayProps> = ({
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-primary-foreground" dir="rtl">
+            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white" dir="rtl">
               <h2 className="text-2xl md:text-4xl font-bold mb-2">{banner.title}</h2>
               {banner.subtitle && (
                 <p className="text-lg md:text-xl opacity-90">{banner.subtitle}</p>
@@ -106,7 +106,7 @@ export const StoreBannerDisplay: React.FC<StoreBannerDisplayProps> = ({
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-primary-foreground" dir="rtl">
+            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white" dir="rtl">
               <h2 className="text-2xl md:text-4xl font-bold mb-2">
                 {banners[currentIndex].title}
               </h2>
@@ -124,7 +124,7 @@ export const StoreBannerDisplay: React.FC<StoreBannerDisplayProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-background/20 hover:bg-background/40 backdrop-blur-sm text-primary-foreground"
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white"
               onClick={handlePrevious}
             >
               <ChevronLeft className="h-6 w-6" />
@@ -133,7 +133,7 @@ export const StoreBannerDisplay: React.FC<StoreBannerDisplayProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-background/20 hover:bg-background/40 backdrop-blur-sm text-primary-foreground"
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white"
               onClick={handleNext}
             >
               <ChevronRight className="h-6 w-6" />
@@ -146,8 +146,8 @@ export const StoreBannerDisplay: React.FC<StoreBannerDisplayProps> = ({
                   onClick={() => setCurrentIndex(index)}
                   className={`w-2 h-2 rounded-full transition-all ${
                     index === currentIndex
-                      ? 'bg-primary-foreground w-8'
-                      : 'bg-primary-foreground/50 hover:bg-primary-foreground/75'
+                      ? 'bg-white w-8'
+                      : 'bg-white/50 hover:bg-white/75'
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />

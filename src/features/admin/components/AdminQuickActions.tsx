@@ -97,7 +97,7 @@ export const AdminQuickActions = () => {
                 <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${action.color} opacity-10 rounded-full -translate-y-8 translate-x-8 group-hover:scale-110 transition-transform duration-300`}></div>
                 <div className="flex items-start justify-between relative z-10">
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                    <action.icon className="h-6 w-6 text-primary-foreground" />
+                    <action.icon className="h-6 w-6 text-white" />
                   </div>
                   {action.badge && (
                     <Badge variant="secondary" className="text-xs">
@@ -111,7 +111,7 @@ export const AdminQuickActions = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="w-full bg-gradient-primary hover:opacity-90 group-hover:scale-105 transition-all duration-200">
+                <Button className="w-full bg-gradient-to-r from-primary to-primary/80 hover:opacity-90 group-hover:scale-105 transition-all duration-200">
                   الانتقال
                 </Button>
               </CardContent>

@@ -268,7 +268,7 @@ export const AtlantisOnboarding = () => {
             </Button>
           </div>
 
-          <Card className="bg-gradient-success">
+          <Card className="bg-gradient-to-r from-green-50 to-blue-50">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Volume2 className="h-5 w-5 text-green-600" />

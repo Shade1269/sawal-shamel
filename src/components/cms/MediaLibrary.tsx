@@ -290,7 +290,7 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                     {isSelected && !selectionMode && (
                       <div className="absolute top-2 right-2">
                         <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
-                          <div className="w-2 h-2 bg-primary-foreground rounded-full" />
+                          <div className="w-2 h-2 bg-white rounded-full" />
                         </div>
                       </div>
                     )}

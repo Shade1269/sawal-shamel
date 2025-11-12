@@ -38,7 +38,7 @@ const themes: ExtendedTheme[] = [
     name: "Default",
     colors: { primary: "#2563eb", bg: "#ffffff" },
     icon: <Palette className="h-5 w-5" />,
-    preview: "bg-gradient-primary",
+    preview: "bg-gradient-to-br from-blue-600 to-blue-800",
     description: "ثيم كلاسيكي أنيق ومتوازن للاستخدام العام"
   },
   {
@@ -46,7 +46,7 @@ const themes: ExtendedTheme[] = [
     name: "Luxury", 
     colors: { primary: "#d4af37", bg: "#0c0c0c" },
     icon: <Crown className="h-5 w-5" />,
-    preview: "bg-gradient-luxury",
+    preview: "bg-gradient-to-br from-yellow-600 to-amber-800",
     description: "ثيم فاخر بألوان ذهبية للمنتجات الراقية"
   },
   {
@@ -54,7 +54,7 @@ const themes: ExtendedTheme[] = [
     name: "Damascus",
     colors: { primary: "#d4af37", bg: "#0a1016" },
     icon: <Sparkles className="h-5 w-5" />,
-    preview: "bg-gradient-persian",
+    preview: "bg-gradient-to-br from-teal-600 to-cyan-800",
     description: "ثيم دمشقي تراثي بلمسة عصرية"
   },
   {
@@ -66,13 +66,13 @@ const themes: ExtendedTheme[] = [
   {
     ...nightTheme,
     icon: <Moon className="h-5 w-5" />,
-    preview: "bg-gradient-premium",
+    preview: "bg-gradient-to-br from-purple-900 to-gray-900",
     description: "ثيم ليلي داكن مع إضاءة أرجوانية"
   },
   {
     ...legendaryTheme,
     icon: <Crown className="h-5 w-5 text-yellow-400" />,
-    preview: "bg-gradient-premium",
+    preview: "bg-gradient-to-br from-violet-800 to-purple-900",
     description: "ثيم أسطوري حصري للمسوقات المتميزات",
     isPremium: true,
     requiresLevel: "gold"
@@ -180,22 +180,22 @@ export const ThemeSelector = ({ storeId, currentTheme, onThemeChange }: ThemeSel
                 {/* Theme Preview */}
                 <div className="relative h-32 rounded-lg overflow-hidden">
                   <div className={`w-full h-full ${theme.preview}`}>
-                    <div className="absolute inset-0 bg-foreground/10"></div>
+                    <div className="absolute inset-0 bg-black/20"></div>
                     <div className="absolute bottom-3 left-3 right-3">
-                        <div className="bg-card/90 backdrop-blur-sm rounded-md p-2 border border-border">
-                          <div className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-1">
-                              <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
-                              <span className="text-muted-foreground">معاينة المتجر</span>
-                            </div>
-                            <div className="w-4 h-4 bg-primary/20 rounded"></div>
+                      <div className="bg-white/90 backdrop-blur-sm rounded-md p-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center gap-1">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                            <span className="text-gray-600">معاينة المتجر</span>
                           </div>
-                          <div className="mt-1 flex gap-1">
-                            <div className="flex-1 h-1 bg-muted rounded"></div>
-                            <div className="flex-1 h-1 bg-muted rounded"></div>
-                            <div className="w-8 h-1 bg-primary/40 rounded"></div>
-                          </div>
+                          <div className="w-4 h-4 bg-primary/20 rounded"></div>
                         </div>
+                        <div className="mt-1 flex gap-1">
+                          <div className="flex-1 h-1 bg-gray-200 rounded"></div>
+                          <div className="flex-1 h-1 bg-gray-200 rounded"></div>
+                          <div className="w-8 h-1 bg-primary/40 rounded"></div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -495,7 +495,7 @@ const ColorPreview: React.FC<{ palette: ColorPalette }> = ({ palette }) => {
               <h4 className="font-semibold mb-2">مثال على التطبيق</h4>
             </div>
             <div
-              className="h-32 rounded-lg flex items-center justify-center text-primary-foreground font-semibold"
+              className="h-32 rounded-lg flex items-center justify-center text-white font-semibold"
               style={{ 
                 background: `linear-gradient(135deg, ${palette.primary}, ${palette.accent})`
               }}
@@ -504,7 +504,7 @@ const ColorPreview: React.FC<{ palette: ColorPalette }> = ({ palette }) => {
             </div>
             <div className="flex gap-2 mt-4">
               <div
-                className="flex-1 h-8 rounded flex items-center justify-center text-primary-foreground text-sm"
+                className="flex-1 h-8 rounded flex items-center justify-center text-white text-sm"
                 style={{ backgroundColor: palette.primary }}
               >
                 زر أساسي
