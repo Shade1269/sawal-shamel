@@ -1,8 +1,6 @@
 import React, { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useFastAuth } from '@/hooks/useFastAuth';
+import { Outlet } from 'react-router-dom';
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
-import { useToast } from '@/hooks/use-toast';
 
 /**
  * Base Layout - Foundation for all app layouts
@@ -10,7 +8,6 @@ import { useToast } from '@/hooks/use-toast';
  */
 
 export interface BaseLayoutProps {
-  children: ReactNode;
   header?: ReactNode;
   sidebar?: ReactNode;
   footer?: ReactNode;
@@ -22,7 +19,6 @@ export interface BaseLayoutProps {
 }
 
 export const BaseLayout: React.FC<BaseLayoutProps> = ({
-  children,
   header,
   sidebar,
   footer,
@@ -53,7 +49,9 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
 
         {/* Main Content */}
         <main className={`flex-1 overflow-auto ${contentClassName}`}>
-          {children}
+          <div className="container mx-auto p-8">
+            <Outlet />
+          </div>
         </main>
       </div>
 
