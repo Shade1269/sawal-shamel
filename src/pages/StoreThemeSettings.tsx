@@ -47,7 +47,7 @@ const StoreThemeSettings: React.FC = () => {
             </Button>
             <div>
               <h1 className="text-3xl font-bold flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent">
+                <div className="p-2 rounded-lg gradient-btn-accent">
                   <Palette className="w-6 h-6 text-white" />
                 </div>
                 ثيمات المتجر

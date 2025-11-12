@@ -144,7 +144,7 @@ export default function UXEnhancementsPage() {
               activeTab === feature.tab ? 'ring-2 ring-primary' : ''
             }`}>
               <CardHeader className="text-center">
-                <div className="mx-auto p-3 rounded-xl bg-gradient-to-br from-primary/10 to-purple-500/10 w-fit">
+                <div className="mx-auto p-3 rounded-xl gradient-card-primary w-fit">
                   <feature.icon className={`h-8 w-8 ${feature.color}`} />
                 </div>
                 <CardTitle className="text-lg">{feature.title}</CardTitle>

@@ -286,7 +286,7 @@ const ProductManagement = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-luxury/10 to-luxury/5 border-luxury/20">
+          <Card className="bg-luxury/10 border border-luxury/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>

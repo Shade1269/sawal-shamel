@@ -140,11 +140,11 @@ export const AdvancedThemeBuilder: React.FC<AdvancedThemeBuilderProps> = ({
   };
 
   return (
-    <div className="h-full bg-gradient-to-br from-background via-background to-primary/5 p-6">
+    <div className="h-full gradient-page-bg p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg">
+          <div className="p-3 rounded-xl gradient-btn-accent shadow-lg">
             <Palette className="w-6 h-6 text-white" />
           </div>
           <div>

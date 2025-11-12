@@ -65,7 +65,7 @@ export const StoreBannerDisplay: React.FC<StoreBannerDisplayProps> = ({
               alt={banner.title}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+            <div className="absolute inset-0 gradient-fade-down" />
             <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-primary-foreground" dir="rtl">
               <h2 className="text-2xl md:text-4xl font-bold mb-2">{banner.title}</h2>
               {banner.subtitle && (
@@ -105,7 +105,7 @@ export const StoreBannerDisplay: React.FC<StoreBannerDisplayProps> = ({
               alt={banners[currentIndex].title}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+            <div className="absolute inset-0 gradient-fade-down" />
             <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-primary-foreground" dir="rtl">
               <h2 className="text-2xl md:text-4xl font-bold mb-2">
                 {banners[currentIndex].title}
