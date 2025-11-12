@@ -61,9 +61,9 @@ export function InventoryDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">مخزون منخفض</p>
-                <p className="text-2xl font-bold text-orange-600">{analytics.lowStockItems}</p>
+                <p className="text-2xl font-bold text-warning">{analytics.lowStockItems}</p>
               </div>
-              <AlertTriangle className="h-8 w-8 text-orange-600" />
+              <AlertTriangle className="h-8 w-8 text-warning" />
             </div>
           </CardContent>
         </Card>
@@ -73,9 +73,9 @@ export function InventoryDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">نفد المخزون</p>
-                <p className="text-2xl font-bold text-red-600">{analytics.outOfStockItems}</p>
+                <p className="text-2xl font-bold text-destructive">{analytics.outOfStockItems}</p>
               </div>
-              <Package className="h-8 w-8 text-red-600" />
+              <Package className="h-8 w-8 text-destructive" />
             </div>
           </CardContent>
         </Card>
@@ -85,9 +85,9 @@ export function InventoryDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">قيمة المخزون</p>
-                <p className="text-2xl font-bold text-green-600">{analytics.totalValue.toFixed(0)} ريال</p>
+                <p className="text-2xl font-bold text-success">{analytics.totalValue.toFixed(0)} ريال</p>
               </div>
-              <TrendingUp className="h-8 w-8 text-green-600" />
+              <TrendingUp className="h-8 w-8 text-success" />
             </div>
           </CardContent>
         </Card>
@@ -97,9 +97,9 @@ export function InventoryDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">المخازن النشطة</p>
-                <p className="text-2xl font-bold text-blue-600">{warehouses.filter(w => w.is_active).length}</p>
+                <p className="text-2xl font-bold text-info">{warehouses.filter(w => w.is_active).length}</p>
               </div>
-              <Warehouse className="h-8 w-8 text-blue-600" />
+              <Warehouse className="h-8 w-8 text-info" />
             </div>
           </CardContent>
         </Card>
@@ -147,9 +147,9 @@ export function InventoryDashboard() {
                 <div key={movement.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                      movement.movement_type === 'IN' ? 'bg-green-100 text-green-600' :
-                      movement.movement_type === 'OUT' ? 'bg-red-100 text-red-600' :
-                      'bg-blue-100 text-blue-600'
+                      movement.movement_type === 'IN' ? 'bg-success/10 text-success' :
+                      movement.movement_type === 'OUT' ? 'bg-destructive/10 text-destructive' :
+                      'bg-info/10 text-info'
                     }`}>
                       {movement.movement_type === 'IN' ? '+' :
                        movement.movement_type === 'OUT' ? '-' : '↔'}

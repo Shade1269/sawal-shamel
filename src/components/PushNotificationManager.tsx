@@ -258,11 +258,11 @@ export const PushNotificationManager: React.FC = () => {
   const getPermissionStatus = () => {
     switch (permission) {
       case 'granted':
-        return { icon: <CheckCircle2 className="h-4 w-4 text-green-600" />, text: 'مُفعَّل', color: 'bg-green-100 text-green-800' };
+        return { icon: <CheckCircle2 className="h-4 w-4 text-success" />, text: 'مُفعَّل', color: 'bg-success/10 text-success' };
       case 'denied':
-        return { icon: <XCircle className="h-4 w-4 text-red-600" />, text: 'مرفوض', color: 'bg-red-100 text-red-800' };
+        return { icon: <XCircle className="h-4 w-4 text-destructive" />, text: 'مرفوض', color: 'bg-destructive/10 text-destructive' };
       default:
-        return { icon: <AlertTriangle className="h-4 w-4 text-yellow-600" />, text: 'في الانتظار', color: 'bg-yellow-100 text-yellow-800' };
+        return { icon: <AlertTriangle className="h-4 w-4 text-warning" />, text: 'في الانتظار', color: 'bg-warning/10 text-warning' };
     }
   };
 
@@ -337,7 +337,7 @@ export const PushNotificationManager: React.FC = () => {
             <div className="relative">
               <Smartphone className="h-8 w-8 text-primary animate-pulse-slow" />
               {isSubscribed && (
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-bounce-gentle" />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-success rounded-full animate-bounce-gentle" />
               )}
             </div>
             <div>

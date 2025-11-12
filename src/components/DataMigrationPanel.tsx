@@ -229,7 +229,7 @@ const DataMigrationPanel = () => {
   const getStatusBadge = (status: MigrationResult | null) => {
     if (!status) return <Badge variant="secondary">في الانتظار</Badge>;
     if (status.success) {
-      return <Badge variant="default" className="bg-green-500">تم النقل ({status.count}/{status.total})</Badge>;
+      return <Badge variant="default" className="bg-success text-success-foreground">تم النقل ({status.count}/{status.total})</Badge>;
     }
     return <Badge variant="destructive">فشل</Badge>;
   };
@@ -237,9 +237,9 @@ const DataMigrationPanel = () => {
   const getStatusIcon = (status: MigrationResult | null) => {
     if (!status) return null;
     if (status.success) {
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
+      return <CheckCircle className="h-4 w-4 text-success" />;
     }
-    return <AlertCircle className="h-4 w-4 text-red-500" />;
+    return <AlertCircle className="h-4 w-4 text-destructive" />;
   };
 
   return (
