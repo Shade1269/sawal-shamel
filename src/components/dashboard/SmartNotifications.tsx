@@ -153,7 +153,7 @@ export function SmartNotifications({
             <div className="relative">
               <Bell className="h-4 w-4 md:h-5 md:w-5" />
               {unreadCount > 0 && (
-                <div className="absolute -top-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                <div className="absolute -top-1 -right-1 w-3 h-3 md:w-4 md:h-4 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </div>
               )}

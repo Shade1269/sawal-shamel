@@ -57,11 +57,11 @@ export const AtlantisSystem = () => {
             <div className="flex items-center gap-4">
               <BackButton fallbackRoute="/affiliate" />
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-premium rounded-xl flex items-center justify-center">
                   <Crown className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  <h1 className="text-3xl font-bold bg-gradient-premium bg-clip-text text-transparent">
                     نظام أتلانتس
                   </h1>
                   <p className="text-muted-foreground">
@@ -122,7 +122,7 @@ export const AtlantisSystem = () => {
 
         {/* Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <EnhancedCard variant="success" className="bg-gradient-to-r from-purple-500/10 to-purple-600/5">
+          <EnhancedCard variant="success" className="bg-gradient-to-r from-premium/10 to-premium/5">
             <EnhancedCardHeader>
               <EnhancedCardTitle className="flex items-center gap-2 text-purple-800">
                 <Star className="h-5 w-5" />
@@ -147,7 +147,7 @@ export const AtlantisSystem = () => {
             </EnhancedCardContent>
           </EnhancedCard>
 
-          <EnhancedCard variant="info" className="bg-gradient-to-r from-blue-500/10 to-blue-600/5">
+          <EnhancedCard variant="info" className="bg-gradient-to-r from-info/10 to-info/5">
             <EnhancedCardHeader>
               <EnhancedCardTitle className="flex items-center gap-2 text-blue-800">
                 <Target className="h-5 w-5" />
@@ -164,7 +164,7 @@ export const AtlantisSystem = () => {
             </EnhancedCardContent>
           </EnhancedCard>
 
-          <EnhancedCard variant="success" className="bg-gradient-to-r from-green-500/10 to-green-600/5">
+          <EnhancedCard variant="success" className="bg-gradient-to-r from-success/10 to-success/5">
             <EnhancedCardHeader>
               <EnhancedCardTitle className="flex items-center gap-2 text-green-800">
                 <Sparkles className="h-5 w-5" />

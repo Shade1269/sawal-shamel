@@ -139,7 +139,7 @@ export const PaymentIntegration: React.FC<PaymentIntegrationProps> = ({
                 </div>
                 {selectedMethod === method.id && (
                   <div className="w-4 h-4 rounded-full bg-primary flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-white"></div>
+                    <div className="w-2 h-2 rounded-full bg-primary-foreground"></div>
                   </div>
                 )}
               </div>
@@ -156,7 +156,7 @@ export const PaymentIntegration: React.FC<PaymentIntegrationProps> = ({
       >
         {processing ? (
           <>
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-foreground mr-2"></div>
             جاري المعالجة...
           </>
         ) : (

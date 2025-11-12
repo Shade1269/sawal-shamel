@@ -332,7 +332,7 @@ const About = () => {
       {/* CTA Section */}
       <section className="py-20 px-4 bg-background/50">
         <div className="container mx-auto max-w-4xl text-center">
-          <Card className="border-0 bg-gradient-to-br from-primary/10 to-secondary/10 backdrop-blur-sm">
+          <Card className="border-0 bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-sm">
             <CardContent className="p-12">
               <div className="space-y-6">
                 <h2 className="text-3xl font-bold">

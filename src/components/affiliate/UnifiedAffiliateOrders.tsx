@@ -98,7 +98,7 @@ export default function UnifiedAffiliateOrders() {
         <Card className={`transition-colors duration-500 ${
           isDarkMode 
             ? 'bg-slate-800/50 border-slate-700/50' 
-            : 'bg-white border-slate-200'
+            : 'bg-card border-border'
         }`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className={`text-sm font-medium transition-colors duration-500 ${

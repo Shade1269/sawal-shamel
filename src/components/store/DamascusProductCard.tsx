@@ -107,7 +107,7 @@ export const DamascusProductCard: React.FC<DamascusProductCardProps> = ({
           </Badge>
         )}
         {product.isOnSale && discountPercentage > 0 && (
-          <Badge className="bg-red-600 text-white font-bold border-0">
+          <Badge variant="destructive" className="font-bold border-0">
             خصم {discountPercentage}%
           </Badge>
         )}
@@ -122,7 +122,7 @@ export const DamascusProductCard: React.FC<DamascusProductCardProps> = ({
       <div className="relative w-full aspect-[4/5] overflow-hidden bg-[rgb(var(--damascus-bg))]">
         {product.isOutOfStock && (
           <div className="absolute inset-0 bg-black/40 z-10 flex items-center justify-center">
-            <span className="text-white text-lg font-bold">غير متوفر</span>
+            <span className="text-primary-foreground text-lg font-bold">غير متوفر</span>
           </div>
         )}
         

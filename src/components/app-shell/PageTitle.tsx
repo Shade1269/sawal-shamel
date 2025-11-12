@@ -84,13 +84,13 @@ export const PageTitle: React.FC<PageTitleProps> = React.memo(({ actions, classN
   return (
     <header
       className={cn(
-        'mb-6 flex flex-wrap items-center justify-between gap-4 rounded-[var(--radius-l)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/92 px-4 py-4 text-[color:var(--glass-fg)] shadow-[var(--shadow-glass-soft)] backdrop-blur-xl',
+        'mb-6 flex flex-wrap items-center justify-between gap-4 rounded-[var(--radius-l)] border border-border bg-card/92 px-4 py-4 text-card-foreground shadow-soft backdrop-blur-xl',
         className
       )}
       data-component="page-title"
     >
       <div className="space-y-2">
-        <nav aria-label="مسار التنقل" className="flex items-center gap-2 text-xs text-[color:var(--muted-foreground)]">
+        <nav aria-label="مسار التنقل" className="flex items-center gap-2 text-xs text-muted-foreground">
           {breadcrumbs.map((breadcrumb, index) => {
             const isLast = index === breadcrumbs.length - 1;
             return (
@@ -98,10 +98,10 @@ export const PageTitle: React.FC<PageTitleProps> = React.memo(({ actions, classN
                 <Link
                   to={breadcrumb.href}
                   className={cn(
-                    'inline-flex items-center gap-1 rounded-full px-2 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--glass-bg)]',
+                    'inline-flex items-center gap-1 rounded-full px-2 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card',
                     isLast
-                      ? 'bg-[color:var(--glass-bg-strong, var(--surface-2))] text-[color:var(--glass-fg)]'
-                      : 'hover:text-[color:var(--glass-fg)]'
+                      ? 'bg-muted text-card-foreground'
+                      : 'hover:text-card-foreground'
                   )}
                   aria-current={isLast ? 'page' : undefined}
                 >
@@ -114,7 +114,7 @@ export const PageTitle: React.FC<PageTitleProps> = React.memo(({ actions, classN
             );
           })}
         </nav>
-        <h1 className="text-xl font-semibold text-[color:var(--glass-fg)] lg:text-2xl">{title}</h1>
+        <h1 className="text-xl font-semibold text-card-foreground lg:text-2xl">{title}</h1>
       </div>
 
       {actions ? <div className="flex-shrink-0">{actions}</div> : null}

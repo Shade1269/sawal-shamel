@@ -46,8 +46,8 @@ export const KpiCard: React.FC<KpiCardProps> = React.memo(
           'relative flex flex-col gap-[var(--spacing-md)] rounded-[var(--radius-l)] p-[var(--spacing-lg)] backdrop-blur-xl overflow-hidden transition-all duration-500',
           'hover:-translate-y-0.5 focus-within:outline-none focus-within:ring-2',
           isDarkMode 
-            ? 'border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 shadow-[var(--shadow-glass-soft)] hover:shadow-[var(--shadow-glass-strong)] focus-within:shadow-[var(--shadow-glass-strong)]' 
-            : 'border border-slate-300/60 bg-white/95 shadow-xl hover:shadow-2xl focus-within:shadow-2xl',
+            ? 'border border-border bg-card/90 shadow-md hover:shadow-lg focus-within:shadow-lg' 
+            : 'border border-slate-300/60 bg-card/95 shadow-xl hover:shadow-2xl focus-within:shadow-2xl',
           className
         )}
         style={{ color: isDarkMode ? 'var(--glass-fg)' : 'var(--foreground)' }}
@@ -88,11 +88,11 @@ export const KpiCard: React.FC<KpiCardProps> = React.memo(
         <header className="flex items-center justify-between gap-[var(--spacing-md)]">
           <div className="space-y-1">
             <p className={`text-xs font-bold uppercase tracking-wide drop-shadow-sm ${
-              isDarkMode ? 'text-white/90' : 'text-slate-700'
+              isDarkMode ? 'text-foreground' : 'text-foreground'
             }`}>{title}</p>
             {description ? (
               <p className={`text-xs drop-shadow-sm ${
-                isDarkMode ? 'text-white/70' : 'text-slate-500'
+                isDarkMode ? 'text-muted-foreground' : 'text-muted-foreground'
               }`}>{description}</p>
             ) : null}
           </div>
@@ -138,7 +138,7 @@ export const KpiCard: React.FC<KpiCardProps> = React.memo(
 
         {footer ? (
           <footer className={`text-sm drop-shadow-sm ${
-            isDarkMode ? 'text-white/80' : 'text-slate-600'
+            isDarkMode ? 'text-muted-foreground' : 'text-muted-foreground'
           }`}>{footer}</footer>
         ) : null}
       </article>

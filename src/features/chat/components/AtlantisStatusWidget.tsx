@@ -38,10 +38,10 @@ export const AtlantisStatusWidget = ({ compact = false }: AtlantisStatusWidgetPr
 
   const getLevelColor = (level: string) => {
     switch (level) {
-      case 'legendary': return 'from-purple-500 to-purple-600';
-      case 'gold': return 'from-yellow-400 to-yellow-600';
-      case 'silver': return 'from-gray-300 to-gray-500';
-      default: return 'from-orange-400 to-orange-600';
+      case 'legendary': return 'bg-gradient-luxury';
+      case 'gold': return 'bg-gradient-warning';
+      case 'silver': return 'bg-gradient-muted';
+      default: return 'bg-gradient-commerce';
     }
   };
 
@@ -66,11 +66,11 @@ export const AtlantisStatusWidget = ({ compact = false }: AtlantisStatusWidgetPr
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <Crown className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
+                <Crown className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <Badge className={`bg-gradient-to-r ${getLevelColor(userLevel.current_level)} text-white text-xs`}>
+                <Badge className={`${getLevelColor(userLevel.current_level)} text-primary-foreground text-xs`}>
                   {getLevelName(userLevel.current_level)}
                 </Badge>
                 <p className="text-sm text-muted-foreground">
@@ -108,7 +108,7 @@ export const AtlantisStatusWidget = ({ compact = false }: AtlantisStatusWidgetPr
 
           {/* Level Badge */}
           <div className="flex items-center gap-3">
-            <Badge className={`bg-gradient-to-r ${getLevelColor(userLevel.current_level)} text-white px-3 py-1`}>
+            <Badge className={`${getLevelColor(userLevel.current_level)} text-primary-foreground px-3 py-1`}>
               {getLevelName(userLevel.current_level)}
             </Badge>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">

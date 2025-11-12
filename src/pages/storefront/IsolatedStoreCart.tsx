@@ -88,7 +88,7 @@ export const IsolatedStoreCart: React.FC = () => {
             </p>
             <Button 
               onClick={() => navigate(`/${storeSlug}`)}
-              className="bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 border border-red-500/20"
+              className="bg-gradient-danger hover:opacity-90 shadow-lg shadow-destructive/25 hover:shadow-xl hover:shadow-destructive/35 border border-destructive/20"
               size="lg"
             >
               تسوق الآن
@@ -114,7 +114,7 @@ export const IsolatedStoreCart: React.FC = () => {
           <ArrowLeft className="h-4 w-4 mr-2" />
           العودة للمتجر
         </Button>
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-gradient-danger bg-clip-text text-transparent">
           سلة التسوق
         </h1>
       </div>
@@ -196,7 +196,7 @@ export const IsolatedStoreCart: React.FC = () => {
                           </div>
 
                           <div className="flex items-center gap-4">
-                            <span className="font-bold text-2xl bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                            <span className="font-bold text-2xl bg-gradient-danger bg-clip-text text-transparent">
                               {item.total_price_sar.toFixed(0)} ر.س
                             </span>
                             
@@ -227,7 +227,7 @@ export const IsolatedStoreCart: React.FC = () => {
             className="sticky top-4"
           >
             <CardHeader className="border-b border-red-600/15">
-              <CardTitle className="text-2xl bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+              <CardTitle className="text-2xl bg-gradient-danger bg-clip-text text-transparent">
                 ملخص الطلب
               </CardTitle>
             </CardHeader>
@@ -244,14 +244,14 @@ export const IsolatedStoreCart: React.FC = () => {
                 <div className="h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent" />
                 <div className="flex justify-between items-center py-2">
                   <span className="text-xl font-bold text-white">المجموع الكلي</span>
-                  <span className="text-3xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                  <span className="text-3xl font-bold bg-gradient-danger bg-clip-text text-transparent">
                     {total.toFixed(0)} ر.س
                   </span>
                 </div>
               </div>
 
               <Button 
-                className="w-full h-14 text-lg bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 border border-red-500/20 transition-all duration-500 group"
+                className="w-full h-14 text-lg bg-gradient-danger hover:opacity-90 shadow-lg shadow-destructive/25 hover:shadow-xl hover:shadow-destructive/35 border border-destructive/20 transition-all duration-500 group"
                 size="lg"
                 onClick={() => navigate(`/${storeSlug}/checkout`)}
               >

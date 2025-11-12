@@ -92,13 +92,13 @@ export const MiniChart: React.FC<MiniChartProps> = React.memo(
     return (
       <figure
         className={cn(
-          'w-full rounded-[var(--radius-l)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85 p-[var(--spacing-md)] shadow-[var(--shadow-glass-soft)] backdrop-blur-xl',
+          'w-full rounded-[var(--radius-l)] border border-border bg-card/85 p-[var(--spacing-md)] shadow-md backdrop-blur-xl',
           className
         )}
         data-component="mini-chart"
         aria-label={`${title} — ${trendLabelMap[trend]}`}
       >
-        <figcaption className="mb-[var(--spacing-sm)] flex items-center justify-between text-xs text-[color:var(--muted-foreground)]">
+        <figcaption className="mb-[var(--spacing-sm)] flex items-center justify-between text-xs text-muted-foreground">
           <span>{title}</span>
           <span>{trendLabelMap[trend]}</span>
         </figcaption>

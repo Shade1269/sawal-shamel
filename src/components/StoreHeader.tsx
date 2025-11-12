@@ -19,6 +19,7 @@ import {
   Mail
 } from 'lucide-react';
 import { SimpleCart } from '@/features/commerce';
+import { getLevelClasses, getGradientClasses } from '@/utils/themeHelpers';
 
 interface StoreHeaderProps {
   store: {
@@ -55,33 +56,33 @@ export const StoreHeader: React.FC<StoreHeaderProps> = ({ store, productsCount }
   const getLevelIcon = (level: string) => {
     switch (level?.toLowerCase()) {
       case 'gold':
-        return <Crown className="h-5 w-5 text-yellow-500" />;
+        return <Crown className="h-5 w-5 text-premium" />;
       case 'platinum':
-        return <Award className="h-5 w-5 text-purple-500" />;
+        return <Award className="h-5 w-5 text-luxury" />;
       case 'diamond':
-        return <Verified className="h-5 w-5 text-blue-500" />;
+        return <Verified className="h-5 w-5 text-info" />;
       default:
-        return <Star className="h-5 w-5 text-gray-500" />;
+        return <Star className="h-5 w-5 text-muted-foreground" />;
     }
   };
 
-  const getLevelColor = (level: string) => {
+  const getLevelGradient = (level: string) => {
     switch (level?.toLowerCase()) {
       case 'gold':
-        return 'from-yellow-400 to-yellow-600';
+        return getGradientClasses('luxury');
       case 'platinum':
-        return 'from-purple-400 to-purple-600';
+        return getGradientClasses('premium');
       case 'diamond':
-        return 'from-blue-400 to-blue-600';
+        return getGradientClasses('info');
       default:
-        return 'from-gray-400 to-gray-600';
+        return getGradientClasses('primary');
     }
   };
 
   return (
     <div className="relative overflow-hidden">
       {/* خلفية متدرجة */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${getLevelColor(store.profiles?.level || 'bronze')} opacity-10`} />
+      <div className={`absolute inset-0 ${getLevelGradient(store.profiles?.level || 'bronze')} opacity-10`} />
       
       <Card className="border-0 bg-card/80 backdrop-blur-sm relative">
         <CardContent className="p-4 sm:p-8">
@@ -91,7 +92,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = ({ store, productsCount }
               <div className="flex items-start gap-3 sm:gap-6">
                 {/* صورة المتجر */}
                 <div className="relative">
-                  <Avatar className="h-16 w-16 sm:h-24 sm:w-24 border-2 sm:border-4 border-white shadow-lg">
+                  <Avatar className="h-16 w-16 sm:h-24 sm:w-24 border-2 sm:border-4 border-card shadow-lg">
                     <AvatarImage 
                       src={store.logo_url || store.profiles?.avatar_url} 
                       alt={store.store_name} 
@@ -105,7 +106,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = ({ store, productsCount }
                   <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2">
                     <Badge 
                       variant="secondary" 
-                      className={`bg-gradient-to-r ${getLevelColor(store.profiles?.level || 'bronze')} text-white border-0 text-xs`}
+                      className={`${getLevelGradient(store.profiles?.level || 'bronze')} text-primary-foreground border-0 text-xs`}
                     >
                       {getLevelIcon(store.profiles?.level || 'bronze')}
                     </Badge>
@@ -116,7 +117,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = ({ store, productsCount }
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
                     <h1 className="text-xl sm:text-3xl font-bold truncate">{store.store_name}</h1>
-                    <Verified className="h-4 w-4 sm:h-6 sm:w-6 text-blue-500 flex-shrink-0" />
+                    <Verified className="h-4 w-4 sm:h-6 sm:w-6 text-info flex-shrink-0" />
                   </div>
                   
                   <div className="flex items-center gap-2 sm:gap-4 mb-3 flex-wrap">
@@ -149,7 +150,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = ({ store, productsCount }
                       <span className="text-xs sm:text-sm font-medium">{store.total_sales.toLocaleString()} ريال مبيعات</span>
                     </div>
                     <div className="flex items-center gap-1 col-span-2 sm:col-span-1">
-                      <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
+                      <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-premium text-premium" />
                       <span className="text-xs sm:text-sm font-medium">4.8</span>
                       <span className="text-xs text-muted-foreground">(128 تقييم)</span>
                     </div>

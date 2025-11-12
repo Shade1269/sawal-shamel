@@ -45,20 +45,20 @@ export default function ModernAffiliateLayout() {
       {/* Decorative background - Subtle */}
       {isDarkMode ? (
         <>
-          <div aria-hidden className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-blue-500/20 via-purple-500/10 to-transparent blur-3xl animate-pulse" />
-          <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-tr from-emerald-400/15 via-pink-500/10 to-transparent blur-3xl animate-pulse" />
+          <div aria-hidden className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-premium/20 blur-3xl animate-pulse" />
+          <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-success/15 blur-3xl animate-pulse" />
         </>
       ) : (
         <>
-          <div aria-hidden className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-blue-400/15 via-purple-400/10 to-transparent blur-3xl" />
-          <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-tr from-emerald-400/12 via-pink-400/8 to-transparent blur-3xl" />
+          <div aria-hidden className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-premium/15 blur-3xl" />
+          <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-success/12 blur-3xl" />
         </>
       )}
       {/* Sidebar */}
       <AffiliateSidebar />
 
       {/* Main Content - Dynamic margin based on sidebar state (desktop only) */}
-        <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 bg-gradient-to-br from-blue-50/30 via-white/50 to-purple-50/30 ${sidebarState.isCollapsed ? 'md:mr-16' : 'md:mr-64'}`}>
+        <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 bg-gradient-muted ${sidebarState.isCollapsed ? 'md:mr-16' : 'md:mr-64'}`}>
         {/* Header */}
         <header className="h-16 border-b border-border/40 bg-background/60 backdrop-blur-xl sticky top-0 z-40 shadow-sm">
           <div className="flex h-16 items-center gap-4 px-4 lg:px-6">

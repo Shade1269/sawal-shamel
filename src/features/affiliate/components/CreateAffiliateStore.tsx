@@ -83,10 +83,10 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/10" dir="rtl">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-subtle" dir="rtl">
       <Card className="w-full max-w-md mx-4 shadow-2xl border border-border/50 bg-card backdrop-blur-sm">
         <CardHeader className="text-center space-y-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+          <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto shadow-glow">
             <Store className="w-8 h-8 text-primary-foreground" />
           </div>
           <div>

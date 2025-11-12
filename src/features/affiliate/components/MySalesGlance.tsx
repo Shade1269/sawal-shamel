@@ -14,23 +14,23 @@ const formatter = new Intl.NumberFormat('ar-SA', { minimumFractionDigits: 0 });
 const currencyFormatter = new Intl.NumberFormat('ar-SA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const MetricCard = ({ title, snapshot }: { title: string; snapshot: SalesSnapshot }) => (
-  <div className="rounded-2xl border border-[color:var(--anaqti-border,rgba(209,168,142,0.35))] bg-white/70 p-4 shadow-sm">
-    <p className="text-sm font-semibold text-[color:var(--anaqti-muted,rgba(61,43,43,0.45))]">{title}</p>
+  <div className="rounded-2xl border border-border bg-card/70 p-4 shadow-sm">
+    <p className="text-sm font-semibold text-muted-foreground">{title}</p>
     <div className="mt-3 flex flex-wrap items-center gap-6">
       <div className="flex items-baseline gap-1">
-        <ShoppingBag className="h-4 w-4 text-[color:var(--anaqti-primary,#c64262)]" />
-        <span className="text-lg font-bold text-[color:var(--anaqti-text,#3d2b2b)]">{formatter.format(snapshot.orders)}</span>
-        <span className="text-xs text-[color:var(--anaqti-muted,rgba(61,43,43,0.45))]">طلب</span>
+        <ShoppingBag className="h-4 w-4 text-primary" />
+        <span className="text-lg font-bold text-foreground">{formatter.format(snapshot.orders)}</span>
+        <span className="text-xs text-muted-foreground">طلب</span>
       </div>
       <div className="flex items-baseline gap-1">
-        <ShoppingCart className="h-4 w-4 text-[color:var(--anaqti-accent,#1f7a8c)]" />
-        <span className="text-lg font-bold text-[color:var(--anaqti-text,#3d2b2b)]">{formatter.format(snapshot.items)}</span>
-        <span className="text-xs text-[color:var(--anaqti-muted,rgba(61,43,43,0.45))]">منتج</span>
+        <ShoppingCart className="h-4 w-4 text-accent" />
+        <span className="text-lg font-bold text-foreground">{formatter.format(snapshot.items)}</span>
+        <span className="text-xs text-muted-foreground">منتج</span>
       </div>
       <div className="flex items-baseline gap-1">
         <TrendingUp className="h-4 w-4 text-emerald-500" />
-        <span className="text-lg font-bold text-[color:var(--anaqti-text,#3d2b2b)]">{currencyFormatter.format(snapshot.revenue)}</span>
-        <span className="text-xs text-[color:var(--anaqti-muted,rgba(61,43,43,0.45))]">ر.س</span>
+        <span className="text-lg font-bold text-foreground">{currencyFormatter.format(snapshot.revenue)}</span>
+        <span className="text-xs text-muted-foreground">ر.س</span>
       </div>
     </div>
   </div>
@@ -48,7 +48,7 @@ export const MySalesGlance = ({ metrics, loading, onRefresh }: MySalesGlanceProp
           <Button
             variant="outline"
             size="sm"
-            className="rounded-full border-[color:var(--anaqti-border,rgba(209,168,142,0.35))] text-[color:var(--anaqti-primary,#c64262)]"
+            className="rounded-full border-border text-primary"
             onClick={onRefresh}
             disabled={loading}
           >
@@ -71,7 +71,7 @@ export const MySalesGlance = ({ metrics, loading, onRefresh }: MySalesGlanceProp
             <MetricCard title="هذا الشهر" snapshot={metrics.month} />
           </div>
         ) : (
-          <div className="rounded-xl bg-white/70 p-6 text-sm text-[color:var(--anaqti-muted,rgba(61,43,43,0.45))]">
+          <div className="rounded-xl bg-card/70 p-6 text-sm text-muted-foreground">
             لم يتم تسجيل أي مبيعات بعد هذا الشهر. ابدأ بمشاركة متجرك لتحفيز أول عملية بيع!
           </div>
         )}

@@ -107,7 +107,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
     return (
       <div className={cn("aspect-square bg-muted flex items-center justify-center rounded-lg", className)}>
         <Package className="h-12 w-12 text-muted-foreground" />
-        <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+        <div className="absolute bottom-2 right-2 bg-foreground/50 text-background text-xs px-2 py-1 rounded">
           لا توجد صور
         </div>
       </div>
@@ -147,7 +147,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
         <Button
           variant="ghost"
           size="icon"
-          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/90 text-white h-12 w-12 rounded-full backdrop-blur-sm border border-white/30 shadow-lg"
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-foreground/70 hover:bg-foreground/90 text-background h-12 w-12 rounded-full backdrop-blur-sm border border-border shadow-lg"
           disabled={!hasMultipleImages}
           onClick={(e) => {
             e.stopPropagation();
@@ -161,7 +161,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 hover:bg-black/90 text-white h-12 w-12 rounded-full backdrop-blur-sm border border-white/30 shadow-lg"
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-foreground/70 hover:bg-foreground/90 text-background h-12 w-12 rounded-full backdrop-blur-sm border border-border shadow-lg"
           disabled={!hasMultipleImages}
           onClick={(e) => {
             e.stopPropagation();
@@ -173,7 +173,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
         </Button>
         
         {/* Image Counter - Always show */}
-        <div className="absolute top-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+        <div className="absolute top-3 right-3 bg-foreground/50 text-background text-xs px-2 py-1 rounded-full">
           {currentIndex + 1} / {validImages.length}
         </div>
         
@@ -185,7 +185,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
                 key={index}
                 className={cn(
                   "w-2 h-2 rounded-full transition-all",
-                  index === currentIndex ? "bg-white scale-125" : "bg-white/50 hover:bg-white/80"
+                  index === currentIndex ? "bg-background scale-125" : "bg-background/50 hover:bg-background/80"
                 )}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -197,7 +197,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
         )}
         
         {/* Swipe Indicator */}
-        <div className="absolute bottom-3 left-3 text-white/70 text-xs bg-black/30 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute bottom-3 left-3 text-background/70 text-xs bg-foreground/30 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
           {hasMultipleImages ? '👈👉 اسحب للتنقل' : 'صورة واحدة'}
         </div>
       </div>

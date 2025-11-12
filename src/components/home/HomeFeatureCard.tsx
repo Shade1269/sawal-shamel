@@ -33,8 +33,8 @@ export const HomeFeatureCard = ({
     <UnifiedCard variant="glass" hover="lift" onClick={onClick} className="group">
       <UnifiedCardHeader className="text-center">
         <div className={`mx-auto w-24 h-24 ${gradientClass} rounded-3xl flex items-center justify-center mb-6 shadow-soft interactive-scale-110 relative overflow-hidden`}>
-          <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <Icon className="h-12 w-12 text-white relative z-10" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <Icon className="h-12 w-12 text-primary-foreground relative z-10" />
           {badge && (
             <>
               <div className={`absolute -top-1 -right-1 w-4 h-4 bg-${badge.color} rounded-full ${badge.pulse ? 'animate-ping' : ''}`}></div>

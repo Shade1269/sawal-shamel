@@ -769,7 +769,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // Loading states
   if (storeLoading || productsLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent mx-auto"></div>
           <div className="space-y-2">
@@ -956,7 +956,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5" />
+                <div className="w-full h-full bg-gradient-subtle" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-background/30 to-background/10 backdrop-blur-sm" />
             </div>
@@ -964,7 +964,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             {/* Content */}
             <div className="relative z-10 py-20 px-8 text-center space-y-6">
               {storeSettings.hero_title && (
-                <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent drop-shadow-lg">
+                <h2 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent drop-shadow-lg">
                   {storeSettings.hero_title}
                 </h2>
               )}
@@ -1720,17 +1720,17 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                       <span>الشحن:</span>
                       <span>يتم حسابه عند الدفع</span>
                     </div>
-                    <div className="h-px bg-gradient-to-r from-transparent via-red-600/20 to-transparent my-3" />
+                    <div className="h-px bg-gradient-muted my-3" />
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-bold text-white">المجموع:</span>
-                      <span className="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                      <span className="text-2xl font-bold bg-gradient-danger bg-clip-text text-transparent">
                         {cartTotal.toFixed(0)} ريال
                       </span>
                     </div>
                   </div>
                   
                   <Button 
-                    className="w-full h-14 text-lg bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 border border-red-500/20 transition-all duration-500 group" 
+                    className="w-full h-14 text-lg bg-gradient-danger hover:opacity-90 shadow-elegant border border-danger/20 transition-all duration-500 group"
                     onClick={handleCheckoutClick}
                   >
                     <ArrowRight className="h-5 w-5 mr-2 group-hover:translate-x-1 transition-transform" />

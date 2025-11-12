@@ -370,7 +370,7 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({ shopId }) =>
           <div className="flex gap-3">
             <Button onClick={handleCreateInvoice} disabled={loading} className="flex-1">
               {loading ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2" />
               ) : (
                 <Calculator className="ml-2 h-4 w-4" />
               )}

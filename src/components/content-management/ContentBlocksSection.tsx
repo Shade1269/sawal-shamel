@@ -151,7 +151,7 @@ export function ContentBlocksSection() {
                               {block.block_category === 'general' && 'عام'}
                             </Badge>
                             {block.is_premium && (
-                              <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-xs">
+                              <Badge className="bg-gradient-warning text-primary-foreground text-xs">
                                 مميز
                               </Badge>
                             )}

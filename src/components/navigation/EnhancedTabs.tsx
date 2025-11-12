@@ -11,8 +11,8 @@ const tabsVariants = cva(
     variants: {
       variant: {
         default: "border-b border-border bg-background",
-        luxury: "bg-gradient-luxury text-white border-b border-luxury/20",
-        persian: "bg-gradient-persian text-white border-b border-persian/20",
+        luxury: "bg-gradient-luxury text-luxury-foreground border-b border-luxury/20",
+        persian: "bg-gradient-persian text-persian-foreground border-b border-persian/20",
         glass: "glass-effect border-b border-border/30",
         filled: "bg-muted/50 rounded-lg p-1"
       },
@@ -40,8 +40,8 @@ const tabVariants = cva(
     variants: {
       variant: {
         default: "border-b-2 border-transparent hover:border-primary/60 data-[active=true]:border-primary data-[active=true]:text-primary",
-        luxury: "hover:bg-white/10 data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-md",
-        persian: "hover:bg-white/10 data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-md",
+        luxury: "hover:bg-primary-foreground/10 data-[active=true]:bg-primary-foreground/20 data-[active=true]:text-luxury-foreground rounded-md",
+        persian: "hover:bg-primary-foreground/10 data-[active=true]:bg-primary-foreground/20 data-[active=true]:text-persian-foreground rounded-md",
         glass: "hover:bg-background/80 data-[active=true]:bg-background data-[active=true]:text-foreground rounded-md",
         filled: "hover:bg-background/60 data-[active=true]:bg-background data-[active=true]:text-foreground data-[active=true]:shadow-sm rounded-md"
       },

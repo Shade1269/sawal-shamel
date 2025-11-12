@@ -195,19 +195,19 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-6">
+      <div className="rounded-lg border border-border bg-card/90 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <CreditCard className="h-6 w-6 text-[color:var(--accent)]" />
+          <CreditCard className="h-6 w-6 text-accent" />
           <div>
-            <h3 className="text-lg font-semibold text-[color:var(--glass-fg)]">الدفع عبر Geidea</h3>
-            <p className="text-sm text-[color:var(--fg-muted)]">دفع آمن ومشفر</p>
+            <h3 className="text-lg font-semibold text-foreground">الدفع عبر Geidea</h3>
+            <p className="text-sm text-muted-foreground">دفع آمن ومشفر</p>
           </div>
         </div>
 
         <div className="space-y-3">
           <div className="flex justify-between text-sm">
-            <span className="text-[color:var(--fg-muted)]">المبلغ المطلوب:</span>
-            <span className="font-semibold text-[color:var(--glass-fg)]">
+            <span className="text-muted-foreground">المبلغ المطلوب:</span>
+            <span className="font-semibold text-foreground">
               {amount.toFixed(2)} ريال سعودي
             </span>
           </div>

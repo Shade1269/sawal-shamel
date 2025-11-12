@@ -64,14 +64,14 @@ export function ProductShowcase3D({
   return (
     <Card
       className={cn(
-        "overflow-hidden border border-red-600/15 bg-gradient-to-br from-slate-900/98 via-slate-900/96 to-slate-800/98 backdrop-blur-sm shadow-lg shadow-black/30 hover:shadow-xl hover:shadow-red-600/15 hover:border-red-600/25 transition-all duration-500",
+        "overflow-hidden border border-primary/15 bg-gradient-subtle backdrop-blur-sm shadow-lg shadow-black/30 hover:shadow-glow hover:border-primary/25 transition-all duration-500",
         className
       )}
     >
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-2xl font-bold text-white mb-2">
+            <CardTitle className="text-2xl font-bold text-foreground mb-2">
               {product.title}
             </CardTitle>
             {product.description && (
@@ -124,14 +124,14 @@ export function ProductShowcase3D({
                 />
               </AnimatePresence>
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
 
               {images.length > 1 && (
                 <>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-slate-900/90 hover:bg-red-600/80 text-white border border-red-600/20 hover:border-red-600/40 h-10 w-10 rounded-lg shadow-md"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-primary/80 text-foreground border border-primary/20 hover:border-primary/40 h-10 w-10 rounded-lg shadow-md"
                     onClick={prevImage}
                   >
                     <ChevronRight className="h-5 w-5" />
@@ -139,7 +139,7 @@ export function ProductShowcase3D({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900/90 hover:bg-red-600/80 text-white border border-red-600/20 hover:border-red-600/40 h-10 w-10 rounded-lg shadow-md"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-primary/80 text-foreground border border-primary/20 hover:border-primary/40 h-10 w-10 rounded-lg shadow-md"
                     onClick={nextImage}
                   >
                     <ChevronLeft className="h-5 w-5" />
@@ -204,7 +204,7 @@ export function ProductShowcase3D({
                 {product.rating && (
                   <div className="flex items-center gap-1">
                     <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                    <span className="text-lg font-semibold text-white">
+                    <span className="text-lg font-semibold text-foreground">
                       {product.rating}
                     </span>
                     {product.reviews && (
@@ -245,7 +245,7 @@ export function ProductShowcase3D({
               <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
                 <Button
                   onClick={onAddToCart}
-                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-red-700 via-red-600 to-red-700 hover:from-red-600 hover:to-red-600 text-white shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/35 border border-red-500/20 transition-all duration-500"
+                  className="w-full h-14 text-lg font-bold bg-gradient-primary text-primary-foreground shadow-glow hover:shadow-xl border border-primary/20 transition-all duration-500"
                 >
                   <ShoppingCart className="h-5 w-5 ml-2" />
                   أضف إلى السلة
