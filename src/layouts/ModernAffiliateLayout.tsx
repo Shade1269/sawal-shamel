@@ -117,13 +117,13 @@ export default function ModernAffiliateLayout() {
     <div className="relative">
       {isDarkMode ? (
         <>
-          <div aria-hidden className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-premium/20 to-transparent blur-3xl animate-pulse" />
-          <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-br from-success/15 to-transparent blur-3xl animate-pulse" />
+          <div aria-hidden className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full gradient-card-secondary blur-3xl animate-pulse" />
+          <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full gradient-card-success blur-3xl animate-pulse" />
         </>
       ) : (
         <>
-          <div aria-hidden className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-gradient-to-br from-premium/15 to-transparent blur-3xl" />
-          <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-gradient-to-br from-success/12 to-transparent blur-3xl" />
+          <div aria-hidden className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full gradient-card-secondary blur-3xl" />
+          <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full gradient-card-success blur-3xl" />
         </>
       )}
       

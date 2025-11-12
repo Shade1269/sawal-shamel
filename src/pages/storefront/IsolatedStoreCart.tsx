@@ -140,7 +140,7 @@ export const IsolatedStoreCart: React.FC = () => {
                             alt={item.product_title}
                             className="w-full h-full object-cover rounded-xl border-2 border-red-600/20 group-hover:border-red-600/40 transition-all duration-300"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <div className="absolute inset-0 gradient-overlay rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                       )}
                       
@@ -241,7 +241,7 @@ export const IsolatedStoreCart: React.FC = () => {
                   <span>الشحن</span>
                   <span className="font-semibold text-white">{shipping} ر.س</span>
                 </div>
-                <div className="h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent" />
+                <div className="h-px gradient-fade-down" />
                 <div className="flex justify-between items-center py-2">
                   <span className="text-xl font-bold text-white">المجموع الكلي</span>
                   <span className="text-3xl font-bold bg-gradient-danger bg-clip-text text-transparent">

@@ -77,7 +77,7 @@ const ThemeStudioPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+    <div className="min-h-screen gradient-bg-primary">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b shadow-sm">
         <div className="container mx-auto px-6 py-4">

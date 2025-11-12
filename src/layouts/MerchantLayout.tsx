@@ -50,7 +50,7 @@ const MerchantHeader = () => {
             <Button variant="ghost" className="relative h-10 w-10 rounded-xl hover:bg-accent/50 transition-all duration-200 hover:scale-105 ring-2 ring-transparent hover:ring-primary/20">
               <Avatar className="h-9 w-9 ring-2 ring-primary/20">
                 <AvatarImage src="" />
-                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-sm">
+                <AvatarFallback className="gradient-btn-primary text-white font-bold text-sm">
                   {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || 'T'}
                 </AvatarFallback>
               </Avatar>
@@ -59,7 +59,7 @@ const MerchantHeader = () => {
           <DropdownMenuContent className="w-64 bg-card/95 backdrop-blur-xl border border-border/50 shadow-2xl shadow-black/10" align="end">
             <DropdownMenuLabel className="font-normal px-4 py-3">
               <div className="flex flex-col space-y-2">
-                <p className="text-base font-bold leading-none bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                <p className="text-base font-bold leading-none gradient-text-primary">
                   {profile?.full_name || 'تاجر'}
                 </p>
                 <p className="text-sm leading-none text-muted-foreground/80">
@@ -67,7 +67,7 @@ const MerchantHeader = () => {
                 </p>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-gradient-to-r from-transparent via-border to-transparent" />
+            <DropdownMenuSeparator className="gradient-fade-down" />
             <DropdownMenuItem onClick={() => navigate("/profile")} className="px-4 py-3 hover:bg-accent/50 transition-colors duration-200">
               <User className="mr-3 h-4 w-4" />
               <span className="font-medium">الملف الشخصي</span>
@@ -76,7 +76,7 @@ const MerchantHeader = () => {
               <Store className="mr-3 h-4 w-4" />
               <span className="font-medium">لوحة التحكم</span>
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-gradient-to-r from-transparent via-border to-transparent" />
+            <DropdownMenuSeparator className="gradient-fade-down" />
             <DropdownMenuItem onClick={handleSignOut} className="px-4 py-3 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors duration-200">
               <span className="font-medium">تسجيل الخروج</span>
             </DropdownMenuItem>

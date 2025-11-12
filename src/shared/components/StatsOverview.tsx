@@ -44,37 +44,37 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({
   const getColorClasses = (color: StatItem['color']) => {
     const colorMap = {
       primary: {
-        bg: 'bg-gradient-to-br from-primary/10 to-primary/5',
+        bg: 'gradient-card-primary',
         border: 'border-primary/20',
         icon: 'bg-gradient-primary text-white',
         text: 'text-primary'
       },
       luxury: {
-        bg: 'bg-gradient-to-br from-luxury/10 to-luxury/5',
+        bg: 'gradient-card-secondary',
         border: 'border-luxury/20',
         icon: 'bg-gradient-luxury text-white',
         text: 'text-luxury'
       },
       premium: {
-        bg: 'bg-gradient-to-br from-premium/10 to-premium/5',
+        bg: 'gradient-card-secondary',
         border: 'border-premium/20',
         icon: 'bg-gradient-premium text-white',
         text: 'text-premium'
       },
       persian: {
-        bg: 'bg-gradient-to-br from-persian/10 to-persian/5',
+        bg: 'gradient-card-accent',
         border: 'border-persian/20',
         icon: 'bg-gradient-persian text-white',
         text: 'text-persian'
       },
       success: {
-        bg: 'bg-gradient-to-br from-green-500/10 to-green-500/5',
+        bg: 'gradient-card-success',
         border: 'border-green-500/20',
         icon: 'bg-gradient-success text-white',
         text: 'text-green-600'
       },
       warning: {
-        bg: 'bg-gradient-to-br from-amber-500/10 to-amber-500/5',
+        bg: 'gradient-warning',
         border: 'border-amber-500/20',
         icon: 'bg-gradient-warning text-white',
         text: 'text-amber-600'

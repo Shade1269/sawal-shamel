@@ -52,7 +52,7 @@ const AdminHeader = () => {
             <Button variant="ghost" className="relative h-10 w-10 rounded-xl hover:bg-accent/50 transition-all duration-200 hover:scale-105 ring-2 ring-transparent hover:ring-primary/20">
               <Avatar className="h-9 w-9 ring-2 ring-primary/20">
                 <AvatarImage src="" />
-                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-sm">
+                <AvatarFallback className="gradient-btn-primary text-white font-bold text-sm">
                   {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || 'A'}
                 </AvatarFallback>
               </Avatar>

@@ -78,7 +78,7 @@ const StoreThemeSettings: React.FC = () => {
 
         {/* Theme Selector */}
         <Card className="shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-muted/50 to-background border-b">
+          <CardHeader className="gradient-header border-b">
             <CardTitle className="text-xl">الثيمات المتاحة</CardTitle>
             <CardDescription>
               اختر من بين الثيمات المصممة خصيصاً لأنواع مختلفة من المتاجر

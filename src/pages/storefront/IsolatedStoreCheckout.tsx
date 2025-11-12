@@ -549,7 +549,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent" />
+                <div className="h-px gradient-fade-down" />
 
                 <div className="space-y-3">
                   <div className="flex justify-between text-base text-slate-300">
@@ -560,7 +560,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                     <span>الشحن</span>
                     <span className="font-semibold text-white">{shipping} ر.س</span>
                   </div>
-                  <div className="h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent" />
+                  <div className="h-px gradient-fade-down" />
                   <div className="flex justify-between items-center py-2">
                     <span className="text-xl font-bold text-white">المجموع الكلي</span>
                     <span className="text-3xl font-bold bg-gradient-danger bg-clip-text text-transparent">
