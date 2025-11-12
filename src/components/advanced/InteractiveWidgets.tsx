@@ -118,7 +118,7 @@ const InteractiveWidget: React.FC<{
         <EnhancedCardContent className="pt-0">
           <div className="h-full flex items-center justify-center text-muted-foreground">
             {widget.type === 'chart' && (
-              <div className="w-full h-full bg-gradient-to-r from-primary/20 to-primary/40 rounded-md flex items-center justify-center">
+              <div className="w-full h-full bg-primary/20 rounded-md flex items-center justify-center">
                 📊 Chart Widget
               </div>
             )}
@@ -349,7 +349,7 @@ export const InteractiveWidgets: React.FC = () => {
       <EnhancedCard className="relative">
         <EnhancedCardContent className="p-0">
           <div 
-            className="relative overflow-hidden bg-gradient-to-br from-muted/20 to-muted/40 min-h-[600px] rounded-lg border-2 border-dashed border-muted-foreground/20"
+            className="relative overflow-hidden gradient-bg-muted min-h-[600px] rounded-lg border-2 border-dashed border-muted-foreground/20"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setSelectedWidget(null);

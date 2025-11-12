@@ -174,7 +174,7 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
                       {Math.abs(kpi.trend)}% هذا الشهر
                     </div>
                   </div>
-                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center ${kpi.color}`}>
+                  <div className="gradient-icon-wrapper w-12 h-12 rounded-full flex items-center justify-center ${kpi.color}">
                     <IconComponent className="w-6 h-6" />
                   </div>
                 </div>
