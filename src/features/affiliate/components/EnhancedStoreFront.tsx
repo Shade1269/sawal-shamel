@@ -1584,7 +1584,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
       {/* Enhanced Shopping Cart Sheet */}
       <Sheet open={showCart} onOpenChange={setShowCart}>
-        <SheetContent side="left" className="w-full sm:max-w-md bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-red-600/15">
+        <SheetContent side="left" className="w-full sm:max-w-md bg-gradient-card-muted border-red-600/15">
           <SheetHeader>
             <SheetTitle className="flex items-center gap-2 text-xl text-white">
               <ShoppingCart className="h-6 w-6 text-red-500" />
@@ -1598,7 +1598,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
           <div className="mt-6 space-y-4">
             {!isolatedCart || isolatedCart.items.length === 0 ? (
               <div className="text-center py-12 space-y-4">
-                <div className="w-24 h-24 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full flex items-center justify-center mx-auto border-2 border-red-600/20 shadow-lg shadow-red-600/10">
+                <div className="w-24 h-24 bg-gradient-card-muted rounded-full flex items-center justify-center mx-auto border-2 border-red-600/20 shadow-lg shadow-red-600/10">
                   <ShoppingCart className="h-12 w-12 text-red-500/50" />
                 </div>
                 <div>

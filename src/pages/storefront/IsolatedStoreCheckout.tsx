@@ -207,7 +207,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
 
   if (cartLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-card-muted">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4" />
           <p className="text-slate-400">جاري تحميل...</p>
@@ -218,7 +218,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="space-y-6 p-6 min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
+      <div className="space-y-6 p-6 min-h-screen bg-gradient-card-muted">
         <LuxuryCardV2 variant="glass" hover="none" className="max-w-md mx-auto">
           <CardContent className="text-center py-16">
             <h3 className="text-2xl font-bold mb-3 text-white">السلة فارغة</h3>
@@ -241,7 +241,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
   const total = cart.total + shipping;
 
   return (
-    <div className="space-y-6 min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-4 md:p-6">
+    <div className="space-y-6 min-h-screen bg-gradient-card-muted p-4 md:p-6">
       <div className="flex items-center gap-4">
         <Button 
           variant="ghost" 

@@ -124,6 +124,26 @@
   @apply bg-gradient-to-r from-warning/5 to-warning/10 border-warning/20;
 }
 
+.gradient-success {
+  @apply bg-gradient-to-r from-success/5 to-success/10 border-success/20;
+}
+
+.gradient-danger {
+  @apply bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/90 hover:to-destructive/70;
+}
+
+.gradient-danger-muted {
+  @apply bg-gradient-to-r from-destructive/20 to-destructive/10 border-destructive/20;
+}
+
+.gradient-danger-light {
+  @apply bg-gradient-to-br from-destructive/5 to-destructive/10;
+}
+
+.gradient-warning-light {
+  @apply bg-gradient-to-br from-warning/5 to-warning/10;
+}
+
 /* === Complex Gradients === */
 .gradient-page-bg {
   @apply bg-gradient-to-br from-background to-secondary/20;

@@ -60,7 +60,7 @@ const themes: ExtendedTheme[] = [
   {
     ...feminineTheme,
     icon: <Heart className="h-5 w-5" />,
-    preview: "bg-gradient-to-br from-pink-500 to-rose-600",
+    preview: "bg-gradient-premium",
     description: "ثيم أنثوي ناعم بألوان وردية جذابة"
   },
   {

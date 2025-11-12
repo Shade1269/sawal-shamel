@@ -1535,7 +1535,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
             {/* Users & Moderation Section */}
             <div className="space-y-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/25">
+                <div className="w-10 h-10 rounded-xl bg-gradient-info flex items-center justify-center shadow-lg shadow-info/25">
                   <Users className="h-5 w-5 text-white" />
                 </div>
                 <h3 className="text-2xl font-black admin-card">إدارة الأعضاء</h3>
