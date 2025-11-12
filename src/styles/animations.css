@@ -1,0 +1,113 @@
+/* ============================================
+   Atlantis Platform - Animations
+   Extracted from index.css for better organization
+   ============================================ */
+
+/* Animation Utility Classes */
+.message-appear {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.animate-persian-float {
+  animation: persianFloat 5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-ferrari-glow {
+  animation: ferrariGlow 3s ease-in-out infinite alternate;
+}
+
+/* ============================================
+   Keyframes
+   ============================================ */
+
+/* Basic Fade */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scale */
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Theme Specific */
+@keyframes persianFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 35%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 36px color-mix(in srgb, var(--primary) 55%, transparent);
+  }
+}
+
+@keyframes ferrariGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(196, 30, 58, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 32px rgba(196, 30, 58, 0.6);
+  }
+}
+
+/* Ripple Effect */
+@keyframes ripple {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
