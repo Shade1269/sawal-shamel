@@ -70,13 +70,13 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({
       success: {
         bg: 'bg-gradient-to-br from-green-500/10 to-green-500/5',
         border: 'border-green-500/20',
-        icon: 'bg-gradient-to-r from-green-500 to-green-600 text-white',
+        icon: 'bg-gradient-success text-white',
         text: 'text-green-600'
       },
       warning: {
         bg: 'bg-gradient-to-br from-amber-500/10 to-amber-500/5',
         border: 'border-amber-500/20',
-        icon: 'bg-gradient-to-r from-amber-500 to-amber-600 text-white',
+        icon: 'bg-gradient-warning text-white',
         text: 'text-amber-600'
       }
     };

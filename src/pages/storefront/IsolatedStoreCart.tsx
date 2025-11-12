@@ -179,7 +179,7 @@ export const IsolatedStoreCart: React.FC = () => {
                             
                             <Badge 
                               variant="secondary" 
-                              className="min-w-[3rem] justify-center bg-gradient-to-r from-red-950/30 to-red-900/30 text-white border border-red-600/20 text-base font-bold"
+                              className="min-w-[3rem] justify-center bg-gradient-danger-muted text-white border border-red-600/20 text-base font-bold"
                             >
                               {item.quantity}
                             </Badge>
@@ -259,7 +259,7 @@ export const IsolatedStoreCart: React.FC = () => {
                 <ArrowRight className="h-5 w-5 mr-2 group-hover:translate-x-1 transition-transform" />
               </Button>
 
-              <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 rounded-lg p-3 border border-red-600/10">
+              <div className="bg-gradient-card-muted rounded-lg p-3 border border-red-600/10">
                 <p className="text-xs text-slate-400 text-center">
                   الدفع عند الاستلام متاح
                 </p>

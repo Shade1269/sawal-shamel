@@ -3,12 +3,12 @@ export const damascusComponents = {
   button: {
     base: "inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
     variants: {
-      default: "bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-lg shadow-teal-600/25 hover:shadow-xl hover:shadow-teal-600/40 hover:from-teal-700 hover:to-teal-800 transform hover:scale-105",
-      destructive: "bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-600/25 hover:shadow-xl hover:shadow-red-600/40",
-      outline: "border-2 border-teal-600 text-teal-600 bg-white/50 backdrop-blur-sm hover:bg-teal-50 hover:shadow-lg",
-      secondary: "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/40",
-      ghost: "text-teal-600 hover:bg-teal-50 hover:text-teal-700",
-      link: "text-teal-600 underline-offset-4 hover:underline hover:text-teal-700"
+      default: "bg-gradient-persian text-white shadow-lg shadow-persian/25 hover:shadow-xl hover:shadow-persian/40 transform hover:scale-105",
+      destructive: "bg-gradient-danger text-white shadow-lg shadow-danger/25 hover:shadow-xl hover:shadow-danger/40",
+      outline: "border-2 border-persian text-persian bg-white/50 backdrop-blur-sm hover:bg-persian/5 hover:shadow-lg",
+      secondary: "bg-gradient-premium text-white shadow-lg shadow-premium/25 hover:shadow-xl hover:shadow-premium/40",
+      ghost: "text-persian hover:bg-persian/5 hover:text-persian",
+      link: "text-persian underline-offset-4 hover:underline hover:text-persian"
     },
     sizes: {
       default: "h-12 px-6 py-3",

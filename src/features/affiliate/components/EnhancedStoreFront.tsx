@@ -1711,7 +1711,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                 </div>
                 
                 <div className="border-t border-red-600/15 pt-4 space-y-4">
-                  <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl p-4 border border-red-600/20">
+                  <div className="bg-gradient-card-muted rounded-xl p-4 border border-red-600/20">
                     <div className="flex justify-between items-center mb-1">
                       <span className="text-sm text-slate-300">المجموع الفرعي:</span>
                       <span className="text-white font-medium">{cartTotal.toFixed(0)} ريال</span>

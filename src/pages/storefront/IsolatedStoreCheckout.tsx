@@ -569,7 +569,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 rounded-xl p-4 border border-red-600/10">
+                <div className="bg-gradient-card-muted rounded-xl p-4 border border-red-600/10">
                   <div className="flex items-center gap-3 mb-2">
                     <CreditCard className="h-5 w-5 text-red-400" />
                     <span className="font-semibold text-white">
