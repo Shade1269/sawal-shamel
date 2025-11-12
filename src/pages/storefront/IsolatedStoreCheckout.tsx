@@ -46,13 +46,16 @@ export const IsolatedStoreCheckout: React.FC = () => {
 
   // التحقق من تسجيل دخول العميل
   useEffect(() => {
-    if (!sessionId && !cartLoading) {
+    // انتظر حتى يتم تحميل بيانات المتجر قبل التحقق
+    if (!store?.id || cartLoading) return;
+    
+    if (!sessionId) {
       toast.info('يجب تسجيل الدخول أولاً لإتمام الطلب');
       // توجيه العميل لصفحة التسجيل مع حفظ مسار العودة
       const returnUrl = encodeURIComponent(`/${storeSlug}/checkout`);
       navigate(`/${storeSlug}/auth?returnUrl=${returnUrl}`, { replace: true });
     }
-  }, [sessionId, cartLoading, storeSlug, navigate]);
+  }, [sessionId, cartLoading, storeSlug, navigate, store?.id]);
 
   const [formData, setFormData] = useState<OrderFormData>({
     customerName: '',
