@@ -592,7 +592,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
           <CardHeader className="pb-6">
             <CardTitle id="inventory-integration-admin" className="text-3xl font-black admin-card">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-success to-success/80 flex items-center justify-center shadow-glow">
+                <div className="w-10 h-10 rounded-xl gradient-icon-wrapper flex items-center justify-center shadow-glow">
                   <Package className="h-5 w-5 text-white" />
                 </div>
                 نظام المخزون الداخلي
@@ -604,7 +604,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="bg-gradient-to-r from-success/10 to-success/5 border border-success/20 rounded-xl p-6">
+            <div className="gradient-card-success rounded-xl p-6">
               <p className="admin-text text-emerald-800 dark:text-emerald-200">
                 تأكد من تطبيق الملف <code className="text-xs bg-emerald-100 dark:bg-emerald-900/50 px-3 py-1 rounded-md font-mono">sql/05_internal_inventory.sql</code> وضبط المتغير <code className="text-xs bg-emerald-100 dark:bg-emerald-900/50 px-3 py-1 rounded-md font-mono">DEFAULT_WAREHOUSE_CODE</code> ليشير إلى المستودع الأساسي.
               </p>
@@ -622,7 +622,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
           <CardHeader className="pb-6">
             <CardTitle id="cron-monitoring" className="text-3xl font-black admin-card">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-info to-info/80 flex items-center justify-center shadow-glow">
+                <div className="w-10 h-10 rounded-xl gradient-info flex items-center justify-center shadow-glow">
                   <Clock className="h-5 w-5 text-white" />
                 </div>
                 سجل المهام التلقائية (Cron Jobs)
@@ -722,7 +722,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
           {/* Products Management Section */}
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-lg shadow-primary/25 ring-2 ring-primary/20">
+              <div className="w-12 h-12 rounded-2xl gradient-icon-wrapper flex items-center justify-center shadow-lg shadow-primary/25 ring-2 ring-primary/20">
                 <Package className="h-6 w-6 text-white drop-shadow-sm" />
               </div>
               <div>
@@ -1535,7 +1535,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
             {/* Users & Moderation Section */}
             <div className="space-y-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/25">
+                <div className="w-10 h-10 rounded-xl gradient-icon-wrapper flex items-center justify-center shadow-lg shadow-primary/25">
                   <Users className="h-5 w-5 text-white" />
                 </div>
                 <h3 className="text-2xl font-black admin-card">إدارة الأعضاء</h3>
