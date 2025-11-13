@@ -27,9 +27,9 @@ export const ProtectedRoute = ({
   // Show loading spinner while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
+      <div className="min-h-screen gradient-bg-accent flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center animate-pulse">
+          <div className="mx-auto w-16 h-16 gradient-btn-primary rounded-2xl flex items-center justify-center animate-pulse">
             <Loader2 className="h-8 w-8 text-primary-foreground animate-spin" />
           </div>
           <div>
@@ -49,9 +49,9 @@ export const ProtectedRoute = ({
   // If a specific role is required but profile isn't loaded yet, don't block the user
   if (requiredRole && !profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
+      <div className="min-h-screen gradient-bg-accent flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center animate-pulse">
+          <div className="mx-auto w-16 h-16 gradient-btn-primary rounded-2xl flex items-center justify-center animate-pulse">
             <Loader2 className="h-8 w-8 text-primary-foreground animate-spin" />
           </div>
           <div>

@@ -188,7 +188,7 @@ export const AtlantisLeaderboard = () => {
                 <Card 
                   key={entry.id}
                   className={`transition-all duration-300 hover:scale-105 hover:shadow-lg ${
-                    index < 3 ? 'ring-2 ring-primary/20 bg-gradient-to-r from-primary/5 to-transparent' : ''
+                    index < 3 ? 'ring-2 ring-primary/20 gradient-card-primary' : ''
                   }`}
                 >
                   <CardContent className="p-6">
