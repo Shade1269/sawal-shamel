@@ -85,8 +85,8 @@ export function AdminSidebar() {
     
     return `group flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-300 hover:scale-[1.02] ${
       isActive 
-        ? "bg-gradient-to-r from-primary/25 via-primary/15 to-primary/10 text-primary border border-primary/30 font-semibold shadow-glow ring-2 ring-primary/20 backdrop-blur-sm" 
-        : "text-muted-foreground hover:bg-gradient-to-r hover:from-accent/50 hover:to-accent/30 hover:text-accent-foreground hover:shadow-md hover:backdrop-blur-sm"
+        ? "gradient-bg-primary text-primary border border-primary/30 font-semibold shadow-glow ring-2 ring-primary/20 backdrop-blur-sm" 
+        : "text-muted-foreground gradient-hover-accent hover:text-accent-foreground hover:shadow-md hover:backdrop-blur-sm"
     }`;
   };
 
@@ -135,13 +135,13 @@ export function AdminSidebar() {
   );
 
   return (
-    <Sidebar collapsible="icon" className="border-l border-gradient-to-b from-primary/20 via-primary/10 to-transparent bg-gradient-subtle backdrop-blur-2xl shadow-2xl shadow-primary/5 admin-sidebar-enhanced">
+    <Sidebar collapsible="icon" className="border-l border-border gradient-bg-muted backdrop-blur-2xl shadow-2xl shadow-primary/5 admin-sidebar-enhanced">
       <SidebarContent className="px-3 py-6">
         {/* Logo/Header */}
         <div className={`px-3 mb-8 ${isCollapsed ? "text-center" : ""}`}>
           {!isCollapsed ? (
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-glow ring-2 ring-primary/20">
+              <div className="w-12 h-12 rounded-2xl gradient-btn-primary flex items-center justify-center shadow-glow ring-2 ring-primary/20">
                 <Crown className="h-6 w-6 text-primary-foreground drop-shadow-sm" />
               </div>
               <div>
@@ -152,7 +152,7 @@ export function AdminSidebar() {
               </div>
             </div>
           ) : (
-            <div className="w-12 h-12 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto shadow-glow ring-2 ring-primary/20">
+            <div className="w-12 h-12 rounded-2xl gradient-btn-primary flex items-center justify-center mx-auto shadow-glow ring-2 ring-primary/20">
               <Crown className="h-6 w-6 text-primary-foreground drop-shadow-sm" />
             </div>
           )}
@@ -171,9 +171,9 @@ export function AdminSidebar() {
         {/* Status Indicator */}
         {!isCollapsed && (
           <div className="mt-8 px-3">
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-success/15 via-success/10 to-success/15 border border-success/30 shadow-glow backdrop-blur-sm">
+            <div className="p-4 rounded-2xl gradient-card-success shadow-glow backdrop-blur-sm">
               <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-gradient-to-r from-success to-success/80 animate-pulse shadow-sm"></div>
+                <div className="w-3 h-3 rounded-full bg-success animate-pulse shadow-sm"></div>
                 <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
                   النظام يعمل بطلاقة
                 </span>

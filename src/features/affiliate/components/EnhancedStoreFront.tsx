@@ -784,7 +784,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // Error state
   if (storeError) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-destructive/5 to-destructive/10">
+      <div className="min-h-screen flex items-center justify-center gradient-bg-muted">
         <div className="text-center max-w-md mx-auto p-8">
           <div className="w-24 h-24 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Store className="h-12 w-12 text-destructive" />
@@ -805,7 +805,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // تطبيق الثيم إذا كان المتجر محمل
   if (!affiliateStore) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-destructive/5 to-destructive/10">
+      <div className="min-h-screen flex items-center justify-center gradient-bg-muted">
         <div className="text-center max-w-md mx-auto p-8">
           <div className="w-24 h-24 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Store className="h-12 w-12 text-destructive" />
@@ -958,7 +958,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               ) : (
                 <div className="w-full h-full bg-gradient-subtle" />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-background/30 to-background/10 backdrop-blur-sm" />
+              <div className="absolute inset-0 gradient-overlay backdrop-blur-sm" />
             </div>
 
             {/* Content */}
@@ -1003,7 +1003,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm p-8 rounded-3xl border-2 border-primary/10 shadow-2xl"
+          className="gradient-bg-card backdrop-blur-sm p-8 rounded-3xl border-2 border-primary/10 shadow-2xl"
         >
           <div className="space-y-6">
             {/* Search Bar */}
@@ -1322,7 +1322,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                               )}
                             </div>
                           ) : (
-                            <div className="h-40 w-full bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center text-sm text-muted-foreground">
+                            <div className="h-40 w-full gradient-bg-accent flex items-center justify-center text-sm text-muted-foreground">
                               لا توجد صورة متاحة
                             </div>
                           )}
