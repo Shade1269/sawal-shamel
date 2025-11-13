@@ -68,11 +68,11 @@ export const ProductGrid = ({
     >
       {products.map((product) => (
         <motion.div key={product.id} variants={item}>
-          <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-2 hover:border-primary/30 bg-gradient-to-b from-card to-card/80">
+          <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-2 hover:border-primary/30 gradient-bg-card">
             <div className="relative overflow-hidden">
               {/* Product Image */}
               <div 
-                className="aspect-square cursor-pointer overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10"
+                className="aspect-square cursor-pointer overflow-hidden gradient-card-muted"
                 onClick={() => onProductClick(product)}
               >
                 {product.image_urls?.[0] ? (

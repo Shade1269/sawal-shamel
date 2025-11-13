@@ -181,7 +181,7 @@ function MyOrders() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary/10 to-primary/20 py-8">
+      <div className="gradient-bg-primary py-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4 mb-4">
             <Button
