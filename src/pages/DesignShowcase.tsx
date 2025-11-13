@@ -120,7 +120,7 @@ const DesignShowcase = () => {
           </section>
 
           {/* Products Section */}
-          <ProductGridPreview />
+          <ProductGridPreview onProductClick={() => setActiveTab('product')} />
 
           {/* Footer Info */}
           <section className="py-16 bg-surface/30">

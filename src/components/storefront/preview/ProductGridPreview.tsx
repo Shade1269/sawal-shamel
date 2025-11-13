@@ -1,5 +1,9 @@
 import { ProductCardPreview } from './ProductCardPreview';
 
+interface ProductGridPreviewProps {
+  onProductClick?: () => void;
+}
+
 const sampleProducts = [
   {
     id: 1,
@@ -59,7 +63,7 @@ const sampleProducts = [
   }
 ];
 
-export const ProductGridPreview = () => {
+export const ProductGridPreview = ({ onProductClick }: ProductGridPreviewProps) => {
   return (
       <section className="py-16 bg-background">
       <div className="container mx-auto px-6">
@@ -73,6 +77,8 @@ export const ProductGridPreview = () => {
               <ProductCardPreview
                 key={product.id}
                 {...product}
+                onProductClick={onProductClick}
+                onAddToCart={onProductClick}
               />
             ))}
           </div>

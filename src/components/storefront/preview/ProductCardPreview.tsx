@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { QuickViewModal } from './QuickViewModal';
+import { ShoppingCart } from 'lucide-react';
 
 interface ProductCardPreviewProps {
   title: string;
@@ -11,6 +10,8 @@ interface ProductCardPreviewProps {
   badge?: string;
   inStock?: boolean;
   id: number;
+  onProductClick?: () => void;
+  onAddToCart?: () => void;
 }
 
 const productImages = [
@@ -30,52 +31,55 @@ export const ProductCardPreview = ({
   reviews,
   badge,
   inStock = true,
-  id
+  id,
+  onProductClick,
+  onAddToCart
 }: ProductCardPreviewProps) => {
-  const [showQuickView, setShowQuickView] = useState(false);
   const productImage = productImages[(id - 1) % productImages.length];
 
   return (
-    <>
-      <motion.div
-        whileHover={{ y: -2 }}
-        onClick={() => setShowQuickView(true)}
-        className="group cursor-pointer bg-card rounded-xl overflow-hidden"
+    <motion.div
+      whileHover={{ y: -2 }}
+      className="group bg-card rounded-xl overflow-hidden"
+    >
+      {/* Image - Simple and Clean */}
+      <div 
+        className="relative aspect-[3/4] bg-surface overflow-hidden cursor-pointer"
+        onClick={onProductClick}
       >
-        {/* Image - Simple and Clean */}
-        <div className="relative aspect-[3/4] bg-surface overflow-hidden">
-          <img 
-            src={productImage} 
-            alt={title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        </div>
+        <img 
+          src={productImage} 
+          alt={title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+      </div>
 
-        {/* Info - Minimal with better contrast */}
-        <div className="p-5 space-y-2 text-center bg-card">
+      {/* Info - Minimal with better contrast */}
+      <div className="p-5 space-y-3 text-center bg-card">
+        <div 
+          className="cursor-pointer"
+          onClick={onProductClick}
+        >
           <h3 className="font-medium text-foreground text-base leading-snug">
             {title}
           </h3>
-          <p className="text-xl font-bold text-foreground">
+          <p className="text-xl font-bold text-foreground mt-2">
             {price} ر.س
           </p>
         </div>
-      </motion.div>
-
-      <QuickViewModal
-        isOpen={showQuickView}
-        onClose={() => setShowQuickView(false)}
-        product={{
-          title,
-          price,
-          originalPrice,
-          rating,
-          reviews,
-          badge,
-          inStock,
-          image: productImage
-        }}
-      />
-    </>
+        
+        {/* Add to Cart Button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddToCart?.();
+          }}
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+        >
+          <ShoppingCart className="w-5 h-5" />
+          أضف للسلة
+        </button>
+      </div>
+    </motion.div>
   );
 };
