@@ -61,33 +61,21 @@ const sampleProducts = [
 
 export const ProductGridPreview = () => {
   return (
-    <section className="py-16 bg-background">
-      <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <div className="text-center mb-12 space-y-4">
-          <h2 className="text-4xl font-bold bg-gradient-to-l from-primary via-luxury to-premium bg-clip-text text-transparent">
-            منتجاتنا المميزة
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            مجموعة مختارة بعناية من أفضل المنتجات لتناسب ذوقك الرفيع
-          </p>
-        </div>
+    <section className="py-12 bg-background">
+      <div className="container mx-auto px-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Section Header */}
+          <h2 className="text-3xl font-bold text-center mb-8 text-fg">الملابس</h2>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sampleProducts.map((product, index) => (
-            <ProductCardPreview
-              key={product.id}
-              {...product}
-            />
-          ))}
-        </div>
-
-        {/* Load More Button */}
-        <div className="text-center mt-12">
-          <button className="px-8 py-3 bg-gradient-luxury text-primary-foreground rounded-full font-semibold hover-scale shadow-lg">
-            عرض المزيد من المنتجات
-          </button>
+          {/* Products Grid - 3 columns like reference */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sampleProducts.map((product) => (
+              <ProductCardPreview
+                key={product.id}
+                {...product}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
