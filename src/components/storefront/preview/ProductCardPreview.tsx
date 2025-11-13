@@ -45,43 +45,23 @@ export const ProductCardPreview = ({
           <ShoppingCart className="w-20 h-20 text-primary/30" />
         </div>
 
-        {/* Image Overlay on Hover */}
-        <AnimatePresence>
-          {isHovered && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center gap-2"
-            >
-              <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                exit={{ scale: 0, rotate: 180 }}
-                transition={{ delay: 0.1 }}
-              >
-                <Button 
-                  size="icon" 
-                  className="rounded-full shadow-lg hover-scale"
-                  onClick={() => setShowQuickView(true)}
-                >
-                  <Eye className="w-4 h-4" />
-                </Button>
-              </motion.div>
-              
-              <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                exit={{ scale: 0, rotate: 180 }}
-                transition={{ delay: 0.15 }}
-              >
-                <Button size="icon" className="rounded-full shadow-lg hover-scale bg-gradient-luxury">
-                  <ShoppingCart className="w-4 h-4" />
-                </Button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Action Buttons - Always Visible */}
+        <div className="absolute bottom-16 inset-x-0 flex items-center justify-center gap-2 px-3">
+          <Button 
+            size="icon" 
+            className="rounded-full shadow-lg bg-background/90 backdrop-blur-sm hover:bg-background border-2 border-border"
+            onClick={() => setShowQuickView(true)}
+          >
+            <Eye className="w-4 h-4 text-foreground" />
+          </Button>
+          
+          <Button 
+            size="icon" 
+            className="rounded-full shadow-lg bg-primary hover:bg-primary/90 border-2 border-primary"
+          >
+            <ShoppingCart className="w-4 h-4" />
+          </Button>
+        </div>
 
         {/* Badges */}
         <div className="absolute top-3 right-3 flex flex-col gap-2">
