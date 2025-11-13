@@ -87,17 +87,17 @@ const QuickActionPanel: React.FC<QuickActionPanelProps> = ({
         hover: 'hover:scale-105'
       },
       success: {
-        button: 'bg-gradient-to-r from-green-500 to-green-600 hover:shadow-green-500/25 border-green-500/20',
+        button: 'gradient-btn-success hover:shadow-success/25 border-success/20',
         icon: 'text-white',
         hover: 'hover:scale-105'
       },
       warning: {
-        button: 'bg-gradient-to-r from-amber-500 to-amber-600 hover:shadow-amber-500/25 border-amber-500/20',
+        button: 'gradient-btn-warning hover:shadow-warning/25 border-warning/20',
         icon: 'text-white',
         hover: 'hover:scale-105'
       },
       destructive: {
-        button: 'bg-gradient-to-r from-red-500 to-red-600 hover:shadow-red-500/25 border-red-500/20',
+        button: 'gradient-btn-destructive hover:shadow-destructive/25 border-destructive/20',
         icon: 'text-white',
         hover: 'hover:scale-105'
       }

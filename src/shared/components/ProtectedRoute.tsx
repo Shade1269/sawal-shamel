@@ -66,7 +66,7 @@ export const ProtectedRoute = ({
   // Check if user is active (unless explicitly allowed)
   if (!allowInactive && profile && !isActive) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center p-4">
+      <div className="min-h-screen gradient-bg-destructive flex items-center justify-center p-4">
         <div className="max-w-md mx-auto text-center bg-background rounded-2xl shadow-2xl p-8">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,7 +85,7 @@ export const ProtectedRoute = ({
   // Check role permissions
   if (requiredRole && !hasRole(requiredRole)) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center p-4">
+      <div className="min-h-screen gradient-bg-warning flex items-center justify-center p-4">
         <div className="max-w-md mx-auto text-center bg-background rounded-2xl shadow-2xl p-8">
           <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
