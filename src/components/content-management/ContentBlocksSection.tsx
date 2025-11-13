@@ -177,7 +177,7 @@ export function ContentBlocksSection() {
                           />
                         </div>
                       ) : (
-                        <div className="aspect-video bg-gradient-to-br from-primary/5 to-secondary/5 rounded-lg flex items-center justify-center">
+                        <div className="aspect-video bg-gradient-subtle rounded-lg flex items-center justify-center">
                           <Icon className="h-8 w-8 text-muted-foreground" />
                         </div>
                       )}

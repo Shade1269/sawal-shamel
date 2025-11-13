@@ -228,10 +228,10 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                 <CardDescription>رسوم متحركة مبنية على Web Animations API</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-center h-32 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg">
+                <div className="flex items-center justify-center h-32 bg-gradient-subtle rounded-lg">
                   <div
                     ref={customRef as React.RefObject<HTMLDivElement>}
-                    className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-primary-foreground font-bold"
+                    className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center text-primary-foreground font-bold"
                   >
                     AI
                   </div>
@@ -353,21 +353,21 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                 <div className="space-y-3">
                   <div>
                     <Label className="text-sm">التوتر (Tension)</Label>
-                    <div className="bg-gradient-to-r from-green-200 to-green-400 h-2 rounded-full mt-1">
+                    <div className="bg-gradient-success h-2 rounded-full mt-1">
                       <div className="bg-green-600 h-full w-3/4 rounded-full"></div>
                     </div>
                   </div>
                   
                   <div>
                     <Label className="text-sm">الاحتكاك (Friction)</Label>
-                    <div className="bg-gradient-to-r from-blue-200 to-blue-400 h-2 rounded-full mt-1">
+                    <div className="bg-gradient-info h-2 rounded-full mt-1">
                       <div className="bg-blue-600 h-full w-1/2 rounded-full"></div>
                     </div>
                   </div>
                   
                   <div>
                     <Label className="text-sm">الكتلة (Mass)</Label>
-                    <div className="bg-gradient-to-r from-purple-200 to-purple-400 h-2 rounded-full mt-1">
+                    <div className="bg-gradient-accent h-2 rounded-full mt-1">
                       <div className="bg-purple-600 h-full w-2/3 rounded-full"></div>
                     </div>
                   </div>

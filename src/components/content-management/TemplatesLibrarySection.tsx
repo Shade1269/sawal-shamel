@@ -95,9 +95,9 @@ export function TemplatesLibrarySection() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredTemplates.map((template) => (
-                <Card key={template.id} className="group hover:shadow-lg transition-shadow overflow-hidden">
+              <Card key={template.id} className="group hover:shadow-lg transition-shadow overflow-hidden">
                   {/* Template Preview */}
-                  <div className="aspect-video bg-gradient-to-br from-primary/5 to-secondary/5 relative overflow-hidden">
+                  <div className="aspect-video bg-gradient-subtle relative overflow-hidden">
                     {template.preview_image_url ? (
                       <img 
                         src={template.preview_image_url} 

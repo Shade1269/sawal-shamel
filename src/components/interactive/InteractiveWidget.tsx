@@ -35,7 +35,7 @@ const widgetVariants = cva(
         glass: "glass-effect backdrop-blur-sm border border-border/30 hover:border-border/60",
         luxury: "luxury-effect text-luxury-foreground hover:shadow-luxury-glow",
         persian: "persian-effect text-persian-foreground hover:shadow-persian-glow",
-        gradient: "bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/30"
+        gradient: "bg-gradient-subtle border border-primary/30"
       },
       size: {
         sm: "p-4 h-32",
@@ -178,8 +178,8 @@ const InteractiveWidget: React.FC<InteractiveWidgetProps> = ({
     >
       {/* Background Effects */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+        <div className="absolute inset-0 bg-gradient-hover" />
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
       </div>
 
       <CardHeader className="pb-2 relative z-10">
