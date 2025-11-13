@@ -6,6 +6,7 @@ import { OrdersPreview } from '@/components/storefront/preview/OrdersPreview';
 import { ChatPreview } from '@/components/storefront/preview/ChatPreview';
 import { CartPreview } from '@/components/storefront/preview/CartPreview';
 import { ProductDetailPreview } from '@/components/storefront/preview/ProductDetailPreview';
+import { BannerSliderPreview } from '@/components/storefront/preview/BannerSliderPreview';
 import { Button } from '@/components/ui/button';
 import { Search, Heart, ShoppingBag, User, Package, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -86,8 +87,8 @@ const DesignShowcase = () => {
       {/* Content based on active tab */}
       {activeTab === 'store' && (
         <>
-          {/* Hero Section */}
-          <HeroPreview />
+          {/* Banner Slider */}
+          <BannerSliderPreview />
 
           {/* Categories Section - Enhanced text visibility */}
           <section className="py-12 bg-background">
