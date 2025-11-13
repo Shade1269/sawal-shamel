@@ -191,36 +191,6 @@ export const THEMES = {
   [luxuryConfig.id]: luxuryConfig,
   [damascusConfig.id]: damascusConfig,
   [ferrariConfig.id]: ferrariConfig,
-  anaqti: {
-    id: "anaqti",
-    name: "Anaqti",
-    colors: {
-      bg: "#faf8f5",
-      fg: "#49413a",
-      primary: "#9a8374",
-      secondary: "#dccfbf",
-      background: "#faf8f5",
-      foreground: "#49413a"
-    },
-    radii: { 
-      sm: "0.5rem",
-      md: "0.75rem", 
-      lg: "1rem",
-      xl: "1.5rem"
-    },
-    spacing: { 
-      xs: "0.5rem",
-      sm: "1rem",
-      md: "1.5rem", 
-      lg: "2rem",
-      xl: "3rem"
-    },
-    typography: { 
-      fontFamily: "Noto Sans Arabic",
-      baseSize: 16,
-      lineHeight: 1.5
-    }
-  }
 };
 
 export function getTheme(themeId: string) {

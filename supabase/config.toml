@@ -1,8 +1,5 @@
 project_id = "uewuiiopkctdtaexmtxu"
 
-[functions.chat-assistant]
-verify_jwt = false
-
 [functions.zoho-callback]
 verify_jwt = false
 
