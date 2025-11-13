@@ -363,7 +363,7 @@ export function UserActivityTracker() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <Card className="gradient-card-accent">
+          <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-purple/5">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Zap className="h-5 w-5 text-primary" />

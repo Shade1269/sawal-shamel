@@ -173,7 +173,7 @@ export const SmartColorPalette: React.FC<SmartColorPaletteProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg gradient-icon-wrapper">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent">
             <Palette className="w-5 h-5 text-white" />
           </div>
           <div>

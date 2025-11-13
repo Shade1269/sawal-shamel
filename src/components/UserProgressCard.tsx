@@ -32,7 +32,7 @@ export const UserProgressCard = () => {
   const isMaxLevel = userLevel.current_level === 'legendary';
 
   return (
-    <Card className="gradient-bg-card backdrop-blur-sm">
+    <Card className="bg-gradient-to-br from-card/90 to-card backdrop-blur-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">

@@ -110,8 +110,8 @@ const sampleComponents: ComponentTemplate[] = [
     author: { id: '2', name: 'سارة أحمد', avatar: '/avatars/2.jpg' },
     preview: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300',
     code: `
-<div className="relative gradient-hero text-white py-20 overflow-hidden">
-  <motion.div
+<div className="relative bg-gradient-to-r from-primary to-primary-dark text-white py-20 overflow-hidden">
+  <motion.div 
     initial={{ opacity: 0, y: 50 }}
     animate={{ opacity: 1, y: 0 }}
     className="container mx-auto text-center"

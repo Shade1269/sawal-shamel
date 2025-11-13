@@ -114,7 +114,7 @@ export const PromotionsDashboard: React.FC = () => {
               {activeCampaigns.slice(0, 3).map((campaign) => (
                 <div
                   key={campaign.id}
-                  className="flex items-center justify-between p-4 gradient-card-primary rounded-lg"
+                  className="flex items-center justify-between p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20"
                 >
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-primary/20 rounded-full">
