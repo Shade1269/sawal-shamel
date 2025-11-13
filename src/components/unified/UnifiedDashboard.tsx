@@ -317,7 +317,7 @@ export function UnifiedDashboard() {
             <IconComponent className={`h-6 w-6 md:h-8 md:w-8 ${config.primaryColor}`} />
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text truncate">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold gradient-text-primary truncate">
               {config.title}
             </h1>
             <p className="text-sm md:text-base text-muted-foreground truncate">{config.description}</p>

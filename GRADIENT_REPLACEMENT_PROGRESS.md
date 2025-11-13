@@ -117,13 +117,29 @@
 
 ---
 
+### **المرحلة 7: Store & UI Components (8 Gradient)**
+
+#### **ملفات تم تعديلها:**
+```
+✅ src/pages/affiliate/store/StoreSetup.tsx     (2 gradients)
+✅ src/components/luxury/ProductShowcase3D.tsx  (1 gradient)
+✅ src/components/performance/SkeletonLoader.tsx (1 gradient)
+✅ src/components/store/StoreBannerDisplay.tsx  (2 gradients)
+✅ src/components/ui/badge.tsx                  (1 gradient)
+✅ src/components/ui/enhanced-card.tsx          (1 gradient)
+```
+
+**المجموع:** 6 ملفات، 8 gradients ✓
+
+---
+
 ## 📊 **التقدم:**
 
 ```
 الإجمالي المطلوب:     315 gradients
-تم الاستبدال:         108 gradients
-المتبقي:              207 gradients
-التقدم:               34% ⬆️ (كان 29%)
+تم الاستبدال:         116 gradients
+المتبقي:              199 gradients
+التقدم:               37% ⬆️ (كان 34%)
 ```
 
 ---
@@ -200,20 +216,20 @@ className="gradient-card-success"
 
 ---
 
-## ⏳ **المتبقي (207 Gradients):**
+## ⏳ **المتبقي (199 Gradients):**
 
 ### **الملفات الكبيرة المتبقية:**
-- `src/pages/storefront/*.tsx` (~15 gradients متبقي)
-- `src/components/store/*.tsx` (~10 gradients متبقي)
-- `src/pages/*.tsx` (~25 gradients متبقي)
-- `src/components/*.tsx` (~30 gradients متبقي)
-- `src/features/*.tsx` (~20 gradients متبقي)
-- وغيرها (~107 gradients)
+- `src/pages/storefront/*.tsx` (~17 gradients - IsolatedStoreCart, IsolatedStoreCheckout - dark theme خاص)
+- `src/components/store/*.tsx` (~5 gradients متبقي)
+- `src/pages/*.tsx` (~20 gradients متبقي)
+- `src/components/*.tsx` (~25 gradients متبقي)
+- `src/features/*.tsx` (~15 gradients متبقي)
+- وغيرها (~117 gradients)
 
 ### **الخطة المقترحة:**
 **Option A (سريع):** استبدال 30 gradient في الصفحات المتبقية - 30 دقيقة
 **Option B (متوسط):** استبدال 60 gradient إضافي - ساعة واحدة
-**Option C (شامل):** استبدال جميع الـ 207 المتبقية - 4 ساعات
+**Option C (شامل):** استبدال جميع الـ 199 المتبقية - 4 ساعات
 
 ---
 
@@ -221,12 +237,12 @@ className="gradient-card-success"
 
 ```
 ╔══════════════════════════════════════╗
-║ Gradient Replacement: 34% Complete  ║
+║ Gradient Replacement: 37% Complete  ║
 ║                                      ║
-║  ✅ 108 Gradients Replaced           ║
-║  ⏳ 207 Gradients Remaining          ║
+║  ✅ 116 Gradients Replaced           ║
+║  ⏳ 199 Gradients Remaining          ║
 ║                                      ║
-║  Progress: [████████░░░░] 34%       ║
+║  Progress: [█████████░░░] 37%       ║
 ╚══════════════════════════════════════╝
 ```
 
@@ -254,16 +270,16 @@ className="gradient-card-success"
 ✅ Phase 1B: Component Unification    [100%] ✓
 ✅ Phase 2:  Layout Unification       [100%] ✓
 ✅ Phase 3:  Page Splitting           [100%] ✓
-⏳ Phase 4:  Gradient Replacement     [ 34%] (كان 29%)
+⏳ Phase 4:  Gradient Replacement     [ 37%] (كان 34%)
 ```
 
-**التقدم الكلي:** **97.8%** ⬆️ (كان 97.6%)
+**التقدم الكلي:** **97.9%** ⬆️ (كان 97.8%)
 
 ---
 
 ## 🎊 **الإنجاز:**
 
-تم استبدال 108 gradient بنجاح عبر 43 ملف!
+تم استبدال 116 gradient بنجاح عبر 49 ملف!
 الكود أصبح أكثر consistency ومركزية.
 
 **الخطوة التالية:** استبدال باقي الصفحات والـ components المتبقية.
