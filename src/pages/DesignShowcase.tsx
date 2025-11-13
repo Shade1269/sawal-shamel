@@ -4,6 +4,8 @@ import { ProductGridPreview } from '@/components/storefront/preview/ProductGridP
 import { ProfilePreview } from '@/components/storefront/preview/ProfilePreview';
 import { OrdersPreview } from '@/components/storefront/preview/OrdersPreview';
 import { ChatPreview } from '@/components/storefront/preview/ChatPreview';
+import { CartPreview } from '@/components/storefront/preview/CartPreview';
+import { ProductDetailPreview } from '@/components/storefront/preview/ProductDetailPreview';
 import { Button } from '@/components/ui/button';
 import { Search, Heart, ShoppingBag, User, Package, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -12,7 +14,7 @@ import { cn } from '@/lib/utils';
 
 const DesignShowcase = () => {
   const { setThemeId } = useTheme();
-  const [activeTab, setActiveTab] = useState<'store' | 'profile' | 'orders' | 'chat'>('store');
+  const [activeTab, setActiveTab] = useState<'store' | 'profile' | 'orders' | 'chat' | 'cart' | 'product'>('store');
 
   // Set anaqti theme on mount
   useEffect(() => {
@@ -64,8 +66,17 @@ const DesignShowcase = () => {
               >
                 <User className="w-6 h-6 text-foreground/70" />
               </button>
-              <button className="p-2.5 hover:bg-secondary/50 rounded-lg transition-colors">
+              <button 
+                onClick={() => setActiveTab('cart')}
+                className={cn(
+                  "p-2.5 rounded-lg transition-colors relative",
+                  activeTab === 'cart' ? 'bg-blue-100' : 'hover:bg-secondary/50'
+                )}
+              >
                 <ShoppingBag className="w-6 h-6 text-foreground/70" />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                  2
+                </span>
               </button>
             </div>
           </div>
@@ -126,6 +137,8 @@ const DesignShowcase = () => {
       {activeTab === 'profile' && <ProfilePreview />}
       {activeTab === 'orders' && <OrdersPreview />}
       {activeTab === 'chat' && <ChatPreview />}
+      {activeTab === 'cart' && <CartPreview />}
+      {activeTab === 'product' && <ProductDetailPreview />}
     </div>
   );
 };

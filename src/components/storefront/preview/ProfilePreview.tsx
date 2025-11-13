@@ -81,12 +81,9 @@ export const ProfilePreview = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="mt-8 flex gap-4">
-              <Button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-6">
+            <div className="mt-8">
+              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6">
                 تعديل المعلومات
-              </Button>
-              <Button variant="outline" className="flex-1 border-2 border-gray-300 hover:bg-gray-50 text-gray-900 font-bold py-6">
-                تغيير كلمة المرور
               </Button>
             </div>
           </motion.div>
