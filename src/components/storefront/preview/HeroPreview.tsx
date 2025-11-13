@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import dressImage from '@/assets/products/dress-pink.jpg';
 
 export const HeroPreview = () => {
   return (
@@ -34,7 +33,7 @@ export const HeroPreview = () => {
             >
               <div className="relative aspect-[3/4] max-w-md mx-auto lg:mr-0 bg-surface-2 rounded-2xl overflow-hidden">
                 <img 
-                  src={dressImage} 
+                  src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=800&fit=crop" 
                   alt="أحدث التشكيلات" 
                   className="w-full h-full object-cover"
                 />

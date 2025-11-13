@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { QuickViewModal } from './QuickViewModal';
-import dressBeige from '@/assets/products/dress-beige.jpg';
-import dressBlue from '@/assets/products/dress-blue.jpg';
-import dressGreen from '@/assets/products/dress-green.jpg';
-import dressPink from '@/assets/products/dress-pink.jpg';
-import bagBrown from '@/assets/products/bag-brown.jpg';
-import shoesBeige from '@/assets/products/shoes-beige.jpg';
 
 interface ProductCardPreviewProps {
   title: string;
@@ -19,7 +13,14 @@ interface ProductCardPreviewProps {
   id: number;
 }
 
-const productImages = [dressPink, dressBeige, dressBlue, dressGreen, bagBrown, shoesBeige];
+const productImages = [
+  'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=800&fit=crop', // Pink dress
+  'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=600&h=800&fit=crop', // Beige dress
+  'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&h=800&fit=crop', // Blue dress
+  'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600&h=800&fit=crop', // Green dress
+  'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&h=800&fit=crop', // Brown bag
+  'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&h=800&fit=crop'  // Beige shoes
+];
 
 export const ProductCardPreview = ({
   title,
