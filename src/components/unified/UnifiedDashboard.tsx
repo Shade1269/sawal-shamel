@@ -313,7 +313,7 @@ export function UnifiedDashboard() {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex items-center gap-3 md:gap-4">
-          <div className={`p-2 md:p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20`}>
+          <div className={`p-2 md:p-3 rounded-xl gradient-icon-wrapper`}>
             <IconComponent className={`h-6 w-6 md:h-8 md:w-8 ${config.primaryColor}`} />
           </div>
           <div className="min-w-0 flex-1">
