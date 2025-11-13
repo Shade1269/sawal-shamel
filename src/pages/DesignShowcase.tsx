@@ -2,9 +2,11 @@ import { HeroPreview } from '@/components/storefront/preview/HeroPreview';
 import { ProductGridPreview } from '@/components/storefront/preview/ProductGridPreview';
 import { FloatingCartPreview } from '@/components/storefront/preview/FloatingCartPreview';
 import { FiltersPreview } from '@/components/storefront/preview/FiltersPreview';
+import { SearchBarPreview } from '@/components/storefront/preview/SearchBarPreview';
+import { Interactive3DCard } from '@/components/storefront/preview/Interactive3DCard';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Sparkles, Search, Zap, Palette } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -68,6 +70,67 @@ const DesignShowcase = () => {
       <section className="relative">
         <SectionLabel title="Hero Section - القسم الرئيسي" />
         <HeroPreview />
+      </section>
+
+      {/* Search Bar Preview */}
+      <section className="relative py-16 bg-gradient-to-b from-background to-secondary/10">
+        <SectionLabel title="Search Bar - شريط البحث الذكي" />
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-3xl font-bold mb-4">بحث ذكي ومتطور</h3>
+              <p className="text-muted-foreground mb-8">
+                جربي البحث الآن وشاهدي الاقتراحات التلقائية والنتائج الفورية
+              </p>
+            </motion.div>
+
+            <SearchBarPreview />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
+              <FeatureCard
+                icon="🔍"
+                title="اقتراحات ذكية"
+                description="نتائج مقترحة تلقائياً أثناء الكتابة"
+              />
+              <FeatureCard
+                icon="⏱️"
+                title="عمليات بحث أخيرة"
+                description="الوصول السريع لعمليات البحث السابقة"
+              />
+              <FeatureCard
+                icon="📈"
+                title="الأكثر بحثاً"
+                description="اكتشفي ما يبحث عنه الآخرون"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3D Interactive Card */}
+      <section className="relative py-16">
+        <SectionLabel title="3D Interactive - تفاعل ثلاثي الأبعاد" />
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center space-y-6 mb-8"
+            >
+              <h3 className="text-3xl font-bold">تجربة تفاعلية ثلاثية الأبعاد</h3>
+              <p className="text-muted-foreground">
+                أضفنا تأثيرات 3D لجعل التجربة أكثر تميزاً وجاذبية
+              </p>
+            </motion.div>
+
+            <Interactive3DCard />
+          </div>
+        </div>
       </section>
 
       {/* Product Grid Preview */}
@@ -158,8 +221,69 @@ const DesignShowcase = () => {
               <FeatureItem text="Infinite Scroll للمنتجات" />
               <FeatureItem text="شارات وعلامات ديناميكية (جديد، خصم، الأكثر مبيعاً)" />
               <FeatureItem text="تقييمات ومراجعات المنتجات" />
+              <FeatureItem text="بحث ذكي مع اقتراحات تلقائية" />
+              <FeatureItem text="تأثيرات 3D تفاعلية" />
+              <FeatureItem text="Quick View Modal كامل بكل التفاصيل" />
+              <FeatureItem text="Search History والأكثر بحثاً" />
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* New Features Highlight */}
+      <section className="py-16 bg-gradient-to-br from-primary/5 via-luxury/5 to-premium/5">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto text-center space-y-8"
+          >
+            <h3 className="text-4xl font-bold bg-gradient-to-l from-primary via-luxury to-premium bg-clip-text text-transparent">
+              🎉 ميزات جديدة مذهلة!
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <motion.div
+                whileHover={{ scale: 1.05, rotateY: 5 }}
+                className="p-8 bg-card rounded-2xl border border-border shadow-lg"
+              >
+                <div className="w-16 h-16 bg-gradient-luxury rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Search className="w-8 h-8 text-primary-foreground" />
+                </div>
+                <h4 className="text-xl font-bold mb-3">بحث ذكي</h4>
+                <p className="text-muted-foreground">
+                  نظام بحث متطور مع اقتراحات تلقائية وعمليات بحث سابقة
+                </p>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.05, rotateY: 5 }}
+                className="p-8 bg-card rounded-2xl border border-border shadow-lg"
+              >
+                <div className="w-16 h-16 bg-gradient-to-br from-success to-luxury rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Zap className="w-8 h-8 text-white" />
+                </div>
+                <h4 className="text-xl font-bold mb-3">Quick View</h4>
+                <p className="text-muted-foreground">
+                  عرض سريع للمنتجات مع كل التفاصيل دون مغادرة الصفحة
+                </p>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.05, rotateY: 5 }}
+                className="p-8 bg-card rounded-2xl border border-border shadow-lg"
+              >
+                <div className="w-16 h-16 bg-gradient-to-br from-premium to-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Palette className="w-8 h-8 text-white" />
+                </div>
+                <h4 className="text-xl font-bold mb-3">تفاعل 3D</h4>
+                <p className="text-muted-foreground">
+                  تأثيرات ثلاثية الأبعاد تفاعلية لتجربة فريدة ومميزة
+                </p>
+              </motion.div>
+            </div>
+          </motion.div>
         </div>
       </section>
 

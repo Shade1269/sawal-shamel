@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Heart, Eye, ShoppingCart, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { QuickViewModal } from './QuickViewModal';
 
 interface ProductCardPreviewProps {
   title: string;
@@ -26,6 +27,7 @@ export const ProductCardPreview = ({
 }: ProductCardPreviewProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [showQuickView, setShowQuickView] = useState(false);
 
   return (
     <motion.div
@@ -58,7 +60,11 @@ export const ProductCardPreview = ({
                 exit={{ scale: 0, rotate: 180 }}
                 transition={{ delay: 0.1 }}
               >
-                <Button size="icon" className="rounded-full shadow-lg hover-scale">
+                <Button 
+                  size="icon" 
+                  className="rounded-full shadow-lg hover-scale"
+                  onClick={() => setShowQuickView(true)}
+                >
                   <Eye className="w-4 h-4" />
                 </Button>
               </motion.div>
@@ -172,6 +178,22 @@ export const ProductCardPreview = ({
           </div>
         </div>
       </div>
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        isOpen={showQuickView}
+        onClose={() => setShowQuickView(false)}
+        product={{
+          title,
+          price,
+          originalPrice,
+          rating,
+          reviews,
+          badge,
+          inStock,
+          description: "منتج فريد وعالي الجودة مصمم خصيصاً لتلبية احتياجاتك. مصنوع من أفضل المواد مع ضمان الجودة والأصالة."
+        }}
+      />
     </motion.div>
   );
 };
