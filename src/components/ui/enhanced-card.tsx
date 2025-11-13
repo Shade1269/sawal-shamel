@@ -11,7 +11,7 @@ const enhancedCardVariants = cva(
         default: "bg-white/95 text-foreground border-slate-200 shadow-lg backdrop-blur-sm dark:bg-card/90 dark:text-card-foreground dark:border-border/60",
         outline: "border-2 border-border bg-transparent",
         filled: "bg-muted border-transparent",
-        gradient: "gradient-bg-card border-slate-200 dark:border-border/40",
+        gradient: "bg-gradient-to-br from-white to-slate-50 border-slate-200 dark:from-card dark:to-muted dark:border-border/40",
         
         // Persian Heritage Variants
         luxury: "bg-gradient-luxury text-white border-luxury/30 shadow-luxury",

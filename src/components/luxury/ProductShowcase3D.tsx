@@ -124,7 +124,7 @@ export function ProductShowcase3D({
                 />
               </AnimatePresence>
 
-              <div className="absolute inset-0 gradient-fade-down pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
 
               {images.length > 1 && (
                 <>

@@ -45,8 +45,8 @@ const StoreSetup = () => {
     return (
       <div className={`min-h-screen transition-colors duration-500 ${
         isDarkMode 
-          ? 'gradient-bg-muted'
-          : 'gradient-bg-primary'
+          ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'
+          : 'bg-gradient-to-br from-background via-background to-primary/5'
       }`}>
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto">
