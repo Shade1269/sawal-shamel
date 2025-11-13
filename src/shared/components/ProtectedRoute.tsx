@@ -27,9 +27,9 @@ export const ProtectedRoute = ({
   // Show loading spinner while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
+      <div className="min-h-screen gradient-bg-accent flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center animate-pulse">
+          <div className="mx-auto w-16 h-16 gradient-btn-primary rounded-2xl flex items-center justify-center animate-pulse">
             <Loader2 className="h-8 w-8 text-primary-foreground animate-spin" />
           </div>
           <div>
@@ -49,9 +49,9 @@ export const ProtectedRoute = ({
   // If a specific role is required but profile isn't loaded yet, don't block the user
   if (requiredRole && !profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
+      <div className="min-h-screen gradient-bg-accent flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center animate-pulse">
+          <div className="mx-auto w-16 h-16 gradient-btn-primary rounded-2xl flex items-center justify-center animate-pulse">
             <Loader2 className="h-8 w-8 text-primary-foreground animate-spin" />
           </div>
           <div>
@@ -66,7 +66,7 @@ export const ProtectedRoute = ({
   // Check if user is active (unless explicitly allowed)
   if (!allowInactive && profile && !isActive) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center p-4">
+      <div className="min-h-screen gradient-bg-destructive flex items-center justify-center p-4">
         <div className="max-w-md mx-auto text-center bg-background rounded-2xl shadow-2xl p-8">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,7 +85,7 @@ export const ProtectedRoute = ({
   // Check role permissions
   if (requiredRole && !hasRole(requiredRole)) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center p-4">
+      <div className="min-h-screen gradient-bg-warning flex items-center justify-center p-4">
         <div className="max-w-md mx-auto text-center bg-background rounded-2xl shadow-2xl p-8">
           <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

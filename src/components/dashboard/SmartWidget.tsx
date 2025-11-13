@@ -114,8 +114,8 @@ export function SmartWidget({
     >
       {/* Background gradient */}
       <div className={cn(
-        "absolute inset-0 opacity-5",
-        data.color.replace('bg-', 'bg-gradient-to-br from-')
+        "absolute inset-0 opacity-5 gradient-bg-card",
+        data.color
       )} />
       
       <CardContent className={getVariantStyles()}>

@@ -44,40 +44,40 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({
   const getColorClasses = (color: StatItem['color']) => {
     const colorMap = {
       primary: {
-        bg: 'bg-gradient-to-br from-primary/10 to-primary/5',
+        bg: 'gradient-card-primary',
         border: 'border-primary/20',
-        icon: 'bg-gradient-primary text-white',
+        icon: 'gradient-btn-primary text-white',
         text: 'text-primary'
       },
       luxury: {
-        bg: 'bg-gradient-to-br from-luxury/10 to-luxury/5',
+        bg: 'gradient-card-luxury',
         border: 'border-luxury/20',
-        icon: 'bg-gradient-luxury text-white',
+        icon: 'gradient-btn-luxury text-white',
         text: 'text-luxury'
       },
       premium: {
-        bg: 'bg-gradient-to-br from-premium/10 to-premium/5',
+        bg: 'gradient-card-premium',
         border: 'border-premium/20',
-        icon: 'bg-gradient-premium text-white',
+        icon: 'gradient-btn-premium text-white',
         text: 'text-premium'
       },
       persian: {
-        bg: 'bg-gradient-to-br from-persian/10 to-persian/5',
+        bg: 'gradient-card-persian',
         border: 'border-persian/20',
-        icon: 'bg-gradient-persian text-white',
+        icon: 'gradient-btn-persian text-white',
         text: 'text-persian'
       },
       success: {
-        bg: 'bg-gradient-to-br from-green-500/10 to-green-500/5',
-        border: 'border-green-500/20',
-        icon: 'bg-gradient-to-r from-green-500 to-green-600 text-white',
-        text: 'text-green-600'
+        bg: 'gradient-card-success',
+        border: 'border-success/20',
+        icon: 'gradient-btn-success text-white',
+        text: 'text-success'
       },
       warning: {
-        bg: 'bg-gradient-to-br from-amber-500/10 to-amber-500/5',
-        border: 'border-amber-500/20',
-        icon: 'bg-gradient-to-r from-amber-500 to-amber-600 text-white',
-        text: 'text-amber-600'
+        bg: 'gradient-card-warning',
+        border: 'border-warning/20',
+        icon: 'gradient-btn-warning text-white',
+        text: 'text-warning'
       }
     };
     return colorMap[color];

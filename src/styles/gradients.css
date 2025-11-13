@@ -29,6 +29,22 @@
   @apply bg-gradient-to-br from-success/10 to-success/5 border-success/20;
 }
 
+.gradient-card-luxury {
+  @apply bg-gradient-to-br from-luxury/10 to-luxury/5 border-luxury/20;
+}
+
+.gradient-card-premium {
+  @apply bg-gradient-to-br from-premium/10 to-premium/5 border-premium/20;
+}
+
+.gradient-card-persian {
+  @apply bg-gradient-to-br from-persian/10 to-persian/5 border-persian/20;
+}
+
+.gradient-card-warning {
+  @apply bg-gradient-to-br from-warning/10 to-warning/5 border-warning/20;
+}
+
 /* === Background Gradients === */
 .gradient-bg-primary {
   @apply bg-gradient-to-br from-primary/5 to-primary/10;
@@ -50,6 +66,14 @@
   @apply bg-gradient-to-br from-muted/20 to-muted/40;
 }
 
+.gradient-bg-destructive {
+  @apply bg-gradient-to-br from-destructive/10 to-destructive/20;
+}
+
+.gradient-bg-warning {
+  @apply bg-gradient-to-br from-warning/10 to-warning/20;
+}
+
 /* === Button Gradients === */
 .gradient-btn-primary {
   @apply bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70;
@@ -65,6 +89,22 @@
 
 .gradient-btn-premium {
   @apply bg-gradient-to-r from-premium to-premium/80 hover:from-premium/90 hover:to-premium/70;
+}
+
+.gradient-btn-persian {
+  @apply bg-gradient-to-r from-persian to-persian/80 hover:from-persian/90 hover:to-persian/70;
+}
+
+.gradient-btn-success {
+  @apply bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success/70;
+}
+
+.gradient-btn-warning {
+  @apply bg-gradient-to-r from-warning to-warning/80 hover:from-warning/90 hover:to-warning/70;
+}
+
+.gradient-btn-destructive {
+  @apply bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/90 hover:to-destructive/70;
 }
 
 /* === Text Gradients === */

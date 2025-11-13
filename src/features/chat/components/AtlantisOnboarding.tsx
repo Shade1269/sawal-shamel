@@ -197,7 +197,7 @@ export const AtlantisOnboarding = () => {
           </div>
 
           {userLevel && (
-            <Card className="bg-gradient-to-r from-primary/10 to-primary/5">
+            <Card className="gradient-card-primary">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>

@@ -199,7 +199,7 @@ export default function LuxuryShowcase() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-card to-background p-6">
+    <div className="min-h-screen gradient-bg-card p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -354,7 +354,7 @@ export default function LuxuryShowcase() {
                 </p>
               </LuxuryCardContent>
               <LuxuryCardFooter>
-                <Button className="w-full bg-gradient-to-r from-danger to-danger/80">
+                <Button className="w-full gradient-btn-primary">
                   عرض حصري
                 </Button>
               </LuxuryCardFooter>

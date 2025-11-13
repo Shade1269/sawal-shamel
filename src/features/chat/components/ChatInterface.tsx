@@ -994,7 +994,7 @@ const ChatInterface = () => {
                       </div>
                       <div className={`p-3 rounded-2xl shadow-soft relative transition-all hover:shadow-md ${
                         isOwn 
-                          ? 'bg-gradient-to-r from-primary to-primary/90 text-white rounded-br-sm ml-auto' 
+                          ? 'gradient-btn-primary text-white rounded-br-sm ml-auto' 
                           : 'bg-white dark:bg-card rounded-bl-sm border border-border/50'
                       }`}>
                         {msg.is_pinned && (

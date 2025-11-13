@@ -44,7 +44,7 @@ export const AtlantisLeaderboard = () => {
     <div className="space-y-6">
       {/* Header with Castle Controller */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 bg-gradient-to-r from-primary/10 to-primary/5">
+        <Card className="lg:col-span-2 gradient-card-primary">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -188,7 +188,7 @@ export const AtlantisLeaderboard = () => {
                 <Card 
                   key={entry.id}
                   className={`transition-all duration-300 hover:scale-105 hover:shadow-lg ${
-                    index < 3 ? 'ring-2 ring-primary/20 bg-gradient-to-r from-primary/5 to-transparent' : ''
+                    index < 3 ? 'ring-2 ring-primary/20 gradient-card-primary' : ''
                   }`}
                 >
                   <CardContent className="p-6">

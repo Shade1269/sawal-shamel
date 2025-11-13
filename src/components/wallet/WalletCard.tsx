@@ -40,7 +40,7 @@ export const WalletCard = ({ onWithdrawClick }: WalletCardProps) => {
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Available Balance */}
-        <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-6">
+        <div className="gradient-card-primary rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">الرصيد المتاح</span>
             <DollarSign className="h-4 w-4 text-primary" />

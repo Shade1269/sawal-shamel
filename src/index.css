@@ -17,6 +17,10 @@
 @import './styles/design-system.css';
 @import './ui/styles.css';
 
+/* Animations & Gradients */
+@import './styles/animations.css';
+@import './styles/gradients.css';
+
 /* Tailwind */
 @tailwind base;
 @tailwind components;
@@ -140,9 +144,3 @@
   }
 }
 
-/* ============================================
-   Animations - External File
-   See: src/styles/animations.css for all keyframes
-   ============================================ */
-@import './styles/animations.css';
-@import './styles/gradients.css';

@@ -68,7 +68,7 @@ export const AtlantisAnimations = ({
           
           {level && (
             <motion.div
-              className={`inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r ${getLevelColor(level)} text-primary-foreground font-bold text-lg mb-4`}
+              className={`inline-flex items-center px-6 py-3 rounded-full gradient-btn-primary text-primary-foreground font-bold text-lg mb-4`}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.7, type: "spring" }}

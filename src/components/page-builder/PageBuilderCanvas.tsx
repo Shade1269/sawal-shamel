@@ -128,7 +128,7 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
               {/* CTA Section */}
               <motion.div
                 whileHover={{ scale: 1.01 }}
-                className="p-8 bg-gradient-to-r from-primary to-accent rounded-lg text-primary-foreground text-center border-2 border-dashed border-transparent hover:border-primary-foreground/30 transition-all cursor-pointer"
+                className="p-8 gradient-btn-accent rounded-lg text-primary-foreground text-center border-2 border-dashed border-transparent hover:border-primary-foreground/30 transition-all cursor-pointer"
                 onClick={() => onElementSelect?.({ type: 'cta', id: 'cta-1' })}
               >
                 <h2 className="text-3xl font-bold mb-4">عرض خاص محدود!</h2>

@@ -60,7 +60,7 @@ export const SearchAndFilters = ({
       className="space-y-6"
     >
       {/* Main Search Bar */}
-      <Card className="bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm border-2 border-primary/10 shadow-lg">
+      <Card className="gradient-bg-card backdrop-blur-sm border-2 border-primary/10 shadow-lg">
         <CardContent className="p-6">
           <div className="space-y-4">
             {/* Search Input */}
