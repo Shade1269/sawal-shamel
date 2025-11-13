@@ -11,15 +11,15 @@ export const HeroPreview = () => {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="space-y-6 text-right order-2 lg:order-1"
+              className="space-y-8 text-right order-2 lg:order-1"
             >
-              <h1 className="text-5xl font-bold text-fg leading-tight">
+              <h1 className="text-6xl font-bold text-foreground leading-tight">
                 أحدث التشكيلات
               </h1>
               
               <Button 
                 size="lg" 
-                className="bg-primary hover:bg-primary/90 text-primary-fg rounded-lg px-8"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-10 py-6 text-lg font-semibold"
               >
                 تسوق الآن
               </Button>

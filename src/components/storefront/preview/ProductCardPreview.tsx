@@ -51,12 +51,12 @@ export const ProductCardPreview = ({
           />
         </div>
 
-        {/* Info - Minimal */}
-        <div className="p-4 space-y-2 text-center">
-          <h3 className="font-medium text-fg text-sm">
+        {/* Info - Minimal with better contrast */}
+        <div className="p-5 space-y-2 text-center bg-card">
+          <h3 className="font-medium text-foreground text-base leading-snug">
             {title}
           </h3>
-          <p className="text-lg font-semibold text-fg-muted">
+          <p className="text-xl font-bold text-foreground">
             {price} ر.س
           </p>
         </div>

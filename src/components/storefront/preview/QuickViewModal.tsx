@@ -75,31 +75,31 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
             </div>
           </div>
 
-          {/* Product Info - Left side */}
+          {/* Product Info - Left side with enhanced text visibility */}
           <div className="space-y-6 order-1 md:order-2">
             <div>
-              <h2 className="text-3xl font-bold text-fg mb-2 text-right">
+              <h2 className="text-3xl font-bold text-foreground mb-3 text-right">
                 {product.title}
               </h2>
-              <p className="text-2xl font-semibold text-fg-muted text-right">
+              <p className="text-3xl font-bold text-foreground text-right">
                 {product.price} ر.س
               </p>
             </div>
 
             {/* Size Selector */}
             <div>
-              <h3 className="font-semibold mb-3 text-right text-fg">المقاسات</h3>
-              <div className="flex gap-2 justify-end flex-wrap">
+              <h3 className="font-bold mb-4 text-right text-foreground text-lg">المقاسات</h3>
+              <div className="flex gap-3 justify-end flex-wrap">
                 {sizes.map((size) => (
                   <button
                     key={size.value}
                     onClick={() => size.available && setSelectedSize(size.value)}
                     disabled={!size.available}
                     className={cn(
-                      "w-12 h-12 rounded-lg border-2 font-medium transition-all",
+                      "w-14 h-14 rounded-lg border-2 font-bold text-base transition-all",
                       selectedSize === size.value
-                        ? "border-primary bg-primary text-primary-fg"
-                        : "border-border bg-background text-fg hover:border-primary/50",
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-background text-foreground hover:border-primary/50",
                       !size.available && "opacity-30 cursor-not-allowed"
                     )}
                   >
@@ -111,7 +111,7 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
 
             {/* Color Selector */}
             <div>
-              <h3 className="font-semibold mb-3 text-right text-fg">اللون</h3>
+              <h3 className="font-bold mb-4 text-right text-foreground text-lg">اللون</h3>
               <div className="flex gap-3 justify-end flex-wrap">
                 {colors.map((color) => (
                   <motion.button
@@ -121,7 +121,7 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
                     onClick={() => color.available && setSelectedColor(color.value)}
                     disabled={!color.available}
                     className={cn(
-                      "relative w-10 h-10 rounded-full border-2 transition-all",
+                      "relative w-12 h-12 rounded-full border-2 transition-all",
                       selectedColor === color.value
                         ? "border-primary ring-2 ring-primary ring-offset-2"
                         : "border-border hover:border-primary/50",
@@ -131,7 +131,7 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
                   >
                     {!color.available && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-[2px] h-full bg-fg-muted rotate-45" />
+                        <div className="w-[2px] h-full bg-foreground/50 rotate-45" />
                       </div>
                     )}
                   </motion.button>
@@ -142,7 +142,7 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
             {/* Add to Cart Button */}
             <Button 
               size="lg" 
-              className="w-full bg-primary hover:bg-primary/90 text-primary-fg text-lg"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold py-6 mt-8"
             >
               أضف إلى السلة
             </Button>
