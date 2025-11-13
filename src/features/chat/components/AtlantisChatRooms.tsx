@@ -476,9 +476,9 @@ const AtlantisChatRooms = () => {
           {rooms.map((room) => (
             <Card key={room.id} className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-card/60 backdrop-blur-sm border-border/50">
               <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
+                    <div className="p-2 gradient-icon-wrapper rounded-lg group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
                       {getRoomIcon(room.type)}
                     </div>
                     <div>
@@ -518,7 +518,7 @@ const AtlantisChatRooms = () => {
 
                 <Button
                   onClick={() => joinRoom(room.id)}
-                  className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                  className="w-full gradient-btn-primary"
                 >
                   <MessageCircle className="h-4 w-4 mr-2" />
                   دخول الغرفة
