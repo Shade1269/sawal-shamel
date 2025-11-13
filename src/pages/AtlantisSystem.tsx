@@ -122,7 +122,7 @@ export const AtlantisSystem = () => {
 
         {/* Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <EnhancedCard variant="success" className="bg-gradient-to-r from-premium/10 to-premium/5">
+          <EnhancedCard variant="success" className="gradient-card-accent">
             <EnhancedCardHeader>
               <EnhancedCardTitle className="flex items-center gap-2 text-purple-800">
                 <Star className="h-5 w-5" />
@@ -147,7 +147,7 @@ export const AtlantisSystem = () => {
             </EnhancedCardContent>
           </EnhancedCard>
 
-          <EnhancedCard variant="info" className="bg-gradient-to-r from-info/10 to-info/5">
+          <EnhancedCard variant="info" className="gradient-info">
             <EnhancedCardHeader>
               <EnhancedCardTitle className="flex items-center gap-2 text-blue-800">
                 <Target className="h-5 w-5" />
@@ -164,7 +164,7 @@ export const AtlantisSystem = () => {
             </EnhancedCardContent>
           </EnhancedCard>
 
-          <EnhancedCard variant="success" className="bg-gradient-to-r from-success/10 to-success/5">
+          <EnhancedCard variant="success" className="gradient-card-success">
             <EnhancedCardHeader>
               <EnhancedCardTitle className="flex items-center gap-2 text-green-800">
                 <Sparkles className="h-5 w-5" />
