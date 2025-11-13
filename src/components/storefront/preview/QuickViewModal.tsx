@@ -142,7 +142,7 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
             {/* Add to Cart Button */}
             <Button 
               size="lg" 
-              className="w-full bg-gray-900 hover:bg-gray-800 text-white text-lg font-bold py-7 mt-8 shadow-lg"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold py-7 mt-8 shadow-lg"
             >
               أضف إلى السلة
             </Button>
