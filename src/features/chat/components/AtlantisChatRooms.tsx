@@ -313,13 +313,13 @@ const AtlantisChatRooms = () => {
   }
 
   return (
-    <div className="min-h-screen gradient-bg-muted">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
       {/* Header */}
       <div className="border-b bg-card/80 backdrop-blur-md shadow-sm">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold gradient-text-primary">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                 غرف دردشة أتلانتس
               </h1>
               <p className="text-muted-foreground mt-2">
@@ -329,7 +329,7 @@ const AtlantisChatRooms = () => {
 
             <Dialog open={showCreateRoom} onOpenChange={setShowCreateRoom}>
               <DialogTrigger asChild>
-                <Button className="gradient-btn-primary gap-2">
+                <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 gap-2">
                   <Plus className="h-4 w-4" />
                   إنشاء غرفة جديدة
                 </Button>
@@ -476,9 +476,9 @@ const AtlantisChatRooms = () => {
           {rooms.map((room) => (
             <Card key={room.id} className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-card/60 backdrop-blur-sm border-border/50">
               <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 gradient-icon-wrapper rounded-lg group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
+                    <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg group-hover:from-primary/30 group-hover:to-primary/20 transition-colors">
                       {getRoomIcon(room.type)}
                     </div>
                     <div>
@@ -518,7 +518,7 @@ const AtlantisChatRooms = () => {
 
                 <Button
                   onClick={() => joinRoom(room.id)}
-                  className="w-full gradient-btn-primary"
+                  className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
                 >
                   <MessageCircle className="h-4 w-4 mr-2" />
                   دخول الغرفة

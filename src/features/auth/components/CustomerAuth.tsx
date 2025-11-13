@@ -95,7 +95,7 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 gradient-bg-accent">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       {step === 'role' ? (
         <RoleSelectionStep
           onRoleSelect={handleRoleSelect}
