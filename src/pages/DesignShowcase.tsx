@@ -3,15 +3,16 @@ import { HeroPreview } from '@/components/storefront/preview/HeroPreview';
 import { ProductGridPreview } from '@/components/storefront/preview/ProductGridPreview';
 import { ProfilePreview } from '@/components/storefront/preview/ProfilePreview';
 import { OrdersPreview } from '@/components/storefront/preview/OrdersPreview';
+import { ChatPreview } from '@/components/storefront/preview/ChatPreview';
 import { Button } from '@/components/ui/button';
-import { Search, Heart, ShoppingBag, User, Package } from 'lucide-react';
+import { Search, Heart, ShoppingBag, User, Package, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 
 const DesignShowcase = () => {
   const { setThemeId } = useTheme();
-  const [activeTab, setActiveTab] = useState<'store' | 'profile' | 'orders'>('store');
+  const [activeTab, setActiveTab] = useState<'store' | 'profile' | 'orders' | 'chat'>('store');
 
   // Set anaqti theme on mount
   useEffect(() => {
@@ -36,6 +37,15 @@ const DesignShowcase = () => {
 
             {/* Icons */}
             <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setActiveTab('chat')}
+                className={cn(
+                  "p-2.5 rounded-lg transition-colors",
+                  activeTab === 'chat' ? 'bg-blue-100' : 'hover:bg-secondary/50'
+                )}
+              >
+                <MessageCircle className="w-6 h-6 text-foreground/70" />
+              </button>
               <button 
                 onClick={() => setActiveTab('orders')}
                 className={cn(
@@ -115,6 +125,7 @@ const DesignShowcase = () => {
 
       {activeTab === 'profile' && <ProfilePreview />}
       {activeTab === 'orders' && <OrdersPreview />}
+      {activeTab === 'chat' && <ChatPreview />}
     </div>
   );
 };
