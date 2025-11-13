@@ -43,6 +43,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ProductImageCarousel } from "@/features/commerce/components/ProductImageCarousel";
 import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
 import { ProductVariantSelector } from "@/components/products/ProductVariantSelector";
+import { StoreBannerDisplay } from "@/components/store/StoreBannerDisplay";
 import { motion, AnimatePresence } from "framer-motion";
 import { parseFeaturedCategories, type StoreCategory, type StoreSettings } from "@/hooks/useStoreSettings";
 import { useIsolatedStoreCart } from "@/hooks/useIsolatedStoreCart";
@@ -52,9 +53,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CustomerChatWidget } from "@/components/customer-service/CustomerChatWidget";
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 import { LuxuryCardV2, LuxuryCardContent } from "@/components/luxury/LuxuryCardV2";
-import { ModernStoreHeader } from "@/components/storefront/modern/ModernStoreHeader";
-import { ModernBannerSlider } from "@/components/storefront/modern/ModernBannerSlider";
-import { ModernProductGrid } from "@/components/storefront/modern/ModernProductGrid";
 
 interface Product {
   id: string;
@@ -835,18 +833,111 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   return (
     <StoreThemeProvider storeId={affiliateStore.id}>
       <div className="min-h-screen bg-background">
-      {/* Modern Store Header */}
-      <ModernStoreHeader 
-        store={affiliateStore}
-        cartItemsCount={isolatedCart?.items?.length || 0}
-        onCartClick={() => setShowCart(true)}
-        onAuthClick={() => setShowAuthModal(true)}
-      />
+      {/* Enhanced Store Header - Mobile Optimized */}
+      <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-xl border-b border-primary/20 shadow-lg">
+        <div className="container mx-auto px-3 md:px-6 py-3 md:py-4">
+          <div className="flex justify-between items-center gap-3">
+            {/* Store Identity */}
+            <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
+              {affiliateStore?.logo_url && (
+                <div className="relative flex-shrink-0">
+                  <img
+                    src={affiliateStore.logo_url}
+                    alt={`شعار متجر ${affiliateStore.store_name}`}
+                    className="w-10 h-10 md:w-12 md:h-12 rounded-xl object-cover shadow-lg ring-2 ring-primary/20"
+                    loading="lazy"
+                  />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-2 border-background animate-pulse"></div>
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <h1 className="text-base md:text-2xl font-bold text-foreground truncate">
+                  {affiliateStore?.store_name}
+                </h1>
+                {affiliateStore?.bio && (
+                  <p className="text-xs md:text-sm text-muted-foreground truncate hidden sm:block">
+                    {affiliateStore.bio}
+                  </p>
+                )}
+                <div className="flex items-center gap-2 md:gap-4 mt-0.5 md:mt-1 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3" />
+                    <span className="hidden sm:inline">{affiliateStore.total_orders} طلب</span>
+                    <span className="sm:hidden">{affiliateStore.total_orders}</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Package className="h-3 w-3" />
+                    <span className="hidden sm:inline">{products?.length || 0} منتج</span>
+                    <span className="sm:hidden">{products?.length || 0}</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-1.5 md:gap-2">
+              {/* Login/User Button */}
+              {isAuthenticated && customer ? (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate(`/${storeSlug}/orders`)}
+                  className="hover:shadow-lg hover:scale-105 transition-all rounded-xl"
+                >
+                  <User className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">{customer.full_name || 'حسابي'}</span>
+                </Button>
+              ) : (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate(`/${storeSlug}/auth`)}
+                  className="hover:shadow-lg hover:scale-105 transition-all rounded-xl"
+                >
+                  <User className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">تسجيل الدخول</span>
+                </Button>
+              )}
+
+              {/* Cart Button */}
+              <Sheet open={showCart} onOpenChange={setShowCart}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="sm" className="relative group hover:shadow-lg hover:scale-105 transition-all rounded-xl">
+                    <ShoppingCart className="h-4 w-4 md:mr-2 group-hover:scale-110 transition-transform" />
+                    <span className="hidden md:inline">السلة</span>
+                    {cartItemsCount > 0 && (
+                      <Badge className="absolute -top-1.5 -left-1.5 min-w-[18px] h-5 text-xs animate-bounce bg-danger shadow-lg">
+                        {cartItemsCount}
+                      </Badge>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-full sm:max-w-lg bg-card/98 backdrop-blur-xl">
+                  {/* Cart content will be rendered below */}
+                </SheetContent>
+              </Sheet>
+
+              {/* Orders Button - Only show when authenticated */}
+              {isAuthenticated && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate(`/${storeSlug}/orders`)}
+                  className="hidden lg:flex hover:shadow-lg hover:scale-105 transition-all rounded-xl"
+                >
+                  <Clock className="h-4 w-4 mr-2" />
+                  طلباتي
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* Main Content */}
       <main className="container mx-auto px-3 md:px-6 py-4 md:py-8 space-y-6 md:space-y-8">
         {storeBanners && storeBanners.length > 0 && (
-          <ModernBannerSlider banners={storeBanners} onBannerClick={handleBannerClick} />
+          <StoreBannerDisplay banners={storeBanners} onBannerClick={handleBannerClick} />
         )}
 
         {/* Hero Section - Enhanced */}
@@ -1336,13 +1427,157 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               </div>
             </div>
           ) : (
-            <ModernProductGrid
-              products={filteredProducts}
-              wishlist={wishlist}
-              onAddToCart={handleProductAddToCart}
-              onProductClick={setSelectedProduct}
-              onToggleWishlist={toggleWishlist}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
+              {filteredProducts.map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  layout
+                  initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  transition={{ 
+                    duration: 0.3,
+                    delay: index * 0.1,
+                    type: "spring",
+                    stiffness: 300
+                  }}
+                  className="group"
+                >
+                  <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 bg-card rounded-2xl">
+                    {/* Product Image */}
+                    <div className="aspect-square relative overflow-hidden gradient-bg-muted">
+                      {product.image_urls && product.image_urls.length > 0 ? (
+                        <img
+                          src={product.image_urls[0]}
+                          alt={product.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Package className="h-16 md:h-20 w-16 md:w-20 text-muted-foreground/50" />
+                        </div>
+                      )}
+                      
+                      {/* Discount Badge */}
+                      {product.discount_percentage && product.discount_percentage > 0 && (
+                        <Badge className="absolute top-2 md:top-3 right-2 md:right-3 bg-danger hover:bg-danger text-white animate-pulse shadow-lg">
+                          <Percent className="h-3 w-3 mr-1" />
+                          {product.discount_percentage}%
+                        </Badge>
+                      )}
+
+                      {/* Quick Actions Overlay */}
+                      <div className="absolute inset-0 gradient-overlay opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-2 md:gap-3">
+                        <Button 
+                          size="sm" 
+                          variant="secondary"
+                          onClick={() => setSelectedProduct(product)}
+                          className="backdrop-blur-md hover:scale-110 transition-transform shadow-lg rounded-xl"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="secondary"
+                          onClick={() => toggleWishlist(product.id)}
+                          className="backdrop-blur-md hover:scale-110 transition-transform shadow-lg rounded-xl"
+                        >
+                          <Heart className={`h-4 w-4 ${wishlist.includes(product.id) ? 'fill-danger text-danger' : ''}`} />
+                        </Button>
+                        <Button 
+                          size="sm"
+                          onClick={() => handleProductAddToCart(product)}
+                          className="backdrop-blur-md hover:scale-110 transition-transform shadow-lg rounded-xl"
+                          disabled={product.stock === 0}
+                        >
+                          <ShoppingCart className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      {/* Stock Status */}
+                      {product.stock === 0 && (
+                        <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                          <Badge variant="destructive" className="text-lg px-6 py-2 font-bold">
+                            نفد المخزون
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+
+                    <CardContent className="p-4 md:p-5 space-y-3 md:space-y-4">
+                      {/* Product Info */}
+                      <div className="space-y-1.5 md:space-y-2">
+                        <h3 className="font-bold text-base md:text-lg leading-tight line-clamp-2 text-foreground group-hover:text-primary transition-colors">
+                          {product.title}
+                        </h3>
+                        
+                        {product.description && (
+                          <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                            {product.description}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Rating */}
+                      {product.average_rating && product.average_rating > 0 && (
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                className={`h-3.5 w-3.5 md:h-4 md:w-4 ${
+                                  star <= Math.round(product.average_rating || 0)
+                                    ? 'fill-warning text-warning'
+                                    : 'fill-muted text-muted'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          <span className="text-xs md:text-sm text-muted-foreground">
+                            ({product.total_reviews || 0})
+                          </span>
+                        </div>
+                      )}
+                      
+                      {/* Price */}
+                      <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                        <div className="space-y-0.5">
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-xl md:text-2xl font-bold text-primary">
+                              {(product.final_price || product.price_sar).toFixed(0)}
+                            </span>
+                            <span className="text-xs md:text-sm text-muted-foreground font-medium">ريال</span>
+                          </div>
+                          {product.discount_percentage && product.discount_percentage > 0 && (
+                            <span className="text-xs md:text-sm text-muted-foreground line-through">
+                              {product.price_sar.toFixed(0)} ريال
+                            </span>
+                          )}
+                        </div>
+                        
+                        {product.stock && product.stock <= 5 && product.stock > 0 && (
+                          <Badge variant="outline" className="text-xs border-warning text-warning">
+                            {product.stock} متبقي
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      {/* Add to Cart Button */}
+                      <Button 
+                        onClick={() => handleProductAddToCart(product)}
+                        className="w-full group/btn gradient-btn-primary transition-all duration-300 shadow-lg hover:shadow-xl rounded-xl font-semibold"
+                        size="lg"
+                        disabled={product.stock === 0}
+                      >
+                        <Plus className="h-4 w-4 mr-2 group-hover/btn:scale-125 transition-transform" />
+                        {product.variants && product.variants.length > 0 ? 'عرض الخيارات' : 'إضافة للسلة'}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           )}
         </section>
       </main>
