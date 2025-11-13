@@ -1,0 +1,84 @@
+/* ================================================
+   Anaqti (أناقتي) Theme - Warm Neutral Colors
+   Inspired by elegant fashion e-commerce design
+   ================================================ */
+
+[data-theme="anaqti"] {
+  /* ============ Background Colors ============ */
+  --bg: 40 20% 97%;                    /* Very light warm beige #FAF8F5 */
+  --surface: 40 30% 94%;               /* Light cream #F5F1EB */
+  --surface-2: 40 25% 92%;             /* Slightly darker cream */
+  --surface-hover: 40 20% 90%;         /* Hover state */
+  
+  /* ============ Foreground Colors ============ */
+  --fg: 25 20% 25%;                    /* Dark brown #49413A */
+  --fg-muted: 25 15% 45%;              /* Muted brown #7A6E66 */
+  
+  /* ============ Primary & Accent ============ */
+  --primary: 25 35% 55%;               /* Warm taupe/brown #9A8374 */
+  --primary-fg: 40 30% 98%;            /* Almost white for text on primary */
+  --accent: 20 45% 70%;                /* Dusty rose/mauve #C4A99A */
+  --accent-fg: 25 20% 25%;             /* Dark text on accent */
+  
+  /* ============ Secondary Colors ============ */
+  --secondary: 35 25% 85%;             /* Light sand #DCCFBF */
+  --secondary-fg: 25 20% 30%;          /* Dark brown text */
+  
+  /* ============ Status Colors ============ */
+  --success: 140 40% 50%;              /* Olive green #4D9966 */
+  --warning: 35 60% 60%;               /* Warm amber #D4A574 */
+  --danger: 0 50% 55%;                 /* Muted red #C65858 */
+  --info: 200 35% 55%;                 /* Dusty blue #669BB8 */
+  
+  /* ============ UI Elements ============ */
+  --border: 35 20% 85%;                /* Soft tan border #DCCFBF */
+  --muted: 35 15% 88%;                 /* Very light gray-brown #E5DED5 */
+  --muted-foreground: 25 12% 50%;      /* Medium gray-brown */
+  
+  /* ============ Luxury & Premium ============ */
+  --luxury: 30 40% 65%;                /* Warm beige-gold #C9A876 */
+  --luxury-foreground: 25 25% 20%;     /* Dark brown */
+  --premium: 280 35% 60%;              /* Soft purple #9D7DB3 */
+  --premium-foreground: 40 30% 98%;    /* Light text */
+  
+  /* ============ Persian Heritage Colors ============ */
+  --persian: 160 40% 50%;              /* Turquoise green #4D9980 */
+  --persian-foreground: 40 30% 98%;
+  --turquoise: 180 40% 55%;            /* Teal #5AACB8 */
+  --turquoise-foreground: 40 30% 98%;
+  
+  /* ============ Additional Colors ============ */
+  --bronze: 25 45% 50%;                /* Bronze brown #997657 */
+  --bronze-foreground: 40 30% 98%;
+  --olive: 55 35% 45%;                 /* Olive #8A8A5C */
+  --olive-foreground: 40 30% 98%;
+  --coral: 15 60% 65%;                 /* Soft coral #D9907A */
+  --coral-foreground: 25 20% 25%;
+  --pearl: 40 15% 95%;                 /* Pearl white #F5F3F0 */
+  --pearl-foreground: 25 20% 25%;
+  --jasmine: 45 70% 75%;               /* Warm yellow-cream #E8D4A0 */
+  --jasmine-foreground: 25 20% 25%;
+  
+  /* ============ Interactive States ============ */
+  --status-online: 140 40% 50%;        /* Green */
+  --status-offline: 0 0% 60%;          /* Gray */
+  
+  /* ============ Layout & Borders ============ */
+  --radius-s: 0.5rem;
+  --radius-m: 0.75rem;
+  --radius-l: 1rem;
+  
+  /* ============ Shadows ============ */
+  --shadow-glass-soft: 0 2px 12px rgba(73, 65, 58, 0.08);
+  --shadow-glass-strong: 0 8px 32px rgba(73, 65, 58, 0.12);
+  
+  /* ============ Compatibility Aliases ============ */
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--surface);
+  --card-foreground: var(--fg);
+  --popover: var(--surface-2);
+  --popover-foreground: var(--fg);
+  --destructive: var(--danger);
+  --destructive-foreground: 40 30% 98%;
+}
