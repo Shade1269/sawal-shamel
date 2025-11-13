@@ -40,12 +40,12 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0" dir="rtl">
-        <div className="grid md:grid-cols-2 gap-8 p-8">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0 bg-background border-2 border-border" dir="rtl">
+        <div className="grid md:grid-cols-2 gap-8 p-8 bg-background">
           {/* Image Section - Right side */}
           <div className="space-y-4 order-2 md:order-1">
             {/* Main Image */}
-            <div className="relative aspect-[3/4] bg-surface rounded-xl overflow-hidden">
+            <div className="relative aspect-[3/4] bg-muted rounded-xl overflow-hidden border border-border">
               {product.image ? (
                 <img 
                   src={product.image} 
@@ -53,7 +53,7 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-surface">
+                <div className="w-full h-full flex items-center justify-center bg-muted">
                   <span className="text-6xl opacity-30">👗</span>
                 </div>
               )}
@@ -62,7 +62,7 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
             {/* Thumbnail Gallery */}
             <div className="grid grid-cols-4 gap-2">
               {[1, 2, 3, 4].map((idx) => (
-                <div key={idx} className="aspect-square bg-surface rounded-lg overflow-hidden border-2 border-transparent hover:border-primary/50 cursor-pointer transition-colors">
+                <div key={idx} className="aspect-square bg-muted rounded-lg overflow-hidden border-2 border-border hover:border-primary/50 cursor-pointer transition-colors">
                   {product.image && (
                     <img 
                       src={product.image} 
@@ -77,17 +77,17 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
 
           {/* Product Info - Left side with enhanced text visibility */}
           <div className="space-y-6 order-1 md:order-2">
-            <div>
+            <div className="bg-card p-4 rounded-lg">
               <h2 className="text-3xl font-bold text-foreground mb-3 text-right">
                 {product.title}
               </h2>
-              <p className="text-3xl font-bold text-foreground text-right">
+              <p className="text-3xl font-bold text-primary text-right">
                 {product.price} ر.س
               </p>
             </div>
 
             {/* Size Selector */}
-            <div>
+            <div className="bg-card p-4 rounded-lg">
               <h3 className="font-bold mb-4 text-right text-foreground text-lg">المقاسات</h3>
               <div className="flex gap-3 justify-end flex-wrap">
                 {sizes.map((size) => (
@@ -98,8 +98,8 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
                     className={cn(
                       "w-14 h-14 rounded-lg border-2 font-bold text-base transition-all",
                       selectedSize === size.value
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border bg-background text-foreground hover:border-primary/50",
+                        ? "border-primary bg-primary text-primary-foreground shadow-lg"
+                        : "border-border bg-card text-foreground hover:border-primary/50 hover:bg-muted",
                       !size.available && "opacity-30 cursor-not-allowed"
                     )}
                   >
@@ -110,7 +110,7 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
             </div>
 
             {/* Color Selector */}
-            <div>
+            <div className="bg-card p-4 rounded-lg">
               <h3 className="font-bold mb-4 text-right text-foreground text-lg">اللون</h3>
               <div className="flex gap-3 justify-end flex-wrap">
                 {colors.map((color) => (
@@ -121,9 +121,9 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
                     onClick={() => color.available && setSelectedColor(color.value)}
                     disabled={!color.available}
                     className={cn(
-                      "relative w-12 h-12 rounded-full border-2 transition-all",
+                      "relative w-12 h-12 rounded-full border-3 transition-all shadow-md",
                       selectedColor === color.value
-                        ? "border-primary ring-2 ring-primary ring-offset-2"
+                        ? "border-primary ring-4 ring-primary/30 ring-offset-2 ring-offset-background"
                         : "border-border hover:border-primary/50",
                       !color.available && "opacity-30 cursor-not-allowed"
                     )}
@@ -131,7 +131,7 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
                   >
                     {!color.available && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-[2px] h-full bg-foreground/50 rotate-45" />
+                        <div className="w-[2px] h-full bg-foreground rotate-45" />
                       </div>
                     )}
                   </motion.button>
@@ -142,7 +142,7 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
             {/* Add to Cart Button */}
             <Button 
               size="lg" 
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold py-6 mt-8"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold py-7 mt-8 shadow-lg"
             >
               أضف إلى السلة
             </Button>
