@@ -69,7 +69,7 @@ export const LeaderboardCard = ({ entry, position }: LeaderboardCardProps) => {
 
   return (
     <Card className={`transition-all duration-300 hover:scale-105 hover:shadow-lg ${
-      position <= 3 ? 'ring-2 ring-primary/20 gradient-card-primary' : ''
+      position <= 3 ? 'ring-2 ring-primary/20 bg-gradient-to-r from-primary/5 to-transparent' : ''
     }`}>
       <CardContent className="p-4">
         <div className="flex items-center justify-between">

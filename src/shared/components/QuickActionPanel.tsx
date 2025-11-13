@@ -87,17 +87,17 @@ const QuickActionPanel: React.FC<QuickActionPanelProps> = ({
         hover: 'hover:scale-105'
       },
       success: {
-        button: 'gradient-btn-success hover:shadow-success/25 border-success/20',
+        button: 'bg-gradient-to-r from-green-500 to-green-600 hover:shadow-green-500/25 border-green-500/20',
         icon: 'text-white',
         hover: 'hover:scale-105'
       },
       warning: {
-        button: 'gradient-btn-warning hover:shadow-warning/25 border-warning/20',
+        button: 'bg-gradient-to-r from-amber-500 to-amber-600 hover:shadow-amber-500/25 border-amber-500/20',
         icon: 'text-white',
         hover: 'hover:scale-105'
       },
       destructive: {
-        button: 'gradient-btn-destructive hover:shadow-destructive/25 border-destructive/20',
+        button: 'bg-gradient-to-r from-red-500 to-red-600 hover:shadow-red-500/25 border-red-500/20',
         icon: 'text-white',
         hover: 'hover:scale-105'
       }
@@ -123,7 +123,7 @@ const QuickActionPanel: React.FC<QuickActionPanelProps> = ({
 
   return (
     <div className={className}>
-      <Card className="border border-border/30 gradient-bg-card backdrop-blur-sm shadow-elegant">
+      <Card className="border border-border/30 bg-gradient-to-br from-card/60 to-card backdrop-blur-sm shadow-elegant">
         <CardHeader>
           <CardTitle className="text-xl font-bold bg-gradient-persian bg-clip-text text-transparent flex items-center gap-2">
             <Zap className="w-5 h-5 text-persian" />
