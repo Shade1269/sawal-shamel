@@ -47,7 +47,7 @@ const StoreThemeSettings: React.FC = () => {
             </Button>
             <div>
               <h1 className="text-3xl font-bold flex items-center gap-3">
-                <div className="p-2 rounded-lg gradient-btn-accent">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent">
                   <Palette className="w-6 h-6 text-white" />
                 </div>
                 ثيمات المتجر
@@ -78,7 +78,7 @@ const StoreThemeSettings: React.FC = () => {
 
         {/* Theme Selector */}
         <Card className="shadow-lg">
-          <CardHeader className="gradient-bg-muted border-b">
+          <CardHeader className="bg-gradient-to-r from-muted/50 to-background border-b">
             <CardTitle className="text-xl">الثيمات المتاحة</CardTitle>
             <CardDescription>
               اختر من بين الثيمات المصممة خصيصاً لأنواع مختلفة من المتاجر

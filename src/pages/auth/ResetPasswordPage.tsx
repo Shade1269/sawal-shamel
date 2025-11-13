@@ -49,7 +49,7 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center gradient-bg-accent p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
       <Card className="w-full max-w-md shadow-xl backdrop-blur-sm bg-card/80">
         <CardHeader className="text-center space-y-3">
           <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">

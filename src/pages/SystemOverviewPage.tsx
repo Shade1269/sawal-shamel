@@ -195,11 +195,11 @@ export default function SystemOverviewPage() {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="p-4 rounded-xl gradient-icon-wrapper">
+          <div className="p-4 rounded-xl bg-gradient-to-br from-primary/20 to-purple-500/20">
             <Rocket className="h-10 w-10 text-primary" />
           </div>
           <div>
-            <h1 className="text-4xl font-bold gradient-text-accent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-purple-500 to-orange-500 bg-clip-text text-transparent">
               نظرة شاملة على النظام
             </h1>
             <p className="text-lg text-muted-foreground">

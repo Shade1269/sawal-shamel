@@ -235,7 +235,7 @@ export default function AffiliateStorefrontPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Store Header */}
-      <div className="gradient-bg-primary py-12">
+      <div className="bg-gradient-to-r from-primary/10 to-primary/20 py-12">
         <div className="container mx-auto px-4 text-center">
           {store.logo_url && (
             <img 
