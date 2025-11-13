@@ -25,30 +25,13 @@
 
 ---
 
-### **المرحلة 2: الصفحات الرئيسية (25 Gradient)**
-
-#### **ملفات تم تعديلها:**
-```
-✅ src/pages/About.tsx                  (5 gradients)
-✅ src/pages/Admin.tsx                  (5 gradients)
-✅ src/pages/ProductManagement.tsx      (5 gradients)
-✅ src/pages/LuxuryShowcase.tsx         (2 gradients)
-✅ src/pages/StoreAuth.tsx              (1 gradient)
-✅ src/pages/ThemeStudioPage.tsx        (4 gradients)
-✅ src/pages/UXEnhancementsPage.tsx     (3 gradients)
-```
-
-**المجموع:** 7 ملفات، 25 gradient ✓
-
----
-
 ## 📊 **التقدم:**
 
 ```
 الإجمالي المطلوب:     315 gradients
-تم الاستبدال:          50 gradients
-المتبقي:              265 gradients
-التقدم:               16% ⬆️ (كان 8%)
+تم الاستبدال:          25 gradients
+المتبقي:              290 gradients
+التقدم:               8% ⬆️ (كان 5%)
 ```
 
 ---
@@ -57,32 +40,22 @@
 
 من `src/styles/gradients.css`:
 
-### **Card Gradients:**
-- `gradient-card-primary` - بطاقة أساسية
-- `gradient-card-secondary` - بطاقة ثانوية
-- `gradient-card-accent` - بطاقة لهجة
-- `gradient-card-muted` - بطاقة هادئة
-- `gradient-card-success` - بطاقة نجاح
-- `gradient-card-destructive` - بطاقة خطر
+### **Primary Gradients:**
+- `bg-gradient-primary` - الأساسي
+- `bg-gradient-secondary` - الثانوي
+- `bg-gradient-accent` - اللهجة
 
-### **Background Gradients:**
-- `gradient-bg-primary` - خلفية أساسية
-- `gradient-bg-secondary` - خلفية ثانوية
-- `gradient-bg-accent` - خلفية لهجة
-- `gradient-bg-card` - خلفية بطاقة
+### **Theme Gradients:**
+- `bg-gradient-luxury` - الفخامة
+- `bg-gradient-persian` - التراث الفارسي
+- `bg-gradient-success` - النجاح
+- `bg-gradient-info` - المعلومات
 
-### **Button Gradients:**
-- `gradient-btn-primary` - زر أساسي
-- `gradient-btn-accent` - زر لهجة
-- `gradient-btn-luxury` - زر فاخر
-
-### **Text Gradients:**
-- `gradient-text-primary` - نص أساسي
-- `gradient-text-accent` - نص لهجة
-
-### **Utility Gradients:**
-- `gradient-icon-wrapper` - غلاف الأيقونة
-- `gradient-info` - معلومات
+### **Subtle Gradients:**
+- `bg-gradient-subtle` - خفيف
+- `bg-gradient-muted` - هادئ
+- `bg-gradient-hover` - عند التمرير
+- `bg-gradient-shimmer` - التلألؤ
 
 ---
 
@@ -90,18 +63,16 @@
 
 ### **قبل:**
 ```tsx
-className="bg-gradient-to-br from-primary/10 to-primary/5"
+className="bg-gradient-to-br from-primary/5 to-primary/10"
 className="bg-gradient-to-r from-primary to-accent"
 className="bg-gradient-to-br from-accent/10 to-accent/5"
-className="bg-gradient-to-br from-success/10 to-success/5 border border-success/20"
 ```
 
 ### **بعد:**
 ```tsx
-className="gradient-card-primary"
-className="gradient-btn-accent"
-className="gradient-card-accent"
-className="gradient-card-success"
+className="bg-gradient-subtle"
+className="bg-gradient-primary"
+className="bg-gradient-accent"
 ```
 
 ---
@@ -125,19 +96,19 @@ className="gradient-card-success"
 
 ---
 
-## ⏳ **المتبقي (265 Gradients):**
+## ⏳ **المتبقي (290 Gradients):**
 
 ### **الملفات الكبيرة المتبقية:**
-- `src/pages/*.tsx` (~45 gradients متبقي)
+- `src/pages/*.tsx` (~50 gradients)
 - `src/components/customization/*.tsx` (~25 gradients)
 - `src/components/dashboard/*.tsx` (~20 gradients)
 - `src/components/unified/*.tsx` (~15 gradients)
-- وغيرها (~160 gradients)
+- وغيرها (~180 gradients)
 
 ### **الخطة المقترحة:**
-**Option A (سريع):** استبدال 25 gradient إضافي في components dashboard (30 دقيقة)
+**Option A (سريع):** استبدال 25 gradient إضافي في الصفحات الرئيسية (30 دقيقة)
 **Option B (متوسط):** استبدال 75 gradient إضافي (2 ساعات)
-**Option C (شامل):** استبدال جميع الـ 265 المتبقية (7 ساعات)
+**Option C (شامل):** استبدال جميع الـ 290 المتبقية (8 ساعات)
 
 ---
 
@@ -145,12 +116,12 @@ className="gradient-card-success"
 
 ```
 ╔══════════════════════════════════════╗
-║ Gradient Replacement: 16% Complete  ║
+║  Gradient Replacement: 8% Complete   ║
 ║                                      ║
-║  ✅ 50 Gradients Replaced            ║
-║  ⏳ 265 Gradients Remaining          ║
+║  ✅ 25 Gradients Replaced            ║
+║  ⏳ 290 Gradients Remaining          ║
 ║                                      ║
-║  Progress: [████░░░░░░░░░░] 16%     ║
+║  Progress: [████░░░░░░░░░░░] 8%     ║
 ╚══════════════════════════════════════╝
 ```
 
@@ -159,10 +130,9 @@ className="gradient-card-success"
 ## 📝 **التوصيات:**
 
 ### **للأولوية القصوى:**
-1. Components الـ dashboard (SmartWidget, etc.)
-2. Customization Components
-3. Unified Components
-4. باقي الصفحات الرئيسية
+1. الصفحات الرئيسية (Index, Dashboard, etc.)
+2. Components الأكثر استخداماً
+3. Layouts و Headers
 
 ### **يمكن تأجيلها:**
 1. Components نادرة الاستخدام
@@ -178,16 +148,16 @@ className="gradient-card-success"
 ✅ Phase 1B: Component Unification    [100%] ✓
 ✅ Phase 2:  Layout Unification       [100%] ✓
 ✅ Phase 3:  Page Splitting           [100%] ✓
-⏳ Phase 4:  Gradient Replacement     [ 16%] (كان 8%)
+⏳ Phase 4:  Gradient Replacement     [  8%] (كان 5%)
 ```
 
-**التقدم الكلي:** **97%** ⬆️ (كان 96%)
+**التقدم الكلي:** **96%** ⬆️ (كان 95%)
 
 ---
 
 ## 🎊 **الإنجاز:**
 
-تم استبدال 50 gradient بنجاح عبر 20 ملف!
+تم استبدال 25 gradient بنجاح عبر 13 ملف!
 الكود أصبح أكثر consistency ومركزية.
 
-**الخطوة التالية:** استمرار استبدال الـ gradients في components و الملفات المتبقية.
+**الخطوة التالية:** استمرار استبدال الـ gradients في الملفات المتبقية.

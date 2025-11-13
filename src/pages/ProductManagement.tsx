@@ -262,7 +262,7 @@ const ProductManagement = () => {
       <div className="container mx-auto px-4 py-8 space-y-6">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="gradient-card-primary">
+          <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -274,7 +274,7 @@ const ProductManagement = () => {
             </CardContent>
           </Card>
 
-          <Card className="gradient-card-success">
+          <Card className="bg-gradient-to-br from-success/10 to-success/5 border-success/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -286,7 +286,7 @@ const ProductManagement = () => {
             </CardContent>
           </Card>
 
-          <Card className="gradient-card-accent">
+          <Card className="bg-gradient-to-br from-luxury/10 to-luxury/5 border-luxury/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -298,7 +298,7 @@ const ProductManagement = () => {
             </CardContent>
           </Card>
 
-          <Card className="gradient-card-destructive">
+          <Card className="bg-gradient-to-br from-danger/10 to-danger/5 border-danger/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -376,7 +376,7 @@ const ProductManagement = () => {
               className="group border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300 overflow-hidden"
             >
               <div className="relative">
-                <div className="aspect-square gradient-card-muted flex items-center justify-center">
+                <div className="aspect-square bg-gradient-to-br from-muted/50 to-muted/20 flex items-center justify-center">
                   {product.images?.find(img => img.is_primary)?.image_url ? (
                     <img 
                       src={product.images.find(img => img.is_primary)?.image_url} 
