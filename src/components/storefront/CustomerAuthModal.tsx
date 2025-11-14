@@ -63,6 +63,16 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
     }
   }, [isOpen]);
 
+  // Auto-close after successful authentication
+  React.useEffect(() => {
+    if (step === 'authenticated') {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [step, onClose]);
+
   // Check if already authenticated
   React.useEffect(() => {
     if (isAuthenticated && isOpen) {
