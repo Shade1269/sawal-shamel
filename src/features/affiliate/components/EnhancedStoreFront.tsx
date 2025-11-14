@@ -58,6 +58,7 @@ import { ModernProductGrid } from "@/components/storefront/modern/ModernProductG
 import { ModernProductModal } from "@/components/storefront/modern/ModernProductModal";
 import { ModernShoppingCart } from "@/components/storefront/modern/ModernShoppingCart";
 import { ModernFooter } from "@/components/storefront/modern/ModernFooter";
+import { ModernAIChatWidget } from "@/components/storefront/modern/ModernAIChatWidget";
 
 interface Product {
   id: string;
@@ -1417,10 +1418,29 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       />
 
 
+      {/* AI Chat Widget */}
+      {affiliateStore && products && (
+        <ModernAIChatWidget
+          storeInfo={{
+            id: affiliateStore.id,
+            store_name: affiliateStore.store_name,
+            bio: affiliateStore.bio
+          }}
+          products={products.map(p => ({
+            id: p.id,
+            title: p.title,
+            description: p.description,
+            price_sar: p.price_sar,
+            stock: p.stock,
+            category: p.category
+          }))}
+        />
+      )}
+
       {/* Footer */}
       {affiliateStore && <ModernFooter store={affiliateStore} />}
 
-      {/* Customer Chat */}
+      {/* Customer Chat (Human Support) */}
       {affiliateStore && (
         <CustomerChatWidget
           storeId={affiliateStore.id}
