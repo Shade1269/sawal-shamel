@@ -190,11 +190,10 @@ export const useIsolatedStoreCart = (storeId: string, storeSlug?: string) => {
         if (error) throw error;
       }
 
-      toast.success('تمت إضافة المنتج للسلة');
       await loadCart(); // Reload cart
     } catch (error) {
       console.error('Error adding to cart:', error);
-      toast.error('خطأ في إضافة المنتج');
+      throw error; // رمي الخطأ للسماح للمكون باستخدامه
     }
   };
 
