@@ -942,403 +942,8 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
           </div>
         </section>
 
-        {/* Enhanced Search and Filter Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="gradient-bg-card backdrop-blur-sm p-8 rounded-3xl border-2 border-primary/10 shadow-2xl"
-        >
-          <div className="space-y-6">
-            {/* Search Bar */}
-            <div className="relative max-w-2xl mx-auto">
-              <div className="relative">
-                <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-6 w-6" />
-                <Input
-                  placeholder="🔍 ابحث عن المنتجات المفضلة لديك..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pr-14 pl-4 h-16 text-lg border-2 focus:border-primary/50 rounded-2xl bg-background/70 backdrop-blur-sm shadow-inner text-center"
-                />
-                {searchQuery && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setSearchQuery("")}
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 hover:bg-destructive/20 hover:text-destructive"
-                  >
-                    <X className="h-5 w-5" />
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            {/* Filter Controls */}
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Button 
-                  variant={showFilters ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="hover:shadow-lg transition-all duration-300"
-                >
-                  <SlidersHorizontal className="h-4 w-4 mr-2" />
-                  فلاتر متقدمة
-                  {showFilters ? <span className="mr-2">▲</span> : <span className="mr-2">▼</span>}
-                </Button>
-                
-                {(searchQuery || selectedCategory !== 'all' || priceRange[0] > 0 || priceRange[1] < 1000) && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={clearFilters}
-                    className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                  >
-                    <X className="h-4 w-4 mr-2" />
-                    مسح جميع الفلاتر
-                  </Button>
-                )}
-              </div>
-
-              <div className="flex items-center gap-3 text-sm">
-                <Badge variant="secondary" className="px-3 py-1.5">
-                  {filteredProducts?.length || 0} منتج متاح
-                </Badge>
-                <span className="text-muted-foreground">
-                  من أصل {products?.length || 0} منتج
-                </span>
-              </div>
-            </div>
-
-            {/* Advanced Filters Panel */}
-            <AnimatePresence>
-              {showFilters && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="overflow-hidden"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-background/60 backdrop-blur-sm rounded-2xl border border-primary/20 mt-4">
-                    {/* Category Filter */}
-                    <div className="space-y-3">
-                      <Label className="text-sm font-semibold flex items-center gap-2 text-primary">
-                        <Package className="h-4 w-4" />
-                        التصنيف
-                      </Label>
-                      <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                        <SelectTrigger className="w-full h-12 border-2 hover:border-primary/40 transition-colors">
-                          <SelectValue placeholder="اختر التصنيف" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">🌟 جميع التصنيفات</SelectItem>
-                          {categories.map(category => (
-                            <SelectItem key={category} value={category}>
-                              📦 {category}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Sort Options */}
-                    <div className="space-y-3">
-                      <Label className="text-sm font-semibold flex items-center gap-2 text-primary">
-                        <TrendingUp className="h-4 w-4" />
-                        ترتيب حسب
-                      </Label>
-                      <Select value={sortBy} onValueChange={setSortBy}>
-                        <SelectTrigger className="w-full h-12 border-2 hover:border-primary/40 transition-colors">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="newest">🆕 الأحدث</SelectItem>
-                          <SelectItem value="price-low">💰 السعر: من الأقل للأعلى</SelectItem>
-                          <SelectItem value="price-high">💎 السعر: من الأعلى للأقل</SelectItem>
-                          <SelectItem value="name">🔤 الاسم أبجدياً</SelectItem>
-                          <SelectItem value="rating">⭐ الأعلى تقييماً</SelectItem>
-                          <SelectItem value="discount">🔥 الأعلى خصماً</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Price Range */}
-                    <div className="space-y-3">
-                      <Label className="text-sm font-semibold flex items-center gap-2 text-primary">
-                        <Percent className="h-4 w-4" />
-                        نطاق السعر: {priceRange[0]} - {priceRange[1]} ريال
-                      </Label>
-                      <div className="px-3 py-4">
-                        <Slider
-                          value={priceRange}
-                          onValueChange={(value) => setPriceRange(value as [number, number])}
-                          max={1000}
-                          min={0}
-                          step={10}
-                          className="w-full"
-                        />
-                        <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                          <span>0 ريال</span>
-                          <span>1000+ ريال</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </motion.section>
-
-        {/* Products Grid Section */}
+        {/* Products Grid Section - بسيط مثل الديمو */}
         <section id="products-section" className="space-y-6">
-          <div className="space-y-4">
-            {/* Quick Actions */}
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="hover:shadow-md transition-all"
-                >
-                  <Filter className="h-4 w-4 mr-2" />
-                  فلترة متقدمة
-                  {showFilters && <span className="mr-2">↑</span>}
-                </Button>
-                
-                {(searchQuery || selectedCategory !== 'all' || priceRange[0] > 0 || priceRange[1] < 1000) && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={clearFilters}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <X className="h-4 w-4 mr-1" />
-                    مسح الفلاتر
-                  </Button>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  {filteredProducts.length} من {products?.length || 0} منتج
-                </span>
-              </div>
-            </div>
-
-            {/* Advanced Filters Panel */}
-            <AnimatePresence>
-              {showFilters && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden"
-                >
-                  <div className="p-4 bg-background/50 rounded-xl border mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                      {/* Category Filter */}
-                      <div>
-                        <Label className="text-sm font-medium mb-2 block">التصنيف</Label>
-                        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                          <SelectTrigger className="h-10">
-                            <SelectValue placeholder="اختر التصنيف" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">جميع التصنيفات</SelectItem>
-                            {categories.map(category => (
-                              <SelectItem key={category} value={category}>
-                                {category}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Sort Options */}
-                      <div>
-                        <Label className="text-sm font-medium mb-2 block">ترتيب حسب</Label>
-                        <Select value={sortBy} onValueChange={setSortBy}>
-                          <SelectTrigger className="h-10">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="newest">الأحدث</SelectItem>
-                            <SelectItem value="price-low">السعر: من الأقل للأعلى</SelectItem>
-                            <SelectItem value="price-high">السعر: من الأعلى للأقل</SelectItem>
-                            <SelectItem value="name">الاسم أبجدياً</SelectItem>
-                            <SelectItem value="rating">الأعلى تقييماً</SelectItem>
-                            <SelectItem value="discount">الأعلى خصماً</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Price Range */}
-                      <div className="md:col-span-2">
-                        <Label className="text-sm font-medium mb-2 block">
-                          نطاق السعر ({priceRange[0]} - {priceRange[1]} ريال)
-                        </Label>
-                        <div className="px-3 pt-2">
-                          <Slider
-                            value={priceRange}
-                            onValueChange={(value) => setPriceRange(value as [number, number])}
-                            max={1000}
-                            min={0}
-                            step={10}
-                            className="w-full"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </section>
-
-        {categoryBanners.length > 0 && (
-          <section className="space-y-6 bg-background/70 backdrop-blur-sm border border-primary/10 rounded-3xl p-6 shadow-lg">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold">البنرات المخصصة للفئات</h2>
-              <p className="text-sm text-muted-foreground">
-                المنتجات المختارة لكل فئة ستظهر هنا في شرائط عرضية أنيقة في أعلى المتجر.
-              </p>
-            </div>
-            <div className="space-y-6">
-              {categoryBanners.map(({ category, products }) => (
-                <motion.div
-                  key={category.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.35 }}
-                  className="space-y-4"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div className="space-y-1">
-                      <h3 className="text-xl font-semibold text-primary">{category.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {products.length} منتج مختار لعرضهم في واجهة الفئة
-                      </p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedCategory(category.name)}
-                      className="text-primary hover:text-primary"
-                    >
-                      <ArrowRight className="h-4 w-4 mr-2" />
-                      استكشاف فئة {category.name}
-                    </Button>
-                  </div>
-                  <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
-                    {products.map((product) => {
-                      const isAvailable = Boolean(product.product);
-                      return (
-                        <motion.button
-                          type="button"
-                          key={`${category.id}-${product.id}`}
-                          onClick={() => handleBannerProductClick(product)}
-                          whileHover={isAvailable ? { y: -6, scale: 1.02 } : undefined}
-                          className={`group relative w-60 flex-shrink-0 text-right rounded-2xl border overflow-hidden transition-all duration-300 ${
-                            isAvailable
-                              ? "bg-card/70 hover:border-primary/40 shadow-sm hover:shadow-xl"
-                              : "bg-muted cursor-not-allowed opacity-70"
-                          }`}
-                          disabled={!isAvailable}
-                        >
-                          {product.imageUrl ? (
-                            <div className="relative h-40 w-full overflow-hidden">
-                              <img
-                                src={product.imageUrl}
-                                alt={product.title}
-                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                loading="lazy"
-                              />
-                              {product.rating && (
-                                <div className="absolute top-3 left-3 bg-background/90 text-xs px-2 py-1 rounded-full shadow">
-                                  ⭐ {product.rating.toFixed(1)}
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="h-40 w-full gradient-bg-accent flex items-center justify-center text-sm text-muted-foreground">
-                              لا توجد صورة متاحة
-                            </div>
-                          )}
-                          <div className="p-4 space-y-2">
-                            <div className="space-y-1">
-                              <p className="font-semibold line-clamp-2">{product.title}</p>
-                              {product.category && (
-                                <span className="text-xs text-muted-foreground">{product.category}</span>
-                              )}
-                            </div>
-                            <div className="flex items-center justify-between text-sm">
-                              {product.price ? (
-                                <span className="font-bold text-primary">{product.price.toFixed(0)} ريال</span>
-                              ) : (
-                                <span className="text-muted-foreground">سيتوفر قريباً</span>
-                              )}
-                              <span className="text-xs text-muted-foreground">اضغط للعرض السريع</span>
-                            </div>
-                          </div>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {categorySection && (
-          <section className="space-y-4 bg-background/60 backdrop-blur-sm border border-primary/10 rounded-2xl p-6 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="text-xl font-semibold">تصفح الفئات المميزة</h2>
-                <p className="text-sm text-muted-foreground">
-                  اختر فئة لعرض المنتجات المرتبطة بها أو استعرض كل المتجر
-                </p>
-              </div>
-              {selectedCategory !== "all" && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSelectedCategory("all")}
-                  className="text-primary hover:text-primary"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  إظهار جميع المنتجات
-                </Button>
-              )}
-            </div>
-            {categorySection}
-          </section>
-        )}
-
-        {/* Products Section */}
-        <section id="products-section" className="space-y-6">
-          {/* Results Summary */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold">المنتجات</h2>
-              <p className="text-muted-foreground">
-                {productsLoading ? (
-                  'جاري التحميل...'
-                ) : filteredProducts.length > 0 ? (
-                  `عرض ${filteredProducts.length} منتج`
-                ) : (
-                  'لا توجد منتجات'
-                )}
-              </p>
-            </div>
-          </div>
-
-          {/* Products Grid */}
           {productsLoading ? (
             <div className="flex justify-center items-center py-20">
               <div className="text-center space-y-4">
@@ -1347,27 +952,8 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               </div>
             </div>
           ) : filteredProducts.length === 0 ? (
-              <div className="text-center py-20">
-                <div className="space-y-6">
-                  <div className="w-32 h-32 gradient-bg-muted rounded-full flex items-center justify-center mx-auto">
-                    <Search className="h-16 w-16 text-muted-foreground" />
-                  </div>
-                <div>
-                  <h3 className="text-2xl font-bold mb-3">لم يتم العثور على منتجات</h3>
-                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                    {searchQuery 
-                      ? `لا توجد منتجات تتطابق مع "${searchQuery}"`
-                      : 'لا توجد منتجات في هذا التصنيف'
-                    }
-                  </p>
-                  {(searchQuery || selectedCategory !== 'all') && (
-                    <Button onClick={clearFilters} className="px-8">
-                      <X className="h-4 w-4 mr-2" />
-                      مسح الفلاتر والعرض الكامل
-                    </Button>
-                  )}
-                </div>
-              </div>
+            <div className="text-center py-20">
+              <p className="text-xl text-muted-foreground">لا توجد منتجات متاحة</p>
             </div>
           ) : (
             <ModernProductGrid
@@ -1378,6 +964,16 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               onToggleWishlist={toggleWishlist}
             />
           )}
+        </section>
+
+        {/* Footer Info - مطابق للديمو */}
+        <section className="py-16 bg-surface/30">
+          <div className="container mx-auto px-6">
+            <div className="max-w-3xl mx-auto text-center space-y-4">
+              <h3 className="text-3xl font-bold text-foreground">{affiliateStore.store_name}</h3>
+              <p className="text-foreground/70 text-lg">{affiliateStore.bio || 'منتجاتك المحفوظة ستظهر هنا'}</p>
+            </div>
+          </div>
         </section>
       </main>
 
