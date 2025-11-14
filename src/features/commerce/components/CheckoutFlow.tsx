@@ -19,6 +19,7 @@ interface CheckoutFlowProps {
   shopId: string;
   storeSettings: any;
   affiliateStoreId?: string; // إضافة معرف متجر المسوق
+  customerSessionId?: string; // إضافة معرف جلسة العميل
 }
 
 interface CustomerInfo {
@@ -36,7 +37,8 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
   onCancel,
   shopId,
   storeSettings,
-  affiliateStoreId
+  affiliateStoreId,
+  customerSessionId
 }) => {
   console.log('CheckoutFlow: Component initialized with:', { 
     cartItems: cart.length, 
@@ -74,6 +76,7 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
           customer_name: customerInfo.name,
           customer_phone: customerInfo.phone,
           customer_email: customerInfo.email || null,
+          session_id: customerSessionId || null, // حفظ معرف الجلسة
           shipping_address: {
             address: customerInfo.address,
             city: customerInfo.city,

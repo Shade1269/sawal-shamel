@@ -151,6 +151,8 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // States
   const [showCart, setShowCart] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showOrdersModal, setShowOrdersModal] = useState(false);
+  const [pendingCheckout, setPendingCheckout] = useState(false);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
@@ -1005,12 +1007,18 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         onUpdateQuantity={updateCartQuantity}
         onRemoveItem={removeFromCart}
         onCheckout={() => {
-          if (!isAuthenticated) {
+          // التحقق من تسجيل الدخول مع التأكد من وجود sessionId في localStorage
+          const storeSessionKey = `customer_session_${affiliateStore?.id}`;
+          const hasStoreSession = localStorage.getItem(storeSessionKey);
+          
+          if (!isAuthenticated && !hasStoreSession) {
             toast({
               title: "يجب تسجيل الدخول أولاً",
-              description: "الرجاء تسجيل الدخول للمتابعة إلى صفحة الدفع",
+              description: "الرجاء تسجيل الدخول برقم جوالك لحفظ الطلب في صفحة طلباتي",
               variant: "default",
             });
+            setPendingCheckout(true);
+            setShowCart(false);
             setShowAuthModal(true);
             return;
           }
@@ -1083,7 +1091,18 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       {/* Auth Modal */}
       <CustomerAuthModal
         isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
+        onClose={() => {
+          setShowAuthModal(false);
+          // إذا كان العميل في وضع الـ checkout المعلق، تحقق من تسجيل دخوله ثم أكمل العملية
+          if (pendingCheckout) {
+            setPendingCheckout(false);
+            const storeSessionKey = `customer_session_${affiliateStore?.id}`;
+            const hasStoreSession = localStorage.getItem(storeSessionKey);
+            if (isAuthenticated || hasStoreSession) {
+              handleCheckoutClick();
+            }
+          }
+        }}
         storeId={affiliateStore?.id || ''}
         storeSlug={storeSlug || ''}
         storeName={affiliateStore?.store_name || ''}
