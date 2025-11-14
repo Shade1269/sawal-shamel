@@ -59,6 +59,8 @@ import { ModernProductModal } from "@/components/storefront/modern/ModernProduct
 import { ModernShoppingCart } from "@/components/storefront/modern/ModernShoppingCart";
 import { ModernFooter } from "@/components/storefront/modern/ModernFooter";
 import { ModernAIChatWidget } from "@/components/storefront/modern/ModernAIChatWidget";
+import { ModernCustomerOrders } from "@/components/storefront/modern/ModernCustomerOrders";
+import { ModernInvoice } from "@/components/storefront/modern/ModernInvoice";
 
 interface Product {
   id: string;
@@ -161,6 +163,8 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const [sortBy, setSortBy] = useState("newest");
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showOrders, setShowOrders] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   // جلب بيانات المتجر
   const { data: affiliateStore, isLoading: storeLoading, error: storeError } = useQuery({
@@ -845,6 +849,18 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         cartItemsCount={isolatedCart?.items?.length || 0}
         onCartClick={() => setShowCart(true)}
         onAuthClick={() => setShowAuthModal(true)}
+        onOrdersClick={() => {
+          if (!isAuthenticated) {
+            toast({
+              title: "يجب تسجيل الدخول أولاً",
+              description: "الرجاء تسجيل الدخول لعرض طلباتك",
+              variant: "default",
+            });
+            setShowAuthModal(true);
+            return;
+          }
+          setShowOrders(true);
+        }}
       />
 
       {/* Main Content */}
@@ -1417,6 +1433,35 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         customerId={customer?.id}
       />
 
+
+      {/* Customer Orders Modal */}
+      {showOrders && isAuthenticated && customer && affiliateStore && (
+        <Dialog open={showOrders} onOpenChange={setShowOrders}>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+            {selectedOrderId ? (
+              <ModernInvoice
+                orderId={selectedOrderId}
+                onClose={() => setSelectedOrderId(null)}
+              />
+            ) : (
+              <ModernCustomerOrders
+                customerId={customer.id}
+                storeId={affiliateStore.id}
+                onViewInvoice={(orderId) => setSelectedOrderId(orderId)}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Auth Modal */}
+      <CustomerAuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        storeId={affiliateStore?.id || ''}
+        storeSlug={storeSlug || ''}
+        storeName={affiliateStore?.store_name || ''}
+      />
 
       {/* AI Chat Widget */}
       {affiliateStore && products && (
