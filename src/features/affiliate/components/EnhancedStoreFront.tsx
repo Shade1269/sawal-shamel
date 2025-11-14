@@ -55,6 +55,9 @@ import { LuxuryCardV2, LuxuryCardContent } from "@/components/luxury/LuxuryCardV
 import { ModernStoreHeader } from "@/components/storefront/modern/ModernStoreHeader";
 import { ModernBannerSlider } from "@/components/storefront/modern/ModernBannerSlider";
 import { ModernProductGrid } from "@/components/storefront/modern/ModernProductGrid";
+import { ModernProductModal } from "@/components/storefront/modern/ModernProductModal";
+import { ModernShoppingCart } from "@/components/storefront/modern/ModernShoppingCart";
+import { ModernFooter } from "@/components/storefront/modern/ModernFooter";
 
 interface Product {
   id: string;
@@ -1347,352 +1350,77 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         </section>
       </main>
 
-      {/* Enhanced Shopping Cart Sheet */}
-      <Sheet open={showCart} onOpenChange={setShowCart}>
-        <SheetContent side="left" className="w-full sm:max-w-md gradient-bg-card border-red-600/15">
-          <SheetHeader>
-            <SheetTitle className="flex items-center gap-2 text-xl text-white">
-              <ShoppingCart className="h-6 w-6 text-red-500" />
-              سلة التسوق
-              {cartItemsCount > 0 && (
-                <Badge className="ml-2 bg-red-600/20 text-red-400 border-red-600/30">{cartItemsCount} منتج</Badge>
-              )}
-            </SheetTitle>
-          </SheetHeader>
-          
-          <div className="mt-6 space-y-4">
-            {!isolatedCart || isolatedCart.items.length === 0 ? (
-              <div className="text-center py-12 space-y-4">
-                <div className="w-24 h-24 gradient-bg-muted rounded-full flex items-center justify-center mx-auto border-2 border-red-600/20 shadow-lg shadow-red-600/10">
-                  <ShoppingCart className="h-12 w-12 text-red-500/50" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-xl mb-2 text-white">السلة فارغة</h3>
-                  <p className="text-slate-400 text-sm">
-                    ابدأ بإضافة المنتجات التي تعجبك
-                  </p>
-                </div>
-                <Button 
-                  onClick={() => setShowCart(false)} 
-                  variant="outline"
-                  className="border-2 border-red-600/30 text-red-400 bg-slate-900/80 hover:bg-red-950/20 hover:border-red-600/50"
-                >
-                  متابعة التسوق
-                </Button>
-              </div>
-            ) : (
-              <>
-                <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-                  <AnimatePresence>
-                    {isolatedCart.items.map((item) => (
-                      <motion.div
-                        key={item.id}
-                        layout
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <LuxuryCardV2 
-                          variant="glass" 
-                          size="sm" 
-                          hover="scale"
-                          className="border-red-600/20 hover:border-red-600/30"
-                        >
-                          <LuxuryCardContent className="p-1">
-                            <div className="flex items-center gap-3 p-3">
-                              <div className="relative group">
-                                <img 
-                                  src={item.product_image_url || '/placeholder.svg'} 
-                                  alt={item.product_title}
-                                  className="w-20 h-20 object-cover rounded-lg border border-red-600/20 group-hover:border-red-600/40 transition-all duration-300"
-                                />
-                                <div className="absolute inset-0 gradient-fade-down rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-                              </div>
-                              
-                              <div className="flex-1 min-w-0 space-y-2">
-                                <h4 className="font-semibold text-sm line-clamp-2 text-white">{item.product_title}</h4>
-                                
-                                {item.selected_variants && Object.keys(item.selected_variants).length > 0 && (
-                                  <div className="flex flex-wrap gap-1" dir="rtl">
-                                    {Object.entries(item.selected_variants).map(([type, value]) => (
-                                      <Badge 
-                                        key={type} 
-                                        variant="outline" 
-                                        className="text-xs border-red-600/30 bg-red-950/20 text-red-300"
-                                      >
-                                        {type === 'size' ? 'المقاس' : type === 'color' ? 'اللون' : type}: {value}
-                                      </Badge>
-                                    ))}
-                                  </div>
-                                )}
-                                
-                                <div className="flex items-center gap-2">
-                                  <span className="text-red-500 font-bold text-lg">
-                                    {item.total_price_sar.toFixed(0)} ريال
-                                  </span>
-                                  <span className="text-xs text-slate-400">
-                                    {item.unit_price_sar.toFixed(0)} × {item.quantity}
-                                  </span>
-                                </div>
-                              </div>
-                              
-                              <div className="flex flex-col gap-2">
-                                <div className="flex items-center gap-1 bg-slate-800/80 backdrop-blur-sm rounded-lg p-1 border border-red-600/10">
-                                  <Button 
-                                    size="sm" 
-                                    variant="ghost"
-                                    onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
-                                    className="h-7 w-7 p-0 hover:bg-red-950/30 hover:text-red-400 transition-colors"
-                                  >
-                                    <Minus className="h-3 w-3" />
-                                  </Button>
-                                  <span className="w-8 text-center text-sm font-semibold text-white">{item.quantity}</span>
-                                  <Button 
-                                    size="sm" 
-                                    variant="ghost"
-                                    onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
-                                    className="h-7 w-7 p-0 hover:bg-red-950/30 hover:text-red-400 transition-colors"
-                                  >
-                                    <Plus className="h-3 w-3" />
-                                  </Button>
-                                </div>
-                                
-                                <Button 
-                                  size="sm" 
-                                  variant="ghost"
-                                  onClick={() => removeFromCart(item.id)}
-                                  className="h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-950/30 transition-colors"
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          </LuxuryCardContent>
-                        </LuxuryCardV2>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-                
-                <div className="border-t border-red-600/15 pt-4 space-y-4">
-                  <div className="gradient-bg-card rounded-xl p-4 border border-red-600/20">
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm text-slate-300">المجموع الفرعي:</span>
-                      <span className="text-white font-medium">{cartTotal.toFixed(0)} ريال</span>
-                    </div>
-                    <div className="flex justify-between items-center text-xs text-slate-400">
-                      <span>الشحن:</span>
-                      <span>يتم حسابه عند الدفع</span>
-                    </div>
-                    <div className="h-px bg-gradient-muted my-3" />
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-bold text-white">المجموع:</span>
-                      <span className="text-2xl font-bold bg-gradient-danger bg-clip-text text-transparent">
-                        {cartTotal.toFixed(0)} ريال
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    className="w-full h-14 text-lg bg-gradient-danger hover:opacity-90 shadow-elegant border border-danger/20 transition-all duration-500 group"
-                    onClick={handleCheckoutClick}
-                  >
-                    <ArrowRight className="h-5 w-5 mr-2 group-hover:translate-x-1 transition-transform" />
-                    إتمام الطلب
-                  </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    className="w-full border-2 border-red-600/30 text-red-400 bg-slate-900/80 backdrop-blur-sm hover:bg-red-950/20 hover:border-red-600/50 transition-all duration-300"
-                    onClick={() => setShowCart(false)}
-                  >
-                    متابعة التسوق
-                  </Button>
-                </div>
-              </>
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
+      {/* Modern Shopping Cart */}
+      <ModernShoppingCart
+        open={showCart}
+        onClose={() => setShowCart(false)}
+        items={isolatedCart?.items || []}
+        total={cartTotal}
+        onUpdateQuantity={updateCartQuantity}
+        onRemoveItem={removeFromCart}
+        onCheckout={() => {
+          if (!isAuthenticated) {
+            toast({
+              title: "يجب تسجيل الدخول أولاً",
+              description: "الرجاء تسجيل الدخول للمتابعة إلى صفحة الدفع",
+              variant: "default",
+            });
+            setShowAuthModal(true);
+            return;
+          }
+          setShowCart(false);
+          toast({
+            title: "جاري تجهيز صفحة الدفع",
+            description: "سيتم إضافة صفحة الدفع قريباً",
+          });
+        }}
+      />
 
-      {/* Enhanced Product Quick View Modal */}
-      <Dialog open={!!selectedProduct} onOpenChange={() => {
-        setSelectedProduct(null);
-        setSelectedVariant(null);
-        setVariantError(null);
-      }}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          {selectedProduct && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-2xl">{selectedProduct.title}</DialogTitle>
-              </DialogHeader>
-              
-              <Tabs defaultValue="details" dir="rtl">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="details">تفاصيل المنتج</TabsTrigger>
-                  <TabsTrigger value="reviews">
-                    المراجعات ({selectedProduct.total_reviews || 0})
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="details" className="mt-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Product Images */}
-                <div className="space-y-4">
-                  <div className="aspect-square rounded-xl overflow-hidden">
-                    {selectedProduct.image_urls && selectedProduct.image_urls.length > 0 ? (
-                      <ProductImageCarousel 
-                        images={selectedProduct.image_urls} 
-                        productTitle={selectedProduct.title} 
-                      />
-                    ) : (
-                      <div className="aspect-square bg-muted rounded-xl flex items-center justify-center">
-                        <Package className="h-24 w-24 text-muted-foreground" />
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                {/* Product Details */}
-                <div className="space-y-6">
-                  <div>
-                    <h2 className="text-3xl font-bold mb-3">{selectedProduct.title}</h2>
-                    <p className="text-muted-foreground leading-relaxed">{selectedProduct.description}</p>
-                  </div>
-
-                  {/* Rating */}
-                  {selectedProduct.average_rating && selectedProduct.average_rating > 0 && (
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star
-                            key={star}
-                            className={`h-5 w-5 ${
-                              star <= Math.round(selectedProduct.average_rating || 0)
-                                ? 'fill-yellow-400 text-yellow-400'
-                                : 'text-gray-300'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-lg font-medium">{selectedProduct.average_rating.toFixed(1)}</span>
-                      <span className="text-muted-foreground">
-                        ({selectedProduct.total_reviews} تقييم)
-                      </span>
-                    </div>
-                  )}
-                  
-                  {/* Price */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <span className="text-4xl font-bold text-primary">
-                        {(selectedProduct.final_price || selectedProduct.price_sar).toFixed(0)} ريال
-                      </span>
-                      {selectedProduct.discount_percentage && selectedProduct.discount_percentage > 0 && (
-                        <>
-                          <span className="text-xl text-muted-foreground line-through">
-                            {selectedProduct.price_sar.toFixed(0)} ريال
-                          </span>
-                          <Badge className="bg-red-500 hover:bg-red-600">
-                            خصم {selectedProduct.discount_percentage}%
-                          </Badge>
-                        </>
-                      )}
-                    </div>
-                    
-                    {selectedProduct.stock && selectedProduct.stock <= 5 && selectedProduct.stock > 0 && (
-                      <p className="text-orange-600 font-medium">
-                        ⚠️ متبقي {selectedProduct.stock} قطع فقط
-                      </p>
-                    )}
-                  </div>
-
-                  {selectedProduct.variants && selectedProduct.variants.length > 0 && (
-                    <>
-                      <ProductVariantSelector
-                        variants={selectedProduct.variants}
-                        onVariantChange={(v) => {
-                          setSelectedVariant(v as any);
-                          if (v) setVariantError(null);
-                        }}
-                      />
-                      {variantError && (
-                        <p className="text-destructive text-sm mt-1">{variantError}</p>
-                      )}
-                    </>
-                  )}
-
-                  {/* Actions */}
-                  <div className="space-y-3">
-                    <Button
-                      className="w-full h-14 text-lg gradient-btn-primary shadow-lg"
-                      onClick={() => {
-                        const requiresVariant = (selectedProduct.variants && selectedProduct.variants.length > 0);
-                        if (requiresVariant && !selectedVariant) {
-                          const hasSizes = selectedProduct.variants!.some(v => !!v.size);
-                          const hasColors = selectedProduct.variants!.some(v => !!v.color);
-                          const msg = hasSizes && hasColors
-                            ? 'يرجى اختيار المقاس واللون'
-                            : hasSizes
-                            ? 'يرجى اختيار المقاس'
-                            : hasColors
-                            ? 'يرجى اختيار اللون'
-                            : 'يرجى اختيار المتغير المناسب';
-                          setVariantError(msg);
-                          toast({ title: 'خطأ', description: msg, variant: 'destructive' });
-                          return;
-                        }
-                        const variantInfo = selectedVariant ? {
-                          variant_id: selectedVariant.id,
-                          size: selectedVariant.size,
-                          color: selectedVariant.color
-                        } : undefined;
-                        addToCart(selectedProduct, 1, variantInfo);
-                        setSelectedProduct(null);
-                        setSelectedVariant(null);
-                        setVariantError(null);
-                      }}
-                      disabled={selectedProduct.stock === 0 || (selectedVariant && selectedVariant.available_stock === 0)}
-                    >
-                      <ShoppingCart className="h-5 w-5 mr-2" />
-                      {(selectedProduct.stock === 0 || (selectedVariant && selectedVariant.available_stock === 0)) ? 'نفد المخزون' : 'إضافة للسلة'}
-                    </Button>
-                    
-                    <div className="flex gap-2">
-                      <Button 
-                        variant="outline" 
-                        className="flex-1"
-                        onClick={() => toggleWishlist(selectedProduct.id)}
-                      >
-                        <Heart className={`h-4 w-4 mr-2 ${wishlist.includes(selectedProduct.id) ? 'fill-red-500 text-red-500' : ''}`} />
-                        {wishlist.includes(selectedProduct.id) ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}
-                      </Button>
-                      
-                      <Button variant="outline" className="flex-1">
-                        <Share2 className="h-4 w-4 mr-2" />
-                        مشاركة
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="reviews" className="mt-6">
-              <ReviewsSection 
-                productId={selectedProduct.id}
-                currentUserId={undefined}
-              />
-            </TabsContent>
-          </Tabs>
-        </>
-      )}
-    </DialogContent>
-  </Dialog>
+      {/* Modern Product Modal */}
+      <ModernProductModal
+        product={selectedProduct}
+        open={!!selectedProduct}
+        onClose={() => {
+          setSelectedProduct(null);
+          setSelectedVariant(null);
+          setVariantError(null);
+        }}
+        onAddToCart={() => {
+          if (!selectedProduct) return;
+          if (selectedProduct.variants && selectedProduct.variants.length > 0 && !selectedVariant) {
+            const msg = 'يرجى اختيار المقاس أو اللون أولاً';
+            setVariantError(msg);
+            toast({ title: 'خطأ', description: msg, variant: 'destructive' });
+            return;
+          }
+          const variantInfo = selectedVariant ? {
+            variant_id: selectedVariant.id,
+            size: selectedVariant.size,
+            color: selectedVariant.color
+          } : undefined;
+          addToCart(selectedProduct, 1, variantInfo);
+          setSelectedProduct(null);
+          setSelectedVariant(null);
+          setVariantError(null);
+        }}
+        onToggleWishlist={toggleWishlist}
+        isInWishlist={selectedProduct ? wishlist.includes(selectedProduct.id) : false}
+        selectedVariant={selectedVariant}
+        onVariantChange={(variantId) => {
+          const variant = selectedProduct?.variants?.find(v => v.id === variantId);
+          setSelectedVariant(variant || null);
+          if (variant) setVariantError(null);
+        }}
+        variantError={variantError}
+        storeId={affiliateStore?.id}
+        customerId={customer?.id}
+      />
 
 
+      {/* Footer */}
+      {affiliateStore && <ModernFooter store={affiliateStore} />}
+
+      {/* Customer Chat */}
       {affiliateStore && (
         <CustomerChatWidget
           storeId={affiliateStore.id}
