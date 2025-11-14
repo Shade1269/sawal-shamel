@@ -76,14 +76,31 @@ const StoreOrderConfirmation = () => {
 
   const fetchOrderData = async () => {
     try {
-      // جلب بيانات الطلب من order_hub
-      const { data: hubOrder, error: hubError } = await supabase
+      // جلب بيانات الطلب من order_hub - البحث باستخدام source_order_id أولاً
+      let hubOrder = null;
+      
+      // محاولة البحث بـ source_order_id و source='ecommerce'
+      const { data: orderBySource, error: sourceError } = await supabase
         .from('order_hub')
         .select('*')
-        .eq('id', orderId)
+        .eq('source', 'ecommerce')
+        .eq('source_order_id', orderId)
         .maybeSingle();
 
-      if (hubError) throw hubError;
+      if (sourceError) throw sourceError;
+      hubOrder = orderBySource;
+
+      // إذا لم يُعثر عليه، جرب البحث بـ id مباشرة (للتوافق مع الحالات القديمة)
+      if (!hubOrder) {
+        const { data: orderById, error: idError } = await supabase
+          .from('order_hub')
+          .select('*')
+          .eq('id', orderId)
+          .maybeSingle();
+
+        if (idError) throw idError;
+        hubOrder = orderById;
+      }
       
       if (!hubOrder) {
         toast.error('لم يتم العثور على الطلب');
