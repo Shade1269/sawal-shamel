@@ -175,7 +175,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
         } else {
           // إذا اختار الدفع عند الاستلام، انتقل مباشرة لصفحة التأكيد
           await clearCart();
-          navigate(`/${storeSlug}/order/${result.orderId}/confirmation`);
+          navigate(`/${storeSlug}/order/confirmation?orderId=${result.orderId}&slug=${storeSlug}`);
         }
       } else {
         toast.error(result.error || 'خطأ في إنشاء الطلب');
@@ -191,7 +191,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
   const handleGeideaSuccess = async (paymentData: any) => {
     console.log('Geidea payment successful:', paymentData);
     await clearCart();
-    navigate(`/${storeSlug}/order/${createdOrderId}/confirmation`);
+    navigate(`/${storeSlug}/order/confirmation?orderId=${createdOrderId}&slug=${storeSlug}`);
   };
 
   const handleGeideaError = (error: string) => {
