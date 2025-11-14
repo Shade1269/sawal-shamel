@@ -500,6 +500,32 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // وظائف السلة المحسّنة
   const addToCart = async (product: Product, quantity: number = 1, variantInfo?: { variant_id: string; size?: string | null; color?: string | null }) => {
     try {
+      // التحقق من المخزون قبل الإضافة
+      if (variantInfo) {
+        // إذا كان هناك متغير محدد، تحقق من مخزون المتغير
+        const variant = product.variants?.find(v => v.id === variantInfo.variant_id);
+        if (variant && variant.current_stock < quantity) {
+          toast({
+            title: "⚠️ نفذت الكمية",
+            description: `عذراً، المخزون المتاح: ${variant.current_stock} فقط`,
+            variant: "destructive"
+          });
+          return;
+        }
+      } else {
+        // إذا لم يكن هناك متغير، تحقق من مخزون المنتج الأساسي
+        if (product.stock < quantity) {
+          toast({
+            title: "⚠️ نفذت الكمية",
+            description: product.stock === 0 
+              ? "عذراً، هذا المنتج غير متوفر حالياً" 
+              : `عذراً، المخزون المتاح: ${product.stock} فقط`,
+            variant: "destructive"
+          });
+          return;
+        }
+      }
+
       const variants = variantInfo ? {
         variant_id: variantInfo.variant_id,
         size: variantInfo.size || '',
