@@ -1007,11 +1007,11 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         onUpdateQuantity={updateCartQuantity}
         onRemoveItem={removeFromCart}
         onCheckout={() => {
-          // التحقق من تسجيل الدخول مع التأكد من وجود sessionId في localStorage
+          // التحقق من تسجيل الدخول عن طريق التأكد من وجود sessionId في localStorage
           const storeSessionKey = `customer_session_${affiliateStore?.id}`;
           const hasStoreSession = localStorage.getItem(storeSessionKey);
           
-          if (!isAuthenticated && !hasStoreSession) {
+          if (!hasStoreSession) {
             toast({
               title: "يجب تسجيل الدخول أولاً",
               description: "الرجاء تسجيل الدخول برقم جوالك لحفظ الطلب في صفحة طلباتي",
@@ -1098,7 +1098,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             setPendingCheckout(false);
             const storeSessionKey = `customer_session_${affiliateStore?.id}`;
             const hasStoreSession = localStorage.getItem(storeSessionKey);
-            if (isAuthenticated || hasStoreSession) {
+            if (hasStoreSession) {
               handleCheckoutClick();
             }
           }
