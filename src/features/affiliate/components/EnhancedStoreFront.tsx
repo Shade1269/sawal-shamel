@@ -36,8 +36,7 @@ import {
   MapPin,
   Phone,
   Mail,
-  User,
-  MessageCircle
+  User
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -50,7 +49,7 @@ import { useIsolatedStoreCart } from "@/hooks/useIsolatedStoreCart";
 import { CustomerAuthModal } from "@/components/storefront/CustomerAuthModal";
 import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CustomerChatWidget } from "@/components/customer-service/CustomerChatWidget";
+import { UnifiedChatWidget } from "@/components/customer-service/UnifiedChatWidget";
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 import { LuxuryCardV2, LuxuryCardContent } from "@/components/luxury/LuxuryCardV2";
 import { ModernBannerSlider } from "@/components/storefront/modern/ModernBannerSlider";
@@ -58,7 +57,7 @@ import { ModernProductGrid } from "@/components/storefront/modern/ModernProductG
 import { ModernProductModal } from "@/components/storefront/modern/ModernProductModal";
 import { ModernShoppingCart } from "@/components/storefront/modern/ModernShoppingCart";
 import { ModernFooter } from "@/components/storefront/modern/ModernFooter";
-import { ModernAIChatWidget } from "@/components/storefront/modern/ModernAIChatWidget";
+
 import { ModernCustomerOrders } from "@/components/storefront/modern/ModernCustomerOrders";
 import { ModernInvoice } from "@/components/storefront/modern/ModernInvoice";
 
@@ -860,12 +859,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               {/* Icons */}
               <div className="flex items-center gap-2">
                 <button 
-                  onClick={() => {}}
-                  className="p-2.5 rounded-lg transition-colors hover:bg-secondary/50"
-                >
-                  <MessageCircle className="w-6 h-6 text-foreground/70" />
-                </button>
-                <button 
                   onClick={() => {
                     if (!isAuthenticated) {
                       toast({
@@ -1073,9 +1066,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         storeName={affiliateStore?.store_name || ''}
       />
 
-      {/* AI Chat Widget */}
+      {/* Unified Chat Widget (AI + Human Support) */}
       {affiliateStore && products && (
-        <ModernAIChatWidget
+        <UnifiedChatWidget
           storeInfo={{
             id: affiliateStore.id,
             store_name: affiliateStore.store_name,
@@ -1089,17 +1082,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             stock: p.stock,
             category: p.category
           }))}
-        />
-      )}
-
-      {/* Footer */}
-      {affiliateStore && <ModernFooter store={affiliateStore} />}
-
-      {/* Customer Chat (Human Support) */}
-      {affiliateStore && (
-        <CustomerChatWidget
-          storeId={affiliateStore.id}
-          storeName={affiliateStore.store_name}
           customerProfileId={customer?.profile_id}
           isAuthenticated={isAuthenticated}
           onAuthRequired={() => {
@@ -1107,9 +1089,13 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               title: 'تسجيل الدخول مطلوب',
               description: 'يجب تسجيل الدخول لبدء المحادثة مع المتجر',
             });
+            setShowAuthModal(true);
           }}
         />
       )}
+
+      {/* Footer */}
+      {affiliateStore && <ModernFooter store={affiliateStore} />}
       </div>
     </StoreThemeProvider>
   );

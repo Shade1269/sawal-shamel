@@ -1,0 +1,207 @@
+import React, { useState } from 'react';
+import { MessageCircle, Bot, Headphones, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ModernAIChatWidget } from '@/components/storefront/modern/ModernAIChatWidget';
+import { CustomerChatWidget } from '@/components/customer-service/CustomerChatWidget';
+
+interface UnifiedChatWidgetProps {
+  storeInfo: {
+    id: string;
+    store_name: string;
+    bio?: string | null;
+  };
+  products: Array<{
+    id: string;
+    title: string;
+    description: string;
+    price_sar: number;
+    stock: number;
+    category: string;
+  }>;
+  customerProfileId?: string;
+  isAuthenticated: boolean;
+  onAuthRequired: () => void;
+}
+
+type ChatMode = 'closed' | 'menu' | 'ai' | 'human';
+
+export const UnifiedChatWidget: React.FC<UnifiedChatWidgetProps> = ({
+  storeInfo,
+  products,
+  customerProfileId,
+  isAuthenticated,
+  onAuthRequired
+}) => {
+  const [mode, setMode] = useState<ChatMode>('closed');
+
+  const handleOpen = () => {
+    setMode('menu');
+  };
+
+  const handleSelectAI = () => {
+    setMode('ai');
+  };
+
+  const handleSelectHuman = () => {
+    if (!isAuthenticated) {
+      onAuthRequired();
+      setMode('closed');
+      return;
+    }
+    setMode('human');
+  };
+
+  const handleClose = () => {
+    setMode('closed');
+  };
+
+  const handleBackToMenu = () => {
+    setMode('menu');
+  };
+
+  // Render AI Chat Widget
+  if (mode === 'ai') {
+    return (
+      <div className="relative">
+        <Button
+          onClick={handleBackToMenu}
+          size="sm"
+          variant="ghost"
+          className="fixed bottom-[590px] left-6 z-[60] bg-background/95 backdrop-blur-sm shadow-md hover:bg-background"
+        >
+          <X className="h-4 w-4 ml-2" />
+          رجوع
+        </Button>
+        <ModernAIChatWidget
+          storeInfo={storeInfo}
+          products={products}
+        />
+      </div>
+    );
+  }
+
+  // Render Human Support Chat Widget
+  if (mode === 'human') {
+    return (
+      <div className="relative">
+        <Button
+          onClick={handleBackToMenu}
+          size="sm"
+          variant="ghost"
+          className="fixed bottom-[590px] left-6 z-[60] bg-background/95 backdrop-blur-sm shadow-md hover:bg-background"
+        >
+          <X className="h-4 w-4 ml-2" />
+          رجوع
+        </Button>
+        <CustomerChatWidget
+          storeId={storeInfo.id}
+          storeName={storeInfo.store_name}
+          customerProfileId={customerProfileId}
+          isAuthenticated={isAuthenticated}
+          onAuthRequired={onAuthRequired}
+        />
+      </div>
+    );
+  }
+
+  // Render Menu or Closed Button
+  if (mode === 'closed') {
+    return (
+      <motion.div
+        className="fixed bottom-24 left-6 z-50"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <Button
+          onClick={handleOpen}
+          size="lg"
+          className="h-14 w-14 rounded-full shadow-lg bg-secondary hover:bg-secondary/90 relative"
+          dir="rtl"
+          title="الدردشة"
+        >
+          <MessageCircle className="h-6 w-6" />
+          <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-green-400 border-2 border-background"></div>
+        </Button>
+      </motion.div>
+    );
+  }
+
+  // Render Menu
+  return (
+    <AnimatePresence>
+      <motion.div
+        className="fixed bottom-24 left-6 z-50"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 20 }}
+      >
+        <Card className="w-[320px] shadow-2xl border-border/50" dir="rtl">
+          <CardHeader className="p-4 bg-gradient-to-r from-secondary to-secondary/80 text-secondary-foreground">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-semibold">
+                اختر نوع المحادثة
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClose}
+                className="h-8 w-8 p-0 hover:bg-secondary-foreground/10"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4 space-y-3">
+            {/* AI Bot Option */}
+            <motion.button
+              onClick={handleSelectAI}
+              className="w-full p-4 rounded-lg border-2 border-border hover:border-secondary transition-all bg-card hover:bg-secondary/5 text-right group"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-full bg-secondary/10 group-hover:bg-secondary/20 transition-colors">
+                  <Bot className="h-5 w-5 text-secondary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-foreground mb-1">
+                    المساعد الذكي 🤖
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    احصل على إجابات فورية عن المنتجات والأسعار والعروض
+                  </p>
+                </div>
+              </div>
+            </motion.button>
+
+            {/* Human Support Option */}
+            <motion.button
+              onClick={handleSelectHuman}
+              className="w-full p-4 rounded-lg border-2 border-border hover:border-secondary transition-all bg-card hover:bg-secondary/5 text-right group"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-full bg-secondary/10 group-hover:bg-secondary/20 transition-colors">
+                  <Headphones className="h-5 w-5 text-secondary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-foreground mb-1">
+                    خدمة العملاء 👤
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    تحدث مع فريق الدعم للاستفسارات المعقدة والمساعدة الشخصية
+                  </p>
+                </div>
+              </div>
+            </motion.button>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
