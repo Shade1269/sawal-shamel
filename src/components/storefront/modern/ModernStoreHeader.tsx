@@ -17,13 +17,15 @@ interface ModernStoreHeaderProps {
   cartItemsCount: number;
   onCartClick: () => void;
   onAuthClick: () => void;
+  onOrdersClick?: () => void;
 }
 
 export const ModernStoreHeader = ({
   store,
   cartItemsCount,
   onCartClick,
-  onAuthClick
+  onAuthClick,
+  onOrdersClick
 }: ModernStoreHeaderProps) => {
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border/50 shadow-lg">
@@ -73,6 +75,17 @@ export const ModernStoreHeader = ({
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
+            {onOrdersClick && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onOrdersClick}
+                className="relative hover:bg-accent"
+              >
+                <Package className="h-5 w-5 md:h-6 md:w-6" />
+              </Button>
+            )}
+
             <Button
               variant="ghost"
               size="icon"
