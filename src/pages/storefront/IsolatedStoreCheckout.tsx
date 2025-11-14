@@ -8,12 +8,12 @@ import { ArrowLeft, Loader2, CheckCircle, CreditCard } from 'lucide-react';
 import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 import { storeOrderService } from '@/services/storeOrderService';
 import { toast } from 'sonner';
-import { LuxuryCardV2, LuxuryCardHeader, LuxuryCardTitle, LuxuryCardContent } from '@/components/luxury/LuxuryCardV2';
 import { motion } from 'framer-motion';
 import { useStorefrontOtp } from '@/hooks/useStorefrontOtp';
 import { useShippingManagement } from '@/hooks/useShippingManagement';
 import { GeideaPayment } from '@/components/payment/GeideaPayment';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { StoreThemeProvider } from '@/components/store/StoreThemeProvider';
 
 interface StoreContextType {
   store: {
@@ -207,33 +207,37 @@ export const IsolatedStoreCheckout: React.FC = () => {
 
   if (cartLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4" />
-          <p className="text-slate-400">جاري تحميل...</p>
+      <StoreThemeProvider storeId={store?.id}>
+        <div className="flex items-center justify-center min-h-screen bg-background">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">جاري تحميل...</p>
+          </div>
         </div>
-      </div>
+      </StoreThemeProvider>
     );
   }
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="space-y-6 p-6 min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
-        <LuxuryCardV2 variant="glass" hover="none" className="max-w-md mx-auto">
-          <CardContent className="text-center py-16">
-            <h3 className="text-2xl font-bold mb-3 text-white">السلة فارغة</h3>
-            <p className="text-slate-400 mb-6">
-              لا يمكن إتمام الطلب مع سلة فارغة
-            </p>
-            <Button 
-              onClick={() => navigate(`/${storeSlug}`)}
-              className="bg-gradient-danger hover:opacity-90 shadow-lg shadow-destructive/25"
-            >
-              تسوق الآن
-            </Button>
-          </CardContent>
-        </LuxuryCardV2>
-      </div>
+      <StoreThemeProvider storeId={store?.id}>
+        <div className="space-y-6 p-6 min-h-screen bg-background">
+          <Card className="max-w-md mx-auto border-border/50 bg-card/50 backdrop-blur">
+            <CardContent className="text-center py-16">
+              <h3 className="text-2xl font-bold mb-3 text-foreground">السلة فارغة</h3>
+              <p className="text-muted-foreground mb-6">
+                لا يمكن إتمام الطلب مع سلة فارغة
+              </p>
+              <Button 
+                onClick={() => navigate(`/${storeSlug}`)}
+                className="bg-primary text-primary-foreground hover:opacity-90"
+              >
+                تسوق الآن
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </StoreThemeProvider>
     );
   }
 
@@ -241,21 +245,22 @@ export const IsolatedStoreCheckout: React.FC = () => {
   const total = cart.total + shipping;
 
   return (
-    <div className="space-y-6 min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-4 md:p-6">
-      <div className="flex items-center gap-4">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={() => navigate(`/${storeSlug}/cart`)}
-          className="text-red-400 hover:text-red-300 hover:bg-red-950/20"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          العودة للسلة
-        </Button>
-        <h1 className="text-3xl font-bold bg-gradient-danger bg-clip-text text-transparent">
-          إتمام الطلب
-        </h1>
-      </div>
+    <StoreThemeProvider storeId={store?.id}>
+      <div className="space-y-6 min-h-screen bg-background p-4 md:p-6">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate(`/${storeSlug}/cart`)}
+            className="text-primary hover:text-primary/80"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            العودة للسلة
+          </Button>
+          <h1 className="text-3xl font-bold text-foreground">
+            إتمام الطلب
+          </h1>
+        </div>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
@@ -264,25 +269,25 @@ export const IsolatedStoreCheckout: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <LuxuryCardV2 variant="glass" hover="lift" className="border-red-600/20">
-              <LuxuryCardHeader className="border-b border-red-600/15">
-                <LuxuryCardTitle className="text-xl">معلومات العميل</LuxuryCardTitle>
-              </LuxuryCardHeader>
-              <LuxuryCardContent className="space-y-4 pt-6">
+            <Card className="border-border/50 bg-card/50 backdrop-blur">
+              <CardHeader className="border-b border-border/50">
+                <CardTitle className="text-xl text-foreground">معلومات العميل</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="customerName" className="text-slate-300">الاسم الكامل *</Label>
+                    <Label htmlFor="customerName" className="text-foreground">الاسم الكامل *</Label>
                     <Input
                       id="customerName"
                       value={formData.customerName}
                       onChange={(e) => handleInputChange('customerName', e.target.value)}
                       placeholder="أدخل اسمك الكامل"
                       required
-                      className="bg-slate-900/95 border-2 border-slate-700/50 focus:border-red-600/50 focus:ring-2 focus:ring-red-600 text-white placeholder:text-slate-500"
+                      className="bg-background border-border"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="customerPhone" className="text-slate-300">رقم الجوال *</Label>
+                    <Label htmlFor="customerPhone" className="text-foreground">رقم الجوال *</Label>
                     <Input
                       id="customerPhone"
                       type="tel"
@@ -290,23 +295,23 @@ export const IsolatedStoreCheckout: React.FC = () => {
                       onChange={(e) => handleInputChange('customerPhone', e.target.value)}
                       placeholder="05xxxxxxxx"
                       required
-                      className="bg-slate-900/95 border-2 border-slate-700/50 focus:border-red-600/50 focus:ring-2 focus:ring-red-600 text-white placeholder:text-slate-500"
+                      className="bg-background border-border"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="customerEmail" className="text-slate-300">البريد الإلكتروني</Label>
+                  <Label htmlFor="customerEmail" className="text-foreground">البريد الإلكتروني</Label>
                   <Input
                     id="customerEmail"
                     type="email"
                     value={formData.customerEmail}
                     onChange={(e) => handleInputChange('customerEmail', e.target.value)}
                     placeholder="example@email.com"
-                    className="bg-slate-900/95 border-2 border-slate-700/50 focus:border-red-600/50 focus:ring-2 focus:ring-red-600 text-white placeholder:text-slate-500"
+                    className="bg-background border-border"
                   />
                 </div>
-              </LuxuryCardContent>
-            </LuxuryCardV2>
+              </CardContent>
+            </Card>
           </motion.div>
 
           <motion.div
@@ -314,81 +319,81 @@ export const IsolatedStoreCheckout: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <LuxuryCardV2 variant="glass" hover="lift" className="border-red-600/20">
-              <LuxuryCardHeader className="border-b border-red-600/15">
-                <LuxuryCardTitle className="text-xl">عنوان الشحن</LuxuryCardTitle>
-              </LuxuryCardHeader>
-              <LuxuryCardContent className="space-y-4 pt-6">
+            <Card className="border-border/50 bg-card/50 backdrop-blur">
+              <CardHeader className="border-b border-border/50">
+                <CardTitle className="text-xl text-foreground">عنوان الشحن</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="city" className="text-slate-300">المدينة *</Label>
+                    <Label htmlFor="city" className="text-foreground">المدينة *</Label>
                     <Input
                       id="city"
                       value={formData.city}
                       onChange={(e) => handleInputChange('city', e.target.value)}
                       placeholder="الرياض"
                       required
-                      className="bg-slate-900/95 border-2 border-slate-700/50 focus:border-red-600/50 focus:ring-2 focus:ring-red-600 text-white placeholder:text-slate-500"
+                      className="bg-background border-border"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="district" className="text-slate-300">الحي</Label>
+                    <Label htmlFor="district" className="text-foreground">الحي</Label>
                     <Input
                       id="district"
                       value={formData.district}
                       onChange={(e) => handleInputChange('district', e.target.value)}
                       placeholder="النسيم"
-                      className="bg-slate-900/95 border-2 border-slate-700/50 focus:border-red-600/50 focus:ring-2 focus:ring-red-600 text-white placeholder:text-slate-500"
+                      className="bg-background border-border"
                     />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="street" className="text-slate-300">الشارع *</Label>
+                  <Label htmlFor="street" className="text-foreground">الشارع *</Label>
                   <Input
                     id="street"
                     value={formData.street}
                     onChange={(e) => handleInputChange('street', e.target.value)}
                     placeholder="شارع الملك فهد"
                     required
-                    className="bg-slate-900/95 border-2 border-slate-700/50 focus:border-red-600/50 focus:ring-2 focus:ring-red-600 text-white placeholder:text-slate-500"
+                    className="bg-background border-border"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="building" className="text-slate-300">رقم المبنى</Label>
+                    <Label htmlFor="building" className="text-foreground">رقم المبنى</Label>
                     <Input
                       id="building"
                       value={formData.building}
                       onChange={(e) => handleInputChange('building', e.target.value)}
                       placeholder="123"
-                      className="bg-slate-900/95 border-2 border-slate-700/50 focus:border-red-600/50 focus:ring-2 focus:ring-red-600 text-white placeholder:text-slate-500"
+                      className="bg-background border-border"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="apartment" className="text-slate-300">رقم الشقة</Label>
+                    <Label htmlFor="apartment" className="text-foreground">رقم الشقة</Label>
                     <Input
                       id="apartment"
                       value={formData.apartment}
                       onChange={(e) => handleInputChange('apartment', e.target.value)}
                       placeholder="45"
-                      className="bg-slate-900/95 border-2 border-slate-700/50 focus:border-red-600/50 focus:ring-2 focus:ring-red-600 text-white placeholder:text-slate-500"
+                      className="bg-background border-border"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="postalCode" className="text-slate-300">الرمز البريدي</Label>
+                    <Label htmlFor="postalCode" className="text-foreground">الرمز البريدي</Label>
                     <Input
                       id="postalCode"
                       value={formData.postalCode}
                       onChange={(e) => handleInputChange('postalCode', e.target.value)}
                       placeholder="12345"
-                      className="bg-slate-900/95 border-2 border-slate-700/50 focus:border-red-600/50 focus:ring-2 focus:ring-red-600 text-white placeholder:text-slate-500"
+                      className="bg-background border-border"
                     />
                   </div>
                 </div>
-              </LuxuryCardContent>
-            </LuxuryCardV2>
+              </CardContent>
+            </Card>
           </motion.div>
 
           {/* خيارات الشحن */}
@@ -397,24 +402,24 @@ export const IsolatedStoreCheckout: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <LuxuryCardV2 variant="glass" hover="lift" className="border-red-600/20">
-              <LuxuryCardHeader className="border-b border-red-600/15">
-                <LuxuryCardTitle className="text-xl">طريقة الشحن</LuxuryCardTitle>
-              </LuxuryCardHeader>
-              <LuxuryCardContent className="space-y-4 pt-6">
+            <Card className="border-border/50 bg-card/50 backdrop-blur">
+              <CardHeader className="border-b border-border/50">
+                <CardTitle className="text-xl text-foreground">طريقة الشحن</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-6">
                 {calculatingShipping ? (
                   <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-red-500" />
-                    <span className="mr-3 text-slate-400">جاري حساب تكلفة الشحن...</span>
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <span className="mr-3 text-muted-foreground">جاري حساب تكلفة الشحن...</span>
                   </div>
                 ) : !formData.city ? (
                   <div className="text-center py-8">
-                    <p className="text-slate-400">يرجى إدخال المدينة أولاً لعرض خيارات الشحن</p>
+                    <p className="text-muted-foreground">يرجى إدخال المدينة أولاً لعرض خيارات الشحن</p>
                   </div>
                 ) : shippingOptions.length === 0 ? (
                   <div className="text-center py-8">
-                    <p className="text-slate-400">لا توجد خيارات شحن متاحة لهذه المدينة</p>
-                    <p className="text-xs text-slate-500 mt-2">يرجى الاتصال بالدعم للمساعدة</p>
+                    <p className="text-muted-foreground">لا توجد خيارات شحن متاحة لهذه المدينة</p>
+                    <p className="text-xs text-muted-foreground/70 mt-2">يرجى الاتصال بالدعم للمساعدة</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -428,34 +433,34 @@ export const IsolatedStoreCheckout: React.FC = () => {
                         })}
                         className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                           selectedShipping?.providerId === option.providerId
-                            ? 'border-red-600 bg-red-950/20'
-                            : 'border-slate-700/50 bg-slate-900/50 hover:border-red-600/50'
+                            ? 'border-primary bg-primary/10'
+                            : 'border-border bg-background hover:border-primary/50'
                         }`}
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                               selectedShipping?.providerId === option.providerId
-                                ? 'border-red-600 bg-red-600'
-                                : 'border-slate-600'
+                                ? 'border-primary bg-primary'
+                                : 'border-border'
                             }`}>
                               {selectedShipping?.providerId === option.providerId && (
-                                <CheckCircle className="h-3 w-3 text-white" />
+                                <CheckCircle className="h-3 w-3 text-primary-foreground" />
                               )}
                             </div>
                             <div>
-                              <p className="font-semibold text-white">{option.providerName}</p>
-                              <p className="text-xs text-slate-400">التوصيل خلال {option.estimatedDeliveryDays}</p>
+                              <p className="font-semibold text-foreground">{option.providerName}</p>
+                              <p className="text-xs text-muted-foreground">التوصيل خلال {option.estimatedDeliveryDays}</p>
                             </div>
                           </div>
-                          <span className="text-lg font-bold text-red-400">{option.totalCost.toFixed(0)} ر.س</span>
+                          <span className="text-lg font-bold text-primary">{option.totalCost.toFixed(0)} ر.س</span>
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
-              </LuxuryCardContent>
-            </LuxuryCardV2>
+              </CardContent>
+            </Card>
           </motion.div>
 
           {/* خيارات الدفع */}
@@ -464,32 +469,32 @@ export const IsolatedStoreCheckout: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <LuxuryCardV2 variant="glass" hover="lift" className="border-red-600/20">
-              <LuxuryCardHeader className="border-b border-red-600/15">
-                <LuxuryCardTitle className="text-xl">طريقة الدفع</LuxuryCardTitle>
-              </LuxuryCardHeader>
-              <LuxuryCardContent className="space-y-4 pt-6">
+            <Card className="border-border/50 bg-card/50 backdrop-blur">
+              <CardHeader className="border-b border-border/50">
+                <CardTitle className="text-xl text-foreground">طريقة الدفع</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-6">
                 <RadioGroup value={paymentMethod} onValueChange={(value) => setPaymentMethod(value as 'cod' | 'geidea')}>
                   {/* الدفع عند الاستلام */}
                   <div
                     onClick={() => setPaymentMethod('cod')}
                     className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                       paymentMethod === 'cod'
-                        ? 'border-red-600 bg-red-950/20'
-                        : 'border-slate-700/50 bg-slate-900/50 hover:border-red-600/50'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border bg-background hover:border-primary/50'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <RadioGroupItem value="cod" id="cod" className="border-red-600" />
+                        <RadioGroupItem value="cod" id="cod" className="border-primary" />
                         <div>
-                          <Label htmlFor="cod" className="font-semibold text-white cursor-pointer">
+                          <Label htmlFor="cod" className="font-semibold text-foreground cursor-pointer">
                             الدفع عند الاستلام
                           </Label>
-                          <p className="text-xs text-slate-400">ادفع نقداً عند وصول الطلب</p>
+                          <p className="text-xs text-muted-foreground">ادفع نقداً عند وصول الطلب</p>
                         </div>
                       </div>
-                      <CreditCard className="h-5 w-5 text-red-400" />
+                      <CreditCard className="h-5 w-5 text-primary" />
                     </div>
                   </div>
 
@@ -498,26 +503,26 @@ export const IsolatedStoreCheckout: React.FC = () => {
                     onClick={() => setPaymentMethod('geidea')}
                     className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                       paymentMethod === 'geidea'
-                        ? 'border-red-600 bg-red-950/20'
-                        : 'border-slate-700/50 bg-slate-900/50 hover:border-red-600/50'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border bg-background hover:border-primary/50'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <RadioGroupItem value="geidea" id="geidea" className="border-red-600" />
+                        <RadioGroupItem value="geidea" id="geidea" className="border-primary" />
                         <div>
-                          <Label htmlFor="geidea" className="font-semibold text-white cursor-pointer">
+                          <Label htmlFor="geidea" className="font-semibold text-foreground cursor-pointer">
                             الدفع الإلكتروني
                           </Label>
-                          <p className="text-xs text-slate-400">بطاقة ائتمان / مدى / Apple Pay</p>
+                          <p className="text-xs text-muted-foreground">بطاقة ائتمان / مدى / Apple Pay</p>
                         </div>
                       </div>
-                      <CreditCard className="h-5 w-5 text-red-400" />
+                      <CreditCard className="h-5 w-5 text-primary" />
                     </div>
                   </div>
                 </RadioGroup>
-              </LuxuryCardContent>
-            </LuxuryCardV2>
+              </CardContent>
+            </Card>
           </motion.div>
         </div>
 
@@ -527,56 +532,52 @@ export const IsolatedStoreCheckout: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <LuxuryCardV2 
-              variant="glow" 
-              hover="lift" 
-              className="sticky top-4"
-            >
-              <CardHeader className="border-b border-red-600/15">
-                <CardTitle className="text-2xl bg-gradient-danger bg-clip-text text-transparent">
+            <Card className="sticky top-4 border-border/50 bg-card/50 backdrop-blur">
+              <CardHeader className="border-b border-border/50">
+                <CardTitle className="text-2xl text-foreground">
                   ملخص الطلب
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6 pt-6">
-                <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-red-600/30 scrollbar-track-slate-800">
+                <div className="space-y-2 max-h-48 overflow-y-auto">
                   {cart.items.map((item) => (
-                    <div key={item.id} className="flex justify-between text-sm py-2 border-b border-red-600/10 last:border-0">
-                      <span className="flex-1 truncate text-slate-300">
+                    <div key={item.id} className="flex justify-between text-sm py-2 border-b border-border/50 last:border-0">
+                      <span className="flex-1 truncate text-muted-foreground">
                         {item.product_title} × {item.quantity}
                       </span>
-                      <span className="font-semibold text-white">{item.total_price_sar.toFixed(0)} ر.س</span>
+                      <span className="font-semibold text-foreground">{item.total_price_sar.toFixed(0)} ر.س</span>
                     </div>
                   ))}
                 </div>
 
-                <div className="h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent" />
+                <div className="h-px bg-border" />
 
                 <div className="space-y-3">
-                  <div className="flex justify-between text-base text-slate-300">
+                  <div className="flex justify-between text-base text-muted-foreground">
                     <span>المجموع الفرعي</span>
-                    <span className="font-semibold text-white">{cart.total.toFixed(0)} ر.س</span>
+                    <span className="font-semibold text-foreground">{cart.total.toFixed(0)} ر.س</span>
                   </div>
-                  <div className="flex justify-between text-base text-slate-300">
+                  <div className="flex justify-between text-base text-muted-foreground">
                     <span>الشحن</span>
-                    <span className="font-semibold text-white">{shipping} ر.س</span>
+                    <span className="font-semibold text-foreground">{shipping} ر.س</span>
                   </div>
-                  <div className="h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent" />
+                  <div className="h-px bg-border" />
                   <div className="flex justify-between items-center py-2">
-                    <span className="text-xl font-bold text-white">المجموع الكلي</span>
-                    <span className="text-3xl font-bold bg-gradient-danger bg-clip-text text-transparent">
+                    <span className="text-xl font-bold text-foreground">المجموع الكلي</span>
+                    <span className="text-3xl font-bold text-primary">
                       {total.toFixed(0)} ر.س
                     </span>
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 rounded-xl p-4 border border-red-600/10">
+                <div className="bg-muted/50 rounded-xl p-4 border border-border">
                   <div className="flex items-center gap-3 mb-2">
-                    <CreditCard className="h-5 w-5 text-red-400" />
-                    <span className="font-semibold text-white">
+                    <CreditCard className="h-5 w-5 text-primary" />
+                    <span className="font-semibold text-foreground">
                       {paymentMethod === 'cod' ? 'الدفع عند الاستلام' : 'الدفع الإلكتروني'}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted-foreground">
                     {paymentMethod === 'cod' 
                       ? 'ادفع نقداً عند وصول الطلب' 
                       : 'سيتم توجيهك لصفحة الدفع بعد تأكيد الطلب'}
@@ -585,7 +586,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-14 text-lg bg-gradient-danger hover:opacity-90 shadow-lg shadow-destructive/25 hover:shadow-xl hover:shadow-destructive/35 border border-destructive/20 transition-all duration-500 group"
+                  className="w-full h-14 text-lg bg-primary text-primary-foreground hover:opacity-90 transition-all"
                   size="lg"
                   disabled={submitting}
                 >
@@ -602,45 +603,46 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   )}
                 </Button>
 
-                <p className="text-xs text-slate-400 text-center leading-relaxed">
+                <p className="text-xs text-muted-foreground text-center leading-relaxed">
                   بالضغط على "تأكيد الطلب" أنت توافق على الشروط والأحكام
                 </p>
               </CardContent>
-            </LuxuryCardV2>
+            </Card>
           </motion.div>
         </div>
       </form>
 
       {/* نافذة الدفع عبر Geidea */}
-      {showGeideaPayment && createdOrderId && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 rounded-2xl border border-red-600/20 shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-red-600/20 flex items-center justify-between sticky top-0 bg-slate-900 z-10">
-              <h2 className="text-2xl font-bold text-white">إتمام الدفع</h2>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowGeideaPayment(false)}
-                className="text-slate-400 hover:text-white"
-              >
-                إلغاء
-              </Button>
-            </div>
-            <div className="p-6">
-              <GeideaPayment
-                amount={total}
-                orderId={createdOrderId}
-                customerName={formData.customerName}
-                customerEmail={formData.customerEmail}
-                customerPhone={formData.customerPhone}
-                onSuccess={handleGeideaSuccess}
-                onError={handleGeideaError}
-                onCancel={handleGeideaCancel}
-              />
+        {showGeideaPayment && createdOrderId && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-background rounded-2xl border border-border shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-background z-10">
+                <h2 className="text-2xl font-bold text-foreground">إتمام الدفع</h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowGeideaPayment(false)}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  إلغاء
+                </Button>
+              </div>
+              <div className="p-6">
+                <GeideaPayment
+                  amount={total}
+                  orderId={createdOrderId}
+                  customerName={formData.customerName}
+                  customerEmail={formData.customerEmail}
+                  customerPhone={formData.customerPhone}
+                  onSuccess={handleGeideaSuccess}
+                  onError={handleGeideaError}
+                  onCancel={handleGeideaCancel}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </StoreThemeProvider>
   );
 };
