@@ -145,13 +145,13 @@ export const ModernProductModal = ({
                 <TabsTrigger value="details">التفاصيل</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="description" className="space-y-4 mt-4">
-                <p className="text-muted-foreground leading-relaxed text-right">
+              <TabsContent value="description" className="space-y-4 mt-4 bg-muted/30 p-4 rounded-lg">
+                <p className="text-foreground leading-relaxed text-right">
                   {product.description}
                 </p>
               </TabsContent>
               
-              <TabsContent value="details" className="space-y-3 mt-4" dir="rtl">
+              <TabsContent value="details" className="space-y-3 mt-4 bg-muted/30 p-4 rounded-lg" dir="rtl">
                 <div className="flex items-center gap-2 text-sm">
                   <Package className="h-5 w-5 text-primary" />
                   <span className="text-muted-foreground">الفئة:</span>
