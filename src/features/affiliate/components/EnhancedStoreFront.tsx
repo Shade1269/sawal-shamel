@@ -989,10 +989,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             return;
           }
           setShowCart(false);
-          toast({
-            title: "جاري تجهيز صفحة الدفع",
-            description: "سيتم إضافة صفحة الدفع قريباً",
-          });
+          handleCheckoutClick();
         }}
       />
 
