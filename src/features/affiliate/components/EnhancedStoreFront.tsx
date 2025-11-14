@@ -36,7 +36,8 @@ import {
   MapPin,
   Phone,
   Mail,
-  User
+  User,
+  MessageCircle
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -52,7 +53,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CustomerChatWidget } from "@/components/customer-service/CustomerChatWidget";
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 import { LuxuryCardV2, LuxuryCardContent } from "@/components/luxury/LuxuryCardV2";
-import { ModernStoreHeader } from "@/components/storefront/modern/ModernStoreHeader";
 import { ModernBannerSlider } from "@/components/storefront/modern/ModernBannerSlider";
 import { ModernProductGrid } from "@/components/storefront/modern/ModernProductGrid";
 import { ModernProductModal } from "@/components/storefront/modern/ModernProductModal";
@@ -842,91 +842,105 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
   return (
     <StoreThemeProvider storeId={affiliateStore.id}>
-      <div className="min-h-screen bg-background">
-      {/* Modern Store Header */}
-      <ModernStoreHeader 
-        store={affiliateStore}
-        cartItemsCount={isolatedCart?.items?.length || 0}
-        onCartClick={() => setShowCart(true)}
-        onAuthClick={() => setShowAuthModal(true)}
-        onOrdersClick={() => {
-          if (!isAuthenticated) {
-            toast({
-              title: "يجب تسجيل الدخول أولاً",
-              description: "الرجاء تسجيل الدخول لعرض طلباتك",
-              variant: "default",
-            });
-            setShowAuthModal(true);
-            return;
-          }
-          setShowOrders(true);
-        }}
-      />
+      <div className="min-h-screen bg-background" dir="rtl">
+        {/* Clean Header - مطابق للديمو */}
+        <header className="sticky top-0 z-40 bg-background border-b border-border shadow-sm">
+          <div className="container mx-auto px-6 py-5">
+            <div className="flex items-center justify-between max-w-7xl mx-auto">
+              {/* Search */}
+              <button className="p-2.5 hover:bg-secondary/50 rounded-lg transition-colors">
+                <Search className="w-6 h-6 text-foreground/70" />
+              </button>
+
+              {/* Logo/Brand */}
+              <h1 className="text-3xl font-bold text-foreground cursor-pointer">
+                {affiliateStore.store_name}
+              </h1>
+
+              {/* Icons */}
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => {}}
+                  className="p-2.5 rounded-lg transition-colors hover:bg-secondary/50"
+                >
+                  <MessageCircle className="w-6 h-6 text-foreground/70" />
+                </button>
+                <button 
+                  onClick={() => {
+                    if (!isAuthenticated) {
+                      toast({
+                        title: "يجب تسجيل الدخول أولاً",
+                        description: "الرجاء تسجيل الدخول لعرض طلباتك",
+                        variant: "default",
+                      });
+                      setShowAuthModal(true);
+                      return;
+                    }
+                    setShowOrders(true);
+                  }}
+                  className="p-2.5 rounded-lg transition-colors hover:bg-secondary/50"
+                >
+                  <Package className="w-6 h-6 text-foreground/70" />
+                </button>
+                <button 
+                  onClick={() => setShowAuthModal(true)}
+                  className="p-2.5 rounded-lg transition-colors hover:bg-secondary/50"
+                >
+                  <User className="w-6 h-6 text-foreground/70" />
+                </button>
+                <button 
+                  onClick={() => setShowCart(true)}
+                  className="p-2.5 rounded-lg transition-colors relative hover:bg-secondary/50"
+                >
+                  <ShoppingCart className="w-6 h-6 text-foreground/70" />
+                  {isolatedCart?.items?.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                      {isolatedCart.items.length}
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
 
       {/* Main Content */}
       <main className="container mx-auto px-3 md:px-6 py-4 md:py-8 space-y-6 md:space-y-8">
+        {/* Banner Slider */}
         {storeBanners && storeBanners.length > 0 && (
           <ModernBannerSlider banners={storeBanners} onBannerClick={handleBannerClick} />
         )}
 
-        {/* Hero Section - Enhanced */}
-        {(storeSettings?.hero_title || storeSettings?.hero_image_url) && (
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="relative overflow-hidden rounded-2xl md:rounded-3xl shadow-2xl mb-8 md:mb-12"
-          >
-            {/* Background Image */}
-            <div className="absolute inset-0 z-0">
-              {storeSettings.hero_image_url ? (
-                <img
-                  src={storeSettings.hero_image_url}
-                  alt="Hero Background"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-subtle" />
-              )}
-              <div className="absolute inset-0 gradient-overlay backdrop-blur-sm" />
+        {/* Categories Section - مطابق للديمو */}
+        <section className="py-12 bg-background">
+          <div className="container mx-auto px-6">
+            <div className="max-w-7xl mx-auto">
+              <div className="grid grid-cols-3 gap-6">
+                {[
+                  { name: 'الملابس', emoji: '👗', category: 'ملابس' },
+                  { name: 'الحقائب', emoji: '👜', category: 'حقائب' },
+                  { name: 'الأحذية', emoji: '👠', category: 'أحذية' }
+                ].map((category, idx) => (
+                  <motion.div
+                    key={idx}
+                    whileHover={{ y: -4 }}
+                    className="group cursor-pointer"
+                    onClick={() => setSelectedCategory(category.category === selectedCategory ? 'all' : category.category)}
+                  >
+                    <div className="relative aspect-square bg-surface rounded-xl overflow-hidden mb-4 border border-border/50">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/10 flex items-center justify-center">
+                        <span className="text-5xl opacity-30">
+                          {category.emoji}
+                        </span>
+                      </div>
+                    </div>
+                    <h3 className="text-center font-semibold text-foreground text-lg">{category.name}</h3>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-
-            {/* Content */}
-            <div className="relative z-10 py-20 px-8 text-center space-y-6">
-              {storeSettings.hero_title && (
-                <h2 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent drop-shadow-lg">
-                  {storeSettings.hero_title}
-                </h2>
-              )}
-              
-              {storeSettings.hero_subtitle && (
-                <p className="text-xl md:text-2xl font-medium text-foreground/90 max-w-2xl mx-auto">
-                  {storeSettings.hero_subtitle}
-                </p>
-              )}
-              
-              {storeSettings.hero_description && (
-                <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                  {storeSettings.hero_description}
-                </p>
-              )}
-
-              {storeSettings.hero_cta_text && (
-                <Button
-                  size="lg"
-                  variant={storeSettings.hero_cta_color as any}
-                  className="text-lg px-8 py-6 shadow-xl hover:scale-105 transition-transform"
-                  onClick={() => {
-                    const productsSection = document.getElementById('products-section');
-                    productsSection?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  {storeSettings.hero_cta_text}
-                  <ArrowRight className="mr-2 h-5 w-5" />
-                </Button>
-              )}
-            </div>
-          </motion.section>
-        )}
+          </div>
+        </section>
 
         {/* Enhanced Search and Filter Section */}
         <motion.section
