@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { toast } from 'sonner';
 import { useCustomerAuth } from '@/hooks/useCustomerAuth';
+import { StorefrontSession, saveStorefrontSession } from '@/utils/storefrontSession';
 
 interface UseStorefrontOtpProps {
   storeSlug: string;
@@ -64,6 +65,16 @@ export const useStorefrontOtp = ({ storeSlug, storeId }: UseStorefrontOtpProps) 
         setSessionId(session.sessionId);
         if (storeSlug) {
           localStorage.setItem(`sf:${storeSlug}:cust_sess`, session.sessionId);
+          // مزامنة جلسة الواجهة مع نظام StorefrontSession لتصبح "موثقة"
+          try {
+            saveStorefrontSession(storeSlug, session.sessionId);
+            const sf = new StorefrontSession(storeSlug);
+            sf.verifySession(phone);
+          } catch (e) {
+            console.warn('Storefront session sync failed', e);
+          }
+          // إبلاغ الواجهة بنجاح التحقق (لإغلاق المودال/استئناف الإجراء)
+          window.dispatchEvent(new CustomEvent('storefront-auth-success', { detail: { storeSlug, sessionId: session.sessionId } }));
         }
         setStep('orders');
       }
