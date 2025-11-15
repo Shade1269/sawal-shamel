@@ -185,6 +185,31 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
       originalColors: Object.keys(colorsSource),
     });
 
+    // Apply storefront dark override if active
+    if (document.documentElement.classList.contains('storefront-dark')) {
+      // Tailwind HSL triplets (used with hsl(var(--token)))
+      root.style.setProperty('--background', '222 47% 11%');
+      root.style.setProperty('--foreground', '210 40% 98%');
+      root.style.setProperty('--card', '217 33% 17%');
+      root.style.setProperty('--card-foreground', '210 40% 98%');
+      root.style.setProperty('--popover', '217 33% 17%');
+      root.style.setProperty('--popover-foreground', '210 40% 98%');
+      root.style.setProperty('--input', '217 33% 24%');
+      root.style.setProperty('--muted', '217 33% 17%');
+      root.style.setProperty('--muted-foreground', '215 20% 65%');
+      root.style.setProperty('--secondary', '217 33% 20%');
+      root.style.setProperty('--secondary-foreground', '210 40% 98%');
+      root.style.setProperty('--accent', '217 33% 24%');
+      root.style.setProperty('--accent-foreground', '210 40% 98%');
+
+      // Raw CSS variables used directly (not via hsl())
+      root.style.setProperty('--bg', 'hsl(222, 47%, 11%)');
+      root.style.setProperty('--fg', 'hsl(210, 40%, 98%)');
+      root.style.setProperty('--surface', 'hsl(217, 33%, 17%)');
+      root.style.setProperty('--surface-2', 'hsl(217, 33%, 20%)');
+      root.style.setProperty('--border', 'hsl(217, 33%, 24%)');
+    }
+
     // الخطوط
     if (typography?.fontFamily) {
       root.style.setProperty('--font-sans', typography.fontFamily);

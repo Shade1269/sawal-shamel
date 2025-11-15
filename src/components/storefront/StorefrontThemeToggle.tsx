@@ -1,12 +1,14 @@
 import { Moon, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useStoreTheme } from '@/components/store/ThemeProvider';
 
 interface StorefrontThemeToggleProps {
   storeSlug: string;
 }
 
 export const StorefrontThemeToggle = ({ storeSlug }: StorefrontThemeToggleProps) => {
+  const { currentTheme, applyTheme } = useStoreTheme();
   const [isDark, setIsDark] = useState(() => {
     if (typeof window === 'undefined') return false;
     const saved = localStorage.getItem(`storefront_theme_${storeSlug}`);
@@ -23,7 +25,18 @@ export const StorefrontThemeToggle = ({ storeSlug }: StorefrontThemeToggleProps)
       root.classList.remove('storefront-dark');
       localStorage.setItem(`storefront_theme_${storeSlug}`, 'light');
     }
-  }, [isDark, storeSlug]);
+
+    // Re-apply store theme so inline variables respect current mode
+    if (currentTheme && applyTheme) {
+      applyTheme(currentTheme);
+    }
+  }, [isDark, storeSlug, currentTheme, applyTheme]);
+
+  useEffect(() => {
+    if (currentTheme && document.documentElement.classList.contains('storefront-dark')) {
+      applyTheme(currentTheme);
+    }
+  }, [currentTheme, applyTheme]);
 
   const toggleTheme = () => {
     setIsDark(prev => !prev);
