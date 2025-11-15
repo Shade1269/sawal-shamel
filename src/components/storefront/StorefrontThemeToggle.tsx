@@ -15,18 +15,6 @@ export const StorefrontThemeToggle = ({ storeSlug }: StorefrontThemeToggleProps)
 
   useEffect(() => {
     const root = document.documentElement;
-
-    // Helper: sync computed CSS variables from the current mode into inline styles
-    const syncComputedVarsToInline = () => {
-      const computed = getComputedStyle(root);
-      const vars = [
-        '--background','--foreground','--card','--card-foreground','--popover','--popover-foreground','--border','--input','--muted','--muted-foreground','--secondary','--secondary-foreground','--accent','--accent-foreground','--ring','--primary','--primary-foreground'
-      ];
-      vars.forEach(v => {
-        const val = computed.getPropertyValue(v).trim();
-        if (val) root.style.setProperty(v, val);
-      });
-    };
     
     if (isDark) {
       root.classList.add('storefront-dark');
@@ -35,9 +23,6 @@ export const StorefrontThemeToggle = ({ storeSlug }: StorefrontThemeToggleProps)
       root.classList.remove('storefront-dark');
       localStorage.setItem(`storefront_theme_${storeSlug}`, 'light');
     }
-
-    // Wait a frame so the class takes effect, then sync variables so they override ThemeProvider inline values
-    requestAnimationFrame(syncComputedVarsToInline);
   }, [isDark, storeSlug]);
 
   const toggleTheme = () => {
