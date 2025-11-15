@@ -1007,11 +1007,24 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         onUpdateQuantity={updateCartQuantity}
         onRemoveItem={removeFromCart}
         onCheckout={() => {
-          // التحقق من تسجيل الدخول عن طريق التأكد من وجود sessionId في localStorage
+          // التحقق من تسجيل الدخول والتأكد من صلاحية الجلسة
           const storeSessionKey = `customer_session_${affiliateStore?.id}`;
-          const hasStoreSession = localStorage.getItem(storeSessionKey);
+          const storedSession = localStorage.getItem(storeSessionKey);
           
-          if (!hasStoreSession) {
+          let isValidSession = false;
+          if (storedSession) {
+            try {
+              const session = JSON.parse(storedSession);
+              // التحقق من أن الجلسة لم تنتهِ صلاحيتها
+              if (session.expiresAt && new Date(session.expiresAt) > new Date()) {
+                isValidSession = true;
+              }
+            } catch (e) {
+              console.error('Error parsing session:', e);
+            }
+          }
+          
+          if (!isValidSession) {
             toast({
               title: "يجب تسجيل الدخول أولاً",
               description: "الرجاء تسجيل الدخول برقم جوالك لحفظ الطلب في صفحة طلباتي",
@@ -1097,8 +1110,21 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
           if (pendingCheckout) {
             setPendingCheckout(false);
             const storeSessionKey = `customer_session_${affiliateStore?.id}`;
-            const hasStoreSession = localStorage.getItem(storeSessionKey);
-            if (hasStoreSession) {
+            const storedSession = localStorage.getItem(storeSessionKey);
+            
+            let isValidSession = false;
+            if (storedSession) {
+              try {
+                const session = JSON.parse(storedSession);
+                if (session.expiresAt && new Date(session.expiresAt) > new Date()) {
+                  isValidSession = true;
+                }
+              } catch (e) {
+                console.error('Error parsing session:', e);
+              }
+            }
+            
+            if (isValidSession) {
               handleCheckoutClick();
             }
           }
