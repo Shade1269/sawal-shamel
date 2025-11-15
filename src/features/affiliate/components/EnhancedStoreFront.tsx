@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { StorefrontSession } from "@/utils/storefrontSession";
 import { 
   ShoppingCart, 
   Star, 
@@ -60,6 +61,7 @@ import { ModernFooter } from "@/components/storefront/modern/ModernFooter";
 
 import { ModernCustomerOrders } from "@/components/storefront/modern/ModernCustomerOrders";
 import { ModernInvoice } from "@/components/storefront/modern/ModernInvoice";
+import { StorefrontThemeToggle } from "@/components/storefront/StorefrontThemeToggle";
 
 interface Product {
   id: string;
@@ -606,10 +608,30 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   };
 
   const handleCheckoutClick = () => {
-    // التوجه لصفحة الطلب الخاصة بالمتجر (المسار المعزول ليتوافق مع السلة)
-    if (storeSlug) {
-      navigate(`/${storeSlug}/checkout`);
+    // التحقق من تسجيل الدخول والتأكد من صلاحية الجلسة قبل الانتقال للـ checkout
+    if (!storeSlug || !affiliateStore?.id) return;
+    
+    const storefrontSession = new StorefrontSession(storeSlug);
+    const sessionData = storefrontSession.getSession();
+    
+    // فحص صلاحية الجلسة
+    const isValidSession = sessionData && 
+                          sessionData.isVerified && 
+                          sessionData.expiresAt > Date.now();
+    
+    if (!isValidSession) {
+      toast({
+        title: "يجب تسجيل الدخول أولاً",
+        description: "الرجاء تسجيل الدخول برقم جوالك لحفظ الطلب في صفحة طلباتي",
+        variant: "default",
+      });
+      setPendingCheckout(true);
+      setShowAuthModal(true);
+      return;
     }
+    
+    // إذا كانت الجلسة صالحة، انتقل للـ checkout
+    navigate(`/${storeSlug}/checkout`);
   };
 
   const handleBannerClick = (banner: any) => {
@@ -886,6 +908,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
               {/* Icons */}
               <div className="flex items-center gap-2">
+                {/* Theme Toggle */}
+                {storeSlug && <StorefrontThemeToggle storeSlug={storeSlug} />}
+                
                 <button 
                   onClick={() => {
                     if (!isAuthenticated) {

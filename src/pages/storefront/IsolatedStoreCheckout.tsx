@@ -14,6 +14,7 @@ import { useShippingManagement } from '@/hooks/useShippingManagement';
 import { GeideaPayment } from '@/components/payment/GeideaPayment';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { StoreThemeProvider } from '@/components/store/StoreThemeProvider';
+import { StorefrontSession } from '@/utils/storefrontSession';
 
 interface StoreContextType {
   store: {
@@ -44,15 +45,25 @@ export const IsolatedStoreCheckout: React.FC = () => {
   const { sessionId } = useStorefrontOtp({ storeSlug: storeSlug || '', storeId: store?.id });
   const { calculateShippingCost, loading: shippingLoading } = useShippingManagement();
 
-  // التحقق من تسجيل دخول العميل
+  // التحقق من تسجيل دخول العميل باستخدام StorefrontSession
   useEffect(() => {
-    if (!sessionId && !cartLoading) {
+    if (!storeSlug || !store?.id) return;
+    
+    const storefrontSession = new StorefrontSession(storeSlug);
+    const sessionData = storefrontSession.getSession();
+    
+    // فحص صلاحية الجلسة
+    const isValidSession = sessionData && 
+                          sessionData.isVerified && 
+                          sessionData.expiresAt > Date.now();
+    
+    if (!isValidSession && !cartLoading) {
       toast.info('يجب تسجيل الدخول أولاً لإتمام الطلب');
       // توجيه العميل لصفحة التسجيل مع حفظ مسار العودة
       const returnUrl = encodeURIComponent(`/${storeSlug}/checkout`);
       navigate(`/${storeSlug}/auth?returnUrl=${returnUrl}`, { replace: true });
     }
-  }, [sessionId, cartLoading, storeSlug, navigate]);
+  }, [storeSlug, store?.id, cartLoading, navigate]);
 
   const [formData, setFormData] = useState<OrderFormData>({
     customerName: '',
