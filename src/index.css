@@ -89,7 +89,16 @@
 
   /* Storefront Dark Mode - للعملاء في المتاجر */
   html.storefront-dark {
-    /* خلفيات */
+    color-scheme: dark;
+    
+    /* متغيرات الثيم المخصصة */
+    --bg: hsl(222, 47%, 11%);
+    --fg: hsl(210, 40%, 98%);
+    --surface: hsl(217, 33%, 17%);
+    --surface-2: hsl(217, 33%, 20%);
+    --border: hsl(217, 33%, 24%);
+    
+    /* خلفيات Shadcn */
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
     
@@ -100,7 +109,6 @@
     --popover-foreground: 210 40% 98%;
     
     /* الحدود والألوان الثانوية */
-    --border: 217 33% 24%;
     --input: 217 33% 24%;
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
@@ -114,6 +122,8 @@
     /* تحسين الظلال للوضع المظلم */
     --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.5);
     --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.5);
+    --shadow-glass-soft: 0 4px 20px rgba(0, 0, 0, 0.5);
+    --shadow-glass-strong: 0 8px 32px rgba(0, 0, 0, 0.6);
   }
 
   /* Global */
