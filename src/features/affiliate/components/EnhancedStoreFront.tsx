@@ -1083,7 +1083,10 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
       {/* Customer Orders Modal */}
       {showOrders && isAuthenticated && customer && affiliateStore && (
-        <Dialog open={showOrders} onOpenChange={setShowOrders}>
+        <Dialog open={showOrders} onOpenChange={(isOpen) => {
+          setShowOrders(isOpen);
+          if (!isOpen) setSelectedOrderId(null);
+        }}>
           <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
             {selectedOrderId ? (
               <ModernInvoice
