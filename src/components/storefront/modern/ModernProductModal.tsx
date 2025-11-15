@@ -62,8 +62,13 @@ export const ModernProductModal = ({
     }
   };
 
+  // إغلاق الـ modal إذا لم يكن هناك منتج
+  if (!product) return null;
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      if (!isOpen) onClose();
+    }}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0 bg-background border-border">
         <div className="grid md:grid-cols-2 gap-0">
           {/* Image Section */}
