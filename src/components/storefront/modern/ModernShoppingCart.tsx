@@ -40,7 +40,7 @@ export const ModernShoppingCart = ({
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent side="left" className="w-full sm:max-w-lg p-0 flex flex-col bg-background" dir="rtl">
+      <SheetContent side="right" className="w-full sm:max-w-lg p-0 flex flex-col bg-background" dir="rtl">
         {/* Header */}
         <SheetHeader className="px-6 py-5 border-b border-border bg-muted/30">
           <div className="flex items-center justify-between">
