@@ -612,12 +612,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     if (!storeSlug || !affiliateStore?.id) return;
     
     const storefrontSession = new StorefrontSession(storeSlug);
-    const sessionData = storefrontSession.getSession();
     
-    // فحص صلاحية الجلسة
-    const isValidSession = sessionData && 
-                          sessionData.isVerified && 
-                          sessionData.expiresAt > Date.now();
+    // استخدام isSessionValid() للتحقق من isVerified=true و expiresAt صالح
+    const isValidSession = storefrontSession.isSessionValid();
     
     if (!isValidSession) {
       toast({
@@ -1032,22 +1029,11 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         onUpdateQuantity={updateCartQuantity}
         onRemoveItem={removeFromCart}
         onCheckout={() => {
-          // التحقق من تسجيل الدخول والتأكد من صلاحية الجلسة
-          const storeSessionKey = `customer_session_${affiliateStore?.id}`;
-          const storedSession = localStorage.getItem(storeSessionKey);
+          // استخدام StorefrontSession للتحقق من صلاحية الجلسة (يتطلب isVerified=true و expiresAt صالح)
+          if (!affiliateStore?.store_slug) return;
           
-          let isValidSession = false;
-          if (storedSession) {
-            try {
-              const session = JSON.parse(storedSession);
-              // التحقق من أن الجلسة لم تنتهِ صلاحيتها
-              if (session.expiresAt && new Date(session.expiresAt) > new Date()) {
-                isValidSession = true;
-              }
-            } catch (e) {
-              console.error('Error parsing session:', e);
-            }
-          }
+          const sessionManager = new StorefrontSession(affiliateStore.store_slug);
+          const isValidSession = sessionManager.isSessionValid();
           
           if (!isValidSession) {
             toast({
@@ -1135,22 +1121,12 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         onClose={() => {
           setShowAuthModal(false);
           // إذا كان العميل في وضع الـ checkout المعلق، تحقق من تسجيل دخوله ثم أكمل العملية
-          if (pendingCheckout) {
+          if (pendingCheckout && storeSlug) {
             setPendingCheckout(false);
-            const storeSessionKey = `customer_session_${affiliateStore?.id}`;
-            const storedSession = localStorage.getItem(storeSessionKey);
             
-            let isValidSession = false;
-            if (storedSession) {
-              try {
-                const session = JSON.parse(storedSession);
-                if (session.expiresAt && new Date(session.expiresAt) > new Date()) {
-                  isValidSession = true;
-                }
-              } catch (e) {
-                console.error('Error parsing session:', e);
-              }
-            }
+            // استخدام StorefrontSession.isSessionValid() للتحقق من isVerified=true و expiresAt صالح
+            const storefrontSession = new StorefrontSession(storeSlug);
+            const isValidSession = storefrontSession.isSessionValid();
             
             if (isValidSession) {
               handleCheckoutClick();
