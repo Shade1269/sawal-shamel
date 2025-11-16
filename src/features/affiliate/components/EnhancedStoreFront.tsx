@@ -1106,7 +1106,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               />
             ) : (
               <ModernCustomerOrders
-                customerId={customer.id}
+                customerId={customer.profile_id}
                 storeId={affiliateStore.id}
                 onViewInvoice={(orderId) => setSelectedOrderId(orderId)}
               />
