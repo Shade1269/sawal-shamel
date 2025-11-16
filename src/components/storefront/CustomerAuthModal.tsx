@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Phone, Lock, CheckCircle, Loader2 } from 'lucide-react';
 import { useCustomerAuth } from '@/hooks/useCustomerAuth';
+import { StorefrontSession } from '@/utils/storefrontSession';
 
 interface CustomerAuthModalProps {
   isOpen: boolean;
@@ -46,6 +47,14 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
     if (otp.trim()) {
       const result = await verifyOTP(phone, otp, storeId);
       if (result.success) {
+        // تأكيد جلسة المتجر والتحقق عبر StorefrontSession (خاصة بكل متجر)
+        const manager = new StorefrontSession(storeSlug);
+        const existing = manager.getSession();
+        if (!existing) {
+          manager.createGuestSession(storeId);
+        }
+        manager.verifySession(phone);
+
         setStep('authenticated');
         setTimeout(() => {
           onClose();
@@ -73,12 +82,17 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
     }
   }, [step, onClose]);
 
-  // Check if already authenticated
+  // Check if already authenticated (store-specific)
   React.useEffect(() => {
-    if (isAuthenticated && isOpen) {
-      setStep('authenticated');
+    if (isOpen) {
+      const manager = new StorefrontSession(storeSlug);
+      if (manager.isSessionValid()) {
+        setStep('authenticated');
+      } else {
+        setStep('phone');
+      }
     }
-  }, [isAuthenticated, isOpen]);
+  }, [isOpen, storeSlug]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
