@@ -27,7 +27,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
   storeSlug,
   storeName
 }) => {
-  const { isLoading, sendOTP, verifyOTP, isAuthenticated } = useCustomerAuth();
+  const { isLoading, sendOTP, verifyOTP, isAuthenticated, checkStoredSession } = useCustomerAuth();
   const [step, setStep] = useState<'phone' | 'otp' | 'authenticated'>('phone');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
@@ -82,17 +82,22 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
     }
   }, [step, onClose]);
 
-  // Check if already authenticated (store-specific)
+  // Check if already authenticated (store-specific + customer context)
   React.useEffect(() => {
-    if (isOpen) {
-      const manager = new StorefrontSession(storeSlug);
-      if (manager.isSessionValid()) {
-        setStep('authenticated');
-      } else {
-        setStep('phone');
+    if (!isOpen) return;
+    const manager = new StorefrontSession(storeSlug);
+    const storeSessionValid = manager.isSessionValid();
+
+    if (storeSessionValid && isAuthenticated) {
+      setStep('authenticated');
+    } else {
+      // نحاول مزامنة جلسة العميل إن وُجدت، وإلا نبقى على خطوة الهاتف
+      if (storeSessionValid && !isAuthenticated) {
+        checkStoredSession?.();
       }
+      setStep('phone');
     }
-  }, [isOpen, storeSlug]);
+  }, [isOpen, storeSlug, isAuthenticated]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
