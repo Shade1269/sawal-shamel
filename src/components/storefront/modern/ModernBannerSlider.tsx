@@ -95,7 +95,7 @@ export const ModernBannerSlider = ({ banners, onBannerClick }: ModernBannerSlide
                 />
                 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent" />
+                <div className="absolute inset-0 gradient-banner-overlay" />
                 
                 {/* Content */}
                 <div className="absolute inset-0 flex items-end justify-start p-6 md:p-12 lg:p-16">

@@ -106,7 +106,7 @@ const DesignShowcase = () => {
                       className="group cursor-pointer"
                     >
                       <div className="relative aspect-square bg-surface rounded-xl overflow-hidden mb-4 border border-border/50">
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/10 flex items-center justify-center">
+                        <div className="absolute inset-0 gradient-category-card flex items-center justify-center">
                           <span className="text-5xl opacity-30">
                             {category.image === 'dress' ? '👗' : category.image === 'bag' ? '👜' : '👠'}
                           </span>

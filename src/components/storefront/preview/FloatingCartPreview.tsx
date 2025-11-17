@@ -79,7 +79,7 @@ export const FloatingCartPreview = () => {
               className="fixed left-0 top-0 h-full w-full sm:w-[440px] bg-background shadow-2xl z-50 flex flex-col"
             >
               {/* Header */}
-              <div className="p-6 border-b border-border bg-gradient-to-b from-secondary/20 to-transparent">
+              <div className="p-6 border-b border-border gradient-cart-header">
                 <div className="flex items-center justify-between mb-4">
                   <Button
                     variant="ghost"
@@ -106,7 +106,7 @@ export const FloatingCartPreview = () => {
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${freeShippingProgress}%` }}
-                      className="h-full bg-gradient-to-r from-success to-luxury rounded-full"
+                      className="h-full gradient-cart-progress rounded-full"
                     />
                   </div>
                 </div>
@@ -130,7 +130,7 @@ export const FloatingCartPreview = () => {
                       className="flex gap-4 p-4 bg-card rounded-xl border border-border hover:border-primary/50 transition-colors"
                     >
                       {/* Product Image */}
-                      <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-luxury/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <div className="w-20 h-20 gradient-cart-product rounded-lg flex items-center justify-center flex-shrink-0">
                         <ShoppingBag className="w-8 h-8 text-primary/50" />
                       </div>
 
@@ -187,7 +187,7 @@ export const FloatingCartPreview = () => {
 
               {/* Footer */}
               {cartItems.length > 0 && (
-                <div className="p-6 border-t border-border bg-gradient-to-t from-secondary/20 to-transparent space-y-4">
+                <div className="p-6 border-t border-border gradient-cart-footer space-y-4">
                   {/* Summary */}
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
