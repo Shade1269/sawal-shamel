@@ -1,15 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
+import { getCorsHeaders, handleCorsPreflightRequest } from '../_shared/cors.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+// ✅ تم إزالة CORS wildcard لأسباب أمنية
+// الآن يتم استخدام getCorsHeaders() التي تتحقق من Origin
 
 serve(async (req) => {
+  // معالجة preflight request
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return handleCorsPreflightRequest(req);
   }
+
+  // الحصول على CORS headers الآمنة
+  const corsHeaders = getCorsHeaders(req);
 
   try {
     console.log('=== Edge Function Started ===');

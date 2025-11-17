@@ -237,12 +237,8 @@ const AuthForm = () => {
                           مسوق محترف
                         </div>
                       </SelectItem>
-                      <SelectItem value="admin">
-                        <div className="flex items-center gap-2">
-                          <Users className="h-4 w-4" />
-                          مسؤول
-                        </div>
-                      </SelectItem>
+                      {/* ❌ تم إزالة خيار Admin من التسجيل لأسباب أمنية */}
+                      {/* المسؤولين يتم إضافتهم فقط من قبل Super Admin */}
                     </SelectContent>
                   </Select>
                 </div>
