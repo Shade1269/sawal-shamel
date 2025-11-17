@@ -46,10 +46,7 @@ export const useAffiliateOrders = (affiliateStoreId?: string) => {
         // حساب الإحصائيات
         const totalOrders = ordersData.length;
         const totalRevenue = ordersData.reduce((sum, order) => sum + Number(order.total_amount_sar || 0), 0);
-        // العمولة يمكن حسابها من جدول commissions المنفصل
-        // مؤقتاً نحسبها من النسبة إذا كانت موجودة
-        const totalCommissions = 0; // TODO: ربط مع جدول commissions
-        
+
         // جلب العمولات من جدول commissions
         const { data: commissions, error: commissionsError } = await supabase
           .from('commissions')
