@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.0';
 import { getCorsHeaders, handleCorsPreflightRequest } from '../_shared/cors.ts';
 
+
+
 // ✅ تم إزالة CORS wildcard لأسباب أمنية
 // الآن يتم استخدام getCorsHeaders() التي تتحقق من Origin
 
@@ -11,7 +13,10 @@ serve(async (req) => {
     return handleCorsPreflightRequest(req);
   }
 
+
+
   // الحصول على CORS headers الآمنة
+
   const corsHeaders = getCorsHeaders(req);
 
   try {
