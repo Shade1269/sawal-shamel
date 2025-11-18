@@ -207,7 +207,7 @@ export const ModernAIChatWidget = ({ storeInfo, products }: ModernAIChatWidgetPr
             <Button
               onClick={() => setIsOpen(true)}
               size="lg"
-              className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-2xl"
+              className="h-14 w-14 rounded-full gradient-btn-primary shadow-2xl"
             >
               <MessageCircle className="h-6 w-6" />
             </Button>
@@ -233,7 +233,7 @@ export const ModernAIChatWidget = ({ storeInfo, products }: ModernAIChatWidgetPr
           >
             <Card className="flex flex-col h-[600px] shadow-2xl border-border/50 overflow-hidden">
               {/* Header */}
-              <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground p-4 flex items-center justify-between">
+              <div className="gradient-btn-primary text-primary-foreground p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <div className="h-10 w-10 rounded-full bg-primary-foreground/20 flex items-center justify-center backdrop-blur-sm">

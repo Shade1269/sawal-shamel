@@ -101,7 +101,7 @@ export const BannerSliderPreview = () => {
                 />
                 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent" />
+                <div className="absolute inset-0 gradient-banner-overlay" />
                 
                 {/* Content */}
                 <div className="absolute inset-0 flex items-end justify-start p-8 md:p-16">

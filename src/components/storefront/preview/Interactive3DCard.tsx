@@ -35,7 +35,7 @@ export const Interactive3DCard = () => {
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="relative w-full h-[400px] bg-gradient-to-br from-primary/5 via-luxury/5 to-premium/5 rounded-3xl overflow-hidden border border-border"
+      className="relative w-full h-[400px] gradient-3d-card rounded-3xl overflow-hidden border border-border"
     >
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
         <ambientLight intensity={0.5} />

@@ -47,7 +47,7 @@ export function SidebarItem({
           "hover:bg-[hsl(var(--sidebar-hover))] hover:text-[hsl(var(--sidebar-text))]",
           "hover:scale-[1.02] active:scale-[0.98]",
           isActive && [
-            "bg-gradient-to-l from-[hsl(var(--sidebar-active))] to-[hsl(var(--sidebar-active-glow))]",
+            "gradient-sidebar-active",
             "text-primary-foreground font-medium shadow-lg",
             "shadow-[hsl(var(--sidebar-active-glow))]/30"
           ],

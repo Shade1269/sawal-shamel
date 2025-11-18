@@ -140,7 +140,7 @@ export const UnifiedChatWidget: React.FC<UnifiedChatWidgetProps> = ({
         exit={{ opacity: 0, y: 20 }}
       >
         <Card className="w-[320px] shadow-2xl border-border/50" dir="rtl">
-          <CardHeader className="p-4 bg-gradient-to-r from-secondary to-secondary/80 text-secondary-foreground">
+          <CardHeader className="p-4 gradient-header-secondary text-secondary-foreground">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-semibold">
                 اختر نوع المحادثة

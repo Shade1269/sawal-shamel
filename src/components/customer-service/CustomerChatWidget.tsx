@@ -120,7 +120,7 @@ export const CustomerChatWidget: React.FC<CustomerChatWidgetProps> = ({
       exit={{ opacity: 0, y: 20 }}
     >
       <Card className={`w-[380px] shadow-2xl border-border/50 ${isMinimized ? 'h-auto' : 'h-[550px]'}`} dir="rtl">
-        <CardHeader className="p-4 bg-gradient-to-r from-secondary to-secondary/80 text-secondary-foreground">
+        <CardHeader className="p-4 gradient-header-secondary text-secondary-foreground">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">

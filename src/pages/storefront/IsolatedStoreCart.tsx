@@ -53,7 +53,7 @@ export const IsolatedStoreCart: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800">
+      <div className="flex items-center justify-center min-h-screen gradient-dark-page">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4" />
           <p className="text-slate-400">جاري تحميل السلة...</p>
@@ -64,7 +64,7 @@ export const IsolatedStoreCart: React.FC = () => {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-6">
+      <div className="min-h-screen gradient-dark-page p-6">
         <div className="flex items-center gap-4 mb-8">
           <Button 
             variant="ghost" 
@@ -79,7 +79,7 @@ export const IsolatedStoreCart: React.FC = () => {
 
         <LuxuryCardV2 variant="glass" hover="none" className="max-w-md mx-auto">
           <CardContent className="text-center py-16">
-            <div className="w-32 h-32 bg-gradient-to-br from-slate-800 to-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-red-600/20 shadow-lg shadow-red-600/10">
+            <div className="w-32 h-32 gradient-dark-card rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-red-600/20 shadow-lg shadow-red-600/10">
               <ShoppingCart className="h-16 w-16 text-red-500/50" />
             </div>
             <h3 className="text-2xl font-bold mb-3 text-white">السلة فارغة</h3>
@@ -103,7 +103,7 @@ export const IsolatedStoreCart: React.FC = () => {
   const total = cart.total + shipping;
 
   return (
-    <div className="space-y-6 min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-4 md:p-6">
+    <div className="space-y-6 min-h-screen gradient-dark-page p-4 md:p-6">
       <div className="flex items-center gap-4">
         <Button 
           variant="ghost" 
@@ -177,9 +177,9 @@ export const IsolatedStoreCart: React.FC = () => {
                               <Minus className="h-4 w-4" />
                             </Button>
                             
-                            <Badge 
-                              variant="secondary" 
-                              className="min-w-[3rem] justify-center bg-gradient-to-r from-red-950/30 to-red-900/30 text-white border border-red-600/20 text-base font-bold"
+                            <Badge
+                              variant="secondary"
+                              className="min-w-[3rem] justify-center gradient-cart-quantity text-white border border-red-600/20 text-base font-bold"
                             >
                               {item.quantity}
                             </Badge>
@@ -241,7 +241,7 @@ export const IsolatedStoreCart: React.FC = () => {
                   <span>الشحن</span>
                   <span className="font-semibold text-white">{shipping} ر.س</span>
                 </div>
-                <div className="h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent" />
+                <div className="h-px gradient-cart-divider" />
                 <div className="flex justify-between items-center py-2">
                   <span className="text-xl font-bold text-white">المجموع الكلي</span>
                   <span className="text-3xl font-bold bg-gradient-danger bg-clip-text text-transparent">
@@ -259,7 +259,7 @@ export const IsolatedStoreCart: React.FC = () => {
                 <ArrowRight className="h-5 w-5 mr-2 group-hover:translate-x-1 transition-transform" />
               </Button>
 
-              <div className="bg-gradient-to-r from-slate-800/50 to-slate-900/50 rounded-lg p-3 border border-red-600/10">
+              <div className="gradient-dark-section rounded-lg p-3 border border-red-600/10">
                 <p className="text-xs text-slate-400 text-center">
                   الدفع عند الاستلام متاح
                 </p>

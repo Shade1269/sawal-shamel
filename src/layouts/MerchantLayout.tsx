@@ -68,19 +68,13 @@ export default function MerchantLayout() {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background" data-merchant-layout>
-        <div className="flex-1 flex flex-col min-w-0">
-          <MerchantHeader />
-          <main className="flex-1 overflow-auto bg-gradient-muted">
-            <BaseLayout
-              showHeader={false}
-              showSidebar={false}
-              contentClassName=""
-            />
-          </main>
-        </div>
-        <MerchantSidebarModern />
-      </div>
+      <BaseLayout
+        header={<MerchantHeader />}
+        sidebar={<MerchantSidebarModern />}
+        showHeader={true}
+        showSidebar={true}
+        contentClassName="bg-gradient-muted"
+      />
     </SidebarProvider>
   );
 }

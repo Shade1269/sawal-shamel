@@ -140,7 +140,7 @@ export const ModernStoreHeader = ({
 
       {/* Promotional Bar */}
       <motion.div 
-        className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border-t border-primary/20"
+        className="gradient-promo-bar border-t border-primary/20"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}

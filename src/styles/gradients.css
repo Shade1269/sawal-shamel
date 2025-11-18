@@ -164,6 +164,10 @@
   @apply bg-gradient-to-r from-warning/5 to-warning/10 border-warning/20;
 }
 
+.gradient-success-overlay {
+  @apply bg-gradient-to-br from-success/10 to-success/5;
+}
+
 /* === Complex Gradients === */
 .gradient-page-bg {
   @apply bg-gradient-to-br from-background to-secondary/20;
@@ -171,4 +175,82 @@
 
 .gradient-overlay {
   @apply bg-gradient-to-br from-primary-foreground/20 to-transparent;
+}
+
+/* === Sidebar Gradients === */
+.gradient-sidebar-active {
+  background: linear-gradient(to left, hsl(var(--sidebar-active)), hsl(var(--sidebar-active-glow)));
+}
+
+/* === Chat Widget Gradients === */
+.gradient-header-secondary {
+  @apply bg-gradient-to-r from-secondary to-secondary/80;
+}
+
+/* === Banner & Overlay Gradients === */
+.gradient-banner-overlay {
+  @apply bg-gradient-to-t from-background/90 via-background/50 to-transparent;
+}
+
+/* === Promotional Bar === */
+.gradient-promo-bar {
+  @apply bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10;
+}
+
+/* === Cart Gradients === */
+.gradient-cart-header {
+  @apply bg-gradient-to-b from-secondary/20 to-transparent;
+}
+
+.gradient-cart-footer {
+  @apply bg-gradient-to-t from-secondary/20 to-transparent;
+}
+
+.gradient-cart-progress {
+  @apply bg-gradient-to-r from-success to-luxury;
+}
+
+.gradient-cart-quantity {
+  @apply bg-gradient-to-r from-red-950/30 to-red-900/30;
+}
+
+.gradient-cart-divider {
+  @apply bg-gradient-to-r from-transparent via-red-600/30 to-transparent;
+}
+
+.gradient-cart-product {
+  @apply bg-gradient-to-br from-primary/10 to-luxury/10;
+}
+
+/* === Category Card Gradients === */
+.gradient-category-card {
+  @apply bg-gradient-to-br from-primary/5 to-secondary/10;
+}
+
+/* === Damascus Theme Gradients === */
+.gradient-damascus-divider {
+  background: linear-gradient(to right, transparent, rgb(var(--damascus-gold)), transparent);
+}
+
+/* === Dark Theme Gradients === */
+.gradient-dark-page {
+  @apply bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800;
+}
+
+.gradient-dark-card {
+  @apply bg-gradient-to-br from-slate-800 to-slate-900;
+}
+
+.gradient-dark-section {
+  @apply bg-gradient-to-r from-slate-800/50 to-slate-900/50;
+}
+
+/* === Interactive 3D Card === */
+.gradient-3d-card {
+  @apply bg-gradient-to-br from-primary/5 via-luxury/5 to-premium/5;
+}
+
+/* === Theme Preview Gradients === */
+.gradient-feminine-preview {
+  @apply bg-gradient-to-br from-pink-500 to-rose-600;
 }

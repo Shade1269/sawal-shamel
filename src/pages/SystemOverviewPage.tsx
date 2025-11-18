@@ -230,7 +230,7 @@ export default function SystemOverviewPage() {
         transition={{ delay: 0.2 }}
       >
         <Card className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-success/10" />
+          <div className="absolute inset-0 gradient-success-overlay" />
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">التقدم الإجمالي</CardTitle>
             <CardDescription>مراحل تطوير النظام المكتملة</CardDescription>
