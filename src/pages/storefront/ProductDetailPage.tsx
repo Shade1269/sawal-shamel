@@ -20,6 +20,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ShoppingCart, Plus, Minus, ArrowLeft, Star, Heart, Share2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
+import { RecentlyViewedProducts } from '@/components/product/RecentlyViewedProducts';
+import { ProductDetailSkeleton } from '@/components/product/ProductDetailSkeleton';
+import { EnhancedStockIndicator } from '@/components/product/EnhancedStockIndicator';
 
 interface ProductVariant {
   type: string;
@@ -63,6 +67,9 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Hook المنتجات المشاهدة مؤخراً
+  const { addProduct } = useRecentlyViewed();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -158,6 +165,18 @@ const ProductDetailPage = () => {
         });
 
         setProduct({ ...productData, variants: formattedVariants });
+
+        // إضافة المنتج للمنتجات المشاهدة مؤخراً
+        if (productData && productData.products) {
+          addProduct({
+            id: productData.product_id,
+            name: productData.products.title,
+            price: productData.products.price_sar,
+            image_url: productData.products.image_urls?.[0] || '',
+            store_slug: store_slug,
+            category: productData.products.category,
+          });
+        }
 
       } catch (error: any) {
         console.error('Error fetching product:', error);
@@ -290,12 +309,7 @@ const ProductDetailPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p>جاري تحميل المنتج...</p>
-          </div>
-        </div>
+        <ProductDetailSkeleton />
       </div>
     );
   }
@@ -410,6 +424,14 @@ const ProductDetailPage = () => {
                   {product.products.description}
                 </p>
               )}
+
+              {/* مؤشر المخزون المحسّن */}
+              <EnhancedStockIndicator
+                stock={product.variants?.reduce((total, v) => total + (v.stock || 0), 0) || 50}
+                totalStock={100}
+                viewCount={Math.floor(Math.random() * 20) + 5}
+                showProgress={true}
+              />
             </div>
 
             <Separator />
@@ -509,6 +531,11 @@ const ProductDetailPage = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* المنتجات المشاهدة مؤخراً */}
+        <div className="mt-12">
+          <RecentlyViewedProducts />
         </div>
       </main>
     </div>

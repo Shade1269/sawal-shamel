@@ -18,6 +18,9 @@ import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 import { PromotionalBannerDisplay } from '@/components/storefront/PromotionalBannerDisplay';
 import { ProductVariantDisplay } from '@/components/products/ProductVariantDisplay';
 import { toast } from 'sonner';
+import { RecentlyViewedProducts } from '@/components/product/RecentlyViewedProducts';
+import { ProductGridSkeleton } from '@/components/product/ProductGridSkeleton';
+import { CompactStockIndicator } from '@/components/product/EnhancedStockIndicator';
 
 interface ProductVariant {
   type: string;
@@ -208,11 +211,15 @@ export const IsolatedStorefront: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">جاري تحميل المنتجات...</p>
+      <div className="space-y-6">
+        {/* Header Skeleton */}
+        <div className="text-center space-y-2">
+          <div className="h-8 w-48 mx-auto bg-muted animate-pulse rounded" />
+          <div className="h-4 w-64 mx-auto bg-muted animate-pulse rounded" />
         </div>
+
+        {/* Products Grid Skeleton */}
+        <ProductGridSkeleton count={8} />
       </div>
     );
   }
@@ -313,9 +320,7 @@ export const IsolatedStorefront: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                  <Badge variant="secondary" className="text-xs">
-                    متوفر ({product.stock_quantity})
-                  </Badge>
+                  <CompactStockIndicator stock={product.stock_quantity || 0} />
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
@@ -369,11 +374,16 @@ export const IsolatedStorefront: React.FC = () => {
         bannerType="popup"
       />
       
-      <PromotionalBannerDisplay 
+      <PromotionalBannerDisplay
         affiliateStoreId={store?.id}
         bannerType="sidebar"
         position="floating"
       />
+
+      {/* المنتجات المشاهدة مؤخراً */}
+      <div className="mt-8">
+        <RecentlyViewedProducts />
+      </div>
     </div>
   );
 };
