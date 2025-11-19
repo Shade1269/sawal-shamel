@@ -120,32 +120,34 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
         data-sidebar="true"
         className={cn(
           "fixed right-0 top-0 z-40 h-screen transition-all duration-300 ease-in-out",
-          "backdrop-blur-xl shadow-2xl",
+          "backdrop-blur-xl shadow-2xl border-l border-border/50",
+          "bg-gradient-to-br from-card/95 via-card/90 to-background/95",
           // Mobile: full overlay drawer
           "md:top-16 md:h-[calc(100vh-4rem)]",
           // Collapsed state
-          state.isCollapsed 
-            ? "translate-x-full md:translate-x-0 md:w-16" 
-            : "translate-x-0 w-80 md:w-64"
+          state.isCollapsed
+            ? "translate-x-full md:translate-x-0 md:w-16"
+            : "translate-x-0 w-80 md:w-72"
         )}
-        style={{
-          backgroundColor: `hsl(var(--sidebar-glass-bg) / var(--sidebar-glass-opacity))`,
-          borderLeft: `1px solid hsl(var(--sidebar-border))`,
-        }}
       >
         <div className="flex flex-col h-full">
         {/* Header with Logo & Toggle */}
-        <div className="flex items-center justify-between p-4 border-b border-[hsl(var(--sidebar-border))]">
+        <div className="flex items-center justify-between p-4 border-b border-border/50 bg-gradient-to-l from-primary/5 to-transparent">
           {!state.isCollapsed && (
-            <h2 className="text-lg font-bold text-[hsl(var(--sidebar-text))]">
-              عناقتي
-            </h2>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-premium flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                أ
+              </div>
+              <h2 className="text-lg font-bold bg-gradient-premium bg-clip-text text-transparent">
+                أناقتي
+              </h2>
+            </div>
           )}
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleCollapse}
-            className="hover:bg-[hsl(var(--sidebar-hover))] text-[hsl(var(--sidebar-text))]"
+            className="hover:bg-primary/10 text-foreground hover:text-primary transition-all duration-200"
           >
             {state.isCollapsed ? (
               <Menu className="h-5 w-5" />
@@ -229,12 +231,13 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
           ))}
         </ScrollArea>
 
-          {/* Footer - User Info (if needed) */}
+          {/* Footer - User Info */}
           {!state.isCollapsed && (
-            <div className="p-4 border-t border-[hsl(var(--sidebar-border))]">
-              <p className="text-xs text-[hsl(var(--sidebar-text-secondary))] text-center">
-                © 2025 عناقتي
-              </p>
+            <div className="p-4 border-t border-border/50 bg-gradient-to-t from-primary/5 to-transparent">
+              <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+                <span>© 2025</span>
+                <span className="font-semibold bg-gradient-premium bg-clip-text text-transparent">أناقتي</span>
+              </div>
             </div>
           )}
         </div>

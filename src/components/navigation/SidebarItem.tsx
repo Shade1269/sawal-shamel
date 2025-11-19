@@ -43,13 +43,13 @@ export function SidebarItem({
         to={item.href}
         className={cn(
           "flex items-center gap-3 px-3 py-2.5 mx-2 rounded-lg transition-all duration-200",
-          "text-[hsl(var(--sidebar-text-secondary))]",
-          "hover:bg-[hsl(var(--sidebar-hover))] hover:text-[hsl(var(--sidebar-text))]",
+          "text-muted-foreground",
+          "hover:bg-primary/10 hover:text-primary hover:shadow-sm",
           "hover:scale-[1.02] active:scale-[0.98]",
           isActive && [
-            "gradient-sidebar-active",
-            "text-primary-foreground font-medium shadow-lg",
-            "shadow-[hsl(var(--sidebar-active-glow))]/30"
+            "bg-gradient-to-l from-primary/20 via-primary/10 to-transparent",
+            "text-primary font-semibold shadow-md border-l-2 border-primary",
+            "shadow-primary/10"
           ],
           isCollapsed && "justify-center px-2",
           level > 0 && "mr-6"
@@ -57,7 +57,8 @@ export function SidebarItem({
         style={
           isActive && item.color
             ? {
-                background: `linear-gradient(135deg, hsl(${item.color}), hsl(var(--sidebar-active)))`,
+                background: `linear-gradient(90deg, hsl(${item.color})/0.2, hsl(${item.color})/0.05, transparent)`,
+                borderLeftColor: `hsl(${item.color})`
               }
             : undefined
         }
@@ -119,10 +120,7 @@ export function SidebarItem({
         </button>
       )}
 
-      {/* Active Indicator */}
-      {isActive && !isCollapsed && (
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full shadow-lg" />
-      )}
+      {/* Active Indicator - Removed as we now use border-left */}
     </div>
   );
 
