@@ -6,7 +6,11 @@ import {
   BarChart3,
   Settings,
   Package,
-  CreditCard
+  CreditCard,
+  Tag,
+  TrendingUp,
+  ExternalLink,
+  Search
 } from 'lucide-react';
 
 export const affiliateNavigationSections = [
@@ -37,10 +41,24 @@ export const affiliateNavigationSections = [
         color: '221 83% 53%',
       },
       {
+        id: 'products-browser',
+        title: 'تصفح المنتجات',
+        href: '/products',
+        icon: Search,
+        color: '221 83% 53%',
+      },
+      {
         id: 'store-settings',
         title: 'إعدادات المتجر',
         href: '/affiliate/store/settings',
         icon: Settings,
+        color: '221 83% 53%',
+      },
+      {
+        id: 'coupons',
+        title: 'الكوبونات والعروض',
+        href: '/affiliate/store/settings?tab=coupons',
+        icon: Tag,
         color: '221 83% 53%',
       },
       {
@@ -69,15 +87,22 @@ export const affiliateNavigationSections = [
   },
   {
     id: 'analytics',
-    title: 'التحليلات',
+    title: 'التحليلات والأداء',
     icon: <BarChart3 className="h-4 w-4" />,
     color: '24 95% 53%',
     items: [
       {
         id: 'analytics-commissions',
-        title: 'العمولات',
+        title: 'تحليلات العمولات',
         href: '/affiliate/analytics',
         icon: BarChart3,
+        color: '24 95% 53%',
+      },
+      {
+        id: 'performance',
+        title: 'الأداء والإحصائيات',
+        href: '/affiliate',
+        icon: TrendingUp,
         color: '24 95% 53%',
       },
     ],

@@ -40,11 +40,11 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
       )}
 
       <div className="flex min-h-[calc(100vh-4rem)]">
-        {/* Sidebar */}
+        {/* Sidebar - Now always rendered, ModernSidebar handles its own responsive behavior */}
         {showSidebar && sidebar && (
-          <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:border-r lg:border-border lg:bg-card/50">
+          <>
             {sidebar}
-          </aside>
+          </>
         )}
 
         {/* Main Content */}
