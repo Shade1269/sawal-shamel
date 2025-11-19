@@ -24,6 +24,8 @@ import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 import { RecentlyViewedProducts } from '@/components/product/RecentlyViewedProducts';
 import { ProductDetailSkeleton } from '@/components/product/ProductDetailSkeleton';
 import { EnhancedStockIndicator } from '@/components/product/EnhancedStockIndicator';
+import { Breadcrumbs } from '@/components/navigation/Breadcrumbs';
+import { EnhancedImageGallery } from '@/components/product/EnhancedImageGallery';
 
 interface ProductVariant {
   type: string;
@@ -366,37 +368,33 @@ const ProductDetailPage = () => {
 
       {/* محتوى المنتج */}
       <main className="container mx-auto px-4 py-8">
+        {/* Breadcrumbs */}
+        <div className="mb-6">
+          <Breadcrumbs
+            items={[
+              {
+                label: store.store_name,
+                href: `/s/${store_slug}`,
+              },
+              {
+                label: product.products.category || 'منتجات',
+                labelEn: product.products.category || 'Products',
+                href: `/s/${store_slug}`,
+              },
+              {
+                label: product.products.title,
+                href: '#',
+              },
+            ]}
+          />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* صور المنتج */}
-          <div className="space-y-4">
-            <div className="aspect-square rounded-lg overflow-hidden bg-muted">
-              <img
-                src={currentImage}
-                alt={product.products.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            {images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto">
-                {images.map((img, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                      index === currentImageIndex ? 'border-primary' : 'border-transparent'
-                    }`}
-                  >
-                    <img
-                      src={img}
-                      alt={`${product.products.title} ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* معرض الصور المحسّن */}
+          <EnhancedImageGallery
+            images={product.products.image_urls || []}
+            productName={product.products.title}
+          />
 
           {/* تفاصيل المنتج */}
           <div className="space-y-6">

@@ -18,9 +18,11 @@ import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 import { PromotionalBannerDisplay } from '@/components/storefront/PromotionalBannerDisplay';
 import { ProductVariantDisplay } from '@/components/products/ProductVariantDisplay';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 import { RecentlyViewedProducts } from '@/components/product/RecentlyViewedProducts';
 import { ProductGridSkeleton } from '@/components/product/ProductGridSkeleton';
 import { CompactStockIndicator } from '@/components/product/EnhancedStockIndicator';
+import { EmptyStates } from '@/components/ui/EmptyState';
 
 interface ProductVariant {
   type: string;
@@ -226,14 +228,8 @@ export const IsolatedStorefront: React.FC = () => {
 
   if (products.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="max-w-md mx-auto">
-          <ShoppingCart className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-          <h3 className="text-lg font-semibold mb-2">لا توجد منتجات</h3>
-          <p className="text-muted-foreground">
-            لم يتم إضافة أي منتجات إلى هذا المتجر بعد
-          </p>
-        </div>
+      <div className="py-12">
+        <EmptyStates.NoProducts canAdd={false} />
       </div>
     );
   }
@@ -269,8 +265,15 @@ export const IsolatedStorefront: React.FC = () => {
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+        {products.map((product, index) => (
+          <motion.div
+            key={product.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05, duration: 0.3 }}
+            whileHover={{ y: -4 }}
+          >
+            <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
             <div className="aspect-square overflow-hidden">
               {product.image_urls && product.image_urls[0] ? (
                 <img
@@ -358,6 +361,7 @@ export const IsolatedStorefront: React.FC = () => {
               </div>
             </CardContent>
           </Card>
+          </motion.div>
         ))}
       </div>
 
