@@ -7,8 +7,10 @@ import { getCorsHeaders, handleCorsPreflightRequest } from '../_shared/cors.ts';
 serve(async (req) => {
   // CORS preflight
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return handleCorsPreflightRequest(req);
   }
+
+  const corsHeaders = getCorsHeaders(req);
 
   try {
     const body = await req.json();
@@ -323,8 +325,10 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error("[create-ecommerce-order] Error", error);
+    const corsHeaders = getCorsHeaders(req);
+    const errorMessage = error instanceof Error ? error.message : "خطأ في إنشاء الطلب";
     return new Response(
-      JSON.stringify({ success: false, error: error?.message ?? "خطأ في إنشاء الطلب" }),
+      JSON.stringify({ success: false, error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
