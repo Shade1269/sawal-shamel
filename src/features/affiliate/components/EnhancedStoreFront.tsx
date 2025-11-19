@@ -954,36 +954,22 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
           <ModernBannerSlider banners={storeBanners} onBannerClick={handleBannerClick} />
         )}
 
-        {/* Categories Section - مطابق للديمو */}
-        <section className="py-12 bg-background">
-          <div className="container mx-auto px-6">
-            <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-3 gap-6">
-                {[
-                  { name: 'الملابس', emoji: '👗', category: 'ملابس' },
-                  { name: 'الحقائب', emoji: '👜', category: 'حقائب' },
-                  { name: 'الأحذية', emoji: '👠', category: 'أحذية' }
-                ].map((category, idx) => (
-                  <motion.div
-                    key={idx}
-                    whileHover={{ y: -4 }}
-                    className="group cursor-pointer"
-                    onClick={() => setSelectedCategory(category.category === selectedCategory ? 'all' : category.category)}
-                  >
-                    <div className="relative aspect-square bg-surface rounded-xl overflow-hidden mb-4 border border-border/50">
-                      <div className="absolute inset-0 gradient-category-card flex items-center justify-center">
-                        <span className="text-5xl opacity-30">
-                          {category.emoji}
-                        </span>
-                      </div>
-                    </div>
-                    <h3 className="text-center font-semibold text-foreground text-lg">{category.name}</h3>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Category Filter - Dropdown */}
+        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-full sm:w-64 h-12">
+              <SelectValue placeholder="اختر الفئة" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">جميع الفئات</SelectItem>
+              {Array.from(new Set(products?.map(p => p.category).filter(Boolean))).map((category) => (
+                <SelectItem key={category} value={category || ''}>
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         {/* Products Grid Section - بسيط مثل الديمو */}
         <section id="products-section" className="space-y-6">
