@@ -47,9 +47,9 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
           </>
         )}
 
-        {/* Main Content */}
-        <main className={`flex-1 overflow-auto ${contentClassName}`}>
-          <div className="container mx-auto p-8">
+        {/* Main Content - Add padding-right to account for sidebar */}
+        <main className={`flex-1 w-full md:pr-72 transition-all duration-300 ${contentClassName}`}>
+          <div className="container mx-auto p-6 md:p-8">
             <Outlet />
           </div>
         </main>

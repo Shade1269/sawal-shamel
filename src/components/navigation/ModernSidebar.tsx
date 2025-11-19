@@ -122,6 +122,7 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
           "fixed right-0 top-0 z-40 h-screen transition-all duration-300 ease-in-out",
           "backdrop-blur-xl shadow-2xl border-l border-border/50",
           "bg-gradient-to-br from-card/95 via-card/90 to-background/95",
+          "overflow-hidden",
           // Mobile: full overlay drawer
           "md:top-16 md:h-[calc(100vh-4rem)]",
           // Collapsed state
@@ -165,7 +166,7 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
         />
 
         {/* Navigation */}
-        <ScrollArea className="flex-1 px-2">
+        <ScrollArea className="flex-1 px-2 overflow-y-auto">
           {/* Favorites Section */}
           {!state.isCollapsed && favoriteItems.length > 0 && (
             <SidebarSection
