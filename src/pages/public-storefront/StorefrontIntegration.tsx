@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
-import EnhancedStoreFront from '@/features/affiliate/components/EnhancedStoreFront';
+import EnhancedStoreFront from '@/features/storefront/EnhancedStoreFront';
 import { CustomerAuthProvider } from '@/contexts/CustomerAuthContext';
 
 const StorefrontIntegration: React.FC = () => {

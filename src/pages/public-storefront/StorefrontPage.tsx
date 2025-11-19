@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
-import EnhancedStoreFront from '@/features/affiliate/components/EnhancedStoreFront';
+import EnhancedStoreFront from '@/features/storefront/EnhancedStoreFront';
 
 const StorefrontPage: React.FC = () => {
   const { storeSlug } = useParams<{ storeSlug: string }>();
