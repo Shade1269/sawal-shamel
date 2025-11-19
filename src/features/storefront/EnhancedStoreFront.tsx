@@ -15,7 +15,6 @@ import type { StoreSettings } from "@/hooks/useStoreSettings";
 import {
   StorefrontHeader,
   StorefrontFilters,
-  StorefrontCategories,
   StorefrontProductGrid,
   ProductGridSkeleton,
 } from "./components";
@@ -492,16 +491,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                   window.open(banner.link_url, "_blank", "noopener,noreferrer");
                 }
               }}
-            />
-          )}
-
-          {/* Categories */}
-          {categories.length > 0 && (
-            <StorefrontCategories
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onCategorySelect={setSelectedCategory}
-              layout="horizontal"
             />
           )}
 
