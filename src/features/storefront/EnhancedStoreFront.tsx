@@ -34,11 +34,11 @@ import { Button } from "@/components/ui/button";
 interface Product {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   price_sar: number;
-  image_urls: string[];
+  image_urls?: string[];
   stock: number;
-  category: string;
+  category?: string;
   variants?: ProductVariant[];
   commission_amount?: number;
   final_price?: number;
@@ -522,7 +522,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               products={filteredProducts}
               wishlist={wishlist}
               onAddToCart={handleProductAddToCart}
-              onProductClick={setSelectedProduct}
+              onProductClick={(product) => setSelectedProduct(product)}
               onToggleWishlist={toggleWishlist}
               isLoading={false}
             />
