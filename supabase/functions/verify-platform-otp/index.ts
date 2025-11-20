@@ -383,7 +383,7 @@ serve(async (req) => {
                   })
                   .select()
                   .single();
-                profileId = createdProfile?.id || profileId;
+                profileId = createdProfile?.id ?? null;
               } else {
                 profileId = existingProfile.id;
               }
@@ -473,7 +473,7 @@ serve(async (req) => {
                   if (profErr) {
                     console.error('Fallback profile create failed:', profErr);
                   }
-                  profileId = createdProfile?.id || profileId;
+                  profileId = createdProfile?.id ?? null;
                 } else {
                   profileId = existingProfile.id;
                 }

@@ -129,7 +129,6 @@ export function EnhancedStockIndicator({
           <Progress
             value={stockPercentage}
             className="h-2 bg-muted"
-            indicatorClassName={config.progressColor}
           />
           <p className="text-xs text-muted-foreground mt-1">
             {stockPercentage.toFixed(0)}% متوفر
@@ -142,7 +141,7 @@ export function EnhancedStockIndicator({
         <p
           className={cn(
             'text-sm font-medium',
-            config.urgent && 'animate-pulse',
+            status === 'low' && 'animate-pulse',
             config.color
           )}
         >
