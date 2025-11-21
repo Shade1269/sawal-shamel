@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { User, Languages, Sun, Moon, LogOut } from 'lucide-react';
 
 interface HomeUserHeaderProps {
@@ -30,7 +30,7 @@ export const HomeUserHeader = ({
           </div>
           
           <div className="flex items-center gap-3">
-            <Button
+            <UnifiedButton
               variant="ghost"
               size="sm"
               onClick={onLanguageToggle}
@@ -38,9 +38,9 @@ export const HomeUserHeader = ({
             >
               <Languages className="h-4 w-4" />
               {language === 'ar' ? 'EN' : 'AR'}
-            </Button>
+            </UnifiedButton>
             
-            <Button
+            <UnifiedButton
               variant="ghost"
               size="sm"
               onClick={onDarkModeToggle}
@@ -48,9 +48,9 @@ export const HomeUserHeader = ({
             >
               {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               {isDarkMode ? 'نهاري' : 'ليلي'}
-            </Button>
+            </UnifiedButton>
             
-            <Button
+            <UnifiedButton
               variant="ghost"
               size="sm"
               onClick={onSignOut}
@@ -58,7 +58,7 @@ export const HomeUserHeader = ({
             >
               <LogOut className="h-4 w-4" />
               تسجيل خروج
-            </Button>
+            </UnifiedButton>
           </div>
         </div>
       </div>

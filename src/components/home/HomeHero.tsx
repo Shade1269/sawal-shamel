@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { Activity } from 'lucide-react';
 
 interface HomeHeroProps {
