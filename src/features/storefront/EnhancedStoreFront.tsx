@@ -151,13 +151,13 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
       const { data, error } = await supabase
         .from("affiliate_stores")
-        .select("*")
+        .select("*, gaming_settings")
         .eq("store_slug", storeSlug)
         .eq("is_active", true)
         .maybeSingle();
 
       if (error) throw error;
-      return data as AffiliateStore | null;
+      return data as unknown as AffiliateStore | null;
     },
     enabled: !!storeSlug,
     staleTime: 5 * 60 * 1000,
@@ -172,6 +172,39 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     removeFromCart: removeFromIsolatedCart,
     clearCart,
   } = useIsolatedStoreCart(affiliateStore?.id || "", storeSlug);
+
+  // تطبيق Gaming Mode على DOM
+  useEffect(() => {
+    if (!affiliateStore) return;
+
+    const gamingSettings = affiliateStore.gaming_settings;
+    const rootElement = document.documentElement;
+
+    if (gamingSettings?.enabled) {
+      rootElement.setAttribute('data-gaming-mode', 'true');
+      rootElement.setAttribute('data-gaming-theme', gamingSettings.theme || 'cyberpunk');
+      rootElement.setAttribute('data-performance-mode', gamingSettings.performanceMode || 'high');
+      
+      // تحميل CSS الخاص بـ gaming themes
+      if (!document.getElementById('gaming-themes-css')) {
+        const link = document.createElement('link');
+        link.id = 'gaming-themes-css';
+        link.rel = 'stylesheet';
+        link.href = '/src/styles/gaming-themes.css';
+        document.head.appendChild(link);
+      }
+    } else {
+      rootElement.removeAttribute('data-gaming-mode');
+      rootElement.removeAttribute('data-gaming-theme');
+      rootElement.removeAttribute('data-performance-mode');
+    }
+
+    return () => {
+      rootElement.removeAttribute('data-gaming-mode');
+      rootElement.removeAttribute('data-gaming-theme');
+      rootElement.removeAttribute('data-performance-mode');
+    };
+  }, [affiliateStore]);
 
   // Fetch products
   const { data: products, isLoading: productsLoading } = useQuery({

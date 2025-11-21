@@ -131,6 +131,12 @@ interface AffiliateStore {
   total_orders: number;
   profile_id: string;
   is_active: boolean;
+  gaming_settings?: {
+    enabled: boolean;
+    theme: string;
+    performanceMode: string;
+    features: Record<string, boolean | number>;
+  };
 }
 
 interface CartItem {
@@ -169,7 +175,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const [showOrders, setShowOrders] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
-  // جلب بيانات المتجر
+  // جلب بيانات المتجر مع gaming_settings
   const { data: affiliateStore, isLoading: storeLoading, error: storeError } = useQuery({
     queryKey: ["affiliate-store", storeSlug],
     queryFn: async () => {
@@ -177,19 +183,52 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       
       const { data, error } = await supabase
         .from("affiliate_stores")
-        .select("*")
+        .select("*, gaming_settings")
         .eq("store_slug", storeSlug)
         .eq("is_active", true)
         .maybeSingle();
       
       if (error) throw error;
-      return data as AffiliateStore | null;
+      return data as unknown as AffiliateStore | null;
     },
     enabled: !!storeSlug,
     staleTime: 5 * 60 * 1000,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
+
+  // تطبيق Gaming Mode على DOM
+  useEffect(() => {
+    if (!affiliateStore) return;
+
+    const gamingSettings = (affiliateStore as any).gaming_settings;
+    const rootElement = document.documentElement;
+
+    if (gamingSettings?.enabled) {
+      rootElement.setAttribute('data-gaming-mode', 'true');
+      rootElement.setAttribute('data-gaming-theme', gamingSettings.theme || 'cyberpunk');
+      rootElement.setAttribute('data-performance-mode', gamingSettings.performanceMode || 'high');
+      
+      // تحميل CSS الخاص بـ gaming themes
+      if (!document.getElementById('gaming-themes-css')) {
+        const link = document.createElement('link');
+        link.id = 'gaming-themes-css';
+        link.rel = 'stylesheet';
+        link.href = '/src/styles/gaming-themes.css';
+        document.head.appendChild(link);
+      }
+    } else {
+      rootElement.removeAttribute('data-gaming-mode');
+      rootElement.removeAttribute('data-gaming-theme');
+      rootElement.removeAttribute('data-performance-mode');
+    }
+
+    return () => {
+      rootElement.removeAttribute('data-gaming-mode');
+      rootElement.removeAttribute('data-gaming-theme');
+      rootElement.removeAttribute('data-performance-mode');
+    };
+  }, [affiliateStore]);
 
   // استخدام نظام السلة المحسّن مع تمرير storeSlug
   const { 
