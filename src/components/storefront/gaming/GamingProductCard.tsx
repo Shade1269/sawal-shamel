@@ -9,11 +9,11 @@ import '@/styles/gaming-store.css';
 interface Product {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   price_sar: number;
-  image_urls: string[];
+  image_urls?: string[];
   stock: number;
-  category: string;
+  category?: string;
   variants?: any[];
   final_price?: number;
   average_rating?: number;
@@ -46,33 +46,20 @@ export const GamingProductCard = ({
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: {
-        delay: index * 0.05,
-        duration: 0.5,
-        ease: [0.4, 0, 0.2, 1]
-      }
     },
     hover: {
       y: -12,
       scale: 1.03,
-      transition: {
-        duration: 0.3,
-        ease: [0.4, 0, 0.2, 1]
-      }
     }
-  };
+  } as const;
 
   const imageVariants = {
     initial: { scale: 1, rotate: 0 },
     hover: {
       scale: 1.15,
       rotate: 2,
-      transition: {
-        duration: 0.5,
-        ease: [0.4, 0, 0.2, 1]
-      }
     }
-  };
+  } as const;
 
   const glowColors = [
     'rgba(0, 240, 255, 0.3)',
@@ -89,6 +76,10 @@ export const GamingProductCard = ({
       initial="initial"
       animate="animate"
       whileHover="hover"
+      transition={{
+        delay: index * 0.05,
+        duration: 0.5,
+      }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       className="gaming-product-card h-full"

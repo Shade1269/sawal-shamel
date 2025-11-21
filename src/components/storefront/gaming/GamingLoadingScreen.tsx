@@ -59,6 +59,8 @@ export const GamingLoadingScreen = () => {
                          i === 1 ? 'var(--gaming-secondary)' :
                          'var(--gaming-accent)',
               boxShadow: `0 0 10px currentColor`,
+              transformOrigin: '0 0',
+              transform: `rotate(${rotation}deg) translateX(60px)`,
             }}
             animate={{
               rotate: 360,
@@ -68,10 +70,6 @@ export const GamingLoadingScreen = () => {
               repeat: Infinity,
               ease: 'linear',
               delay: i * 0.2,
-            }}
-            style={{
-              transformOrigin: '0 0',
-              transform: `rotate(${rotation}deg) translateX(60px)`,
             }}
           />
         ))}
