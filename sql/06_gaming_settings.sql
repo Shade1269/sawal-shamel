@@ -22,7 +22,22 @@ ADD COLUMN IF NOT EXISTS gaming_settings JSONB DEFAULT '{
     "portalTransitions": true,
     "quantumGlitch": false,
     "energyShield": true,
-    "warpSpeed": true
+    "warpSpeed": true,
+    "matrixRain": false,
+    "glitchEffect": false,
+    "timeDilation": false,
+    "magneticAttraction": true,
+    "physicsEngine": true,
+    "gravitySimulation": false,
+    "auroraBorealis": true,
+    "shootingStars": true,
+    "blackHole": false,
+    "cosmicDust": true,
+    "weatherEffects": false,
+    "weatherType": "auto",
+    "liveNotifications": true,
+    "visitorCounter": true,
+    "heatmap": false
   }
 }'::jsonb;
 

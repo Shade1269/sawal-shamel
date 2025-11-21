@@ -24,6 +24,22 @@ export interface StoreGamingSettings {
     quantumGlitch: boolean;
     energyShield: boolean;
     warpSpeed: boolean;
+    // ULTIMATE 3.0 Features
+    matrixRain: boolean;
+    glitchEffect: boolean;
+    timeDilation: boolean;
+    magneticAttraction: boolean;
+    physicsEngine: boolean;
+    gravitySimulation: boolean;
+    auroraBorealis: boolean;
+    shootingStars: boolean;
+    blackHole: boolean;
+    cosmicDust: boolean;
+    weatherEffects: boolean;
+    weatherType: 'rain' | 'snow' | 'lightning' | 'heat' | 'clear' | 'auto';
+    liveNotifications: boolean;
+    visitorCounter: boolean;
+    heatmap: boolean;
   };
 }
 
@@ -48,6 +64,22 @@ const defaultSettings: StoreGamingSettings = {
     quantumGlitch: false,
     energyShield: true,
     warpSpeed: true,
+    // ULTIMATE 3.0 Features
+    matrixRain: false,
+    glitchEffect: false,
+    timeDilation: false,
+    magneticAttraction: true,
+    physicsEngine: true,
+    gravitySimulation: false,
+    auroraBorealis: true,
+    shootingStars: true,
+    blackHole: false,
+    cosmicDust: true,
+    weatherEffects: false,
+    weatherType: 'auto',
+    liveNotifications: true,
+    visitorCounter: true,
+    heatmap: false,
   },
 };
 

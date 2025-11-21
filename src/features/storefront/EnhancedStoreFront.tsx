@@ -319,6 +319,22 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         enableQuantumGlitch: features.quantumGlitch ?? false,
         enableEnergyShield: features.energyShield ?? true,
         enableWarpSpeed: features.warpSpeed ?? true,
+        // ULTIMATE 3.0 Features
+        enableMatrixRain: features.matrixRain ?? false,
+        enableGlitchEffect: features.glitchEffect ?? false,
+        enableTimeDilation: features.timeDilation ?? false,
+        enableMagneticAttraction: features.magneticAttraction ?? true,
+        enablePhysicsEngine: features.physicsEngine ?? true,
+        enableGravitySimulation: features.gravitySimulation ?? false,
+        enableAuroraBorealis: features.auroraBorealis ?? true,
+        enableShootingStars: features.shootingStars ?? true,
+        enableBlackHole: features.blackHole ?? false,
+        enableCosmicDust: features.cosmicDust ?? true,
+        enableWeatherEffects: features.weatherEffects ?? false,
+        weatherType: features.weatherType || 'auto',
+        enableLiveNotifications: features.liveNotifications ?? true,
+        enableVisitorCounter: features.visitorCounter ?? true,
+        enableHeatmap: features.heatmap ?? false,
       });
     }
   }, [affiliateStore?.gaming_settings, loadFromStore]);
