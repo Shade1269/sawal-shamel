@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UnifiedButton, UnifiedCard, UnifiedCardHeader, UnifiedCardTitle, UnifiedCardDescription, UnifiedCardContent } from '@/components/design-system';
 import { ThemeSwitcher } from '@/components/theme';
-import { Heart, Star, Sparkles, Zap, Shield, Award } from 'lucide-react';
+import { Heart, Star, Sparkles, Zap, Shield, Award, Moon, Sun } from 'lucide-react';
 
 /**
  * Design System Showcase Page
@@ -10,10 +10,31 @@ import { Heart, Star, Sparkles, Zap, Shield, Award } from 'lucide-react';
 
 const DesignSystemShowcase: React.FC = () => {
   const [clickedButton, setClickedButton] = useState<string>('');
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDark]);
 
   const handleButtonClick = (variant: string) => {
     setClickedButton(variant);
     setTimeout(() => setClickedButton(''), 1000);
+  };
+
+  const toggleTheme = () => {
+    setIsDark(prev => !prev);
   };
 
   return (
@@ -30,7 +51,23 @@ const DesignSystemShowcase: React.FC = () => {
                 جميع المكونات والأنماط المتاحة في نظام التصميم
               </p>
             </div>
-            <ThemeSwitcher variant="full" />
+            <div className="flex items-center gap-4">
+              <UnifiedButton
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                aria-label={isDark ? 'التبديل للوضع المشمس' : 'التبديل للوضع الليلي'}
+              >
+                {isDark ? (
+                  <Sun className="h-5 w-5 text-foreground/70" />
+                ) : (
+                  <Moon className="h-5 w-5 text-foreground/70" />
+                )}
+              </UnifiedButton>
+              <div className="px-3 py-1.5 rounded-full bg-card border border-border text-xs font-medium">
+                {isDark ? '🌙 ليلي' : '☀️ مشمس'}
+              </div>
+            </div>
           </div>
         </div>
       </header>
