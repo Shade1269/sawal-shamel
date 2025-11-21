@@ -28,8 +28,17 @@ import { ModernCustomerOrders } from "@/components/storefront/modern/ModernCusto
 import { ModernInvoice } from "@/components/storefront/modern/ModernInvoice";
 import { CustomerAuthModal } from "@/components/storefront/CustomerAuthModal";
 import { UnifiedChatWidget } from "@/components/customer-service/UnifiedChatWidget";
-import { Store, ArrowRight } from "lucide-react";
+import { Store, ArrowRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+// Gaming Components
+import {
+  GamingStoreHeader,
+  GamingProductCard,
+  GamingParticles,
+  GamingGridBackground,
+  GamingScanLines,
+} from "@/components/storefront/gaming";
 
 interface Product {
   id: string;
@@ -94,6 +103,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [variantError, setVariantError] = useState<string | null>(null);
+
+  // Gaming Mode (تفعيل التصميم الخيالي)
+  const [isGamingMode, setIsGamingMode] = useState(true);
 
   // Filter State
   const [searchQuery, setSearchQuery] = useState("");
@@ -450,30 +462,76 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
   return (
     <StoreThemeProvider storeId={affiliateStore.id}>
-      <div className="min-h-screen bg-background" dir="rtl">
+      <div className={`min-h-screen ${isGamingMode ? 'gaming-store-bg' : 'bg-background'}`} dir="rtl">
+        {/* Gaming Background Effects */}
+        {isGamingMode && (
+          <>
+            <GamingGridBackground />
+            <GamingParticles />
+            <GamingScanLines />
+          </>
+        )}
+
+        {/* Gaming Mode Toggle */}
+        <div className="fixed top-24 left-4 z-50">
+          <Button
+            onClick={() => setIsGamingMode(!isGamingMode)}
+            className={isGamingMode ? 'gaming-btn' : 'bg-primary'}
+            size="sm"
+          >
+            <Zap className="h-4 w-4 ml-2" />
+            {isGamingMode ? 'الوضع العادي' : 'وضع Gaming'}
+          </Button>
+        </div>
+
         {/* Header */}
-        <StorefrontHeader
-          storeName={affiliateStore.store_name}
-          storeSlug={storeSlug}
-          cartCount={cartItemsCount}
-          wishlistCount={wishlist.length}
-          isAuthenticated={isAuthenticated}
-          onSearchClick={() => setShowSearch(!showSearch)}
-          onCartClick={() => setShowCart(true)}
-          onOrdersClick={() => {
-            if (!isAuthenticated) {
-              toast({
-                title: "يجب تسجيل الدخول أولاً",
-                description: "الرجاء تسجيل الدخول لعرض طلباتك",
-                variant: "default",
-              });
-              setShowAuthModal(true);
-              return;
-            }
-            setShowOrders(true);
-          }}
-          onAuthClick={() => setShowAuthModal(true)}
-        />
+        {isGamingMode ? (
+          <GamingStoreHeader
+            storeName={affiliateStore.store_name}
+            storeSlug={storeSlug}
+            cartCount={cartItemsCount}
+            wishlistCount={wishlist.length}
+            isAuthenticated={isAuthenticated}
+            onSearchClick={() => setShowSearch(!showSearch)}
+            onCartClick={() => setShowCart(true)}
+            onOrdersClick={() => {
+              if (!isAuthenticated) {
+                toast({
+                  title: "يجب تسجيل الدخول أولاً",
+                  description: "الرجاء تسجيل الدخول لعرض طلباتك",
+                  variant: "default",
+                });
+                setShowAuthModal(true);
+                return;
+              }
+              setShowOrders(true);
+            }}
+            onAuthClick={() => setShowAuthModal(true)}
+          />
+        ) : (
+          <StorefrontHeader
+            storeName={affiliateStore.store_name}
+            storeSlug={storeSlug}
+            cartCount={cartItemsCount}
+            wishlistCount={wishlist.length}
+            isAuthenticated={isAuthenticated}
+            onSearchClick={() => setShowSearch(!showSearch)}
+            onCartClick={() => setShowCart(true)}
+            onOrdersClick={() => {
+              if (!isAuthenticated) {
+                toast({
+                  title: "يجب تسجيل الدخول أولاً",
+                  description: "الرجاء تسجيل الدخول لعرض طلباتك",
+                  variant: "default",
+                });
+                setShowAuthModal(true);
+                return;
+              }
+              setShowOrders(true);
+            }}
+            onAuthClick={() => setShowAuthModal(true)}
+          />
+        )}
 
         {/* Main Content */}
         <main className="container mx-auto px-3 md:px-6 py-4 md:py-8 space-y-6 md:space-y-8">
@@ -517,6 +575,20 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             <div className="text-center py-20">
               <p className="text-xl text-muted-foreground">لا توجد منتجات متاحة</p>
             </div>
+          ) : isGamingMode ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative z-10">
+              {filteredProducts.map((product, index) => (
+                <GamingProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleProductAddToCart}
+                  onProductClick={(product) => setSelectedProduct(product)}
+                  onToggleWishlist={toggleWishlist}
+                  isInWishlist={wishlist.includes(product.id)}
+                  index={index}
+                />
+              ))}
+            </div>
           ) : (
             <StorefrontProductGrid
               products={filteredProducts}
@@ -529,11 +601,15 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
           )}
 
           {/* Footer Info */}
-          <section className="py-16 bg-surface/30">
+          <section className={`py-16 relative z-10 ${isGamingMode ? 'gaming-glass-card mx-4' : 'bg-surface/30'}`}>
             <div className="container mx-auto px-6">
               <div className="max-w-3xl mx-auto text-center space-y-4">
-                <h3 className="text-3xl font-bold text-foreground">{affiliateStore.store_name}</h3>
-                <p className="text-foreground/70 text-lg">{affiliateStore.bio || "منتجاتك المحفوظة ستظهر هنا"}</p>
+                <h3 className={`text-3xl font-bold ${isGamingMode ? 'gaming-neon-text' : 'text-foreground'}`}>
+                  {affiliateStore.store_name}
+                </h3>
+                <p className={`text-lg ${isGamingMode ? 'text-white/70' : 'text-foreground/70'}`}>
+                  {affiliateStore.bio || "منتجاتك المحفوظة ستظهر هنا"}
+                </p>
               </div>
             </div>
           </section>
