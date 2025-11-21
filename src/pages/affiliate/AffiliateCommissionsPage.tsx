@@ -125,81 +125,65 @@ export default function AffiliateCommissionsPage() {
             }`}>
               {commissions?.length || 0} عمولة
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card className={`transition-colors duration-500 ${
-          isDarkMode 
-            ? 'bg-slate-800/50 border-slate-700/50' 
-            : 'bg-white border-slate-200'
-        }`}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium transition-colors duration-500 ${
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
               isDarkMode ? 'text-slate-200' : 'text-slate-700'
-            }`}>في الانتظار</CardTitle>
+            }`}>في الانتظار</UnifiedCardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-yellow-600">{pendingCommissions.toFixed(2)} ر.س</div>
             <p className={`text-xs transition-colors duration-500 ${
               isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
             }`}>
               {commissions?.filter(c => c.status === 'PENDING').length || 0} عمولة
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card className={`transition-colors duration-500 ${
-          isDarkMode 
-            ? 'bg-slate-800/50 border-slate-700/50' 
-            : 'bg-white border-slate-200'
-        }`}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium transition-colors duration-500 ${
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
               isDarkMode ? 'text-slate-200' : 'text-slate-700'
-            }`}>مؤكدة</CardTitle>
+            }`}>مؤكدة</UnifiedCardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-green-600">{confirmedCommissions.toFixed(2)} ر.س</div>
             <p className={`text-xs transition-colors duration-500 ${
               isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
             }`}>
               {commissions?.filter(c => c.status === 'CONFIRMED').length || 0} عمولة
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card className={`transition-colors duration-500 ${
-          isDarkMode 
-            ? 'bg-slate-800/50 border-slate-700/50' 
-            : 'bg-white border-slate-200'
-        }`}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium transition-colors duration-500 ${
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
               isDarkMode ? 'text-slate-200' : 'text-slate-700'
-            }`}>مدفوعة</CardTitle>
+            }`}>مدفوعة</UnifiedCardTitle>
             <Banknote className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-blue-600">{paidCommissions.toFixed(2)} ر.س</div>
             <p className={`text-xs transition-colors duration-500 ${
               isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
             }`}>
               {commissions?.filter(c => c.status === 'PAID').length || 0} عمولة
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
       {/* Commissions List */}
       {!commissions || commissions.length === 0 ? (
-        <Card className={`transition-colors duration-500 ${
-          isDarkMode 
-            ? 'bg-slate-800/50 border-slate-700/50' 
-            : 'bg-white border-slate-200'
-        }`}>
-          <CardContent className="text-center py-12">
+        <UnifiedCard variant="glass">
+          <UnifiedCardContent className="text-center py-12">
             <DollarSign className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
             <h3 className={`text-lg font-semibold mb-2 transition-colors duration-500 ${
               isDarkMode ? 'text-white' : 'text-slate-800'
@@ -209,23 +193,19 @@ export default function AffiliateCommissionsPage() {
             }`}>
               لم تحصل على أي عمولات بعد
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       ) : (
-        <Card className={`transition-colors duration-500 ${
-          isDarkMode 
-            ? 'bg-slate-800/50 border-slate-700/50' 
-            : 'bg-white border-slate-200'
-        }`}>
-          <CardHeader>
-            <CardTitle className={`flex items-center gap-2 transition-colors duration-500 ${
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader>
+            <UnifiedCardTitle className={`flex items-center gap-2 transition-colors duration-500 ${
               isDarkMode ? 'text-white' : 'text-slate-800'
             }`}>
               <TrendingUp className="h-5 w-5" />
               تفاصيل العمولات
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="space-y-4">
               {commissions.map((commission) => {
                 const StatusIcon = statusIcons[commission.status];
@@ -263,9 +243,9 @@ export default function AffiliateCommissionsPage() {
                       }`}>
                         {commission.amount_sar.toFixed(2)} ر.س
                       </p>
-                      <Badge variant={statusColors[commission.status]}>
+                      <UnifiedBadge variant={statusColors[commission.status]}>
                         {statusLabels[commission.status]}
-                      </Badge>
+                      </UnifiedBadge>
                       {commission.confirmed_at && (
                         <p className={`text-xs mt-1 transition-colors duration-500 ${
                           isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
@@ -285,8 +265,8 @@ export default function AffiliateCommissionsPage() {
                 );
               })}
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       )}
     </div>
   );
