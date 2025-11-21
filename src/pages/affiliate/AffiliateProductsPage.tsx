@@ -3,23 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { 
-  EnhancedCard, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle, 
-  EnhancedCardContent,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  InteractiveWidget,
-  VirtualizedList,
-  EnhancedButton,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  Button
-} from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardHeader, UnifiedCardTitle, UnifiedCardContent } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -165,26 +151,26 @@ export default function AffiliateProductsPage() {
       </div>
 
       {!products || products.length === 0 ? (
-        <Card>
-          <CardContent className="text-center py-12">
+        <UnifiedCard variant="glass">
+          <UnifiedCardContent className="text-center py-12">
             <Package className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">لا توجد منتجات</h3>
             <p className="text-muted-foreground mb-4">
               لم تقم بإضافة أي منتجات إلى متجرك بعد
             </p>
-            <Button 
+            <UnifiedButton 
               variant="outline" 
               onClick={() => navigate('/products')}
             >
               تصفح المخزون وإضافة منتجات
-            </Button>
-          </CardContent>
-        </Card>
+            </UnifiedButton>
+          </UnifiedCardContent>
+        </UnifiedCard>
       ) : (
         <div className="grid gap-6">
           {products.map((product) => (
-            <Card key={product.id} className="overflow-hidden">
-              <CardContent className="p-6">
+            <UnifiedCard key={product.id} variant="glass" hover="lift">
+              <UnifiedCardContent className="p-6">
                 <div className="flex gap-6">
                   {/* Product Image */}
                   <div className="flex-shrink-0">
@@ -206,12 +192,12 @@ export default function AffiliateProductsPage() {
                           {product.products.description?.substring(0, 100)}...
                         </p>
                         <div className="flex items-center gap-4">
-                          <Badge variant="secondary">
+                          <UnifiedBadge variant="secondary">
                             {product.products.price_sar} ر.س
-                          </Badge>
-                          <Badge variant={product.is_visible ? "default" : "secondary"}>
+                          </UnifiedBadge>
+                          <UnifiedBadge variant={product.is_visible ? "success" : "secondary"}>
                             {product.is_visible ? "مرئي" : "مخفي"}
-                          </Badge>
+                          </UnifiedBadge>
                         </div>
                       </div>
                     </div>
@@ -262,8 +248,8 @@ export default function AffiliateProductsPage() {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           ))}
         </div>
       )}

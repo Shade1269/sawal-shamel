@@ -2,21 +2,8 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { 
-  EnhancedCard, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle, 
-  EnhancedCardContent,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  InteractiveWidget,
-  AnimatedCounter,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent
-} from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { DollarSign, Clock, CheckCircle, Banknote, TrendingUp } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
@@ -124,18 +111,14 @@ export default function AffiliateCommissionsPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className={`transition-colors duration-500 ${
-          isDarkMode 
-            ? 'bg-slate-800/50 border-slate-700/50' 
-            : 'bg-white border-slate-200'
-        }`}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium transition-colors duration-500 ${
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
               isDarkMode ? 'text-slate-200' : 'text-slate-700'
-            }`}>إجمالي العمولات</CardTitle>
+            }`}>إجمالي العمولات</UnifiedCardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">{totalCommissions.toFixed(2)} ر.س</div>
             <p className={`text-xs transition-colors duration-500 ${
               isDarkMode ? 'text-muted-foreground' : 'text-slate-500'

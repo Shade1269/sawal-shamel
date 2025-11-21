@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { Menu, Search, Bell, ShoppingCart, User } from 'lucide-react';
 import { GlobalSearch, GlobalNotifications } from '@/shared/components';
 import { ShoppingCartDrawer } from '@/features/commerce';
@@ -21,14 +21,13 @@ export function MobileHeader({ showAuth = false, onMenuClick }: MobileHeaderProp
         {/* Left Side */}
         <div className="flex items-center gap-2">
           {!showAuth && (
-            <Button 
+            <UnifiedButton 
               variant="ghost" 
               size="sm"
-              className="p-2"
               onClick={onMenuClick}
             >
               <Menu className="h-5 w-5" />
-            </Button>
+            </UnifiedButton>
           )}
           
           <div className="text-sm font-semibold bg-gradient-primary bg-clip-text text-transparent">
@@ -40,9 +39,9 @@ export function MobileHeader({ showAuth = false, onMenuClick }: MobileHeaderProp
         <div className="flex items-center gap-1">
           {showAuth ? (
             // Auth pages - minimal header
-            <Button variant="ghost" size="sm" className="p-2">
+            <UnifiedButton variant="ghost" size="sm">
               <User className="h-5 w-5" />
-            </Button>
+            </UnifiedButton>
           ) : (
             // Authenticated pages - full functionality
             <>

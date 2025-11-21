@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ShoppingCart, Search, Package, Clock, CheckCircle, XCircle } from 'lucide-react';
@@ -64,10 +64,10 @@ const MerchantOrders = () => {
     const Icon = config.icon;
 
     return (
-      <Badge variant="outline" className={config.color}>
+      <UnifiedBadge variant="outline" className={config.color}>
         <Icon className="h-3 w-3 ml-1" />
         {config.label}
-      </Badge>
+      </UnifiedBadge>
     );
   };
 
@@ -86,47 +86,47 @@ const MerchantOrders = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">جميع الطلبات</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium">جميع الطلبات</UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">{stats.all}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">قيد الانتظار</CardTitle>
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardContent>
+        </UnifiedCard>
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium">قيد الانتظار</UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">مؤكدة</CardTitle>
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardContent>
+        </UnifiedCard>
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium">مؤكدة</UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-blue-600">{stats.confirmed}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">مكتملة</CardTitle>
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardContent>
+        </UnifiedCard>
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium">مكتملة</UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-green-600">{stats.delivered}</div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
-      <Card>
-        <CardHeader>
+      <UnifiedCard variant="glass">
+        <UnifiedCardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
+            <UnifiedCardTitle className="flex items-center gap-2">
               <ShoppingCart className="h-5 w-5" />
               قائمة الطلبات
-            </CardTitle>
+            </UnifiedCardTitle>
           </div>
           <div className="relative mt-4">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -137,8 +137,8 @@ const MerchantOrders = () => {
               className="pl-10"
             />
           </div>
-        </CardHeader>
-        <CardContent>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="all">الكل ({stats.all})</TabsTrigger>
@@ -160,8 +160,8 @@ const MerchantOrders = () => {
               ) : (
                 <div className="space-y-3">
                   {filteredOrders.map((order) => (
-                    <Card key={order.id}>
-                      <CardContent className="p-4">
+                    <UnifiedCard key={order.id} variant="glass" hover="lift">
+                      <UnifiedCardContent className="p-4">
                         <div className="flex items-start justify-between mb-3">
                           <div>
                             <div className="font-semibold">#{order.order_number}</div>
@@ -194,15 +194,15 @@ const MerchantOrders = () => {
                           <span>{new Date(order.created_at).toLocaleDateString('ar-SA')}</span>
                           <span>{order.customer_phone}</span>
                         </div>
-                      </CardContent>
-                    </Card>
+                      </UnifiedCardContent>
+                    </UnifiedCard>
                   ))}
                 </div>
               )}
             </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };
