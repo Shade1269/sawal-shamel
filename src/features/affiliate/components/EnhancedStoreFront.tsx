@@ -63,6 +63,8 @@ import { ModernProductGrid } from "@/components/storefront/modern/ModernProductG
 import { ModernProductModal } from "@/components/storefront/modern/ModernProductModal";
 import { ModernShoppingCart } from "@/components/storefront/modern/ModernShoppingCart";
 import { ModernFooter } from "@/components/storefront/modern/ModernFooter";
+import { GamingProductCard } from "@/components/storefront/gaming/GamingProductCard";
+import { GamingStoreHeader } from "@/components/storefront/gaming/GamingStoreHeader";
 
 import { ModernCustomerOrders } from "@/components/storefront/modern/ModernCustomerOrders";
 import { ModernInvoice } from "@/components/storefront/modern/ModernInvoice";
@@ -161,8 +163,8 @@ const EnhancedStoreFrontInner = ({ storeSlug: propStoreSlug }: EnhancedStoreFron
   const navigate = useNavigate();
   const { toast } = useToast();
   const { customer, isAuthenticated } = useCustomerAuth();
-  const { loadFromStore: loadGamingSettings } = useGamingSettings();
-  
+  const { loadFromStore: loadGamingSettings, isGamingMode } = useGamingSettings();
+
   // Ref to track if gaming settings have been loaded for this store
   const loadedStoreIdRef = useRef<string | null>(null);
   
@@ -966,64 +968,91 @@ const EnhancedStoreFrontInner = ({ storeSlug: propStoreSlug }: EnhancedStoreFron
 
   return (
     <StoreThemeProvider storeId={affiliateStore.id}>
-      <div className="min-h-screen bg-background" dir="rtl">
-        {/* Clean Header - مطابق للديمو */}
-        <header className="sticky top-0 z-40 bg-background border-b border-border shadow-sm">
-          <div className="container mx-auto px-6 py-5">
-            <div className="flex items-center justify-between max-w-7xl mx-auto">
-              {/* Search */}
-              <button className="p-2.5 hover:bg-secondary/50 rounded-lg transition-colors">
-                <Search className="w-6 h-6 text-foreground/70" />
-              </button>
+      <div className={`min-h-screen ${isGamingMode ? 'gaming-store-bg' : 'bg-background'}`} dir="rtl">
+        {/* Gaming Grid Background Overlay */}
+        {isGamingMode && <div className="gaming-grid-bg fixed inset-0 pointer-events-none z-0" />}
 
-              {/* Logo/Brand */}
-              <h1 className="text-3xl font-bold text-foreground cursor-pointer">
-                {affiliateStore.store_name}
-              </h1>
+        {/* Gaming Header or Clean Header */}
+        {isGamingMode ? (
+          <GamingStoreHeader
+            storeName={affiliateStore.store_name}
+            storeSlug={storeSlug}
+            cartCount={cartItemsCount}
+            wishlistCount={wishlist.length}
+            isAuthenticated={isAuthenticated}
+            onCartClick={() => setShowCart(true)}
+            onOrdersClick={() => {
+              if (!isAuthenticated) {
+                toast({
+                  title: "يجب تسجيل الدخول أولاً",
+                  description: "الرجاء تسجيل الدخول لعرض طلباتك",
+                  variant: "default",
+                });
+                setShowAuthModal(true);
+                return;
+              }
+              setShowOrders(true);
+            }}
+            onAuthClick={() => setShowAuthModal(true)}
+          />
+        ) : (
+          <header className="sticky top-0 z-40 bg-background border-b border-border shadow-sm">
+            <div className="container mx-auto px-6 py-5">
+              <div className="flex items-center justify-between max-w-7xl mx-auto">
+                {/* Search */}
+                <button className="p-2.5 hover:bg-secondary/50 rounded-lg transition-colors">
+                  <Search className="w-6 h-6 text-foreground/70" />
+                </button>
 
-              {/* Icons */}
-              <div className="flex items-center gap-2">
-                {/* Theme Toggle */}
-                {storeSlug && <StorefrontThemeToggle storeSlug={storeSlug} />}
-                
-                <button 
-                  onClick={() => {
-                    if (!isAuthenticated) {
-                      toast({
-                        title: "يجب تسجيل الدخول أولاً",
-                        description: "الرجاء تسجيل الدخول لعرض طلباتك",
-                        variant: "default",
-                      });
-                      setShowAuthModal(true);
-                      return;
-                    }
-                    setShowOrders(true);
-                  }}
-                  className="p-2.5 rounded-lg transition-colors hover:bg-secondary/50"
-                >
-                  <Package className="w-6 h-6 text-foreground/70" />
-                </button>
-                <button 
-                  onClick={() => setShowAuthModal(true)}
-                  className="p-2.5 rounded-lg transition-colors hover:bg-secondary/50"
-                >
-                  <User className="w-6 h-6 text-foreground/70" />
-                </button>
-                <button 
-                  onClick={() => setShowCart(true)}
-                  className="p-2.5 rounded-lg transition-colors relative hover:bg-secondary/50"
-                >
-                  <ShoppingCart className="w-6 h-6 text-foreground/70" />
-                  {isolatedCart?.items?.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
-                      {isolatedCart.items.length}
-                    </span>
-                  )}
-                </button>
+                {/* Logo/Brand */}
+                <h1 className="text-3xl font-bold text-foreground cursor-pointer">
+                  {affiliateStore.store_name}
+                </h1>
+
+                {/* Icons */}
+                <div className="flex items-center gap-2">
+                  {/* Theme Toggle */}
+                  {storeSlug && <StorefrontThemeToggle storeSlug={storeSlug} />}
+
+                  <button
+                    onClick={() => {
+                      if (!isAuthenticated) {
+                        toast({
+                          title: "يجب تسجيل الدخول أولاً",
+                          description: "الرجاء تسجيل الدخول لعرض طلباتك",
+                          variant: "default",
+                        });
+                        setShowAuthModal(true);
+                        return;
+                      }
+                      setShowOrders(true);
+                    }}
+                    className="p-2.5 rounded-lg transition-colors hover:bg-secondary/50"
+                  >
+                    <Package className="w-6 h-6 text-foreground/70" />
+                  </button>
+                  <button
+                    onClick={() => setShowAuthModal(true)}
+                    className="p-2.5 rounded-lg transition-colors hover:bg-secondary/50"
+                  >
+                    <User className="w-6 h-6 text-foreground/70" />
+                  </button>
+                  <button
+                    onClick={() => setShowCart(true)}
+                    className="p-2.5 rounded-lg transition-colors relative hover:bg-secondary/50"
+                  >
+                    <ShoppingCart className="w-6 h-6 text-foreground/70" />
+                    {isolatedCart?.items?.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                        {isolatedCart.items.length}
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </header>
+          </header>
+        )}
 
       {/* Main Content */}
       <main className="container mx-auto px-3 md:px-6 py-4 md:py-8 space-y-6 md:space-y-8">
@@ -1032,11 +1061,16 @@ const EnhancedStoreFrontInner = ({ storeSlug: propStoreSlug }: EnhancedStoreFron
           <ModernBannerSlider banners={storeBanners} onBannerClick={handleBannerClick} />
         )}
 
-        {/* Categories Section - مطابق للديمو */}
-        <section className="py-12 bg-background">
+        {/* Categories Section - Gaming or Modern Style */}
+        <section className={`py-12 ${isGamingMode ? 'relative z-10' : 'bg-background'}`}>
           <div className="container mx-auto px-6">
             <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-3 gap-6">
+              {isGamingMode && (
+                <h2 className="gaming-neon-text text-3xl md:text-4xl font-black text-center mb-10">
+                  🎮 اختر الفئة
+                </h2>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {[
                   { name: 'الملابس', emoji: '👗', category: 'ملابس' },
                   { name: 'الحقائب', emoji: '👜', category: 'حقائب' },
@@ -1044,18 +1078,35 @@ const EnhancedStoreFrontInner = ({ storeSlug: propStoreSlug }: EnhancedStoreFron
                 ].map((category, idx) => (
                   <motion.div
                     key={idx}
-                    whileHover={{ y: -4 }}
+                    whileHover={{ y: isGamingMode ? -12 : -4, scale: isGamingMode ? 1.05 : 1 }}
                     className="group cursor-pointer"
                     onClick={() => setSelectedCategory(category.category === selectedCategory ? 'all' : category.category)}
                   >
-                    <div className="relative aspect-square bg-surface rounded-xl overflow-hidden mb-4 border border-border/50">
-                      <div className="absolute inset-0 gradient-category-card flex items-center justify-center">
-                        <span className="text-5xl opacity-30">
+                    <div className={`relative aspect-square rounded-xl overflow-hidden mb-4 ${
+                      isGamingMode
+                        ? 'gaming-glass-card border-2 border-transparent hover:border-gaming-neon-blue'
+                        : 'bg-surface border border-border/50'
+                    }`}>
+                      <div className={`absolute inset-0 flex items-center justify-center ${
+                        isGamingMode ? '' : 'gradient-category-card'
+                      }`}>
+                        <span className={`text-5xl ${isGamingMode ? 'filter drop-shadow-[0_0_20px_rgba(0,240,255,0.5)]' : 'opacity-30'}`}>
                           {category.emoji}
                         </span>
                       </div>
+                      {isGamingMode && selectedCategory === category.category && (
+                        <div className="absolute inset-0 border-4 border-gaming-neon-pink rounded-xl pointer-events-none animate-pulse"></div>
+                      )}
                     </div>
-                    <h3 className="text-center font-semibold text-foreground text-lg">{category.name}</h3>
+                    <h3 className={`text-center font-semibold text-lg ${
+                      isGamingMode && selectedCategory === category.category
+                        ? 'gaming-neon-text-pink'
+                        : isGamingMode
+                        ? 'text-gaming-neon-blue'
+                        : 'text-foreground'
+                    }`}>
+                      {category.name}
+                    </h3>
                   </motion.div>
                 ))}
               </div>
@@ -1063,18 +1114,48 @@ const EnhancedStoreFrontInner = ({ storeSlug: propStoreSlug }: EnhancedStoreFron
           </div>
         </section>
 
-        {/* Products Grid Section - بسيط مثل الديمو */}
-        <section id="products-section" className="space-y-6">
+        {/* Products Grid Section - Gaming or Modern Style */}
+        <section id="products-section" className="space-y-6 relative z-10">
+          {isGamingMode && (
+            <div className="text-center mb-8">
+              <h2 className="gaming-neon-text text-4xl md:text-5xl font-black mb-3">
+                ⚡ منتجات مميزة
+              </h2>
+              <p style={{ color: 'var(--gaming-neon-purple)' }} className="text-lg font-bold">
+                اكتشف أفضل المنتجات مع تجربة gaming فريدة
+              </p>
+            </div>
+          )}
           {productsLoading ? (
             <div className="flex justify-center items-center py-20">
               <div className="text-center space-y-4">
-                <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent mx-auto"></div>
-                <p className="text-muted-foreground">جاري تحميل المنتجات الرائعة...</p>
+                {isGamingMode ? (
+                  <div className="gaming-loader mx-auto"></div>
+                ) : (
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent mx-auto"></div>
+                )}
+                <p className={isGamingMode ? "gaming-neon-text text-base" : "text-muted-foreground"}>
+                  جاري تحميل المنتجات الرائعة...
+                </p>
               </div>
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-xl text-muted-foreground">لا توجد منتجات متاحة</p>
+            </div>
+          ) : isGamingMode ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative z-10">
+              {filteredProducts.map((product, index) => (
+                <GamingProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleProductAddToCart}
+                  onProductClick={setSelectedProduct}
+                  onToggleWishlist={toggleWishlist}
+                  isInWishlist={wishlist.includes(product.id)}
+                  index={index}
+                />
+              ))}
             </div>
           ) : (
             <ModernProductGrid
@@ -1087,12 +1168,28 @@ const EnhancedStoreFrontInner = ({ storeSlug: propStoreSlug }: EnhancedStoreFron
           )}
         </section>
 
-        {/* Footer Info - مطابق للديمو */}
-        <section className="py-16 bg-surface/30">
+        {/* Footer Info - Gaming or Modern Style */}
+        <section className={`py-16 ${isGamingMode ? 'relative z-10 gaming-glass-card mx-4 md:mx-8 rounded-3xl' : 'bg-surface/30'}`}>
           <div className="container mx-auto px-6">
             <div className="max-w-3xl mx-auto text-center space-y-4">
-              <h3 className="text-3xl font-bold text-foreground">{affiliateStore.store_name}</h3>
-              <p className="text-foreground/70 text-lg">{affiliateStore.bio || 'منتجاتك المحفوظة ستظهر هنا'}</p>
+              <h3 className={`text-3xl font-bold ${isGamingMode ? 'gaming-header-logo' : 'text-foreground'}`}>
+                {affiliateStore.store_name}
+              </h3>
+              <p className={`text-lg ${isGamingMode ? 'text-gaming-neon-cyan font-semibold' : 'text-foreground/70'}`}>
+                {affiliateStore.bio || 'منتجاتك المحفوظة ستظهر هنا'}
+              </p>
+              {isGamingMode && (
+                <div className="flex justify-center gap-4 mt-8 flex-wrap">
+                  <div className="gaming-badge">
+                    <Zap className="inline h-4 w-4 ml-1" />
+                    {filteredProducts.length} منتج
+                  </div>
+                  <div className="gaming-badge gaming-badge-sale">
+                    <Gift className="inline h-4 w-4 ml-1" />
+                    عروض حصرية
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
