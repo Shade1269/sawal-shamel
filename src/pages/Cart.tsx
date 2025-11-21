@@ -1,19 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Button
-} from '@/components/ui/index';
+  UnifiedCard,
+  UnifiedCardContent,
+  UnifiedCardHeader,
+  UnifiedCardTitle,
+  UnifiedButton
+} from '@/components/design-system';
 import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { BackButton } from '@/components/ui/back-button';
@@ -93,14 +86,13 @@ const Cart = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <BackButton />
-              <Button
+              <UnifiedButton
                 variant="ghost"
                 onClick={handleBackToStore}
-                className="flex items-center gap-2"
+                leftIcon={<ArrowLeft className="h-4 w-4" />}
               >
-                <ArrowLeft className="h-4 w-4" />
                 العودة للمتجر
-              </Button>
+              </UnifiedButton>
             </div>
             <h1 className="text-2xl font-bold">سلة التسوق</h1>
             <div></div>
@@ -110,26 +102,26 @@ const Cart = () => {
 
       <div className="container mx-auto px-4 py-8">
         {cartItems.length === 0 ? (
-          <Card>
-            <CardContent className="text-center py-12">
+          <UnifiedCard variant="glass" padding="lg">
+            <UnifiedCardContent className="text-center py-12">
               <h2 className="text-xl font-semibold mb-4">السلة فارغة</h2>
               <p className="text-muted-foreground mb-6">
                 لم تقم بإضافة أي منتجات للسلة بعد
               </p>
-              <Button onClick={handleBackToStore}>
+              <UnifiedButton variant="primary" onClick={handleBackToStore}>
                 تصفح المنتجات
-              </Button>
-            </CardContent>
-          </Card>
+              </UnifiedButton>
+            </UnifiedCardContent>
+          </UnifiedCard>
         ) : (
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>منتجات السلة ({cartItems.length})</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+              <UnifiedCard variant="glass" padding="lg">
+                <UnifiedCardHeader>
+                  <UnifiedCardTitle>منتجات السلة ({cartItems.length})</UnifiedCardTitle>
+                </UnifiedCardHeader>
+                <UnifiedCardContent className="space-y-4">
                   {cartItems.map((item) => (
                     <div key={item.id} className="flex items-center gap-4 p-4 border rounded-lg">
                       {item.image && (
@@ -146,44 +138,44 @@ const Cart = () => {
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button
+                        <UnifiedButton
                           variant="outline"
                           size="icon"
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         >
                           <Minus className="h-4 w-4" />
-                        </Button>
+                        </UnifiedButton>
                         <span className="w-12 text-center font-semibold">
                           {item.quantity}
                         </span>
-                        <Button
+                        <UnifiedButton
                           variant="outline"
                           size="icon"
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         >
                           <Plus className="h-4 w-4" />
-                        </Button>
+                        </UnifiedButton>
                       </div>
-                      <Button
-                        variant="destructive"
+                      <UnifiedButton
+                        variant="danger"
                         size="icon"
                         onClick={() => removeFromCart(item.id)}
                       >
                         <Trash2 className="h-4 w-4" />
-                      </Button>
+                      </UnifiedButton>
                     </div>
                   ))}
-                </CardContent>
-              </Card>
+                </UnifiedCardContent>
+              </UnifiedCard>
             </div>
 
             {/* Order Summary */}
             <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle>ملخص الطلب</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+              <UnifiedCard variant="glass" padding="lg">
+                <UnifiedCardHeader>
+                  <UnifiedCardTitle>ملخص الطلب</UnifiedCardTitle>
+                </UnifiedCardHeader>
+                <UnifiedCardContent className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span>المجموع الفرعي:</span>
@@ -194,15 +186,16 @@ const Cart = () => {
                       <span className="text-primary">{getTotalPrice().toFixed(2)} ريال</span>
                     </div>
                   </div>
-                  <Button 
-                    className="w-full" 
+                  <UnifiedButton 
+                    variant="primary"
                     size="lg"
+                    fullWidth
                     onClick={handleContinueToShipping}
                   >
                     متابعة للشحن
-                  </Button>
-                </CardContent>
-              </Card>
+                  </UnifiedButton>
+                </UnifiedCardContent>
+              </UnifiedCard>
             </div>
           </div>
         )}

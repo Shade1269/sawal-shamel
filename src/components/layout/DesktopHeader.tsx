@@ -16,7 +16,7 @@ export function DesktopHeader({ showAuth = false, compact = false }: DesktopHead
   const titleSize = compact ? 'text-base' : 'text-lg';
 
   return (
-    <header className={`${headerHeight} border-b bg-card/50 backdrop-blur-sm sticky top-0 z-40`}>
+    <header className={`${headerHeight} border-b border-border/50 bg-card/30 backdrop-blur-md sticky top-0 z-40`}>
       <div className="flex items-center justify-between px-4 h-full">
         <div className="flex items-center gap-3">
           {!showAuth && (
