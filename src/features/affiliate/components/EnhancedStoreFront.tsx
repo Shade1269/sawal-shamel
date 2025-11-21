@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreThemeProvider } from "@/components/store/ThemeProvider";
 import { GamingSettingsProvider, useGamingSettings } from "@/contexts/GamingSettingsContext";
+import { useRef } from "react";
 import { GamingMouseTrail } from "@/components/storefront/gaming/GamingMouseTrail";
 import { GamingParticles, GamingGridBackground, GamingScanLines } from "@/components/storefront/gaming/GamingParticles";
 import { MatrixRain } from "@/components/storefront/ultimate3/MatrixRain";
@@ -162,6 +163,9 @@ const EnhancedStoreFrontInner = ({ storeSlug: propStoreSlug }: EnhancedStoreFron
   const { customer, isAuthenticated } = useCustomerAuth();
   const { loadFromStore: loadGamingSettings } = useGamingSettings();
   
+  // Ref to track if gaming settings have been loaded for this store
+  const loadedStoreIdRef = useRef<string | null>(null);
+  
   // States
   const [showCart, setShowCart] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -209,6 +213,9 @@ const EnhancedStoreFrontInner = ({ storeSlug: propStoreSlug }: EnhancedStoreFron
   
   useEffect(() => {
     if (!affiliateStore) return;
+    
+    // Only load gaming settings once per store
+    if (loadedStoreIdRef.current === affiliateStore.id) return;
 
     const gamingSettings = (affiliateStore as any).gaming_settings;
     const rootElement = document.documentElement;
@@ -241,12 +248,18 @@ const EnhancedStoreFrontInner = ({ storeSlug: propStoreSlug }: EnhancedStoreFron
         enableGlowEffects: gamingSettings.features?.glowEffects ?? true,
         enableMatrixRain: gamingSettings.features?.matrixRain ?? false,
       });
+      
+      // Mark this store as loaded
+      loadedStoreIdRef.current = affiliateStore.id;
     } else {
       rootElement.removeAttribute('data-gaming-mode');
       rootElement.removeAttribute('data-gaming-theme');
       rootElement.removeAttribute('data-performance-mode');
       
       loadGamingSettings({ isGamingMode: false });
+      
+      // Mark this store as loaded
+      loadedStoreIdRef.current = affiliateStore.id;
     }
 
     return () => {
