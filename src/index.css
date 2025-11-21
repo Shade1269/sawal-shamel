@@ -24,6 +24,7 @@
 /* Gaming Store Theme */
 @import './styles/gaming-store.css';
 @import './styles/gaming-themes.css';
+@import './styles/ultra-effects.css';
 
 /* Tailwind */
 @tailwind base;

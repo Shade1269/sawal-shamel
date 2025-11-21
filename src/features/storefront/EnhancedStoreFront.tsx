@@ -44,6 +44,13 @@ import {
 } from "@/components/storefront/gaming";
 import { useGamingSettings } from "@/contexts/GamingSettingsContext";
 
+// Ultra Effects (Sci-Fi)
+import {
+  HolographicCard,
+  LaserClickEffect,
+  NebulaStarsBackground,
+} from "@/components/storefront/ultra";
+
 interface Product {
   id: string;
   title: string;
@@ -481,6 +488,10 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         {isGamingMode && settings.enableParticles && <GamingParticles />}
         {isGamingMode && settings.enableScanLines && <GamingScanLines />}
         {isGamingMode && settings.enableMouseTrail && <GamingMouseTrail />}
+
+        {/* Ultra Effects (Sci-Fi) */}
+        {isGamingMode && settings.enableNebulaBackground && <NebulaStarsBackground />}
+        {isGamingMode && settings.enableLaserClicks && <LaserClickEffect />}
 
         {/* Gaming Theme Switcher */}
         {isGamingMode && <GamingThemeSwitcher />}

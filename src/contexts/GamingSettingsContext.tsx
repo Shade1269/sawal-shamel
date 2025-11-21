@@ -41,6 +41,15 @@ export interface GamingSettings {
   // Notifications
   enableGamingNotifications: boolean;
 
+  // Ultra Effects (Sci-Fi)
+  enableHolographic: boolean;
+  enableLaserClicks: boolean;
+  enableNebulaBackground: boolean;
+  enablePortalTransitions: boolean;
+  enableQuantumGlitch: boolean;
+  enableEnergyShield: boolean;
+  enableWarpSpeed: boolean;
+
   // Advanced
   enableAnimations: boolean;
   reducedMotion: boolean;
@@ -86,6 +95,15 @@ const defaultSettings: GamingSettings = {
 
   // Notifications
   enableGamingNotifications: true,
+
+  // Ultra Effects - All enabled by default for WOW factor!
+  enableHolographic: true,
+  enableLaserClicks: true,
+  enableNebulaBackground: true,
+  enablePortalTransitions: true,
+  enableQuantumGlitch: false, // قد يكون مزعج للبعض
+  enableEnergyShield: true,
+  enableWarpSpeed: true,
 
   // Advanced
   enableAnimations: true,
