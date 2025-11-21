@@ -153,12 +153,14 @@ interface EnhancedStoreFrontProps {
   storeSlug?: string;
 }
 
-const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProps = {}) => {
+// Inner component that uses GamingContext
+const EnhancedStoreFrontInner = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProps = {}) => {
   const { storeSlug: paramStoreSlug } = useParams<{ storeSlug: string }>();
   const storeSlug = propStoreSlug || paramStoreSlug;
   const navigate = useNavigate();
   const { toast } = useToast();
   const { customer, isAuthenticated } = useCustomerAuth();
+  const { loadFromStore: loadGamingSettings } = useGamingSettings();
   
   // States
   const [showCart, setShowCart] = useState(false);
@@ -193,6 +195,8 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         .maybeSingle();
       
       if (error) throw error;
+      
+      console.log('Store fetched:', data);
       return data as unknown as AffiliateStore | null;
     },
     enabled: !!storeSlug,
@@ -202,7 +206,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   });
 
   // تطبيق Gaming Mode على DOM و GamingContext
-  const { loadFromStore: loadGamingSettings } = useGamingSettings();
   
   useEffect(() => {
     if (!affiliateStore) return;
@@ -1243,12 +1246,12 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 };
 
 // تغليف المكون بـ GamingSettingsProvider
-const EnhancedStoreFrontWrapper = (props: EnhancedStoreFrontProps) => {
+const EnhancedStoreFront = (props: EnhancedStoreFrontProps) => {
   return (
     <GamingSettingsProvider>
-      <EnhancedStoreFront {...props} />
+      <EnhancedStoreFrontInner {...props} />
     </GamingSettingsProvider>
   );
 };
 
-export default EnhancedStoreFrontWrapper;
+export default EnhancedStoreFront;
