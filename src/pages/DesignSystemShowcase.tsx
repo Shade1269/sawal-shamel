@@ -165,10 +165,10 @@ const DesignSystemShowcase: React.FC = () => {
           </UnifiedCard>
 
           {/* Status Buttons */}
-          <UnifiedCard variant="glass" padding="lg">
+          <UnifiedCard variant="glass" padding="lg" className="bg-muted border-2 border-white">
             <UnifiedCardHeader>
-              <UnifiedCardTitle>Status Variants</UnifiedCardTitle>
-              <UnifiedCardDescription>أزرار الحالات</UnifiedCardDescription>
+              <UnifiedCardTitle className="text-white">Status Variants</UnifiedCardTitle>
+              <UnifiedCardDescription className="text-white">أزرار الحالات</UnifiedCardDescription>
             </UnifiedCardHeader>
             <UnifiedCardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
