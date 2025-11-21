@@ -507,7 +507,6 @@ export type Database = {
           bio: string | null
           created_at: string | null
           current_theme_id: string | null
-          gaming_settings: Json | null
           id: string
           is_active: boolean
           logo_url: string | null
@@ -523,7 +522,6 @@ export type Database = {
           bio?: string | null
           created_at?: string | null
           current_theme_id?: string | null
-          gaming_settings?: Json | null
           id?: string
           is_active?: boolean
           logo_url?: string | null
@@ -539,7 +537,6 @@ export type Database = {
           bio?: string | null
           created_at?: string | null
           current_theme_id?: string | null
-          gaming_settings?: Json | null
           id?: string
           is_active?: boolean
           logo_url?: string | null

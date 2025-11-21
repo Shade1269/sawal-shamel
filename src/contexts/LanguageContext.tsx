@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface LanguageContextType {
   language: 'ar' | 'en';
-  direction: 'rtl' | 'ltr';
   toggleLanguage: () => void;
   t: (key: string) => string;
 }
@@ -92,9 +91,8 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     return translations[language][key as keyof typeof translations['ar']] || key;
   };
 
-  const value: LanguageContextType = {
+  const value = {
     language,
-    direction: (language === 'ar' ? 'rtl' : 'ltr') as 'rtl' | 'ltr',
     toggleLanguage,
     t,
   };

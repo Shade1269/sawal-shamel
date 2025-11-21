@@ -28,49 +28,17 @@ import { ModernCustomerOrders } from "@/components/storefront/modern/ModernCusto
 import { ModernInvoice } from "@/components/storefront/modern/ModernInvoice";
 import { CustomerAuthModal } from "@/components/storefront/CustomerAuthModal";
 import { UnifiedChatWidget } from "@/components/customer-service/UnifiedChatWidget";
-import { Store, ArrowRight, Zap } from "lucide-react";
+import { Store, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-// Gaming Components
-import {
-  GamingStoreHeader,
-  GamingProductCard,
-  GamingParticles,
-  GamingGridBackground,
-  GamingScanLines,
-  GamingMouseTrail,
-  GamingThemeSwitcher,
-  GamingLoadingScreen,
-} from "@/components/storefront/gaming";
-import { useGamingSettings } from "@/contexts/GamingSettingsContext";
-
-// Ultra Effects (Sci-Fi)
-import {
-  HolographicCard,
-  LaserClickEffect,
-  NebulaStarsBackground,
-} from "@/components/storefront/ultra";
-
-// ULTIMATE 3.0 Effects
-import {
-  MatrixRain,
-  WeatherSystem,
-  CosmicEffects,
-  LiveNotifications,
-  MagneticAttraction,
-  PhysicsFloatingCards,
-  AIAssistantAvatar,
-  GestureControls,
-} from "@/components/storefront/ultimate3";
 
 interface Product {
   id: string;
   title: string;
-  description?: string;
+  description: string;
   price_sar: number;
-  image_urls?: string[];
+  image_urls: string[];
   stock: number;
-  category?: string;
+  category: string;
   variants?: ProductVariant[];
   commission_amount?: number;
   final_price?: number;
@@ -102,12 +70,6 @@ interface AffiliateStore {
   total_orders: number;
   profile_id: string;
   is_active: boolean;
-  gaming_settings?: {
-    enabled: boolean;
-    theme: string;
-    performanceMode: string;
-    features: Record<string, boolean | number>;
-  };
 }
 
 interface EnhancedStoreFrontProps {
@@ -120,10 +82,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const navigate = useNavigate();
   const { toast } = useToast();
   const { customer, isAuthenticated } = useCustomerAuth();
-
-  // Gaming Settings
-  const { settings: gamingContextSettings, toggleGamingMode, loadFromStore: loadGamingSettings } = useGamingSettings();
-  const isGamingMode = gamingContextSettings.isGamingMode;
 
   // UI State
   const [showCart, setShowCart] = useState(false);
@@ -151,13 +109,13 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
       const { data, error } = await supabase
         .from("affiliate_stores")
-        .select("*, gaming_settings")
+        .select("*")
         .eq("store_slug", storeSlug)
         .eq("is_active", true)
         .maybeSingle();
 
       if (error) throw error;
-      return data as unknown as AffiliateStore | null;
+      return data as AffiliateStore | null;
     },
     enabled: !!storeSlug,
     staleTime: 5 * 60 * 1000,
@@ -172,63 +130,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     removeFromCart: removeFromIsolatedCart,
     clearCart,
   } = useIsolatedStoreCart(affiliateStore?.id || "", storeSlug);
-
-  // تطبيق Gaming Mode على DOM و Context
-  useEffect(() => {
-    if (!affiliateStore) return;
-
-    const gamingSettings = affiliateStore.gaming_settings;
-    const rootElement = document.documentElement;
-
-    if (gamingSettings?.enabled) {
-      // تطبيق على DOM
-      rootElement.setAttribute('data-gaming-mode', 'true');
-      rootElement.setAttribute('data-gaming-theme', gamingSettings.theme || 'cyberpunk');
-      rootElement.setAttribute('data-performance-mode', gamingSettings.performanceMode || 'high');
-      
-      // تطبيق على Context
-      loadGamingSettings({
-        isGamingMode: true,
-        gamingTheme: gamingSettings.theme as any || 'cyberpunk',
-        performanceMode: gamingSettings.performanceMode as any || 'high',
-        enableMouseTrail: gamingSettings.features?.mouseTrail === true,
-        enable3DTilt: gamingSettings.features?.tilt3D === true,
-        enableParticles: gamingSettings.features?.particles === true,
-        enableScanLines: gamingSettings.features?.scanLines === true,
-        enableGridBackground: gamingSettings.features?.gridBackground === true,
-        enableParallax: gamingSettings.features?.parallax === true,
-        enableGlowEffects: gamingSettings.features?.glowEffects === true,
-        enableHolographic: gamingSettings.features?.holographic === true,
-        enableLaserClicks: gamingSettings.features?.laserClicks === true,
-        enableNebulaBackground: gamingSettings.features?.nebulaBackground === true,
-        enablePortalTransitions: gamingSettings.features?.portalTransitions === true,
-        enableMatrixRain: gamingSettings.features?.matrixRain === true,
-        enableWeatherEffects: gamingSettings.features?.weatherEffects === true,
-      });
-      
-      // تحميل CSS الخاص بـ gaming themes
-      if (!document.getElementById('gaming-themes-css')) {
-        const link = document.createElement('link');
-        link.id = 'gaming-themes-css';
-        link.rel = 'stylesheet';
-        link.href = '/src/styles/gaming-themes.css';
-        document.head.appendChild(link);
-      }
-    } else {
-      rootElement.removeAttribute('data-gaming-mode');
-      rootElement.removeAttribute('data-gaming-theme');
-      rootElement.removeAttribute('data-performance-mode');
-      
-      // تعطيل في Context
-      loadGamingSettings({ isGamingMode: false });
-    }
-
-    return () => {
-      rootElement.removeAttribute('data-gaming-mode');
-      rootElement.removeAttribute('data-gaming-theme');
-      rootElement.removeAttribute('data-performance-mode');
-    };
-  }, [affiliateStore, loadGamingSettings]);
 
   // Fetch products
   const { data: products, isLoading: productsLoading } = useQuery({
@@ -349,55 +250,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     enabled: !!affiliateStore?.id,
     staleTime: 5 * 60 * 1000,
   });
-
-  // Load gaming settings from store database
-  useEffect(() => {
-    if (affiliateStore?.gaming_settings) {
-      const dbSettings = affiliateStore.gaming_settings;
-      const features = dbSettings.features || {};
-
-      loadGamingSettings({
-        isGamingMode: Boolean(dbSettings.enabled ?? true),
-        gamingTheme: dbSettings.theme as any || 'cyberpunk',
-        performanceMode: dbSettings.performanceMode as any || 'high',
-        enableMouseTrail: Boolean(features.mouseTrail ?? true),
-        enable3DTilt: Boolean(features.tilt3D ?? true),
-        enableParticles: Boolean(features.particles ?? true),
-        enableScanLines: Boolean(features.scanLines ?? true),
-        enableGridBackground: Boolean(features.gridBackground ?? true),
-        enableParallax: Boolean(features.parallax ?? true),
-        enableGlowEffects: Boolean(features.glowEffects ?? true),
-        enableSoundEffects: Boolean(features.soundEffects ?? false),
-        soundVolume: typeof features.soundVolume === 'number' ? features.soundVolume : 50,
-        enableHolographic: Boolean(features.holographic ?? true),
-        enableLaserClicks: Boolean(features.laserClicks ?? true),
-        enableNebulaBackground: Boolean(features.nebulaBackground ?? true),
-        enablePortalTransitions: Boolean(features.portalTransitions ?? true),
-        enableQuantumGlitch: Boolean(features.quantumGlitch ?? false),
-        enableEnergyShield: Boolean(features.energyShield ?? true),
-        enableWarpSpeed: Boolean(features.warpSpeed ?? true),
-        // ULTIMATE 3.0 Features
-        enableMatrixRain: Boolean(features.matrixRain ?? false),
-        enableGlitchEffect: Boolean(features.glitchEffect ?? false),
-        enableTimeDilation: Boolean(features.timeDilation ?? false),
-        enableMagneticAttraction: Boolean(features.magneticAttraction ?? true),
-        enablePhysicsEngine: Boolean(features.physicsEngine ?? true),
-        enableGravitySimulation: Boolean(features.gravitySimulation ?? false),
-        enableAuroraBorealis: Boolean(features.auroraBorealis ?? true),
-        enableShootingStars: Boolean(features.shootingStars ?? true),
-        enableBlackHole: Boolean(features.blackHole ?? false),
-        enableCosmicDust: Boolean(features.cosmicDust ?? true),
-        enableWeatherEffects: Boolean(features.weatherEffects ?? false),
-        weatherType: typeof features.weatherType === 'string' && 
-                     ['rain', 'snow', 'lightning', 'heat', 'clear', 'auto'].includes(features.weatherType) 
-                     ? features.weatherType as 'rain' | 'snow' | 'lightning' | 'heat' | 'clear' | 'auto'
-                     : 'auto',
-        enableLiveNotifications: Boolean(features.liveNotifications ?? true),
-        enableVisitorCounter: Boolean(features.visitorCounter ?? true),
-        enableHeatmap: Boolean(features.heatmap ?? false),
-      });
-    }
-  }, [affiliateStore?.gaming_settings, loadGamingSettings]);
 
   // Calculate cart totals
   const cartTotal = isolatedCart?.total || 0;
@@ -562,11 +414,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
   // Loading state
   if (storeLoading || productsLoading) {
-    return isGamingMode ? (
-      <div className="min-h-screen gaming-store-bg" data-gaming-theme={gamingContextSettings.gamingTheme}>
-        <GamingLoadingScreen />
-      </div>
-    ) : (
+    return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent mx-auto"></div>
@@ -602,108 +450,30 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
   return (
     <StoreThemeProvider storeId={affiliateStore.id}>
-      <div
-        className={`min-h-screen ${isGamingMode ? 'gaming-store-bg' : 'bg-background'}`}
-        dir="rtl"
-        data-gaming-theme={isGamingMode ? gamingContextSettings.gamingTheme : undefined}
-      >
-        {/* Gaming Background Effects */}
-        {isGamingMode && gamingContextSettings.enableGridBackground && <GamingGridBackground />}
-        {isGamingMode && gamingContextSettings.enableParticles && <GamingParticles />}
-        {isGamingMode && gamingContextSettings.enableScanLines && <GamingScanLines />}
-        {isGamingMode && gamingContextSettings.enableMouseTrail && <GamingMouseTrail />}
-
-        {/* Ultra Effects (Sci-Fi) */}
-        {isGamingMode && gamingContextSettings.enableNebulaBackground && <NebulaStarsBackground />}
-        {isGamingMode && gamingContextSettings.enableLaserClicks && <LaserClickEffect />}
-
-        {/* ULTIMATE 3.0 EFFECTS - خيال علمي كامل! */}
-        {/* Reality Distortion */}
-        {isGamingMode && gamingContextSettings.enableMatrixRain && <MatrixRain />}
-
-        {/* Cosmic Phenomena */}
-        {isGamingMode && (gamingContextSettings.enableAuroraBorealis || gamingContextSettings.enableShootingStars || gamingContextSettings.enableBlackHole || gamingContextSettings.enableCosmicDust) && <CosmicEffects />}
-
-        {/* Weather System */}
-        {isGamingMode && gamingContextSettings.enableWeatherEffects && (
-          <WeatherSystem weather={gamingContextSettings.weatherType === 'auto' ? undefined : gamingContextSettings.weatherType} autoChange={gamingContextSettings.weatherType === 'auto'} />
-        )}
-
-        {/* Social Proof Live */}
-        {isGamingMode && gamingContextSettings.enableLiveNotifications && <LiveNotifications />}
-
-        {/* Magnetic Attraction */}
-        {isGamingMode && gamingContextSettings.enableMagneticAttraction && <MagneticAttraction />}
-
-        {/* AI Assistant Avatar */}
-        {isGamingMode && gamingContextSettings.performanceMode === 'ultra' && <AIAssistantAvatar />}
-
-        {/* Gesture Controls */}
-        {isGamingMode && gamingContextSettings.performanceMode !== 'low' && <GestureControls />}
-
-        {/* Gaming Theme Switcher */}
-        {isGamingMode && <GamingThemeSwitcher />}
-
-        {/* Gaming Mode Toggle */}
-        <div className="fixed top-24 left-4 z-50">
-          <Button
-            onClick={toggleGamingMode}
-            className={isGamingMode ? 'gaming-btn' : 'bg-primary'}
-            size="sm"
-          >
-            <Zap className="h-4 w-4 ml-2" />
-            {isGamingMode ? 'الوضع العادي' : 'وضع Gaming'}
-          </Button>
-        </div>
-
+      <div className="min-h-screen bg-background" dir="rtl">
         {/* Header */}
-        {isGamingMode ? (
-          <GamingStoreHeader
-            storeName={affiliateStore.store_name}
-            storeSlug={storeSlug}
-            cartCount={cartItemsCount}
-            wishlistCount={wishlist.length}
-            isAuthenticated={isAuthenticated}
-            onSearchClick={() => setShowSearch(!showSearch)}
-            onCartClick={() => setShowCart(true)}
-            onOrdersClick={() => {
-              if (!isAuthenticated) {
-                toast({
-                  title: "يجب تسجيل الدخول أولاً",
-                  description: "الرجاء تسجيل الدخول لعرض طلباتك",
-                  variant: "default",
-                });
-                setShowAuthModal(true);
-                return;
-              }
-              setShowOrders(true);
-            }}
-            onAuthClick={() => setShowAuthModal(true)}
-          />
-        ) : (
-          <StorefrontHeader
-            storeName={affiliateStore.store_name}
-            storeSlug={storeSlug}
-            cartCount={cartItemsCount}
-            wishlistCount={wishlist.length}
-            isAuthenticated={isAuthenticated}
-            onSearchClick={() => setShowSearch(!showSearch)}
-            onCartClick={() => setShowCart(true)}
-            onOrdersClick={() => {
-              if (!isAuthenticated) {
-                toast({
-                  title: "يجب تسجيل الدخول أولاً",
-                  description: "الرجاء تسجيل الدخول لعرض طلباتك",
-                  variant: "default",
-                });
-                setShowAuthModal(true);
-                return;
-              }
-              setShowOrders(true);
-            }}
-            onAuthClick={() => setShowAuthModal(true)}
-          />
-        )}
+        <StorefrontHeader
+          storeName={affiliateStore.store_name}
+          storeSlug={storeSlug}
+          cartCount={cartItemsCount}
+          wishlistCount={wishlist.length}
+          isAuthenticated={isAuthenticated}
+          onSearchClick={() => setShowSearch(!showSearch)}
+          onCartClick={() => setShowCart(true)}
+          onOrdersClick={() => {
+            if (!isAuthenticated) {
+              toast({
+                title: "يجب تسجيل الدخول أولاً",
+                description: "الرجاء تسجيل الدخول لعرض طلباتك",
+                variant: "default",
+              });
+              setShowAuthModal(true);
+              return;
+            }
+            setShowOrders(true);
+          }}
+          onAuthClick={() => setShowAuthModal(true)}
+        />
 
         {/* Main Content */}
         <main className="container mx-auto px-3 md:px-6 py-4 md:py-8 space-y-6 md:space-y-8">
@@ -747,41 +517,23 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             <div className="text-center py-20">
               <p className="text-xl text-muted-foreground">لا توجد منتجات متاحة</p>
             </div>
-          ) : isGamingMode ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative z-10">
-              {filteredProducts.map((product, index) => (
-                <GamingProductCard
-                  key={product.id}
-                  product={product}
-                  onAddToCart={handleProductAddToCart}
-                  onProductClick={(product) => setSelectedProduct(product)}
-                  onToggleWishlist={toggleWishlist}
-                  isInWishlist={wishlist.includes(product.id)}
-                  index={index}
-                />
-              ))}
-            </div>
           ) : (
             <StorefrontProductGrid
               products={filteredProducts}
               wishlist={wishlist}
               onAddToCart={handleProductAddToCart}
-              onProductClick={(product) => setSelectedProduct(product)}
+              onProductClick={setSelectedProduct}
               onToggleWishlist={toggleWishlist}
               isLoading={false}
             />
           )}
 
           {/* Footer Info */}
-          <section className={`py-16 relative z-10 ${isGamingMode ? 'gaming-glass-card mx-4' : 'bg-surface/30'}`}>
+          <section className="py-16 bg-surface/30">
             <div className="container mx-auto px-6">
               <div className="max-w-3xl mx-auto text-center space-y-4">
-                <h3 className={`text-3xl font-bold ${isGamingMode ? 'gaming-neon-text' : 'text-foreground'}`}>
-                  {affiliateStore.store_name}
-                </h3>
-                <p className={`text-lg ${isGamingMode ? 'text-white/70' : 'text-foreground/70'}`}>
-                  {affiliateStore.bio || "منتجاتك المحفوظة ستظهر هنا"}
-                </p>
+                <h3 className="text-3xl font-bold text-foreground">{affiliateStore.store_name}</h3>
+                <p className="text-foreground/70 text-lg">{affiliateStore.bio || "منتجاتك المحفوظة ستظهر هنا"}</p>
               </div>
             </div>
           </section>

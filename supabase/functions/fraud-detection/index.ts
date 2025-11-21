@@ -34,10 +34,8 @@ interface FraudCheckResponse {
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return handleCorsPreflightRequest(req);
+    return new Response(null, { headers: corsHeaders });
   }
-
-  const corsHeaders = getCorsHeaders(req);
 
   try {
     const supabase = createClient(

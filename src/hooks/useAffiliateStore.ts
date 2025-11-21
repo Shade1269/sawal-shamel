@@ -34,46 +34,24 @@ export const useAffiliateStore = () => {
     queryFn: async () => {
       if (!user) return null;
       
-      console.log('Fetching store for user:', user.id);
-      
-      // جلب الملف الشخصي
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('id')
         .eq('auth_user_id', user.id)
-        .maybeSingle();
+        .single();
 
-      if (profileError) {
-        console.error('Profile fetch error:', profileError);
-        throw profileError;
-      }
+      if (profileError) throw profileError;
 
-      if (!profile) {
-        console.log('No profile found for user:', user.id);
-        return null;
-      }
-
-      console.log('Profile found:', profile.id);
-
-      // جلب المتجر - استخدام limit(1) للحصول على أول نتيجة فقط
       const { data, error } = await supabase
         .from('affiliate_stores')
         .select('*')
         .eq('profile_id', profile.id)
-        .limit(1)
-        .maybeSingle();
+        .single();
 
-      if (error) {
-        console.error('Store fetch error:', error);
-        throw error;
-      }
-
-      console.log('Store fetched:', data);
+      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows found
       return data as AffiliateStore | null;
     },
-    enabled: !!user,
-    retry: 1,
-    staleTime: 30000
+    enabled: !!user
   });
 
   const createStoreMutation = useMutation({

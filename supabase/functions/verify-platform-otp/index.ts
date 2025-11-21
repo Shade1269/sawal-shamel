@@ -192,8 +192,8 @@ serve(async (req) => {
     // البحث عن مستخدم في auth.users (مع ترقيم صفحات)
     let existingAuthUser = await findUserByPhone(supabase, phone);
 
-    let userId: string | null = null;
-    let profileId: string | null = null;
+    let userId: string;
+    let profileId: string;
     let session = null;
 
     // **حالة خاصة**: إذا كان profile موجود بدون auth_user_id لكن auth user موجود
@@ -383,7 +383,7 @@ serve(async (req) => {
                   })
                   .select()
                   .single();
-                profileId = createdProfile?.id ?? null;
+                profileId = createdProfile?.id || profileId;
               } else {
                 profileId = existingProfile.id;
               }
@@ -473,7 +473,7 @@ serve(async (req) => {
                   if (profErr) {
                     console.error('Fallback profile create failed:', profErr);
                   }
-                  profileId = createdProfile?.id ?? null;
+                  profileId = createdProfile?.id || profileId;
                 } else {
                   profileId = existingProfile.id;
                 }
@@ -616,10 +616,8 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in verify-platform-otp:', error);
-    const corsHeaders = getCorsHeaders(req);
-    const errorMessage = error instanceof Error ? error.message : 'خطأ في الخادم';
     return new Response(
-      JSON.stringify({ success: false, error: errorMessage }),
+      JSON.stringify({ success: false, error: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

@@ -18,11 +18,6 @@ import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 import { PromotionalBannerDisplay } from '@/components/storefront/PromotionalBannerDisplay';
 import { ProductVariantDisplay } from '@/components/products/ProductVariantDisplay';
 import { toast } from 'sonner';
-import { motion } from 'framer-motion';
-import { RecentlyViewedProducts } from '@/components/product/RecentlyViewedProducts';
-import { ProductGridSkeleton } from '@/components/product/ProductGridSkeleton';
-import { CompactStockIndicator } from '@/components/product/EnhancedStockIndicator';
-import { EmptyStates } from '@/components/ui/EmptyState';
 
 interface ProductVariant {
   type: string;
@@ -213,23 +208,25 @@ export const IsolatedStorefront: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        {/* Header Skeleton */}
-        <div className="text-center space-y-2">
-          <div className="h-8 w-48 mx-auto bg-muted animate-pulse rounded" />
-          <div className="h-4 w-64 mx-auto bg-muted animate-pulse rounded" />
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">جاري تحميل المنتجات...</p>
         </div>
-
-        {/* Products Grid Skeleton */}
-        <ProductGridSkeleton count={8} />
       </div>
     );
   }
 
   if (products.length === 0) {
     return (
-      <div className="py-12">
-        <EmptyStates.NoProducts canAdd={false} />
+      <div className="text-center py-12">
+        <div className="max-w-md mx-auto">
+          <ShoppingCart className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-lg font-semibold mb-2">لا توجد منتجات</h3>
+          <p className="text-muted-foreground">
+            لم يتم إضافة أي منتجات إلى هذا المتجر بعد
+          </p>
+        </div>
       </div>
     );
   }
@@ -265,15 +262,8 @@ export const IsolatedStorefront: React.FC = () => {
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product, index) => (
-          <motion.div
-            key={product.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05, duration: 0.3 }}
-            whileHover={{ y: -4 }}
-          >
-            <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
+        {products.map((product) => (
+          <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
             <div className="aspect-square overflow-hidden">
               {product.image_urls && product.image_urls[0] ? (
                 <img
@@ -323,7 +313,9 @@ export const IsolatedStorefront: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                  <CompactStockIndicator stock={product.stock_quantity || 0} />
+                  <Badge variant="secondary" className="text-xs">
+                    متوفر ({product.stock_quantity})
+                  </Badge>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
@@ -361,7 +353,6 @@ export const IsolatedStorefront: React.FC = () => {
               </div>
             </CardContent>
           </Card>
-          </motion.div>
         ))}
       </div>
 
@@ -378,16 +369,11 @@ export const IsolatedStorefront: React.FC = () => {
         bannerType="popup"
       />
       
-      <PromotionalBannerDisplay
+      <PromotionalBannerDisplay 
         affiliateStoreId={store?.id}
         bannerType="sidebar"
         position="floating"
       />
-
-      {/* المنتجات المشاهدة مؤخراً */}
-      <div className="mt-8">
-        <RecentlyViewedProducts />
-      </div>
     </div>
   );
 };

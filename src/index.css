@@ -21,12 +21,6 @@
 @import './styles/animations.css';
 @import './styles/gradients.css';
 
-/* Gaming Store Theme */
-@import './styles/gaming-store.css';
-@import './styles/gaming-themes.css';
-@import './styles/ultra-effects.css';
-@import './styles/ultimate-effects-3.css';
-
 /* Tailwind */
 @tailwind base;
 @tailwind components;

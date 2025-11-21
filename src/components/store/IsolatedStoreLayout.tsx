@@ -5,8 +5,6 @@ import { Loader2, Package, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StoreThemeProvider } from '@/components/store/ThemeProvider';
 import { CustomerAuthProvider } from '@/contexts/CustomerAuthContext';
-import { BottomNav } from '@/components/mobile/BottomNav';
-import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 
 interface StoreData {
   id: string;
@@ -23,9 +21,6 @@ export const IsolatedStoreLayout: React.FC = () => {
   const [store, setStore] = useState<StoreData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Cart hook for bottom nav
-  const { cart } = useIsolatedStoreCart(store?.id || '');
 
   const loadStore = async () => {
     if (!storeSlug) {
@@ -88,14 +83,10 @@ export const IsolatedStoreLayout: React.FC = () => {
     );
   }
 
-  // حساب عدد المنتجات في السلة
-  const cartCount = cart?.items?.reduce((total, item) => total + (item.quantity || 0), 0) || 0;
-
   return (
     <CustomerAuthProvider>
       <StoreThemeProvider storeId={store.id}>
         <Outlet context={{ store }} />
-        <BottomNav storeSlug={storeSlug} cartCount={cartCount} />
       </StoreThemeProvider>
     </CustomerAuthProvider>
   );

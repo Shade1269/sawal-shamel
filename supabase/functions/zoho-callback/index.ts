@@ -192,11 +192,10 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in zoho-callback:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       `<html><body style="font-family: Arial; padding: 40px;">
         <h1 style="color: red;">❌ خطأ</h1>
-        <p>${errorMessage}</p>
+        <p>${error.message}</p>
       </body></html>`,
       { 
         status: 500,
