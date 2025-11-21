@@ -12,15 +12,18 @@ import { useDarkMode } from '@/shared/components/DarkModeProvider';
 
 const StoreSetup = () => {
   const navigate = useNavigate();
-  const { store, isLoading } = useAffiliateStore();
+  const { store, isLoading, error } = useAffiliateStore();
   const { isDarkMode } = useDarkMode();
 
   // إذا كان لدى المستخدم متجر، انتقل مباشرة لصفحة الإعدادات
   useEffect(() => {
-    if (store) {
+    console.log('StoreSetup - store:', store, 'isLoading:', isLoading, 'error:', error);
+    
+    if (!isLoading && store) {
+      console.log('Redirecting to settings...');
       navigate('/affiliate/store/settings', { replace: true });
     }
-  }, [store, navigate]);
+  }, [store, isLoading, error, navigate]);
 
   const handleStoreCreated = () => {
     // الانتقال لصفحة الإعدادات بعد إنشاء المتجر
