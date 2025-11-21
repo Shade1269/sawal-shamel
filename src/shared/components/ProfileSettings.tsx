@@ -1,29 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  UnifiedButton, 
-  UnifiedInput, 
-  UnifiedCard, 
-  UnifiedCardHeader, 
-  UnifiedCardTitle, 
-  UnifiedCardDescription, 
-  UnifiedCardContent,
-  UnifiedBadge,
-  UnifiedDialog,
-  UnifiedDialogTrigger,
-  UnifiedDialogContent,
-  UnifiedDialogHeader,
-  UnifiedDialogTitle,
-  UnifiedDialogDescription,
-  UnifiedSelect,
-  UnifiedSelectTrigger,
-  UnifiedSelectValue,
-  UnifiedSelectContent,
-  UnifiedSelectItem
-} from '@/components/design-system';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { Settings, User, Moon, Sun, X } from 'lucide-react';
+import { Camera, Settings, User, Upload, Moon, Sun, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -164,20 +149,20 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
   };
 
   return (
-    <UnifiedDialog open={open} onOpenChange={setOpen}>
-      <UnifiedDialogTrigger asChild>
-        <UnifiedButton variant="ghost" size="icon" className="shrink-0" aria-label="الإعدادات">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon" className="shrink-0" aria-label="الإعدادات">
           <Settings className="h-4 w-4" />
-        </UnifiedButton>
-      </UnifiedDialogTrigger>
-      <UnifiedDialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto rtl z-[100]" dir="rtl" variant="glass">
-        <UnifiedDialogHeader>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto rtl z-[100]" dir="rtl">
+        <DialogHeader>
           <div className="flex items-center justify-between">
-            <UnifiedDialogTitle className="arabic-text flex items-center gap-2">
+            <DialogTitle className="arabic-text flex items-center gap-2">
               <User className="h-5 w-5" />
               الملف الشخصي والإعدادات
-            </UnifiedDialogTitle>
-            <UnifiedButton
+            </DialogTitle>
+            <Button
               variant="ghost"
               size="icon"
               onClick={() => setOpen(false)}
@@ -185,20 +170,20 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
               aria-label="إغلاق"
             >
               <X className="h-4 w-4" />
-            </UnifiedButton>
+            </Button>
           </div>
-          <UnifiedDialogDescription className="sr-only">
+          <DialogDescription className="sr-only">
             إعدادات الملف الشخصي والحساب
-          </UnifiedDialogDescription>
-        </UnifiedDialogHeader>
+          </DialogDescription>
+        </DialogHeader>
 
         <div className="space-y-6 py-4">
           {/* Avatar Section */}
-          <UnifiedCard variant="glass" padding="md" hover="lift">
-            <UnifiedCardHeader>
-              <UnifiedCardTitle className="text-sm arabic-text">الصورة الشخصية</UnifiedCardTitle>
-            </UnifiedCardHeader>
-            <UnifiedCardContent className="space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm arabic-text">الصورة الشخصية</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="flex items-center gap-4">
                 <Avatar className="w-16 h-16">
                   <AvatarImage src={profile?.avatar_url} alt="Profile" />
@@ -212,122 +197,115 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
                   />
                 </div>
               </div>
-            </UnifiedCardContent>
-          </UnifiedCard>
+            </CardContent>
+          </Card>
 
           {/* Personal Info */}
-          <UnifiedCard variant="glass" padding="md" hover="lift">
-            <UnifiedCardHeader>
-              <UnifiedCardTitle className="text-sm arabic-text">المعلومات الشخصية</UnifiedCardTitle>
-            </UnifiedCardHeader>
-            <UnifiedCardContent className="space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm arabic-text">المعلومات الشخصية</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="full_name" className="arabic-text">الاسم الكامل</Label>
-                <UnifiedInput
+                <Input
                   id="full_name"
                   value={formData.full_name}
                   onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
                   placeholder="أدخل اسمك الكامل"
                   className="arabic-text"
-                  variant="default"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="phone" className="arabic-text">رقم الجوال</Label>
-                <UnifiedInput
+                <Input
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                   placeholder="05xxxxxxxx"
                   className="arabic-text"
-                  variant="default"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="whatsapp" className="arabic-text">واتساب</Label>
-                <UnifiedInput
+                <Input
                   id="whatsapp"
                   value={formData.whatsapp}
                   onChange={(e) => setFormData(prev => ({ ...prev, whatsapp: e.target.value }))}
                   placeholder="05xxxxxxxx"
                   className="arabic-text"
-                  variant="default"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label className="arabic-text">الحالة</Label>
-                <UnifiedSelect value={formData.status} onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}>
-                  <UnifiedSelectTrigger className="arabic-text" variant="default">
-                    <UnifiedSelectValue />
-                  </UnifiedSelectTrigger>
-                  <UnifiedSelectContent className="z-[110]">
-                    <UnifiedSelectItem value="online">متصل</UnifiedSelectItem>
-                    <UnifiedSelectItem value="busy">مشغول</UnifiedSelectItem>
-                    <UnifiedSelectItem value="away">غائب</UnifiedSelectItem>
-                    <UnifiedSelectItem value="offline">غير متصل</UnifiedSelectItem>
-                  </UnifiedSelectContent>
-                </UnifiedSelect>
+                <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}>
+                  <SelectTrigger className="arabic-text">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="z-[110]">
+                    <SelectItem value="online">متصل</SelectItem>
+                    <SelectItem value="busy">مشغول</SelectItem>
+                    <SelectItem value="away">غائب</SelectItem>
+                    <SelectItem value="offline">غير متصل</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </UnifiedCardContent>
-          </UnifiedCard>
+            </CardContent>
+          </Card>
 
           {/* Password Change Section */}
-          <UnifiedCard variant="glass" padding="md" hover="lift">
-            <UnifiedCardHeader>
-              <UnifiedCardTitle className="text-sm arabic-text">تغيير كلمة المرور</UnifiedCardTitle>
-              <UnifiedCardDescription className="arabic-text">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm arabic-text">تغيير كلمة المرور</CardTitle>
+              <CardDescription className="arabic-text">
                 قم بتحديث كلمة المرور الخاصة بك
-              </UnifiedCardDescription>
-            </UnifiedCardHeader>
-            <UnifiedCardContent className="space-y-4">
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="newPassword" className="arabic-text">كلمة المرور الجديدة</Label>
-                <UnifiedInput
+                <Input
                   id="newPassword"
                   type="password"
                   value={passwordData.newPassword}
                   onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
                   placeholder="أدخل كلمة المرور الجديدة"
                   className="arabic-text"
-                  variant="default"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="arabic-text">تأكيد كلمة المرور</Label>
-                <UnifiedInput
+                <Input
                   id="confirmPassword"
                   type="password"
                   value={passwordData.confirmPassword}
                   onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                   placeholder="أعد إدخال كلمة المرور الجديدة"
                   className="arabic-text"
-                  variant="default"
                 />
               </div>
 
-              <UnifiedButton 
+              <Button 
                 onClick={handlePasswordChange} 
                 disabled={changingPassword || !passwordData.newPassword || !passwordData.confirmPassword}
-                fullWidth
-                variant="luxury"
-                loading={changingPassword}
-                loadingText="جاري التغيير..."
+                className="w-full arabic-text"
+                variant="outline"
               >
-                تغيير كلمة المرور
-              </UnifiedButton>
-            </UnifiedCardContent>
-          </UnifiedCard>
+                {changingPassword ? 'جاري التغيير...' : 'تغيير كلمة المرور'}
+              </Button>
+            </CardContent>
+          </Card>
 
           {/* Settings */}
-          <UnifiedCard variant="glass" padding="md" hover="lift">
-            <UnifiedCardHeader>
-              <UnifiedCardTitle className="text-sm arabic-text">إعدادات التطبيق</UnifiedCardTitle>
-            </UnifiedCardHeader>
-            <UnifiedCardContent className="space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm arabic-text">إعدادات التطبيق</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="arabic-text">الوضع الليلي</Label>
@@ -351,33 +329,28 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
                 </div>
                 <Switch checked={notifications} onCheckedChange={setNotifications} />
               </div>
-            </UnifiedCardContent>
-          </UnifiedCard>
+            </CardContent>
+          </Card>
 
           {/* User Account Information */}
-          <UnifiedCard variant="glass" padding="md" hover="glow">
-            <UnifiedCardHeader>
-              <UnifiedCardTitle className="text-sm arabic-text">معلومات الحساب</UnifiedCardTitle>
-            </UnifiedCardHeader>
-            <UnifiedCardContent className="space-y-3">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm arabic-text">معلومات الحساب</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground arabic-text">البريد الإلكتروني:</span>
                 <span className="font-medium arabic-text">{profile?.email || 'غير محدد'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground arabic-text">الصلاحية:</span>
-                <UnifiedBadge 
-                  variant={profile?.role === 'admin' ? 'luxury' : profile?.role === 'moderator' ? 'persian' : 'default'}
-                  animation="pulse"
-                >
+                <Badge variant={profile?.role === 'admin' ? 'default' : profile?.role === 'moderator' ? 'secondary' : 'outline'}>
                   {profile?.role === 'admin' ? 'مدير عام' : profile?.role === 'moderator' ? 'مشرف' : 'عضو'}
-                </UnifiedBadge>
+                </Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground arabic-text">النقاط:</span>
-                <UnifiedBadge variant="luxury" dot dotColor="success">
-                  {profile?.points || 0}
-                </UnifiedBadge>
+                <span className="font-medium arabic-text">{profile?.points || 0}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground arabic-text">تاريخ الانضمام:</span>
@@ -387,41 +360,25 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profile, onProfileUpd
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground arabic-text">حالة الحساب:</span>
-                <UnifiedBadge 
-                  variant={profile?.is_active ? 'success' : 'error'}
-                  dot
-                  dotColor={profile?.is_active ? 'success' : 'error'}
-                >
+                <Badge variant={profile?.is_active ? 'default' : 'destructive'}>
                   {profile?.is_active ? 'نشط' : 'غير نشط'}
-                </UnifiedBadge>
+                </Badge>
               </div>
-            </UnifiedCardContent>
-          </UnifiedCard>
+            </CardContent>
+          </Card>
 
           {/* Actions */}
           <div className="flex gap-3 pt-4">
-            <UnifiedButton 
-              onClick={handleSaveProfile} 
-              disabled={loading}
-              fullWidth
-              variant="luxury"
-              animation="glow"
-              loading={loading}
-              loadingText="جاري الحفظ..."
-            >
-              حفظ التغييرات
-            </UnifiedButton>
-            <UnifiedButton 
-              variant="outline" 
-              onClick={() => setOpen(false)} 
-              disabled={loading}
-            >
+            <Button onClick={handleSaveProfile} disabled={loading} className="flex-1">
+              {loading ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+            </Button>
+            <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
               إلغاء
-            </UnifiedButton>
+            </Button>
           </div>
         </div>
-      </UnifiedDialogContent>
-    </UnifiedDialog>
+      </DialogContent>
+    </Dialog>
   );
 };
 
