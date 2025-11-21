@@ -34,6 +34,8 @@ export const useAffiliateStore = () => {
     queryFn: async () => {
       if (!user) return null;
       
+      console.log('Fetching store for user:', user.id);
+      
       // جلب الملف الشخصي
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
@@ -51,11 +53,14 @@ export const useAffiliateStore = () => {
         return null;
       }
 
-      // جلب المتجر
+      console.log('Profile found:', profile.id);
+
+      // جلب المتجر - استخدام limit(1) للحصول على أول نتيجة فقط
       const { data, error } = await supabase
         .from('affiliate_stores')
         .select('*')
         .eq('profile_id', profile.id)
+        .limit(1)
         .maybeSingle();
 
       if (error) {
