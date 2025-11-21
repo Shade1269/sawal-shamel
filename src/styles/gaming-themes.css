@@ -1,0 +1,273 @@
+/* ============================================
+   🎮 GAMING THEMES - Multiple Styles
+   ============================================ */
+
+/* 1️⃣ CYBERPUNK (Default) - نيون أزرق/وردي */
+[data-gaming-theme="cyberpunk"] {
+  --gaming-primary: #00f0ff;
+  --gaming-secondary: #ff006e;
+  --gaming-accent: #a855f7;
+  --gaming-success: #39ff14;
+  --gaming-warning: #ff9500;
+
+  --gaming-bg: #0a0a0f;
+  --gaming-bg-alt: #050508;
+  --gaming-card: rgba(15, 15, 25, 0.8);
+
+  --gaming-gradient-1: linear-gradient(135deg, #00f0ff 0%, #a855f7 50%, #ff006e 100%);
+  --gaming-gradient-2: linear-gradient(135deg, #ff006e 0%, #ff9500 100%);
+  --gaming-gradient-3: linear-gradient(135deg, #39ff14 0%, #00f0ff 100%);
+
+  --gaming-glow: 0 0 20px var(--gaming-primary), 0 0 40px var(--gaming-primary);
+}
+
+/* 2️⃣ SYNTHWAVE - وردي/بنفسجي + sunset vibes */
+[data-gaming-theme="synthwave"] {
+  --gaming-primary: #ff0099;
+  --gaming-secondary: #9d00ff;
+  --gaming-accent: #ff6600;
+  --gaming-success: #00ff99;
+  --gaming-warning: #ffcc00;
+
+  --gaming-bg: #1a0033;
+  --gaming-bg-alt: #0d001a;
+  --gaming-card: rgba(45, 0, 80, 0.8);
+
+  --gaming-gradient-1: linear-gradient(135deg, #ff0099 0%, #9d00ff 50%, #ff6600 100%);
+  --gaming-gradient-2: linear-gradient(135deg, #ff6600 0%, #ffcc00 100%);
+  --gaming-gradient-3: linear-gradient(135deg, #00ff99 0%, #ff0099 100%);
+
+  --gaming-glow: 0 0 20px var(--gaming-primary), 0 0 40px var(--gaming-primary);
+}
+
+/* Synthwave specific animations */
+[data-gaming-theme="synthwave"] .gaming-product-card {
+  border-image: linear-gradient(45deg, #ff0099, #9d00ff, #ff6600) 1;
+}
+
+[data-gaming-theme="synthwave"] .gaming-header {
+  background: linear-gradient(180deg, rgba(26, 0, 51, 0.95) 0%, rgba(13, 0, 26, 0.8) 100%);
+  border-bottom: 2px solid #ff0099;
+}
+
+/* 3️⃣ MATRIX - أخضر نيون + رموز متساقطة */
+[data-gaming-theme="matrix"] {
+  --gaming-primary: #00ff00;
+  --gaming-secondary: #00cc00;
+  --gaming-accent: #00ff99;
+  --gaming-success: #00ff00;
+  --gaming-warning: #ffff00;
+
+  --gaming-bg: #000000;
+  --gaming-bg-alt: #001100;
+  --gaming-card: rgba(0, 30, 0, 0.8);
+
+  --gaming-gradient-1: linear-gradient(135deg, #00ff00 0%, #00cc00 50%, #00ff99 100%);
+  --gaming-gradient-2: linear-gradient(135deg, #00ff99 0%, #00cc00 100%);
+  --gaming-gradient-3: linear-gradient(135deg, #00ff00 0%, #00ff99 100%);
+
+  --gaming-glow: 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 60px #00ff00;
+}
+
+/* Matrix specific effects */
+[data-gaming-theme="matrix"] .gaming-product-card::before {
+  background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+}
+
+[data-gaming-theme="matrix"] .gaming-header-logo {
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+  font-family: 'Courier New', monospace;
+}
+
+/* Matrix rain effect */
+[data-gaming-theme="matrix"] .gaming-grid-bg {
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 0, 0.1) 2px, rgba(0, 255, 0, 0.1) 4px);
+}
+
+/* 4️⃣ RETRO ARCADE - 8-bit ألوان + pixel style */
+[data-gaming-theme="retro"] {
+  --gaming-primary: #ff00ff;
+  --gaming-secondary: #00ffff;
+  --gaming-accent: #ffff00;
+  --gaming-success: #00ff00;
+  --gaming-warning: #ff8800;
+
+  --gaming-bg: #000033;
+  --gaming-bg-alt: #000022;
+  --gaming-card: rgba(0, 0, 80, 0.9);
+
+  --gaming-gradient-1: linear-gradient(135deg, #ff00ff 0%, #00ffff 50%, #ffff00 100%);
+  --gaming-gradient-2: linear-gradient(135deg, #ffff00 0%, #ff8800 100%);
+  --gaming-gradient-3: linear-gradient(135deg, #00ff00 0%, #00ffff 100%);
+
+  --gaming-glow: 0 0 10px var(--gaming-primary), 0 0 20px var(--gaming-primary);
+}
+
+/* Retro pixel effects */
+[data-gaming-theme="retro"] .gaming-product-card {
+  border: 3px solid var(--gaming-primary);
+  border-radius: 0;
+  image-rendering: pixelated;
+}
+
+[data-gaming-theme="retro"] .gaming-btn {
+  border-radius: 0;
+  border: 2px solid;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-family: 'Press Start 2P', monospace, system-ui;
+  font-size: 0.7rem;
+}
+
+[data-gaming-theme="retro"] * {
+  border-radius: 0 !important;
+}
+
+/* 5️⃣ NEON TOKYO - ياباني + نيون */
+[data-gaming-theme="neon-tokyo"] {
+  --gaming-primary: #ff1744;
+  --gaming-secondary: #f50057;
+  --gaming-accent: #e040fb;
+  --gaming-success: #00e676;
+  --gaming-warning: #ffd600;
+
+  --gaming-bg: #0d0221;
+  --gaming-bg-alt: #050112;
+  --gaming-card: rgba(30, 5, 50, 0.8);
+
+  --gaming-gradient-1: linear-gradient(135deg, #ff1744 0%, #f50057 50%, #e040fb 100%);
+  --gaming-gradient-2: linear-gradient(135deg, #e040fb 0%, #ffd600 100%);
+  --gaming-gradient-3: linear-gradient(135deg, #00e676 0%, #ff1744 100%);
+
+  --gaming-glow: 0 0 20px var(--gaming-primary), 0 0 40px var(--gaming-primary);
+}
+
+/* Neon Tokyo specific */
+[data-gaming-theme="neon-tokyo"] .gaming-header {
+  background: linear-gradient(180deg, rgba(13, 2, 33, 0.95) 0%, rgba(5, 1, 18, 0.8) 100%);
+  border-bottom: 3px solid var(--gaming-primary);
+  box-shadow: 0 4px 20px rgba(255, 23, 68, 0.3);
+}
+
+[data-gaming-theme="neon-tokyo"] .gaming-product-card::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, var(--gaming-primary), transparent);
+  opacity: 0.3;
+}
+
+/* ============================================
+   THEME-SPECIFIC ANIMATIONS
+   ============================================ */
+
+/* Synthwave grid */
+@keyframes synthwave-pulse {
+  0%, 100% {
+    background-position: 0% 50%;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    background-position: 100% 50%;
+    filter: hue-rotate(30deg);
+  }
+}
+
+[data-gaming-theme="synthwave"] .gaming-store-bg::before {
+  animation: synthwave-pulse 15s ease-in-out infinite;
+}
+
+/* Matrix rain */
+@keyframes matrix-rain {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+[data-gaming-theme="matrix"] .gaming-particles {
+  opacity: 0.5;
+}
+
+/* Retro flicker */
+@keyframes retro-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.95; }
+}
+
+[data-gaming-theme="retro"] .gaming-neon-text {
+  animation: retro-flicker 0.15s infinite;
+}
+
+/* Neon Tokyo glow pulse */
+@keyframes tokyo-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--gaming-primary), 0 0 40px var(--gaming-primary);
+  }
+  50% {
+    box-shadow: 0 0 30px var(--gaming-secondary), 0 0 60px var(--gaming-secondary);
+  }
+}
+
+[data-gaming-theme="neon-tokyo"] .gaming-product-card:hover {
+  animation: tokyo-glow 2s ease-in-out infinite;
+}
+
+/* ============================================
+   THEME SWITCHER COMPONENT STYLES
+   ============================================ */
+
+.gaming-theme-selector {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: var(--gaming-card);
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gaming-theme-option {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.gaming-theme-option:hover {
+  transform: scale(1.1);
+}
+
+.gaming-theme-option.active {
+  border-color: var(--gaming-primary);
+  box-shadow: var(--gaming-glow);
+}
+
+.gaming-theme-option[data-theme="cyberpunk"] {
+  background: linear-gradient(135deg, #00f0ff 0%, #ff006e 100%);
+}
+
+.gaming-theme-option[data-theme="synthwave"] {
+  background: linear-gradient(135deg, #ff0099 0%, #9d00ff 100%);
+}
+
+.gaming-theme-option[data-theme="matrix"] {
+  background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+}
+
+.gaming-theme-option[data-theme="retro"] {
+  background: linear-gradient(135deg, #ff00ff 0%, #ffff00 100%);
+}
+
+.gaming-theme-option[data-theme="neon-tokyo"] {
+  background: linear-gradient(135deg, #ff1744 0%, #e040fb 100%);
+}

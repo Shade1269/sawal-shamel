@@ -38,7 +38,11 @@ import {
   GamingParticles,
   GamingGridBackground,
   GamingScanLines,
+  GamingMouseTrail,
+  GamingThemeSwitcher,
+  GamingLoadingScreen,
 } from "@/components/storefront/gaming";
+import { useGamingSettings } from "@/contexts/GamingSettingsContext";
 
 interface Product {
   id: string;
@@ -92,6 +96,10 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const { toast } = useToast();
   const { customer, isAuthenticated } = useCustomerAuth();
 
+  // Gaming Settings
+  const { settings, toggleGamingMode } = useGamingSettings();
+  const isGamingMode = settings.isGamingMode;
+
   // UI State
   const [showCart, setShowCart] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -103,9 +111,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [variantError, setVariantError] = useState<string | null>(null);
-
-  // Gaming Mode (تفعيل التصميم الخيالي)
-  const [isGamingMode, setIsGamingMode] = useState(true);
 
   // Filter State
   const [searchQuery, setSearchQuery] = useState("");
@@ -426,7 +431,11 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
   // Loading state
   if (storeLoading || productsLoading) {
-    return (
+    return isGamingMode ? (
+      <div className="min-h-screen gaming-store-bg" data-gaming-theme={settings.gamingTheme}>
+        <GamingLoadingScreen />
+      </div>
+    ) : (
       <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent mx-auto"></div>
@@ -462,20 +471,24 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
   return (
     <StoreThemeProvider storeId={affiliateStore.id}>
-      <div className={`min-h-screen ${isGamingMode ? 'gaming-store-bg' : 'bg-background'}`} dir="rtl">
+      <div
+        className={`min-h-screen ${isGamingMode ? 'gaming-store-bg' : 'bg-background'}`}
+        dir="rtl"
+        data-gaming-theme={isGamingMode ? settings.gamingTheme : undefined}
+      >
         {/* Gaming Background Effects */}
-        {isGamingMode && (
-          <>
-            <GamingGridBackground />
-            <GamingParticles />
-            <GamingScanLines />
-          </>
-        )}
+        {isGamingMode && settings.enableGridBackground && <GamingGridBackground />}
+        {isGamingMode && settings.enableParticles && <GamingParticles />}
+        {isGamingMode && settings.enableScanLines && <GamingScanLines />}
+        {isGamingMode && settings.enableMouseTrail && <GamingMouseTrail />}
+
+        {/* Gaming Theme Switcher */}
+        {isGamingMode && <GamingThemeSwitcher />}
 
         {/* Gaming Mode Toggle */}
         <div className="fixed top-24 left-4 z-50">
           <Button
-            onClick={() => setIsGamingMode(!isGamingMode)}
+            onClick={toggleGamingMode}
             className={isGamingMode ? 'gaming-btn' : 'bg-primary'}
             size="sm"
           >

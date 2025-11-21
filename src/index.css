@@ -23,6 +23,7 @@
 
 /* Gaming Store Theme */
 @import './styles/gaming-store.css';
+@import './styles/gaming-themes.css';
 
 /* Tailwind */
 @tailwind base;

@@ -6,3 +6,6 @@ export {
   GamingScanLines,
   GamingFloatingIcons,
 } from './GamingParticles';
+export { GamingMouseTrail } from './GamingMouseTrail';
+export { GamingThemeSwitcher } from './GamingThemeSwitcher';
+export { GamingLoadingScreen } from './GamingLoadingScreen';

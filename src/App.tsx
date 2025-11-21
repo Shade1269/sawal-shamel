@@ -20,6 +20,7 @@ import AdminLayout from "@/layouts/AdminLayout";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
 import { CustomerAuthProvider } from "@/contexts/CustomerAuthContext";
+import { GamingSettingsProvider } from "@/contexts/GamingSettingsContext";
 
 const HomePage = lazy(() => import("./pages/Index"));
 import AuthPage from "./features/auth/components/AuthPage"
@@ -113,6 +114,7 @@ const App = () => {
               <FirebaseAuthProvider>
                 <LanguageProvider>
                   <DarkModeProvider>
+                  <GamingSettingsProvider>
                   <UserDataProvider>
                   <AdaptiveLayoutProvider>
                     <BrowserRouter>
@@ -245,6 +247,7 @@ const App = () => {
                     </BrowserRouter>
                   </AdaptiveLayoutProvider>
                   </UserDataProvider>
+                  </GamingSettingsProvider>
                 </DarkModeProvider>
               </LanguageProvider>
               </FirebaseAuthProvider>
