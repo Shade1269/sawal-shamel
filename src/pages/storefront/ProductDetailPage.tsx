@@ -1,20 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  InteractiveWidget,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Button
-} from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedButton, UnifiedBadge } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ShoppingCart, Plus, Minus, ArrowLeft, Star, Heart, Share2 } from 'lucide-react';
@@ -319,17 +305,17 @@ const ProductDetailPage = () => {
   if (!product || !store) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md mx-auto">
-          <CardContent className="text-center py-8">
+        <UnifiedCard variant="glass" className="max-w-md mx-auto">
+          <UnifiedCardContent className="text-center py-8">
             <h2 className="text-xl font-semibold mb-2">المنتج غير موجود</h2>
             <p className="text-muted-foreground mb-4">
               لم يتم العثور على المنتج المطلوب
             </p>
-            <Button onClick={() => navigate(`/s/${store_slug}`)}>
+            <UnifiedButton onClick={() => navigate(`/s/${store_slug}`)}>
               العودة للمتجر
-            </Button>
-          </CardContent>
-        </Card>
+            </UnifiedButton>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
     );
   }
@@ -340,17 +326,17 @@ const ProductDetailPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card sticky top-0 z-40">
+      <header className="border-b bg-card/30 backdrop-blur-md sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            <Button
+            <UnifiedButton
               variant="ghost"
               size="sm"
               onClick={() => navigate(`/s/${store_slug}`)}
             >
               <ArrowLeft className="h-4 w-4 ml-2" />
               العودة للمتجر
-            </Button>
+            </UnifiedButton>
             
             <div className="flex items-center gap-2">
               {store.logo_url && (
@@ -402,9 +388,9 @@ const ProductDetailPage = () => {
               <h1 className="text-3xl font-bold mb-2">{product.products.title}</h1>
               
               {product.products.category && (
-                <Badge variant="secondary" className="mb-4">
+                <UnifiedBadge variant="secondary" className="mb-4">
                   {product.products.category}
-                </Badge>
+                </UnifiedBadge>
               )}
 
               <div className="flex items-center gap-4 mb-4">
@@ -484,32 +470,33 @@ const ProductDetailPage = () => {
               <div>
                 <label className="text-sm font-medium mb-2 block">الكمية</label>
                 <div className="flex items-center gap-3">
-                  <Button
+                  <UnifiedButton
                     variant="outline"
                     size="sm"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
                   >
                     <Minus className="h-4 w-4" />
-                  </Button>
+                  </UnifiedButton>
                   <span className="text-lg font-semibold w-12 text-center">
                     {quantity}
                   </span>
-                  <Button
+                  <UnifiedButton
                     variant="outline"
                     size="sm"
                     onClick={() => setQuantity(quantity + 1)}
                   >
                     <Plus className="h-4 w-4" />
-                  </Button>
+                  </UnifiedButton>
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <Button
+                <UnifiedButton
                   onClick={addToCart}
                   className="flex-1"
                   size="lg"
+                  variant="primary"
                   disabled={!hasRequiredVariants()}
                 >
                   <ShoppingCart className="h-5 w-5 ml-2" />
@@ -517,15 +504,15 @@ const ProductDetailPage = () => {
                     ? `إضافة للسلة • ${(getFinalPrice() * quantity).toFixed(2)} ر.س`
                     : 'اختر المتغيرات أولاً'
                   }
-                </Button>
+                </UnifiedButton>
                 
-                <Button variant="outline" size="lg">
+                <UnifiedButton variant="outline" size="lg">
                   <Heart className="h-5 w-5" />
-                </Button>
+                </UnifiedButton>
                 
-                <Button variant="outline" size="lg">
+                <UnifiedButton variant="outline" size="lg">
                   <Share2 className="h-5 w-5" />
-                </Button>
+                </UnifiedButton>
               </div>
             </div>
           </div>
