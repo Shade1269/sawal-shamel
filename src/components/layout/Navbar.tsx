@@ -4,7 +4,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40">
       <div className="h-0.5 bg-gradient-primary" />
-      <nav className="bg-glass backdrop-blur px-4 sm:px-6">
+      <nav className="bg-card/30 backdrop-blur-md border-b border-border/50 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex h-16 items-center justify-between">
           <Link to="/" className="text-lg font-semibold tracking-wide">
             سوال شامل

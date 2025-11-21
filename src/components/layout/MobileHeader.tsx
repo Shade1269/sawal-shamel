@@ -16,7 +16,7 @@ export function MobileHeader({ showAuth = false, onMenuClick }: MobileHeaderProp
   const touchSize = getTouchFriendlySize(device);
 
   return (
-    <header className="h-16 bg-card/95 backdrop-blur-sm border-b sticky top-0 z-50">
+    <header className="h-16 bg-card/30 backdrop-blur-md border-b border-border/50 sticky top-0 z-50">
       <div className="flex items-center justify-between px-4 h-full">
         {/* Left Side */}
         <div className="flex items-center gap-2">

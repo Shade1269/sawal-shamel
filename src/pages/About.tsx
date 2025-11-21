@@ -1,21 +1,12 @@
 import React from 'react';
 import { 
-  EnhancedButton,
-  EnhancedCard,
-  EnhancedCardContent,
-  EnhancedCardDescription,
-  EnhancedCardHeader,
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  InteractiveWidget,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/index';
+  UnifiedButton,
+  UnifiedCard,
+  UnifiedCardContent,
+  UnifiedCardDescription,
+  UnifiedCardHeader,
+  UnifiedCardTitle
+} from '@/components/design-system';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { 
@@ -40,20 +31,21 @@ const About = () => {
   return (
     <div className="min-h-screen bg-gradient-persian-bg">
       {/* Navigation */}
-      <div className="border-b bg-card/80 backdrop-blur-sm">
+      <div className="border-b border-border/50 bg-card/30 backdrop-blur-md">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center gap-2 sm:gap-4">
             <BackButton />
             <Link to="/">
-              <Button 
+              <UnifiedButton 
                 variant="ghost" 
-                className="text-primary hover:bg-primary/10 gap-1 sm:gap-2 text-sm sm:text-base px-2 sm:px-4"
+                className="gap-1 sm:gap-2 text-sm sm:text-base"
+                size="md"
               >
                 <Home className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">العودة إلى الصفحة الرئيسية</span>
                 <span className="sm:hidden">الرئيسية</span>
                 <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
-              </Button>
+              </UnifiedButton>
             </Link>
           </div>
         </div>
@@ -77,15 +69,14 @@ const About = () => {
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4 sm:px-0">
             <Link to="/auth" className="w-full sm:w-auto">
-              <Button size="lg" className="bg-gradient-primary w-full sm:w-auto">
+              <UnifiedButton variant="hero" size="lg" className="w-full sm:w-auto" rightIcon={<ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />}>
                 انضم إلينا الآن
-                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-              </Button>
+              </UnifiedButton>
             </Link>
             <Link to="/products" className="w-full sm:w-auto">
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+              <UnifiedButton variant="outline" size="lg" className="w-full sm:w-auto">
                 استكشف المنتجات
-              </Button>
+              </UnifiedButton>
             </Link>
           </div>
         </div>
@@ -102,35 +93,35 @@ const About = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-            <Card className="border-0 bg-card/50 backdrop-blur-sm">
-              <CardHeader className="p-4 sm:p-6">
+            <UnifiedCard variant="glass" padding="lg">
+              <UnifiedCardHeader>
                 <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mb-3 sm:mb-4">
                   <Target className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                 </div>
-                <CardTitle className="text-xl sm:text-2xl">رسالتنا</CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6 pt-0">
-                <CardDescription className="text-sm sm:text-base leading-relaxed">
+                <UnifiedCardTitle className="text-xl sm:text-2xl">رسالتنا</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent>
+                <UnifiedCardDescription className="text-sm sm:text-base leading-relaxed">
                   تمكين التجار والمسوقين من خلال منصة تجارة إلكترونية شاملة وآمنة، 
                   تسهل عليهم إدارة أعمالهم وتحقيق أقصى استفادة من الفرص التجارية المتاحة.
-                </CardDescription>
-              </CardContent>
-            </Card>
+                </UnifiedCardDescription>
+              </UnifiedCardContent>
+            </UnifiedCard>
 
-            <Card className="border-0 bg-card/50 backdrop-blur-sm">
-              <CardHeader className="p-4 sm:p-6">
+            <UnifiedCard variant="glass" padding="lg">
+              <UnifiedCardHeader>
                 <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-luxury rounded-2xl flex items-center justify-center mb-3 sm:mb-4">
                   <Globe className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                 </div>
-                <CardTitle className="text-xl sm:text-2xl">رؤيتنا</CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6 pt-0">
-                <CardDescription className="text-sm sm:text-base leading-relaxed">
+                <UnifiedCardTitle className="text-xl sm:text-2xl">رؤيتنا</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent>
+                <UnifiedCardDescription className="text-sm sm:text-base leading-relaxed">
                   أن نكون المنصة الرائدة في الشرق الأوسط للتجارة الإلكترونية والتسويق بالعمولة،
                   وأن نساهم في بناء اقتصاد رقمي مزدهر ومستدام.
-                </CardDescription>
-              </CardContent>
-            </Card>
+                </UnifiedCardDescription>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </div>
         </div>
       </section>
@@ -146,61 +137,61 @@ const About = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="text-center border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-              <CardHeader>
+            <UnifiedCard variant="glass" hover="glow" padding="md" className="text-center">
+              <UnifiedCardHeader>
                 <div className="mx-auto w-16 h-16 bg-gradient-premium rounded-2xl flex items-center justify-center mb-4">
                   <Shield className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle className="text-lg">الثقة والأمان</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-sm">
+                <UnifiedCardTitle className="text-lg">الثقة والأمان</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent>
+                <UnifiedCardDescription className="text-sm">
                   نضمن أعلى مستويات الأمان لحماية بيانات عملائنا وشركائنا
-                </CardDescription>
-              </CardContent>
-            </Card>
+                </UnifiedCardDescription>
+              </UnifiedCardContent>
+            </UnifiedCard>
 
-            <Card className="text-center border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-              <CardHeader>
+            <UnifiedCard variant="glass" hover="glow" padding="md" className="text-center">
+              <UnifiedCardHeader>
                 <div className="mx-auto w-16 h-16 bg-gradient-heritage rounded-2xl flex items-center justify-center mb-4">
                   <Zap className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle className="text-lg">الابتكار</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-sm">
+                <UnifiedCardTitle className="text-lg">الابتكار</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent>
+                <UnifiedCardDescription className="text-sm">
                   نسعى باستمرار لتطوير حلول مبتكرة تلبي احتياجات السوق المتطورة
-                </CardDescription>
-              </CardContent>
-            </Card>
+                </UnifiedCardDescription>
+              </UnifiedCardContent>
+            </UnifiedCard>
 
-            <Card className="text-center border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-              <CardHeader>
+            <UnifiedCard variant="glass" hover="glow" padding="md" className="text-center">
+              <UnifiedCardHeader>
                 <div className="mx-auto w-16 h-16 bg-gradient-persian rounded-2xl flex items-center justify-center mb-4">
                   <Users className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle className="text-lg">العمل الجماعي</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-sm">
+                <UnifiedCardTitle className="text-lg">العمل الجماعي</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent>
+                <UnifiedCardDescription className="text-sm">
                   نؤمن بقوة التعاون والعمل الجماعي لتحقيق النجاح المشترك
-                </CardDescription>
-              </CardContent>
-            </Card>
+                </UnifiedCardDescription>
+              </UnifiedCardContent>
+            </UnifiedCard>
 
-            <Card className="text-center border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300">
-              <CardHeader>
+            <UnifiedCard variant="glass" hover="glow" padding="md" className="text-center">
+              <UnifiedCardHeader>
                 <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mb-4">
                   <Award className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle className="text-lg">التميز</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-sm">
+                <UnifiedCardTitle className="text-lg">التميز</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent>
+                <UnifiedCardDescription className="text-sm">
                   نسعى للتميز في كل خدمة نقدمها ونلتزم بأعلى معايير الجودة
-                </CardDescription>
-              </CardContent>
-            </Card>
+                </UnifiedCardDescription>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </div>
         </div>
       </section>
@@ -332,8 +323,8 @@ const About = () => {
       {/* CTA Section */}
       <section className="py-20 px-4 bg-background/50">
         <div className="container mx-auto max-w-4xl text-center">
-          <Card className="border-0 gradient-bg-accent backdrop-blur-sm">
-            <CardContent className="p-12">
+          <UnifiedCard variant="luxury" padding="xl">
+            <UnifiedCardContent>
               <div className="space-y-6">
                 <h2 className="text-3xl font-bold">
                   ابدأ رحلتك معنا اليوم
@@ -345,21 +336,19 @@ const About = () => {
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                   <Link to="/auth">
-                    <Button size="lg" className="bg-gradient-primary">
-                      <Heart className="w-5 h-5 mr-2" />
+                    <UnifiedButton variant="hero" size="lg" leftIcon={<Heart className="w-5 h-5" />} rightIcon={<ArrowRight className="w-5 h-5" />}>
                       ابدأ مجاناً الآن
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button>
+                    </UnifiedButton>
                   </Link>
-                  <Button variant="outline" size="lg" asChild>
-                    <Link to="/products">
+                  <Link to="/products">
+                    <UnifiedButton variant="outline" size="lg">
                       استكشف المنتجات
-                    </Link>
-                  </Button>
+                    </UnifiedButton>
+                  </Link>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </div>
       </section>
     </div>
