@@ -950,9 +950,9 @@ export const AffiliateStoreManager = ({
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                           {[
                             { value: 'cyberpunk', label: 'Cyberpunk', colors: 'من السماوي إلى الوردي' },
-                            { value: 'neon', label: 'Neon', colors: 'من الأخضر النيون إلى الأزرق' },
+                            { value: 'neon-tokyo', label: 'Neon Tokyo', colors: 'من الأخضر النيون إلى الأزرق' },
                             { value: 'matrix', label: 'Matrix', colors: 'من الأخضر الداكن إلى الأسود' },
-                            { value: 'quantum', label: 'Quantum', colors: 'من البنفسجي إلى الذهبي' }
+                            { value: 'synthwave', label: 'Synthwave', colors: 'من الوردي إلى البنفسجي' }
                           ].map(theme => (
                             <Card
                               key={theme.value}
