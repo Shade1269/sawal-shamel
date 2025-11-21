@@ -465,11 +465,11 @@ const DesignSystemShowcase: React.FC = () => {
             </UnifiedCardHeader>
             <UnifiedCardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="glass-card h-32 flex items-center justify-center">
-                  <span className="font-bold elegant-text">Glass Card</span>
+                <div className="glass-card h-32 rounded-full flex items-center justify-center">
+                  <span className="font-bold text-foreground">Glass Card</span>
                 </div>
-                <div className="glass-card-strong h-32 flex items-center justify-center">
-                  <span className="font-bold elegant-text">Glass Card Strong</span>
+                <div className="glass-card-strong h-32 rounded-full flex items-center justify-center">
+                  <span className="font-bold text-foreground">Glass Card Strong</span>
                 </div>
               </div>
             </UnifiedCardContent>
@@ -483,17 +483,32 @@ const DesignSystemShowcase: React.FC = () => {
             </UnifiedCardHeader>
             <UnifiedCardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="interactive-lift bg-card border border-border rounded-lg p-6 text-center cursor-pointer">
-                  <p className="font-bold">Lift</p>
-                  <p className="text-sm text-muted-foreground mt-2">حرك الماوس</p>
+                <div className="interactive-lift bg-white dark:bg-card border border-border rounded-full p-8 text-center cursor-pointer shadow-sm">
+                  <div className="flex flex-col items-center justify-center space-y-2">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                      <Zap className="h-6 w-6 text-primary" />
+                    </div>
+                    <p className="font-bold text-foreground">Lift</p>
+                    <p className="text-xs text-muted-foreground">حرك الماوس</p>
+                  </div>
                 </div>
-                <div className="interactive-glow bg-card border border-border rounded-lg p-6 text-center cursor-pointer">
-                  <p className="font-bold">Glow</p>
-                  <p className="text-sm text-muted-foreground mt-2">حرك الماوس</p>
+                <div className="interactive-glow bg-white dark:bg-card border border-border rounded-full p-8 text-center cursor-pointer shadow-sm">
+                  <div className="flex flex-col items-center justify-center space-y-2">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                      <Sparkles className="h-6 w-6 text-primary" />
+                    </div>
+                    <p className="font-bold text-foreground">Glow</p>
+                    <p className="text-xs text-muted-foreground">حرك الماوس</p>
+                  </div>
                 </div>
-                <div className="interactive-scale bg-card border border-border rounded-lg p-6 text-center cursor-pointer">
-                  <p className="font-bold">Scale</p>
-                  <p className="text-sm text-muted-foreground mt-2">حرك الماوس</p>
+                <div className="interactive-scale bg-white dark:bg-card border border-border rounded-full p-8 text-center cursor-pointer shadow-sm">
+                  <div className="flex flex-col items-center justify-center space-y-2">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                      <Star className="h-6 w-6 text-primary" />
+                    </div>
+                    <p className="font-bold text-foreground">Scale</p>
+                    <p className="text-xs text-muted-foreground">حرك الماوس</p>
+                  </div>
                 </div>
               </div>
             </UnifiedCardContent>
