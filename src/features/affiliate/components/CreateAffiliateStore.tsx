@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,13 +12,20 @@ interface CreateAffiliateStoreProps {
 }
 
 export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onStoreCreated }) => {
-  const { createStore, isCreating } = useAffiliateStore();
+  const { createStore, isCreating, store } = useAffiliateStore();
   const [formData, setFormData] = useState({
     store_name: '',
     bio: '',
     store_slug: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // تنفيذ التوجيه بعد نجاح إنشاء المتجر
+  useEffect(() => {
+    if (store && !isCreating) {
+      onStoreCreated?.();
+    }
+  }, [store, isCreating, onStoreCreated]);
 
   const validateSlug = (slug: string) => {
     // يجب أن يحتوي على أحرف إنجليزية فقط، أرقام، وشرطات
@@ -53,11 +60,7 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
     
     if (Object.keys(newErrors).length > 0) return;
 
-    createStore(formData, {
-      onSuccess: () => {
-        onStoreCreated?.();
-      }
-    });
+    createStore(formData);
   };
 
   const handleSlugChange = (value: string) => {
