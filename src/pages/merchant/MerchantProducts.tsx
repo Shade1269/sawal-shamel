@@ -115,11 +115,11 @@ const MerchantProducts = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20"><AlertCircle className="h-3 w-3 ml-1" />قيد المراجعة</Badge>;
+        return <UnifiedBadge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20"><AlertCircle className="h-3 w-3 ml-1" />قيد المراجعة</UnifiedBadge>;
       case 'approved':
-        return <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20"><CheckCircle className="h-3 w-3 ml-1" />موافق عليه</Badge>;
+        return <UnifiedBadge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20"><CheckCircle className="h-3 w-3 ml-1" />موافق عليه</UnifiedBadge>;
       case 'rejected':
-        return <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20"><XCircle className="h-3 w-3 ml-1" />مرفوض</Badge>;
+        return <UnifiedBadge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20"><XCircle className="h-3 w-3 ml-1" />مرفوض</UnifiedBadge>;
       default:
         return null;
     }
