@@ -62,6 +62,8 @@ import { StoreOwnerChatPanel } from './StoreOwnerChatPanel';
 import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams } from 'react-router-dom';
 import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
+import { useStoreGamingSettings } from '@/hooks/useStoreGamingSettings';
+import { Gamepad2, Zap } from 'lucide-react';
 
 interface AffiliateStoreManagerProps {
   store: {
@@ -121,6 +123,16 @@ export const AffiliateStoreManager = ({
   const { settings, updateSettings, uploadImage, refetch } = useStoreSettings(store.id);
   const { generateQR, downloadQR, qrCodeDataUrl, isGenerating } = useQRGenerator();
   const { analytics, loading: analyticsLoading } = useStoreAnalytics(store.id);
+  const { 
+    settings: gamingSettings, 
+    loading: gamingLoading, 
+    saving: gamingSaving,
+    updateFeature,
+    toggleGamingMode,
+    changeTheme: changeGamingTheme,
+    changePerformanceMode,
+    resetToDefaults: resetGamingDefaults
+  } = useStoreGamingSettings(store.id);
 
   const storeUrl = createStoreUrl(store.store_slug);
 
@@ -645,6 +657,7 @@ export const AffiliateStoreManager = ({
             <SelectContent>
               <SelectItem value="general">⚙️ الإعدادات العامة</SelectItem>
               <SelectItem value="appearance">🎨 المظهر</SelectItem>
+              <SelectItem value="gaming">🎮 Gaming Mode</SelectItem>
               <SelectItem value="hero">🖼️ القسم الرئيسي</SelectItem>
               <SelectItem value="banners">🖼️ إدارة البانرات</SelectItem>
               <SelectItem value="categories">📂 إدارة الفئات</SelectItem>
@@ -659,7 +672,7 @@ export const AffiliateStoreManager = ({
         </div>
 
         {/* تبويبات للشاشات الكبيرة */}
-        <TabsList className={`hidden md:grid w-full grid-cols-11 transition-colors duration-500 ${
+        <TabsList className={`hidden md:grid w-full grid-cols-12 transition-colors duration-500 ${
           isDarkMode 
             ? 'bg-slate-800/50 border-slate-700/50' 
             : 'bg-gradient-subtle border-border shadow-lg'
@@ -674,6 +687,11 @@ export const AffiliateStoreManager = ({
               ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
               : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
           }`}>المظهر</TabsTrigger>
+          <TabsTrigger value="gaming" className={`transition-colors duration-500 ${
+            isDarkMode 
+              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
+              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
+          }`}>Gaming</TabsTrigger>
           <TabsTrigger value="hero" className={`transition-colors duration-500 ${
             isDarkMode 
               ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
@@ -874,6 +892,208 @@ export const AffiliateStoreManager = ({
                   <Save className="h-4 w-4 ml-2" />
                   حفظ التغييرات
                 </Button>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="gaming" className="space-y-4 md:space-y-6">
+          <Card className={`rounded-none md:rounded-xl border-x-0 md:border-x transition-colors duration-500 ${
+            isDarkMode 
+              ? 'bg-slate-800/50 border-slate-700/50' 
+              : 'bg-white/95 border-slate-300/60 shadow-lg'
+          }`}>
+            <CardHeader className="p-4 md:p-6">
+              <CardTitle className={`flex items-center gap-2 text-base md:text-lg transition-colors duration-500 ${
+                isDarkMode ? 'text-white' : 'text-slate-900'
+              }`}>
+                <Gamepad2 className="h-4 w-4 md:h-5 md:w-5" />
+                إعدادات Gaming Mode
+              </CardTitle>
+              <CardDescription className={`text-xs md:text-sm transition-colors duration-500 ${
+                isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+              }`}>
+                فعّل التأثيرات التفاعلية والرسوم المتحركة المتقدمة لمتجرك
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6 p-4 md:p-6">
+              {gamingLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
+                  <p className="text-sm text-muted-foreground mt-2">جاري التحميل...</p>
+                </div>
+              ) : (
+                <>
+                  {/* تفعيل Gaming Mode */}
+                  <div className="flex items-center justify-between p-4 border rounded-lg bg-gradient-to-r from-purple-500/10 to-blue-500/10">
+                    <div>
+                      <h3 className="font-semibold flex items-center gap-2">
+                        <Zap className="h-5 w-5 text-yellow-500" />
+                        تفعيل Gaming Mode
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        قم بتفعيل التأثيرات الخيالية والتفاعلية في متجرك
+                      </p>
+                    </div>
+                    <Switch
+                      checked={gamingSettings.enabled}
+                      onCheckedChange={toggleGamingMode}
+                      disabled={gamingSaving}
+                    />
+                  </div>
+
+                  {gamingSettings.enabled && (
+                    <>
+                      {/* اختيار الثيم */}
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold">ثيم Gaming</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          {[
+                            { value: 'cyberpunk', label: 'Cyberpunk', colors: 'من السماوي إلى الوردي' },
+                            { value: 'neon', label: 'Neon', colors: 'من الأخضر النيون إلى الأزرق' },
+                            { value: 'matrix', label: 'Matrix', colors: 'من الأخضر الداكن إلى الأسود' },
+                            { value: 'quantum', label: 'Quantum', colors: 'من البنفسجي إلى الذهبي' }
+                          ].map(theme => (
+                            <Card
+                              key={theme.value}
+                              className={`cursor-pointer border-2 transition-all ${
+                                gamingSettings.theme === theme.value 
+                                  ? 'border-primary bg-primary/10 shadow-lg' 
+                                  : 'hover:border-primary/50'
+                              }`}
+                              onClick={() => changeGamingTheme(theme.value as any)}
+                            >
+                              <CardContent className="p-3 text-center">
+                                <p className="text-sm font-bold mb-1">{theme.label}</p>
+                                <p className="text-xs text-muted-foreground">{theme.colors}</p>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* مستوى الأداء */}
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold">مستوى الأداء</Label>
+                        <div className="grid grid-cols-3 gap-3">
+                          {[
+                            { value: 'low', label: 'منخفض', desc: 'أداء عالي، تأثيرات قليلة' },
+                            { value: 'medium', label: 'متوسط', desc: 'توازن بين الأداء والتأثيرات' },
+                            { value: 'high', label: 'عالي', desc: 'تأثيرات كاملة' }
+                          ].map(mode => (
+                            <Card
+                              key={mode.value}
+                              className={`cursor-pointer border-2 transition-all ${
+                                gamingSettings.performanceMode === mode.value 
+                                  ? 'border-primary bg-primary/10' 
+                                  : 'hover:border-primary/50'
+                              }`}
+                              onClick={() => changePerformanceMode(mode.value as any)}
+                            >
+                              <CardContent className="p-3 text-center">
+                                <p className="text-sm font-medium mb-1">{mode.label}</p>
+                                <p className="text-xs text-muted-foreground">{mode.desc}</p>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* التأثيرات الأساسية */}
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold">🎨 التأثيرات الأساسية</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {[
+                            { key: 'mouseTrail', label: 'Mouse Trail', desc: 'أثر الماوس المتوهج' },
+                            { key: 'tilt3D', label: '3D Tilt', desc: 'تأثير الإمالة ثلاثي الأبعاد' },
+                            { key: 'particles', label: 'Particles', desc: 'جزيئات متحركة' },
+                            { key: 'scanLines', label: 'Scan Lines', desc: 'خطوط المسح' },
+                            { key: 'gridBackground', label: 'Grid', desc: 'شبكة الخلفية' },
+                            { key: 'glowEffects', label: 'Glow', desc: 'تأثيرات التوهج' }
+                          ].map(feature => (
+                            <div key={feature.key} className="flex items-center justify-between p-3 border rounded-lg">
+                              <div>
+                                <p className="text-sm font-medium">{feature.label}</p>
+                                <p className="text-xs text-muted-foreground">{feature.desc}</p>
+                              </div>
+                              <Switch
+                                checked={gamingSettings.features[feature.key as keyof typeof gamingSettings.features] as boolean}
+                                onCheckedChange={(value) => updateFeature(feature.key as any, value)}
+                                disabled={gamingSaving}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* التأثيرات المتقدمة */}
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold">⚡ التأثيرات المتقدمة</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {[
+                            { key: 'holographic', label: 'Holographic', desc: 'تأثيرات هولوغرافية' },
+                            { key: 'laserClicks', label: 'Laser Clicks', desc: 'نقرات الليزر' },
+                            { key: 'nebulaBackground', label: 'Nebula', desc: 'خلفية سديمية' },
+                            { key: 'portalTransitions', label: 'Portal Transitions', desc: 'انتقالات بوابية' },
+                            { key: 'energyShield', label: 'Energy Shield', desc: 'درع طاقة' },
+                            { key: 'warpSpeed', label: 'Warp Speed', desc: 'سرعة الانتقال' }
+                          ].map(feature => (
+                            <div key={feature.key} className="flex items-center justify-between p-3 border rounded-lg">
+                              <div>
+                                <p className="text-sm font-medium">{feature.label}</p>
+                                <p className="text-xs text-muted-foreground">{feature.desc}</p>
+                              </div>
+                              <Switch
+                                checked={gamingSettings.features[feature.key as keyof typeof gamingSettings.features] as boolean}
+                                onCheckedChange={(value) => updateFeature(feature.key as any, value)}
+                                disabled={gamingSaving}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* التأثيرات الكونية */}
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold">🌌 التأثيرات الكونية</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {[
+                            { key: 'matrixRain', label: 'Matrix Rain', desc: 'مطر الماتريكس' },
+                            { key: 'auroraBorealis', label: 'Aurora', desc: 'الشفق القطبي' },
+                            { key: 'shootingStars', label: 'Shooting Stars', desc: 'نجوم ساقطة' },
+                            { key: 'cosmicDust', label: 'Cosmic Dust', desc: 'غبار كوني' },
+                            { key: 'magneticAttraction', label: 'Magnetic', desc: 'جذب مغناطيسي' },
+                            { key: 'physicsEngine', label: 'Physics', desc: 'محرك فيزيائي' }
+                          ].map(feature => (
+                            <div key={feature.key} className="flex items-center justify-between p-3 border rounded-lg">
+                              <div>
+                                <p className="text-sm font-medium">{feature.label}</p>
+                                <p className="text-xs text-muted-foreground">{feature.desc}</p>
+                              </div>
+                              <Switch
+                                checked={gamingSettings.features[feature.key as keyof typeof gamingSettings.features] as boolean}
+                                onCheckedChange={(value) => updateFeature(feature.key as any, value)}
+                                disabled={gamingSaving}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* إعادة تعيين */}
+                      <div className="pt-4 border-t">
+                        <Button 
+                          variant="outline" 
+                          onClick={resetGamingDefaults}
+                          disabled={gamingSaving}
+                          className="w-full md:w-auto"
+                        >
+                          إعادة تعيين للإعدادات الافتراضية
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </>
               )}
             </CardContent>
           </Card>
