@@ -2,6 +2,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreThemeProvider } from "@/components/store/ThemeProvider";
+import { GamingSettingsProvider, useGamingSettings } from "@/contexts/GamingSettingsContext";
+import { GamingMouseTrail } from "@/components/storefront/gaming/GamingMouseTrail";
+import { GamingParticles, GamingGridBackground, GamingScanLines } from "@/components/storefront/gaming/GamingParticles";
+import { MatrixRain } from "@/components/storefront/ultimate3/MatrixRain";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -197,7 +201,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     refetchOnWindowFocus: false,
   });
 
-  // تطبيق Gaming Mode على DOM
+  // تطبيق Gaming Mode على DOM و GamingContext
+  const { loadFromStore: loadGamingSettings } = useGamingSettings();
+  
   useEffect(() => {
     if (!affiliateStore) return;
 
@@ -217,10 +223,27 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         link.href = '/src/styles/gaming-themes.css';
         document.head.appendChild(link);
       }
+
+      // تطبيق الإعدادات على GamingContext
+      loadGamingSettings({
+        isGamingMode: true,
+        gamingTheme: gamingSettings.theme || 'cyberpunk',
+        performanceMode: gamingSettings.performanceMode || 'high',
+        enableMouseTrail: gamingSettings.features?.mouseTrail ?? true,
+        enable3DTilt: gamingSettings.features?.tilt3D ?? true,
+        enableParticles: gamingSettings.features?.particles ?? true,
+        enableScanLines: gamingSettings.features?.scanLines ?? true,
+        enableGridBackground: gamingSettings.features?.gridBackground ?? true,
+        enableParallax: gamingSettings.features?.parallax ?? true,
+        enableGlowEffects: gamingSettings.features?.glowEffects ?? true,
+        enableMatrixRain: gamingSettings.features?.matrixRain ?? false,
+      });
     } else {
       rootElement.removeAttribute('data-gaming-mode');
       rootElement.removeAttribute('data-gaming-theme');
       rootElement.removeAttribute('data-performance-mode');
+      
+      loadGamingSettings({ isGamingMode: false });
     }
 
     return () => {
@@ -228,7 +251,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       rootElement.removeAttribute('data-gaming-theme');
       rootElement.removeAttribute('data-performance-mode');
     };
-  }, [affiliateStore]);
+  }, [affiliateStore, loadGamingSettings]);
 
   // استخدام نظام السلة المحسّن مع تمرير storeSlug
   const { 
@@ -1207,9 +1230,25 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
       {/* Footer */}
       {affiliateStore && <ModernFooter store={affiliateStore} />}
+
+      {/* Gaming Mode Components */}
+      <GamingMouseTrail />
+      <GamingParticles />
+      <GamingGridBackground />
+      <GamingScanLines />
+      <MatrixRain />
       </div>
     </StoreThemeProvider>
   );
 };
 
-export default EnhancedStoreFront;
+// تغليف المكون بـ GamingSettingsProvider
+const EnhancedStoreFrontWrapper = (props: EnhancedStoreFrontProps) => {
+  return (
+    <GamingSettingsProvider>
+      <EnhancedStoreFront {...props} />
+    </GamingSettingsProvider>
+  );
+};
+
+export default EnhancedStoreFrontWrapper;
