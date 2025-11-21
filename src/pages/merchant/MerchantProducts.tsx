@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Package, Plus, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
@@ -139,53 +139,53 @@ const MerchantProducts = () => {
           <h1 className="text-3xl font-bold">إدارة المنتجات</h1>
           <p className="text-muted-foreground">إدارة منتجاتك والاطلاع على حالة الموافقة</p>
         </div>
-        <Button onClick={() => setShowAdd(true)}>
+        <UnifiedButton onClick={() => setShowAdd(true)}>
           <Plus className="h-4 w-4 ml-2" />
           إضافة منتج جديد
-        </Button>
+        </UnifiedButton>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">جميع المنتجات</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium">جميع المنتجات</UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">{stats.all}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">قيد المراجعة</CardTitle>
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardContent>
+        </UnifiedCard>
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium">قيد المراجعة</UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">موافق عليها</CardTitle>
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardContent>
+        </UnifiedCard>
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium">موافق عليها</UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">مرفوضة</CardTitle>
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardContent>
+        </UnifiedCard>
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium">مرفوضة</UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
-      <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle>قائمة المنتجات</CardTitle>
-          <CardDescription>عرض وإدارة منتجاتك</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <UnifiedCard variant="glass">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle>قائمة المنتجات</UnifiedCardTitle>
+          <UnifiedCardDescription>عرض وإدارة منتجاتك</UnifiedCardDescription>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="all">الكل ({stats.all})</TabsTrigger>
@@ -207,7 +207,7 @@ const MerchantProducts = () => {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {products.map((product) => (
-                    <Card key={product.id} className="overflow-hidden">
+                    <UnifiedCard key={product.id} variant="glass" hover="lift">
                       <div className="aspect-square bg-muted relative">
                         {product.images?.length > 0 && (
                           <img
@@ -221,11 +221,11 @@ const MerchantProducts = () => {
                         </div>
                         {!product.is_active && (
                           <div className="absolute top-2 left-2">
-                            <Badge variant="outline" className="bg-gray-500/10">غير نشط</Badge>
+                            <UnifiedBadge variant="outline" className="bg-gray-500/10">غير نشط</UnifiedBadge>
                           </div>
                         )}
                       </div>
-                      <CardContent className="p-4 space-y-2">
+                      <UnifiedCardContent className="p-4 space-y-2">
                         <h3 className="font-semibold line-clamp-1">{product.title}</h3>
                         <p className="text-sm text-muted-foreground line-clamp-2">
                           {product.description}
@@ -234,7 +234,7 @@ const MerchantProducts = () => {
                         {/* معلومات التسعير */}
                         <div className="space-y-1 pt-2 border-t">
                           {product.merchant_base_price_sar ? (
-                            <>
+                              <>
                               <div className="flex items-center justify-between text-sm">
                                 <span className="text-muted-foreground">سعرك الأساسي:</span>
                                 <span className="font-bold text-green-600">
@@ -268,25 +268,25 @@ const MerchantProducts = () => {
                           </div>
                         )}
                         <div className="flex gap-2 pt-2">
-                          <Button
+                          <UnifiedButton
                             variant="outline"
                             size="sm"
-                            className="flex-1"
+                            fullWidth
                             onClick={() => toast({ title: 'قريباً', description: 'صفحة تعديل المنتج قيد التطوير' })}
                             disabled={product.approval_status !== 'pending'}
                           >
                             تعديل
-                          </Button>
+                          </UnifiedButton>
                         </div>
-                      </CardContent>
-                    </Card>
+                      </UnifiedCardContent>
+                    </UnifiedCard>
                   ))}
                 </div>
               )}
             </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       <Dialog open={showAdd} onOpenChange={setShowAdd}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">

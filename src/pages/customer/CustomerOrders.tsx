@@ -3,9 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useCustomerAuth } from '@/hooks/useCustomerAuth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
 import { ReturnRequestDialog } from '@/components/orders';
 import { 
@@ -168,14 +168,14 @@ const CustomerOrders: React.FC = () => {
               </div>
             </div>
             
-            <Button
+            <UnifiedButton
               variant="ghost"
               onClick={() => navigate(`/${slug}`)}
               className="flex items-center gap-2"
             >
               <ArrowRight className="w-4 h-4" />
               العودة للمتجر
-            </Button>
+            </UnifiedButton>
           </div>
         </div>
       </header>
@@ -188,29 +188,29 @@ const CustomerOrders: React.FC = () => {
               <h2 className="text-xl font-semibold">
                 {orders.length} {orders.length === 1 ? 'طلب' : 'طلبات'}
               </h2>
-              <Button 
+              <UnifiedButton 
                 variant="outline" 
                 size="sm"
                 onClick={() => refetch()}
               >
                 تحديث
-              </Button>
+              </UnifiedButton>
             </div>
 
             {orders.map((order) => {
               const StatusInfo = statusConfig[order.payment_status as keyof typeof statusConfig] || statusConfig.PENDING;
               
               return (
-                <Card key={order.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <CardHeader className="bg-muted/50">
+                <UnifiedCard key={order.id} variant="glass" hover="lift">
+                  <UnifiedCardHeader className="bg-muted/50">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">
+                      <UnifiedCardTitle className="text-lg">
                         طلب #{order.order_number}
-                      </CardTitle>
-                      <Badge className={`${StatusInfo.color} text-white`}>
+                      </UnifiedCardTitle>
+                      <UnifiedBadge className={`${StatusInfo.color} text-white`}>
                         <StatusInfo.icon className="w-4 h-4 ml-1" />
                         {StatusInfo.label}
-                      </Badge>
+                      </UnifiedBadge>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
                       <span className="flex items-center gap-1">
@@ -227,9 +227,9 @@ const CustomerOrders: React.FC = () => {
                         </span>
                       )}
                     </div>
-                  </CardHeader>
+                  </UnifiedCardHeader>
 
-                  <CardContent className="p-6 space-y-4">
+                  <UnifiedCardContent className="p-6 space-y-4">
                     {/* Order Items */}
                     <div className="space-y-3">
                       {order.items.map((item, idx) => (
@@ -286,23 +286,23 @@ const CustomerOrders: React.FC = () => {
                     {order.payment_status === 'DELIVERED' && (
                       <>
                         <Separator />
-                        <Button
+                        <UnifiedButton
                           variant="outline"
-                          className="w-full"
+                          fullWidth
                           onClick={() => setSelectedOrderForReturn({ id: order.id, amount: order.total_amount_sar })}
                         >
                           <RotateCcw className="w-4 h-4 ml-2" />
                           طلب إرجاع الطلب
-                        </Button>
+                        </UnifiedButton>
                       </>
                     )}
-                  </CardContent>
-                </Card>
+                  </UnifiedCardContent>
+                </UnifiedCard>
               );
             })}
           </div>
         ) : (
-          <Card className="text-center p-12">
+          <UnifiedCard variant="glass" className="text-center p-12">
             <div className="space-y-4">
               <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto">
                 <Package className="w-12 h-12 text-muted-foreground" />
@@ -312,13 +312,13 @@ const CustomerOrders: React.FC = () => {
                 <p className="text-muted-foreground mb-6">
                   لم تقم بتقديم أي طلبات بعد. ابدأ التسوق الآن!
                 </p>
-                <Button onClick={() => navigate(`/${slug}`)}>
+                <UnifiedButton onClick={() => navigate(`/${slug}`)}>
                   <ShoppingBag className="w-4 h-4 mr-2" />
                   تصفح المنتجات
-                </Button>
+                </UnifiedButton>
               </div>
             </div>
-          </Card>
+          </UnifiedCard>
         )}
       </main>
 
