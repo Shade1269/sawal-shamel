@@ -209,17 +209,17 @@ const DesignSystemShowcase: React.FC = () => {
           </UnifiedCard>
 
           {/* Glass Buttons */}
-          <UnifiedCard variant="glass-strong" padding="lg">
+          <UnifiedCard variant="default" padding="lg" className="bg-muted border-2 border-white">
             <UnifiedCardHeader>
-              <UnifiedCardTitle>Glass Variants</UnifiedCardTitle>
-              <UnifiedCardDescription>أزرار الزجاج الشفاف</UnifiedCardDescription>
+              <UnifiedCardTitle className="text-white">Glass Variants</UnifiedCardTitle>
+              <UnifiedCardDescription className="text-white/70">أزرار الزجاج الشفاف</UnifiedCardDescription>
             </UnifiedCardHeader>
             <UnifiedCardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <UnifiedButton variant="glass" fullWidth>
+                <UnifiedButton variant="glass" fullWidth className="border-2 border-white text-white font-bold">
                   Glass Button
                 </UnifiedButton>
-                <UnifiedButton variant="glass-primary" fullWidth>
+                <UnifiedButton variant="glass-primary" fullWidth className="border-2 border-white text-white font-bold">
                   Glass Primary
                 </UnifiedButton>
               </div>
