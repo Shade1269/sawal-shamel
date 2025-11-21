@@ -50,6 +50,32 @@ export interface GamingSettings {
   enableEnergyShield: boolean;
   enableWarpSpeed: boolean;
 
+  // ULTIMATE 3.0 Effects
+  // Reality Distortion
+  enableMatrixRain: boolean;
+  enableGlitchEffect: boolean;
+  enableTimeDilation: boolean;
+
+  // Magnetic & Physics
+  enableMagneticAttraction: boolean;
+  enablePhysicsEngine: boolean;
+  enableGravitySimulation: boolean;
+
+  // Cosmic Phenomena
+  enableAuroraBorealis: boolean;
+  enableShootingStars: boolean;
+  enableBlackHole: boolean;
+  enableCosmicDust: boolean;
+
+  // Weather System
+  enableWeatherEffects: boolean;
+  weatherType: 'rain' | 'snow' | 'lightning' | 'heat' | 'clear' | 'auto';
+
+  // Social Proof
+  enableLiveNotifications: boolean;
+  enableVisitorCounter: boolean;
+  enableHeatmap: boolean;
+
   // Advanced
   enableAnimations: boolean;
   reducedMotion: boolean;
@@ -105,6 +131,32 @@ const defaultSettings: GamingSettings = {
   enableQuantumGlitch: false, // قد يكون مزعج للبعض
   enableEnergyShield: true,
   enableWarpSpeed: true,
+
+  // ULTIMATE 3.0 Effects - خيال علمي كامل!
+  // Reality Distortion
+  enableMatrixRain: true,
+  enableGlitchEffect: true,
+  enableTimeDilation: false, // مزعج للبعض
+
+  // Magnetic & Physics
+  enableMagneticAttraction: true,
+  enablePhysicsEngine: true,
+  enableGravitySimulation: false, // للأداء
+
+  // Cosmic Phenomena
+  enableAuroraBorealis: true,
+  enableShootingStars: true,
+  enableBlackHole: true,
+  enableCosmicDust: true,
+
+  // Weather System
+  enableWeatherEffects: true,
+  weatherType: 'auto', // يتغير تلقائيًا
+
+  // Social Proof
+  enableLiveNotifications: true,
+  enableVisitorCounter: true,
+  enableHeatmap: false, // قد يكون ثقيل
 
   // Advanced
   enableAnimations: true,

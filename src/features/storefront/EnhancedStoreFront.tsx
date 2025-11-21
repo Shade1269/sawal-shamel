@@ -51,6 +51,16 @@ import {
   NebulaStarsBackground,
 } from "@/components/storefront/ultra";
 
+// ULTIMATE 3.0 Effects
+import {
+  MatrixRain,
+  WeatherSystem,
+  CosmicEffects,
+  LiveNotifications,
+  MagneticAttraction,
+  PhysicsFloatingCards,
+} from "@/components/storefront/ultimate3";
+
 interface Product {
   id: string;
   title: string;
@@ -528,6 +538,24 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         {/* Ultra Effects (Sci-Fi) */}
         {isGamingMode && settings.enableNebulaBackground && <NebulaStarsBackground />}
         {isGamingMode && settings.enableLaserClicks && <LaserClickEffect />}
+
+        {/* ULTIMATE 3.0 EFFECTS - خيال علمي كامل! */}
+        {/* Reality Distortion */}
+        {isGamingMode && settings.enableMatrixRain && <MatrixRain />}
+
+        {/* Cosmic Phenomena */}
+        {isGamingMode && (settings.enableAuroraBorealis || settings.enableShootingStars || settings.enableBlackHole || settings.enableCosmicDust) && <CosmicEffects />}
+
+        {/* Weather System */}
+        {isGamingMode && settings.enableWeatherEffects && (
+          <WeatherSystem weather={settings.weatherType === 'auto' ? undefined : settings.weatherType} autoChange={settings.weatherType === 'auto'} />
+        )}
+
+        {/* Social Proof Live */}
+        {isGamingMode && settings.enableLiveNotifications && <LiveNotifications />}
+
+        {/* Magnetic Attraction */}
+        {isGamingMode && settings.enableMagneticAttraction && <MagneticAttraction />}
 
         {/* Gaming Theme Switcher */}
         {isGamingMode && <GamingThemeSwitcher />}
