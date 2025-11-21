@@ -122,8 +122,8 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const { customer, isAuthenticated } = useCustomerAuth();
 
   // Gaming Settings
-  const { settings, toggleGamingMode, loadFromStore } = useGamingSettings();
-  const isGamingMode = settings.isGamingMode;
+  const { settings: gamingContextSettings, toggleGamingMode, loadFromStore: loadGamingSettings } = useGamingSettings();
+  const isGamingMode = gamingContextSettings.isGamingMode;
 
   // UI State
   const [showCart, setShowCart] = useState(false);
@@ -173,7 +173,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     clearCart,
   } = useIsolatedStoreCart(affiliateStore?.id || "", storeSlug);
 
-  // تطبيق Gaming Mode على DOM
+  // تطبيق Gaming Mode على DOM و Context
   useEffect(() => {
     if (!affiliateStore) return;
 
@@ -181,9 +181,30 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     const rootElement = document.documentElement;
 
     if (gamingSettings?.enabled) {
+      // تطبيق على DOM
       rootElement.setAttribute('data-gaming-mode', 'true');
       rootElement.setAttribute('data-gaming-theme', gamingSettings.theme || 'cyberpunk');
       rootElement.setAttribute('data-performance-mode', gamingSettings.performanceMode || 'high');
+      
+      // تطبيق على Context
+      loadGamingSettings({
+        isGamingMode: true,
+        gamingTheme: gamingSettings.theme as any || 'cyberpunk',
+        performanceMode: gamingSettings.performanceMode as any || 'high',
+        enableMouseTrail: gamingSettings.features?.mouseTrail === true,
+        enable3DTilt: gamingSettings.features?.tilt3D === true,
+        enableParticles: gamingSettings.features?.particles === true,
+        enableScanLines: gamingSettings.features?.scanLines === true,
+        enableGridBackground: gamingSettings.features?.gridBackground === true,
+        enableParallax: gamingSettings.features?.parallax === true,
+        enableGlowEffects: gamingSettings.features?.glowEffects === true,
+        enableHolographic: gamingSettings.features?.holographic === true,
+        enableLaserClicks: gamingSettings.features?.laserClicks === true,
+        enableNebulaBackground: gamingSettings.features?.nebulaBackground === true,
+        enablePortalTransitions: gamingSettings.features?.portalTransitions === true,
+        enableMatrixRain: gamingSettings.features?.matrixRain === true,
+        enableWeatherEffects: gamingSettings.features?.weatherEffects === true,
+      });
       
       // تحميل CSS الخاص بـ gaming themes
       if (!document.getElementById('gaming-themes-css')) {
@@ -197,6 +218,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       rootElement.removeAttribute('data-gaming-mode');
       rootElement.removeAttribute('data-gaming-theme');
       rootElement.removeAttribute('data-performance-mode');
+      
+      // تعطيل في Context
+      loadGamingSettings({ isGamingMode: false });
     }
 
     return () => {
@@ -204,7 +228,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       rootElement.removeAttribute('data-gaming-theme');
       rootElement.removeAttribute('data-performance-mode');
     };
-  }, [affiliateStore]);
+  }, [affiliateStore, loadGamingSettings]);
 
   // Fetch products
   const { data: products, isLoading: productsLoading } = useQuery({
@@ -332,7 +356,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       const dbSettings = affiliateStore.gaming_settings;
       const features = dbSettings.features || {};
 
-      loadFromStore({
+      loadGamingSettings({
         isGamingMode: Boolean(dbSettings.enabled ?? true),
         gamingTheme: dbSettings.theme as any || 'cyberpunk',
         performanceMode: dbSettings.performanceMode as any || 'high',
@@ -373,7 +397,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         enableHeatmap: Boolean(features.heatmap ?? false),
       });
     }
-  }, [affiliateStore?.gaming_settings, loadFromStore]);
+  }, [affiliateStore?.gaming_settings, loadGamingSettings]);
 
   // Calculate cart totals
   const cartTotal = isolatedCart?.total || 0;
@@ -539,7 +563,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // Loading state
   if (storeLoading || productsLoading) {
     return isGamingMode ? (
-      <div className="min-h-screen gaming-store-bg" data-gaming-theme={settings.gamingTheme}>
+      <div className="min-h-screen gaming-store-bg" data-gaming-theme={gamingContextSettings.gamingTheme}>
         <GamingLoadingScreen />
       </div>
     ) : (
@@ -581,41 +605,41 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       <div
         className={`min-h-screen ${isGamingMode ? 'gaming-store-bg' : 'bg-background'}`}
         dir="rtl"
-        data-gaming-theme={isGamingMode ? settings.gamingTheme : undefined}
+        data-gaming-theme={isGamingMode ? gamingContextSettings.gamingTheme : undefined}
       >
         {/* Gaming Background Effects */}
-        {isGamingMode && settings.enableGridBackground && <GamingGridBackground />}
-        {isGamingMode && settings.enableParticles && <GamingParticles />}
-        {isGamingMode && settings.enableScanLines && <GamingScanLines />}
-        {isGamingMode && settings.enableMouseTrail && <GamingMouseTrail />}
+        {isGamingMode && gamingContextSettings.enableGridBackground && <GamingGridBackground />}
+        {isGamingMode && gamingContextSettings.enableParticles && <GamingParticles />}
+        {isGamingMode && gamingContextSettings.enableScanLines && <GamingScanLines />}
+        {isGamingMode && gamingContextSettings.enableMouseTrail && <GamingMouseTrail />}
 
         {/* Ultra Effects (Sci-Fi) */}
-        {isGamingMode && settings.enableNebulaBackground && <NebulaStarsBackground />}
-        {isGamingMode && settings.enableLaserClicks && <LaserClickEffect />}
+        {isGamingMode && gamingContextSettings.enableNebulaBackground && <NebulaStarsBackground />}
+        {isGamingMode && gamingContextSettings.enableLaserClicks && <LaserClickEffect />}
 
         {/* ULTIMATE 3.0 EFFECTS - خيال علمي كامل! */}
         {/* Reality Distortion */}
-        {isGamingMode && settings.enableMatrixRain && <MatrixRain />}
+        {isGamingMode && gamingContextSettings.enableMatrixRain && <MatrixRain />}
 
         {/* Cosmic Phenomena */}
-        {isGamingMode && (settings.enableAuroraBorealis || settings.enableShootingStars || settings.enableBlackHole || settings.enableCosmicDust) && <CosmicEffects />}
+        {isGamingMode && (gamingContextSettings.enableAuroraBorealis || gamingContextSettings.enableShootingStars || gamingContextSettings.enableBlackHole || gamingContextSettings.enableCosmicDust) && <CosmicEffects />}
 
         {/* Weather System */}
-        {isGamingMode && settings.enableWeatherEffects && (
-          <WeatherSystem weather={settings.weatherType === 'auto' ? undefined : settings.weatherType} autoChange={settings.weatherType === 'auto'} />
+        {isGamingMode && gamingContextSettings.enableWeatherEffects && (
+          <WeatherSystem weather={gamingContextSettings.weatherType === 'auto' ? undefined : gamingContextSettings.weatherType} autoChange={gamingContextSettings.weatherType === 'auto'} />
         )}
 
         {/* Social Proof Live */}
-        {isGamingMode && settings.enableLiveNotifications && <LiveNotifications />}
+        {isGamingMode && gamingContextSettings.enableLiveNotifications && <LiveNotifications />}
 
         {/* Magnetic Attraction */}
-        {isGamingMode && settings.enableMagneticAttraction && <MagneticAttraction />}
+        {isGamingMode && gamingContextSettings.enableMagneticAttraction && <MagneticAttraction />}
 
         {/* AI Assistant Avatar */}
-        {isGamingMode && settings.performanceMode === 'ultra' && <AIAssistantAvatar />}
+        {isGamingMode && gamingContextSettings.performanceMode === 'ultra' && <AIAssistantAvatar />}
 
         {/* Gesture Controls */}
-        {isGamingMode && settings.performanceMode !== 'low' && <GestureControls />}
+        {isGamingMode && gamingContextSettings.performanceMode !== 'low' && <GestureControls />}
 
         {/* Gaming Theme Switcher */}
         {isGamingMode && <GamingThemeSwitcher />}
