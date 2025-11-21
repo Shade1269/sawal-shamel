@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, ShieldCheck } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { supabase } from '@/integrations/supabase/client';
 import { getHomeRouteForRole } from '@/hooks/getHomeRouteForRole';
 
@@ -112,8 +112,8 @@ const AuthCallbackPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center gradient-bg-accent p-4">
-      <Card className="w-full max-w-md shadow-xl backdrop-blur-sm bg-card/80 text-right">
-        <CardHeader className="space-y-3 text-center">
+      <UnifiedCard variant="glass" className="w-full max-w-md shadow-glow">
+        <UnifiedCardHeader className="space-y-3 text-center">
           <div className={`inline-flex h-12 w-12 items-center justify-center rounded-full ${state === 'error' ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary'}`}>
             {state === 'pending' ? (
               <Loader2 className="h-6 w-6 animate-spin" />
@@ -121,21 +121,21 @@ const AuthCallbackPage = () => {
               <ShieldCheck className="h-6 w-6" />
             )}
           </div>
-          <CardTitle className="text-2xl font-bold">
+          <UnifiedCardTitle className="text-2xl font-bold">
             {state === 'error' ? 'تعذر إكمال تسجيل الدخول' : 'تأكيد الجلسة'}
-          </CardTitle>
-          <CardDescription className="leading-relaxed">
+          </UnifiedCardTitle>
+          <UnifiedCardDescription className="leading-relaxed">
             {message}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex justify-center">
+          </UnifiedCardDescription>
+        </UnifiedCardHeader>
+        <UnifiedCardContent className="flex justify-center">
           {state !== 'pending' && (
-            <Button onClick={handleBackHome} variant={state === 'error' ? 'destructive' : 'default'}>
+            <UnifiedButton onClick={handleBackHome} variant={state === 'error' ? 'danger' : 'primary'}>
               العودة للرئيسية
-            </Button>
+            </UnifiedButton>
           )}
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };
