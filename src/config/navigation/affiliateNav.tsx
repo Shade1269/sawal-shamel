@@ -10,7 +10,8 @@ import {
   Tag,
   TrendingUp,
   ExternalLink,
-  Search
+  Search,
+  Zap
 } from 'lucide-react';
 
 export const affiliateNavigationSections = [
@@ -53,6 +54,14 @@ export const affiliateNavigationSections = [
         href: '/affiliate/store/settings',
         icon: Settings,
         color: '221 83% 53%',
+      },
+      {
+        id: 'gaming-settings',
+        title: 'Gaming Mode',
+        href: '/affiliate/store/gaming',
+        icon: Zap,
+        color: '221 83% 53%',
+        badge: 'جديد',
       },
       {
         id: 'coupons',

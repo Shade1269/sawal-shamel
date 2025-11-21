@@ -90,6 +90,12 @@ interface AffiliateStore {
   total_orders: number;
   profile_id: string;
   is_active: boolean;
+  gaming_settings?: {
+    enabled: boolean;
+    theme: string;
+    performanceMode: string;
+    features: Record<string, boolean | number>;
+  };
 }
 
 interface EnhancedStoreFrontProps {
@@ -104,7 +110,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const { customer, isAuthenticated } = useCustomerAuth();
 
   // Gaming Settings
-  const { settings, toggleGamingMode } = useGamingSettings();
+  const { settings, toggleGamingMode, loadFromStore } = useGamingSettings();
   const isGamingMode = settings.isGamingMode;
 
   // UI State
@@ -274,6 +280,36 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     enabled: !!affiliateStore?.id,
     staleTime: 5 * 60 * 1000,
   });
+
+  // Load gaming settings from store database
+  useEffect(() => {
+    if (affiliateStore?.gaming_settings) {
+      const dbSettings = affiliateStore.gaming_settings;
+      const features = dbSettings.features || {};
+
+      loadFromStore({
+        isGamingMode: dbSettings.enabled ?? true,
+        gamingTheme: dbSettings.theme as any || 'cyberpunk',
+        performanceMode: dbSettings.performanceMode as any || 'high',
+        enableMouseTrail: features.mouseTrail ?? true,
+        enable3DTilt: features.tilt3D ?? true,
+        enableParticles: features.particles ?? true,
+        enableScanLines: features.scanLines ?? true,
+        enableGridBackground: features.gridBackground ?? true,
+        enableParallax: features.parallax ?? true,
+        enableGlowEffects: features.glowEffects ?? true,
+        enableSoundEffects: features.soundEffects ?? false,
+        soundVolume: features.soundVolume ?? 50,
+        enableHolographic: features.holographic ?? true,
+        enableLaserClicks: features.laserClicks ?? true,
+        enableNebulaBackground: features.nebulaBackground ?? true,
+        enablePortalTransitions: features.portalTransitions ?? true,
+        enableQuantumGlitch: features.quantumGlitch ?? false,
+        enableEnergyShield: features.energyShield ?? true,
+        enableWarpSpeed: features.warpSpeed ?? true,
+      });
+    }
+  }, [affiliateStore?.gaming_settings, loadFromStore]);
 
   // Calculate cart totals
   const cartTotal = isolatedCart?.total || 0;

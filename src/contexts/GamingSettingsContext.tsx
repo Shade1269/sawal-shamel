@@ -62,6 +62,7 @@ interface GamingSettingsContextType {
   setTheme: (theme: GamingTheme) => void;
   setPerformanceMode: (mode: PerformanceMode) => void;
   resetToDefaults: () => void;
+  loadFromStore: (storeSettings: Partial<GamingSettings>) => void;
 }
 
 const defaultSettings: GamingSettings = {
@@ -245,6 +246,13 @@ export const GamingSettingsProvider: React.FC<{ children: React.ReactNode }> = (
     setSettings(defaultSettings);
   };
 
+  const loadFromStore = (storeSettings: Partial<GamingSettings>) => {
+    setSettings(prev => ({
+      ...prev,
+      ...storeSettings,
+    }));
+  };
+
   const value: GamingSettingsContextType = {
     settings,
     updateSetting,
@@ -252,6 +260,7 @@ export const GamingSettingsProvider: React.FC<{ children: React.ReactNode }> = (
     setTheme,
     setPerformanceMode,
     resetToDefaults,
+    loadFromStore,
   };
 
   return (

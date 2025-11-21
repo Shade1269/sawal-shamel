@@ -36,6 +36,7 @@ const PaymentCallback = lazy(() => import("./pages/PaymentCallback").then(m => (
 const MarketerHomePage = lazy(() => import("./pages/home/MarketerHome"));
 const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
 const AffiliateStoreSettingsPage = lazy(() => import("./pages/affiliate/store/Settings"));
+const GamingSettingsPage = lazy(() => import("./pages/affiliate/store/GamingSettings"));
 const StoreSetup = lazy(() => import("./pages/affiliate/store/StoreSetup"));
 const StoreAuth = lazy(() => import("./pages/StoreAuth"));
 const CustomerOrders = lazy(() => import("./pages/customer/CustomerOrders"));
@@ -191,6 +192,7 @@ const App = () => {
                 <Route path="home" element={<Navigate to="../" replace />} />
                 <Route path="storefront" element={<AffiliateStoreFront />} />
                 <Route path="store/settings" element={<AffiliateStoreSettingsPage />} />
+                <Route path="store/gaming" element={<GamingSettingsPage />} />
                 <Route path="store/setup" element={<StoreSetup />} />
                 <Route path="orders" element={<UnifiedAffiliateOrders />} />
                 <Route path="analytics" element={<AffiliateAnalyticsPage />} />
