@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UnifiedButton, UnifiedCard, UnifiedCardHeader, UnifiedCardTitle, UnifiedCardDescription, UnifiedCardContent } from '@/components/design-system';
+import { UnifiedButton, UnifiedCard, UnifiedCardHeader, UnifiedCardTitle, UnifiedCardDescription, UnifiedCardContent, UnifiedSelect, UnifiedSelectTrigger, UnifiedSelectValue, UnifiedSelectContent, UnifiedSelectItem } from '@/components/design-system';
 import { ThemeSwitcher } from '@/components/theme';
 import { Heart, Star, Sparkles, Zap, Shield, Award, Moon, Sun } from 'lucide-react';
 
@@ -10,6 +10,7 @@ import { Heart, Star, Sparkles, Zap, Shield, Award, Moon, Sun } from 'lucide-rea
 
 const DesignSystemShowcase: React.FC = () => {
   const [clickedButton, setClickedButton] = useState<string>('');
+  const [selectedValue, setSelectedValue] = useState<string>('');
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
       return document.documentElement.classList.contains('dark');
@@ -416,6 +417,166 @@ const DesignSystemShowcase: React.FC = () => {
               </UnifiedCard>
             </div>
           </div>
+        </section>
+
+        {/* Dropdown Menus Section */}
+        <section className="space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold heading-ar mb-2">القوائم المنسدلة - Dropdown Menus</h2>
+            <p className="text-muted-foreground elegant-text">
+              جميع أنماط القوائم المنسدلة المتاحة
+            </p>
+          </div>
+
+          {/* Default Select */}
+          <UnifiedCard variant="default" padding="lg" className="bg-muted border-2 border-white">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle className="text-white">Default Select</UnifiedCardTitle>
+              <UnifiedCardDescription className="text-white/70">القائمة المنسدلة الافتراضية</UnifiedCardDescription>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <UnifiedSelect value={selectedValue} onValueChange={setSelectedValue}>
+                  <UnifiedSelectTrigger variant="default">
+                    <UnifiedSelectValue placeholder="اختر خيار" />
+                  </UnifiedSelectTrigger>
+                  <UnifiedSelectContent>
+                    <UnifiedSelectItem value="option1">الخيار الأول</UnifiedSelectItem>
+                    <UnifiedSelectItem value="option2">الخيار الثاني</UnifiedSelectItem>
+                    <UnifiedSelectItem value="option3">الخيار الثالث</UnifiedSelectItem>
+                    <UnifiedSelectItem value="option4">الخيار الرابع</UnifiedSelectItem>
+                  </UnifiedSelectContent>
+                </UnifiedSelect>
+
+                <UnifiedSelect>
+                  <UnifiedSelectTrigger variant="default" size="sm">
+                    <UnifiedSelectValue placeholder="Small Size" />
+                  </UnifiedSelectTrigger>
+                  <UnifiedSelectContent>
+                    <UnifiedSelectItem value="small1">Small Option 1</UnifiedSelectItem>
+                    <UnifiedSelectItem value="small2">Small Option 2</UnifiedSelectItem>
+                    <UnifiedSelectItem value="small3">Small Option 3</UnifiedSelectItem>
+                  </UnifiedSelectContent>
+                </UnifiedSelect>
+              </div>
+            </UnifiedCardContent>
+          </UnifiedCard>
+
+          {/* Glass Select */}
+          <UnifiedCard variant="glass" padding="lg">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle>Glass Select</UnifiedCardTitle>
+              <UnifiedCardDescription>قائمة زجاجية شفافة</UnifiedCardDescription>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <UnifiedSelect>
+                  <UnifiedSelectTrigger variant="glass">
+                    <UnifiedSelectValue placeholder="Glass Variant" />
+                  </UnifiedSelectTrigger>
+                  <UnifiedSelectContent>
+                    <UnifiedSelectItem value="glass1">Glass Option 1</UnifiedSelectItem>
+                    <UnifiedSelectItem value="glass2">Glass Option 2</UnifiedSelectItem>
+                    <UnifiedSelectItem value="glass3">Glass Option 3</UnifiedSelectItem>
+                  </UnifiedSelectContent>
+                </UnifiedSelect>
+
+                <UnifiedSelect>
+                  <UnifiedSelectTrigger variant="glass" size="lg">
+                    <UnifiedSelectValue placeholder="Large Glass" />
+                  </UnifiedSelectTrigger>
+                  <UnifiedSelectContent>
+                    <UnifiedSelectItem value="large1">Large Option 1</UnifiedSelectItem>
+                    <UnifiedSelectItem value="large2">Large Option 2</UnifiedSelectItem>
+                    <UnifiedSelectItem value="large3">Large Option 3</UnifiedSelectItem>
+                  </UnifiedSelectContent>
+                </UnifiedSelect>
+              </div>
+            </UnifiedCardContent>
+          </UnifiedCard>
+
+          {/* Elevated & Luxury Select */}
+          <UnifiedCard variant="elegant" padding="lg">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle>Elevated & Luxury Variants</UnifiedCardTitle>
+              <UnifiedCardDescription>قوائم مرتفعة وفاخرة</UnifiedCardDescription>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <UnifiedSelect>
+                  <UnifiedSelectTrigger variant="elevated">
+                    <UnifiedSelectValue placeholder="Elevated Select" />
+                  </UnifiedSelectTrigger>
+                  <UnifiedSelectContent>
+                    <UnifiedSelectItem value="elevated1">منتج فاخر 1</UnifiedSelectItem>
+                    <UnifiedSelectItem value="elevated2">منتج فاخر 2</UnifiedSelectItem>
+                    <UnifiedSelectItem value="elevated3">منتج فاخر 3</UnifiedSelectItem>
+                  </UnifiedSelectContent>
+                </UnifiedSelect>
+
+                <UnifiedSelect>
+                  <UnifiedSelectTrigger variant="luxury">
+                    <UnifiedSelectValue placeholder="Luxury Select" />
+                  </UnifiedSelectTrigger>
+                  <UnifiedSelectContent>
+                    <UnifiedSelectItem value="luxury1">🌟 خيار ذهبي</UnifiedSelectItem>
+                    <UnifiedSelectItem value="luxury2">✨ خيار مميز</UnifiedSelectItem>
+                    <UnifiedSelectItem value="luxury3">💎 خيار حصري</UnifiedSelectItem>
+                  </UnifiedSelectContent>
+                </UnifiedSelect>
+              </div>
+            </UnifiedCardContent>
+          </UnifiedCard>
+
+          {/* All Sizes Showcase */}
+          <UnifiedCard variant="default" padding="lg" className="bg-muted border-2 border-white">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle className="text-white">All Sizes</UnifiedCardTitle>
+              <UnifiedCardDescription className="text-white/70">جميع الأحجام المتاحة</UnifiedCardDescription>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-white mb-2 block">Small (sm)</label>
+                  <UnifiedSelect>
+                    <UnifiedSelectTrigger variant="default" size="sm">
+                      <UnifiedSelectValue placeholder="Small size" />
+                    </UnifiedSelectTrigger>
+                    <UnifiedSelectContent>
+                      <UnifiedSelectItem value="sm1">Small 1</UnifiedSelectItem>
+                      <UnifiedSelectItem value="sm2">Small 2</UnifiedSelectItem>
+                    </UnifiedSelectContent>
+                  </UnifiedSelect>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-white mb-2 block">Medium (md) - Default</label>
+                  <UnifiedSelect>
+                    <UnifiedSelectTrigger variant="default" size="md">
+                      <UnifiedSelectValue placeholder="Medium size" />
+                    </UnifiedSelectTrigger>
+                    <UnifiedSelectContent>
+                      <UnifiedSelectItem value="md1">Medium 1</UnifiedSelectItem>
+                      <UnifiedSelectItem value="md2">Medium 2</UnifiedSelectItem>
+                    </UnifiedSelectContent>
+                  </UnifiedSelect>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-white mb-2 block">Large (lg)</label>
+                  <UnifiedSelect>
+                    <UnifiedSelectTrigger variant="default" size="lg">
+                      <UnifiedSelectValue placeholder="Large size" />
+                    </UnifiedSelectTrigger>
+                    <UnifiedSelectContent>
+                      <UnifiedSelectItem value="lg1">Large 1</UnifiedSelectItem>
+                      <UnifiedSelectItem value="lg2">Large 2</UnifiedSelectItem>
+                    </UnifiedSelectContent>
+                  </UnifiedSelect>
+                </div>
+              </div>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </section>
 
         {/* Design Tokens */}
