@@ -112,14 +112,16 @@ export const useStoreGamingSettings = (storeId: string) => {
 
         if (error) throw error;
 
-        if (data?.gaming_settings) {
+        const storeData = data as any;
+
+        if (storeData?.gaming_settings) {
           // Merge with defaults to ensure all fields exist
           setSettings({
             ...defaultSettings,
-            ...data.gaming_settings,
+            ...storeData.gaming_settings,
             features: {
               ...defaultSettings.features,
-              ...(data.gaming_settings.features || {}),
+              ...(storeData.gaming_settings.features || {}),
             },
           });
         } else {
@@ -156,12 +158,12 @@ export const useStoreGamingSettings = (storeId: string) => {
         },
       };
 
-      const { error } = await supabase
+      const { error } = await (supabase
         .from('affiliate_stores')
         .update({
           gaming_settings: updatedSettings,
-        })
-        .eq('id', storeId);
+        } as any)
+        .eq('id', storeId));
 
       if (error) throw error;
 
@@ -187,7 +189,7 @@ export const useStoreGamingSettings = (storeId: string) => {
   };
 
   // Update a specific feature
-  const updateFeature = async (featureName: keyof StoreGamingSettings['features'], value: boolean | number) => {
+  const updateFeature = async (featureName: keyof StoreGamingSettings['features'], value: boolean | number | string) => {
     return saveSettings({
       features: {
         ...settings.features,

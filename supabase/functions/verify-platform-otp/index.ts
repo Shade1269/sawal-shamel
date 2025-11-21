@@ -192,8 +192,8 @@ serve(async (req) => {
     // البحث عن مستخدم في auth.users (مع ترقيم صفحات)
     let existingAuthUser = await findUserByPhone(supabase, phone);
 
-    let userId: string;
-    let profileId: string;
+    let userId: string | null = null;
+    let profileId: string | null = null;
     let session = null;
 
     // **حالة خاصة**: إذا كان profile موجود بدون auth_user_id لكن auth user موجود
