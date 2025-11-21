@@ -6,6 +6,7 @@ import {
   Wallet,
   Settings,
   CreditCard,
+  Zap,
 } from 'lucide-react';
 import type { SidebarSection } from '@/components/layout/unified/UnifiedSidebar';
 import type { MobileNavItem } from '@/components/layout/unified/UnifiedMobileNav';
@@ -71,6 +72,13 @@ export const affiliateSidebarSections: SidebarSection[] = [
         href: '/affiliate/store/settings',
       },
       {
+        id: 'gaming-settings',
+        label: 'Gaming Mode',
+        icon: Zap,
+        href: '/affiliate/store/gaming',
+        badge: 'جديد',
+      },
+      {
         id: 'subscription',
         label: 'الاشتراك',
         icon: CreditCard,
@@ -112,6 +120,13 @@ export const affiliateMobileNavItems: MobileNavItem[] = [
     label: 'المحفظة',
     icon: Wallet,
     href: '/affiliate/wallet',
+  },
+  {
+    id: 'gaming-settings',
+    label: 'Gaming Mode',
+    icon: Zap,
+    href: '/affiliate/store/gaming',
+    badge: 'جديد',
   },
 ];
 
