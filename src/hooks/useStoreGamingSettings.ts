@@ -158,12 +158,12 @@ export const useStoreGamingSettings = (storeId: string) => {
         },
       };
 
-      const { error } = await (supabase
+      const { error } = await supabase
         .from('affiliate_stores')
         .update({
-          gaming_settings: updatedSettings,
-        } as any)
-        .eq('id', storeId));
+          gaming_settings: updatedSettings as any,
+        })
+        .eq('id', storeId);
 
       if (error) throw error;
 
