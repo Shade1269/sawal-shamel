@@ -280,16 +280,21 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error('Error in send-platform-otp:', error);
+    const corsHeaders = getCorsHeaders(req);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    const errorName = error instanceof Error ? error.name : 'Error';
+    
     console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      name: error.name
+      message: errorMessage,
+      stack: errorStack,
+      name: errorName
     });
     return new Response(
       JSON.stringify({ 
         success: false, 
         error: 'خطأ في الخادم',
-        details: error.message 
+        details: errorMessage 
       }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

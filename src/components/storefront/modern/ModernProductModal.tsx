@@ -11,11 +11,11 @@ import { ReviewsSection } from '@/components/reviews/ReviewsSection';
 interface Product {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   price_sar: number;
-  image_urls: string[];
+  image_urls?: string[];
   stock: number;
-  category: string;
+  category?: string;
   variants?: any[];
   final_price?: number;
   average_rating?: number;

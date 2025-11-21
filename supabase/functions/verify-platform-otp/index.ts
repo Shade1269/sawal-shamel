@@ -383,7 +383,7 @@ serve(async (req) => {
                   })
                   .select()
                   .single();
-                profileId = createdProfile?.id || profileId;
+                profileId = createdProfile?.id ?? null;
               } else {
                 profileId = existingProfile.id;
               }
@@ -473,7 +473,7 @@ serve(async (req) => {
                   if (profErr) {
                     console.error('Fallback profile create failed:', profErr);
                   }
-                  profileId = createdProfile?.id || profileId;
+                  profileId = createdProfile?.id ?? null;
                 } else {
                   profileId = existingProfile.id;
                 }
@@ -616,8 +616,10 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in verify-platform-otp:', error);
+    const corsHeaders = getCorsHeaders(req);
+    const errorMessage = error instanceof Error ? error.message : 'خطأ في الخادم';
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ success: false, error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

@@ -32,7 +32,8 @@ export const storeOrderService = {
     shopId: string,
     affiliateStoreId: string,
     orderData: CreateOrderData,
-    shippingInfo?: { providerId?: string; providerName?: string; costSar?: number }
+    shippingInfo?: { providerId?: string; providerName?: string; costSar?: number },
+    couponInfo?: { id: string; code: string; discountAmount: number }
   ) {
     try {
       let buyerSessionId: string | null = null;
@@ -68,6 +69,14 @@ export const storeOrderService = {
           provider_id: shippingInfo.providerId || null,
           provider_name: shippingInfo.providerName || null,
           cost_sar: shippingInfo.costSar ?? null,
+        };
+      }
+
+      if (couponInfo) {
+        payload.coupon = {
+          id: couponInfo.id,
+          code: couponInfo.code,
+          discount_amount: couponInfo.discountAmount,
         };
       }
 
