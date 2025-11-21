@@ -59,6 +59,8 @@ import {
   LiveNotifications,
   MagneticAttraction,
   PhysicsFloatingCards,
+  AIAssistantAvatar,
+  GestureControls,
 } from "@/components/storefront/ultimate3";
 
 interface Product {
@@ -556,6 +558,12 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
         {/* Magnetic Attraction */}
         {isGamingMode && settings.enableMagneticAttraction && <MagneticAttraction />}
+
+        {/* AI Assistant Avatar */}
+        {isGamingMode && settings.performanceMode === 'ultra' && <AIAssistantAvatar />}
+
+        {/* Gesture Controls */}
+        {isGamingMode && settings.performanceMode !== 'low' && <GestureControls />}
 
         {/* Gaming Theme Switcher */}
         {isGamingMode && <GamingThemeSwitcher />}

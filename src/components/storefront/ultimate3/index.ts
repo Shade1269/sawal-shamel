@@ -10,3 +10,6 @@ export { CosmicEffects } from './CosmicEffects';
 export { LiveNotifications } from './LiveNotifications';
 export { MagneticAttraction } from './MagneticAttraction';
 export { PhysicsFloatingCards, usePhysicsEngine } from './PhysicsEngine';
+export { AIAssistantAvatar } from './AIAssistantAvatar';
+export { GestureControls, requestGesturePermissions } from './GestureControls';
+export { ARPreview, ARPreviewButton } from './ARPreview';

@@ -115,7 +115,7 @@ export default function GamingSettingsPage() {
 
       {/* Settings Tabs */}
       <Tabs defaultValue="theme" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="theme">
             <Palette className="h-4 w-4 mr-2" />
             الثيم
@@ -131,6 +131,10 @@ export default function GamingSettingsPage() {
           <TabsTrigger value="ultra">
             <Rocket className="h-4 w-4 mr-2" />
             Ultra Effects
+          </TabsTrigger>
+          <TabsTrigger value="ultimate3">
+            <Zap className="h-4 w-4 mr-2" />
+            ULTIMATE 3.0
           </TabsTrigger>
         </TabsList>
 
@@ -389,6 +393,230 @@ export default function GamingSettingsPage() {
               />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* ULTIMATE 3.0 Tab */}
+        <TabsContent value="ultimate3">
+          <div className="space-y-4">
+            {/* Reality Distortion */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  🌀 Reality Distortion
+                </CardTitle>
+                <CardDescription>
+                  تأثيرات تشويه الواقع - Matrix Style
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FeatureToggle
+                  label="Matrix Digital Rain"
+                  description="مطر رقمي بأحرف يابانية - تأثير The Matrix"
+                  checked={settings.features.matrixRain ?? true}
+                  onChange={(value) => updateFeature('matrixRain', value)}
+                  disabled={saving}
+                  badge="MATRIX"
+                />
+                <Separator />
+                <FeatureToggle
+                  label="Glitch Product Cards"
+                  description="المنتجات تتكسر وتتشوه عند hover"
+                  checked={settings.features.glitchEffect ?? true}
+                  onChange={(value) => updateFeature('glitchEffect', value)}
+                  disabled={saving}
+                  badge="COOL"
+                />
+                <Separator />
+                <FeatureToggle
+                  label="Time Dilation"
+                  description="تأثير تباطؤ/تسريع الزمن (قد يكون مزعج)"
+                  checked={settings.features.timeDilation ?? false}
+                  onChange={(value) => updateFeature('timeDilation', value)}
+                  disabled={saving}
+                  badge="⚠️"
+                />
+              </CardContent>
+            </Card>
+
+            {/* Magnetic & Physics */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  🧲 Magnetic & Physics
+                </CardTitle>
+                <CardDescription>
+                  جذب مغناطيسي ومحرك فيزياء
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FeatureToggle
+                  label="Magnetic Attraction"
+                  description="المنتجات تنجذب للماوس بشكل فيزيائي"
+                  checked={settings.features.magneticAttraction ?? true}
+                  onChange={(value) => updateFeature('magneticAttraction', value)}
+                  disabled={saving}
+                  badge="WOW"
+                />
+                <Separator />
+                <FeatureToggle
+                  label="Physics Engine"
+                  description="محرك فيزياء - Bounce & Spring Effects"
+                  checked={settings.features.physicsEngine ?? true}
+                  onChange={(value) => updateFeature('physicsEngine', value)}
+                  disabled={saving}
+                />
+                <Separator />
+                <FeatureToggle
+                  label="Gravity Simulation"
+                  description="البطاقات تسقط وترتد (ثقيل على الأداء)"
+                  checked={settings.features.gravitySimulation ?? false}
+                  onChange={(value) => updateFeature('gravitySimulation', value)}
+                  disabled={saving}
+                  badge="⚠️"
+                />
+              </CardContent>
+            </Card>
+
+            {/* Cosmic Phenomena */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  🌌 Cosmic Phenomena
+                </CardTitle>
+                <CardDescription>
+                  ظواهر كونية خيالية
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FeatureToggle
+                  label="Aurora Borealis"
+                  description="شفق قطبي متحرك في أعلى الشاشة"
+                  checked={settings.features.auroraBorealis ?? true}
+                  onChange={(value) => updateFeature('auroraBorealis', value)}
+                  disabled={saving}
+                  badge="EPIC"
+                />
+                <Separator />
+                <FeatureToggle
+                  label="Shooting Stars"
+                  description="نجوم تعبر الشاشة عشوائيًا"
+                  checked={settings.features.shootingStars ?? true}
+                  onChange={(value) => updateFeature('shootingStars', value)}
+                  disabled={saving}
+                />
+                <Separator />
+                <FeatureToggle
+                  label="Black Hole"
+                  description="ثقب أسود يدور في الزاوية"
+                  checked={settings.features.blackHole ?? true}
+                  onChange={(value) => updateFeature('blackHole', value)}
+                  disabled={saving}
+                  badge="🕳️"
+                />
+                <Separator />
+                <FeatureToggle
+                  label="Cosmic Dust"
+                  description="غبار كوني متلألئ"
+                  checked={settings.features.cosmicDust ?? true}
+                  onChange={(value) => updateFeature('cosmicDust', value)}
+                  disabled={saving}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Weather System */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  🌦️ Weather System
+                </CardTitle>
+                <CardDescription>
+                  نظام طقس ديناميكي متكامل
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FeatureToggle
+                  label="Weather Effects"
+                  description="تفعيل نظام الطقس الكامل"
+                  checked={settings.features.weatherEffects ?? true}
+                  onChange={(value) => updateFeature('weatherEffects', value)}
+                  disabled={saving}
+                  badge="NEW"
+                />
+
+                {settings.features.weatherEffects && (
+                  <div className="pr-6 space-y-2">
+                    <Label>نوع الطقس:</Label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { value: 'auto', label: '🔄 تلقائي', desc: 'يتغير كل 30 ثانية' },
+                        { value: 'rain', label: '🌧️ مطر', desc: 'قطرات مطر' },
+                        { value: 'snow', label: '❄️ ثلج', desc: 'ثلج يتساقط' },
+                        { value: 'lightning', label: '⚡ برق', desc: 'برق ورعد' },
+                        { value: 'heat', label: '🔥 حرارة', desc: 'موجات حر' },
+                        { value: 'clear', label: '☀️ صافي', desc: 'بدون طقس' },
+                      ].map((weather) => (
+                        <button
+                          key={weather.value}
+                          onClick={() => updateFeature('weatherType', weather.value)}
+                          disabled={saving}
+                          className={`
+                            p-3 rounded-lg border-2 text-sm transition-all text-center
+                            ${settings.features.weatherType === weather.value
+                              ? 'border-primary bg-primary/10'
+                              : 'border-border hover:border-primary/50'
+                            }
+                          `}
+                        >
+                          <div className="font-semibold">{weather.label}</div>
+                          <div className="text-xs text-muted-foreground">{weather.desc}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Social Proof */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  👥 Social Proof Live
+                </CardTitle>
+                <CardDescription>
+                  دليل اجتماعي حي - يزيد المصداقية
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FeatureToggle
+                  label="Live Notifications"
+                  description='إشعارات حية: "محمد اشترى iPhone قبل دقيقتين"'
+                  checked={settings.features.liveNotifications ?? true}
+                  onChange={(value) => updateFeature('liveNotifications', value)}
+                  disabled={saving}
+                  badge="HOT"
+                />
+                <Separator />
+                <FeatureToggle
+                  label="Visitor Counter"
+                  description='عداد الزوار المباشر: "47 متصل الآن 🔴"'
+                  checked={settings.features.visitorCounter ?? true}
+                  onChange={(value) => updateFeature('visitorCounter', value)}
+                  disabled={saving}
+                />
+                <Separator />
+                <FeatureToggle
+                  label="Heatmap Overlay"
+                  description="خريطة حرارية للمنتجات الأكثر مشاهدة (ثقيل)"
+                  checked={settings.features.heatmap ?? false}
+                  onChange={(value) => updateFeature('heatmap', value)}
+                  disabled={saving}
+                  badge="⚠️"
+                />
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
 
