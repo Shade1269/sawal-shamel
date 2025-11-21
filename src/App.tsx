@@ -128,7 +128,8 @@ const App = () => {
                               <Route path="/ui" element={<UiShowcasePage />} />
                               <Route path="/luxury-showcase" element={<LuxuryShowcase />} />
                               <Route path="/design-system" element={<DesignSystemShowcase />} />
-                              <Route path="/design-showcase" element={<DesignShowcase />} />
+          <Route path="/design-showcase" element={<DesignShowcase />} />
+          <Route path="/design-system-showcase" element={<DesignSystemShowcase />} />
               <Route
                 path="/profile"
                 element={(
