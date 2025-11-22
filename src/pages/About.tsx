@@ -7,7 +7,7 @@ import {
   UnifiedCardHeader,
   UnifiedCardTitle
 } from '@/components/design-system';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
 import { 
   Shield, 
@@ -54,10 +54,9 @@ const About = () => {
       {/* Hero Section */}
       <section className="py-12 sm:py-20 px-3 sm:px-4">
         <div className="container mx-auto max-w-4xl text-center">
-          <Badge variant="secondary" className="mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm">
-            <Crown className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+          <UnifiedBadge variant="info" className="mb-4 sm:mb-6 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm" leadingIcon={<Crown className="w-3 h-3 sm:w-4 sm:h-4" />}>
             منصة التجارة الإلكترونية الرائدة
-          </Badge>
+          </UnifiedBadge>
           
           <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-4 sm:mb-6">
             من نحن؟
