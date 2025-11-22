@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { Card } from '@/ui';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { UnifiedCard } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedInput } from '@/components/design-system';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -137,17 +137,17 @@ export const PaymentInfoTab: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Card variant="glass" padding="lg">
+      <UnifiedCard variant="glass" padding="lg">
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">جاري التحميل...</p>
         </div>
-      </Card>
+      </UnifiedCard>
     );
   }
 
   return (
-    <Card variant="glass" padding="lg" className="space-y-6">
+    <UnifiedCard variant="glass" padding="lg" className="space-y-6">
       <div>
         <h2 className="text-base font-semibold text-foreground mb-2">
           بيانات السحب
@@ -203,7 +203,7 @@ export const PaymentInfoTab: React.FC = () => {
             
             <div>
               <Label htmlFor="bank_name">اسم البنك</Label>
-              <Input
+              <UnifiedInput
                 id="bank_name"
                 value={bankName}
                 onChange={(e) => setBankName(e.target.value)}
@@ -214,7 +214,7 @@ export const PaymentInfoTab: React.FC = () => {
 
             <div>
               <Label htmlFor="account_name">اسم صاحب الحساب</Label>
-              <Input
+              <UnifiedInput
                 id="account_name"
                 value={accountName}
                 onChange={(e) => setAccountName(e.target.value)}
@@ -225,7 +225,7 @@ export const PaymentInfoTab: React.FC = () => {
 
             <div>
               <Label htmlFor="account_number">رقم الحساب</Label>
-              <Input
+              <UnifiedInput
                 id="account_number"
                 value={accountNumber}
                 onChange={(e) => setAccountNumber(e.target.value)}
@@ -236,7 +236,7 @@ export const PaymentInfoTab: React.FC = () => {
 
             <div>
               <Label htmlFor="iban">رقم الآيبان (IBAN)</Label>
-              <Input
+              <UnifiedInput
                 id="iban"
                 value={iban}
                 onChange={(e) => setIban(e.target.value)}
@@ -256,7 +256,7 @@ export const PaymentInfoTab: React.FC = () => {
             
             <div>
               <Label htmlFor="stc_pay_number">رقم الهاتف المسجل في STC Pay</Label>
-              <Input
+              <UnifiedInput
                 id="stc_pay_number"
                 value={stcPayNumber}
                 onChange={(e) => setStcPayNumber(e.target.value)}
@@ -276,7 +276,7 @@ export const PaymentInfoTab: React.FC = () => {
             
             <div>
               <Label htmlFor="wallet_number">رقم الهاتف المسجل في المحفظة</Label>
-              <Input
+              <UnifiedInput
                 id="wallet_number"
                 value={walletNumber}
                 onChange={(e) => setWalletNumber(e.target.value)}
@@ -289,14 +289,15 @@ export const PaymentInfoTab: React.FC = () => {
       </div>
 
       <div className="flex justify-end pt-4">
-        <Button 
+        <UnifiedButton 
           onClick={handleSave}
           disabled={savePaymentInfoMutation.isPending}
+          variant="primary"
+          leftIcon={<Save className="h-4 w-4" />}
         >
-          <Save className="h-4 w-4 mr-2" />
           {savePaymentInfoMutation.isPending ? 'جاري الحفظ...' : 'حفظ البيانات'}
-        </Button>
+        </UnifiedButton>
       </div>
-    </Card>
+    </UnifiedCard>
   );
 };
