@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import {
-  Badge,
-  Button,
-  Card,
-  Input,
+  UnifiedBadge,
+  UnifiedButton,
+  UnifiedCard,
+  UnifiedInput,
+} from "@/components/design-system";
+import {
   Loader,
   Modal,
   Skeleton,
@@ -25,7 +27,7 @@ const UiShowcase: React.FC = () => {
     <main className="container mx-auto px-4 py-12 space-y-12">
       <section className="space-y-4">
         <div>
-          <Badge variant="glass">Glass UI Kit</Badge>
+          <UnifiedBadge variant="glass">Glass UI Kit</UnifiedBadge>
           <h1 className="mt-2 text-3xl font-bold text-foreground">مجموعة عناصر الواجهة</h1>
           <p className="text-muted-foreground text-sm max-w-2xl">
             العناصر التالية مبنية بالكامل على نظام التوكنز الزجاجي وتستجيب لحالات الواجهة المختلفة مع دعم كامل لحلقات
@@ -35,60 +37,60 @@ const UiShowcase: React.FC = () => {
 
         <Toolbar ariaLabel="تحكم سريع" justify="between" className="flex-wrap gap-3">
           <ToolbarGroup className="gap-2">
-            <Button size="sm" variant="ghost" leftIcon={<Eye className="h-4 w-4" />}>معاينة</Button>
-            <Button size="sm" variant="outline" leftIcon={<Edit3 className="h-4 w-4" />}>تحرير</Button>
-            <Button size="sm" variant="danger" leftIcon={<Trash2 className="h-4 w-4" />}>حذف</Button>
+            <UnifiedButton size="sm" variant="ghost" leftIcon={<Eye className="h-4 w-4" />}>معاينة</UnifiedButton>
+            <UnifiedButton size="sm" variant="outline" leftIcon={<Edit3 className="h-4 w-4" />}>تحرير</UnifiedButton>
+            <UnifiedButton size="sm" variant="primary" leftIcon={<Trash2 className="h-4 w-4" />}>حذف</UnifiedButton>
           </ToolbarGroup>
           <ToolbarSeparator />
           <ToolbarGroup className="gap-2">
-            <Badge variant="success" leadingIcon={<CheckCircle2 className="h-3 w-3" />}>جاهز للنشر</Badge>
-            <Button size="sm" variant="glass" onClick={() => setModalOpen(true)}>فتح نموذج</Button>
+            <UnifiedBadge variant="success" leadingIcon={<CheckCircle2 className="h-3 w-3" />}>جاهز للنشر</UnifiedBadge>
+            <UnifiedButton size="sm" variant="glass" onClick={() => setModalOpen(true)}>فتح نموذج</UnifiedButton>
           </ToolbarGroup>
         </Toolbar>
       </section>
 
       <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card interactive padding="lg">
+        <UnifiedCard hover="lift" padding="lg">
           <h2 className="text-lg font-semibold mb-3">أزرار</h2>
           <div className="space-y-3">
             <div className="flex flex-wrap gap-2">
-              <Button>إجراء أساسي</Button>
-              <Button variant="outline">ثانوي</Button>
-              <Button variant="ghost">شبح</Button>
-              <Button variant="glass">زجاجي</Button>
+              <UnifiedButton>إجراء أساسي</UnifiedButton>
+              <UnifiedButton variant="outline">ثانوي</UnifiedButton>
+              <UnifiedButton variant="ghost">شبح</UnifiedButton>
+              <UnifiedButton variant="glass">زجاجي</UnifiedButton>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button size="sm">صغير</Button>
-              <Button size="lg" rightIcon={<Clock className="h-4 w-4" />}>كبير</Button>
-              <Button loading loadingText="جاري التحميل">تحميل</Button>
+              <UnifiedButton size="sm">صغير</UnifiedButton>
+              <UnifiedButton size="lg" rightIcon={<Clock className="h-4 w-4" />}>كبير</UnifiedButton>
+              <UnifiedButton loading loadingText="جاري التحميل">تحميل</UnifiedButton>
             </div>
           </div>
-        </Card>
+        </UnifiedCard>
 
-        <Card padding="lg">
+        <UnifiedCard padding="lg">
           <h2 className="text-lg font-semibold mb-3">حقول الإدخال</h2>
           <div className="space-y-3">
-            <Input placeholder="البريد الإلكتروني" leadingIcon={<Eye className="h-4 w-4" />} />
-            <Input placeholder="تاريخ التسليم" trailingIcon={<Clock className="h-4 w-4" />} />
-            <Input placeholder="قيمة غير صالحة" invalid />
-            <Input placeholder="معطل" disabled />
+            <UnifiedInput placeholder="البريد الإلكتروني" leftIcon={<Eye className="h-4 w-4" />} />
+            <UnifiedInput placeholder="تاريخ التسليم" rightIcon={<Clock className="h-4 w-4" />} />
+            <UnifiedInput placeholder="قيمة غير صالحة" state="error" />
+            <UnifiedInput placeholder="معطل" disabled />
           </div>
-        </Card>
+        </UnifiedCard>
 
-        <Card padding="lg">
+        <UnifiedCard padding="lg">
           <h2 className="text-lg font-semibold mb-3">الشارات</h2>
           <div className="flex flex-wrap gap-2">
-            <Badge>أساسي</Badge>
-            <Badge variant="secondary">ثانوي</Badge>
-            <Badge variant="success" leadingIcon={<CheckCircle2 className="h-3 w-3" />}>نجاح</Badge>
-            <Badge variant="warning">تحذير</Badge>
-            <Badge variant="danger">خطر</Badge>
-            <Badge variant="muted">هادئ</Badge>
-            <Badge variant="glass" pill>زجاج</Badge>
+            <UnifiedBadge>أساسي</UnifiedBadge>
+            <UnifiedBadge variant="secondary">ثانوي</UnifiedBadge>
+            <UnifiedBadge variant="success" leadingIcon={<CheckCircle2 className="h-3 w-3" />}>نجاح</UnifiedBadge>
+            <UnifiedBadge variant="warning">تحذير</UnifiedBadge>
+            <UnifiedBadge variant="error">خطر</UnifiedBadge>
+            <UnifiedBadge variant="secondary">هادئ</UnifiedBadge>
+            <UnifiedBadge variant="glass" pill>زجاج</UnifiedBadge>
           </div>
-        </Card>
+        </UnifiedCard>
 
-        <Card padding="lg" className="md:col-span-2">
+        <UnifiedCard padding="lg" className="md:col-span-2">
           <h2 className="text-lg font-semibold mb-4">علامات التبويب</h2>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <TabsList aria-label="تجربة المكونات">
@@ -109,9 +111,9 @@ const UiShowcase: React.FC = () => {
               </div>
             </TabsPanel>
           </Tabs>
-        </Card>
+        </UnifiedCard>
 
-        <Card padding="lg">
+        <UnifiedCard padding="lg">
           <h2 className="text-lg font-semibold mb-3">الحالات الهيكلية</h2>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -128,7 +130,7 @@ const UiShowcase: React.FC = () => {
             </div>
             <Loader label="يجري مزامنة البيانات" subLabel="بقي القليل لإنهاء العملية" />
           </div>
-        </Card>
+        </UnifiedCard>
       </section>
 
       <Modal
@@ -138,8 +140,8 @@ const UiShowcase: React.FC = () => {
         description="يمكن إغلاق النموذج بمفتاح الهروب أو بالنقر خارج المحتوى."
         footer={
           <>
-            <Button variant="ghost" onClick={() => setModalOpen(false)}>إلغاء</Button>
-            <Button variant="secondary" onClick={() => setModalOpen(false)}>تأكيد</Button>
+            <UnifiedButton variant="ghost" onClick={() => setModalOpen(false)}>إلغاء</UnifiedButton>
+            <UnifiedButton variant="secondary" onClick={() => setModalOpen(false)}>تأكيد</UnifiedButton>
           </>
         }
       >
@@ -147,8 +149,8 @@ const UiShowcase: React.FC = () => {
           هذا النموذج يحترم توكنز التركيز ويدير الحلقة بشكل صحيح للحفاظ على المستخدم داخل النافذة حتى يتم الإغلاق.
         </p>
         <div className="space-y-3">
-          <Input placeholder="العنوان" />
-          <Input placeholder="وصف مختصر" />
+          <UnifiedInput placeholder="العنوان" />
+          <UnifiedInput placeholder="وصف مختصر" />
         </div>
       </Modal>
     </main>

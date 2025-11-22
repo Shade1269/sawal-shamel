@@ -24,9 +24,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Badge,
-  Button,
-  Card,
+  UnifiedBadge,
+  UnifiedButton,
+  UnifiedCard,
+} from "@/components/design-system";
+import {
   Skeleton,
   Tabs,
   TabsList,
@@ -64,7 +66,7 @@ const OverviewSection: React.FC<{ hook: UserProfileHookValue; onOpenNotification
   const roleLabel = roleLabels[profile.role] ?? profile.role;
 
   return (
-    <Card
+    <UnifiedCard
       variant="glass"
       padding="lg"
       className="flex flex-col gap-6 md:flex-row md:items-center"
@@ -101,28 +103,28 @@ const OverviewSection: React.FC<{ hook: UserProfileHookValue; onOpenNotification
             </p>
           )}
           <div className="flex flex-wrap items-center gap-2">
-            <Badge
+            <UnifiedBadge
               variant="glass"
               leadingIcon={<UserIcon className="h-3.5 w-3.5" />}
               data-testid="profile-role"
             >
               {roleLabel}
-            </Badge>
+            </UnifiedBadge>
             {profile.joinedAt ? (
-              <Badge
-                variant="muted"
+              <UnifiedBadge
+                variant="secondary"
                 leadingIcon={<ShieldCheck className="h-3.5 w-3.5" />}
                 aria-label="تاريخ الانضمام"
               >
                 انضم في {new Date(profile.joinedAt).toLocaleDateString("ar-SA")}
-              </Badge>
+              </UnifiedBadge>
             ) : null}
           </div>
         </div>
       </div>
       <div className="flex flex-1 flex-col gap-3 md:items-end">
         <div className="flex flex-wrap gap-2">
-          <Button
+          <UnifiedButton
             variant="glass"
             size="sm"
             leftIcon={<Pencil className="h-4 w-4" />}
@@ -132,8 +134,8 @@ const OverviewSection: React.FC<{ hook: UserProfileHookValue; onOpenNotification
             }}
           >
             تعديل الملف الشخصي
-          </Button>
-          <Button
+          </UnifiedButton>
+          <UnifiedButton
             variant="outline"
             size="sm"
             leftIcon={<Bell className="h-4 w-4" />}
@@ -141,7 +143,7 @@ const OverviewSection: React.FC<{ hook: UserProfileHookValue; onOpenNotification
             onClick={onOpenNotifications}
           >
             مركز الإشعارات
-          </Button>
+          </UnifiedButton>
         </div>
         <div className="grid grid-cols-2 gap-3 text-sm text-[color:var(--muted-foreground)] md:text-right">
           <div className="flex items-center gap-2">
@@ -160,7 +162,7 @@ const OverviewSection: React.FC<{ hook: UserProfileHookValue; onOpenNotification
           </div>
         </div>
       </div>
-    </Card>
+    </UnifiedCard>
   );
 };
 
@@ -168,7 +170,7 @@ const OverviewTab: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => {
   const { profile } = hook;
   return (
     <div className="grid gap-4 lg:grid-cols-2" data-section="profile-overview">
-      <Card variant="glass" padding="lg" className="space-y-4" data-block="profile-contact">
+      <UnifiedCard variant="glass" padding="lg" className="space-y-4" data-block="profile-contact">
         <div className="flex items-center gap-3">
           <UserIcon className="h-5 w-5 text-[color:var(--accent)]" />
           <div>
@@ -192,8 +194,8 @@ const OverviewTab: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => {
             </p>
           </div>
         </div>
-      </Card>
-      <Card
+      </UnifiedCard>
+      <UnifiedCard
         variant="glass"
         padding="lg"
         className="space-y-4"
@@ -205,7 +207,7 @@ const OverviewTab: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => {
           <li>فعّل التنبيهات الفورية للبقاء على اطلاع بالطلبات الجديدة.</li>
           <li>راجع الجلسات الموثوقة بانتظام لضمان أمان حسابك.</li>
         </ul>
-      </Card>
+      </UnifiedCard>
     </div>
   );
 };
@@ -214,7 +216,7 @@ const SecurityTab: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => {
   const { security, toggleTwoFactor, revokeSession, trustSession } = hook;
 
   return (
-    <Card variant="glass" padding="lg" className="space-y-6" data-section="profile-security">
+    <UnifiedCard variant="glass" padding="lg" className="space-y-6" data-section="profile-security">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-base font-semibold text-[color:var(--glass-fg)]">أمان الحساب</h2>
@@ -251,14 +253,14 @@ const SecurityTab: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => {
                   <p className="text-xs text-[color:var(--muted-foreground)]">{session.location}</p>
                 </div>
               </div>
-              <Badge variant={session.current ? "success" : "muted"}>
+              <UnifiedBadge variant={session.current ? "success" : "secondary"}>
                 {session.current ? "الجلسة الحالية" : "غير نشطة"}
-              </Badge>
+              </UnifiedBadge>
             </div>
             <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[color:var(--muted-foreground)]">
               <span>آخر نشاط: {session.lastActive}</span>
               <div className="flex flex-wrap gap-2">
-                <Button
+                <UnifiedButton
                   variant="ghost"
                   size="sm"
                   leftIcon={<ShieldCheck className="h-3.5 w-3.5" />}
@@ -266,9 +268,9 @@ const SecurityTab: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => {
                   onClick={() => trustSession(session.id, !session.trusted)}
                 >
                   {session.trusted ? "موثوقة" : "وضع علامة موثوقة"}
-                </Button>
+                </UnifiedButton>
                 {!session.current ? (
-                  <Button
+                  <UnifiedButton
                     variant="danger"
                     size="sm"
                     leftIcon={<RefreshCcw className="h-3.5 w-3.5" />}
@@ -276,7 +278,7 @@ const SecurityTab: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => {
                     onClick={() => revokeSession(session.id)}
                   >
                     إنهاء الجلسة
-                  </Button>
+                  </UnifiedButton>
                 ) : null}
               </div>
             </div>
@@ -287,7 +289,7 @@ const SecurityTab: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => {
       <div className="rounded-[var(--radius-m)] bg-[color:var(--surface)]/60 p-4 text-xs text-[color:var(--muted-foreground)]">
         نصيحة: فعّل إشعارات البريد عند تسجيل الدخول من جهاز جديد لضمان اكتشاف أي نشاط غير مألوف بسرعة.
       </div>
-    </Card>
+    </UnifiedCard>
   );
 };
 
@@ -296,7 +298,7 @@ const PreferencesTab: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => {
   const themeIds = Object.keys(THEMES);
 
   return (
-    <Card variant="glass" padding="lg" className="space-y-6" data-section="profile-preferences">
+    <UnifiedCard variant="glass" padding="lg" className="space-y-6" data-section="profile-preferences">
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2" data-field="theme">
           <label className="text-sm font-medium text-[color:var(--glass-fg)]" htmlFor="profile-theme-select">
@@ -364,7 +366,7 @@ const PreferencesTab: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => {
           aria-label="تفعيل أو إيقاف تأثيرات الحركة"
         />
       </div>
-    </Card>
+    </UnifiedCard>
   );
 };
 
@@ -389,7 +391,7 @@ const ProfilePageBody: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => 
     <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 lg:py-8" data-page="profile">
       <SkipLink targetId="profile-main" label="تخطي إلى محتوى الملف الشخصي" />
       <div className="flex items-center gap-4">
-        <Button
+        <UnifiedButton
           variant="outline"
           size="sm"
           onClick={handleBack}
@@ -398,7 +400,7 @@ const ProfilePageBody: React.FC<{ hook: UserProfileHookValue }> = ({ hook }) => 
           className="hover:bg-accent/10"
         >
           العودة
-        </Button>
+        </UnifiedButton>
       </div>
       <OverviewSection hook={hook} onOpenNotifications={handleOpenNotifications} />
       <Tabs defaultValue="overview" className="space-y-6" data-section="profile-tabs">
