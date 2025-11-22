@@ -118,17 +118,17 @@ const AdminPermissions = () => {
       </div>
 
       {/* Permissions Matrix */}
-      <Card className="shadow-elegant">
-        <CardHeader className="p-4 md:p-6">
-          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+      <UnifiedCard variant="glass-strong" hover="lift">
+        <UnifiedCardHeader className="p-4 md:p-6">
+          <UnifiedCardTitle className="flex items-center gap-2 text-base md:text-lg">
             <Shield className="h-4 w-4 md:h-5 md:w-5 text-primary" />
             مصفوفة الصلاحيات
-          </CardTitle>
-          <CardDescription className="text-sm">
+          </UnifiedCardTitle>
+          <UnifiedCardDescription className="text-sm">
             تحديد الصلاحيات لكل دور في النظام
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-4 md:p-6">
+          </UnifiedCardDescription>
+        </UnifiedCardHeader>
+        <UnifiedCardContent className="p-4 md:p-6">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -167,8 +167,8 @@ const AdminPermissions = () => {
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       {/* Role Management */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
@@ -177,78 +177,78 @@ const AdminPermissions = () => {
           const activePermissions = Object.values(role.permissions).filter(Boolean).length;
           
           return (
-            <Card key={roleKey} className="shadow-elegant hover:shadow-luxury transition-all duration-300">
-              <CardHeader className="p-4 md:pb-3">
+            <UnifiedCard key={roleKey} variant="flat" hover="lift" className="transition-all duration-300">
+              <UnifiedCardHeader className="p-4 md:pb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 md:gap-3">
                     <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg gradient-card-muted flex items-center justify-center`}>
                       <Icon className={`h-4 w-4 md:h-5 md:w-5 ${role.color}`} />
                     </div>
                     <div>
-                      <CardTitle className="text-base md:text-lg">{role.name}</CardTitle>
+                      <UnifiedCardTitle className="text-base md:text-lg">{role.name}</UnifiedCardTitle>
                     </div>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="p-4">
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="p-4">
                 <div className="space-y-2 md:space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs md:text-sm text-muted-foreground">الصلاحيات النشطة</span>
-                    <Badge variant="secondary" className="text-xs">
+                    <UnifiedBadge variant="info" className="text-xs">
                       {activePermissions} من {Object.keys(permissionLabels).length}
-                    </Badge>
+                    </UnifiedBadge>
                   </div>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" className="flex-1">
+                    <UnifiedButton size="sm" variant="outline" fullWidth>
                       <Eye className="h-3 w-3 md:h-4 md:w-4 md:mr-2" />
                       <span className="hidden md:inline">عرض</span>
-                    </Button>
-                    <Button size="sm" variant="outline" className="flex-1">
+                    </UnifiedButton>
+                    <UnifiedButton size="sm" variant="outline" fullWidth>
                       <Edit className="h-3 w-3 md:h-4 md:w-4 md:mr-2" />
                       <span className="hidden md:inline">تعديل</span>
-                    </Button>
+                    </UnifiedButton>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           );
         })}
       </div>
 
       {/* Quick Actions */}
-      <Card className="shadow-elegant">
-        <CardHeader className="p-4 md:p-6">
-          <CardTitle className="text-base md:text-lg">إجراءات سريعة</CardTitle>
-          <CardDescription className="text-sm">
+      <UnifiedCard variant="flat" hover="lift">
+        <UnifiedCardHeader className="p-4 md:p-6">
+          <UnifiedCardTitle className="text-base md:text-lg">إجراءات سريعة</UnifiedCardTitle>
+          <UnifiedCardDescription className="text-sm">
             عمليات سريعة لإدارة الصلاحيات
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-4 md:p-6">
+          </UnifiedCardDescription>
+        </UnifiedCardHeader>
+        <UnifiedCardContent className="p-4 md:p-6">
           <div className="flex flex-col md:flex-row gap-2 md:gap-3">
-            <Button size="sm" className="bg-gradient-primary w-full md:w-auto">
+            <UnifiedButton size="sm" variant="primary" fullWidth>
               <Plus className="h-3 w-3 md:h-4 md:w-4 md:mr-2" />
               <span className="hidden md:inline">إضافة دور جديد</span>
               <span className="md:hidden">إضافة</span>
-            </Button>
-            <Button size="sm" variant="outline" className="w-full md:w-auto">
+            </UnifiedButton>
+            <UnifiedButton size="sm" variant="outline" fullWidth>
               <Settings className="h-3 w-3 md:h-4 md:w-4 md:mr-2" />
               <span className="hidden md:inline">إعدادات متقدمة</span>
               <span className="md:hidden">إعدادات</span>
-            </Button>
-            <Button size="sm" variant="outline" className="w-full md:w-auto">
+            </UnifiedButton>
+            <UnifiedButton size="sm" variant="outline" fullWidth>
               <Shield className="h-3 w-3 md:h-4 md:w-4 md:mr-2" />
               <span className="hidden md:inline">نسخ احتياطي للصلاحيات</span>
               <span className="md:hidden">نسخ احتياطي</span>
-            </Button>
+            </UnifiedButton>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       {/* Save Changes */}
       <div className="flex justify-end">
-        <Button size="sm" className="px-4 md:px-8 bg-gradient-luxury w-full md:w-auto">
+        <UnifiedButton size="sm" variant="luxury" className="px-4 md:px-8 w-full md:w-auto">
           حفظ التغييرات
-        </Button>
+        </UnifiedButton>
       </div>
     </div>
   );

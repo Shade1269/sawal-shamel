@@ -205,44 +205,44 @@ const AdminActivity = () => {
 
       {/* Activity Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="shadow-elegant">
-          <CardContent className="p-4 text-center">
+        <UnifiedCard variant="flat" hover="lift">
+          <UnifiedCardContent className="p-4 text-center">
             <div className="text-2xl font-bold text-primary">1,247</div>
             <div className="text-sm text-muted-foreground">إجمالي الأنشطة</div>
-          </CardContent>
-        </Card>
-        <Card className="shadow-elegant">
-          <CardContent className="p-4 text-center">
+          </UnifiedCardContent>
+        </UnifiedCard>
+        <UnifiedCard variant="flat" hover="lift">
+          <UnifiedCardContent className="p-4 text-center">
             <div className="text-2xl font-bold text-green-600">892</div>
             <div className="text-sm text-muted-foreground">عمليات ناجحة</div>
-          </CardContent>
-        </Card>
-        <Card className="shadow-elegant">
-          <CardContent className="p-4 text-center">
+          </UnifiedCardContent>
+        </UnifiedCard>
+        <UnifiedCard variant="flat" hover="lift">
+          <UnifiedCardContent className="p-4 text-center">
             <div className="text-2xl font-bold text-yellow-600">23</div>
             <div className="text-sm text-muted-foreground">تحذيرات</div>
-          </CardContent>
-        </Card>
-        <Card className="shadow-elegant">
-          <CardContent className="p-4 text-center">
+          </UnifiedCardContent>
+        </UnifiedCard>
+        <UnifiedCard variant="flat" hover="lift">
+          <UnifiedCardContent className="p-4 text-center">
             <div className="text-2xl font-bold text-red-600">5</div>
             <div className="text-sm text-muted-foreground">أخطاء</div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
       {/* Activity Log */}
-      <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <UnifiedCard variant="glass-strong" hover="lift">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5 text-primary" />
             سجل الأنشطة الحديثة
-          </CardTitle>
-          <CardDescription>
+          </UnifiedCardTitle>
+          <UnifiedCardDescription>
             عرض {filteredActivities.length} من أصل {activities.length} نشاط
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </UnifiedCardDescription>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <div className="space-y-4">
             {filteredActivities.map((activity) => {
               const Icon = getActivityIcon(activity.type);
@@ -257,9 +257,9 @@ const AdminActivity = () => {
                       <span className="font-medium">{activity.user}</span>
                       <span className="text-sm text-muted-foreground">•</span>
                       <span className="text-sm font-medium">{activity.action}</span>
-                      <Badge className={getStatusColor(activity.status)}>
+                      <UnifiedBadge className={getStatusColor(activity.status)}>
                         {getStatusText(activity.status)}
-                      </Badge>
+                      </UnifiedBadge>
                     </div>
                     <div className="text-sm text-muted-foreground">
                       {activity.details}
@@ -271,16 +271,16 @@ const AdminActivity = () => {
                   </div>
                   
                   <div className="flex gap-1">
-                    <Button size="sm" variant="ghost">
+                    <UnifiedButton size="sm" variant="ghost">
                       <Eye className="h-4 w-4" />
-                    </Button>
+                    </UnifiedButton>
                   </div>
                 </div>
               );
             })}
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };
