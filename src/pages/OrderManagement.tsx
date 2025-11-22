@@ -11,15 +11,9 @@ import {
   ResponsiveLayout,
   ResponsiveGrid,
   VirtualizedList,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button
+  EnhancedButton
 } from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle, UnifiedBadge } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -329,10 +323,9 @@ const OrderManagement = () => {
     const IconComponent = config.icon;
     
     return (
-      <Badge variant={config.variant} className="flex items-center gap-1">
-        <IconComponent className="h-3 w-3" />
+      <UnifiedBadge variant={config.variant} className="flex items-center gap-1" leadingIcon={<IconComponent className="h-3 w-3" />}>
         {config.label}
-      </Badge>
+      </UnifiedBadge>
     );
   };
 
@@ -345,7 +338,7 @@ const OrderManagement = () => {
     };
     
     const config = statusConfig[status] || { label: status, variant: 'secondary' };
-    return <Badge variant={config.variant}>{config.label}</Badge>;
+    return <UnifiedBadge variant={config.variant}>{config.label}</UnifiedBadge>;
   };
 
   if (loading) {
@@ -361,14 +354,14 @@ const OrderManagement = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">إدارة الطلبات</CardTitle>
-          <CardDescription>
+      <UnifiedCard variant="flat" hover="lift">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="text-2xl font-bold">إدارة الطلبات</UnifiedCardTitle>
+          <UnifiedCardDescription>
             إدارة ومتابعة جميع طلبات المتجر
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </UnifiedCardDescription>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <Tabs defaultValue="orders" className="space-y-6">
             <TabsList>
               <TabsTrigger value="orders">الطلبات</TabsTrigger>
@@ -445,7 +438,7 @@ const OrderManagement = () => {
                           <div className="flex gap-2">
                             <Dialog>
                               <DialogTrigger asChild>
-                                <Button
+                                <UnifiedButton
                                   variant="outline"
                                   size="sm"
                                   onClick={() => {
@@ -454,7 +447,7 @@ const OrderManagement = () => {
                                   }}
                                 >
                                   <Eye className="h-4 w-4" />
-                                </Button>
+                                </UnifiedButton>
                               </DialogTrigger>
                               <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                                 <DialogHeader>
@@ -468,24 +461,24 @@ const OrderManagement = () => {
                                   <div className="space-y-6">
                                     {/* Customer Info */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                      <Card>
-                                        <CardHeader>
-                                          <CardTitle className="text-lg">معلومات العميل</CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="space-y-2">
+                                      <UnifiedCard variant="flat">
+                                        <UnifiedCardHeader>
+                                          <UnifiedCardTitle className="text-lg">معلومات العميل</UnifiedCardTitle>
+                                        </UnifiedCardHeader>
+                                        <UnifiedCardContent className="space-y-2">
                                           <p><strong>الاسم:</strong> {selectedOrder.customer_name}</p>
                                           <p><strong>الهاتف:</strong> {showFullData ? selectedOrder.customer_phone : maskPhone(selectedOrder.customer_phone)}</p>
                                           {selectedOrder.customer_email && (
                                             <p><strong>الإيميل:</strong> {showFullData ? selectedOrder.customer_email : maskEmail(selectedOrder.customer_email)}</p>
                                           )}
-                                        </CardContent>
-                                      </Card>
+                                        </UnifiedCardContent>
+                                      </UnifiedCard>
                                       
-                                      <Card>
-                                        <CardHeader>
-                                          <CardTitle className="text-lg">معلومات الطلب</CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="space-y-2">
+                                      <UnifiedCard variant="flat">
+                                        <UnifiedCardHeader>
+                                          <UnifiedCardTitle className="text-lg">معلومات الطلب</UnifiedCardTitle>
+                                        </UnifiedCardHeader>
+                                        <UnifiedCardContent className="space-y-2">
                                           <div className="flex gap-2">
                                             {getStatusBadge(selectedOrder.status)}
                                             {getPaymentStatusBadge(selectedOrder.payment_status)}
@@ -494,16 +487,16 @@ const OrderManagement = () => {
                                           {selectedOrder.tracking_number && (
                                             <p><strong>رقم التتبع:</strong> {selectedOrder.tracking_number}</p>
                                           )}
-                                        </CardContent>
-                                      </Card>
+                                        </UnifiedCardContent>
+                                      </UnifiedCard>
                                     </div>
 
                                     {/* Order Items */}
-                                    <Card>
-                                      <CardHeader>
-                                        <CardTitle className="text-lg">عناصر الطلب</CardTitle>
-                                      </CardHeader>
-                                      <CardContent>
+                                    <UnifiedCard variant="flat">
+                                      <UnifiedCardHeader>
+                                        <UnifiedCardTitle className="text-lg">عناصر الطلب</UnifiedCardTitle>
+                                      </UnifiedCardHeader>
+                                      <UnifiedCardContent>
                                         <Table>
                                           <TableHeader>
                                             <TableRow>
@@ -535,16 +528,16 @@ const OrderManagement = () => {
                                             ))}
                                           </TableBody>
                                         </Table>
-                                      </CardContent>
-                                    </Card>
+                                      </UnifiedCardContent>
+                                    </UnifiedCard>
 
                                     {/* Notes */}
                                     {(selectedOrder.notes || selectedOrder.internal_notes) && (
-                                      <Card>
-                                        <CardHeader>
-                                          <CardTitle className="text-lg">الملاحظات</CardTitle>
-                                        </CardHeader>
-                                        <CardContent className="space-y-2">
+                                      <UnifiedCard variant="flat">
+                                        <UnifiedCardHeader>
+                                          <UnifiedCardTitle className="text-lg">الملاحظات</UnifiedCardTitle>
+                                        </UnifiedCardHeader>
+                                        <UnifiedCardContent className="space-y-2">
                                           {selectedOrder.notes && (
                                             <div>
                                               <Label>ملاحظات العميل:</Label>
@@ -557,8 +550,8 @@ const OrderManagement = () => {
                                               <p className="text-sm bg-muted p-2 rounded">{selectedOrder.internal_notes}</p>
                                             </div>
                                           )}
-                                        </CardContent>
-                                      </Card>
+                                        </UnifiedCardContent>
+                                      </UnifiedCard>
                                     )}
                                   </div>
                                 )}
@@ -567,7 +560,7 @@ const OrderManagement = () => {
 
                             <Dialog open={statusUpdateDialog} onOpenChange={setStatusUpdateDialog}>
                               <DialogTrigger asChild>
-                                <Button
+                                <UnifiedButton
                                   variant="outline"
                                   size="sm"
                                   onClick={() => {
@@ -577,7 +570,7 @@ const OrderManagement = () => {
                                   }}
                                 >
                                   <Edit className="h-4 w-4" />
-                                </Button>
+                                </UnifiedButton>
                               </DialogTrigger>
                               <DialogContent>
                                 <DialogHeader>
@@ -629,15 +622,15 @@ const OrderManagement = () => {
                                   </div>
 
                                   <div className="flex justify-end gap-2">
-                                    <Button
+                                    <UnifiedButton
                                       variant="outline"
                                       onClick={() => setStatusUpdateDialog(false)}
                                     >
                                       إلغاء
-                                    </Button>
-                                    <Button onClick={updateOrderStatus}>
+                                    </UnifiedButton>
+                                    <UnifiedButton variant="primary" onClick={updateOrderStatus}>
                                       تحديث الحالة
-                                    </Button>
+                                    </UnifiedButton>
                                   </div>
                                 </div>
                               </DialogContent>
@@ -660,20 +653,20 @@ const OrderManagement = () => {
             </TabsContent>
 
             <TabsContent value="analytics">
-              <Card>
-                <CardHeader>
-                  <CardTitle>إحصائيات الطلبات</CardTitle>
-                </CardHeader>
-                <CardContent>
+              <UnifiedCard variant="flat">
+                <UnifiedCardHeader>
+                  <UnifiedCardTitle>إحصائيات الطلبات</UnifiedCardTitle>
+                </UnifiedCardHeader>
+                <UnifiedCardContent>
                   <p className="text-muted-foreground">
                     قريباً - ستتوفر الإحصائيات التفصيلية للطلبات والمبيعات
                   </p>
-                </CardContent>
-              </Card>
+                </UnifiedCardContent>
+              </UnifiedCard>
             </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };
