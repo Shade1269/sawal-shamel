@@ -304,29 +304,29 @@ export default function SystemOverviewPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <Card className="relative overflow-hidden">
+                <UnifiedCard variant="glass-strong" className="relative overflow-hidden">
                   <div className={`absolute inset-0 opacity-5 ${phase.color.replace('text-', 'bg-')}`} />
-                  <CardHeader>
+                  <UnifiedCardHeader>
                     <div className="flex items-center gap-3">
                       <div className={`p-3 rounded-xl bg-gradient-to-br from-${phase.color.split('-')[1]}-500/20 to-${phase.color.split('-')[1]}-600/20`}>
                         <phase.icon className={`h-8 w-8 ${phase.color}`} />
                       </div>
                       <div className="flex-1">
-                        <CardTitle className="text-xl">{phase.title}</CardTitle>
-                        <CardDescription className="text-base">{phase.description}</CardDescription>
+                        <UnifiedCardTitle className="text-xl">{phase.title}</UnifiedCardTitle>
+                        <UnifiedCardDescription className="text-base">{phase.description}</UnifiedCardDescription>
                       </div>
                       <div className="text-center">
-                        <Badge 
-                          variant={phase.status === 'completed' ? 'default' : 'secondary'}
+                        <UnifiedBadge 
+                          variant={phase.status === 'completed' ? 'success' : 'info'}
                           className="mb-2"
                         >
                           {phase.status === 'completed' ? 'مكتمل' : 'قيد التطوير'}
-                        </Badge>
+                        </UnifiedBadge>
                         <div className="text-2xl font-bold">{phase.progress}%</div>
                       </div>
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
+                  </UnifiedCardHeader>
+                  <UnifiedCardContent className="space-y-6">
                     <Progress value={phase.progress} className="h-2" />
                     
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -362,8 +362,8 @@ export default function SystemOverviewPage() {
                         </ul>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </UnifiedCardContent>
+                </UnifiedCard>
               </motion.div>
             </TabsContent>
           ))}
@@ -376,17 +376,17 @@ export default function SystemOverviewPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
       >
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <UnifiedCard variant="elegant" hover="lift">
+          <UnifiedCardHeader>
+            <UnifiedCardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-blue-500" />
               الهيكل التقني للنظام
-            </CardTitle>
-            <CardDescription>
+            </UnifiedCardTitle>
+            <UnifiedCardDescription>
               طبقات النظام والتقنيات المستخدمة في كل طبقة
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardDescription>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {technicalArchitecture.map((layer, index) => (
                 <motion.div
@@ -396,35 +396,35 @@ export default function SystemOverviewPage() {
                   transition={{ delay: 0.7 + index * 0.1 }}
                   className="relative"
                 >
-                  <Card className="h-full hover:shadow-md transition-shadow">
-                    <CardHeader className="text-center">
+                  <UnifiedCard variant="flat" hover="lift" className="h-full">
+                    <UnifiedCardHeader className="text-center">
                       <div className={`mx-auto p-3 rounded-xl ${layer.color} w-fit mb-2`}>
                         <layer.icon className="h-6 w-6 text-white" />
                       </div>
-                      <CardTitle className="text-base">{layer.layer}</CardTitle>
-                      <CardDescription className="text-xs">
+                      <UnifiedCardTitle className="text-base">{layer.layer}</UnifiedCardTitle>
+                      <UnifiedCardDescription className="text-xs">
                         {layer.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
+                      </UnifiedCardDescription>
+                    </UnifiedCardHeader>
+                    <UnifiedCardContent>
                       <div className="space-y-2">
                         {layer.technologies.map((tech, techIndex) => (
-                          <Badge 
+                          <UnifiedBadge 
                             key={techIndex} 
                             variant="outline" 
                             className="text-xs mx-1 mb-1"
                           >
                             {tech}
-                          </Badge>
+                          </UnifiedBadge>
                         ))}
                       </div>
-                    </CardContent>
-                  </Card>
+                    </UnifiedCardContent>
+                  </UnifiedCard>
                 </motion.div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </motion.div>
 
       {/* Final Summary */}
@@ -433,18 +433,18 @@ export default function SystemOverviewPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8 }}
       >
-        <Card className="relative overflow-hidden">
+        <UnifiedCard variant="elegant" hover="lift" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-muted" />
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl flex items-center justify-center gap-2">
+          <UnifiedCardHeader className="text-center">
+            <UnifiedCardTitle className="text-2xl flex items-center justify-center gap-2">
               <Trophy className="h-7 w-7 text-yellow-500" />
               إنجازات المشروع
-            </CardTitle>
-            <CardDescription>
+            </UnifiedCardTitle>
+            <UnifiedCardDescription>
               ملخص شامل للإنجازات والتحسينات المطبقة
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+            </UnifiedCardDescription>
+          </UnifiedCardHeader>
+          <UnifiedCardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
               <div className="space-y-2">
                 <div className="text-3xl font-bold text-green-500">100%</div>
@@ -465,18 +465,18 @@ export default function SystemOverviewPage() {
                 تم تطوير نظام شامل ومتطور يوفر تجربة مستخدم استثنائية مع أداء محسّن وميزات متقدمة
               </p>
               <div className="flex items-center justify-center gap-2">
-                <Badge variant="default" className="flex items-center gap-1">
+                <UnifiedBadge variant="success" className="flex items-center gap-1">
                   <Rocket className="h-3 w-3" />
                   جاهز للإنتاج
-                </Badge>
-                <Badge variant="outline" className="flex items-center gap-1">
+                </UnifiedBadge>
+                <UnifiedBadge variant="outline" className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
                   {new Date().toLocaleDateString('ar')}
-                </Badge>
+                </UnifiedBadge>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </motion.div>
     </div>
   );
