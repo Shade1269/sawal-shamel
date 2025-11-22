@@ -14,8 +14,8 @@ import {
   CardHeader, 
   CardTitle 
 } from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { UnifiedBadge } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
@@ -470,16 +470,16 @@ const ProductsBrowser = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
           <div>
             <div className="flex items-center gap-2 sm:gap-4 mb-4">
-              <Button
+              <UnifiedButton
                 variant="ghost"
                 onClick={() => goToUserHome(profile?.role)}
-                className="text-primary hover:bg-primary/10 gap-1 sm:gap-2 text-sm sm:text-base px-2 sm:px-4"
+                className="text-primary hover:bg-primary/10 text-sm sm:text-base px-2 sm:px-4"
+                leftIcon={<Home className="h-3 w-3 sm:h-4 sm:w-4" />}
+                rightIcon={<ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />}
               >
-                <Home className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">الصفحة الرئيسية</span>
                 <span className="sm:hidden">الرئيسية</span>
-                <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
-              </Button>
+              </UnifiedButton>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl bg-gradient-primary flex items-center justify-center">

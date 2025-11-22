@@ -1,9 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
 import { Palette, ArrowRight, Info, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
 import ThemeSystemPreview from '@/components/theme/ThemeSystemPreview';
@@ -36,15 +36,14 @@ const StoreThemeSettings: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <Button 
+            <UnifiedButton 
               variant="ghost" 
               size="sm"
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2"
+              leftIcon={<ArrowRight className="w-4 h-4" />}
             >
-              <ArrowRight className="w-4 h-4" />
               رجوع
-            </Button>
+            </UnifiedButton>
             <div>
               <h1 className="text-3xl font-bold flex items-center gap-3">
                 <div className="p-2 rounded-lg gradient-btn-accent">
@@ -59,13 +58,13 @@ const StoreThemeSettings: React.FC = () => {
           </div>
           
           {/* Advanced Theme Studio Button */}
-          <Button 
+          <UnifiedButton 
             onClick={() => navigate('/theme-studio')}
-            className="bg-gradient-premium hover:opacity-90"
+            variant="premium"
+            leftIcon={<Sparkles className="w-4 h-4" />}
           >
-            <Sparkles className="w-4 h-4 mr-2" />
             الاستوديو المتقدم
-          </Button>
+          </UnifiedButton>
         </div>
 
         {/* Info Alert */}
@@ -77,26 +76,26 @@ const StoreThemeSettings: React.FC = () => {
         </Alert>
 
         {/* Theme Selector */}
-        <Card className="shadow-lg">
-          <CardHeader className="gradient-bg-muted border-b">
-            <CardTitle className="text-xl">الثيمات المتاحة</CardTitle>
-            <CardDescription>
+        <UnifiedCard variant="default" padding="none">
+          <UnifiedCardHeader className="gradient-bg-muted border-b p-6">
+            <UnifiedCardTitle className="text-xl">الثيمات المتاحة</UnifiedCardTitle>
+            <UnifiedCardDescription>
               اختر من بين الثيمات المصممة خصيصاً لأنواع مختلفة من المتاجر
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-8">
+            </UnifiedCardDescription>
+          </UnifiedCardHeader>
+          <UnifiedCardContent className="p-8">
             <StoreThemeSelector
               storeId={storeId}
               onThemeApplied={handleThemeApplied}
             />
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
         <ThemeSystemPreview className="mt-8" />
 
         {/* Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+          <UnifiedCard variant="default" padding="md" hover="lift" className="text-center">
             <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
               <Palette className="w-6 h-6 text-primary" />
             </div>
@@ -104,9 +103,9 @@ const StoreThemeSettings: React.FC = () => {
             <p className="text-sm text-muted-foreground">
               نظام ألوان مدروس يناسب طبيعة منتجاتك
             </p>
-          </Card>
+          </UnifiedCard>
 
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+          <UnifiedCard variant="default" padding="md" hover="lift" className="text-center">
             <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
               <div className="text-accent text-xl">📱</div>
             </div>
@@ -114,9 +113,9 @@ const StoreThemeSettings: React.FC = () => {
             <p className="text-sm text-muted-foreground">
               يبدو رائعاً على جميع الأجهزة والشاشات
             </p>
-          </Card>
+          </UnifiedCard>
 
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow">
+          <UnifiedCard variant="default" padding="md" hover="lift" className="text-center">
             <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
               <div className="text-secondary-foreground text-xl">⚡</div>
             </div>
@@ -124,7 +123,7 @@ const StoreThemeSettings: React.FC = () => {
             <p className="text-sm text-muted-foreground">
               محسن للأداء وسرعة تحميل الصفحات
             </p>
-          </Card>
+          </UnifiedCard>
         </div>
       </div>
     </div>
