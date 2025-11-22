@@ -231,20 +231,19 @@ const EmkanIntegration: React.FC = () => {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button
+          <UnifiedButton
             variant="outline"
             onClick={loadTransactions}
             disabled={loading}
+            leftIcon={<RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />}
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             تحديث
-          </Button>
+          </UnifiedButton>
           <Dialog open={showSettingsDialog} onOpenChange={setShowSettingsDialog}>
             <DialogTrigger asChild>
-              <Button>
-                <Settings className="h-4 w-4 mr-2" />
+              <UnifiedButton leftIcon={<Settings className="h-4 w-4" />}>
                 الإعدادات
-              </Button>
+              </UnifiedButton>
             </DialogTrigger>
             <DialogContent className="max-w-md">
               <DialogHeader>
@@ -305,17 +304,17 @@ const EmkanIntegration: React.FC = () => {
                     ملاحظة: تأكد من أن بيانات إمكان محفوظة في إعدادات Supabase Secrets
                   </div>
                   <div className="flex gap-2">
-                    <Button 
+                    <UnifiedButton 
                       onClick={testConnection} 
                       variant="outline" 
                       className="flex-1" 
                       disabled={loading}
                     >
                       {loading ? "جاري اختبار الاتصال..." : "🔗 اختبار الاتصال"}
-                    </Button>
-                    <Button onClick={saveSettings} className="flex-1" disabled={loading}>
+                    </UnifiedButton>
+                    <UnifiedButton onClick={saveSettings} className="flex-1" disabled={loading}>
                       💾 حفظ الإعدادات
-                    </Button>
+                    </UnifiedButton>
                   </div>
                 </div>
               </div>
@@ -326,8 +325,8 @@ const EmkanIntegration: React.FC = () => {
 
       {/* Status Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
+        <UnifiedCard variant="glass">
+          <UnifiedCardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">الحالة</p>
@@ -347,11 +346,11 @@ const EmkanIntegration: React.FC = () => {
                 )}
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardContent className="p-4">
+        <UnifiedCard variant="glass">
+          <UnifiedCardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">إجمالي المعاملات</p>
@@ -361,11 +360,11 @@ const EmkanIntegration: React.FC = () => {
                 <CreditCard className="h-5 w-5 text-blue-600" />
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardContent className="p-4">
+        <UnifiedCard variant="glass">
+          <UnifiedCardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">المعاملات الناجحة</p>
@@ -377,11 +376,11 @@ const EmkanIntegration: React.FC = () => {
                 <CheckCircle className="h-5 w-5 text-green-600" />
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardContent className="p-4">
+        <UnifiedCard variant="glass">
+          <UnifiedCardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">إجمالي المبلغ</p>
@@ -393,19 +392,19 @@ const EmkanIntegration: React.FC = () => {
                 <DollarSign className="h-5 w-5 text-yellow-600" />
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
       {/* Transactions Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <UnifiedCard variant="premium">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="flex items-center gap-2">
             <Eye className="h-5 w-5" />
             المعاملات الأخيرة
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           {transactions.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <CreditCard className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -441,8 +440,8 @@ const EmkanIntegration: React.FC = () => {
               </Table>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };

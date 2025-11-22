@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
 import {
   CheckCircle2,
@@ -281,43 +281,43 @@ export const IntegrationHealthChecker: React.FC = () => {
   const getStatusBadge = (status: IntegrationStatus['status']) => {
     switch (status) {
       case 'healthy':
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">سليم</Badge>;
+        return <UnifiedBadge variant="success" className="bg-green-100 text-green-800 hover:bg-green-100">سليم</UnifiedBadge>;
       case 'warning':
-        return <Badge variant="outline" className="border-yellow-400 text-yellow-800">تحذير</Badge>;
+        return <UnifiedBadge variant="warning" className="border-yellow-400 text-yellow-800">تحذير</UnifiedBadge>;
       case 'error':
-        return <Badge variant="destructive">خطأ</Badge>;
+        return <UnifiedBadge variant="error">خطأ</UnifiedBadge>;
       case 'checking':
-        return <Badge variant="secondary">جاري الفحص...</Badge>;
+        return <UnifiedBadge variant="secondary">جاري الفحص...</UnifiedBadge>;
     }
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
+    <UnifiedCard className="w-full max-w-4xl mx-auto" variant="premium">
+      <UnifiedCardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <UnifiedCardTitle className="flex items-center gap-2">
               <Wifi className="h-5 w-5" />
               فحص صحة التكاملات
-            </CardTitle>
-            <CardDescription>
+            </UnifiedCardTitle>
+            <UnifiedCardDescription>
               فحص شامل لحالة جميع الأنظمة والتكاملات الخارجية
-            </CardDescription>
+            </UnifiedCardDescription>
           </div>
-          <Button
+          <UnifiedButton
             onClick={runHealthCheck}
             disabled={isChecking}
             variant="outline"
             size="sm"
             className="gap-2"
+            leftIcon={<RefreshCw className={`h-4 w-4 ${isChecking ? 'animate-spin' : ''}`} />}
           >
-            <RefreshCw className={`h-4 w-4 ${isChecking ? 'animate-spin' : ''}`} />
             إعادة فحص
-          </Button>
+          </UnifiedButton>
         </div>
-      </CardHeader>
+      </UnifiedCardHeader>
       
-      <CardContent className="space-y-4">
+      <UnifiedCardContent className="space-y-4">
         {integrations.map((integration, index) => (
           <div key={integration.name}>
             <div className="flex items-center justify-between p-4 bg-card/50 rounded-lg border">
@@ -351,9 +351,9 @@ export const IntegrationHealthChecker: React.FC = () => {
           <div className="text-center py-8 text-muted-foreground">
             <Wifi className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>لم يتم فحص أي تكاملات بعد</p>
-            <Button onClick={runHealthCheck} className="mt-4">
+            <UnifiedButton onClick={runHealthCheck} className="mt-4">
               بدء الفحص
-            </Button>
+            </UnifiedButton>
           </div>
         )}
 
@@ -363,8 +363,8 @@ export const IntegrationHealthChecker: React.FC = () => {
             <p className="text-muted-foreground">جاري فحص التكاملات...</p>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </UnifiedCardContent>
+    </UnifiedCard>
   );
 };
 
