@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -189,14 +189,14 @@ const EmkanIntegration: React.FC = () => {
     switch (status.toLowerCase()) {
       case 'completed':
       case 'success':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1" />مكتمل</Badge>;
+        return <UnifiedBadge variant="success" className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1" />مكتمل</UnifiedBadge>;
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="w-3 h-3 mr-1" />معلق</Badge>;
+        return <UnifiedBadge variant="warning" className="bg-yellow-100 text-yellow-800"><Clock className="w-3 h-3 mr-1" />معلق</UnifiedBadge>;
       case 'failed':
       case 'error':
-        return <Badge className="bg-red-100 text-red-800"><XCircle className="w-3 h-3 mr-1" />فاشل</Badge>;
+        return <UnifiedBadge variant="error" className="bg-red-100 text-red-800"><XCircle className="w-3 h-3 mr-1" />فاشل</UnifiedBadge>;
       default:
-        return <Badge className="bg-gray-100 text-gray-800"><AlertCircle className="w-3 h-3 mr-1" />غير معروف</Badge>;
+        return <UnifiedBadge variant="secondary" className="bg-gray-100 text-gray-800"><AlertCircle className="w-3 h-3 mr-1" />غير معروف</UnifiedBadge>;
     }
   };
 

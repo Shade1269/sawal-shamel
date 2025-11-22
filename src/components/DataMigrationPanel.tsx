@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -227,11 +227,11 @@ const DataMigrationPanel = () => {
   };
 
   const getStatusBadge = (status: MigrationResult | null) => {
-    if (!status) return <Badge variant="secondary">في الانتظار</Badge>;
+    if (!status) return <UnifiedBadge variant="secondary">في الانتظار</UnifiedBadge>;
     if (status.success) {
-      return <Badge variant="default" className="bg-green-500">تم النقل ({status.count}/{status.total})</Badge>;
+      return <UnifiedBadge variant="success" className="bg-green-500">تم النقل ({status.count}/{status.total})</UnifiedBadge>;
     }
-    return <Badge variant="destructive">فشل</Badge>;
+    return <UnifiedBadge variant="error">فشل</UnifiedBadge>;
   };
 
   const getStatusIcon = (status: MigrationResult | null) => {
@@ -244,17 +244,17 @@ const DataMigrationPanel = () => {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <UnifiedCard variant="premium">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="flex items-center gap-2">
             <Database className="h-5 w-5" />
             نقل البيانات من Supabase إلى Firebase
-          </CardTitle>
-          <CardDescription>
+          </UnifiedCardTitle>
+          <UnifiedCardDescription>
             انقل جميع البيانات من قاعدة بيانات Supabase إلى Firebase Firestore
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+          </UnifiedCardDescription>
+        </UnifiedCardHeader>
+        <UnifiedCardContent className="space-y-4">
           {/* Overall Progress */}
           {overallProgress > 0 && (
             <div className="space-y-2">
@@ -286,7 +286,7 @@ const DataMigrationPanel = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(status)}
-                    <Button
+                    <UnifiedButton
                       variant="outline"
                       size="sm"
                       onClick={() => runSingleMigration(step)}
@@ -298,7 +298,7 @@ const DataMigrationPanel = () => {
                         <Download className="h-4 w-4" />
                       )}
                       نقل
-                    </Button>
+                    </UnifiedButton>
                   </div>
                 </div>
               );
@@ -307,30 +307,22 @@ const DataMigrationPanel = () => {
 
           {/* Action Buttons */}
           <div className="flex gap-2 pt-4 border-t">
-            <Button
+            <UnifiedButton
               onClick={runFullMigration}
               disabled={loading}
               className="flex-1"
+              leftIcon={loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
             >
-              {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              ) : (
-                <Download className="h-4 w-4 mr-2" />
-              )}
               نقل جميع البيانات
-            </Button>
-            <Button
+            </UnifiedButton>
+            <UnifiedButton
               variant="outline"
               onClick={checkData}
               disabled={loading}
+              leftIcon={loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
             >
-              {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              ) : (
-                <RefreshCw className="h-4 w-4 mr-2" />
-              )}
               فحص البيانات
-            </Button>
+            </UnifiedButton>
           </div>
 
           {/* Warning */}
@@ -348,8 +340,8 @@ const DataMigrationPanel = () => {
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };
