@@ -13,9 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import Button from "@/ui/Button";
-import Card from "@/ui/Card";
-import Badge from "@/ui/Badge";
+import { UnifiedButton, UnifiedCard, UnifiedBadge } from "@/components/design-system";
 import Skeleton from "@/ui/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { VisuallyHidden } from "@/components/app-shell/VisuallyHidden";

@@ -1,7 +1,7 @@
 import React from "react";
 import type { ReactNode } from "react";
 
-import Badge from "@/ui/Badge";
+import { UnifiedBadge } from "@/components/design-system";
 
 interface PaymentMethodOption {
   id: string;
@@ -54,9 +54,9 @@ const CheckoutPaymentSection: React.FC<CheckoutPaymentSectionProps> = ({
               </div>
             </div>
             {disabled ? (
-              <Badge variant="muted" pill>
+              <UnifiedBadge variant="secondary" pill>
                 قريباً
-              </Badge>
+              </UnifiedBadge>
             ) : (
               <span className="text-sm font-semibold text-[color:var(--accent)]">
                 اختيار

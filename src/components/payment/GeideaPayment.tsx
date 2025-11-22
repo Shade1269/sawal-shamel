@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import Button from '@/ui/Button';
+import { UnifiedButton } from '@/components/design-system';
 import { CreditCard, Loader2 } from 'lucide-react';
 
 interface GeideaPaymentProps {
@@ -213,8 +213,8 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
           </div>
 
           {!sessionId ? (
-            <Button
-              variant="solid"
+            <UnifiedButton
+              variant="primary"
               className="w-full"
               onClick={createPaymentSession}
               disabled={loading}
@@ -230,7 +230,7 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
                   الدفع الآن
                 </>
               )}
-            </Button>
+            </UnifiedButton>
           ) : null}
         </div>
       </div>

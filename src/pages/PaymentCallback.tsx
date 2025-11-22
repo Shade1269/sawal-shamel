@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, XCircle, Loader2, FileText, Download } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import Button from '@/ui/Button';
-import Card from '@/ui/Card';
+import { UnifiedButton, UnifiedCard } from '@/components/design-system';
 
 interface OrderDetails {
   id: string;
