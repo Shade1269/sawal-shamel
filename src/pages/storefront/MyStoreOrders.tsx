@@ -1,21 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useOutletContext, useSearchParams } from 'react-router-dom';
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  VirtualizedList,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Button
-} from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Package, ShoppingBag, Loader2 } from 'lucide-react';
 import { storeOrderService } from '@/services/storeOrderService';
@@ -59,9 +46,9 @@ const getStatusBadgeVariant = (status: string) => {
     case 'shipped':
       return 'outline';
     case 'delivered':
-      return 'default';
+      return 'success';
     case 'cancelled':
-      return 'destructive';
+      return 'error';
     default:
       return 'secondary';
   }
@@ -128,10 +115,10 @@ export const MyStoreOrders: React.FC = () => {
     return (
       <div className="space-y-4">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/${storeSlug}`)}>
+          <UnifiedButton variant="ghost" size="sm" onClick={() => navigate(`/${storeSlug}`)}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             العودة للمتجر
-          </Button>
+          </UnifiedButton>
         </div>
         <div className="text-center py-8">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
@@ -145,10 +132,10 @@ export const MyStoreOrders: React.FC = () => {
     return (
       <div className="space-y-4">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/${storeSlug}`)}>
+          <UnifiedButton variant="ghost" size="sm" onClick={() => navigate(`/${storeSlug}`)}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             العودة للمتجر
-          </Button>
+          </UnifiedButton>
         </div>
 
         <div className="text-center py-12">
@@ -157,10 +144,10 @@ export const MyStoreOrders: React.FC = () => {
           <p className="text-muted-foreground mb-4">
             لم تقم بإجراء أي طلبات من هذا المتجر بعد
           </p>
-          <Button onClick={() => navigate(`/${storeSlug}`)}>
+          <UnifiedButton onClick={() => navigate(`/${storeSlug}`)}>
             <ShoppingBag className="h-4 w-4 mr-2" />
             تسوق الآن
-          </Button>
+          </UnifiedButton>
         </div>
       </div>
     );
@@ -169,28 +156,29 @@ export const MyStoreOrders: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate(`/${storeSlug}`)}>
+        <UnifiedButton variant="ghost" size="sm" onClick={() => navigate(`/${storeSlug}`)}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           العودة للمتجر
-        </Button>
+        </UnifiedButton>
         <h1 className="text-2xl font-bold">طلباتي</h1>
-        <Badge variant="secondary">{orders.length} طلب</Badge>
+        <UnifiedBadge variant="secondary">{orders.length} طلب</UnifiedBadge>
       </div>
 
       <div className="space-y-4">
         {orders.map((order) => (
-          <Card 
-            key={order.id} 
+          <UnifiedCard 
+            key={order.id}
+            variant="glass"
             className={`${
               highlightOrderId === order.id ? 'ring-2 ring-primary animate-pulse' : ''
             }`}
           >
-            <CardHeader className="pb-3">
+            <UnifiedCardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-lg">
+                  <UnifiedCardTitle className="text-lg">
                     {order.order_number ? `طلب ${order.order_number}` : `طلب #${order.id.slice(-8)}`}
-                  </CardTitle>
+                  </UnifiedCardTitle>
                   <p className="text-sm text-muted-foreground">
                     {new Date(order.created_at).toLocaleDateString('ar-SA', {
                       year: 'numeric',
@@ -202,17 +190,17 @@ export const MyStoreOrders: React.FC = () => {
                   </p>
                 </div>
                 <div className="text-right">
-                  <Badge variant={getStatusBadgeVariant(order.status)}>
+                  <UnifiedBadge variant={getStatusBadgeVariant(order.status)}>
                     {getStatusText(order.status)}
-                  </Badge>
+                  </UnifiedBadge>
                   <p className="text-lg font-semibold mt-1">
                     {order.total_sar} ر.س
                   </p>
                 </div>
               </div>
-            </CardHeader>
+            </UnifiedCardHeader>
 
-            <CardContent className="space-y-4">
+            <UnifiedCardContent className="space-y-4">
               {/* Order Items */}
               <div className="space-y-3">
                 <h4 className="font-medium text-sm">المنتجات:</h4>
@@ -262,23 +250,22 @@ export const MyStoreOrders: React.FC = () => {
               {/* Action Buttons */}
               {order.status.toLowerCase() === 'pending' && (
                 <div className="flex gap-2 pt-2">
-                  <Button
+                  <UnifiedButton
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      // Here you could add order cancellation logic
                       toast.info('يمكنك التواصل مع المتجر لإلغاء الطلب');
                     }}
                   >
                     طلب إلغاء
-                  </Button>
+                  </UnifiedButton>
                 </div>
               )}
 
               {(order.status.toLowerCase() === 'shipped' ||
                 order.status.toLowerCase() === 'delivered') && (
-                <div className="bg-green-50 dark:bg-green-950 p-3 rounded-lg">
-                  <p className="text-sm text-green-700 dark:text-green-300">
+                <div className="bg-success/10 p-3 rounded-lg">
+                  <p className="text-sm text-success">
                     {order.status.toLowerCase() === 'delivered'
                       ? '✅ تم تسليم طلبك بنجاح!'
                       : '🚚 طلبك في الطريق إليك'
@@ -286,25 +273,25 @@ export const MyStoreOrders: React.FC = () => {
                   </p>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         ))}
       </div>
 
       {/* Contact Info */}
-      <Card>
-        <CardContent className="p-4">
+      <UnifiedCard variant="glass">
+        <UnifiedCardContent className="p-4">
           <div className="text-center">
             <h4 className="font-medium mb-2">تحتاج مساعدة؟</h4>
             <p className="text-sm text-muted-foreground mb-3">
               يمكنك التواصل مع {store?.store_name} للاستفسار عن طلباتك
             </p>
-            <Button variant="outline" size="sm">
+            <UnifiedButton variant="outline" size="sm">
               التواصل مع المتجر
-            </Button>
+            </UnifiedButton>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };

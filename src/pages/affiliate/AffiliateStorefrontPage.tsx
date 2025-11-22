@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
+import { UnifiedInput } from '@/components/design-system';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ShoppingCart, Plus, Minus, Store, Package, CheckCircle } from 'lucide-react';
@@ -260,17 +260,18 @@ export default function AffiliateStorefrontPage() {
       {/* Shopping Cart Button */}
       {cartItems.length > 0 && (
         <div className="fixed top-4 left-4 z-50">
-          <Button
+          <UnifiedButton
             onClick={() => setShowCheckout(true)}
             className="relative"
             size="lg"
+            variant="primary"
           >
             <ShoppingCart className="h-5 w-5 mr-2" />
             السلة ({totalItems})
-            <Badge className="absolute -top-2 -right-2 min-w-[20px] h-5">
+            <UnifiedBadge variant="secondary" className="absolute -top-2 -right-2 min-w-[20px] h-5">
               {totalItems}
-            </Badge>
-          </Button>
+            </UnifiedBadge>
+          </UnifiedButton>
         </div>
       )}
 
@@ -290,7 +291,7 @@ export default function AffiliateStorefrontPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map((product) => (
-              <Card key={product.id} className="overflow-hidden">
+              <UnifiedCard key={product.id} variant="glass" hover="lift" className="overflow-hidden">
                 <div className="aspect-square overflow-hidden">
                   <img
                     src={product.products.image_urls?.[0] || '/placeholder.svg'}
@@ -298,7 +299,7 @@ export default function AffiliateStorefrontPage() {
                     className="w-full h-full object-cover hover:scale-105 transition-transform"
                   />
                 </div>
-                <CardContent className="p-4">
+                <UnifiedCardContent className="p-4">
                   <h3 className="font-semibold mb-2 line-clamp-2">
                     {product.products.title}
                   </h3>
@@ -306,16 +307,16 @@ export default function AffiliateStorefrontPage() {
                     {product.products.description}
                   </p>
                   <div className="flex items-center justify-between">
-                    <Badge variant="secondary" className="text-lg font-bold">
+                    <UnifiedBadge variant="secondary" className="text-lg font-bold">
                       {product.products.price_sar} ر.س
-                    </Badge>
-                    <Button onClick={() => addToCart(product)} size="sm">
+                    </UnifiedBadge>
+                    <UnifiedButton onClick={() => addToCart(product)} size="sm" variant="primary">
                       <Plus className="h-4 w-4 mr-1" />
                       إضافة
-                    </Button>
+                    </UnifiedButton>
                   </div>
-                </CardContent>
-              </Card>
+                </UnifiedCardContent>
+              </UnifiedCard>
             ))}
           </div>
         )}
@@ -324,14 +325,14 @@ export default function AffiliateStorefrontPage() {
       {/* Checkout Modal */}
       {showCheckout && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+          <UnifiedCard variant="glass" className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle className="flex items-center gap-2">
                 <ShoppingCart className="h-5 w-5" />
                 إتمام الطلب
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+              </UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent className="space-y-6">
               {/* Cart Items */}
               <div>
                 <h3 className="font-semibold mb-3">عناصر السلة</h3>
@@ -353,21 +354,21 @@ export default function AffiliateStorefrontPage() {
                           <p className="text-sm text-muted-foreground">{item.unit_price_sar} ر.س</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Button
+                          <UnifiedButton
                             size="sm"
                             variant="outline"
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
                           >
                             <Minus className="h-3 w-3" />
-                          </Button>
+                          </UnifiedButton>
                           <span className="w-8 text-center">{item.quantity}</span>
-                          <Button
+                          <UnifiedButton
                             size="sm"
                             variant="outline"
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
                           >
                             <Plus className="h-3 w-3" />
-                          </Button>
+                          </UnifiedButton>
                         </div>
                         <p className="font-semibold">
                           {item.total_price_sar.toFixed(2)} ر.س
@@ -390,7 +391,7 @@ export default function AffiliateStorefrontPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="name">الاسم الكامل *</Label>
-                    <Input
+                    <UnifiedInput
                       id="name"
                       value={customerData.name}
                       onChange={(e) => setCustomerData(prev => ({ ...prev, name: e.target.value }))}
@@ -399,7 +400,7 @@ export default function AffiliateStorefrontPage() {
                   </div>
                   <div>
                     <Label htmlFor="phone">رقم الهاتف *</Label>
-                    <Input
+                    <UnifiedInput
                       id="phone"
                       value={customerData.phone}
                       onChange={(e) => setCustomerData(prev => ({ ...prev, phone: e.target.value }))}
@@ -409,7 +410,7 @@ export default function AffiliateStorefrontPage() {
                 </div>
                 <div>
                   <Label htmlFor="email">البريد الإلكتروني</Label>
-                  <Input
+                  <UnifiedInput
                     id="email"
                     type="email"
                     value={customerData.email}
@@ -430,14 +431,14 @@ export default function AffiliateStorefrontPage() {
 
               {/* Actions */}
               <div className="flex gap-3">
-                <Button 
+                <UnifiedButton 
                   variant="outline" 
                   onClick={() => setShowCheckout(false)}
                   className="flex-1"
                 >
                   إغلاق
-                </Button>
-                <Button
+                </UnifiedButton>
+                <UnifiedButton
                   onClick={() => createOrderMutation.mutate()}
                   disabled={
                     !customerData.name ||
@@ -448,17 +449,19 @@ export default function AffiliateStorefrontPage() {
                     cartItems.length === 0
                   }
                   className="flex-1"
+                  variant="primary"
+                  size="lg"
                 >
                   {createOrderMutation.isPending ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
                   ) : (
                     <CheckCircle className="h-4 w-4 mr-2" />
                   )}
                   تأكيد الطلب
-                </Button>
+                </UnifiedButton>
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </div>
       )}
     </div>
