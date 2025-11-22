@@ -8,15 +8,10 @@ import {
   ResponsiveLayout,
   ResponsiveGrid,
   InteractiveWidget,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button
+  EnhancedButton
 } from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Switch } from '@/components/ui/switch';
 import { 
   Shield, 
