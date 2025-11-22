@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { 
@@ -209,17 +209,17 @@ export default function SystemOverviewPage() {
         </div>
 
         <div className="flex items-center justify-center gap-4">
-          <Badge variant="default" className="flex items-center gap-2 px-4 py-2">
+          <UnifiedBadge variant="success" className="flex items-center gap-2 px-4 py-2">
             <CheckCircle2 className="h-4 w-4" />
             جميع المراحل مكتملة
-          </Badge>
-          <Badge variant="outline" className="px-3 py-1">
+          </UnifiedBadge>
+          <UnifiedBadge variant="default" className="px-3 py-1">
             النسخة 4.0 - الإصدار النهائي
-          </Badge>
-          <Badge variant="secondary" className="px-3 py-1">
+          </UnifiedBadge>
+          <UnifiedBadge variant="info" className="px-3 py-1">
             {profile?.role === 'admin' ? 'مدير النظام' :
              profile?.role === 'affiliate' || profile?.role === 'merchant' || profile?.role === 'marketer' ? 'مسوق' : 'مستخدم'}
-          </Badge>
+          </UnifiedBadge>
         </div>
       </motion.div>
 
@@ -229,13 +229,13 @@ export default function SystemOverviewPage() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <Card className="relative overflow-hidden">
+        <UnifiedCard variant="glass-strong" className="relative overflow-hidden">
           <div className="absolute inset-0 gradient-success-overlay" />
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">التقدم الإجمالي</CardTitle>
-            <CardDescription>مراحل تطوير النظام المكتملة</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+          <UnifiedCardHeader className="text-center">
+            <UnifiedCardTitle className="text-2xl">التقدم الإجمالي</UnifiedCardTitle>
+            <UnifiedCardDescription>مراحل تطوير النظام المكتملة</UnifiedCardDescription>
+          </UnifiedCardHeader>
+          <UnifiedCardContent className="space-y-4">
             <div className="flex items-center justify-center">
               <div className="text-6xl font-bold text-green-500">
                 {Math.round(overallProgress)}%
@@ -245,8 +245,8 @@ export default function SystemOverviewPage() {
             <div className="text-center text-sm text-muted-foreground">
               {completedPhases} من {systemPhases.length} مراحل مكتملة
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </motion.div>
 
       {/* Stats Overview */}
@@ -263,13 +263,13 @@ export default function SystemOverviewPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4 + index * 0.1 }}
           >
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
+            <UnifiedCard variant="elegant" hover="lift" className="text-center">
+              <UnifiedCardContent className="p-6">
                 <stat.icon className={`h-8 w-8 mx-auto mb-3 ${stat.color}`} />
                 <div className="text-3xl font-bold mb-1">{stat.value}</div>
                 <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </motion.div>
         ))}
       </motion.div>
