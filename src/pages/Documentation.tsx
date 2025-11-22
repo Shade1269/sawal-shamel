@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { Book, Code, Database, Layers, Shield, Zap } from 'lucide-react';
 
 export default function Documentation() {
@@ -14,10 +14,10 @@ export default function Documentation() {
             دليل شامل للـ API والمعمارية والأمثلة
           </p>
           <div className="flex gap-2 justify-center flex-wrap">
-            <Badge variant="default">✅ الإصدار 1.0</Badge>
-            <Badge variant="secondary">TypeScript</Badge>
-            <Badge variant="secondary">React</Badge>
-            <Badge variant="secondary">Supabase</Badge>
+            <UnifiedBadge variant="success">✅ الإصدار 1.0</UnifiedBadge>
+            <UnifiedBadge variant="info">TypeScript</UnifiedBadge>
+            <UnifiedBadge variant="info">React</UnifiedBadge>
+            <UnifiedBadge variant="info">Supabase</UnifiedBadge>
           </div>
         </div>
 
@@ -32,64 +32,64 @@ export default function Documentation() {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+            <UnifiedCard variant="glass-strong">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle className="flex items-center gap-2">
                   <Book className="w-5 h-5" />
                   ما هو النظام الموحد؟
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+                </UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-4">
                 <p className="text-muted-foreground">
                   نظام الطلبات الموحد (Unified Orders System) هو طبقة موحدة للتعامل مع الطلبات من مصادر متعددة
                   (التجارة الإلكترونية، الطلبات البسيطة، الطلبات اليدوية).
                 </p>
                 
                 <div className="grid gap-4 md:grid-cols-3">
-                  <Card className="bg-muted/50">
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2">
+                  <UnifiedCard variant="flat">
+                    <UnifiedCardHeader>
+                      <UnifiedCardTitle className="text-lg flex items-center gap-2">
                         <Database className="w-4 h-4" />
                         جدول موحد
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                      </UnifiedCardTitle>
+                    </UnifiedCardHeader>
+                    <UnifiedCardContent>
                       <p className="text-sm text-muted-foreground">
                         جدول <code className="bg-muted px-1 rounded">order_hub</code> يجمع جميع الطلبات من مصادر مختلفة
                       </p>
-                    </CardContent>
-                  </Card>
+                    </UnifiedCardContent>
+                  </UnifiedCard>
 
-                  <Card className="bg-muted/50">
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2">
+                  <UnifiedCard variant="flat">
+                    <UnifiedCardHeader>
+                      <UnifiedCardTitle className="text-lg flex items-center gap-2">
                         <Code className="w-4 h-4" />
                         خدمة موحدة
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                      </UnifiedCardTitle>
+                    </UnifiedCardHeader>
+                    <UnifiedCardContent>
                       <p className="text-sm text-muted-foreground">
                         <code className="bg-muted px-1 rounded">UnifiedOrdersService</code> للتعامل مع جميع أنواع الطلبات
                       </p>
-                    </CardContent>
-                  </Card>
+                    </UnifiedCardContent>
+                  </UnifiedCard>
 
-                  <Card className="bg-muted/50">
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2">
+                  <UnifiedCard variant="flat">
+                    <UnifiedCardHeader>
+                      <UnifiedCardTitle className="text-lg flex items-center gap-2">
                         <Layers className="w-4 h-4" />
                         React Hooks
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                      </UnifiedCardTitle>
+                    </UnifiedCardHeader>
+                    <UnifiedCardContent>
                       <p className="text-sm text-muted-foreground">
                         Hooks جاهزة للاستخدام في مكونات React مع إدارة الحالة
                       </p>
-                    </CardContent>
-                  </Card>
+                    </UnifiedCardContent>
+                  </UnifiedCard>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
 
             <Card>
               <CardHeader>
