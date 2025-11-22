@@ -6,14 +6,9 @@ import {
   EnhancedCardTitle,
   ResponsiveLayout,
   ResponsiveGrid,
-  EnhancedButton,
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
+  EnhancedButton
 } from '@/components/ui/index';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle, UnifiedInput } from '@/components/design-system';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
@@ -154,30 +149,30 @@ const StoreManagement = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card>
-            <CardHeader className="text-center">
+          <UnifiedCard>
+            <UnifiedCardHeader className="text-center">
               <Store className="h-12 w-12 text-primary mx-auto mb-4" />
-              <CardTitle className="text-2xl">إنشاء متجرك الإلكتروني</CardTitle>
+              <UnifiedCardTitle className="text-2xl">إنشاء متجرك الإلكتروني</UnifiedCardTitle>
               <p className="text-muted-foreground">
                 ابدأ رحلتك في التجارة الإلكترونية وأنشئ متجرك الخاص
               </p>
-            </CardHeader>
-            <CardContent>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               {!showCreateShop ? (
                 <div className="text-center space-y-4">
                   <p className="text-sm text-muted-foreground">
                     لا يوجد لديك متجر حتى الآن. أنشئ متجرك الأول وابدأ في بيع منتجاتك!
                   </p>
-                  <Button onClick={() => setShowCreateShop(true)} className="w-full">
+                  <UnifiedButton onClick={() => setShowCreateShop(true)} fullWidth variant="primary">
                     <Plus className="ml-2 h-4 w-4" />
                     إنشاء متجر جديد
-                  </Button>
+                  </UnifiedButton>
                 </div>
               ) : (
                 <form onSubmit={handleCreateShop} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="shopName">اسم المتجر</Label>
-                    <Input
+                    <UnifiedInput
                       id="shopName"
                       value={shopName}
                       onChange={(e) => setShopName(e.target.value)}
@@ -186,17 +181,17 @@ const StoreManagement = () => {
                     />
                   </div>
                   <div className="flex gap-2">
-                    <Button type="button" variant="outline" onClick={() => setShowCreateShop(false)} className="flex-1">
+                    <UnifiedButton type="button" variant="outline" onClick={() => setShowCreateShop(false)} className="flex-1">
                       إلغاء
-                    </Button>
-                    <Button type="submit" className="flex-1">
+                    </UnifiedButton>
+                    <UnifiedButton type="submit" variant="primary" className="flex-1">
                       إنشاء المتجر
-                    </Button>
+                    </UnifiedButton>
                   </div>
                 </form>
               )}
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </div>
       </div>
     );
@@ -220,51 +215,51 @@ const StoreManagement = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">المنتجات</CardTitle>
+          <UnifiedCard>
+            <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <UnifiedCardTitle className="text-sm font-medium">المنتجات</UnifiedCardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               <div className="text-2xl font-bold">{userShop.total_products}</div>
               <p className="text-xs text-muted-foreground">منتج متاح في المتجر</p>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
           
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">الطلبات</CardTitle>
+          <UnifiedCard>
+            <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <UnifiedCardTitle className="text-sm font-medium">الطلبات</UnifiedCardTitle>
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               <div className="text-2xl font-bold">{userShop.total_orders}</div>
               <p className="text-xs text-muted-foreground">إجمالي الطلبات</p>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">الأنشطة</CardTitle>
+          <UnifiedCard>
+            <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <UnifiedCardTitle className="text-sm font-medium">الأنشطة</UnifiedCardTitle>
               <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               <div className="text-2xl font-bold">{userActivities.length}</div>
               <p className="text-xs text-muted-foreground">نشاط حديث</p>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Add Product */}
-          <Card>
-            <CardHeader>
-              <CardTitle>إضافة منتج جديد</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <UnifiedCard>
+            <UnifiedCardHeader>
+              <UnifiedCardTitle>إضافة منتج جديد</UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               <form onSubmit={handleAddProduct} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="title">اسم المنتج</Label>
-                  <Input
+                  <UnifiedInput
                     id="title"
                     value={newProduct.title}
                     onChange={(e) => setNewProduct(prev => ({...prev, title: e.target.value}))}
@@ -286,7 +281,7 @@ const StoreManagement = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="price">السعر (ر.س)</Label>
-                    <Input
+                    <UnifiedInput
                       id="price"
                       type="number"
                       value={newProduct.price_sar}
@@ -299,7 +294,7 @@ const StoreManagement = () => {
                   
                   <div className="space-y-2">
                     <Label htmlFor="stock">الكمية</Label>
-                    <Input
+                    <UnifiedInput
                       id="stock"
                       type="number"
                       value={newProduct.stock}
@@ -311,7 +306,7 @@ const StoreManagement = () => {
                 
                 <div className="space-y-2">
                   <Label htmlFor="category">الفئة</Label>
-                  <Input
+                  <UnifiedInput
                     id="category"
                     value={newProduct.category}
                     onChange={(e) => setNewProduct(prev => ({...prev, category: e.target.value}))}
@@ -319,20 +314,20 @@ const StoreManagement = () => {
                   />
                 </div>
                 
-                <Button type="submit" className="w-full">
+                <UnifiedButton type="submit" variant="primary" fullWidth>
                   <Plus className="ml-2 h-4 w-4" />
                   إضافة المنتج
-                </Button>
+                </UnifiedButton>
               </form>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
 
           {/* Recent Activities */}
-          <Card>
-            <CardHeader>
-              <CardTitle>الأنشطة الأخيرة</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <UnifiedCard>
+            <UnifiedCardHeader>
+              <UnifiedCardTitle>الأنشطة الأخيرة</UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               <div className="space-y-4">
                 {userActivities.slice(0, 5).map((activity) => (
                   <div key={activity.id} className="flex items-start space-x-4 space-x-reverse">
@@ -355,37 +350,37 @@ const StoreManagement = () => {
                   </p>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </div>
 
         {/* Products List */}
         {products.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>منتجات المتجر ({products.length})</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <UnifiedCard>
+            <UnifiedCardHeader>
+              <UnifiedCardTitle>منتجات المتجر ({products.length})</UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {products.map((product) => (
-                  <Card key={product.id} className="border overflow-hidden">
+                  <UnifiedCard key={product.id} className="border overflow-hidden" padding="none">
                     <ProductImageCarousel 
                       images={product.image_urls}
                       productTitle={product.title}
                     />
-                    <CardContent className="p-4">
+                    <UnifiedCardContent className="p-4">
                       <h3 className="font-semibold mb-2">{product.title}</h3>
                       <p className="text-sm text-muted-foreground mb-2">{product.description}</p>
                       <div className="flex justify-between items-center">
                         <span className="font-bold text-primary">{product.price_sar} ر.س</span>
                         <span className="text-sm text-muted-foreground">متوفر: {product.stock}</span>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </UnifiedCardContent>
+                  </UnifiedCard>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         )}
       </div>
     </div>

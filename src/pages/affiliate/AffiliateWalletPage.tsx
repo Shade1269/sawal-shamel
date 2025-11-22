@@ -3,15 +3,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { 
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent
-} from '@/components/ui/index';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+  UnifiedCard,
+  UnifiedCardHeader,
+  UnifiedCardTitle,
+  UnifiedCardContent,
+  UnifiedButton,
+  UnifiedInput,
+  UnifiedBadge
+} from '@/components/design-system';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { 
   Dialog, 
   DialogContent, 
@@ -56,15 +56,15 @@ const statusIcons: Record<string, any> = {
   completed: CheckCircle,
 };
 
-const statusColors: Record<string, "default" | "secondary" | "destructive"> = {
+const statusColors: Record<string, "default" | "secondary" | "error" | "success"> = {
   PENDING: "default",
-  APPROVED: "secondary",
-  REJECTED: "destructive",
-  COMPLETED: "default",
+  APPROVED: "success",
+  REJECTED: "error",
+  COMPLETED: "success",
   pending: "default",
-  approved: "secondary",
-  rejected: "destructive",
-  completed: "default",
+  approved: "success",
+  rejected: "error",
+  completed: "success",
 };
 
 const statusLabels: Record<string, string> = {
@@ -323,80 +323,82 @@ export default function AffiliateWalletPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className={`transition-colors duration-500 ${
+        <UnifiedCard className={`transition-colors duration-500 ${
           isDarkMode 
             ? 'bg-slate-800/50 border-slate-700/50' 
             : 'bg-white border-slate-200'
         }`}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium transition-colors duration-500 ${
+          <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
               isDarkMode ? 'text-slate-200' : 'text-slate-700'
-            }`}>الرصيد المتاح</CardTitle>
+            }`}>الرصيد المتاح</UnifiedCardTitle>
             <DollarSign className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-green-600">{availableBalance.toFixed(2)} ر.س</div>
             <p className={`text-xs mt-1 transition-colors duration-500 ${
               isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
             }`}>
               جاهز للسحب
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card className={`transition-colors duration-500 ${
+        <UnifiedCard className={`transition-colors duration-500 ${
           isDarkMode 
             ? 'bg-slate-800/50 border-slate-700/50' 
             : 'bg-white border-slate-200'
         }`}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium transition-colors duration-500 ${
+          <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
               isDarkMode ? 'text-slate-200' : 'text-slate-700'
-            }`}>رصيد معلق</CardTitle>
+            }`}>رصيد معلق</UnifiedCardTitle>
             <Clock className="h-4 w-4 text-yellow-600" />
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-yellow-600">{pendingBalance.toFixed(2)} ر.س</div>
             <p className={`text-xs mt-1 transition-colors duration-500 ${
               isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
             }`}>
               في انتظار التأكيد
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card className={`transition-colors duration-500 ${
+        <UnifiedCard className={`transition-colors duration-500 ${
           isDarkMode 
             ? 'bg-slate-800/50 border-slate-700/50' 
             : 'bg-white border-slate-200'
         }`}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium transition-colors duration-500 ${
+          <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
               isDarkMode ? 'text-slate-200' : 'text-slate-700'
-            }`}>إجمالي المدفوعات</CardTitle>
+            }`}>إجمالي المدفوعات</UnifiedCardTitle>
             <CheckCircle className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-blue-600">{paidBalance.toFixed(2)} ر.س</div>
             <p className={`text-xs mt-1 transition-colors duration-500 ${
               isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
             }`}>
               تم الدفع
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
       <div className="mb-8">
-        <Button 
+        <UnifiedButton 
           onClick={() => setShowWithdrawalDialog(true)}
           disabled={availableBalance < minWithdrawal}
           size="lg"
+          variant="primary"
+          fullWidth={false}
           className="w-full md:w-auto"
         >
           <Send className="h-4 w-4 mr-2" />
           طلب سحب
-        </Button>
+        </UnifiedButton>
         {availableBalance < minWithdrawal && (
           <p className={`text-sm mt-2 transition-colors duration-500 ${
             isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
@@ -406,20 +408,20 @@ export default function AffiliateWalletPage() {
         )}
       </div>
 
-      <Card className={`mb-8 transition-colors duration-500 ${
+      <UnifiedCard className={`mb-8 transition-colors duration-500 ${
         isDarkMode 
           ? 'bg-slate-800/50 border-slate-700/50' 
           : 'bg-white border-slate-200'
       }`}>
-        <CardHeader>
-          <CardTitle className={`flex items-center gap-2 transition-colors duration-500 ${
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className={`flex items-center gap-2 transition-colors duration-500 ${
             isDarkMode ? 'text-white' : 'text-slate-800'
           }`}>
             <History className="h-5 w-5" />
             طلبات السحب
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           {!withdrawalRequests || withdrawalRequests.length === 0 ? (
             <div className="text-center py-12">
               <Send className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
@@ -463,16 +465,16 @@ export default function AffiliateWalletPage() {
                       </div>
                     </div>
                     
-                    <Badge variant={statusColors[request.status]}>
+                    <UnifiedBadge variant={statusColors[request.status]}>
                       {statusLabels[request.status]}
-                    </Badge>
+                    </UnifiedBadge>
                   </div>
                 );
               })}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       <Dialog open={showWithdrawalDialog} onOpenChange={setShowWithdrawalDialog}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -486,7 +488,7 @@ export default function AffiliateWalletPage() {
           <div className="space-y-4">
             <div>
               <Label htmlFor="amount">المبلغ (ر.س)</Label>
-              <Input
+              <UnifiedInput
                 id="amount"
                 type="number"
                 value={withdrawalAmount}
@@ -515,7 +517,7 @@ export default function AffiliateWalletPage() {
               <>
                 <div>
                   <Label htmlFor="bank_name">اسم البنك</Label>
-                  <Input
+                  <UnifiedInput
                     id="bank_name"
                     value={bankName}
                     onChange={(e) => setBankName(e.target.value)}
@@ -524,7 +526,7 @@ export default function AffiliateWalletPage() {
                 </div>
                 <div>
                   <Label htmlFor="account_name">اسم صاحب الحساب</Label>
-                  <Input
+                  <UnifiedInput
                     id="account_name"
                     value={accountName}
                     onChange={(e) => setAccountName(e.target.value)}
@@ -532,7 +534,7 @@ export default function AffiliateWalletPage() {
                 </div>
                 <div>
                   <Label htmlFor="account_number">رقم الحساب</Label>
-                  <Input
+                  <UnifiedInput
                     id="account_number"
                     value={accountNumber}
                     onChange={(e) => setAccountNumber(e.target.value)}
@@ -540,7 +542,7 @@ export default function AffiliateWalletPage() {
                 </div>
                 <div>
                   <Label htmlFor="iban">رقم الآيبان (IBAN) - اختياري</Label>
-                  <Input
+                  <UnifiedInput
                     id="iban"
                     value={iban}
                     onChange={(e) => setIban(e.target.value)}
@@ -553,7 +555,7 @@ export default function AffiliateWalletPage() {
             {(paymentMethod === 'stc_pay' || paymentMethod === 'wallet') && (
               <div>
                 <Label htmlFor="phone_number">رقم الهاتف</Label>
-                <Input
+                <UnifiedInput
                   id="phone_number"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
@@ -575,15 +577,16 @@ export default function AffiliateWalletPage() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowWithdrawalDialog(false)}>
+            <UnifiedButton variant="outline" onClick={() => setShowWithdrawalDialog(false)}>
               إلغاء
-            </Button>
-            <Button 
+            </UnifiedButton>
+            <UnifiedButton 
+              variant="primary"
               onClick={handleWithdrawalRequest}
               disabled={createWithdrawalMutation.isPending}
             >
               {createWithdrawalMutation.isPending ? 'جاري الإرسال...' : 'إرسال الطلب'}
-            </Button>
+            </UnifiedButton>
           </DialogFooter>
         </DialogContent>
       </Dialog>

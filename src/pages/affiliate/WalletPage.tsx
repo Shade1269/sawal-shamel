@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle, UnifiedButton, UnifiedBadge } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WalletCard } from '@/components/wallet/WalletCard';
 import { WalletStats } from '@/components/wallet/WalletStats';
@@ -58,11 +56,11 @@ const withdrawalStatusLabels = {
   COMPLETED: 'مكتمل',
 };
 
-const withdrawalStatusColors: Record<string, "default" | "secondary" | "destructive"> = {
+const withdrawalStatusColors: Record<string, "default" | "secondary" | "error" | "success"> = {
   PENDING: "default",
-  APPROVED: "secondary",
-  REJECTED: "destructive",
-  COMPLETED: "default",
+  APPROVED: "success",
+  REJECTED: "error",
+  COMPLETED: "success",
 };
 
 export default function WalletPage() {
@@ -158,21 +156,21 @@ export default function WalletPage() {
 
         {/* Transactions Tab */}
         <TabsContent value="transactions" className="space-y-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>سجل المعاملات</CardTitle>
+          <UnifiedCard>
+            <UnifiedCardHeader className="flex flex-row items-center justify-between">
+              <UnifiedCardTitle>سجل المعاملات</UnifiedCardTitle>
               {transactions.length > 0 && (
-                <Button 
+                <UnifiedButton 
                   variant="outline" 
                   size="sm"
                   onClick={handleExportTransactions}
                 >
                   <Download className="h-4 w-4 ml-2" />
                   تصدير Excel
-                </Button>
+                </UnifiedButton>
               )}
-            </CardHeader>
-            <CardContent>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               {transactions.length === 0 ? (
                 <div className="text-center py-12">
                   <TrendingUp className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
@@ -221,40 +219,40 @@ export default function WalletPage() {
                     );
                   })}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+            )}
+          </UnifiedCardContent>
+        </UnifiedCard>
+      </TabsContent>
 
-        {/* Withdrawals Tab */}
-        <TabsContent value="withdrawals" className="space-y-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>طلبات السحب</CardTitle>
-              {withdrawals.length > 0 && (
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleExportWithdrawals}
-                >
-                  <Download className="h-4 w-4 ml-2" />
-                  تصدير Excel
-                </Button>
-              )}
-            </CardHeader>
-            <CardContent>
+      {/* Withdrawals Tab */}
+      <TabsContent value="withdrawals" className="space-y-4">
+        <UnifiedCard>
+          <UnifiedCardHeader className="flex flex-row items-center justify-between">
+            <UnifiedCardTitle>طلبات السحب</UnifiedCardTitle>
+            {withdrawals.length > 0 && (
+              <UnifiedButton 
+                variant="outline" 
+                size="sm"
+                onClick={handleExportWithdrawals}
+              >
+                <Download className="h-4 w-4 ml-2" />
+                تصدير Excel
+              </UnifiedButton>
+            )}
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
               {withdrawals.length === 0 ? (
                 <div className="text-center py-12">
                   <ArrowDownToLine className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                   <h3 className="text-lg font-semibold mb-2">لا توجد طلبات سحب</h3>
                   <p className="text-muted-foreground mb-4">
-                    لم تقم بأي طلبات سحب بعد
-                  </p>
-                  {balance && balance.available_balance_sar >= balance.minimum_withdrawal_sar && (
-                    <Button onClick={() => setShowWithdrawalForm(true)}>
-                      <ArrowDownToLine className="h-4 w-4 mr-2" />
-                      طلب سحب جديد
-                    </Button>
+                  لم تقم بأي طلبات سحب بعد
+                </p>
+                {balance && balance.available_balance_sar >= balance.minimum_withdrawal_sar && (
+                  <UnifiedButton variant="primary" onClick={() => setShowWithdrawalForm(true)}>
+                    <ArrowDownToLine className="h-4 w-4 mr-2" />
+                    طلب سحب جديد
+                  </UnifiedButton>
                   )}
                 </div>
               ) : (
@@ -277,12 +275,12 @@ export default function WalletPage() {
                               <p className="text-sm text-muted-foreground">
                                 {format(new Date(withdrawal.created_at), 'dd MMMM yyyy - HH:mm', { locale: ar })}
                               </p>
-                            </div>
                           </div>
-                          <Badge variant={withdrawalStatusColors[withdrawal.status]}>
-                            {withdrawalStatusLabels[withdrawal.status]}
-                          </Badge>
                         </div>
+                        <UnifiedBadge variant={withdrawalStatusColors[withdrawal.status]}>
+                          {withdrawalStatusLabels[withdrawal.status]}
+                        </UnifiedBadge>
+                      </div>
 
                         <div className="text-sm space-y-1">
                           <p className="text-muted-foreground">
@@ -330,8 +328,8 @@ export default function WalletPage() {
                   })}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </TabsContent>
       </Tabs>
 

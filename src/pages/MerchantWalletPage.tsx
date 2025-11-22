@@ -3,9 +3,8 @@ import { useMerchantWithdrawals } from '@/hooks/useMerchantWithdrawals';
 import { MerchantWalletCard } from '@/components/merchant/MerchantWalletCard';
 import { MerchantWithdrawalForm } from '@/components/merchant/MerchantWithdrawalForm';
 import { MerchantTransactionsList } from '@/components/merchant/MerchantTransactionsList';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle, UnifiedBadge } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { Loader2 } from 'lucide-react';
@@ -31,22 +30,22 @@ export default function MerchantWalletPage() {
   if (!balance) {
     return (
       <div className="container mx-auto p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>خطأ</CardTitle>
-            <CardDescription>لم نتمكن من تحميل بيانات المحفظة</CardDescription>
-          </CardHeader>
-        </Card>
+        <UnifiedCard>
+          <UnifiedCardHeader>
+            <UnifiedCardTitle>خطأ</UnifiedCardTitle>
+            <UnifiedCardDescription>لم نتمكن من تحميل بيانات المحفظة</UnifiedCardDescription>
+          </UnifiedCardHeader>
+        </UnifiedCard>
       </div>
     );
   }
 
   const getWithdrawalStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+    const variants: Record<string, 'default' | 'secondary' | 'success' | 'error'> = {
       'PENDING': 'secondary',
-      'APPROVED': 'default',
-      'COMPLETED': 'default',
-      'REJECTED': 'destructive'
+      'APPROVED': 'success',
+      'COMPLETED': 'success',
+      'REJECTED': 'error'
     };
     const labels: Record<string, string> = {
       'PENDING': 'قيد المراجعة',
@@ -54,7 +53,7 @@ export default function MerchantWalletPage() {
       'COMPLETED': 'مكتمل',
       'REJECTED': 'مرفوض'
     };
-    return <Badge variant={variants[status]}>{labels[status]}</Badge>;
+    return <UnifiedBadge variant={variants[status]}>{labels[status]}</UnifiedBadge>;
   };
 
   return (
@@ -82,35 +81,35 @@ export default function MerchantWalletPage() {
               isSubmitting={isCreating}
             />
           ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle>لا يمكنك السحب حالياً</CardTitle>
-                <CardDescription>
+            <UnifiedCard>
+              <UnifiedCardHeader>
+                <UnifiedCardTitle>لا يمكنك السحب حالياً</UnifiedCardTitle>
+                <UnifiedCardDescription>
                   الحد الأدنى للسحب هو {balance.minimum_withdrawal_sar} ريال.
                   رصيدك الحالي: {balance.available_balance_sar.toFixed(2)} ريال
-                </CardDescription>
-              </CardHeader>
-            </Card>
+                </UnifiedCardDescription>
+              </UnifiedCardHeader>
+            </UnifiedCard>
           )}
 
           {pendingWithdrawals.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>طلبات سحب معلقة</CardTitle>
-                <CardDescription>
+            <UnifiedCard>
+              <UnifiedCardHeader>
+                <UnifiedCardTitle>طلبات سحب معلقة</UnifiedCardTitle>
+                <UnifiedCardDescription>
                   لديك {pendingWithdrawals.length} طلب سحب قيد المراجعة بمبلغ إجمالي {totalPending.toFixed(2)} ريال
-                </CardDescription>
-              </CardHeader>
-            </Card>
+                </UnifiedCardDescription>
+              </UnifiedCardHeader>
+            </UnifiedCard>
           )}
         </TabsContent>
 
         <TabsContent value="history">
-          <Card>
-            <CardHeader>
-              <CardTitle>سجل طلبات السحب</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <UnifiedCard>
+            <UnifiedCardHeader>
+              <UnifiedCardTitle>سجل طلبات السحب</UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               {withdrawals.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">
                   لا توجد طلبات سحب بعد
@@ -143,12 +142,12 @@ export default function MerchantWalletPage() {
                         </p>
                       )}
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+                ))}
+              </div>
+            )}
+          </UnifiedCardContent>
+        </UnifiedCard>
+      </TabsContent>
 
         <TabsContent value="transactions">
           <MerchantTransactionsList transactions={transactions} />
