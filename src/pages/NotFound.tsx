@@ -1,9 +1,5 @@
 import React from 'react';
-import { 
-  EnhancedButton,
-  Button
-} from '@/components/ui/index';
-import { Card, CardContent } from '@/components/ui/card';
+import { UnifiedButton, UnifiedCard, UnifiedCardContent } from '@/components/design-system';
 import { 
   Home, 
   ArrowRight, 
@@ -28,8 +24,8 @@ const NotFound = () => {
         </div>
 
         {/* Error Message */}
-        <Card className="border-0 bg-card/50 backdrop-blur-sm mb-8">
-          <CardContent className="p-8">
+        <UnifiedCard variant="glass" padding="lg" className="mb-8">
+          <UnifiedCardContent className="p-8">
             <h1 className="text-3xl font-bold mb-4">
               عذراً، الصفحة غير موجودة
             </h1>
@@ -42,23 +38,20 @@ const NotFound = () => {
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/">
-                  <Button size="lg" className="bg-gradient-primary w-full sm:w-auto">
-                    <Home className="w-5 h-5 mr-2" />
+                  <UnifiedButton size="lg" variant="hero" leftIcon={<Home className="w-5 h-5" />} rightIcon={<ArrowRight className="w-5 h-5" />}>
                     العودة إلى الصفحة الرئيسية
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
+                  </UnifiedButton>
                 </Link>
 
                 <Link to="/checkout">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                    <Search className="w-5 h-5 mr-2" />
+                  <UnifiedButton variant="outline" size="lg" leftIcon={<Search className="w-5 h-5" />}>
                     الانتقال إلى الدفع
-                  </Button>
+                  </UnifiedButton>
                 </Link>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
         {/* Quick Links */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
