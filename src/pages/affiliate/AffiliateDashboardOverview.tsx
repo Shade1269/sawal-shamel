@@ -3,18 +3,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useAffiliateOrders } from '@/hooks/useAffiliateOrders';
-import { 
-  EnhancedCard, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle, 
-  EnhancedCardContent,
-  InteractiveWidget,
-  AnimatedCounter,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  EnhancedButton
-} from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardHeader, UnifiedCardTitle, UnifiedCardContent } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Store, Package, ShoppingBag, DollarSign, Users, TrendingUp, ExternalLink, Palette, FileText, Megaphone, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createStoreUrl } from '@/utils/domains';
@@ -85,16 +76,16 @@ export default function AffiliateDashboardOverview() {
           <p className="text-muted-foreground mb-4">
             قم بإنشاء متجرك الأول لبدء التسويق بالعمولة
           </p>
-          <EnhancedButton onClick={handleCreateStore} variant="persian" animation="glow">
+          <UnifiedButton onClick={handleCreateStore} variant="persian">
             إنشاء متجر جديد
-          </EnhancedButton>
+          </UnifiedButton>
         </div>
       </div>
     );
   }
 
   return (
-    <ResponsiveLayout variant="glass" maxWidth="2xl" centerContent>
+    <div className="container mx-auto py-8 max-w-7xl">
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
@@ -103,236 +94,231 @@ export default function AffiliateDashboardOverview() {
               مرحباً بك في لوحة تحكم متجر {affiliateStore.store_name}
             </p>
           </div>
-          <EnhancedButton asChild variant="outline">
-            <a 
-              href={createStoreUrl(affiliateStore.store_slug)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2"
-            >
-              <ExternalLink className="h-4 w-4" />
+          <a 
+            href={createStoreUrl(affiliateStore.store_slug)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <UnifiedButton variant="outline">
+              <ExternalLink className="h-4 w-4 ml-2" />
               عرض المتجر
-            </a>
-          </EnhancedButton>
+            </UnifiedButton>
+          </a>
         </div>
       </div>
 
       {/* Store Info Card */}
-      <EnhancedCard variant="persian" className="mb-8" hover="glow">
-        <EnhancedCardHeader>
-          <EnhancedCardTitle className="flex items-center gap-2 text-white">
+      <UnifiedCard variant="persian" className="mb-8" hover="glow">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="flex items-center gap-2">
             <Store className="h-5 w-5" />
             معلومات المتجر
-          </EnhancedCardTitle>
-        </EnhancedCardHeader>
-        <EnhancedCardContent>
+          </UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <h4 className="font-medium text-sm text-white/70">اسم المتجر</h4>
-              <p className="text-lg font-semibold text-white">{affiliateStore.store_name}</p>
+              <h4 className="font-medium text-sm opacity-70">اسم المتجر</h4>
+              <p className="text-lg font-semibold">{affiliateStore.store_name}</p>
             </div>
             <div>
-              <h4 className="font-medium text-sm text-white/70">رابط المتجر</h4>
-              <p className="text-lg font-semibold text-white">{createStoreUrl(affiliateStore.store_slug)}</p>
+              <h4 className="font-medium text-sm opacity-70">رابط المتجر</h4>
+              <p className="text-lg font-semibold">{createStoreUrl(affiliateStore.store_slug)}</p>
             </div>
             <div>
-              <h4 className="font-medium text-sm text-white/70">الحالة</h4>
-              <Badge variant={affiliateStore.is_active ? "default" : "secondary"} className="bg-white/20 text-white">
+              <h4 className="font-medium text-sm opacity-70">الحالة</h4>
+              <UnifiedBadge variant={affiliateStore.is_active ? "default" : "secondary"}>
                 {affiliateStore.is_active ? "نشط" : "غير نشط"}
-              </Badge>
+              </UnifiedBadge>
             </div>
           </div>
-        </EnhancedCardContent>
-      </EnhancedCard>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       {/* Stats Cards */}
-      <ResponsiveGrid columns={{ mobile: 1, tablet: 2, desktop: 4 }} gap={{ mobile: 4, tablet: 6 }} className="mb-8">
-        <InteractiveWidget
-          title="المنتجات النشطة"
-          description="منتج متاح للعملاء"
-          variant="glass"
-          metric={{
-            value: productsCount || 0,
-            label: "منتج",
-            icon: Package
-          }}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <UnifiedCard variant="glass" hover="lift">
+          <UnifiedCardContent className="p-6">
+            <div className="flex items-center justify-between mb-2">
+              <Package className="h-8 w-8 text-primary" />
+              <span className="text-3xl font-bold">{productsCount || 0}</span>
+            </div>
+            <h3 className="font-semibold">المنتجات النشطة</h3>
+            <p className="text-sm text-muted-foreground">منتج متاح للعملاء</p>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <InteractiveWidget
-          title="إجمالي الطلبات"
-          description="متوسط قيمة الطلب"
-          variant="luxury"
-          metric={{
-            value: orderStats.totalOrders,
-            label: "طلب",
-            change: orderStats.averageOrderValue,
-            icon: ShoppingBag
-          }}
-        />
+        <UnifiedCard variant="luxury" hover="lift">
+          <UnifiedCardContent className="p-6">
+            <div className="flex items-center justify-between mb-2">
+              <ShoppingBag className="h-8 w-8" />
+              <span className="text-3xl font-bold">{orderStats.totalOrders}</span>
+            </div>
+            <h3 className="font-semibold">إجمالي الطلبات</h3>
+            <p className="text-sm opacity-70">متوسط: {orderStats.averageOrderValue.toFixed(2)} ر.س</p>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <InteractiveWidget
-          title="إجمالي المبيعات"
-          description="إجمالي المبيعات المسجلة"
-          variant="glass"
-          metric={{
-            value: `${orderStats.totalRevenue.toFixed(2)} ر.س`,
-            label: "مبيعات",
-            icon: TrendingUp
-          }}
-        />
+        <UnifiedCard variant="glass" hover="lift">
+          <UnifiedCardContent className="p-6">
+            <div className="flex items-center justify-between mb-2">
+              <TrendingUp className="h-8 w-8 text-success" />
+              <span className="text-3xl font-bold">{orderStats.totalRevenue.toFixed(0)}</span>
+            </div>
+            <h3 className="font-semibold">إجمالي المبيعات</h3>
+            <p className="text-sm text-muted-foreground">ر.س</p>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <InteractiveWidget
-          title="العمولات"
-          description="معلقة ومؤكدة"
-          variant="glass"
-          metric={{
-            value: `${orderStats.totalCommissions.toFixed(2)} ر.س`,
-            label: "عمولة",
-            icon: DollarSign
-          }}
-          progress={{
-            value: orderStats.confirmedCommissions,
-            max: orderStats.totalCommissions,
-            label: "مؤكدة"
-          }}
-        />
-      </ResponsiveGrid>
+        <UnifiedCard variant="glass" hover="lift">
+          <UnifiedCardContent className="p-6">
+            <div className="flex items-center justify-between mb-2">
+              <DollarSign className="h-8 w-8 text-warning" />
+              <span className="text-3xl font-bold">{orderStats.totalCommissions.toFixed(0)}</span>
+            </div>
+            <h3 className="font-semibold">العمولات</h3>
+            <p className="text-sm text-muted-foreground">
+              مؤكدة: {orderStats.confirmedCommissions.toFixed(2)} ر.س
+            </p>
+          </UnifiedCardContent>
+        </UnifiedCard>
+      </div>
 
       {/* Quick Actions */}
-      <ResponsiveGrid columns={{ mobile: 1, tablet: 2, desktop: 6 }} gap={{ mobile: 4, tablet: 6 }}>
-        <EnhancedCard variant="glass" hover="lift">
-          <EnhancedCardHeader>
-            <EnhancedCardTitle className="flex items-center gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <UnifiedCard variant="glass" hover="lift">
+          <UnifiedCardHeader>
+            <UnifiedCardTitle className="flex items-center gap-2">
               <Package className="h-5 w-5" />
               إدارة المنتجات
-            </EnhancedCardTitle>
-          </EnhancedCardHeader>
-          <EnhancedCardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <p className="text-muted-foreground mb-4">
               إدارة منتجات متجرك وإعدادات العمولة
             </p>
-            <EnhancedButton asChild className="w-full" variant="default" animation="glow">
-              <Link to="/affiliate/storefront">
+            <Link to="/affiliate/storefront">
+              <UnifiedButton fullWidth variant="primary">
                 عرض المنتجات
-              </Link>
-            </EnhancedButton>
-          </EnhancedCardContent>
-        </EnhancedCard>
+              </UnifiedButton>
+            </Link>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <EnhancedCard variant="glass" hover="lift">
-          <EnhancedCardHeader>
-            <EnhancedCardTitle className="flex items-center gap-2">
+        <UnifiedCard variant="glass" hover="lift">
+          <UnifiedCardHeader>
+            <UnifiedCardTitle className="flex items-center gap-2">
               <ShoppingBag className="h-5 w-5" />
               متابعة الطلبات
-            </EnhancedCardTitle>
-          </EnhancedCardHeader>
-          <EnhancedCardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <p className="text-muted-foreground mb-4">
               متابعة وإدارة طلبات العملاء
             </p>
-            <EnhancedButton asChild className="w-full" variant="luxury" animation="glow">
-              <Link to="/affiliate/orders">
+            <Link to="/affiliate/orders">
+              <UnifiedButton fullWidth variant="luxury">
                 عرض الطلبات
-              </Link>
-            </EnhancedButton>
-          </EnhancedCardContent>
-        </EnhancedCard>
+              </UnifiedButton>
+            </Link>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <EnhancedCard variant="glass" hover="lift">
-          <EnhancedCardHeader>
-            <EnhancedCardTitle className="flex items-center gap-2">
+        <UnifiedCard variant="glass" hover="lift">
+          <UnifiedCardHeader>
+            <UnifiedCardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
               إدارة المحتوى
-            </EnhancedCardTitle>
-          </EnhancedCardHeader>
-          <EnhancedCardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <p className="text-muted-foreground mb-4">
               إنشاء وإدارة صفحات المتجر
             </p>
-            <EnhancedButton asChild className="w-full" variant="secondary" animation="glow">
-              <Link to="/cms-management">
+            <Link to="/cms-management">
+              <UnifiedButton fullWidth variant="secondary">
                 نظام CMS
-              </Link>
-            </EnhancedButton>
-          </EnhancedCardContent>
-        </EnhancedCard>
+              </UnifiedButton>
+            </Link>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <EnhancedCard variant="glass" hover="lift">
-          <EnhancedCardHeader>
-            <EnhancedCardTitle className="flex items-center gap-2">
+        <UnifiedCard variant="glass" hover="lift">
+          <UnifiedCardHeader>
+            <UnifiedCardTitle className="flex items-center gap-2">
               <Megaphone className="h-5 w-5" />
               البانرات الترويجية
-            </EnhancedCardTitle>
-          </EnhancedCardHeader>
-          <EnhancedCardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <p className="text-muted-foreground mb-4">
               إنشاء وإدارة الإعلانات الترويجية
             </p>
-            <EnhancedButton asChild className="w-full" variant="premium" animation="glow">
-              <Link to={`/banner-management/${affiliateStore?.id || ''}`}>
+            <Link to={`/banner-management/${affiliateStore?.id || ''}`}>
+              <UnifiedButton fullWidth variant="premium">
                 إدارة البانرات
-              </Link>
-            </EnhancedButton>
-          </EnhancedCardContent>
-        </EnhancedCard>
+              </UnifiedButton>
+            </Link>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-         <EnhancedCard variant="glass" hover="lift">
-           <EnhancedCardHeader>
-             <EnhancedCardTitle className="flex items-center gap-2">
+         <UnifiedCard variant="glass" hover="lift">
+           <UnifiedCardHeader>
+             <UnifiedCardTitle className="flex items-center gap-2">
                <Sparkles className="h-5 w-5" />
                الاستوديو المتقدم
-             </EnhancedCardTitle>
-           </EnhancedCardHeader>
-           <EnhancedCardContent>
+             </UnifiedCardTitle>
+           </UnifiedCardHeader>
+           <UnifiedCardContent>
              <p className="text-muted-foreground mb-4">
                تصميم ثيمات متقدمة بالذكاء الاصطناعي
              </p>
-             <EnhancedButton asChild className="w-full" variant="persian" animation="glow">
-               <Link to={`/theme-studio?storeId=${affiliateStore?.id || ''}`}>
+             <Link to={`/theme-studio?storeId=${affiliateStore?.id || ''}`}>
+               <UnifiedButton fullWidth variant="persian">
                  الاستوديو المتقدم
-               </Link>
-             </EnhancedButton>
-           </EnhancedCardContent>
-         </EnhancedCard>
+               </UnifiedButton>
+             </Link>
+           </UnifiedCardContent>
+         </UnifiedCard>
 
-         <EnhancedCard variant="glass" hover="lift">
-           <EnhancedCardHeader>
-             <EnhancedCardTitle className="flex items-center gap-2">
+         <UnifiedCard variant="glass" hover="lift">
+           <UnifiedCardHeader>
+             <UnifiedCardTitle className="flex items-center gap-2">
                <DollarSign className="h-5 w-5" />
                تتبع العمولات
-             </EnhancedCardTitle>
-           </EnhancedCardHeader>
-           <EnhancedCardContent>
+             </UnifiedCardTitle>
+           </UnifiedCardHeader>
+           <UnifiedCardContent>
              <p className="text-muted-foreground mb-4">
                متابعة عمولاتك وأرباحك
              </p>
-             <EnhancedButton asChild className="w-full" variant="outline" animation="glow">
-               <Link to="/affiliate/analytics">
+             <Link to="/affiliate/analytics">
+               <UnifiedButton fullWidth variant="outline">
                  عرض العمولات
-               </Link>
-             </EnhancedButton>
-           </EnhancedCardContent>
-          </EnhancedCard>
+               </UnifiedButton>
+             </Link>
+           </UnifiedCardContent>
+          </UnifiedCard>
 
-         <EnhancedCard variant="glass" hover="lift">
-           <EnhancedCardHeader>
-             <EnhancedCardTitle className="flex items-center gap-2">
+         <UnifiedCard variant="glass" hover="lift">
+           <UnifiedCardHeader>
+             <UnifiedCardTitle className="flex items-center gap-2">
                <Palette className="h-5 w-5" />
                ثيمات المتجر
-             </EnhancedCardTitle>
-           </EnhancedCardHeader>
-           <EnhancedCardContent>
+             </UnifiedCardTitle>
+           </UnifiedCardHeader>
+           <UnifiedCardContent>
              <p className="text-muted-foreground mb-4">
                اختر الثيم المناسب لطبيعة منتجاتك
              </p>
-             <EnhancedButton asChild className="w-full" variant="persian" animation="glow">
-               <Link to={`/store-themes/${affiliateStore.id}`}>
+             <Link to={`/store-themes/${affiliateStore.id}`}>
+               <UnifiedButton fullWidth variant="persian">
                  إدارة الثيمات
-               </Link>
-             </EnhancedButton>
-           </EnhancedCardContent>
-         </EnhancedCard>
-      </ResponsiveGrid>
-    </ResponsiveLayout>
+               </UnifiedButton>
+             </Link>
+           </UnifiedCardContent>
+         </UnifiedCard>
+      </div>
+    </div>
   );
 }
