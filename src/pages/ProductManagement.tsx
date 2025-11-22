@@ -1,23 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  EnhancedButton,
-  EnhancedCard,
-  EnhancedCardContent,
-  EnhancedCardDescription,
-  EnhancedCardHeader,
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  InteractiveWidget,
-  VirtualizedList,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+  UnifiedButton,
+  UnifiedCard,
+  UnifiedCardContent,
+  UnifiedCardDescription,
+  UnifiedCardHeader,
+  UnifiedCardTitle,
+  UnifiedBadge
+} from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
@@ -226,11 +216,9 @@ const ProductManagement = () => {
             <div className="flex items-center gap-4">
               <BackButton />
               <Link to="/">
-                <Button variant="ghost" className="text-primary hover:bg-primary/10 gap-2">
-                  <Home className="h-4 w-4" />
+                <UnifiedButton variant="ghost" leftIcon={<Home className="h-4 w-4" />} rightIcon={<ArrowRight className="h-4 w-4" />}>
                   الصفحة الرئيسية
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+                </UnifiedButton>
               </Link>
               
               <div className="flex items-center gap-3">
@@ -248,13 +236,13 @@ const ProductManagement = () => {
               </div>
             </div>
             
-            <Button 
+            <UnifiedButton 
               onClick={() => navigate('/product-management/add')}
-              className="bg-gradient-primary gap-2"
+              variant="hero"
+              leftIcon={<Plus className="h-4 w-4" />}
             >
-              <Plus className="h-4 w-4" />
               إضافة منتج جديد
-            </Button>
+            </UnifiedButton>
           </div>
         </div>
       </div>
@@ -262,8 +250,8 @@ const ProductManagement = () => {
       <div className="container mx-auto px-4 py-8 space-y-6">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="gradient-card-primary">
-            <CardContent className="p-6">
+          <UnifiedCard variant="premium" padding="md">
+            <UnifiedCardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-primary">إجمالي المنتجات</p>
@@ -271,11 +259,11 @@ const ProductManagement = () => {
                 </div>
                 <Package className="h-8 w-8 text-primary opacity-80" />
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
 
-          <Card className="gradient-card-success">
-            <CardContent className="p-6">
+          <UnifiedCard variant="default" padding="md" className="bg-success/10">
+            <UnifiedCardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-green-600">المنتجات النشطة</p>
@@ -283,11 +271,11 @@ const ProductManagement = () => {
                 </div>
                 <Eye className="h-8 w-8 text-green-600 opacity-80" />
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
 
-          <Card className="gradient-card-accent">
-            <CardContent className="p-6">
+          <UnifiedCard variant="luxury" padding="md">
+            <UnifiedCardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-luxury">المنتجات المميزة</p>
@@ -295,11 +283,11 @@ const ProductManagement = () => {
                 </div>
                 <Star className="h-8 w-8 text-luxury opacity-80" />
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
 
-          <Card className="gradient-card-destructive">
-            <CardContent className="p-6">
+          <UnifiedCard variant="default" padding="md" className="bg-danger/10">
+            <UnifiedCardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-red-600">نفد المخزون</p>
@@ -307,19 +295,19 @@ const ProductManagement = () => {
                 </div>
                 <TrendingUp className="h-8 w-8 text-red-600 opacity-80" />
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </div>
 
         {/* Filters and Search */}
-        <Card className="border-0 bg-card/50 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <UnifiedCard variant="glass" padding="none">
+          <UnifiedCardHeader className="p-6">
+            <UnifiedCardTitle className="flex items-center gap-2">
               <Filter className="h-5 w-5" />
               البحث والتصفية
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="relative">
                 <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -354,7 +342,7 @@ const ProductManagement = () => {
                 <option value="inactive">غير نشط</option>
               </select>
 
-              <Button 
+              <UnifiedButton 
                 variant="outline"
                 onClick={() => {
                   setSearchTerm('');
@@ -363,17 +351,20 @@ const ProductManagement = () => {
                 }}
               >
                 إعادة تعيين
-              </Button>
+              </UnifiedButton>
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
-            <Card 
+            <UnifiedCard 
               key={product.id} 
-              className="group border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300 overflow-hidden"
+              variant="glass"
+              padding="none"
+              hover="glow"
+              className="group overflow-hidden"
             >
               <div className="relative">
                 <div className="aspect-square gradient-card-muted flex items-center justify-center">
@@ -390,18 +381,17 @@ const ProductManagement = () => {
                 
                 <div className="absolute top-2 right-2 flex flex-col gap-2">
                   {product.featured && (
-                    <Badge className="bg-luxury text-luxury-foreground">
-                      <Star className="h-3 w-3 mr-1" />
+                    <UnifiedBadge variant="luxury" leadingIcon={<Star className="h-3 w-3" />}>
                       مميز
-                    </Badge>
+                    </UnifiedBadge>
                   )}
-                  <Badge variant={product.is_active ? "default" : "secondary"}>
+                  <UnifiedBadge variant={product.is_active ? "success" : "secondary"}>
                     {product.is_active ? 'نشط' : 'غير نشط'}
-                  </Badge>
+                  </UnifiedBadge>
                 </div>
               </div>
               
-              <CardContent className="p-4 space-y-3">
+              <UnifiedCardContent className="p-4 space-y-3">
                 <div>
                   <h3 className="font-semibold line-clamp-1 group-hover:text-primary transition-colors">
                     {product.title}
@@ -430,38 +420,34 @@ const ProductManagement = () => {
                 </div>
                 
                 <div className="flex gap-2">
-                  <Button 
+                  <UnifiedButton 
                     size="sm" 
                     variant="outline" 
                     className="flex-1"
                     onClick={() => navigate(`/product-management/edit/${product.id}`)}
+                    leftIcon={<Edit className="h-4 w-4" />}
                   >
-                    <Edit className="h-4 w-4 ml-1" />
                     تعديل
-                  </Button>
+                  </UnifiedButton>
                   
-                  <Button 
+                  <UnifiedButton 
                     size="sm" 
-                    variant={product.is_active ? "destructive" : "default"}
+                    variant={product.is_active ? "danger" : "primary"}
                     onClick={() => toggleProductStatus(product.id, product.is_active)}
                   >
-                    {product.is_active ? (
-                      <Eye className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
+                    <Eye className="h-4 w-4" />
+                  </UnifiedButton>
                   
-                  <Button 
+                  <UnifiedButton 
                     size="sm" 
-                    variant="destructive"
+                    variant="danger"
                     onClick={() => handleDeleteProduct(product.id)}
                   >
                     <Trash2 className="h-4 w-4" />
-                  </Button>
+                  </UnifiedButton>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           ))}
         </div>
 
@@ -475,20 +461,20 @@ const ProductManagement = () => {
                 : 'لم تقم بإضافة أي منتجات بعد'
               }
             </p>
-            <Button 
+            <UnifiedButton 
               onClick={() => navigate('/product-management/add')}
-              className="bg-gradient-primary"
+              variant="hero"
+              leftIcon={<Plus className="h-4 w-4" />}
             >
-              <Plus className="h-4 w-4 mr-2" />
               إضافة منتج جديد
-            </Button>
+            </UnifiedButton>
           </div>
         )}
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300 cursor-pointer">
-            <CardContent className="p-6 text-center">
+          <UnifiedCard variant="glass" padding="md" hover="glow" clickable>
+            <UnifiedCardContent className="p-6 text-center">
               <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Layers className="h-8 w-8 text-white" />
               </div>
@@ -496,18 +482,18 @@ const ProductManagement = () => {
               <p className="text-sm text-muted-foreground mb-4">
                 إضافة وتعديل فئات المنتجات
               </p>
-              <Button 
+              <UnifiedButton 
                 variant="outline" 
-                className="w-full"
+                fullWidth
                 onClick={() => navigate('/product-management/categories')}
               >
                 إدارة الفئات
-              </Button>
-            </CardContent>
-          </Card>
+              </UnifiedButton>
+            </UnifiedCardContent>
+          </UnifiedCard>
 
-          <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300 cursor-pointer">
-            <CardContent className="p-6 text-center">
+          <UnifiedCard variant="glass" padding="md" hover="glow" clickable>
+            <UnifiedCardContent className="p-6 text-center">
               <div className="w-16 h-16 bg-gradient-luxury rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Tag className="h-8 w-8 text-white" />
               </div>
@@ -515,18 +501,18 @@ const ProductManagement = () => {
               <p className="text-sm text-muted-foreground mb-4">
                 إضافة وتعديل العلامات التجارية
               </p>
-              <Button 
+              <UnifiedButton 
                 variant="outline" 
-                className="w-full"
+                fullWidth
                 onClick={() => navigate('/product-management/brands')}
               >
                 إدارة العلامات
-              </Button>
-            </CardContent>
-          </Card>
+              </UnifiedButton>
+            </UnifiedCardContent>
+          </UnifiedCard>
 
-          <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300 cursor-pointer">
-            <CardContent className="p-6 text-center">
+          <UnifiedCard variant="glass" padding="md" hover="glow" clickable>
+            <UnifiedCardContent className="p-6 text-center">
               <div className="w-16 h-16 bg-gradient-premium rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Package className="h-8 w-8 text-white" />
               </div>
@@ -534,15 +520,15 @@ const ProductManagement = () => {
               <p className="text-sm text-muted-foreground mb-4">
                 استيراد عدة منتجات من ملف CSV
               </p>
-              <Button 
+              <UnifiedButton 
                 variant="outline" 
-                className="w-full"
+                fullWidth
                 onClick={() => navigate('/product-management/bulk-import')}
               >
                 استيراد منتجات
-              </Button>
-            </CardContent>
-          </Card>
+              </UnifiedButton>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </div>
       </div>
     </div>
