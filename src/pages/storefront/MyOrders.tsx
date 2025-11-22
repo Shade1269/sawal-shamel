@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
 import { Package, ArrowLeft, Clock, CheckCircle, XCircle, Truck } from 'lucide-react';
 import { toast } from 'sonner';
@@ -131,9 +131,9 @@ function MyOrders() {
       case 'shipped':
         return 'outline';
       case 'delivered':
-        return 'default';
+        return 'success';
       case 'cancelled':
-        return 'destructive';
+        return 'error';
       default:
         return 'secondary';
     }
@@ -169,10 +169,10 @@ function MyOrders() {
           <Package className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
           <h1 className="text-2xl font-bold mb-2">تسجيل الدخول مطلوب</h1>
           <p className="text-muted-foreground mb-4">يجب تسجيل الدخول لعرض طلباتك</p>
-          <Button onClick={() => navigate(`/s/${store_slug}`)}>
+          <UnifiedButton onClick={() => navigate(`/s/${store_slug}`)}>
             <ArrowLeft className="h-4 w-4 ml-2" />
             العودة للمتجر
-          </Button>
+          </UnifiedButton>
         </div>
       </div>
     );
@@ -184,14 +184,14 @@ function MyOrders() {
       <div className="gradient-bg-primary py-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4 mb-4">
-            <Button
+            <UnifiedButton
               variant="outline"
               onClick={() => navigate(`/s/${store_slug}`)}
-              className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
+              className="bg-card/10 border-border/20 hover:bg-card/20"
             >
               <ArrowLeft className="h-4 w-4 ml-2" />
               العودة للمتجر
-            </Button>
+            </UnifiedButton>
           </div>
           
           <div className="flex items-center gap-3">
@@ -215,14 +215,14 @@ function MyOrders() {
         ) : (
           <div className="space-y-6">
             {orders.map((order) => (
-              <Card key={order.order_id} className="overflow-hidden">
-                <CardHeader>
+              <UnifiedCard key={order.order_id} variant="glass" className="overflow-hidden">
+                <UnifiedCardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="flex items-center gap-2">
+                      <UnifiedCardTitle className="flex items-center gap-2">
                         {getStatusIcon(order.status)}
                         طلب رقم {order.order_number}
-                      </CardTitle>
+                      </UnifiedCardTitle>
                       <p className="text-sm text-muted-foreground">
                         {new Date(order.created_at).toLocaleDateString('ar-SA', {
                           year: 'numeric',
@@ -233,13 +233,13 @@ function MyOrders() {
                         })}
                       </p>
                     </div>
-                    <Badge variant={getStatusColor(order.status)}>
+                    <UnifiedBadge variant={getStatusColor(order.status)}>
                       {getStatusText(order.status)}
-                    </Badge>
+                    </UnifiedBadge>
                   </div>
-                </CardHeader>
+                </UnifiedCardHeader>
                 
-                <CardContent>
+                <UnifiedCardContent>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">
@@ -269,8 +269,8 @@ function MyOrders() {
                       ))}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </UnifiedCardContent>
+              </UnifiedCard>
             ))}
           </div>
         )}

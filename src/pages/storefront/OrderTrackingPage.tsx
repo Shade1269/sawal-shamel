@@ -1,24 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  InteractiveWidget,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button
-} from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
+import { UnifiedInput } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Package, Truck, CheckCircle, Clock, MapPin } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -189,12 +175,12 @@ const OrderTrackingPage = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
-      case 'CONFIRMED': return 'bg-blue-100 text-blue-800';
-      case 'SHIPPED': return 'bg-purple-100 text-purple-800';
-      case 'DELIVERED': return 'bg-green-100 text-green-800';
-      case 'CANCELLED': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'PENDING': return 'secondary';
+      case 'CONFIRMED': return 'default';
+      case 'SHIPPED': return 'outline';
+      case 'DELIVERED': return 'success';
+      case 'CANCELLED': return 'error';
+      default: return 'secondary';
     }
   };
 
@@ -204,14 +190,14 @@ const OrderTrackingPage = () => {
       <header className="border-b bg-card sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            <Button
+            <UnifiedButton
               variant="ghost"
               size="sm"
               onClick={() => navigate(`/s/${store_slug}`)}
             >
               <ArrowLeft className="h-4 w-4 ml-2" />
               العودة للمتجر
-            </Button>
+            </UnifiedButton>
             
             <div>
               <h1 className="text-xl font-bold">تتبع الطلب</h1>
@@ -222,17 +208,17 @@ const OrderTrackingPage = () => {
 
       {/* محتوى الصفحة */}
       <main className="container mx-auto px-4 py-8 max-w-2xl">
-        <Card>
-          <CardHeader>
-            <CardTitle>البحث عن طلبك</CardTitle>
-            <CardDescription>
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader>
+            <UnifiedCardTitle>البحث عن طلبك</UnifiedCardTitle>
+            <UnifiedCardDescription>
               أدخل رقم الطلب ورقم الجوال للاستعلام عن حالة الطلب
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            </UnifiedCardDescription>
+          </UnifiedCardHeader>
+          <UnifiedCardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="order-number">رقم الطلب</Label>
-              <Input
+              <UnifiedInput
                 id="order-number"
                 value={orderNumber}
                 onChange={(e) => setOrderNumber(e.target.value)}
@@ -242,7 +228,7 @@ const OrderTrackingPage = () => {
 
             <div className="space-y-2">
               <Label htmlFor="customer-phone">رقم الجوال</Label>
-              <Input
+              <UnifiedInput
                 id="customer-phone"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
@@ -251,33 +237,35 @@ const OrderTrackingPage = () => {
               />
             </div>
 
-            <Button
+            <UnifiedButton
               onClick={trackOrder}
               disabled={loading}
-              className="w-full"
+              fullWidth
+              size="lg"
+              variant="primary"
             >
               {loading ? "جاري البحث..." : "تتبع الطلب"}
-            </Button>
-          </CardContent>
-        </Card>
+            </UnifiedButton>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
         {/* نتائج التتبع */}
         {order && (
           <div className="space-y-6 mt-8">
             {/* معلومات الطلب */}
-            <Card>
-              <CardHeader>
+            <UnifiedCard variant="glass">
+              <UnifiedCardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>طلب رقم {order.order_number}</CardTitle>
-                  <Badge className={getStatusColor(order.status)}>
+                  <UnifiedCardTitle>طلب رقم {order.order_number}</UnifiedCardTitle>
+                  <UnifiedBadge variant={getStatusColor(order.status)}>
                     {order.status}
-                  </Badge>
+                  </UnifiedBadge>
                 </div>
-                <CardDescription>
+                <UnifiedCardDescription>
                   تم الطلب في {new Date(order.created_at).toLocaleDateString('ar')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
+                </UnifiedCardDescription>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">اسم العميل:</span>
@@ -317,15 +305,15 @@ const OrderTrackingPage = () => {
                     ))}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
 
             {/* مراحل التتبع */}
-            <Card>
-              <CardHeader>
-                <CardTitle>مراحل التتبع</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <UnifiedCard variant="glass">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle>مراحل التتبع</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent>
                 <div className="space-y-4">
                   {trackingEvents.map((event, index) => (
                     <div key={index} className="flex items-start gap-4">
@@ -353,8 +341,8 @@ const OrderTrackingPage = () => {
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </div>
         )}
       </main>
