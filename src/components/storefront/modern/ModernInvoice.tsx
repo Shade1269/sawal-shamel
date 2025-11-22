@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard, UnifiedCardContent } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
 import { Download, Printer, Store, MapPin, Phone, CreditCard, Package } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
