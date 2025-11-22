@@ -1,19 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Button
-} from '@/components/ui/index';
-import { Input } from '@/components/ui/input';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle, UnifiedButton, UnifiedInput } from '@/components/design-system';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
@@ -302,12 +289,12 @@ const StorefrontCheckout = () => {
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to={`/${slug}`}>
+            <Link to={`/${slug}`}>
+              <UnifiedButton variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 ml-2" />
                 العودة للمتجر
-              </Link>
-            </Button>
+              </UnifiedButton>
+            </Link>
             <div>
               <h1 className="text-xl font-bold">إتمام الطلب</h1>
               <p className="text-sm text-muted-foreground">{store?.store_name}</p>
@@ -319,19 +306,19 @@ const StorefrontCheckout = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-2 gap-8">
           {/* نموذج بيانات العميل */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+          <UnifiedCard variant="glass">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle className="flex items-center gap-2">
                 <CreditCard className="h-5 w-5" />
                 بيانات التوصيل
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               <form onSubmit={handleSubmitOrder} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="full_name">الاسم الكامل *</Label>
-                    <Input
+                    <UnifiedInput
                       id="full_name"
                       value={customerData.full_name}
                       onChange={(e) => setCustomerData(prev => ({ ...prev, full_name: e.target.value }))}
@@ -340,7 +327,7 @@ const StorefrontCheckout = () => {
                   </div>
                   <div>
                     <Label htmlFor="phone">رقم الجوال *</Label>
-                    <Input
+                    <UnifiedInput
                       id="phone"
                       type="tel"
                       value={customerData.phone}
@@ -352,7 +339,7 @@ const StorefrontCheckout = () => {
 
                 <div>
                   <Label htmlFor="email">البريد الإلكتروني (اختياري)</Label>
-                  <Input
+                  <UnifiedInput
                     id="email"
                     type="email"
                     value={customerData.email}
@@ -363,7 +350,7 @@ const StorefrontCheckout = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="address">العنوان التفصيلي *</Label>
-                    <Input
+                    <UnifiedInput
                       id="address"
                       value={customerData.address}
                       onChange={(e) => setCustomerData(prev => ({ ...prev, address: e.target.value }))}
@@ -372,7 +359,7 @@ const StorefrontCheckout = () => {
                   </div>
                   <div>
                     <Label htmlFor="city">المدينة *</Label>
-                    <Input
+                    <UnifiedInput
                       id="city"
                       value={customerData.city}
                       onChange={(e) => setCustomerData(prev => ({ ...prev, city: e.target.value }))}
@@ -391,27 +378,28 @@ const StorefrontCheckout = () => {
                   />
                 </div>
 
-                <Button
+                <UnifiedButton
                   type="submit"
-                  className="w-full"
+                  fullWidth
                   disabled={submitting}
                   size="lg"
+                  variant="primary"
                 >
                   {submitting ? 'جاري إنشاء الطلب...' : `تأكيد الطلب - ${total} ر.س`}
-                </Button>
+                </UnifiedButton>
               </form>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
 
           {/* ملخص الطلب */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+          <UnifiedCard variant="glass">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle className="flex items-center gap-2">
                 <ShoppingCart className="h-5 w-5" />
                 ملخص الطلب
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+              </UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent className="space-y-4">
               {cartItems.map((item) => (
                 <div key={item.id} className="flex gap-3 pb-3 border-b">
                   <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
@@ -458,8 +446,8 @@ const StorefrontCheckout = () => {
                   💳 طريقة الدفع: الدفع عند الاستلام (COD)
                 </p>
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </div>
       </div>
     </div>

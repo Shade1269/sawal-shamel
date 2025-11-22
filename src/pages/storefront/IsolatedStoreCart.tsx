@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle, UnifiedBadge } from '@/components/design-system';
 import { ArrowLeft, ShoppingCart, Plus, Minus, Trash2, ArrowRight } from 'lucide-react';
 import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 import { LuxuryCardV2, LuxuryCardContent } from '@/components/luxury/LuxuryCardV2';
@@ -66,7 +64,7 @@ export const IsolatedStoreCart: React.FC = () => {
     return (
       <div className="min-h-screen gradient-dark-page p-6">
         <div className="flex items-center gap-4 mb-8">
-          <Button 
+          <UnifiedButton 
             variant="ghost" 
             size="sm" 
             onClick={() => navigate(`/${storeSlug}`)}
@@ -74,11 +72,11 @@ export const IsolatedStoreCart: React.FC = () => {
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             العودة للمتجر
-          </Button>
+          </UnifiedButton>
         </div>
 
-        <LuxuryCardV2 variant="glass" hover="none" className="max-w-md mx-auto">
-          <CardContent className="text-center py-16">
+        <UnifiedCard variant="glass" hover="none" className="max-w-md mx-auto">
+          <UnifiedCardContent className="text-center py-16">
             <div className="w-32 h-32 gradient-dark-card rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-red-600/20 shadow-lg shadow-red-600/10">
               <ShoppingCart className="h-16 w-16 text-red-500/50" />
             </div>
@@ -86,15 +84,15 @@ export const IsolatedStoreCart: React.FC = () => {
             <p className="text-slate-400 mb-6 text-lg">
               لم تقم بإضافة أي منتجات للسلة بعد
             </p>
-            <Button 
+            <UnifiedButton 
               onClick={() => navigate(`/${storeSlug}`)}
-              className="bg-gradient-danger hover:opacity-90 shadow-lg shadow-destructive/25 hover:shadow-xl hover:shadow-destructive/35 border border-destructive/20"
+              variant="primary"
               size="lg"
             >
               تسوق الآن
-            </Button>
-          </CardContent>
-        </LuxuryCardV2>
+            </UnifiedButton>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
     );
   }
@@ -105,7 +103,7 @@ export const IsolatedStoreCart: React.FC = () => {
   return (
     <div className="space-y-6 min-h-screen gradient-dark-page p-4 md:p-6">
       <div className="flex items-center gap-4">
-        <Button 
+        <UnifiedButton 
           variant="ghost" 
           size="sm" 
           onClick={() => navigate(`/${storeSlug}`)}
@@ -113,7 +111,7 @@ export const IsolatedStoreCart: React.FC = () => {
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           العودة للمتجر
-        </Button>
+        </UnifiedButton>
         <h1 className="text-3xl font-bold bg-gradient-danger bg-clip-text text-transparent">
           سلة التسوق
         </h1>
@@ -150,13 +148,13 @@ export const IsolatedStoreCart: React.FC = () => {
                         {item.selected_variants && Object.keys(item.selected_variants).length > 0 && (
                           <div className="flex flex-wrap gap-2">
                             {Object.entries(item.selected_variants).map(([type, value]) => (
-                              <Badge 
+                              <UnifiedBadge 
                                 key={type} 
                                 variant="outline" 
                                 className="border-red-600/30 bg-red-950/20 text-red-300"
                               >
                                 {type === 'size' ? 'المقاس' : type === 'color' ? 'اللون' : type}: {value}
-                              </Badge>
+                              </UnifiedBadge>
                             ))}
                           </div>
                         )}
@@ -167,7 +165,7 @@ export const IsolatedStoreCart: React.FC = () => {
                         
                         <div className="flex items-center justify-between pt-2">
                           <div className="flex items-center gap-3 bg-slate-800/80 backdrop-blur-sm rounded-xl p-2 border border-red-600/10">
-                            <Button
+                            <UnifiedButton
                               variant="ghost"
                               size="sm"
                               onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
@@ -175,16 +173,16 @@ export const IsolatedStoreCart: React.FC = () => {
                               className="h-9 w-9 p-0 hover:bg-red-950/30 hover:text-red-400"
                             >
                               <Minus className="h-4 w-4" />
-                            </Button>
+                            </UnifiedButton>
                             
-                            <Badge
+                            <UnifiedBadge
                               variant="secondary"
                               className="min-w-[3rem] justify-center gradient-cart-quantity text-white border border-red-600/20 text-base font-bold"
                             >
                               {item.quantity}
-                            </Badge>
+                            </UnifiedBadge>
                             
-                            <Button
+                            <UnifiedButton
                               variant="ghost"
                               size="sm"
                               onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
@@ -192,7 +190,7 @@ export const IsolatedStoreCart: React.FC = () => {
                               className="h-9 w-9 p-0 hover:bg-red-950/30 hover:text-red-400"
                             >
                               <Plus className="h-4 w-4" />
-                            </Button>
+                            </UnifiedButton>
                           </div>
 
                           <div className="flex items-center gap-4">
@@ -200,7 +198,7 @@ export const IsolatedStoreCart: React.FC = () => {
                               {item.total_price_sar.toFixed(0)} ر.س
                             </span>
                             
-                            <Button
+                            <UnifiedButton
                               variant="ghost"
                               size="sm"
                               onClick={() => handleRemoveItem(item.id)}
@@ -208,7 +206,7 @@ export const IsolatedStoreCart: React.FC = () => {
                               className="text-red-400 hover:text-red-300 hover:bg-red-950/30 h-9 w-9 p-0"
                             >
                               <Trash2 className="h-5 w-5" />
-                            </Button>
+                            </UnifiedButton>
                           </div>
                         </div>
                       </div>
@@ -221,17 +219,17 @@ export const IsolatedStoreCart: React.FC = () => {
         </div>
 
         <div className="lg:col-span-1">
-          <LuxuryCardV2 
-            variant="glow" 
+          <UnifiedCard 
+            variant="luxury" 
             hover="lift" 
             className="sticky top-4"
           >
-            <CardHeader className="border-b border-red-600/15">
-              <CardTitle className="text-2xl bg-gradient-danger bg-clip-text text-transparent">
+            <UnifiedCardHeader className="border-b border-red-600/15">
+              <UnifiedCardTitle className="text-2xl bg-gradient-danger bg-clip-text text-transparent">
                 ملخص الطلب
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 pt-6">
+              </UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent className="space-y-6 pt-6">
               <div className="space-y-3">
                 <div className="flex justify-between text-base text-slate-300">
                   <span>المجموع الفرعي</span>
@@ -250,22 +248,24 @@ export const IsolatedStoreCart: React.FC = () => {
                 </div>
               </div>
 
-              <Button 
-                className="w-full h-14 text-lg bg-gradient-danger hover:opacity-90 shadow-lg shadow-destructive/25 hover:shadow-xl hover:shadow-destructive/35 border border-destructive/20 transition-all duration-500 group"
+              <UnifiedButton 
+                fullWidth
                 size="lg"
+                variant="primary"
                 onClick={() => navigate(`/${storeSlug}/checkout`)}
+                className="h-14 text-lg group"
               >
                 إتمام الطلب
                 <ArrowRight className="h-5 w-5 mr-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              </UnifiedButton>
 
               <div className="gradient-dark-section rounded-lg p-3 border border-red-600/10">
                 <p className="text-xs text-slate-400 text-center">
                   الدفع عند الاستلام متاح
                 </p>
               </div>
-            </CardContent>
-          </LuxuryCardV2>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </div>
       </div>
     </div>
