@@ -696,9 +696,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             }`}
           >
             <span>{category.name}</span>
-            <Badge variant="secondary" className="ml-3">
+            <UnifiedBadge variant="secondary" size="sm">
               {category.productCount} منتج
-            </Badge>
+            </UnifiedBadge>
           </button>
         );
       }
@@ -743,9 +743,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                 اكتشف {category.productCount} منتجاً مميزاً في هذه الفئة
               </p>
             </div>
-            <Badge variant={isSelected ? "default" : "secondary"} className="shrink-0">
+            <UnifiedBadge variant={isSelected ? "default" : "secondary"}>
               {category.productCount}
-            </Badge>
+            </UnifiedBadge>
           </div>
         </button>
       );
@@ -809,9 +809,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                   <p className="font-semibold text-lg">جميع الفئات</p>
                   <p className="text-sm text-muted-foreground">استعرض كل المنتجات المتاحة</p>
                 </div>
-                <Badge variant={selectedCategory === "all" ? "default" : "secondary"} className="shrink-0">
+                <UnifiedBadge variant={selectedCategory === "all" ? "default" : "secondary"}>
                   {products?.length || 0}
-                </Badge>
+                </UnifiedBadge>
               </div>
             </button>
             {categoriesToRender.map((category) => renderCategoryCard(category, "grid"))}
@@ -849,10 +849,10 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
           <p className="text-muted-foreground mb-6 leading-relaxed">
             حدث خطأ أثناء محاولة تحميل المتجر. الرجاء المحاولة مرة أخرى.
           </p>
-          <Button onClick={() => navigate('/')} className="px-8">
+          <UnifiedButton onClick={() => navigate('/')} variant="primary">
             <ArrowRight className="h-4 w-4 mr-2" />
             العودة للصفحة الرئيسية
-          </Button>
+          </UnifiedButton>
         </div>
       </div>
     );
@@ -872,14 +872,14 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             إذا كنت مسوقة، يمكنك إنشاء متجرك الخاص من هنا.
           </p>
           <div className="space-y-3">
-            <Button onClick={() => navigate('/affiliate/store/setup')} className="px-8 w-full">
+            <UnifiedButton onClick={() => navigate('/affiliate/store/setup')} variant="primary" fullWidth>
               <Store className="h-4 w-4 mr-2" />
               إنشاء متجر جديد
-            </Button>
-            <Button variant="outline" onClick={() => navigate('/')} className="px-8 w-full">
+            </UnifiedButton>
+            <UnifiedButton variant="outline" onClick={() => navigate('/')} fullWidth>
               <ArrowRight className="h-4 w-4 mr-2" />
               العودة للصفحة الرئيسية
-            </Button>
+            </UnifiedButton>
           </div>
         </div>
       </div>

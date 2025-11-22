@@ -305,9 +305,9 @@ export function UnifiedProductsManager() {
             </div>
           )}
           <div className="absolute top-2 right-2">
-            <Badge variant={product.is_active ? 'default' : 'secondary'} className="text-xs">
+            <UnifiedBadge variant={product.is_active ? 'success' : 'secondary'} size="sm">
               {product.is_active ? 'نشط' : 'غير نشط'}
-            </Badge>
+            </UnifiedBadge>
           </div>
         </div>
         
@@ -569,7 +569,7 @@ export function UnifiedProductsManager() {
                   <div>
                     <h3 className="text-2xl font-bold">{selectedProduct.title}</h3>
                     <div className="flex items-center gap-2 mt-2">
-                      <UnifiedBadge variant={selectedProduct.is_active ? 'primary' : 'secondary'}>
+                      <UnifiedBadge variant={selectedProduct.is_active ? 'success' : 'secondary'}>
                         {selectedProduct.is_active ? 'نشط' : 'غير نشط'}
                       </UnifiedBadge>
                       {selectedProduct.category && (
