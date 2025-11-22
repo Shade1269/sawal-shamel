@@ -595,22 +595,22 @@ const ProductsBrowser = () => {
 
               {/* تبديل العرض */}
               <div className="flex gap-2">
-                <Button
-                  variant={viewMode === 'grid' ? 'default' : 'outline'}
+                <UnifiedButton
+                  variant={viewMode === 'grid' ? 'primary' : 'outline'}
                   size="sm"
                   onClick={() => setViewMode('grid')}
                   className="flex-1 px-2 sm:px-4"
                 >
                   <Grid className="h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
-                <Button
-                  variant={viewMode === 'list' ? 'default' : 'outline'}
+                </UnifiedButton>
+                <UnifiedButton
+                  variant={viewMode === 'list' ? 'primary' : 'outline'}
                   size="sm"
                   onClick={() => setViewMode('list')}
                   className="flex-1 px-2 sm:px-4"
                 >
                   <List className="h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
+                </UnifiedButton>
               </div>
             </div>
           </CardContent>
@@ -656,28 +656,28 @@ const ProductsBrowser = () => {
                         
                         {/* شارة التاجر */}
                         <div className="absolute top-3 right-3">
-                          <Badge variant="secondary" className="bg-background/80 backdrop-blur-sm">
+                          <UnifiedBadge variant="secondary" className="bg-background/80 backdrop-blur-sm">
                             <Store className="h-3 w-3 ml-1" />
                             {product.merchants?.business_name}
-                          </Badge>
+                          </UnifiedBadge>
                         </div>
 
                         {/* حالة المنتج في متجري */}
                         {isInMyStore && (
                           <div className="absolute top-3 left-3">
-                            <Badge className="bg-green-500/90 text-white backdrop-blur-sm">
+                            <UnifiedBadge variant="success" className="backdrop-blur-sm">
                               <CheckCircle className="h-3 w-3 ml-1" />
                               في متجري
-                            </Badge>
+                            </UnifiedBadge>
                           </div>
                         )}
 
                         {/* تنبيه المخزون */}
                         {product.stock <= 10 && (
                           <div className="absolute bottom-3 right-3">
-                            <Badge variant="destructive" className="bg-red-500/90 backdrop-blur-sm">
+                            <UnifiedBadge variant="error" className="backdrop-blur-sm">
                               باقي {product.stock}
-                            </Badge>
+                            </UnifiedBadge>
                           </div>
                         )}
                       </div>
@@ -701,9 +701,9 @@ const ProductsBrowser = () => {
                                 العمولة: {product.merchants?.default_commission_rate || 10}%
                               </div>
                             </div>
-                            <Badge variant="outline" className="text-xs">
+                            <UnifiedBadge variant="outline" className="text-xs">
                               {product.category}
-                            </Badge>
+                            </UnifiedBadge>
                           </div>
 
                           {/* عرض المتغيرات */}
@@ -721,7 +721,7 @@ const ProductsBrowser = () => {
                             {affiliateStore && (
                               <>
                                 {isInMyStore ? (
-                                  <Button
+                                  <UnifiedButton
                                     variant="outline"
                                     size="sm"
                                     onClick={() => removeFromMyStore(product.id)}
@@ -736,9 +736,9 @@ const ProductsBrowser = () => {
                                         حذف من متجري
                                       </>
                                     )}
-                                  </Button>
+                                  </UnifiedButton>
                                 ) : (
-                                  <Button
+                                  <UnifiedButton
                                     size="sm"
                                     onClick={() => showPricingModal(product)}
                                     disabled={isProcessing}
@@ -752,12 +752,12 @@ const ProductsBrowser = () => {
                                         إضافة لمتجري
                                       </>
                                     )}
-                                  </Button>
+                                  </UnifiedButton>
                                 )}
                               </>
                             )}
                             
-                            <Button 
+                            <UnifiedButton 
                               variant="outline" 
                               size="sm"
                               onClick={() => {
@@ -766,7 +766,7 @@ const ProductsBrowser = () => {
                               }}
                             >
                               <Eye className="h-3 w-3" />
-                            </Button>
+                            </UnifiedButton>
                           </div>
                         </div>
                       </CardContent>
@@ -792,16 +792,16 @@ const ProductsBrowser = () => {
                             <div>
                               <h3 className="font-semibold">{product.title}</h3>
                               <p className="text-sm text-muted-foreground mb-1">
-                                {product.merchants?.business_name}
+                              {product.merchants?.business_name}
                               </p>
                               <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="text-xs">
+                                <UnifiedBadge variant="outline" className="text-xs">
                                   {product.category}
-                                </Badge>
+                                </UnifiedBadge>
                                 {isInMyStore && (
-                                  <Badge className="bg-green-100 text-green-800 text-xs">
+                                  <UnifiedBadge variant="success" className="text-xs">
                                     في متجري
-                                  </Badge>
+                                  </UnifiedBadge>
                                 )}
                               </div>
                             </div>
@@ -824,7 +824,7 @@ const ProductsBrowser = () => {
                             {affiliateStore && (
                               <div className="flex gap-2">
                                 {isInMyStore ? (
-                                  <Button
+                                  <UnifiedButton
                                     variant="outline"
                                     size="sm"
                                     onClick={() => removeFromMyStore(product.id)}
@@ -839,9 +839,9 @@ const ProductsBrowser = () => {
                                         حذف من متجري
                                       </>
                                     )}
-                                  </Button>
+                                  </UnifiedButton>
                                 ) : (
-                                  <Button
+                                  <UnifiedButton
                                     size="sm"
                                     onClick={() => showPricingModal(product)}
                                     disabled={isProcessing}
@@ -855,7 +855,7 @@ const ProductsBrowser = () => {
                                         إضافة لمتجري
                                       </>
                                     )}
-                                  </Button>
+                                  </UnifiedButton>
                                 )}
                               </div>
                             )}
@@ -930,7 +930,7 @@ const ProductsBrowser = () => {
                 </div>
               )}
 
-              <Button
+              <UnifiedButton
                 className="w-full"
                 onClick={() => {
                   const price = parseFloat(customPrice);
@@ -949,7 +949,7 @@ const ProductsBrowser = () => {
                 disabled={!customPrice || parseFloat(customPrice) < pricingProduct.price_sar}
               >
                 إضافة للمتجر
-              </Button>
+              </UnifiedButton>
             </div>
           )}
         </DialogContent>
@@ -1034,7 +1034,7 @@ const ProductsBrowser = () => {
               <div className="flex gap-3 pt-4">
                 {affiliateStore && (
                   myProducts.has(selectedProduct.id) ? (
-                    <Button
+                    <UnifiedButton
                       variant="outline"
                       onClick={() => {
                         removeFromMyStore(selectedProduct.id);
@@ -1043,9 +1043,9 @@ const ProductsBrowser = () => {
                       className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
                     >
                       حذف من متجري
-                    </Button>
+                    </UnifiedButton>
                   ) : (
-                    <Button
+                    <UnifiedButton
                       onClick={() => {
                         showPricingModal(selectedProduct);
                         setShowViewDialog(false);
@@ -1054,16 +1054,16 @@ const ProductsBrowser = () => {
                     >
                       <Plus className="h-4 w-4 ml-2" />
                       إضافة لمتجري
-                    </Button>
+                    </UnifiedButton>
                   )
                 )}
-                <Button
+                <UnifiedButton
                   variant="outline"
                   onClick={() => setShowViewDialog(false)}
                   className="flex-1"
                 >
                   إغلاق
-                </Button>
+                </UnifiedButton>
               </div>
             </div>
           )}
