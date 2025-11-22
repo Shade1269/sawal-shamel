@@ -138,7 +138,7 @@ export const PaymentCallback: React.FC = () => {
   if (status === 'loading') {
     return (
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-6 px-4">
-        <Card className="w-full max-w-xl border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85 p-8 text-center">
+        <UnifiedCard className="w-full max-w-xl border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85 p-8 text-center">
           <Loader2 className="h-16 w-16 mx-auto mb-4 text-[color:var(--accent)] animate-spin" />
           <h1 className="text-2xl font-semibold text-[color:var(--glass-fg)] mb-2">
             جاري معالجة الدفع...
@@ -146,7 +146,7 @@ export const PaymentCallback: React.FC = () => {
           <p className="text-[color:var(--fg-muted)]">
             {message}
           </p>
-        </Card>
+        </UnifiedCard>
       </div>
     );
   }
@@ -159,7 +159,7 @@ export const PaymentCallback: React.FC = () => {
     return (
       <div className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-4 py-8">
         {/* رسالة النجاح */}
-        <Card className="w-full border border-green-500/20 bg-[color:var(--glass-bg)]/85 p-6 text-center">
+        <UnifiedCard className="w-full border border-green-500/20 bg-[color:var(--glass-bg)]/85 p-6 text-center">
           <CheckCircle2 className="h-12 w-12 mx-auto mb-3 text-green-500" />
           <h1 className="text-2xl font-semibold text-[color:var(--glass-fg)] mb-2">
             تم الدفع بنجاح!
@@ -167,11 +167,11 @@ export const PaymentCallback: React.FC = () => {
           <p className="text-[color:var(--fg-muted)]">
             تمت عملية الدفع بنجاح. شكراً لثقتك بنا.
           </p>
-        </Card>
+        </UnifiedCard>
 
         {/* الفاتورة */}
         {orderDetails && (
-          <Card className="w-full border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85 p-8" id="invoice">
+          <UnifiedCard className="w-full border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85 p-8" id="invoice">
             {/* رأس الفاتورة */}
             <div className="flex items-start justify-between mb-8 pb-6 border-b border-[color:var(--glass-border)]">
               <div>
@@ -278,35 +278,35 @@ export const PaymentCallback: React.FC = () => {
 
             {/* أزرار الإجراءات */}
             <div className="flex gap-3 mt-8 print:hidden">
-              <Button variant="outline" onClick={handlePrint} className="flex-1 gap-2">
+              <UnifiedButton variant="outline" onClick={handlePrint} className="flex-1 gap-2">
                 <Download className="h-4 w-4" />
                 طباعة الفاتورة
-              </Button>
-              <Button variant="solid" onClick={() => navigate('/orders')} className="flex-1">
+              </UnifiedButton>
+              <UnifiedButton variant="primary" onClick={() => navigate('/orders')} className="flex-1">
                 عرض طلباتي
-              </Button>
-              <Button variant="ghost" onClick={() => navigate('/')}>
+              </UnifiedButton>
+              <UnifiedButton variant="ghost" onClick={() => navigate('/')}>
                 الصفحة الرئيسية
-              </Button>
+              </UnifiedButton>
             </div>
-          </Card>
+          </UnifiedCard>
         )}
 
         {/* إذا لم تُحمل تفاصيل الطلب */}
         {!orderDetails && (
-          <Card className="w-full border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85 p-8 text-center">
+          <UnifiedCard className="w-full border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85 p-8 text-center">
             <p className="text-[color:var(--fg-muted)] mb-6">
               تمت عملية الدفع بنجاح. سيتم معالجة طلبك قريباً.
             </p>
             <div className="flex gap-3 justify-center">
-              <Button variant="solid" onClick={() => navigate('/orders')}>
+              <UnifiedButton variant="primary" onClick={() => navigate('/orders')}>
                 عرض طلباتي
-              </Button>
-              <Button variant="ghost" onClick={() => navigate('/')}>
+              </UnifiedButton>
+              <UnifiedButton variant="ghost" onClick={() => navigate('/')}>
                 الصفحة الرئيسية
-              </Button>
+              </UnifiedButton>
             </div>
-          </Card>
+          </UnifiedCard>
         )}
       </div>
     );
@@ -314,7 +314,7 @@ export const PaymentCallback: React.FC = () => {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-6 px-4">
-      <Card className="w-full max-w-xl border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85 p-8 text-center">
+      <UnifiedCard className="w-full max-w-xl border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85 p-8 text-center">
         <XCircle className="h-16 w-16 mx-auto mb-4 text-red-500" />
         <h1 className="text-2xl font-semibold text-[color:var(--glass-fg)] mb-2">
           فشل الدفع
@@ -323,14 +323,14 @@ export const PaymentCallback: React.FC = () => {
           لم تكتمل عملية الدفع. يرجى المحاولة مرة أخرى.
         </p>
         <div className="flex gap-3 justify-center">
-          <Button variant="solid" onClick={() => navigate('/checkout')}>
+          <UnifiedButton variant="primary" onClick={() => navigate('/checkout')}>
             إعادة المحاولة
-          </Button>
-          <Button variant="ghost" onClick={() => navigate('/')}>
+          </UnifiedButton>
+          <UnifiedButton variant="ghost" onClick={() => navigate('/')}>
             الصفحة الرئيسية
-          </Button>
+          </UnifiedButton>
         </div>
-      </Card>
+      </UnifiedCard>
     </div>
   );
 };
