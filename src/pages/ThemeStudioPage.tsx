@@ -83,7 +83,7 @@ const ThemeStudioPage: React.FC = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button
+              <UnifiedButton
                 variant="ghost"
                 size="sm"
                 onClick={handleBackToStore}
@@ -91,7 +91,7 @@ const ThemeStudioPage: React.FC = () => {
               >
                 <ArrowLeft className="w-4 h-4" />
                 {storeId ? 'العودة للمتجر' : 'رجوع'}
-              </Button>
+              </UnifiedButton>
               
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl gradient-btn-accent shadow-lg">
