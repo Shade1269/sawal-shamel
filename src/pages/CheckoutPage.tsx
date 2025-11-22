@@ -19,11 +19,8 @@ import {
   User,
 } from "lucide-react";
 
-import Button from "@/ui/Button";
-import Card from "@/ui/Card";
-import Input from "@/ui/Input";
+import { UnifiedButton, UnifiedCard, UnifiedInput, UnifiedBadge } from "@/components/design-system";
 import Skeleton from "@/ui/Skeleton";
-import Badge from "@/ui/Badge";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";

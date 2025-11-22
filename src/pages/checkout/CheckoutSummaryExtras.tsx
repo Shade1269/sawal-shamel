@@ -1,8 +1,6 @@
 import React from "react";
 
-import Card from "@/ui/Card";
-import Badge from "@/ui/Badge";
-import Button from "@/ui/Button";
+import { UnifiedCard, UnifiedBadge, UnifiedButton } from "@/components/design-system";
 
 interface SummaryExtrasProps {
   affiliateStoreId?: string;
@@ -22,9 +20,9 @@ const CheckoutSummaryExtras: React.FC<SummaryExtrasProps> = ({ affiliateStoreId 
   };
 
   return (
-    <Card className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]" data-component="checkout-summary-extras">
+    <UnifiedCard className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]" data-component="checkout-summary-extras">
       <div className="flex items-center gap-[var(--spacing-sm)]">
-        <Badge variant="glass">نصائح سريعة</Badge>
+        <UnifiedBadge variant="glass">نصائح سريعة</UnifiedBadge>
         <span className="text-xs text-[color:var(--fg-muted)]">تأكد من بياناتك قبل الإرسال</span>
       </div>
       <ul className="list-disc space-y-[var(--spacing-sm)] pr-5 text-sm text-[color:var(--fg-muted)]">
@@ -33,14 +31,14 @@ const CheckoutSummaryExtras: React.FC<SummaryExtrasProps> = ({ affiliateStoreId 
         <li>الدفع الإلكتروني والبطاقات سيتوفران قريباً.</li>
       </ul>
       <div className="flex flex-wrap items-center gap-[var(--spacing-sm)]">
-        <Button variant="glass" size="sm" onClick={openSupport}>
+        <UnifiedButton variant="glass" size="sm" onClick={openSupport}>
           مركز المساعدة
-        </Button>
-        <Button variant="ghost" size="sm" onClick={scrollToTop}>
+        </UnifiedButton>
+        <UnifiedButton variant="ghost" size="sm" onClick={scrollToTop}>
           مراجعة البيانات
-        </Button>
+        </UnifiedButton>
       </div>
-    </Card>
+    </UnifiedCard>
   );
 };
 
