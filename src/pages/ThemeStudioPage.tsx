@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
 import { AdvancedThemeBuilder } from '@/components/themes/AdvancedThemeBuilder';
 import { RealtimeThemePreview } from '@/components/themes/RealtimeThemePreview';
@@ -115,20 +115,17 @@ const ThemeStudioPage: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              <Badge variant="secondary" className="gap-2">
-                <Crown className="w-4 h-4" />
+              <UnifiedBadge variant="info" leadingIcon={<Crown className="w-4 h-4" />}>
                 الإصدار المتقدم
-              </Badge>
+              </UnifiedBadge>
               
-              <Button variant="outline" className="gap-2">
-                <Share2 className="w-4 h-4" />
+              <UnifiedButton variant="outline" leftIcon={<Share2 className="w-4 h-4" />}>
                 مشاركة
-              </Button>
+              </UnifiedButton>
               
-              <Button className="gap-2 gradient-btn-accent">
-                <Save className="w-4 h-4" />
+              <UnifiedButton variant="hero" leftIcon={<Save className="w-4 h-4" />}>
                 حفظ ونشر
-              </Button>
+              </UnifiedButton>
             </div>
           </div>
         </div>
@@ -178,44 +175,44 @@ const ThemeStudioPage: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <Card className="h-fit">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                <UnifiedCard variant="default" padding="md" className="h-fit">
+                  <UnifiedCardHeader>
+                    <UnifiedCardTitle className="flex items-center gap-2">
                       <Wand2 className="w-5 h-5" />
                       لوحة الألوان الذكية
-                    </CardTitle>
-                    <CardDescription>
+                    </UnifiedCardTitle>
+                    <UnifiedCardDescription>
                       اختر ألوان متناسقة ومتوافقة مع معايير الوصول
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
+                    </UnifiedCardDescription>
+                  </UnifiedCardHeader>
+                  <UnifiedCardContent>
                     <SmartColorPalette
                       initialPalette={previewConfig.colors}
                       onPaletteChange={handleColorPaletteChange}
                       showAISuggestions={true}
                     />
-                  </CardContent>
-                </Card>
+                  </UnifiedCardContent>
+                </UnifiedCard>
 
-                <Card className="h-fit">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                <UnifiedCard variant="default" padding="md" className="h-fit">
+                  <UnifiedCardHeader>
+                    <UnifiedCardTitle className="flex items-center gap-2">
                       <Eye className="w-5 h-5" />
                       المعاينة الفورية
-                    </CardTitle>
-                    <CardDescription>
+                    </UnifiedCardTitle>
+                    <UnifiedCardDescription>
                       شاهد التغييرات مباشرة أثناء التصميم
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
+                    </UnifiedCardDescription>
+                  </UnifiedCardHeader>
+                  <UnifiedCardContent>
                     <RealtimeThemePreview
                       themeConfig={previewConfig}
                       isActive={true}
                       showControls={true}
                       onConfigChange={setPreviewConfig}
                     />
-                  </CardContent>
-                </Card>
+                  </UnifiedCardContent>
+                </UnifiedCard>
               </div>
             </motion.div>
           </TabsContent>
@@ -227,32 +224,32 @@ const ThemeStudioPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <Card>
-                <CardHeader>
+              <UnifiedCard variant="default" padding="md">
+                <UnifiedCardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="flex items-center gap-2">
+                      <UnifiedCardTitle className="flex items-center gap-2">
                         <Eye className="w-5 h-5" />
                         المعاينة المباشرة والتفاعلية
-                      </CardTitle>
-                      <CardDescription>
+                      </UnifiedCardTitle>
+                      <UnifiedCardDescription>
                         اختبر تصميمك على مختلف الصفحات والأجهزة
-                      </CardDescription>
+                      </UnifiedCardDescription>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline">
+                      <UnifiedButton size="sm" variant="outline">
                         جوال
-                      </Button>
-                      <Button size="sm" variant="outline">
+                      </UnifiedButton>
+                      <UnifiedButton size="sm" variant="outline">
                         تابلت
-                      </Button>
-                      <Button size="sm">
+                      </UnifiedButton>
+                      <UnifiedButton size="sm" variant="primary">
                         ديسكتوب
-                      </Button>
+                      </UnifiedButton>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent>
+                </UnifiedCardHeader>
+                <UnifiedCardContent>
                   <div className="space-y-6">
                     <RealtimeThemePreview
                       themeConfig={previewConfig}
@@ -265,22 +262,22 @@ const ThemeStudioPage: React.FC = () => {
                     
                     {/* Performance Analysis */}
                     <div className="grid grid-cols-3 gap-4">
-                      <Card className="p-4 text-center">
+                      <UnifiedCard variant="default" padding="md" className="text-center">
                         <div className="text-2xl font-bold text-primary mb-2">98%</div>
                         <div className="text-sm text-muted-foreground">سرعة التحميل</div>
-                      </Card>
-                      <Card className="p-4 text-center">
-                        <div className="text-2xl font-bold text-green-500 mb-2">AA</div>
+                      </UnifiedCard>
+                      <UnifiedCard variant="default" padding="md" className="text-center">
+                        <div className="text-2xl font-bold text-success mb-2">AA</div>
                         <div className="text-sm text-muted-foreground">إمكانية الوصول</div>
-                      </Card>
-                      <Card className="p-4 text-center">
-                        <div className="text-2xl font-bold text-blue-500 mb-2">95%</div>
+                      </UnifiedCard>
+                      <UnifiedCard variant="default" padding="md" className="text-center">
+                        <div className="text-2xl font-bold text-primary mb-2">95%</div>
                         <div className="text-sm text-muted-foreground">تجربة المستخدم</div>
-                      </Card>
+                      </UnifiedCard>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </UnifiedCardContent>
+              </UnifiedCard>
             </motion.div>
           </TabsContent>
 
@@ -291,20 +288,20 @@ const ThemeStudioPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+              <UnifiedCard variant="default" padding="md">
+                <UnifiedCardHeader>
+                  <UnifiedCardTitle className="flex items-center gap-2">
                     <Sparkles className="w-5 h-5" />
                     مساعد الذكاء الاصطناعي للتصميم
-                  </CardTitle>
-                  <CardDescription>
+                  </UnifiedCardTitle>
+                  <UnifiedCardDescription>
                     اتركنا نساعدك في إنشاء تصميم مثالي لمتجرك
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
+                  </UnifiedCardDescription>
+                </UnifiedCardHeader>
+                <UnifiedCardContent className="space-y-6">
                   {/* AI Features */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card className="p-6 hover:shadow-lg transition-shadow">
+                    <UnifiedCard variant="default" padding="md" hover="lift">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-2 rounded-lg bg-blue-100">
                           <Zap className="w-5 h-5 text-blue-600" />
@@ -314,13 +311,12 @@ const ThemeStudioPage: React.FC = () => {
                       <p className="text-sm text-muted-foreground mb-4">
                         أدخل وصف لمتجرك واتركنا ننشئ ثيمات متعددة مناسبة لك
                       </p>
-                      <Button className="w-full gap-2">
-                        <Sparkles className="w-4 h-4" />
+                      <UnifiedButton variant="primary" fullWidth leftIcon={<Sparkles className="w-4 h-4" />}>
                         ابدأ التوليد
-                      </Button>
-                    </Card>
+                      </UnifiedButton>
+                    </UnifiedCard>
 
-                    <Card className="p-6 hover:shadow-lg transition-shadow">
+                    <UnifiedCard variant="default" padding="md" hover="lift">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-2 rounded-lg bg-green-100">
                           <Eye className="w-5 h-5 text-green-600" />
@@ -330,13 +326,12 @@ const ThemeStudioPage: React.FC = () => {
                       <p className="text-sm text-muted-foreground mb-4">
                         احصل على إلهام من أفضل المتاجر في مجالك
                       </p>
-                      <Button variant="outline" className="w-full gap-2">
-                        <Eye className="w-4 h-4" />
+                      <UnifiedButton variant="outline" fullWidth leftIcon={<Eye className="w-4 h-4" />}>
                         تحليل الآن
-                      </Button>
-                    </Card>
+                      </UnifiedButton>
+                    </UnifiedCard>
 
-                    <Card className="p-6 hover:shadow-lg transition-shadow">
+                    <UnifiedCard variant="default" padding="md" hover="lift">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-2 rounded-lg bg-purple-100">
                           <Palette className="w-5 h-5 text-purple-600" />
@@ -346,13 +341,12 @@ const ThemeStudioPage: React.FC = () => {
                       <p className="text-sm text-muted-foreground mb-4">
                         احصل على لوحات ألوان مثالية حسب طبيعة منتجاتك
                       </p>
-                      <Button variant="outline" className="w-full gap-2">
-                        <Palette className="w-4 h-4" />
+                      <UnifiedButton variant="outline" fullWidth leftIcon={<Palette className="w-4 h-4" />}>
                         اقتراحات
-                      </Button>
-                    </Card>
+                      </UnifiedButton>
+                    </UnifiedCard>
 
-                    <Card className="p-6 hover:shadow-lg transition-shadow">
+                    <UnifiedCard variant="default" padding="md" hover="lift">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-2 rounded-lg bg-orange-100">
                           <Wand2 className="w-5 h-5 text-orange-600" />
@@ -362,11 +356,10 @@ const ThemeStudioPage: React.FC = () => {
                       <p className="text-sm text-muted-foreground mb-4">
                         اتركنا نحسن تصميمك للحصول على أفضل معدلات التحويل
                       </p>
-                      <Button variant="outline" className="w-full gap-2">
-                        <Wand2 className="w-4 h-4" />
+                      <UnifiedButton variant="outline" fullWidth leftIcon={<Wand2 className="w-4 h-4" />}>
                         تحسين
-                      </Button>
-                    </Card>
+                      </UnifiedButton>
+                    </UnifiedCard>
                   </div>
 
                   <Separator />
@@ -378,15 +371,14 @@ const ThemeStudioPage: React.FC = () => {
                       <div className="text-center space-y-2">
                         <Sparkles className="w-12 h-12 mx-auto text-muted-foreground" />
                         <p className="text-muted-foreground">مرحباً! كيف يمكنني مساعدتك في تصميم متجرك؟</p>
-                        <Button className="gap-2">
-                          <Sparkles className="w-4 h-4" />
+                        <UnifiedButton variant="primary" leftIcon={<Sparkles className="w-4 h-4" />}>
                           ابدأ المحادثة
-                        </Button>
+                        </UnifiedButton>
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </UnifiedCardContent>
+              </UnifiedCard>
             </motion.div>
           </TabsContent>
         </Tabs>
