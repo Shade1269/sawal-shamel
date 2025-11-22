@@ -2,24 +2,16 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  InteractiveWidget,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button
-} from '@/components/ui/index';
+  UnifiedCard, 
+  UnifiedCardContent, 
+  UnifiedCardDescription, 
+  UnifiedCardHeader, 
+  UnifiedCardTitle,
+  UnifiedButton,
+  UnifiedBadge
+} from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ArrowRight, Package, Truck, CheckCircle, Clock, Search } from 'lucide-react';
 import { toast } from 'sonner';
@@ -139,27 +131,27 @@ const OrderTracking = () => {
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: any }> = {
       PENDING: { label: 'في الانتظار', variant: 'secondary' },
-      CONFIRMED: { label: 'مؤكد', variant: 'default' },
-      PREPARING: { label: 'قيد التحضير', variant: 'default' },
-      SHIPPED: { label: 'تم الشحن', variant: 'default' },
-      DELIVERED: { label: 'تم التسليم', variant: 'default' },
-      CANCELLED: { label: 'ملغى', variant: 'destructive' }
+      CONFIRMED: { label: 'مؤكد', variant: 'info' },
+      PREPARING: { label: 'قيد التحضير', variant: 'info' },
+      SHIPPED: { label: 'تم الشحن', variant: 'info' },
+      DELIVERED: { label: 'تم التسليم', variant: 'success' },
+      CANCELLED: { label: 'ملغى', variant: 'error' }
     };
     
     const config = statusConfig[status] || { label: status, variant: 'secondary' };
-    return <Badge variant={config.variant}>{config.label}</Badge>;
+    return <UnifiedBadge variant={config.variant}>{config.label}</UnifiedBadge>;
   };
 
   const getPaymentStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: any }> = {
       PENDING: { label: 'في الانتظار', variant: 'secondary' },
-      PAID: { label: 'مدفوع', variant: 'default' },
-      FAILED: { label: 'فشل', variant: 'destructive' },
+      PAID: { label: 'مدفوع', variant: 'success' },
+      FAILED: { label: 'فشل', variant: 'error' },
       REFUNDED: { label: 'مسترد', variant: 'outline' }
     };
     
     const config = statusConfig[status] || { label: status, variant: 'secondary' };
-    return <Badge variant={config.variant}>{config.label}</Badge>;
+    return <UnifiedBadge variant={config.variant}>{config.label}</UnifiedBadge>;
   };
 
   const getStatusIcon = (status: string) => {
@@ -180,14 +172,14 @@ const OrderTracking = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Card className="max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">تتبع الطلب</CardTitle>
-          <CardDescription className="text-center">
+      <UnifiedCard variant="glass" padding="none" className="max-w-4xl mx-auto">
+        <UnifiedCardHeader className="p-6">
+          <UnifiedCardTitle className="text-2xl font-bold text-center">تتبع الطلب</UnifiedCardTitle>
+          <UnifiedCardDescription className="text-center">
             تتبع حالة طلبك ومعرفة موعد وصوله
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
+          </UnifiedCardDescription>
+        </UnifiedCardHeader>
+        <UnifiedCardContent className="space-y-6 p-6">
           {/* Search Section */}
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
@@ -201,14 +193,14 @@ const OrderTracking = () => {
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
-            <Button 
+            <UnifiedButton 
               onClick={handleSearch} 
               disabled={loading}
               className="sm:mt-6"
+              leftIcon={<Search className="h-4 w-4" />}
             >
-              <Search className="h-4 w-4 mr-2" />
               {loading ? 'جاري البحث...' : 'بحث'}
-            </Button>
+            </UnifiedButton>
           </div>
 
           {order && (
@@ -217,11 +209,11 @@ const OrderTracking = () => {
               
               {/* Order Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">معلومات الطلب</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
+                <UnifiedCard variant="flat" padding="none">
+                  <UnifiedCardHeader className="p-4">
+                    <UnifiedCardTitle className="text-lg">معلومات الطلب</UnifiedCardTitle>
+                  </UnifiedCardHeader>
+                  <UnifiedCardContent className="space-y-4 p-4">
                     <div>
                       <Label className="text-sm text-muted-foreground">رقم الطلب</Label>
                       <p className="font-semibold">{order.order_number}</p>
@@ -244,14 +236,14 @@ const OrderTracking = () => {
                         <p className="font-mono bg-muted p-2 rounded">{order.tracking_number}</p>
                       </div>
                     )}
-                  </CardContent>
-                </Card>
+                  </UnifiedCardContent>
+                </UnifiedCard>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">معلومات الشحن</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
+                <UnifiedCard variant="flat" padding="none">
+                  <UnifiedCardHeader className="p-4">
+                    <UnifiedCardTitle className="text-lg">معلومات الشحن</UnifiedCardTitle>
+                  </UnifiedCardHeader>
+                  <UnifiedCardContent className="space-y-4 p-4">
                     <div>
                       <Label className="text-sm text-muted-foreground">اسم العميل</Label>
                       <p>{order.customer_name}</p>
@@ -269,8 +261,8 @@ const OrderTracking = () => {
                         </div>
                       </div>
                     )}
-                  </CardContent>
-                </Card>
+                  </UnifiedCardContent>
+                </UnifiedCard>
               </div>
 
               {/* Order Status Timeline */}
@@ -309,15 +301,14 @@ const OrderTracking = () => {
               <Separator />
               
               <div className="flex justify-center">
-                <Button onClick={() => navigate('/')} variant="outline">
+                <UnifiedButton onClick={() => navigate('/')} variant="outline" rightIcon={<ArrowRight className="h-4 w-4" />}>
                   العودة للمتجر
-                  <ArrowRight className="h-4 w-4 mr-2" />
-                </Button>
+                </UnifiedButton>
               </div>
             </>
           )}
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };

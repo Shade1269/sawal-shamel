@@ -1,23 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  VirtualizedList,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  Button
-} from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+  UnifiedCard, 
+  UnifiedCardContent, 
+  UnifiedCardDescription, 
+  UnifiedCardHeader, 
+  UnifiedCardTitle,
+  UnifiedButton,
+  UnifiedBadge
+} from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -239,15 +230,14 @@ const ProductsPage = () => {
     <div className="container mx-auto p-6 space-y-6">
       {/* Back to Home Button */}
       <div className="flex justify-start">
-        <Button 
+        <UnifiedButton 
           variant="ghost" 
           onClick={() => navigate('/')}
-          className="text-primary hover:bg-primary/10 gap-2"
+          leftIcon={<Home className="h-4 w-4" />}
+          rightIcon={<ArrowRight className="h-4 w-4" />}
         >
-          <Home className="h-4 w-4" />
           العودة إلى الصفحة الرئيسية
-          <ArrowRight className="h-4 w-4" />
-        </Button>
+        </UnifiedButton>
       </div>
       
       <div className="text-center space-y-2">
@@ -259,11 +249,11 @@ const ProductsPage = () => {
         </p>
       </div>
 
-      <Card className="border-0 bg-card/50 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle>البحث والتصفية</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <UnifiedCard variant="glass" padding="none">
+        <UnifiedCardHeader className="p-6">
+          <UnifiedCardTitle>البحث والتصفية</UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="space-y-2">
               <div className="relative">
@@ -303,20 +293,20 @@ const ProductsPage = () => {
               </SelectContent>
             </Select>
             
-            <Button 
+            <UnifiedButton 
               variant="outline"
               onClick={() => {
                 setSearchTerm('');
                 setSelectedCategory('all');
                 setSortBy('newest');
               }}
+              leftIcon={<Filter className="h-4 w-4" />}
             >
-              <Filter className="ml-2 h-4 w-4" />
               إعادة تعيين
-            </Button>
+            </UnifiedButton>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       <div className="flex justify-between items-center">
         <p className="text-muted-foreground">
@@ -326,7 +316,7 @@ const ProductsPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredProducts.map((product: any) => (
-          <Card key={product.id} className="group border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300 overflow-hidden">
+          <UnifiedCard key={product.id} variant="glass" padding="none" hover="glow" className="group overflow-hidden">
             <div className="relative">
               <div className="aspect-square gradient-bg-accent flex items-center justify-center">
                 {product.image_urls && product.image_urls.length > 0 ? (
@@ -341,13 +331,13 @@ const ProductsPage = () => {
               </div>
               
               {product.category && (
-                <Badge className="absolute top-2 right-2 bg-primary/90 text-primary-foreground">
+                <UnifiedBadge variant="info" className="absolute top-2 right-2">
                   {product.category}
-                </Badge>
+                </UnifiedBadge>
               )}
             </div>
             
-            <CardContent className="p-4 space-y-3">
+            <UnifiedCardContent className="p-4 space-y-3">
               <div>
                 <h3 className="font-semibold line-clamp-2 group-hover:text-primary transition-colors">
                   {product.title}
@@ -383,26 +373,27 @@ const ProductsPage = () => {
               </div>
               
               <div className="flex gap-2">
-                <Button 
+                <UnifiedButton 
                   size="sm" 
-                  className="flex-1 bg-gradient-primary"
+                  variant="hero"
+                  className="flex-1"
+                  leftIcon={<Eye className="h-4 w-4" />}
                 >
-                  <Eye className="ml-1 h-4 w-4" />
                   عرض
-                </Button>
+                </UnifiedButton>
                 
                 {isAuthenticated && (
-                  <Button 
+                  <UnifiedButton 
                     size="sm" 
                     variant="outline"
                     onClick={() => handleAddToLibrary(product.id)}
                   >
                     <Plus className="h-4 w-4" />
-                  </Button>
+                  </UnifiedButton>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         ))}
       </div>
 
