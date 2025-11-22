@@ -230,8 +230,8 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
 
       {/* إحصائيات العملاء */}
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card>
-          <CardContent className="p-4 sm:p-6">
+        <UnifiedCard variant="glass">
+          <UnifiedCardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground">إجمالي العملاء</p>
@@ -239,11 +239,11 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
               </div>
               <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardContent className="p-4 sm:p-6">
+        <UnifiedCard variant="glass">
+          <UnifiedCardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground">العملاء النشطون</p>
@@ -251,11 +251,11 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
               </div>
               <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardContent className="p-4 sm:p-6">
+        <UnifiedCard variant="glass">
+          <UnifiedCardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground line-clamp-1">عملاء جدد</p>
@@ -263,11 +263,11 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
               </div>
               <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600" />
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardContent className="p-4 sm:p-6">
+        <UnifiedCard variant="glass">
+          <UnifiedCardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground line-clamp-1">متوسط الإنفاق</p>
@@ -275,13 +275,13 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
               </div>
               <ShoppingBag className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
       {/* أدوات البحث والتصفية */}
-      <Card>
-        <CardHeader className="pb-3 sm:pb-4">
+      <UnifiedCard variant="premium">
+        <UnifiedCardHeader className="pb-3 sm:pb-4">
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="w-full">
               <div className="relative">
@@ -308,9 +308,9 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
               </select>
             </div>
           </div>
-        </CardHeader>
+        </UnifiedCardHeader>
 
-        <CardContent>
+        <UnifiedCardContent>
           {filteredCustomers.length === 0 ? (
             <div className="text-center py-12">
               <Users className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
@@ -354,18 +354,18 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
                         <div className="text-muted-foreground">{customer.total_spent_sar.toFixed(2)} ر.س</div>
                       </div>
                       
-                      <Badge 
-                        variant={customer.customer_status === 'active' ? 'default' : 'secondary'}
+                      <UnifiedBadge 
+                        variant={customer.customer_status === 'active' ? 'success' : 'secondary'}
                       >
                         {customer.customer_status === 'active' ? 'نشط' : 
                          customer.customer_status === 'inactive' ? 'غير نشط' : 'محظور'}
-                      </Badge>
+                      </UnifiedBadge>
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <UnifiedButton variant="ghost" size="sm">
                             <MoreVertical className="w-4 h-4" />
-                          </Button>
+                          </UnifiedButton>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem>
@@ -389,8 +389,8 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };
