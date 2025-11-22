@@ -3,11 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { CreateAffiliateStore } from '@/features/affiliate/components/CreateAffiliateStore';
 import { AffiliateStoreManager } from '@/features/affiliate/components/AffiliateStoreManager';
 import { useAffiliateStore } from '@/hooks/useAffiliateStore';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle, UnifiedButton } from '@/components/design-system';
 import { Store, Settings, Palette } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
-import { Button } from '@/components/ui/button';
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
 
 const StoreSetup = () => {

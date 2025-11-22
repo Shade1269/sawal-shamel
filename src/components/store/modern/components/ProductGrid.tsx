@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Star, Eye, Zap, Percent } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
+import { UnifiedCard, UnifiedCardContent } from '@/components/design-system';
 
 interface Product {
   id: string;
@@ -68,7 +68,7 @@ export const ProductGrid = ({
     >
       {products.map((product) => (
         <motion.div key={product.id} variants={item}>
-          <Card className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-2 hover:border-primary/30 gradient-bg-card">
+          <UnifiedCard variant="glass" className="group overflow-hidden hover:shadow-2xl transition-all duration-500 gradient-bg-card">
             <div className="relative overflow-hidden">
               {/* Product Image */}
               <div 
@@ -95,7 +95,7 @@ export const ProductGrid = ({
               {/* Overlay Actions */}
               <div className="absolute inset-0 bg-transparent group-hover:bg-foreground/10 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                 <div className="flex gap-2">
-                  <Button
+                  <UnifiedButton
                     size="sm"
                     variant="secondary"
                     onClick={(e) => {
@@ -106,8 +106,8 @@ export const ProductGrid = ({
                   >
                     <Eye className="h-4 w-4 mr-1" />
                     عرض
-                  </Button>
-                  <Button
+                  </UnifiedButton>
+                  <UnifiedButton
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -117,33 +117,33 @@ export const ProductGrid = ({
                   >
                     <ShoppingCart className="h-4 w-4 mr-1" />
                     أضف
-                  </Button>
+                  </UnifiedButton>
                 </div>
               </div>
 
               {/* Badges */}
               <div className="absolute top-3 left-3 flex flex-col gap-2">
                 {product.discount_percentage && product.discount_percentage > 0 && (
-                  <Badge variant="destructive" className="shadow-lg animate-pulse">
+                  <UnifiedBadge variant="error" className="shadow-lg animate-pulse">
                     <Percent className="h-3 w-3 mr-1" />
                     -{product.discount_percentage}%
-                  </Badge>
+                  </UnifiedBadge>
                 )}
                 {product.stock < 5 && product.stock > 0 && (
-                  <Badge variant="outline" className="bg-orange-100 text-orange-700 border-orange-300">
+                  <UnifiedBadge variant="warning" className="bg-orange-100 text-orange-700 border-orange-300">
                     <Zap className="h-3 w-3 mr-1" />
                     كمية محدودة
-                  </Badge>
+                  </UnifiedBadge>
                 )}
                 {product.stock === 0 && (
-                  <Badge variant="secondary">
+                  <UnifiedBadge variant="secondary">
                     نفد المخزون
-                  </Badge>
+                  </UnifiedBadge>
                 )}
               </div>
 
               {/* Wishlist Button */}
-              <Button
+              <UnifiedButton
                 size="sm"
                 variant="ghost"
                 onClick={(e) => {
@@ -155,14 +155,14 @@ export const ProductGrid = ({
                 <Heart 
                   className={`h-4 w-4 ${wishlist.includes(product.id) ? 'fill-destructive text-destructive' : 'text-muted-foreground'} transition-colors`} 
                 />
-              </Button>
+              </UnifiedButton>
             </div>
 
-            <CardContent className="p-4 space-y-3">
+            <UnifiedCardContent className="p-4 space-y-3">
               {/* Category */}
-              <Badge variant="outline" className="text-xs">
+              <UnifiedBadge variant="outline" className="text-xs">
                 {product.category}
-              </Badge>
+              </UnifiedBadge>
 
               {/* Product Title */}
               <h3 
@@ -213,7 +213,7 @@ export const ProductGrid = ({
                   )}
                 </div>
 
-                <Button
+                <UnifiedButton
                   size="sm"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -224,10 +224,10 @@ export const ProductGrid = ({
                 >
                   <ShoppingCart className="h-4 w-4 mr-1" />
                   {product.stock === 0 ? 'نفد' : 'أضف'}
-                </Button>
+                </UnifiedButton>
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </motion.div>
       ))}
     </motion.div>

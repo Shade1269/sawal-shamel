@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, Minus, Trash2, ShoppingBag, Truck, Gift } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 
 interface Product {
   id: string;
@@ -77,9 +77,9 @@ export const ShoppingCart = ({
               <div className="text-6xl opacity-50">🛒</div>
               <h3 className="text-lg font-medium text-muted-foreground">السلة فارغة</h3>
               <p className="text-sm text-muted-foreground">أضف منتجات لتبدأ التسوق</p>
-              <Button onClick={onClose} variant="outline">
+              <UnifiedButton onClick={onClose} variant="outline">
                 متابعة التسوق
-              </Button>
+              </UnifiedButton>
             </div>
           </div>
         ) : (
@@ -117,23 +117,23 @@ export const ShoppingCart = ({
                           <h4 className="font-medium text-sm leading-tight line-clamp-2">
                             {item.product.title}
                           </h4>
-                          <Button
+                          <UnifiedButton
                             variant="ghost"
                             size="sm"
                             onClick={() => onRemoveItem(index)}
                             className="text-muted-foreground hover:text-destructive p-1 h-auto"
                           >
                             <Trash2 className="h-4 w-4" />
-                          </Button>
+                          </UnifiedButton>
                         </div>
 
                         {/* Selected Variants */}
                         {item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
                           <div className="flex flex-wrap gap-1">
                             {Object.entries(item.selectedVariants).map(([type, value]) => (
-                              <Badge key={type} variant="secondary" className="text-xs">
+                              <UnifiedBadge key={type} variant="secondary" className="text-xs">
                                 {value}
-                              </Badge>
+                            </UnifiedBadge>
                             ))}
                           </div>
                         )}
@@ -146,9 +146,9 @@ export const ShoppingCart = ({
                                 {item.product.final_price || item.product.price_sar} ر.س
                               </span>
                               {item.product.discount_percentage && item.product.discount_percentage > 0 && (
-                                <Badge variant="destructive" className="text-xs">
+                                <UnifiedBadge variant="error" className="text-xs">
                                   -{item.product.discount_percentage}%
-                                </Badge>
+                                </UnifiedBadge>
                               )}
                             </div>
                             <div className="text-xs text-muted-foreground">
@@ -158,7 +158,7 @@ export const ShoppingCart = ({
 
                           {/* Quantity Controls */}
                           <div className="flex items-center gap-2">
-                            <Button
+                            <UnifiedButton
                               variant="outline"
                               size="sm"
                               onClick={() => onUpdateQuantity(index, item.quantity - 1)}
@@ -166,9 +166,9 @@ export const ShoppingCart = ({
                               className="h-8 w-8 p-0"
                             >
                               <Minus className="h-3 w-3" />
-                            </Button>
+                            </UnifiedButton>
                             <span className="w-8 text-center font-medium">{item.quantity}</span>
-                            <Button
+                            <UnifiedButton
                               variant="outline"
                               size="sm"
                               onClick={() => onUpdateQuantity(index, item.quantity + 1)}
@@ -176,7 +176,7 @@ export const ShoppingCart = ({
                               className="h-8 w-8 p-0"
                             >
                               <Plus className="h-3 w-3" />
-                            </Button>
+                            </UnifiedButton>
                           </div>
                         </div>
                       </div>
@@ -226,23 +226,24 @@ export const ShoppingCart = ({
               </div>
 
               {/* Checkout Button */}
-              <Button
+              <UnifiedButton
                 onClick={onCheckout}
+                variant="primary"
                 className="w-full h-12 text-lg"
                 size="lg"
               >
                 <ShoppingBag className="h-5 w-5 mr-2" />
                 إتمام الطلب ({finalTotal.toFixed(2)} ر.س)
-              </Button>
+              </UnifiedButton>
 
               {/* Continue Shopping */}
-              <Button
+              <UnifiedButton
                 variant="outline"
                 onClick={onClose}
                 className="w-full"
               >
                 متابعة التسوق
-              </Button>
+              </UnifiedButton>
 
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground text-center pt-2">

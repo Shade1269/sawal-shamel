@@ -6,18 +6,13 @@ import {
   EnhancedCardHeader, 
   EnhancedCardTitle,
   ResponsiveLayout,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button
+  EnhancedButton
 } from '@/components/ui/index';
+import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { 
   Crown, 
   Shield, 
@@ -113,7 +108,7 @@ const CreateAdmin = () => {
       <div className="w-full max-w-md">
         {/* Back to Home Button */}
         <div className="flex justify-center mb-6">
-          <Button
+          <UnifiedButton
             variant="ghost"
             onClick={() => goToUserHome(profile?.role)}
             className="text-primary hover:bg-primary/10 gap-2 bg-white/80 backdrop-blur-sm"
@@ -121,23 +116,23 @@ const CreateAdmin = () => {
             <Home className="h-4 w-4" />
             العودة إلى الصفحة الرئيسية
             <ArrowRight className="h-4 w-4" />
-          </Button>
+          </UnifiedButton>
         </div>
         
-        <Card className="w-full shadow-luxury border-0 bg-card/50 backdrop-blur-sm">
-        <CardHeader className="text-center">
+        <UnifiedCard variant="glass-strong" className="w-full shadow-luxury border-0 bg-card/50 backdrop-blur-sm">
+        <UnifiedCardHeader className="text-center">
           <div className="w-16 h-16 bg-gradient-luxury rounded-full flex items-center justify-center mx-auto mb-4">
             <Crown className="h-8 w-8 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+          <UnifiedCardTitle className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
             إنشاء حساب مدير
-          </CardTitle>
-          <CardDescription>
+          </UnifiedCardTitle>
+          <UnifiedCardDescription>
             إنشاء أول حساب مدير للمنصة
-          </CardDescription>
-        </CardHeader>
+          </UnifiedCardDescription>
+        </UnifiedCardHeader>
         
-        <CardContent>
+        <UnifiedCardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="admin-name">اسم المدير</Label>
@@ -178,9 +173,10 @@ const CreateAdmin = () => {
               />
             </div>
             
-            <Button 
+            <UnifiedButton 
               type="submit" 
-              className="w-full bg-gradient-luxury hover:opacity-90"
+              variant="luxury"
+              fullWidth
               disabled={loading}
             >
               {loading ? (
@@ -194,7 +190,7 @@ const CreateAdmin = () => {
                   إنشاء حساب المدير
                 </>
               )}
-            </Button>
+            </UnifiedButton>
           </form>
 
           {success && (
@@ -216,8 +212,8 @@ const CreateAdmin = () => {
               بعد إنشاء حساب المدير، ستحتاج لتسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور للوصول لصفحة الإدارة.
             </p>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
       </div>
     </div>
   );

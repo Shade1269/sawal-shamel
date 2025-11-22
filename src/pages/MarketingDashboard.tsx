@@ -1,19 +1,5 @@
 import React from 'react';
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  InteractiveWidget,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/index';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SocialMediaManager from '@/components/marketing/SocialMediaManager';
 import EmailCampaignManager from '@/components/marketing/EmailCampaignManager';
@@ -84,20 +70,20 @@ const MarketingDashboard = () => {
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <Card key={index} className="bg-card/80 backdrop-blur-sm border-0 shadow-elegant">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
+              <UnifiedCard key={index} variant="glass" hover="lift">
+                <UnifiedCardHeader className="flex flex-row items-center justify-between pb-2">
+                  <UnifiedCardTitle className="text-sm font-medium text-muted-foreground">
                     {stat.title}
-                  </CardTitle>
+                  </UnifiedCardTitle>
                   <Icon className={`h-5 w-5 ${stat.color}`} />
-                </CardHeader>
-                <CardContent>
+                </UnifiedCardHeader>
+                <UnifiedCardContent>
                   <div className="text-2xl font-bold">{stat.value}</div>
                   <p className="text-xs text-primary">
                     {stat.change} من الشهر الماضي
                   </p>
-                </CardContent>
-              </Card>
+                </UnifiedCardContent>
+              </UnifiedCard>
             );
           })}
         </div>

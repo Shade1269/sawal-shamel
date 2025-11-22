@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { Book, Code, Database, Layers, Shield, Zap } from 'lucide-react';
 
 export default function Documentation() {
@@ -14,10 +14,10 @@ export default function Documentation() {
             دليل شامل للـ API والمعمارية والأمثلة
           </p>
           <div className="flex gap-2 justify-center flex-wrap">
-            <Badge variant="default">✅ الإصدار 1.0</Badge>
-            <Badge variant="secondary">TypeScript</Badge>
-            <Badge variant="secondary">React</Badge>
-            <Badge variant="secondary">Supabase</Badge>
+            <UnifiedBadge variant="success">✅ الإصدار 1.0</UnifiedBadge>
+            <UnifiedBadge variant="info">TypeScript</UnifiedBadge>
+            <UnifiedBadge variant="info">React</UnifiedBadge>
+            <UnifiedBadge variant="info">Supabase</UnifiedBadge>
           </div>
         </div>
 
@@ -32,70 +32,70 @@ export default function Documentation() {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+            <UnifiedCard variant="glass-strong">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle className="flex items-center gap-2">
                   <Book className="w-5 h-5" />
                   ما هو النظام الموحد؟
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+                </UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-4">
                 <p className="text-muted-foreground">
                   نظام الطلبات الموحد (Unified Orders System) هو طبقة موحدة للتعامل مع الطلبات من مصادر متعددة
                   (التجارة الإلكترونية، الطلبات البسيطة، الطلبات اليدوية).
                 </p>
                 
                 <div className="grid gap-4 md:grid-cols-3">
-                  <Card className="bg-muted/50">
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2">
+                  <UnifiedCard variant="flat">
+                    <UnifiedCardHeader>
+                      <UnifiedCardTitle className="text-lg flex items-center gap-2">
                         <Database className="w-4 h-4" />
                         جدول موحد
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                      </UnifiedCardTitle>
+                    </UnifiedCardHeader>
+                    <UnifiedCardContent>
                       <p className="text-sm text-muted-foreground">
                         جدول <code className="bg-muted px-1 rounded">order_hub</code> يجمع جميع الطلبات من مصادر مختلفة
                       </p>
-                    </CardContent>
-                  </Card>
+                    </UnifiedCardContent>
+                  </UnifiedCard>
 
-                  <Card className="bg-muted/50">
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2">
+                  <UnifiedCard variant="flat">
+                    <UnifiedCardHeader>
+                      <UnifiedCardTitle className="text-lg flex items-center gap-2">
                         <Code className="w-4 h-4" />
                         خدمة موحدة
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                      </UnifiedCardTitle>
+                    </UnifiedCardHeader>
+                    <UnifiedCardContent>
                       <p className="text-sm text-muted-foreground">
                         <code className="bg-muted px-1 rounded">UnifiedOrdersService</code> للتعامل مع جميع أنواع الطلبات
                       </p>
-                    </CardContent>
-                  </Card>
+                    </UnifiedCardContent>
+                  </UnifiedCard>
 
-                  <Card className="bg-muted/50">
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2">
+                  <UnifiedCard variant="flat">
+                    <UnifiedCardHeader>
+                      <UnifiedCardTitle className="text-lg flex items-center gap-2">
                         <Layers className="w-4 h-4" />
                         React Hooks
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                      </UnifiedCardTitle>
+                    </UnifiedCardHeader>
+                    <UnifiedCardContent>
                       <p className="text-sm text-muted-foreground">
                         Hooks جاهزة للاستخدام في مكونات React مع إدارة الحالة
                       </p>
-                    </CardContent>
-                  </Card>
+                    </UnifiedCardContent>
+                  </UnifiedCard>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>الميزات الرئيسية</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <UnifiedCard variant="glass-strong">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle>الميزات الرئيسية</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent>
                 <div className="grid gap-3 md:grid-cols-2">
                   <div className="flex items-start gap-3">
                     <Shield className="w-5 h-5 text-success mt-0.5" />
@@ -126,68 +126,61 @@ export default function Documentation() {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </TabsContent>
 
           <TabsContent value="api" className="space-y-4 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>UnifiedOrdersService API</CardTitle>
-                <CardDescription>الخدمة الموحدة للتعامل مع الطلبات</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
+            <UnifiedCard variant="flat">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle>UnifiedOrdersService API</UnifiedCardTitle>
+                <UnifiedCardDescription>الخدمة الموحدة للتعامل مع الطلبات</UnifiedCardDescription>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-6">
                 <div>
-                  <h3 className="font-semibold mb-2">fetchOrders(filters?)</h3>
-                  <p className="text-sm text-muted-foreground mb-3">جلب الطلبات مع إمكانية التصفية</p>
-                  <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-sm">
-{`const orders = await UnifiedOrdersService.fetchOrders({
-  source: 'ecommerce',
-  status: 'pending',
-  storeId: 'store-uuid'
+                  <h3 className="text-lg font-semibold mb-2">getAllOrders()</h3>
+                  <p className="text-sm text-muted-foreground mb-2">جلب جميع الطلبات من مصادر متعددة</p>
+                  <pre className="bg-muted p-3 rounded-lg text-sm">
+{`const orders = await UnifiedOrdersService.getAllOrders({
+  page: 1,
+  limit: 20,
+  source: 'all', // 'ecommerce' | 'simple' | 'manual'
+  status: 'pending'
 });`}
                   </pre>
                 </div>
 
                 <div>
-                  <h3 className="font-semibold mb-2">getOrderById(id)</h3>
-                  <p className="text-sm text-muted-foreground mb-3">جلب طلب واحد بالتفاصيل</p>
-                  <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-sm">
-{`const order = await UnifiedOrdersService.getOrderById('order-uuid');
-console.log(order.customer_name);`}
+                  <h3 className="text-lg font-semibold mb-2">getOrderById()</h3>
+                  <p className="text-sm text-muted-foreground mb-2">جلب طلب محدد مع جميع تفاصيله</p>
+                  <pre className="bg-muted p-3 rounded-lg text-sm">
+{`const order = await UnifiedOrdersService.getOrderById(orderId);
+// يرجع UnifiedOrder object`}
                   </pre>
                 </div>
 
                 <div>
-                  <h3 className="font-semibold mb-2">getStoreStats(storeId, affiliateStoreId?)</h3>
-                  <p className="text-sm text-muted-foreground mb-3">جلب إحصائيات المتجر</p>
-                  <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-sm">
-{`const stats = await UnifiedOrdersService.getStoreStats('store-uuid');
-console.log(\`إجمالي الطلبات: \${stats?.total_orders}\`);`}
-                  </pre>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold mb-2">updateOrderStatus(orderId, status)</h3>
-                  <p className="text-sm text-muted-foreground mb-3">تحديث حالة الطلب</p>
-                  <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-sm">
+                  <h3 className="text-lg font-semibold mb-2">updateOrderStatus()</h3>
+                  <p className="text-sm text-muted-foreground mb-2">تحديث حالة الطلب</p>
+                  <pre className="bg-muted p-3 rounded-lg text-sm">
 {`await UnifiedOrdersService.updateOrderStatus(
-  'order-uuid',
-  'confirmed'
+  orderId,
+  'processing',
+  'تم البدء بمعالجة الطلب'
 );`}
                   </pre>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </TabsContent>
 
           <TabsContent value="hooks" className="space-y-4 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>React Hooks</CardTitle>
-                <CardDescription>Hooks جاهزة للاستخدام في مكونات React</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
+            <UnifiedCard variant="glass-strong">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle>Hooks API</UnifiedCardTitle>
+                <UnifiedCardDescription>React Hooks للعمل بسهولة مع البيانات الموحدة</UnifiedCardDescription>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-6">
                 <div>
                   <h3 className="font-semibold mb-2">useUnifiedOrders(filters?)</h3>
                   <p className="text-sm text-muted-foreground mb-3">Hook للتعامل مع الطلبات</p>
@@ -224,17 +217,17 @@ console.log(\`إجمالي الطلبات: \${stats?.total_orders}\`);`}
 }`}
                   </pre>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </TabsContent>
 
           <TabsContent value="architecture" className="space-y-4 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>معمارية النظام</CardTitle>
-                <CardDescription>هيكل النظام الموحد</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <UnifiedCard variant="flat">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle>معمارية النظام</UnifiedCardTitle>
+                <UnifiedCardDescription>هيكل النظام الموحد</UnifiedCardDescription>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-4">
                 <div className="bg-muted p-6 rounded-lg">
                   <pre className="text-xs overflow-x-auto whitespace-pre">
 {`┌─────────────────────────────────────┐
@@ -245,38 +238,35 @@ console.log(\`إجمالي الطلبات: \${stats?.total_orders}\`);`}
 ┌─────────────────────────────────────┐
 │   Application Layer (Services)      │
 │   - UnifiedOrdersService            │
-│   - React Hooks                     │
-│   - Feature Flags                   │
+│   - UnifiedOrdersStatsService       │
 └─────────────────────────────────────┘
               ↕
 ┌─────────────────────────────────────┐
-│   Database Layer (Supabase)         │
-│   - order_hub (مركزي)               │
-│   - product_returns                 │
-│   - refunds                         │
-│   - shipments                       │
+│  Adapters (Data Transformation)     │
+│ ├─ EcommerceOrderAdapter            │
+│ ├─ SimpleOrderAdapter               │
+│ └─ ManualOrderAdapter               │
+└─────────────────────────────────────┘
+              ↕
+┌─────────────────────────────────────┐
+│      Data Layer (Supabase)          │
+│ - orders (ecommerce + simple)       │
+│ - order_items                       │
+│ - manual_orders                     │
+│ - manual_order_items                │
 └─────────────────────────────────────┘`}
                   </pre>
                 </div>
-
-                <div className="space-y-2">
-                  <h3 className="font-semibold">الطبقات الثلاث:</h3>
-                  <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                    <li><strong>UI Layer:</strong> مكونات React للعرض والتفاعل</li>
-                    <li><strong>Application Layer:</strong> منطق الأعمال والخدمات</li>
-                    <li><strong>Data Layer:</strong> قاعدة البيانات والعلاقات</li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </TabsContent>
 
           <TabsContent value="examples" className="space-y-4 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>أمثلة عملية</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
+            <UnifiedCard variant="glass-strong">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle>أمثلة عملية</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-6">
                 <div>
                   <h3 className="font-semibold mb-2">مثال 1: لوحة تحكم بسيطة</h3>
                   <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-sm">
@@ -332,16 +322,16 @@ console.log(\`إجمالي الطلبات: \${stats?.total_orders}\`);`}
 }`}
                   </pre>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </TabsContent>
 
           <TabsContent value="best-practices" className="space-y-4 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>أفضل الممارسات</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <UnifiedCard variant="flat">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle>أفضل الممارسات</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-4">
                 <div>
                   <h3 className="font-semibold mb-2">✅ استخدم التصفية بدلاً من الجلب الكامل</h3>
                   <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-sm">
@@ -377,8 +367,8 @@ const pending = await fetchOrders({ status: 'pending' });`}
 }`}
                   </pre>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </TabsContent>
         </Tabs>
       </div>

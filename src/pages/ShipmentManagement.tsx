@@ -6,20 +6,14 @@ import {
   EnhancedCardTitle,
   ResponsiveLayout,
   ResponsiveGrid,
-  EnhancedButton,
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
+  EnhancedButton
 } from '@/components/ui/index';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedBadge, UnifiedInput } from '@/components/design-system';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import { Plus, Package, Edit, Eye, Truck, MapPin } from 'lucide-react';
 import { useShipmentTracking } from '@/hooks/useShipmentTracking';
 import { useShippingManagement } from '@/hooks/useShippingManagement';
@@ -159,10 +153,10 @@ const ShipmentManagement: React.FC = () => {
         <h1 className="text-2xl font-bold">إدارة الشحنات</h1>
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <DialogTrigger asChild>
-            <Button onClick={resetNewShipment}>
+            <UnifiedButton variant="primary" onClick={resetNewShipment}>
               <Plus className="h-4 w-4 ml-2" />
               إنشاء شحنة جديدة
-            </Button>
+            </UnifiedButton>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" dir="rtl">
             <DialogHeader>
@@ -172,7 +166,7 @@ const ShipmentManagement: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="customer_name">اسم العميل</Label>
-                  <Input
+                  <UnifiedInput
                     id="customer_name"
                     value={newShipment.customer_name}
                     onChange={(e) => setNewShipment({...newShipment, customer_name: e.target.value})}
@@ -181,7 +175,7 @@ const ShipmentManagement: React.FC = () => {
                 </div>
                 <div>
                   <Label htmlFor="customer_phone">رقم الهاتف</Label>
-                  <Input
+                  <UnifiedInput
                     id="customer_phone"
                     value={newShipment.customer_phone}
                     onChange={(e) => setNewShipment({...newShipment, customer_phone: e.target.value})}
@@ -212,7 +206,7 @@ const ShipmentManagement: React.FC = () => {
               <div className="space-y-3">
                 <Label>عنوان الاستلام</Label>
                 <div className="grid grid-cols-2 gap-2">
-                  <Input
+                  <UnifiedInput
                     placeholder="العنوان"
                     value={newShipment.pickup_address.address}
                     onChange={(e) => setNewShipment({
@@ -221,7 +215,7 @@ const ShipmentManagement: React.FC = () => {
                     })}
                     required
                   />
-                  <Input
+                  <UnifiedInput
                     placeholder="المدينة"
                     value={newShipment.pickup_address.city}
                     onChange={(e) => setNewShipment({
@@ -236,7 +230,7 @@ const ShipmentManagement: React.FC = () => {
               <div className="space-y-3">
                 <Label>عنوان التسليم</Label>
                 <div className="grid grid-cols-2 gap-2">
-                  <Input
+                  <UnifiedInput
                     placeholder="العنوان"
                     value={newShipment.delivery_address.address}
                     onChange={(e) => setNewShipment({
@@ -245,7 +239,7 @@ const ShipmentManagement: React.FC = () => {
                     })}
                     required
                   />
-                  <Input
+                  <UnifiedInput
                     placeholder="المدينة"
                     value={newShipment.delivery_address.city}
                     onChange={(e) => setNewShipment({
@@ -260,7 +254,7 @@ const ShipmentManagement: React.FC = () => {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="weight">الوزن (كجم)</Label>
-                  <Input
+                  <UnifiedInput
                     id="weight"
                     type="number"
                     step="0.1"
@@ -270,7 +264,7 @@ const ShipmentManagement: React.FC = () => {
                 </div>
                 <div>
                   <Label htmlFor="cod_amount">دفع عند التسليم (ر.س)</Label>
-                  <Input
+                  <UnifiedInput
                     id="cod_amount"
                     type="number"
                     step="0.01"
@@ -280,7 +274,7 @@ const ShipmentManagement: React.FC = () => {
                 </div>
                 <div>
                   <Label htmlFor="shipping_cost">تكلفة الشحن (ر.س)</Label>
-                  <Input
+                  <UnifiedInput
                     id="shipping_cost"
                     type="number"
                     step="0.01"
@@ -301,12 +295,12 @@ const ShipmentManagement: React.FC = () => {
               </div>
 
               <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setShowCreateDialog(false)}>
+                <UnifiedButton type="button" variant="outline" onClick={() => setShowCreateDialog(false)}>
                   إلغاء
-                </Button>
-                <Button type="submit">
+                </UnifiedButton>
+                <UnifiedButton type="submit" variant="primary">
                   إنشاء الشحنة
-                </Button>
+                </UnifiedButton>
               </div>
             </form>
           </DialogContent>
@@ -323,11 +317,11 @@ const ShipmentManagement: React.FC = () => {
 
         <TabsContent value="all" className="space-y-4">
           {shipments.length === 0 ? (
-            <Card>
-              <CardContent className="p-6 text-center text-muted-foreground">
+            <UnifiedCard>
+              <UnifiedCardContent className="p-6 text-center text-muted-foreground">
                 لا توجد شحنات حالياً
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           ) : (
             <div className="grid gap-4">
               {shipments.map((shipment) => (
@@ -385,15 +379,16 @@ const ShipmentManagement: React.FC = () => {
             <>
               <DialogHeader className="flex flex-row items-center justify-between">
                 <DialogTitle>تفاصيل الشحنة {selectedShipment.shipment_number}</DialogTitle>
-                <Button
+                <UnifiedButton
                   onClick={() => {
                     setShowEventDialog(true);
                   }}
                   size="sm"
+                  variant="primary"
                 >
                   <Plus className="h-4 w-4 ml-2" />
                   إضافة حدث
-                </Button>
+                </UnifiedButton>
               </DialogHeader>
               
               <div className="space-y-6">
@@ -434,7 +429,7 @@ const ShipmentManagement: React.FC = () => {
 
             <div>
               <Label htmlFor="event_description">وصف الحدث</Label>
-              <Input
+              <UnifiedInput
                 id="event_description"
                 value={newEvent.event_description}
                 onChange={(e) => setNewEvent({...newEvent, event_description: e.target.value})}
@@ -444,7 +439,7 @@ const ShipmentManagement: React.FC = () => {
 
             <div>
               <Label htmlFor="location">الموقع</Label>
-              <Input
+              <UnifiedInput
                 id="location"
                 value={newEvent.location}
                 onChange={(e) => setNewEvent({...newEvent, location: e.target.value})}
@@ -453,12 +448,12 @@ const ShipmentManagement: React.FC = () => {
             </div>
 
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setShowEventDialog(false)}>
+              <UnifiedButton type="button" variant="outline" onClick={() => setShowEventDialog(false)}>
                 إلغاء
-              </Button>
-              <Button type="submit">
+              </UnifiedButton>
+              <UnifiedButton type="submit" variant="primary">
                 إضافة الحدث
-              </Button>
+              </UnifiedButton>
             </div>
           </form>
         </DialogContent>

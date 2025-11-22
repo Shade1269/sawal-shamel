@@ -19,11 +19,8 @@ import {
   User,
 } from "lucide-react";
 
-import Button from "@/ui/Button";
-import Card from "@/ui/Card";
-import Input from "@/ui/Input";
+import { UnifiedButton, UnifiedCard, UnifiedInput, UnifiedBadge } from "@/components/design-system";
 import Skeleton from "@/ui/Skeleton";
-import Badge from "@/ui/Badge";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
@@ -371,7 +368,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
   if (!hasItems) {
     return (
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-6 px-4 text-center">
-        <Card
+        <UnifiedCard
           className="w-full max-w-xl border border-border bg-card/85 p-[var(--spacing-xl)] shadow-md"
           data-checkout-empty
         >
@@ -386,19 +383,19 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
               </p>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-[var(--spacing-sm)]">
-              <Button
-                variant="solid"
+              <UnifiedButton
+                variant="primary"
                 onClick={() => navigate(emptyStateHref)}
                 data-testid="checkout-empty-cta"
               >
                 عودة للمتجر
-              </Button>
-              <Button variant="ghost" onClick={() => navigate("/")}>
+              </UnifiedButton>
+              <UnifiedButton variant="ghost" onClick={() => navigate("/")}>
                 الصفحة الرئيسية
-              </Button>
+              </UnifiedButton>
             </div>
           </div>
-        </Card>
+        </UnifiedCard>
       </div>
     );
   }
@@ -409,14 +406,14 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-[var(--spacing-lg)] px-4 py-10">
       <header className="flex flex-col gap-[var(--spacing-md)] sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-[var(--spacing-sm)]">
-          <Button
+          <UnifiedButton
             variant="ghost"
             size="sm"
             leftIcon={<ChevronLeft className="h-4 w-4" aria-hidden />}
             onClick={() => window.history.back()}
           >
             العودة
-          </Button>
+          </UnifiedButton>
           <div>
             <h1 className="text-2xl font-semibold text-foreground">إتمام الشراء</h1>
             <p className="text-sm text-muted-foreground">
@@ -424,9 +421,9 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
             </p>
           </div>
         </div>
-        <Badge variant="glass" data-checkout-items-count>
+        <UnifiedBadge variant="glass" data-checkout-items-count>
           {computedItems.length} منتج
-        </Badge>
+        </UnifiedBadge>
       </header>
 
       <VisuallyHidden aria-live="polite">{totalsAnnouncement}</VisuallyHidden>
@@ -450,7 +447,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
       <main className="grid gap-[var(--spacing-lg)] lg:grid-cols-[minmax(0,1fr)_360px]">
         <section className="space-y-[var(--spacing-lg)]" aria-label="تفاصيل العميل والدفع">
-          <Card className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]">
+          <UnifiedCard className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]">
             <header className="flex items-center gap-[var(--spacing-sm)]">
               <User className="h-5 w-5 text-[color:var(--accent)]" aria-hidden />
               <div>
@@ -464,7 +461,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
             <div className="grid gap-[var(--spacing-md)] sm:grid-cols-2" data-section="customer-fields">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="checkout-name">الاسم الكامل *</Label>
-                <Input
+                <UnifiedInput
                   id="checkout-name"
                   value={customerInfo.name}
                   onChange={(event) =>
@@ -490,7 +487,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
               <div className="flex flex-col gap-2">
                 <Label htmlFor="checkout-phone">رقم الجوال *</Label>
-                <Input
+                <UnifiedInput
                   id="checkout-phone"
                   inputMode="tel"
                   value={customerInfo.phone}
@@ -509,7 +506,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
             <div className="grid gap-[var(--spacing-md)] sm:grid-cols-2">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="checkout-email">البريد الإلكتروني</Label>
-                <Input
+                <UnifiedInput
                   id="checkout-email"
                   type="email"
                   value={customerInfo.email}
@@ -523,7 +520,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="checkout-district">الحي</Label>
-                <Input
+                <UnifiedInput
                   id="checkout-district"
                   value={customerInfo.district}
                   onChange={(event) =>
@@ -535,7 +532,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="checkout-street">العنوان *</Label>
-              <Input
+              <UnifiedInput
                 id="checkout-street"
                 value={customerInfo.street}
                 onChange={(event) =>
@@ -552,7 +549,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
             <div className="grid gap-[var(--spacing-md)] sm:grid-cols-3">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="checkout-city">المدينة *</Label>
-                <Input
+                <UnifiedInput
                   id="checkout-city"
                   value={customerInfo.city}
                   onChange={(event) =>
@@ -567,7 +564,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="checkout-postal">الرمز البريدي</Label>
-                <Input
+                <UnifiedInput
                   id="checkout-postal"
                   inputMode="numeric"
                   value={customerInfo.postalCode}
@@ -578,7 +575,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="checkout-country">الدولة</Label>
-                <Input
+                <UnifiedInput
                   id="checkout-country"
                   value={customerInfo.country}
                   onChange={(event) =>
@@ -587,9 +584,9 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 />
               </div>
             </div>
-          </Card>
+          </UnifiedCard>
 
-          <Card className="space-y-[var(--spacing-md)] border border-border bg-card/90 p-[var(--spacing-xl)] shadow-md">
+          <UnifiedCard className="space-y-[var(--spacing-md)] border border-border bg-card/90 p-[var(--spacing-xl)] shadow-md">
             <header className="flex items-center gap-[var(--spacing-sm)]">
               <MapPin className="h-5 w-5 text-accent" aria-hidden />
               <div>
@@ -625,9 +622,9 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 );
               })}
             </div>
-          </Card>
+          </UnifiedCard>
 
-          <Card className="space-y-[var(--spacing-md)] border border-border bg-card/90 p-[var(--spacing-xl)] shadow-md">
+          <UnifiedCard className="space-y-[var(--spacing-md)] border border-border bg-card/90 p-[var(--spacing-xl)] shadow-md">
             <header className="flex items-center gap-[var(--spacing-sm)]">
               <CreditCard className="h-5 w-5 text-accent" aria-hidden />
               <div>
@@ -661,9 +658,9 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
             <div className="min-h-[1.25rem] text-xs text-[color:var(--danger-fg, #b91c1c)]">
               {touched.paymentMethod && validationErrors.paymentMethod}
             </div>
-          </Card>
+          </UnifiedCard>
 
-          <Card className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]">
+          <UnifiedCard className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]">
             <header>
               <h2 className="text-lg font-semibold text-[color:var(--glass-fg)]">ملاحظات إضافية</h2>
               <p className="text-sm text-[color:var(--fg-muted)]">أخبرنا بأي تفاصيل إضافية للطلب.</p>
@@ -674,17 +671,17 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
               rows={3}
               aria-label="ملاحظات الطلب"
             />
-          </Card>
+          </UnifiedCard>
         </section>
 
         <aside
           className="space-y-[var(--spacing-lg)]"
           aria-label="ملخص الطلب"
         >
-          <Card className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/95 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-strong)]" data-testid="checkout-summary">
+          <UnifiedCard className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/95 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-strong)]" data-testid="checkout-summary">
             <header className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-[color:var(--glass-fg)]">ملخص المنتجات</h2>
-              <Badge variant="muted">{computedItems.reduce((sum, item) => sum + item.quantity, 0)} عنصر</Badge>
+              <UnifiedBadge variant="secondary">{computedItems.reduce((sum, item) => sum + item.quantity, 0)} عنصر</UnifiedBadge>
             </header>
 
             <div className="space-y-[var(--spacing-sm)]" aria-live="polite">
@@ -717,8 +714,8 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                         ) : null}
                       </div>
                       <div className="flex flex-col items-end gap-[var(--spacing-xs)]">
-                        <div className="flex items-center gap-[var(--spacing-xs)]" role="group" aria-label="تحديث الكمية">
-                          <Button
+                      <div className="flex items-center gap-[var(--spacing-xs)]" role="group" aria-label="تحديث الكمية">
+                          <UnifiedButton
                             variant="glass"
                             size="sm"
                             onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
@@ -726,18 +723,18 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                             disabled={item.quantity <= 1}
                           >
                             <Minus className="h-4 w-4" aria-hidden />
-                          </Button>
+                          </UnifiedButton>
                           <span className="min-w-[2rem] text-center text-sm font-medium" aria-live="polite">
                             {item.quantity}
                           </span>
-                          <Button
+                          <UnifiedButton
                             variant="glass"
                             size="sm"
                             onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                             aria-label={`زيادة كمية ${item.product_title}`}
                           >
                             <Plus className="h-4 w-4" aria-hidden />
-                          </Button>
+                          </UnifiedButton>
                         </div>
                         <span className="text-sm font-semibold text-[color:var(--accent)]">
                           {formatCurrency(item.total)}
@@ -779,8 +776,8 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
               </div>
             </div>
 
-            <Button
-              variant="solid"
+            <UnifiedButton
+              variant="primary"
               size="lg"
               fullWidth
               onClick={handlePlaceOrder}
@@ -790,11 +787,11 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
               data-testid="checkout-submit"
             >
               ادفع الآن
-            </Button>
+            </UnifiedButton>
             <p className="text-center text-xs text-[color:var(--fg-muted)]">
               عند المتابعة أنت توافق على شروط الخدمة وسياسة الخصوصية.
             </p>
-          </Card>
+          </UnifiedCard>
 
           <Suspense fallback={<Skeleton height={160} radius="lg" />}>
             <SummaryExtras affiliateStoreId={cart?.affiliate_store_id ?? undefined} />

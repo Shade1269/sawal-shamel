@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { 
   FileText, 
   Image, 
@@ -31,9 +31,9 @@ const CMSManagement = () => {
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">لم يتم العثور على متجر</h1>
           <p className="text-muted-foreground">يجب أن يكون لديك متجر تابع لاستخدام نظام إدارة المحتوى</p>
-          <Button onClick={() => navigate('/affiliate')} className="mt-4">
+          <UnifiedButton variant="primary" onClick={() => navigate('/affiliate')} className="mt-4">
             العودة إلى لوحة التحكم
-          </Button>
+          </UnifiedButton>
         </div>
       </div>
     );
@@ -71,14 +71,14 @@ const CMSManagement = () => {
       <div className="min-h-screen bg-background">
         <div className="border-b">
           <div className="container mx-auto p-4">
-            <Button
+            <UnifiedButton
               variant="ghost"
               onClick={() => setEditingPageId(null)}
               className="mb-4"
+              leftIcon={<ArrowLeft className="w-4 h-4" />}
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
               العودة إلى إدارة الصفحات
-            </Button>
+            </UnifiedButton>
           </div>
         </div>
         
@@ -101,9 +101,9 @@ const CMSManagement = () => {
             إدارة محتوى وصفحات متجر {store.store_name}
           </p>
         </div>
-        <Badge variant="secondary" className="text-sm">
+        <UnifiedBadge variant="success" className="text-sm">
           متجر نشط
-        </Badge>
+        </UnifiedBadge>
       </div>
 
       {/* Overview Cards */}
@@ -111,33 +111,33 @@ const CMSManagement = () => {
         {cmsFeatures.map((feature, index) => {
           const IconComponent = feature.icon;
           return (
-            <Card key={index} className="hover:shadow-md transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+            <UnifiedCard key={index} variant="default" padding="md" hover="lift">
+              <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <UnifiedCardTitle className="text-sm font-medium">
                   {feature.title}
-                </CardTitle>
+                </UnifiedCardTitle>
                 <IconComponent className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
+              </UnifiedCardHeader>
+              <UnifiedCardContent>
                 <div className="text-2xl font-bold">{feature.count}</div>
                 <p className="text-xs text-muted-foreground">
                   {feature.description}
                 </p>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           );
         })}
       </div>
 
       {/* Main CMS Interface */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <UnifiedCard variant="default" padding="md">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="flex items-center gap-2">
             <Settings className="w-5 h-5" />
             إدارة المحتوى
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="pages" className="flex items-center gap-2">
@@ -176,10 +176,9 @@ const CMSManagement = () => {
                 <p className="text-muted-foreground mb-4">
                   قريباً... إدارة وتخصيص قوالب الصفحات
                 </p>
-                <Button variant="outline" disabled>
-                  <Palette className="w-4 h-4 mr-2" />
+                <UnifiedButton variant="outline" disabled leftIcon={<Palette className="w-4 h-4" />}>
                   استكشاف القوالب
-                </Button>
+                </UnifiedButton>
               </div>
             </TabsContent>
 
@@ -190,58 +189,53 @@ const CMSManagement = () => {
                 <p className="text-muted-foreground mb-4">
                   قريباً... إنشاء وإدارة النماذج المخصصة
                 </p>
-                <Button variant="outline" disabled>
-                  <Code className="w-4 h-4 mr-2" />
+                <UnifiedButton variant="outline" disabled leftIcon={<Code className="w-4 h-4" />}>
                   إنشاء نموذج
-                </Button>
+                </UnifiedButton>
               </div>
             </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>إجراءات سريعة</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <UnifiedCard variant="default" padding="md">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle>إجراءات سريعة</UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <div className="flex flex-wrap gap-4">
-            <Button 
+            <UnifiedButton 
               variant="outline" 
               onClick={() => setActiveTab('pages')}
-              className="flex items-center gap-2"
+              leftIcon={<FileText className="w-4 h-4" />}
             >
-              <FileText className="w-4 h-4" />
               إنشاء صفحة جديدة
-            </Button>
-            <Button 
+            </UnifiedButton>
+            <UnifiedButton 
               variant="outline"
               onClick={() => setActiveTab('media')}
-              className="flex items-center gap-2"
+              leftIcon={<Image className="w-4 h-4" />}
             >
-              <Image className="w-4 h-4" />
               رفع صور
-            </Button>
-            <Button 
+            </UnifiedButton>
+            <UnifiedButton 
               variant="outline"
               disabled
-              className="flex items-center gap-2"
+              leftIcon={<Layout className="w-4 h-4" />}
             >
-              <Layout className="w-4 h-4" />
               تخصيص التصميم
-            </Button>
-            <Button 
+            </UnifiedButton>
+            <UnifiedButton 
               variant="outline"
               disabled
-              className="flex items-center gap-2"
+              leftIcon={<Settings className="w-4 h-4" />}
             >
-              <Settings className="w-4 h-4" />
               إعدادات المتجر
-            </Button>
+            </UnifiedButton>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { ShoppingCart, Heart, User, Store, TrendingUp, Package } from 'lucide-react';
 
 interface AffiliateStore {
@@ -76,41 +76,41 @@ export const ModernStoreHeader = ({
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             {onOrdersClick && (
-              <Button
+              <UnifiedButton
                 variant="ghost"
-                size="icon"
+                size="md"
                 onClick={onOrdersClick}
                 className="relative hover:bg-accent"
               >
                 <Package className="h-5 w-5 md:h-6 md:w-6" />
-              </Button>
+              </UnifiedButton>
             )}
 
-            <Button
+            <UnifiedButton
               variant="ghost"
-              size="icon"
+              size="md"
               onClick={onAuthClick}
               className="relative hover:bg-accent"
             >
               <User className="h-5 w-5 md:h-6 md:w-6" />
-            </Button>
+            </UnifiedButton>
 
-            <Button
+            <UnifiedButton
               variant="ghost"
-              size="icon"
+              size="md"
               onClick={onCartClick}
               className="relative hover:bg-accent"
             >
               <ShoppingCart className="h-5 w-5 md:h-6 md:w-6" />
               {cartItemsCount > 0 && (
-                <Badge 
-                  variant="destructive" 
+                <UnifiedBadge 
+                  variant="error" 
                   className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs font-bold"
                 >
                   {cartItemsCount}
-                </Badge>
+                </UnifiedBadge>
               )}
-            </Button>
+            </UnifiedButton>
           </motion.div>
         </div>
       </div>

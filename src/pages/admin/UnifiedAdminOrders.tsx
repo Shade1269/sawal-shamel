@@ -3,12 +3,9 @@ import { CalendarDays, Download, Filter, Loader2, RefreshCw, Search, Eye } from 
 import { useSearchParams } from "react-router-dom";
 import { useFastAuth } from "@/hooks/useFastAuth";
 import { maskPhone, shouldShowFullCustomerData } from "@/lib/privacy";
-import { Button } from "@/ui/Button";
-import { Card } from "@/ui/Card";
-import { Input } from "@/ui/Input";
+import { UnifiedButton, UnifiedCard, UnifiedInput, UnifiedBadge } from "@/components/design-system";
 import { Skeleton } from "@/ui/Skeleton";
 import { useUnifiedOrders } from "@/hooks/useUnifiedOrders";
-import { Badge } from "@/ui/Badge";
 import { formatDistanceToNow } from "date-fns";
 import { ar } from "date-fns/locale";
 
@@ -103,31 +100,31 @@ const UnifiedAdminOrders = () => {
         <div>
           <h1 className="text-3xl font-bold">إدارة الطلبات</h1>
           <p className="text-muted-foreground mt-1">عرض وإدارة جميع الطلبات ({orders.length})</p>
-          <Badge className="mt-2 bg-green-500 text-white">
+          <UnifiedBadge className="mt-2 bg-green-500 text-white">
             النظام الموحد - order_hub
-          </Badge>
+          </UnifiedBadge>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleExportCSV}>
+          <UnifiedButton variant="outline" size="sm" onClick={handleExportCSV}>
             <Download className="h-4 w-4 ml-2" />
             تصدير CSV
-          </Button>
-          <Button variant="ghost" size="sm" onClick={refreshOrders}>
+          </UnifiedButton>
+          <UnifiedButton variant="ghost" size="sm" onClick={refreshOrders}>
             <RefreshCw className="h-4 w-4 ml-2" />
             تحديث
-          </Button>
+          </UnifiedButton>
         </div>
       </div>
 
       {/* Filters */}
-      <Card className="mb-6">
+      <UnifiedCard className="mb-6">
         <div className="p-4 space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search */}
             <div className="flex-1">
               <div className="relative">
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
+                <UnifiedInput
                   placeholder="ابحث برقم الطلب، اسم العميل، أو رقم الهاتف..."
                   value={searchQuery}
                   onChange={(e) => {
@@ -203,7 +200,7 @@ const UnifiedAdminOrders = () => {
             </select>
           </div>
         </div>
-      </Card>
+      </UnifiedCard>
 
       {/* Orders List */}
       {loading ? (
@@ -213,25 +210,25 @@ const UnifiedAdminOrders = () => {
           ))}
         </div>
       ) : error ? (
-        <Card>
+        <UnifiedCard>
           <div className="p-8 text-center text-muted-foreground">
             <p className="text-red-500 mb-2">حدث خطأ في تحميل الطلبات</p>
             <p className="text-sm">{error}</p>
-            <Button onClick={refreshOrders} className="mt-4">
+            <UnifiedButton onClick={refreshOrders} className="mt-4">
               إعادة المحاولة
-            </Button>
+            </UnifiedButton>
           </div>
-        </Card>
+        </UnifiedCard>
       ) : orders.length === 0 ? (
-        <Card>
+        <UnifiedCard>
           <div className="p-8 text-center text-muted-foreground">
             <p>لا توجد طلبات مطابقة للفلاتر المحددة</p>
           </div>
-        </Card>
+        </UnifiedCard>
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <Card
+            <UnifiedCard
               key={order.id}
               className="p-4 hover:shadow-md transition-shadow"
             >
@@ -239,10 +236,10 @@ const UnifiedAdminOrders = () => {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="font-semibold text-lg">#{order.order_number}</span>
-                    <Badge variant={statusVariants[order.status] as any}>
+                    <UnifiedBadge variant={statusVariants[order.status] as any}>
                       {statusLabels[order.status] || order.status}
-                    </Badge>
-                    <Badge variant="outline">{sourceLabels[order.source] || order.source}</Badge>
+                    </UnifiedBadge>
+                    <UnifiedBadge variant="outline">{sourceLabels[order.source] || order.source}</UnifiedBadge>
                   </div>
                   <div className="text-sm text-muted-foreground space-y-1">
                     <p>
@@ -266,7 +263,7 @@ const UnifiedAdminOrders = () => {
                   <p>{formatDistanceToNow(new Date(order.created_at), { addSuffix: true, locale: ar })}</p>
                 </div>
               </div>
-            </Card>
+            </UnifiedCard>
           ))}
         </div>
       )}

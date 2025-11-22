@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from "@/components/design-system";
+import { UnifiedButton } from "@/components/design-system";
+import { UnifiedInput } from "@/components/design-system";
+import { UnifiedBadge } from "@/components/design-system";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
@@ -320,29 +320,29 @@ export function UnifiedOrdersManager() {
           {config.actions.map((action, index) => {
             const ActionIcon = action.icon;
             return (
-              <Button
+              <UnifiedButton
                 key={index}
-                variant={action.variant}
+                variant={action.variant as any}
                 onClick={() => handleAction(action.action)}
                 className="touch-target flex-shrink-0"
                 size="sm"
               >
                 <ActionIcon className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">{action.label}</span>
-              </Button>
+              </UnifiedButton>
             );
           })}
         </div>
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-3 sm:p-4">
+      <UnifiedCard>
+        <UnifiedCardContent className="p-3 sm:p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <div className="flex-1 min-w-0">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
+                <UnifiedInput
                   placeholder="البحث في الطلبات..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -366,8 +366,8 @@ export function UnifiedOrdersManager() {
               </select>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -380,9 +380,9 @@ export function UnifiedOrdersManager() {
             >
               <span className="truncate">{tab.title}</span>
               {tab.filter && (
-                <Badge variant="secondary" className="text-xs h-5 px-1.5">
+                <UnifiedBadge variant="secondary" className="text-xs h-5 px-1.5">
                   {orders.filter(tab.filter).length}
-                </Badge>
+                </UnifiedBadge>
               )}
             </TabsTrigger>
           ))}
@@ -390,17 +390,17 @@ export function UnifiedOrdersManager() {
 
         {config.tabs.map(tab => (
           <TabsContent key={tab.id} value={tab.id}>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+            <UnifiedCard>
+              <UnifiedCardHeader>
+                <UnifiedCardTitle className="flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5" />
                   {tab.title}
-                  <Badge variant="outline">
+                  <UnifiedBadge variant="outline">
                     {filteredOrders.length} طلب
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
+                  </UnifiedBadge>
+                </UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="p-0">
                 {filteredOrders.length > 0 ? (
                   <div>
                     {/* Desktop Table View */}
@@ -441,10 +441,10 @@ export function UnifiedOrdersManager() {
                                 )}
                                 
                                 <TableCell>
-                                  <Badge className={`${statusInfo.color} text-white`}>
-                                    <StatusIcon className="h-3 w-3 mr-1" />
-                                    {statusInfo.label}
-                                  </Badge>
+                                   <UnifiedBadge className={`${statusInfo.color} text-white`}>
+                                     <StatusIcon className="h-3 w-3 mr-1" />
+                                     {statusInfo.label}
+                                   </UnifiedBadge>
                                 </TableCell>
                                 
                                 <TableCell className="font-medium">
@@ -471,37 +471,37 @@ export function UnifiedOrdersManager() {
                                   {formatDate(order.created_at)}
                                 </TableCell>
                                 
-                                <TableCell>
-                                  <div className="flex items-center gap-2">
-                                    <Button size="sm" variant="outline">
-                                      <Eye className="h-4 w-4" />
-                                    </Button>
-                                    
-                                    {config.allowStatusChange && (
-                                      <select
-                                        value={order.status}
-                                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                                        className="text-xs px-2 py-1 border rounded"
-                                      >
-                                        {config.statusOptions.map(status => (
-                                          <option key={status.value} value={status.value}>
-                                            {status.label}
-                                          </option>
-                                        ))}
-                                      </select>
-                                    )}
-                                    
-                                    {config.canCancel && order.status === 'pending' && (
-                                      <Button 
-                                        size="sm" 
-                                        variant="destructive"
-                                        onClick={() => handleStatusChange(order.id, 'cancelled')}
-                                      >
-                                        إلغاء
-                                      </Button>
-                                    )}
-                                  </div>
-                                </TableCell>
+                                 <TableCell>
+                                   <div className="flex items-center gap-2">
+                                     <UnifiedButton size="sm" variant="outline">
+                                       <Eye className="h-4 w-4" />
+                                     </UnifiedButton>
+                                     
+                                     {config.allowStatusChange && (
+                                       <select
+                                         value={order.status}
+                                         onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                         className="text-xs px-2 py-1 border rounded"
+                                       >
+                                         {config.statusOptions.map(status => (
+                                           <option key={status.value} value={status.value}>
+                                             {status.label}
+                                           </option>
+                                         ))}
+                                       </select>
+                                     )}
+                                     
+                                     {config.canCancel && order.status === 'pending' && (
+                                       <UnifiedButton 
+                                         size="sm" 
+                                         variant="danger"
+                                         onClick={() => handleStatusChange(order.id, 'cancelled')}
+                                       >
+                                         إلغاء
+                                       </UnifiedButton>
+                                     )}
+                                   </div>
+                                 </TableCell>
                               </TableRow>
                             );
                           })}
@@ -516,8 +516,8 @@ export function UnifiedOrdersManager() {
                         const StatusIcon = statusInfo.icon;
                         
                         return (
-                          <Card key={order.id} className="border border-border">
-                            <CardContent className="p-4">
+                          <UnifiedCard key={order.id} className="border border-border">
+                            <UnifiedCardContent className="p-4">
                               <div className="space-y-3">
                                 {/* Header Row */}
                                 <div className="flex justify-between items-start">
@@ -525,10 +525,10 @@ export function UnifiedOrdersManager() {
                                     <h3 className="font-semibold text-base">{order.order_number}</h3>
                                     <p className="text-sm text-muted-foreground">{formatDate(order.created_at)}</p>
                                   </div>
-                                  <Badge className={`${statusInfo.color} text-white flex items-center gap-1`}>
+                                  <UnifiedBadge className={`${statusInfo.color} text-white flex items-center gap-1`}>
                                     <StatusIcon className="h-3 w-3" />
                                     {statusInfo.label}
-                                  </Badge>
+                                  </UnifiedBadge>
                                 </div>
 
                                 {/* Customer Info */}
@@ -575,10 +575,10 @@ export function UnifiedOrdersManager() {
 
                                 {/* Actions */}
                                 <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t">
-                                  <Button size="sm" variant="outline" className="flex-1 touch-target">
+                                  <UnifiedButton size="sm" variant="outline" className="flex-1 touch-target">
                                     <Eye className="h-4 w-4 mr-2" />
                                     عرض التفاصيل
-                                  </Button>
+                                  </UnifiedButton>
                                   
                                   {config.allowStatusChange && (
                                     <select
@@ -595,19 +595,19 @@ export function UnifiedOrdersManager() {
                                   )}
                                   
                                   {config.canCancel && order.status === 'pending' && (
-                                    <Button 
+                                    <UnifiedButton 
                                       size="sm" 
-                                      variant="destructive"
+                                      variant="danger"
                                       onClick={() => handleStatusChange(order.id, 'cancelled')}
                                       className="touch-target"
                                     >
                                       إلغاء الطلب
-                                    </Button>
+                                    </UnifiedButton>
                                   )}
                                 </div>
                               </div>
-                            </CardContent>
-                          </Card>
+                            </UnifiedCardContent>
+                          </UnifiedCard>
                         );
                       })}
                     </div>
@@ -621,8 +621,8 @@ export function UnifiedOrdersManager() {
                     </p>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </TabsContent>
         ))}
       </Tabs>

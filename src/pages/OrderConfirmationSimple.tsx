@@ -13,9 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import Button from "@/ui/Button";
-import Card from "@/ui/Card";
-import Badge from "@/ui/Badge";
+import { UnifiedButton, UnifiedCard, UnifiedBadge } from "@/components/design-system";
 import Skeleton from "@/ui/Skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { VisuallyHidden } from "@/components/app-shell/VisuallyHidden";
@@ -302,12 +300,12 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
   if (!order) {
     return (
       <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center gap-[var(--spacing-md)] px-4 text-center">
-        <Card className="w-full space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]">
+        <UnifiedCard className="w-full space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]">
           <Package className="mx-auto h-12 w-12 text-[color:var(--fg-muted)]" aria-hidden />
           <h1 className="text-xl font-semibold text-[color:var(--glass-fg)]">لم يتم العثور على الطلب</h1>
           <p className="text-sm text-[color:var(--fg-muted)]">{error ?? "تحقق من الرابط أو حاول مرة أخرى لاحقاً."}</p>
-          <Button variant="solid" onClick={() => navigate("/")}>العودة للصفحة الرئيسية</Button>
-        </Card>
+          <UnifiedButton variant="primary" onClick={() => navigate("/")}>العودة للصفحة الرئيسية</UnifiedButton>
+        </UnifiedCard>
       </div>
     );
   }
@@ -330,7 +328,7 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
       </header>
 
       <section className="grid gap-[var(--spacing-lg)] lg:grid-cols-[minmax(0,1fr)_320px]">
-        <Card className="space-y-[var(--spacing-lg)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/95 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-strong)]" aria-labelledby="order-receipt-heading">
+        <UnifiedCard className="space-y-[var(--spacing-lg)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/95 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-strong)]" aria-labelledby="order-receipt-heading">
           <div className="flex flex-wrap items-center justify-between gap-[var(--spacing-sm)]">
             <div>
               <h2 id="order-receipt-heading" className="text-lg font-semibold text-[color:var(--glass-fg)]">
@@ -338,9 +336,9 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
               </h2>
               <p className="text-xs text-[color:var(--fg-muted)]">رقم الطلب {order.order_number}</p>
             </div>
-            <Badge variant={orderStatusVariant} aria-live="polite">
+            <UnifiedBadge variant={orderStatusVariant as any} aria-live="polite">
               {orderStatusText}
-            </Badge>
+            </UnifiedBadge>
           </div>
 
           <div className="grid gap-[var(--spacing-md)]" aria-label="قائمة المنتجات">
@@ -383,16 +381,16 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
           </div>
 
           <div className="flex flex-wrap items-center gap-[var(--spacing-sm)]">
-            <Button variant="solid" size="sm" leftIcon={<Copy className="h-4 w-4" aria-hidden />} onClick={copyOrderNumber}>
+            <UnifiedButton variant="primary" size="sm" leftIcon={<Copy className="h-4 w-4" aria-hidden />} onClick={copyOrderNumber}>
               نسخ رقم الطلب
-            </Button>
-            <Button variant="ghost" size="sm" leftIcon={<Share2 className="h-4 w-4" aria-hidden />} onClick={shareOrder}>
+            </UnifiedButton>
+            <UnifiedButton variant="ghost" size="sm" leftIcon={<Share2 className="h-4 w-4" aria-hidden />} onClick={shareOrder}>
               مشاركة التفاصيل
-            </Button>
+            </UnifiedButton>
           </div>
-        </Card>
+        </UnifiedCard>
 
-        <Card className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]" aria-label="تفاصيل إضافية عن الطلب">
+        <UnifiedCard className="space-y-[var(--spacing-md)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90 p-[var(--spacing-xl)] shadow-[var(--shadow-glass-soft)]" aria-label="تفاصيل إضافية عن الطلب">
           <div className="space-y-[var(--spacing-xs)]">
             <h3 className="text-base font-semibold text-[color:var(--glass-fg)]">ملخص سريع</h3>
             <div className="flex items-center gap-[var(--spacing-sm)] text-sm text-[color:var(--fg-muted)]">
@@ -427,24 +425,24 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
           </div>
 
           <div className="flex flex-wrap items-center gap-[var(--spacing-sm)]">
-            <Button variant="solid" size="sm" leftIcon={<ShoppingBag className="h-4 w-4" aria-hidden />} onClick={goToStore}>
+            <UnifiedButton variant="primary" size="sm" leftIcon={<ShoppingBag className="h-4 w-4" aria-hidden />} onClick={goToStore}>
               العودة للمتجر
-            </Button>
-            <Button variant="ghost" size="sm" leftIcon={<Home className="h-4 w-4" aria-hidden />} onClick={() => navigate("/")}>
+            </UnifiedButton>
+            <UnifiedButton variant="ghost" size="sm" leftIcon={<Home className="h-4 w-4" aria-hidden />} onClick={() => navigate("/")}>
               الرئيسية
-            </Button>
+            </UnifiedButton>
             {order.status === 'DELIVERED' && (
-              <Button 
+              <UnifiedButton 
                 variant="outline" 
                 size="sm" 
                 leftIcon={<RotateCcw className="h-4 w-4" aria-hidden />} 
                 onClick={() => setShowReturnDialog(true)}
               >
                 طلب إرجاع
-              </Button>
+              </UnifiedButton>
             )}
           </div>
-        </Card>
+        </UnifiedCard>
       </section>
 
       {error ? (

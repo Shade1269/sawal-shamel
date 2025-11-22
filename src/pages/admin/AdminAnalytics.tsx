@@ -4,9 +4,7 @@ import { TrendingDown, TrendingUp, RefreshCw } from "lucide-react";
 import { PageTitle } from "@/components/app-shell/PageTitle";
 import { useAdminAnalytics } from "@/hooks/useAdminAnalytics";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { Badge } from "@/ui/Badge";
-import { Button } from "@/ui/Button";
-import { Card } from "@/ui/Card";
+import { UnifiedBadge, UnifiedButton, UnifiedCard } from "@/components/design-system";
 import { Skeleton } from "@/ui/Skeleton";
 
 const currencyFormatter = new Intl.NumberFormat("ar-SA", {
@@ -39,11 +37,11 @@ const MetricCard = ({ label, value, change, changeDirection }: MetricCardProps) 
   const changeLabel = isNeutral ? "ثابت" : `${Math.abs(change)}%`;
 
   return (
-    <Card
+    <UnifiedCard
       padding="lg"
-      shadow
       variant="glass"
-      className="flex flex-col justify-between gap-3 border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/92 text-[color:var(--glass-fg)]"
+      hover="none"
+      className="flex flex-col justify-between gap-3 shadow-card"
       data-widget="metric"
     >
       <div className="space-y-1">
@@ -51,8 +49,8 @@ const MetricCard = ({ label, value, change, changeDirection }: MetricCardProps) 
         <p className="text-2xl font-semibold tracking-tight">{value}</p>
       </div>
       <div className="flex items-center gap-2 text-sm">
-        <Badge
-          variant={isNeutral ? "muted" : isPositive ? "success" : "danger"}
+        <UnifiedBadge
+          variant={isNeutral ? "secondary" : isPositive ? "success" : "error"}
           className="inline-flex items-center gap-1"
         >
           {isNeutral ? null : isPositive ? (
@@ -61,10 +59,10 @@ const MetricCard = ({ label, value, change, changeDirection }: MetricCardProps) 
             <TrendingDown className="h-3.5 w-3.5" aria-hidden />
           )}
           <span>{changeLabel}</span>
-        </Badge>
+        </UnifiedBadge>
         <span className="text-[color:var(--muted-foreground)]">خلال آخر 7 أيام</span>
       </div>
-    </Card>
+    </UnifiedCard>
   );
 };
 
@@ -75,15 +73,15 @@ interface RankedListProps {
 
 const RankedList = ({ title, items }: RankedListProps) => {
   return (
-    <Card
+    <UnifiedCard
       padding="lg"
-      shadow
       variant="glass"
-      className="flex flex-col gap-4 border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90"
+      hover="none"
+      className="flex flex-col gap-4 shadow-card"
     >
       <header className="flex items-center justify-between">
         <h3 className="text-base font-medium text-[color:var(--glass-fg)]">{title}</h3>
-        <Badge variant="glass">أفضل 5</Badge>
+        <UnifiedBadge variant="glass">أفضل 5</UnifiedBadge>
       </header>
       <ul className="space-y-3">
         {items.map((item, index) => (
@@ -102,7 +100,7 @@ const RankedList = ({ title, items }: RankedListProps) => {
           </li>
         ))}
       </ul>
-    </Card>
+    </UnifiedCard>
   );
 };
 
@@ -164,32 +162,33 @@ const AnalyticsSkeleton = () => (
   <div className="space-y-6">
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {Array.from({ length: 4 }).map((_, index) => (
-        <Card
+        <UnifiedCard
           key={index}
           variant="glass"
-          className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/80"
+          padding="md"
+          hover="none"
         >
           <div className="space-y-3 p-5">
             <Skeleton className="h-4 w-24 rounded-full" />
             <Skeleton className="h-8 w-32 rounded" />
             <Skeleton className="h-4 w-20 rounded" />
           </div>
-        </Card>
+        </UnifiedCard>
       ))}
     </div>
     <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-      <Card variant="glass" className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/80 p-5">
+      <UnifiedCard variant="glass" padding="md" hover="none" className="p-5">
         <Skeleton className="h-6 w-40 rounded" />
         <Skeleton className="mt-4 h-40 w-full rounded" />
-      </Card>
-      <Card variant="glass" className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/80 p-5">
+      </UnifiedCard>
+      <UnifiedCard variant="glass" padding="md" hover="none" className="p-5">
         <Skeleton className="h-6 w-32 rounded" />
         <div className="mt-4 space-y-3">
           {Array.from({ length: 4 }).map((_, index) => (
             <Skeleton key={index} className="h-10 w-full rounded" />
           ))}
         </div>
-      </Card>
+      </UnifiedCard>
     </div>
   </div>
 );
@@ -240,17 +239,16 @@ const AdminAnalyticsPage = () => {
     >
       <PageTitle
         actions={
-          <Button
+          <UnifiedButton
             variant="outline"
             size="sm"
             onClick={refresh}
             disabled={isLoading}
             aria-label="تحديث بيانات التحليلات"
-            className="inline-flex items-center gap-2 border-[color:var(--glass-border-strong, var(--glass-border))] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg)]/90"
           >
             <RefreshCw className="h-4 w-4" aria-hidden />
             <span>تحديث</span>
-          </Button>
+          </UnifiedButton>
         }
       />
 
@@ -268,32 +266,32 @@ const AdminAnalyticsPage = () => {
             className="grid gap-4 lg:grid-cols-[2fr_1fr]"
             data-section="trend-and-products"
           >
-            <Card
+            <UnifiedCard
               padding="lg"
-              shadow
               variant="glass"
-              className="flex flex-col gap-4 border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/92"
+              hover="none"
+              className="flex flex-col gap-4 shadow-card"
             >
               <header className="flex items-center justify-between">
                 <div>
                   <h3 className="text-base font-medium text-[color:var(--glass-fg)]">تدفق الطلبات</h3>
                   <p className="text-sm text-[color:var(--muted-foreground)]">آخر 14 يوم</p>
                 </div>
-                <Badge variant="outline">ذروة: {numberFormatter.format(peakOrders)}</Badge>
+                <UnifiedBadge variant="outline">ذروة: {numberFormatter.format(peakOrders)}</UnifiedBadge>
               </header>
               <TrendChart points={trend} reducedMotion={reducedMotion} />
-            </Card>
+            </UnifiedCard>
 
             <RankedList title="أفضل المنتجات أداءً" items={topProductsFormatted} />
           </section>
 
           <section className="grid gap-4 lg:grid-cols-2" data-section="top-affiliates">
             <RankedList title="أفضل المسوقات" items={topAffiliatesFormatted} />
-            <Card
+            <UnifiedCard
               padding="lg"
-              shadow
               variant="glass"
-              className="flex flex-col justify-between gap-4 border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/88"
+              hover="none"
+              className="flex flex-col justify-between gap-4 shadow-card"
             >
               <div>
                 <h3 className="text-base font-medium text-[color:var(--glass-fg)]">نصائح سريعة</h3>
@@ -302,11 +300,11 @@ const AdminAnalyticsPage = () => {
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="success">نمو 12%</Badge>
-                <Badge variant="primary">34 حملة نشطة</Badge>
-                <Badge variant="outline">مراجعة أسبوعية</Badge>
+                <UnifiedBadge variant="success">نمو 12%</UnifiedBadge>
+                <UnifiedBadge variant="default">34 حملة نشطة</UnifiedBadge>
+                <UnifiedBadge variant="outline">مراجعة أسبوعية</UnifiedBadge>
               </div>
-            </Card>
+            </UnifiedCard>
           </section>
         </div>
       )}

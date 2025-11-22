@@ -1,9 +1,9 @@
 import React from 'react';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
-import { Button as ThemeButton } from '@/ui/Button';
-import { Card as ThemeCard } from '@/ui/Card';
-import { Input as ThemeInput } from '@/ui/Input';
-import { Badge as ThemeBadge } from '@/ui/Badge';
+import { UnifiedButton as ThemeButton } from '@/components/design-system';
+import { UnifiedCard as ThemeCard } from '@/components/design-system';
+import { UnifiedInput as ThemeInput } from '@/components/design-system';
+import { UnifiedBadge as ThemeBadge } from '@/components/design-system';
 import { cn } from '@/lib/utils';
 
 interface ThemeSystemPreviewProps {
@@ -41,7 +41,7 @@ export const ThemeSystemPreview: React.FC<ThemeSystemPreviewProps> = ({
         <ThemeCard>
           <h3 className="text-base font-semibold mb-3 text-foreground">حقول الإدخال</h3>
           <ThemeInput placeholder="أدخل بريدك الإلكتروني" />
-          <ThemeInput placeholder="تنبيه للتحقق" invalid className="mt-3" />
+          <ThemeInput placeholder="تنبيه للتحقق" state="error" className="mt-3" />
         </ThemeCard>
         <ThemeCard>
           <h3 className="text-base font-semibold mb-3 text-foreground">الشارات</h3>
@@ -49,8 +49,8 @@ export const ThemeSystemPreview: React.FC<ThemeSystemPreviewProps> = ({
             <ThemeBadge>أساسي</ThemeBadge>
             <ThemeBadge variant="success">نجاح</ThemeBadge>
             <ThemeBadge variant="warning">تحذير</ThemeBadge>
-            <ThemeBadge variant="danger">خطر</ThemeBadge>
-            <ThemeBadge variant="muted">هادئ</ThemeBadge>
+            <ThemeBadge variant="error">خطر</ThemeBadge>
+            <ThemeBadge variant="secondary">هادئ</ThemeBadge>
           </div>
         </ThemeCard>
       </div>

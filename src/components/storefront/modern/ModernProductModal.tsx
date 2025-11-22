@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { X, Star, ShoppingCart, Heart, Share2, Package, CheckCircle } from 'lucide-react';
 import { ProductImageCarousel } from '@/features/commerce/components/ProductImageCarousel';
@@ -73,26 +73,26 @@ export const ModernProductModal = ({
         <div className="grid md:grid-cols-2 gap-0">
           {/* Image Section */}
           <div className="relative bg-muted p-6 md:p-8">
-            <Button
+            <UnifiedButton
               variant="ghost"
-              size="icon"
+              size="md"
               onClick={onClose}
               className="absolute top-4 left-4 z-10 bg-background/80 backdrop-blur-sm hover:bg-background"
             >
               <X className="h-5 w-5" />
-            </Button>
+            </UnifiedButton>
 
             {/* Badges */}
             <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
               {product.discount_percentage && product.discount_percentage > 0 && (
-                <Badge variant="destructive" className="shadow-lg font-bold">
+                <UnifiedBadge variant="error" className="shadow-lg font-bold">
                   {product.discount_percentage}% خصم
-                </Badge>
+                </UnifiedBadge>
               )}
               {product.stock === 0 && (
-                <Badge variant="secondary" className="shadow-lg">
+                <UnifiedBadge variant="secondary" className="shadow-lg">
                   نفد المخزون
-                </Badge>
+                </UnifiedBadge>
               )}
             </div>
 
@@ -160,7 +160,7 @@ export const ModernProductModal = ({
                 <div className="flex items-center gap-2 text-sm">
                   <Package className="h-5 w-5 text-primary" />
                   <span className="text-muted-foreground">الفئة:</span>
-                  <Badge variant="outline">{product.category}</Badge>
+                  <UnifiedBadge variant="outline">{product.category}</UnifiedBadge>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <CheckCircle className="h-5 w-5 text-success" />
@@ -187,34 +187,35 @@ export const ModernProductModal = ({
 
             {/* Actions */}
             <div className="space-y-3 pt-4 border-t border-border">
-              <Button
+              <UnifiedButton
                 onClick={onAddToCart}
                 disabled={product.stock === 0}
-                className="w-full h-12 text-lg bg-primary hover:bg-primary/90 shadow-lg"
+                variant="primary"
+                className="w-full h-12 text-lg shadow-lg"
                 size="lg"
               >
                 <ShoppingCart className="h-5 w-5 ml-2" />
                 {product.stock === 0 ? 'نفد المخزون' : 'أضف للسلة'}
-              </Button>
+              </UnifiedButton>
 
               <div className="grid grid-cols-2 gap-3">
-                <Button
+                <UnifiedButton
                   variant="outline"
                   onClick={() => onToggleWishlist(product.id)}
                   className={`h-12 ${isInWishlist ? 'bg-destructive/10 text-destructive border-destructive' : ''}`}
                 >
                   <Heart className={`h-5 w-5 ml-2 ${isInWishlist ? 'fill-current' : ''}`} />
                   {isInWishlist ? 'مضاف للمفضلة' : 'أضف للمفضلة'}
-                </Button>
+                </UnifiedButton>
 
-                <Button
+                <UnifiedButton
                   variant="outline"
                   onClick={handleShare}
                   className="h-12"
                 >
                   <Share2 className="h-5 w-5 ml-2" />
                   مشاركة
-                </Button>
+                </UnifiedButton>
               </div>
             </div>
 

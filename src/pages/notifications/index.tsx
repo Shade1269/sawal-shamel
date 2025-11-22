@@ -1,6 +1,7 @@
 import React, { useMemo, useRef } from "react";
 import { Clock, Inbox, Check, Trash2, BellRing, ListChecks } from "lucide-react";
-import { Badge, Button, Card, Tabs, TabsList, TabsPanel, TabsTrigger } from "@/ui";
+import { UnifiedBadge, UnifiedButton, UnifiedCard } from "@/components/design-system";
+import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/ui";
 import useInbox, { type InboxHookValue } from "@/hooks/useInbox";
 import { getNextFocusIndex, isActivationKey, isRovingKey } from "@/utils/a11yNavigation";
 
@@ -57,11 +58,11 @@ const NotificationItem: React.FC<{
             <p className="text-xs text-[color:var(--muted-foreground)]">{item.timestamp}</p>
           </div>
         </div>
-        <Badge variant={item.read ? "muted" : "primary"}>{item.read ? "مقروء" : "غير مقروء"}</Badge>
+        <UnifiedBadge variant={item.read ? "secondary" : "default"}>{item.read ? "مقروء" : "غير مقروء"}</UnifiedBadge>
       </div>
       <p className="text-sm text-[color:var(--muted-foreground)]">{item.message}</p>
       <div className="flex justify-end">
-        <Button
+        <UnifiedButton
           variant={item.read ? "ghost" : "glass"}
           size="sm"
           leftIcon={<Check className="h-3.5 w-3.5" />}
@@ -70,7 +71,7 @@ const NotificationItem: React.FC<{
           disabled={item.read}
         >
           تمت القراءة
-        </Button>
+        </UnifiedButton>
       </div>
     </div>
   );
@@ -124,9 +125,9 @@ const NotificationsPanel: React.FC<{ hook: InboxHookValue }> = ({ hook }) => {
   return (
     <div className="space-y-4" data-section="notifications-list" role="list">
       {notifications.length === 0 ? (
-        <Card variant="glass" padding="lg" className="text-center text-sm text-[color:var(--muted-foreground)]">
+        <UnifiedCard variant="glass" padding="lg" className="text-center text-sm text-[color:var(--muted-foreground)]">
           لا توجد إشعارات جديدة حاليًا.
-        </Card>
+        </UnifiedCard>
       ) : (
         notifications.map((item, index) => (
           <NotificationItem
@@ -157,7 +158,7 @@ const ActivityPanel: React.FC<{ hook: InboxHookValue }> = ({ hook }) => {
         />
       ))}
       <div className="flex justify-center">
-        <Button
+        <UnifiedButton
           variant="glass"
           size="sm"
           leftIcon={<ListChecks className="h-4 w-4" />}
@@ -165,7 +166,7 @@ const ActivityPanel: React.FC<{ hook: InboxHookValue }> = ({ hook }) => {
           aria-label="تحميل نشاط إضافي"
         >
           تحميل المزيد
-        </Button>
+        </UnifiedButton>
       </div>
     </div>
   );
@@ -177,7 +178,7 @@ const NotificationsPageBody: React.FC<{ hook: InboxHookValue }> = ({ hook }) => 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6 px-4 py-6" data-page="notifications">
       <SkipLink targetId="notifications-main" label="تخطي إلى الإشعارات" />
-      <Card
+      <UnifiedCard
         variant="glass"
         padding="lg"
         className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
@@ -195,10 +196,10 @@ const NotificationsPageBody: React.FC<{ hook: InboxHookValue }> = ({ hook }) => 
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant={unreadBadge > 0 ? "primary" : "muted"} data-testid="notifications-unread">
+          <UnifiedBadge variant={unreadBadge > 0 ? "default" : "secondary"} data-testid="notifications-unread">
             {unreadBadge} غير مقروءة
-          </Badge>
-          <Button
+          </UnifiedBadge>
+          <UnifiedButton
             variant="ghost"
             size="sm"
             leftIcon={<Trash2 className="h-4 w-4" />}
@@ -207,9 +208,9 @@ const NotificationsPageBody: React.FC<{ hook: InboxHookValue }> = ({ hook }) => 
             disabled={hook.notifications.length === 0}
           >
             مسح الكل
-          </Button>
+          </UnifiedButton>
         </div>
-      </Card>
+      </UnifiedCard>
 
       <Tabs defaultValue="notifications" className="space-y-6" data-section="notifications-tabs">
         <TabsList aria-label="مركز التنبيهات" className="grid gap-2 md:grid-cols-2">

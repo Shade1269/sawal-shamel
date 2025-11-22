@@ -8,15 +8,9 @@ import {
   ResponsiveLayout,
   ResponsiveGrid,
   InteractiveWidget,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button
+  EnhancedButton
 } from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle, UnifiedBadge } from '@/components/design-system';
 import { 
   FileText, 
   Download, 
@@ -81,63 +75,62 @@ const AdminReports = () => {
         {reports.map((report, index) => {
           const Icon = report.icon;
           return (
-            <Card key={index} className="shadow-elegant hover:shadow-luxury transition-all duration-300">
-              <CardHeader>
+            <UnifiedCard key={index} variant="glass" hover="lift" className="shadow-elegant">
+              <UnifiedCardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className={`w-12 h-12 rounded-xl ${report.color} flex items-center justify-center text-white`}>
                       <Icon className="h-6 w-6" />
                     </div>
                     <div>
-                      <CardTitle className="text-lg">{report.title}</CardTitle>
-                      <CardDescription className="text-sm mt-1">
+                      <UnifiedCardTitle className="text-lg">{report.title}</UnifiedCardTitle>
+                      <UnifiedCardDescription className="text-sm mt-1">
                         {report.description}
-                      </CardDescription>
+                      </UnifiedCardDescription>
                     </div>
                   </div>
-                  <Badge 
-                    variant={report.status === 'متاح' ? 'default' : 'secondary'}
+                  <UnifiedBadge 
+                    variant={report.status === 'متاح' ? 'success' : 'info'}
                     className="text-xs"
                   >
                     {report.status}
-                  </Badge>
+                  </UnifiedBadge>
                 </div>
-              </CardHeader>
-              <CardContent>
+              </UnifiedCardHeader>
+              <UnifiedCardContent>
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
                     آخر تحديث: {report.lastGenerated}
                   </div>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline">
-                      <BarChart3 className="h-4 w-4 mr-2" />
+                    <UnifiedButton size="sm" variant="outline" leftIcon={<BarChart3 className="h-4 w-4" />}>
                       عرض
-                    </Button>
-                    <Button 
+                    </UnifiedButton>
+                    <UnifiedButton 
                       size="sm" 
-                      variant="default"
+                      variant="primary"
                       disabled={report.status !== 'متاح'}
+                      leftIcon={<Download className="h-4 w-4" />}
                     >
-                      <Download className="h-4 w-4 mr-2" />
                       تحميل
-                    </Button>
+                    </UnifiedButton>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           );
         })}
       </div>
 
       {/* Quick Stats */}
-      <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <UnifiedCard variant="flat" hover="lift" className="shadow-elegant">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-primary" />
             إحصائيات سريعة
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center p-4 rounded-lg bg-gradient-primary/10">
               <div className="text-2xl font-bold text-primary">24</div>
@@ -156,34 +149,31 @@ const AdminReports = () => {
               <div className="text-sm text-muted-foreground">تقرير مجدول</div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       {/* Generate New Report */}
-      <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle>إنشاء تقرير جديد</CardTitle>
-          <CardDescription>
+      <UnifiedCard variant="flat" hover="lift" className="shadow-elegant">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle>إنشاء تقرير جديد</UnifiedCardTitle>
+          <UnifiedCardDescription>
             قم بإنشاء تقرير مخصص حسب احتياجاتك
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </UnifiedCardDescription>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <div className="flex gap-3">
-            <Button className="bg-gradient-primary">
-              <Calendar className="h-4 w-4 mr-2" />
+            <UnifiedButton variant="primary" leftIcon={<Calendar className="h-4 w-4" />}>
               تقرير فترة محددة
-            </Button>
-            <Button variant="outline">
-              <Users className="h-4 w-4 mr-2" />
+            </UnifiedButton>
+            <UnifiedButton variant="outline" leftIcon={<Users className="h-4 w-4" />}>
               تقرير المستخدمین
-            </Button>
-            <Button variant="outline">
-              <TrendingUp className="h-4 w-4 mr-2" />
+            </UnifiedButton>
+            <UnifiedButton variant="outline" leftIcon={<TrendingUp className="h-4 w-4" />}>
               تقرير الأداء
-            </Button>
+            </UnifiedButton>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };
