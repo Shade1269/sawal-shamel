@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
@@ -236,11 +236,11 @@ const AdminProductApproval = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20"><AlertCircle className="h-3 w-3 ml-1" />قيد المراجعة</Badge>;
+        return <UnifiedBadge variant="warning" leadingIcon={<AlertCircle className="h-3 w-3" />}>قيد المراجعة</UnifiedBadge>;
       case 'approved':
-        return <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20"><CheckCircle className="h-3 w-3 ml-1" />موافق عليه</Badge>;
+        return <UnifiedBadge variant="success" leadingIcon={<CheckCircle className="h-3 w-3" />}>موافق عليه</UnifiedBadge>;
       case 'rejected':
-        return <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20"><XCircle className="h-3 w-3 ml-1" />مرفوض</Badge>;
+        return <UnifiedBadge variant="error" leadingIcon={<XCircle className="h-3 w-3" />}>مرفوض</UnifiedBadge>;
       default:
         return null;
     }
@@ -257,38 +257,38 @@ const AdminProductApproval = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">قيد المراجعة</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">موافق عليها</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">مرفوضة</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
-          </CardContent>
-        </Card>
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium">قيد المراجعة</UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
+            <div className="text-2xl font-bold text-warning">{stats.pending}</div>
+          </UnifiedCardContent>
+        </UnifiedCard>
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium">موافق عليها</UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
+            <div className="text-2xl font-bold text-success">{stats.approved}</div>
+          </UnifiedCardContent>
+        </UnifiedCard>
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium">مرفوضة</UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
+            <div className="text-2xl font-bold text-danger">{stats.rejected}</div>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
-      <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle>قائمة المنتجات</CardTitle>
-          <CardDescription>مراجعة المنتجات حسب الحالة</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <UnifiedCard variant="elegant" padding="md">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle>قائمة المنتجات</UnifiedCardTitle>
+          <UnifiedCardDescription>مراجعة المنتجات حسب الحالة</UnifiedCardDescription>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="pending">
@@ -314,7 +314,7 @@ const AdminProductApproval = () => {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {products.map((product) => (
-                    <Card key={product.id} className="overflow-hidden">
+                    <UnifiedCard key={product.id} variant="default" padding="none" className="overflow-hidden">
                       <div className="aspect-square bg-muted relative">
                         {product.images?.length > 0 && (
                           <img
@@ -327,7 +327,7 @@ const AdminProductApproval = () => {
                           {getStatusBadge(product.approval_status)}
                         </div>
                       </div>
-                      <CardContent className="p-4 space-y-2">
+                      <UnifiedCardContent className="p-4 space-y-2">
                         <h3 className="font-semibold line-clamp-1">{product.title}</h3>
                         <p className="text-sm text-muted-foreground line-clamp-2">
                           {product.description}
@@ -346,48 +346,45 @@ const AdminProductApproval = () => {
                           </div>
                         )}
                         <div className="flex gap-2 pt-2">
-                          <Button
+                          <UnifiedButton
                             variant="outline"
                             size="sm"
                             className="flex-1"
                             onClick={() => setSelectedProduct(product)}
+                            leftIcon={<Eye className="h-4 w-4" />}
                           >
-                            <Eye className="h-4 w-4 ml-1" />
                             مراجعة
-                          </Button>
+                          </UnifiedButton>
                           {activeTab === 'pending' && (
                             <>
-                              <Button
-                                variant="default"
+                              <UnifiedButton
+                                variant="success"
                                 size="sm"
                                 onClick={() => {
                                   setSelectedProduct(product);
                                 }}
-                                className="bg-green-600 hover:bg-green-700"
-                              >
-                                <Check className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="destructive"
+                                leftIcon={<Check className="h-4 w-4" />}
+                              />
+                              <UnifiedButton
+                                variant="danger"
                                 size="sm"
                                 onClick={() => {
                                   setSelectedProduct(product);
                                 }}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
+                                leftIcon={<X className="h-4 w-4" />}
+                              />
                             </>
                           )}
                         </div>
-                      </CardContent>
-                    </Card>
+                      </UnifiedCardContent>
+                    </UnifiedCard>
                   ))}
                 </div>
               )}
             </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
         <DialogContent className="max-w-2xl">
@@ -433,32 +430,28 @@ const AdminProductApproval = () => {
               </div>
               {activeTab === 'pending' && (
                 <div className="flex gap-3">
-                  <Button
-                    variant="default"
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                  <UnifiedButton
+                    variant="success"
+                    className="flex-1"
                     onClick={() => handleApprove(selectedProduct.id)}
                     disabled={isReviewing}
+                    loading={isReviewing}
+                    loadingText="جاري المعالجة..."
+                    leftIcon={!isReviewing && <Check className="h-4 w-4" />}
                   >
-                    {isReviewing ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white ml-2"></div>
-                    ) : (
-                      <Check className="h-4 w-4 ml-2" />
-                    )}
-                    {isReviewing ? 'جاري المعالجة...' : 'موافقة'}
-                  </Button>
-                  <Button
-                    variant="destructive"
+                    {!isReviewing && 'موافقة'}
+                  </UnifiedButton>
+                  <UnifiedButton
+                    variant="danger"
                     className="flex-1"
                     onClick={() => handleReject(selectedProduct.id)}
                     disabled={isReviewing || !reviewNotes.trim()}
+                    loading={isReviewing}
+                    loadingText="جاري المعالجة..."
+                    leftIcon={!isReviewing && <X className="h-4 w-4" />}
                   >
-                    {isReviewing ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white ml-2"></div>
-                    ) : (
-                      <X className="h-4 w-4 ml-2" />
-                    )}
-                    {isReviewing ? 'جاري المعالجة...' : 'رفض'}
-                  </Button>
+                    {!isReviewing && 'رفض'}
+                  </UnifiedButton>
                 </div>
               )}
             </div>

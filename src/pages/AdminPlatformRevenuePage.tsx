@@ -1,7 +1,7 @@
 import { usePlatformRevenue } from '@/hooks/usePlatformRevenue';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
@@ -26,17 +26,17 @@ export default function AdminPlatformRevenuePage() {
   }
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'secondary' | 'destructive'> = {
-      'PENDING': 'secondary',
-      'CONFIRMED': 'default',
-      'REFUNDED': 'destructive'
+    const variants: Record<string, 'warning' | 'success' | 'error'> = {
+      'PENDING': 'warning',
+      'CONFIRMED': 'success',
+      'REFUNDED': 'error'
     };
     const labels: Record<string, string> = {
       'PENDING': 'معلق',
       'CONFIRMED': 'مؤكد',
       'REFUNDED': 'مسترجع'
     };
-    return <Badge variant={variants[status]}>{labels[status]}</Badge>;
+    return <UnifiedBadge variant={variants[status]}>{labels[status]}</UnifiedBadge>;
   };
 
   const RevenueTable = ({ data }: { data: any[] }) => (
@@ -98,60 +98,60 @@ export default function AdminPlatformRevenuePage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي الأرباح المؤكدة</CardTitle>
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <UnifiedCardTitle className="text-sm font-medium">إجمالي الأرباح المؤكدة</UnifiedCardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
+            <div className="text-2xl font-bold text-success">
               {totalRevenue.toFixed(2)} ريال
             </div>
             <p className="text-xs text-muted-foreground">
               من {confirmedRevenue.length} معاملة
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">الأرباح المعلقة</CardTitle>
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <UnifiedCardTitle className="text-sm font-medium">الأرباح المعلقة</UnifiedCardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
+            <div className="text-2xl font-bold text-warning">
               {pendingRevenue.toFixed(2)} ريال
             </div>
             <p className="text-xs text-muted-foreground">
               من {pendingRevenueRecords.length} معاملة
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">إجمالي المعاملات</CardTitle>
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <UnifiedCardTitle className="text-sm font-medium">إجمالي المعاملات</UnifiedCardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">
               {revenue.length}
             </div>
             <p className="text-xs text-muted-foreground">
               معاملة مالية
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>سجل الإيرادات</CardTitle>
-          <CardDescription>
+      <UnifiedCard variant="default" padding="md">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle>سجل الإيرادات</UnifiedCardTitle>
+          <UnifiedCardDescription>
             تفاصيل جميع المعاملات المالية للمنصة
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </UnifiedCardDescription>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <Tabs defaultValue="all">
             <TabsList>
               <TabsTrigger value="all">
@@ -195,8 +195,8 @@ export default function AdminPlatformRevenuePage() {
               )}
             </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 }
