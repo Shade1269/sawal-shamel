@@ -4,21 +4,9 @@ import { KPIDashboard } from "@/components/executive/KPIDashboard";
 import { FinancialCharts } from "@/components/executive/FinancialCharts";
 import { CustomerInsights } from "@/components/executive/CustomerInsights";
 import { BusinessInsights } from "@/components/executive/BusinessInsights";
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  InteractiveWidget,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Button
-} from '@/components/ui/index';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
@@ -31,7 +19,6 @@ import {
   Calendar,
   Filter
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { BackButton } from '@/components/ui/back-button';
 
 export default function ExecutiveDashboard() {
@@ -47,18 +34,18 @@ export default function ExecutiveDashboard() {
   if (error) {
     return (
       <div className="container mx-auto p-6">
-        <Card>
-          <CardContent className="flex items-center justify-center py-12">
+        <UnifiedCard variant="elegant">
+          <UnifiedCardContent className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="text-red-500 mb-2">⚠️</div>
               <p className="text-muted-foreground">حدث خطأ في تحميل البيانات</p>
-              <Button onClick={refetch} variant="outline" className="mt-4">
+              <UnifiedButton variant="outline" onClick={refetch} className="mt-4">
                 <RefreshCw className="h-4 w-4 mr-2" />
                 إعادة المحاولة
-              </Button>
+              </UnifiedButton>
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
     );
   }
@@ -93,28 +80,28 @@ export default function ExecutiveDashboard() {
             </SelectContent>
           </Select>
           
-          <Button variant="outline" onClick={handleExport}>
+          <UnifiedButton variant="outline" onClick={handleExport}>
             <Download className="h-4 w-4 mr-2" />
             تصدير
-          </Button>
+          </UnifiedButton>
           
-          <Button variant="outline" onClick={refetch} disabled={loading}>
+          <UnifiedButton variant="outline" onClick={refetch} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             تحديث
-          </Button>
+          </UnifiedButton>
         </div>
       </div>
 
       {/* Status Badges */}
       {!loading && (
         <div className="flex items-center gap-2 flex-wrap">
-          <Badge variant="secondary" className="flex items-center gap-1">
+          <UnifiedBadge variant="success" className="flex items-center gap-1">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
             النظام متصل
-          </Badge>
-          <Badge variant="outline">
+          </UnifiedBadge>
+          <UnifiedBadge variant="default">
             آخر تحديث: {new Date().toLocaleString('ar-SA')}
-          </Badge>
+          </UnifiedBadge>
         </div>
       )}
 
@@ -176,39 +163,39 @@ export default function ExecutiveDashboard() {
       </Tabs>
 
       {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">إجراءات سريعة</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <UnifiedCard variant="glass-strong">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="text-lg">إجراءات سريعة</UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <Button variant="outline" className="justify-start h-auto p-4">
+            <UnifiedButton variant="outline" className="justify-start h-auto p-4">
               <div className="text-left">
                 <div className="font-medium">عرض التقارير المفصلة</div>
                 <div className="text-sm text-muted-foreground">تقارير شاملة لكامل النشاط</div>
               </div>
-            </Button>
-            <Button variant="outline" className="justify-start h-auto p-4">
+            </UnifiedButton>
+            <UnifiedButton variant="outline" className="justify-start h-auto p-4">
               <div className="text-left">
                 <div className="font-medium">إدارة المنتجات</div>
                 <div className="text-sm text-muted-foreground">إضافة وتعديل المنتجات</div>
               </div>
-            </Button>
-            <Button variant="outline" className="justify-start h-auto p-4">
+            </UnifiedButton>
+            <UnifiedButton variant="outline" className="justify-start h-auto p-4">
               <div className="text-left">
                 <div className="font-medium">إدارة الطلبات</div>
                 <div className="text-sm text-muted-foreground">متابعة ومعالجة الطلبات</div>
               </div>
-            </Button>
-            <Button variant="outline" className="justify-start h-auto p-4">
+            </UnifiedButton>
+            <UnifiedButton variant="outline" className="justify-start h-auto p-4">
               <div className="text-left">
                 <div className="font-medium">إعدادات المتجر</div>
                 <div className="text-sm text-muted-foreground">تخصيص المتجر والإعدادات</div>
               </div>
-            </Button>
+            </UnifiedButton>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 }

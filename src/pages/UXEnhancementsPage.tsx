@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { PerformanceOptimizer } from '@/components/ux/PerformanceOptimizer';
 import { UserActivityTracker } from '@/components/ux/UserActivityTracker';
 import { SmartSearch } from '@/components/ux/SmartSearch';
@@ -90,11 +90,11 @@ export default function UXEnhancementsPage() {
         </div>
 
         <div className="flex items-center justify-center gap-2">
-          <Badge variant="secondary" className="flex items-center gap-1">
+          <UnifiedBadge variant="success" className="flex items-center gap-1">
             <Rocket className="h-3 w-3" />
             المرحلة الرابعة مكتملة
-          </Badge>
-          <Badge variant="outline">النسخة 4.0</Badge>
+          </UnifiedBadge>
+          <UnifiedBadge variant="default">النسخة 4.0</UnifiedBadge>
         </div>
       </motion.div>
 
@@ -112,13 +112,13 @@ export default function UXEnhancementsPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 + index * 0.1 }}
           >
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
+            <UnifiedCard variant="glass" hover="lift" className="text-center">
+              <UnifiedCardContent className="p-6">
                 <stat.icon className={`h-8 w-8 mx-auto mb-3 ${stat.color}`} />
                 <div className="text-3xl font-bold mb-1">{stat.value}</div>
                 <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </motion.div>
         ))}
       </motion.div>
@@ -140,19 +140,21 @@ export default function UXEnhancementsPage() {
             className="cursor-pointer"
             onClick={() => setActiveTab(feature.tab)}
           >
-            <Card className={`h-full hover:shadow-lg transition-all duration-300 ${
-              activeTab === feature.tab ? 'ring-2 ring-primary' : ''
-            }`}>
-              <CardHeader className="text-center">
+            <UnifiedCard 
+              variant="elegant" 
+              hover="glow"
+              className={`h-full ${activeTab === feature.tab ? 'ring-2 ring-primary' : ''}`}
+            >
+              <UnifiedCardHeader className="text-center">
                 <div className="mx-auto p-3 rounded-xl gradient-card-accent w-fit">
                   <feature.icon className={`h-8 w-8 ${feature.color}`} />
                 </div>
-                <CardTitle className="text-lg">{feature.title}</CardTitle>
-                <CardDescription className="text-sm">
+                <UnifiedCardTitle className="text-lg">{feature.title}</UnifiedCardTitle>
+                <UnifiedCardDescription className="text-sm">
                   {feature.description}
-                </CardDescription>
-              </CardHeader>
-            </Card>
+                </UnifiedCardDescription>
+              </UnifiedCardHeader>
+            </UnifiedCard>
           </motion.div>
         ))}
       </motion.div>
@@ -192,17 +194,17 @@ export default function UXEnhancementsPage() {
           </TabsContent>
 
           <TabsContent value="search" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+            <UnifiedCard variant="glass-strong">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle className="flex items-center gap-2">
                   <Search className="h-5 w-5 text-green-500" />
                   البحث الذكي
-                </CardTitle>
-                <CardDescription>
+                </UnifiedCardTitle>
+                <UnifiedCardDescription>
                   نظام بحث متقدم يوفر نتائج سريعة ودقيقة عبر النظام بالكامل
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
+                </UnifiedCardDescription>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
                     <h4 className="font-semibold">المميزات الرئيسية:</h4>
@@ -231,27 +233,27 @@ export default function UXEnhancementsPage() {
                 </div>
                 
                 <div className="pt-4">
-                  <Button onClick={() => setSearchOpen(true)} className="w-full">
+                  <UnifiedButton variant="primary" onClick={() => setSearchOpen(true)} fullWidth>
                     <Search className="h-4 w-4 mr-2" />
                     تجربة البحث الذكي
-                  </Button>
+                  </UnifiedButton>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </TabsContent>
 
           <TabsContent value="shortcuts" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+            <UnifiedCard variant="glass-strong">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle className="flex items-center gap-2">
                   <Keyboard className="h-5 w-5 text-orange-500" />
                   اختصارات المفاتيح
-                </CardTitle>
-                <CardDescription>
+                </UnifiedCardTitle>
+                <UnifiedCardDescription>
                   تسريع العمل وزيادة الإنتاجية مع اختصارات المفاتيح المخصصة
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
+                </UnifiedCardDescription>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-semibold">حالة الاختصارات</h4>
@@ -259,12 +261,12 @@ export default function UXEnhancementsPage() {
                       {isEnabled ? 'مفعلة' : 'معطلة'} - {shortcuts.length} اختصار متاح
                     </p>
                   </div>
-                  <Button 
-                    variant={isEnabled ? "destructive" : "default"}
+                  <UnifiedButton 
+                    variant={isEnabled ? "danger" : "primary"}
                     onClick={() => toggleShortcuts(!isEnabled)}
                   >
                     {isEnabled ? 'تعطيل' : 'تفعيل'} الاختصارات
-                  </Button>
+                  </UnifiedButton>
                 </div>
 
                 <div className="space-y-4">
@@ -289,13 +291,13 @@ export default function UXEnhancementsPage() {
                   </div>
                   
                   <div className="text-center pt-4">
-                    <Button variant="outline" onClick={() => console.log('Show all shortcuts')}>
+                    <UnifiedButton variant="outline" onClick={() => console.log('Show all shortcuts')}>
                       عرض جميع الاختصارات ({shortcuts.length})
-                    </Button>
+                    </UnifiedButton>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </TabsContent>
         </Tabs>
       </motion.div>
