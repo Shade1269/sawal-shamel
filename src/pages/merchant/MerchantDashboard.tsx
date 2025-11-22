@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Package, DollarSign, ShoppingCart, TrendingUp, Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -115,12 +115,12 @@ const MerchantDashboard = () => {
   if (!merchant) {
     return (
       <div className="container mx-auto p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>لم يتم العثور على حساب تاجر</CardTitle>
-            <CardDescription>يبدو أنك لست مسجلاً كتاجر في النظام</CardDescription>
-          </CardHeader>
-        </Card>
+        <UnifiedCard variant="glass">
+          <UnifiedCardHeader>
+            <UnifiedCardTitle>لم يتم العثور على حساب تاجر</UnifiedCardTitle>
+            <UnifiedCardDescription>يبدو أنك لست مسجلاً كتاجر في النظام</UnifiedCardDescription>
+          </UnifiedCardHeader>
+        </UnifiedCard>
       </div>
     );
   }
@@ -132,70 +132,70 @@ const MerchantDashboard = () => {
           <h1 className="text-3xl font-bold">لوحة تحكم التاجر</h1>
           <p className="text-muted-foreground">{merchant.business_name}</p>
         </div>
-        <Button onClick={() => navigate('/merchant/products')}>
+        <UnifiedButton variant="primary" onClick={() => navigate('/merchant/products')}>
           <Plus className="h-4 w-4 ml-2" />
           إدارة المنتجات
-        </Button>
+        </UnifiedButton>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
+        <UnifiedCard variant="glass" hover="lift">
+          <UnifiedCardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium">إجمالي المنتجات</CardTitle>
+              <UnifiedCardTitle className="text-sm font-medium">إجمالي المنتجات</UnifiedCardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
             </div>
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">{stats.totalProducts}</div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardHeader className="pb-3">
+        <UnifiedCard variant="glass" hover="lift">
+          <UnifiedCardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium">قيد المراجعة</CardTitle>
-              <TrendingUp className="h-4 w-4 text-yellow-600" />
+              <UnifiedCardTitle className="text-sm font-medium">قيد المراجعة</UnifiedCardTitle>
+              <TrendingUp className="h-4 w-4 text-warning" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.pendingProducts}</div>
-          </CardContent>
-        </Card>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
+            <div className="text-2xl font-bold text-warning">{stats.pendingProducts}</div>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardHeader className="pb-3">
+        <UnifiedCard variant="glass" hover="lift">
+          <UnifiedCardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium">موافق عليها</CardTitle>
-              <Package className="h-4 w-4 text-green-600" />
+              <UnifiedCardTitle className="text-sm font-medium">موافق عليها</UnifiedCardTitle>
+              <Package className="h-4 w-4 text-success" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.approvedProducts}</div>
-          </CardContent>
-        </Card>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
+            <div className="text-2xl font-bold text-success">{stats.approvedProducts}</div>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardHeader className="pb-3">
+        <UnifiedCard variant="glass" hover="lift">
+          <UnifiedCardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium">إجمالي المبيعات</CardTitle>
+              <UnifiedCardTitle className="text-sm font-medium">إجمالي المبيعات</UnifiedCardTitle>
               <DollarSign className="h-4 w-4 text-primary" />
             </div>
-          </CardHeader>
-          <CardContent>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold text-primary">
               {stats.totalRevenue.toLocaleString('ar-SA')} ر.س
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
-      <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle>نظرة عامة</CardTitle>
-          <CardDescription>ملخص نشاطك التجاري</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <UnifiedCard variant="glass" hover="none">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle>نظرة عامة</UnifiedCardTitle>
+          <UnifiedCardDescription>ملخص نشاطك التجاري</UnifiedCardDescription>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <Tabs defaultValue="products">
             <TabsList>
               <TabsTrigger value="products">المنتجات</TabsTrigger>
@@ -207,9 +207,9 @@ const MerchantDashboard = () => {
               <div className="text-center py-8">
                 <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <p className="text-muted-foreground mb-4">إدارة منتجاتك من هنا</p>
-                <Button onClick={() => navigate('/merchant/products')}>
+                <UnifiedButton variant="primary" onClick={() => navigate('/merchant/products')}>
                   عرض جميع المنتجات
-                </Button>
+                </UnifiedButton>
               </div>
             </TabsContent>
 
@@ -217,9 +217,9 @@ const MerchantDashboard = () => {
               <div className="text-center py-8">
                 <ShoppingCart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <p className="text-muted-foreground mb-4">إدارة طلباتك من هنا</p>
-                <Button onClick={() => navigate('/admin/orders')}>
+                <UnifiedButton variant="primary" onClick={() => navigate('/admin/orders')}>
                   عرض جميع الطلبات
-                </Button>
+                </UnifiedButton>
               </div>
             </TabsContent>
 
@@ -230,8 +230,8 @@ const MerchantDashboard = () => {
               </div>
             </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };
