@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Plus, Heart, Eye, Star } from 'lucide-react';
 
 interface Product {
@@ -41,7 +41,7 @@ export const ModernProductCard = ({
       whileHover={{ y: -8 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="group overflow-hidden border border-border/50 bg-card hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+      <UnifiedCard variant="glass" className="group overflow-hidden h-full flex flex-col hover:shadow-xl transition-all duration-300">
         {/* Image Section */}
         <div 
           className="relative aspect-square overflow-hidden bg-muted cursor-pointer"
@@ -56,8 +56,8 @@ export const ModernProductCard = ({
           
           {/* Overlay with Actions */}
           <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2">
-            <Button
-              size="icon"
+            <UnifiedButton
+              size="sm"
               variant="secondary"
               onClick={(e) => {
                 e.stopPropagation();
@@ -66,9 +66,9 @@ export const ModernProductCard = ({
               className="shadow-lg"
             >
               <Eye className="h-5 w-5" />
-            </Button>
-            <Button
-              size="icon"
+            </UnifiedButton>
+            <UnifiedButton
+              size="sm"
               variant="secondary"
               onClick={(e) => {
                 e.stopPropagation();
@@ -77,31 +77,31 @@ export const ModernProductCard = ({
               className={`shadow-lg ${isInWishlist ? 'bg-destructive text-destructive-foreground' : ''}`}
             >
               <Heart className={`h-5 w-5 ${isInWishlist ? 'fill-current' : ''}`} />
-            </Button>
+            </UnifiedButton>
           </div>
 
           {/* Badges */}
           <div className="absolute top-3 right-3 flex flex-col gap-2">
             {product.discount_percentage && product.discount_percentage > 0 && (
-              <Badge variant="destructive" className="shadow-lg font-bold">
+              <UnifiedBadge variant="error" className="shadow-lg font-bold">
                 {product.discount_percentage}% خصم
-              </Badge>
+              </UnifiedBadge>
             )}
             {product.stock === 0 && (
-              <Badge variant="secondary" className="shadow-lg">
+              <UnifiedBadge variant="secondary" className="shadow-lg">
                 نفد المخزون
-              </Badge>
+              </UnifiedBadge>
             )}
             {product.stock && product.stock <= 5 && product.stock > 0 && (
-              <Badge variant="outline" className="shadow-lg bg-background border-warning text-warning">
+              <UnifiedBadge variant="warning" className="shadow-lg">
                 {product.stock} متبقي
-              </Badge>
+              </UnifiedBadge>
             )}
           </div>
         </div>
 
         {/* Content Section */}
-        <CardContent className="flex-1 flex flex-col p-4 space-y-3">
+        <UnifiedCardContent className="flex-1 flex flex-col p-4 space-y-3">
           {/* Title */}
           <h3 
             className="font-bold text-base leading-tight line-clamp-2 text-foreground group-hover:text-primary transition-colors cursor-pointer"
@@ -145,17 +145,18 @@ export const ModernProductCard = ({
           </div>
 
           {/* Add to Cart Button */}
-          <Button 
+          <UnifiedButton 
             onClick={() => onAddToCart(product)}
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
+            variant="primary"
+            className="w-full shadow-lg"
             size="lg"
             disabled={product.stock === 0}
           >
             <Plus className="h-5 w-5 ml-2" />
             أضف للسلة
-          </Button>
-        </CardContent>
-      </Card>
+          </UnifiedButton>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </motion.div>
   );
 };
