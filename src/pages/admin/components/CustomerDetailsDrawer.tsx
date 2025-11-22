@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { ArrowUpRight, Mail, Phone, ShoppingBag, X } from "lucide-react";
 
 import type { AdminCustomer } from "@/hooks/useAdminCustomers";
-import { Button } from "@/ui/Button";
+import { UnifiedButton } from "@/components/design-system";
 
 const currency = new Intl.NumberFormat("ar-SA", {
   style: "currency",

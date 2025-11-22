@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Button } from '@/ui/Button';
+import { UnifiedButton } from '@/components/design-system';
 import { cn } from '@/lib/utils';
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import type { LucideIcon } from 'lucide-react';
@@ -57,7 +57,7 @@ export function QuickActionsPanel({ actions }: QuickActionsPanelProps) {
               {content}
             </Link>
           ) : (
-            <Button
+            <UnifiedButton
               key={action.id}
               type="button"
               variant="ghost"
@@ -68,7 +68,7 @@ export function QuickActionsPanel({ actions }: QuickActionsPanelProps) {
                 isDarkMode ? 'text-accent' : 'text-blue-600'
               }`} aria-hidden />
               {content}
-            </Button>
+            </UnifiedButton>
           );
         })}
       </nav>

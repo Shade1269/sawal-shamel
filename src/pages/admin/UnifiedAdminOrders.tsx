@@ -3,12 +3,9 @@ import { CalendarDays, Download, Filter, Loader2, RefreshCw, Search, Eye } from 
 import { useSearchParams } from "react-router-dom";
 import { useFastAuth } from "@/hooks/useFastAuth";
 import { maskPhone, shouldShowFullCustomerData } from "@/lib/privacy";
-import { Button } from "@/ui/Button";
-import { Card } from "@/ui/Card";
-import { Input } from "@/ui/Input";
+import { UnifiedButton, UnifiedCard, UnifiedInput, UnifiedBadge } from "@/components/design-system";
 import { Skeleton } from "@/ui/Skeleton";
 import { useUnifiedOrders } from "@/hooks/useUnifiedOrders";
-import { Badge } from "@/ui/Badge";
 import { formatDistanceToNow } from "date-fns";
 import { ar } from "date-fns/locale";
 

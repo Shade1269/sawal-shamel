@@ -4,7 +4,7 @@ import { Copy, ExternalLink, MapPin, Phone, X } from "lucide-react";
 import type { AdminOrder } from "@/hooks/useAdminOrders";
 import { useFastAuth } from "@/hooks/useFastAuth";
 import { maskPhone, maskEmail, shouldShowFullCustomerData } from "@/lib/privacy";
-import { Button } from "@/ui/Button";
+import { UnifiedButton } from "@/components/design-system";
 
 const currency = new Intl.NumberFormat("ar-SA", {
   style: "currency",

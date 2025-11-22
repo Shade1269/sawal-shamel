@@ -5,9 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { PageTitle } from "@/components/app-shell/PageTitle";
 import { useAdminCustomers, getNextCustomerIndex } from "@/hooks/useAdminCustomers";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { Button } from "@/ui/Button";
-import { Card } from "@/ui/Card";
-import { Input } from "@/ui/Input";
+import { UnifiedButton, UnifiedCard, UnifiedInput } from "@/components/design-system";
 import { Skeleton } from "@/ui/Skeleton";
 
 const CustomerDetailsDrawer = lazy(() => import("./components/CustomerDetailsDrawer"));
@@ -21,10 +19,11 @@ const datePresets: { value: "all" | "7d" | "30d" | "90d" | "custom"; label: stri
 ];
 
 const CustomersSkeleton = () => (
-  <Card
+  <UnifiedCard
     variant="glass"
+    padding="md"
+    hover="none"
     data-state="loading"
-    className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/80"
   >
     <div className="space-y-5 p-6">
       <Skeleton className="h-10 w-full rounded" />
@@ -39,7 +38,7 @@ const CustomersSkeleton = () => (
         ))}
       </div>
     </div>
-  </Card>
+  </UnifiedCard>
 );
 
 const currency = new Intl.NumberFormat("ar-SA", {
@@ -155,28 +154,26 @@ const AdminCustomersPage = () => {
       <PageTitle
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <Button
+            <UnifiedButton
               variant="outline"
               size="sm"
               onClick={refresh}
               disabled={isLoading}
               aria-label="تحديث بيانات العملاء"
-              className="inline-flex items-center gap-2 border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg)]/90"
             >
               <RefreshCw className="h-4 w-4" aria-hidden />
               <span>تحديث</span>
-            </Button>
-            <Button
-              variant="solid"
+            </UnifiedButton>
+            <UnifiedButton
+              variant="primary"
               size="sm"
               onClick={handleExport}
               disabled={isExporting || isLoading || total === 0}
               aria-label="تصدير العملاء إلى CSV"
-              className="inline-flex items-center gap-2"
             >
               {isExporting ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
               <span>تصدير CSV</span>
-            </Button>
+            </UnifiedButton>
           </div>
         }
       />
@@ -184,20 +181,22 @@ const AdminCustomersPage = () => {
       {isLoading ? (
         <CustomersSkeleton />
       ) : (
-        <Card
+        <UnifiedCard
           variant="glass"
+          padding="md"
+          hover="none"
           data-section="customers-table"
-          className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/88"
         >
           <div className="flex flex-col gap-5 p-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div className="relative flex-1">
-                <Input
+                <UnifiedInput
                   value={searchValue}
                   onChange={(event) => setSearchValue(event.target.value)}
                   placeholder="ابحث عن اسم أو بريد أو رقم جوال"
                   aria-label="بحث في العملاء"
-                  className="w-full border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/70 pr-10 text-[color:var(--glass-fg)]"
+                  className="w-full pr-10"
+                  variant="glass"
                 />
                 <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted-foreground)]" aria-hidden />
               </div>
@@ -209,16 +208,16 @@ const AdminCustomersPage = () => {
                 {datePresets.map((preset) => {
                   const isActive = filters.dateRange.preset === preset.value;
                   return (
-                    <Button
+                    <UnifiedButton
                       key={preset.value}
-                      variant={isActive ? "solid" : "outline"}
+                      variant={isActive ? "primary" : "outline"}
                       size="sm"
                       onClick={() => setDateRangePreset(preset.value)}
                       aria-pressed={isActive}
-                      className="rounded-full border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/60 text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg)]/90"
+                      className="rounded-full"
                     >
                       {preset.label}
-                    </Button>
+                    </UnifiedButton>
                   );
                 })}
               </div>
@@ -228,30 +227,29 @@ const AdminCustomersPage = () => {
               <div className="flex flex-wrap items-center gap-3" data-custom-range>
                 <label className="flex items-center gap-2 text-sm">
                   <span className="text-[color:var(--muted-foreground)]">من</span>
-                  <Input
+                  <UnifiedInput
                     type="date"
                     value={customFrom}
                     onChange={(event) => setCustomFrom(event.target.value)}
-                    className="border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)]"
+                    variant="glass"
                   />
                 </label>
                 <label className="flex items-center gap-2 text-sm">
                   <span className="text-[color:var(--muted-foreground)]">إلى</span>
-                  <Input
+                  <UnifiedInput
                     type="date"
                     value={customTo}
                     onChange={(event) => setCustomTo(event.target.value)}
-                    className="border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)]"
+                    variant="glass"
                   />
                 </label>
-                <Button
+                <UnifiedButton
                   size="sm"
                   variant="outline"
                   onClick={applyCustomDateRange}
-                  className="border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg)]/90"
                 >
                   تطبيق
-                </Button>
+                </UnifiedButton>
               </div>
             ) : null}
 
@@ -262,40 +260,40 @@ const AdminCustomersPage = () => {
               </div>
               <label className="flex items-center gap-2 text-sm">
                 <span className="text-[color:var(--muted-foreground)]">أدنى</span>
-                <Input
+                <UnifiedInput
                   type="number"
                   inputMode="numeric"
                   value={minSpend}
                   onChange={(event) => setMinSpend(event.target.value)}
-                  className="w-32 border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)]"
+                  className="w-32"
+                  variant="glass"
                 />
               </label>
               <label className="flex items-center gap-2 text-sm">
                 <span className="text-[color:var(--muted-foreground)]">أعلى</span>
-                <Input
+                <UnifiedInput
                   type="number"
                   inputMode="numeric"
                   value={maxSpend}
                   onChange={(event) => setMaxSpend(event.target.value)}
-                  className="w-32 border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)]"
+                  className="w-32"
+                  variant="glass"
                 />
               </label>
-              <Button
+              <UnifiedButton
                 size="sm"
                 variant="outline"
                 onClick={applySpendRange}
-                className="border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg)]/90"
               >
                 تطبيق
-              </Button>
-              <Button
+              </UnifiedButton>
+              <UnifiedButton
                 size="sm"
-                variant={filters.sort === "spend-desc" ? "solid" : "outline"}
+                variant={filters.sort === "spend-desc" ? "primary" : "outline"}
                 onClick={() => setSort(filters.sort === "spend-desc" ? "spend-asc" : "spend-desc")}
-                className="border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/60 text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg)]/90"
               >
                 ترتيب حسب الإنفاق
-              </Button>
+              </UnifiedButton>
             </div>
 
             <div className="overflow-x-auto" data-scroll-region>
@@ -361,18 +359,17 @@ const AdminCustomersPage = () => {
               <p className="text-sm text-[color:var(--muted-foreground)]">
                 عرض {visibleCustomers.length} من {total}
               </p>
-              <Button
+              <UnifiedButton
                 variant="outline"
                 onClick={handleLoadMore}
                 disabled={!hasMore}
                 size="sm"
-                className="border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg)]/90"
               >
                 {hasMore ? "تحميل المزيد" : "لا مزيد"}
-              </Button>
+              </UnifiedButton>
             </div>
           </div>
-        </Card>
+        </UnifiedCard>
       )}
 
       <Suspense fallback={null}>
