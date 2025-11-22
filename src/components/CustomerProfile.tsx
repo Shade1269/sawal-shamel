@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { 
@@ -169,12 +169,12 @@ export const CustomerProfile: React.FC = () => {
   if (!customer) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="p-6 text-center">
+        <UnifiedCard variant="glass">
+          <UnifiedCardContent className="p-6 text-center">
             <User className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
             <p className="text-muted-foreground">يرجى تسجيل الدخول للوصول إلى ملفك الشخصي</p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
     );
   }

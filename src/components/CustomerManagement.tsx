@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BackButton } from '@/components/ui/back-button';
 import { 
@@ -214,17 +214,15 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
         </div>
         
         <div className="flex flex-wrap items-center gap-2">
-          <Button onClick={() => goToUserHome(profile?.role)} variant="outline" size="sm" className="text-xs sm:text-sm">
-            <Home className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+          <UnifiedButton onClick={() => goToUserHome(profile?.role)} variant="outline" size="sm" className="text-xs sm:text-sm" leftIcon={<Home className="w-3 h-3 sm:w-4 sm:h-4" />}>
             <span className="hidden sm:inline">الرئيسية</span>
             <span className="sm:hidden">الرئيسية</span>
-          </Button>
+          </UnifiedButton>
           
-          <Button onClick={exportCustomers} variant="outline" size="sm" className="text-xs sm:text-sm">
-            <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+          <UnifiedButton onClick={exportCustomers} variant="outline" size="sm" className="text-xs sm:text-sm" leftIcon={<Download className="w-3 h-3 sm:w-4 sm:h-4" />}>
             <span className="hidden sm:inline">تصدير البيانات</span>
             <span className="sm:hidden">تصدير</span>
-          </Button>
+          </UnifiedButton>
           
           <BackButton />
         </div>
