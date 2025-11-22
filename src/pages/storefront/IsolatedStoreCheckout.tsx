@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { UnifiedButton, UnifiedInput, UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle, UnifiedBadge } from '@/components/design-system';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Loader2, CheckCircle, CreditCard, Tag, X } from 'lucide-react';
 import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 import { storeOrderService } from '@/services/storeOrderService';
@@ -16,7 +14,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { StoreThemeProvider } from '@/components/store/StoreThemeProvider';
 import { StorefrontSession } from '@/utils/storefrontSession';
 import { supabase } from '@/integrations/supabase/client';
-import { Badge } from '@/components/ui/badge';
 
 interface StoreContextType {
   store: {
@@ -335,20 +332,20 @@ export const IsolatedStoreCheckout: React.FC = () => {
     return (
       <StoreThemeProvider storeId={store?.id}>
         <div className="space-y-6 p-6 min-h-screen bg-background">
-          <Card className="max-w-md mx-auto border-border/50 bg-card/50 backdrop-blur">
-            <CardContent className="text-center py-16">
+          <UnifiedCard variant="glass" className="max-w-md mx-auto border-border/50 bg-card/50 backdrop-blur">
+            <UnifiedCardContent className="text-center py-16">
               <h3 className="text-2xl font-bold mb-3 text-foreground">السلة فارغة</h3>
               <p className="text-muted-foreground mb-6">
                 لا يمكن إتمام الطلب مع سلة فارغة
               </p>
-              <Button 
+              <UnifiedButton 
                 onClick={() => navigate(`/${storeSlug}`)}
-                className="bg-primary text-primary-foreground hover:opacity-90"
+                variant="primary"
               >
                 تسوق الآن
-              </Button>
-            </CardContent>
-          </Card>
+              </UnifiedButton>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </div>
       </StoreThemeProvider>
     );
@@ -362,7 +359,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
     <StoreThemeProvider storeId={store?.id}>
       <div className="space-y-6 min-h-screen bg-background p-4 md:p-6">
         <div className="flex items-center gap-4">
-          <Button 
+          <UnifiedButton 
             variant="ghost" 
             size="sm" 
             onClick={() => navigate(`/${storeSlug}/cart`)}
@@ -370,7 +367,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             العودة للسلة
-          </Button>
+          </UnifiedButton>
           <h1 className="text-3xl font-bold text-foreground">
             إتمام الطلب
           </h1>
@@ -383,15 +380,15 @@ export const IsolatedStoreCheckout: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Card className="border-border/50 bg-card/50 backdrop-blur">
-              <CardHeader className="border-b border-border/50">
-                <CardTitle className="text-xl text-foreground">معلومات العميل</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-6">
+            <UnifiedCard variant="glass" className="border-border/50 bg-card/50 backdrop-blur">
+              <UnifiedCardHeader className="border-b border-border/50">
+                <UnifiedCardTitle className="text-xl text-foreground">معلومات العميل</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-4 pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="customerName" className="text-foreground">الاسم الكامل *</Label>
-                    <Input
+                    <UnifiedInput
                       id="customerName"
                       value={formData.customerName}
                       onChange={(e) => handleInputChange('customerName', e.target.value)}
@@ -402,7 +399,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="customerPhone" className="text-foreground">رقم الجوال *</Label>
-                    <Input
+                    <UnifiedInput
                       id="customerPhone"
                       type="tel"
                       value={formData.customerPhone}
@@ -415,7 +412,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="customerEmail" className="text-foreground">البريد الإلكتروني</Label>
-                  <Input
+                  <UnifiedInput
                     id="customerEmail"
                     type="email"
                     value={formData.customerEmail}
@@ -424,8 +421,8 @@ export const IsolatedStoreCheckout: React.FC = () => {
                     className="bg-background border-border"
                   />
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </motion.div>
 
           <motion.div
@@ -433,15 +430,15 @@ export const IsolatedStoreCheckout: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <Card className="border-border/50 bg-card/50 backdrop-blur">
-              <CardHeader className="border-b border-border/50">
-                <CardTitle className="text-xl text-foreground">عنوان الشحن</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-6">
+            <UnifiedCard variant="glass" className="border-border/50 bg-card/50 backdrop-blur">
+              <UnifiedCardHeader className="border-b border-border/50">
+                <UnifiedCardTitle className="text-xl text-foreground">عنوان الشحن</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-4 pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="city" className="text-foreground">المدينة *</Label>
-                    <Input
+                    <UnifiedInput
                       id="city"
                       value={formData.city}
                       onChange={(e) => handleInputChange('city', e.target.value)}
@@ -452,7 +449,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="district" className="text-foreground">الحي</Label>
-                    <Input
+                    <UnifiedInput
                       id="district"
                       value={formData.district}
                       onChange={(e) => handleInputChange('district', e.target.value)}
@@ -464,7 +461,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                 
                 <div className="space-y-2">
                   <Label htmlFor="street" className="text-foreground">الشارع *</Label>
-                  <Input
+                  <UnifiedInput
                     id="street"
                     value={formData.street}
                     onChange={(e) => handleInputChange('street', e.target.value)}
@@ -477,7 +474,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="building" className="text-foreground">رقم المبنى</Label>
-                    <Input
+                    <UnifiedInput
                       id="building"
                       value={formData.building}
                       onChange={(e) => handleInputChange('building', e.target.value)}
@@ -487,7 +484,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="apartment" className="text-foreground">رقم الشقة</Label>
-                    <Input
+                    <UnifiedInput
                       id="apartment"
                       value={formData.apartment}
                       onChange={(e) => handleInputChange('apartment', e.target.value)}
@@ -497,7 +494,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="postalCode" className="text-foreground">الرمز البريدي</Label>
-                    <Input
+                    <UnifiedInput
                       id="postalCode"
                       value={formData.postalCode}
                       onChange={(e) => handleInputChange('postalCode', e.target.value)}
@@ -506,8 +503,8 @@ export const IsolatedStoreCheckout: React.FC = () => {
                     />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </motion.div>
 
           {/* خيارات الشحن */}
@@ -516,11 +513,11 @@ export const IsolatedStoreCheckout: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Card className="border-border/50 bg-card/50 backdrop-blur">
-              <CardHeader className="border-b border-border/50">
-                <CardTitle className="text-xl text-foreground">طريقة الشحن</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-6">
+            <UnifiedCard variant="glass" className="border-border/50 bg-card/50 backdrop-blur">
+              <UnifiedCardHeader className="border-b border-border/50">
+                <UnifiedCardTitle className="text-xl text-foreground">طريقة الشحن</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-4 pt-6">
                 {calculatingShipping ? (
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -573,8 +570,8 @@ export const IsolatedStoreCheckout: React.FC = () => {
                     ))}
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </motion.div>
 
           {/* خيارات الدفع */}
@@ -583,11 +580,11 @@ export const IsolatedStoreCheckout: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <Card className="border-border/50 bg-card/50 backdrop-blur">
-              <CardHeader className="border-b border-border/50">
-                <CardTitle className="text-xl text-foreground">طريقة الدفع</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-6">
+            <UnifiedCard variant="glass" className="border-border/50 bg-card/50 backdrop-blur">
+              <UnifiedCardHeader className="border-b border-border/50">
+                <UnifiedCardTitle className="text-xl text-foreground">طريقة الدفع</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-4 pt-6">
                 <RadioGroup value={paymentMethod} onValueChange={(value) => setPaymentMethod(value as 'cod' | 'geidea')}>
                   {/* الدفع عند الاستلام */}
                   <div
@@ -635,8 +632,8 @@ export const IsolatedStoreCheckout: React.FC = () => {
                     </div>
                   </div>
                 </RadioGroup>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </motion.div>
         </div>
 
@@ -646,13 +643,13 @@ export const IsolatedStoreCheckout: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Card className="sticky top-4 border-border/50 bg-card/50 backdrop-blur">
-              <CardHeader className="border-b border-border/50">
-                <CardTitle className="text-2xl text-foreground">
+            <UnifiedCard variant="glass" className="sticky top-4 border-border/50 bg-card/50 backdrop-blur">
+              <UnifiedCardHeader className="border-b border-border/50">
+                <UnifiedCardTitle className="text-2xl text-foreground">
                   ملخص الطلب
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6 pt-6">
+                </UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent className="space-y-6 pt-6">
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {cart.items.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm py-2 border-b border-border/50 last:border-0">
@@ -676,16 +673,16 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   {appliedCoupon ? (
                     <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
                       <div className="flex items-center gap-2">
-                        <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+                        <UnifiedBadge variant="success" className="bg-green-600 hover:bg-green-700">
                           {appliedCoupon.coupon_code}
-                        </Badge>
+                        </UnifiedBadge>
                         <span className="text-sm text-green-700 dark:text-green-300 font-medium">
                           {appliedCoupon.discount_type === 'percentage'
                             ? `${appliedCoupon.discount_value}% خصم`
                             : `${appliedCoupon.discount_value} ر.س خصم`}
                         </span>
                       </div>
-                      <Button
+                      <UnifiedButton
                         type="button"
                         variant="ghost"
                         size="sm"
@@ -693,11 +690,11 @@ export const IsolatedStoreCheckout: React.FC = () => {
                         className="h-7 px-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                       >
                         <X className="h-4 w-4" />
-                      </Button>
+                      </UnifiedButton>
                     </div>
                   ) : (
                     <div className="flex gap-2">
-                      <Input
+                      <UnifiedInput
                         type="text"
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
@@ -710,18 +707,18 @@ export const IsolatedStoreCheckout: React.FC = () => {
                           }
                         }}
                       />
-                      <Button
+                      <UnifiedButton
                         type="button"
                         onClick={validateCoupon}
                         disabled={couponLoading || !couponCode.trim()}
-                        className="bg-primary text-primary-foreground hover:opacity-90"
+                        variant="primary"
                       >
                         {couponLoading ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
                           'تطبيق'
                         )}
-                      </Button>
+                      </UnifiedButton>
                     </div>
                   )}
                 </div>
@@ -771,11 +768,13 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   </p>
                 </div>
 
-                <Button 
+                <UnifiedButton 
                   type="submit" 
-                  className="w-full h-14 text-lg bg-primary text-primary-foreground hover:opacity-90 transition-all"
+                  fullWidth
                   size="lg"
+                  variant="primary"
                   disabled={submitting}
+                  className="h-14 text-lg"
                 >
                   {submitting ? (
                     <>
@@ -788,13 +787,13 @@ export const IsolatedStoreCheckout: React.FC = () => {
                       <CheckCircle className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
                     </>
                   )}
-                </Button>
+                </UnifiedButton>
 
                 <p className="text-xs text-muted-foreground text-center leading-relaxed">
                   بالضغط على "تأكيد الطلب" أنت توافق على الشروط والأحكام
                 </p>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </motion.div>
         </div>
       </form>
@@ -805,14 +804,14 @@ export const IsolatedStoreCheckout: React.FC = () => {
             <div className="bg-background rounded-2xl border border-border shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-background z-10">
                 <h2 className="text-2xl font-bold text-foreground">إتمام الدفع</h2>
-                <Button
+                <UnifiedButton
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowGeideaPayment(false)}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   إلغاء
-                </Button>
+                </UnifiedButton>
               </div>
               <div className="p-6">
                 <GeideaPayment
