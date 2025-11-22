@@ -8,15 +8,10 @@ import {
   ResponsiveLayout,
   ResponsiveGrid,
   VirtualizedList,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button
+  EnhancedButton
 } from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
@@ -163,14 +158,14 @@ const AdminActivity = () => {
       </div>
 
       {/* Filters */}
-      <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <UnifiedCard variant="glass-strong" hover="lift">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5 text-primary" />
             البحث والتصفية
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -196,17 +191,17 @@ const AdminActivity = () => {
                 <SelectItem value="profile">الملفات الشخصية</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline">
+            <UnifiedButton variant="outline">
               <Download className="h-4 w-4 mr-2" />
               تصدير
-            </Button>
-            <Button variant="outline">
+            </UnifiedButton>
+            <UnifiedButton variant="outline">
               <RefreshCw className="h-4 w-4 mr-2" />
               تحديث
-            </Button>
+            </UnifiedButton>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       {/* Activity Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
