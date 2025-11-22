@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedInput } from '@/components/design-system';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Package, Phone, MessageCircle, RefreshCw, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -243,12 +243,12 @@ const StorefrontMyOrders = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" asChild>
-                <Link to={`/${store_slug}`}>
+              <Link to={`/${store_slug}`} className="inline-block">
+                <UnifiedButton variant="ghost" size="sm">
                   <ArrowLeft className="h-4 w-4 ml-2" />
                   العودة للمتجر
-                </Link>
-              </Button>
+                </UnifiedButton>
+              </Link>
               <div>
                 <h1 className="text-xl font-bold">طلباتي</h1>
                 <p className="text-sm text-muted-foreground">{store?.store_name}</p>
@@ -257,13 +257,13 @@ const StorefrontMyOrders = () => {
             
             {isVerified && (
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" onClick={handleRefreshOrders}>
+                <UnifiedButton variant="ghost" size="sm" onClick={handleRefreshOrders}>
                   <RefreshCw className="h-4 w-4 ml-2" />
                   تحديث
-                </Button>
-                <Button variant="outline" size="sm" onClick={handleLogout}>
+                </UnifiedButton>
+                <UnifiedButton variant="outline" size="sm" onClick={handleLogout}>
                   تسجيل خروج
-                </Button>
+                </UnifiedButton>
               </div>
             )}
           </div>
@@ -272,17 +272,17 @@ const StorefrontMyOrders = () => {
 
       <div className="container mx-auto px-4 py-8">
         {!isVerified ? (
-          <Card className="max-w-md mx-auto">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+          <UnifiedCard variant="glass" className="max-w-md mx-auto">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle className="flex items-center gap-2">
                 <Phone className="h-5 w-5" />
                 تحقق من رقم جوالك
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+              </UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent className="space-y-4">
               <div>
                 <Label htmlFor="phone">رقم الجوال</Label>
-                <Input
+                <UnifiedInput
                   id="phone"
                   type="tel"
                   placeholder="05xxxxxxxx"
@@ -295,7 +295,7 @@ const StorefrontMyOrders = () => {
               {showOTPInput && (
                 <div>
                   <Label htmlFor="otp">كود التحقق</Label>
-                  <Input
+                  <UnifiedInput
                     id="otp"
                     type="text"
                     placeholder="123456"
@@ -311,22 +311,24 @@ const StorefrontMyOrders = () => {
 
               <div className="flex flex-col gap-2">
                 {!showOTPInput ? (
-                  <Button 
+                  <UnifiedButton 
+                    variant="primary"
                     onClick={handleSendOTP}
-                    className="w-full"
+                    fullWidth
                   >
                     <MessageCircle className="h-4 w-4 ml-2" />
                     إرسال كود التحقق
-                  </Button>
+                  </UnifiedButton>
                 ) : (
                   <div className="flex gap-2">
-                    <Button 
+                    <UnifiedButton 
+                      variant="primary"
                       onClick={handleVerifyOTP}
                       className="flex-1"
                     >
                       تحقق
-                    </Button>
-                    <Button 
+                    </UnifiedButton>
+                    <UnifiedButton 
                       variant="outline" 
                       onClick={() => {
                         setShowOTPInput(false);
@@ -334,12 +336,12 @@ const StorefrontMyOrders = () => {
                       }}
                     >
                       إلغاء
-                    </Button>
+                    </UnifiedButton>
                   </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         ) : (
           <div className="max-w-4xl mx-auto">
             <div className="mb-6">
@@ -353,30 +355,30 @@ const StorefrontMyOrders = () => {
                 <p>جاري تحميل طلباتك...</p>
               </div>
             ) : orders.length === 0 ? (
-              <Card>
-                <CardContent className="text-center py-8">
+              <UnifiedCard variant="glass">
+                <UnifiedCardContent className="text-center py-8">
                   <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">لا توجد طلبات</h3>
                   <p className="text-muted-foreground mb-4">
                     لم تقم بأي طلبات من هذا المتجر حتى الآن
                   </p>
-                  <Button asChild>
-                    <Link to={`/${store_slug}`}>
+                  <Link to={`/${store_slug}`}>
+                    <UnifiedButton variant="primary">
                       ابدأ التسوق الآن
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
+                    </UnifiedButton>
+                  </Link>
+                </UnifiedCardContent>
+              </UnifiedCard>
             ) : (
               <div className="space-y-4">
                 {orders.map((order) => (
-                  <Card key={order.order_id}>
-                    <CardHeader>
+                  <UnifiedCard key={order.order_id} variant="glass" hover="lift">
+                    <UnifiedCardHeader>
                       <div className="flex items-center justify-between">
                         <div>
-                          <CardTitle className="text-lg">
+                          <UnifiedCardTitle className="text-lg">
                             طلب رقم: {order.order_number}
-                          </CardTitle>
+                          </UnifiedCardTitle>
                           <p className="text-sm text-muted-foreground">
                             {new Date(order.created_at).toLocaleDateString('ar-SA', {
                               year: 'numeric',
@@ -387,13 +389,18 @@ const StorefrontMyOrders = () => {
                             })}
                           </p>
                         </div>
-                        <Badge className={getStatusColor(order.status)}>
+                        <UnifiedBadge variant={
+                          order.status === 'DELIVERED' ? 'success' :
+                          order.status === 'CANCELLED' ? 'error' :
+                          order.status === 'SHIPPED' ? 'info' :
+                          'default'
+                        }>
                           {getStatusLabel(order.status)}
-                        </Badge>
+                        </UnifiedBadge>
                       </div>
-                    </CardHeader>
+                    </UnifiedCardHeader>
                     
-                    <CardContent>
+                    <UnifiedCardContent>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <span>عدد الأصناف: {order.item_count}</span>
@@ -412,8 +419,8 @@ const StorefrontMyOrders = () => {
                           ))}
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </UnifiedCardContent>
+                  </UnifiedCard>
                 ))}
               </div>
             )}
