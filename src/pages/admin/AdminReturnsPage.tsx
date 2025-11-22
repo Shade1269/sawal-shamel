@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -102,53 +102,53 @@ export default function AdminReturnsPage() {
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Clock className="h-4 w-4 text-amber-500" />
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium flex items-center gap-2">
+              <Clock className="h-4 w-4 text-warning" />
               قيد الانتظار
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">{stats.totalPending}</div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-500" />
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-success" />
               موافق عليها
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">{stats.totalApproved}</div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-blue-500" />
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-primary" />
               مكتملة
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">{stats.totalCompleted}</div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <XCircle className="h-4 w-4 text-red-500" />
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium flex items-center gap-2">
+              <XCircle className="h-4 w-4 text-danger" />
               مرفوضة
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">{stats.totalRejected}</div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
       {/* Tabs */}
@@ -170,11 +170,11 @@ export default function AdminReturnsPage() {
 
         {/* Pending Tab */}
         <TabsContent value="pending" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>الطلبات المعلقة</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <UnifiedCard variant="default" padding="md">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle>الطلبات المعلقة</UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               {pendingReturns.length === 0 ? (
                 <div className="text-center py-12">
                   <Clock className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
@@ -191,8 +191,8 @@ export default function AdminReturnsPage() {
                   ))}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </TabsContent>
 
         {/* Other tabs */}
@@ -202,11 +202,11 @@ export default function AdminReturnsPage() {
           { value: 'rejected', data: rejectedReturns, title: 'المرفوضة' }
         ].map(({ value, data, title }) => (
           <TabsContent key={value} value={value} className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{title}</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <UnifiedCard variant="default" padding="md">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle>{title}</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent>
                 {data.length === 0 ? (
                   <div className="text-center py-12">
                     <Package className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
@@ -223,8 +223,8 @@ export default function AdminReturnsPage() {
                     ))}
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </TabsContent>
         ))}
       </Tabs>
@@ -264,16 +264,18 @@ export default function AdminReturnsPage() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSelectedReturn(null)}>
+            <UnifiedButton variant="outline" onClick={() => setSelectedReturn(null)}>
               إلغاء
-            </Button>
-            <Button
+            </UnifiedButton>
+            <UnifiedButton
               onClick={() => processingStatus && handleProcess(processingStatus)}
               disabled={isProcessing || (processingStatus === 'REJECTED' && !adminNotes)}
-              variant={processingStatus === 'REJECTED' ? 'destructive' : 'default'}
+              variant={processingStatus === 'REJECTED' ? 'danger' : 'primary'}
+              loading={isProcessing}
+              loadingText="جاري المعالجة..."
             >
-              {isProcessing ? 'جاري المعالجة...' : 'تأكيد'}
-            </Button>
+              {!isProcessing && 'تأكيد'}
+            </UnifiedButton>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -304,9 +306,9 @@ function ReturnCard({ returnItem, onProcess }: ReturnCardProps) {
             </p>
           </div>
         </div>
-        <Badge variant={statusColors[returnItem.return_status]}>
+        <UnifiedBadge variant={returnItem.return_status === 'PENDING' ? 'warning' : returnItem.return_status === 'REJECTED' ? 'error' : 'success'}>
           {statusLabels[returnItem.return_status as keyof typeof statusLabels]}
-        </Badge>
+        </UnifiedBadge>
       </div>
 
       {/* Customer Info */}
@@ -358,37 +360,37 @@ function ReturnCard({ returnItem, onProcess }: ReturnCardProps) {
       {/* Action Buttons */}
       {onProcess && returnItem.return_status === 'PENDING' && (
         <div className="flex gap-2">
-          <Button
+          <UnifiedButton
             onClick={() => onProcess(returnItem, 'APPROVED')}
-            variant="default"
+            variant="primary"
             size="sm"
             className="flex-1"
+            leftIcon={<CheckCircle className="h-4 w-4" />}
           >
-            <CheckCircle className="h-4 w-4 mr-2" />
             موافقة
-          </Button>
-          <Button
+          </UnifiedButton>
+          <UnifiedButton
             onClick={() => onProcess(returnItem, 'REJECTED')}
-            variant="destructive"
+            variant="danger"
             size="sm"
             className="flex-1"
+            leftIcon={<XCircle className="h-4 w-4" />}
           >
-            <XCircle className="h-4 w-4 mr-2" />
             رفض
-          </Button>
+          </UnifiedButton>
         </div>
       )}
 
       {onProcess && returnItem.return_status === 'APPROVED' && (
-        <Button
+        <UnifiedButton
           onClick={() => onProcess(returnItem, 'COMPLETED')}
-          variant="default"
+          variant="primary"
           size="sm"
-          className="w-full"
+          fullWidth
+          leftIcon={<CheckCircle className="h-4 w-4" />}
         >
-          <CheckCircle className="h-4 w-4 mr-2" />
           تأكيد إتمام الإرجاع
-        </Button>
+        </UnifiedButton>
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -103,59 +103,59 @@ export default function AdminWithdrawalsPage() {
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Clock className="h-4 w-4 text-amber-500" />
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium flex items-center gap-2">
+              <Clock className="h-4 w-4 text-warning" />
               قيد الانتظار
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">{stats.totalPending}</div>
             <p className="text-xs text-muted-foreground mt-1">
               {stats.pendingAmount.toFixed(2)} ر.س
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-500" />
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-success" />
               موافق عليها
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">{stats.totalApproved}</div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-blue-500" />
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-primary" />
               مكتملة
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">{stats.totalCompleted}</div>
             <p className="text-xs text-muted-foreground mt-1">
               {stats.completedAmount.toFixed(2)} ر.س
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <XCircle className="h-4 w-4 text-red-500" />
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader className="pb-3">
+            <UnifiedCardTitle className="text-sm font-medium flex items-center gap-2">
+              <XCircle className="h-4 w-4 text-danger" />
               مرفوضة
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="text-2xl font-bold">{stats.totalRejected}</div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
       {/* Tabs */}
@@ -177,11 +177,11 @@ export default function AdminWithdrawalsPage() {
 
         {/* Pending Tab */}
         <TabsContent value="pending" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>الطلبات المعلقة</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <UnifiedCard variant="default" padding="md">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle>الطلبات المعلقة</UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               {pendingWithdrawals.length === 0 ? (
                 <div className="text-center py-12">
                   <Clock className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
@@ -198,8 +198,8 @@ export default function AdminWithdrawalsPage() {
                   ))}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </TabsContent>
 
         {/* Other tabs similar structure */}
@@ -209,11 +209,11 @@ export default function AdminWithdrawalsPage() {
           { value: 'rejected', data: rejectedWithdrawals, title: 'المرفوضة' }
         ].map(({ value, data, title }) => (
           <TabsContent key={value} value={value} className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>{title}</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <UnifiedCard variant="default" padding="md">
+              <UnifiedCardHeader>
+                <UnifiedCardTitle>{title}</UnifiedCardTitle>
+              </UnifiedCardHeader>
+              <UnifiedCardContent>
                 {data.length === 0 ? (
                   <div className="text-center py-12">
                     <ArrowDownToLine className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
@@ -230,8 +230,8 @@ export default function AdminWithdrawalsPage() {
                     ))}
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </TabsContent>
         ))}
       </Tabs>
@@ -271,16 +271,18 @@ export default function AdminWithdrawalsPage() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSelectedWithdrawal(null)}>
+            <UnifiedButton variant="outline" onClick={() => setSelectedWithdrawal(null)}>
               إلغاء
-            </Button>
-            <Button
+            </UnifiedButton>
+            <UnifiedButton
               onClick={() => processingStatus && handleProcess(processingStatus)}
               disabled={isProcessing || (processingStatus === 'REJECTED' && !adminNotes)}
-              variant={processingStatus === 'REJECTED' ? 'destructive' : 'default'}
+              variant={processingStatus === 'REJECTED' ? 'danger' : 'primary'}
+              loading={isProcessing}
+              loadingText="جاري المعالجة..."
             >
-              {isProcessing ? 'جاري المعالجة...' : 'تأكيد'}
-            </Button>
+              {!isProcessing && 'تأكيد'}
+            </UnifiedButton>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -311,9 +313,9 @@ function WithdrawalCard({ withdrawal, onProcess }: WithdrawalCardProps) {
             </p>
           </div>
         </div>
-        <Badge variant={statusColors[withdrawal.status]}>
+        <UnifiedBadge variant={withdrawal.status === 'PENDING' ? 'warning' : withdrawal.status === 'REJECTED' ? 'error' : 'success'}>
           {statusLabels[withdrawal.status as keyof typeof statusLabels]}
-        </Badge>
+        </UnifiedBadge>
       </div>
 
       {/* Affiliate Info */}
@@ -383,37 +385,37 @@ function WithdrawalCard({ withdrawal, onProcess }: WithdrawalCardProps) {
       {/* Action Buttons */}
       {onProcess && withdrawal.status === 'PENDING' && (
         <div className="flex gap-2">
-          <Button
+          <UnifiedButton
             onClick={() => onProcess(withdrawal, 'APPROVED')}
-            variant="default"
+            variant="primary"
             size="sm"
             className="flex-1"
+            leftIcon={<CheckCircle className="h-4 w-4" />}
           >
-            <CheckCircle className="h-4 w-4 mr-2" />
             موافقة
-          </Button>
-          <Button
+          </UnifiedButton>
+          <UnifiedButton
             onClick={() => onProcess(withdrawal, 'REJECTED')}
-            variant="destructive"
+            variant="danger"
             size="sm"
             className="flex-1"
+            leftIcon={<XCircle className="h-4 w-4" />}
           >
-            <XCircle className="h-4 w-4 mr-2" />
             رفض
-          </Button>
+          </UnifiedButton>
         </div>
       )}
 
       {onProcess && withdrawal.status === 'APPROVED' && (
-        <Button
+        <UnifiedButton
           onClick={() => onProcess(withdrawal, 'COMPLETED')}
-          variant="default"
+          variant="primary"
           size="sm"
-          className="w-full"
+          fullWidth
+          leftIcon={<CheckCircle className="h-4 w-4" />}
         >
-          <CheckCircle className="h-4 w-4 mr-2" />
           تأكيد إتمام التحويل
-        </Button>
+        </UnifiedButton>
       )}
     </div>
   );
