@@ -101,17 +101,17 @@ export const ModernInvoice = ({ orderId, onClose }: ModernInvoiceProps) => {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">فاتورة #{orderData.order_number}</h2>
         <div className="flex gap-2">
-          <Button onClick={handlePrint} variant="outline">
+          <UnifiedButton onClick={handlePrint} variant="outline">
             <Printer className="h-4 w-4 ml-2" />طباعة
-          </Button>
-          <Button onClick={handleDownload}>
+          </UnifiedButton>
+          <UnifiedButton onClick={handleDownload}>
             <Download className="h-4 w-4 ml-2" />تحميل PDF
-          </Button>
+          </UnifiedButton>
         </div>
       </div>
 
-      <Card>
-        <CardContent className="p-8" ref={invoiceRef}>
+      <UnifiedCard>
+        <UnifiedCardContent className="p-8" ref={invoiceRef}>
           <div className="flex items-start justify-between mb-8">
             <div className="flex items-center gap-4">
               {store?.logo_url ? (
@@ -223,8 +223,8 @@ export const ModernInvoice = ({ orderId, onClose }: ModernInvoiceProps) => {
           <div className="mt-12 pt-6 border-t text-center text-sm text-muted-foreground">
             <p>شكراً لتسوقكم معنا</p>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };

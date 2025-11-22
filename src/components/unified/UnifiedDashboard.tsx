@@ -286,21 +286,21 @@ export function UnifiedDashboard() {
 
   if (error) {
     return (
-      <Card>
-        <CardContent className="flex items-center justify-center py-12">
+      <UnifiedCard>
+        <UnifiedCardContent className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
               <AlertTriangle className="h-6 w-6 text-red-500" />
             </div>
             <h3 className="font-medium mb-2">خطأ في تحميل البيانات</h3>
             <p className="text-sm text-muted-foreground mb-4">{error}</p>
-            <Button onClick={refreshData}>
+            <UnifiedButton onClick={refreshData}>
               <RefreshCw className="h-4 w-4 mr-2" />
               إعادة المحاولة
-            </Button>
+            </UnifiedButton>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     );
   }
 
@@ -322,28 +322,28 @@ export function UnifiedDashboard() {
             </h1>
             <p className="text-sm md:text-base text-muted-foreground truncate">{config.description}</p>
             <div className="flex items-center gap-1 md:gap-2 mt-1 flex-wrap">
-              <Badge variant="outline" className="text-xs">
-                <Activity className="h-3 w-3 mr-1" />
-                <span className="hidden sm:inline">متصل الآن</span>
-                <span className="sm:hidden">متصل</span>
-              </Badge>
-              <Badge variant="secondary" className="text-xs hidden sm:inline-flex">
-                آخر تحديث: منذ دقيقتين
-              </Badge>
+            <UnifiedBadge variant="outline" className="text-xs">
+              <Activity className="h-3 w-3 mr-1" />
+              <span className="hidden sm:inline">متصل الآن</span>
+              <span className="sm:hidden">متصل</span>
+            </UnifiedBadge>
+            <UnifiedBadge variant="secondary" className="text-xs hidden sm:inline-flex">
+              آخر تحديث: منذ دقيقتين
+            </UnifiedBadge>
             </div>
           </div>
         </div>
         
         <div className="flex items-center gap-2 overflow-x-auto">
-          <Button variant="outline" size="sm" className="flex-shrink-0">
+          <UnifiedButton variant="outline" size="sm" className="flex-shrink-0">
             <Filter className="h-4 w-4 md:mr-2" />
             <span className="hidden md:inline">تصفية</span>
-          </Button>
-          <Button variant="outline" size="sm" className="flex-shrink-0">
+          </UnifiedButton>
+          <UnifiedButton variant="outline" size="sm" className="flex-shrink-0">
             <Download className="h-4 w-4 md:mr-2" />
             <span className="hidden md:inline">تصدير</span>
-          </Button>
-          <Button 
+          </UnifiedButton>
+          <UnifiedButton 
             variant="outline" 
             size="sm" 
             onClick={refreshData}
@@ -352,7 +352,7 @@ export function UnifiedDashboard() {
           >
             <RefreshCw className={`h-4 w-4 md:mr-2 ${loading ? 'animate-spin' : ''}`} />
             <span className="hidden md:inline">تحديث</span>
-          </Button>
+          </UnifiedButton>
         </div>
       </motion.div>
 
@@ -396,9 +396,9 @@ export function UnifiedDashboard() {
               <span className="hidden sm:inline">الإشعارات</span>
               <span className="sm:hidden">تنبيه</span>
               {notifications.filter(n => !n.isRead).length > 0 && (
-                <Badge variant="destructive" className="ml-1 text-xs px-1 py-0 hidden md:inline-flex">
+                <UnifiedBadge variant="error" className="ml-1 text-xs px-1 py-0 hidden md:inline-flex">
                   {notifications.filter(n => !n.isRead).length}
-                </Badge>
+                </UnifiedBadge>
               )}
             </TabsTrigger>
             <TabsTrigger value="performance" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm">
@@ -410,30 +410,30 @@ export function UnifiedDashboard() {
           
           {/* Mobile notification badge */}
           {notifications.filter(n => !n.isRead).length > 0 && (
-            <Badge variant="destructive" className="md:hidden text-xs">
+            <UnifiedBadge variant="error" className="md:hidden text-xs">
               {notifications.filter(n => !n.isRead).length}
-            </Badge>
+            </UnifiedBadge>
           )}
         </div>
 
         <TabsContent value="overview" className="space-y-6">
           {/* Quick Actions with Enhanced Design */}
-          <Card>
-            <CardHeader>
+          <UnifiedCard>
+            <UnifiedCardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="flex items-center gap-2">
+                  <UnifiedCardTitle className="flex items-center gap-2">
                     <Zap className="h-5 w-5 text-primary" />
                     الإجراءات السريعة
-                  </CardTitle>
-                  <CardDescription>الأدوات والوظائف الأكثر استخداماً</CardDescription>
+                  </UnifiedCardTitle>
+                  <UnifiedCardDescription>الأدوات والوظائف الأكثر استخداماً</UnifiedCardDescription>
                 </div>
-                <Badge variant="outline">
+                <UnifiedBadge variant="outline">
                   {config.quickActions.length} إجراء
-                </Badge>
+                </UnifiedBadge>
               </div>
-            </CardHeader>
-            <CardContent>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                 {config.quickActions.map((action, index) => {
                   const ActionIcon = action.icon;
@@ -443,12 +443,11 @@ export function UnifiedDashboard() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      <Button
-                        variant="outline"
-                        className="h-auto p-3 md:p-4 flex flex-col sm:flex-row items-start gap-3 hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/20 w-full"
-                        asChild
-                      >
-                        <a href={action.href}>
+                      <a href={action.href} className="w-full">
+                        <UnifiedButton
+                          variant="outline"
+                          className="h-auto p-3 md:p-4 flex flex-col sm:flex-row items-start gap-3 hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/20 w-full"
+                        >
                           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 w-full">
                             <div className={`p-2 md:p-3 rounded-lg ${action.color} shadow-lg flex-shrink-0`}>
                               <ActionIcon className="h-4 w-4 md:h-5 md:w-5 text-white" />
@@ -460,22 +459,22 @@ export function UnifiedDashboard() {
                               </div>
                             </div>
                           </div>
-                        </a>
-                      </Button>
+                        </UnifiedButton>
+                      </a>
                     </motion.div>
                   );
                 })}
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
 
           {/* Performance Overview */}
-          <Card>
-            <CardHeader>
-              <CardTitle>ملخص الأداء</CardTitle>
-              <CardDescription>مؤشرات الأداء الرئيسية</CardDescription>
-            </CardHeader>
-            <CardContent>
+          <UnifiedCard>
+            <UnifiedCardHeader>
+              <UnifiedCardTitle>ملخص الأداء</UnifiedCardTitle>
+              <UnifiedCardDescription>مؤشرات الأداء الرئيسية</UnifiedCardDescription>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs md:text-sm">
@@ -499,8 +498,8 @@ export function UnifiedDashboard() {
                   <Progress value={78} className="h-2" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </TabsContent>
 
         <TabsContent value="analytics">
@@ -524,12 +523,12 @@ export function UnifiedDashboard() {
         </TabsContent>
 
         <TabsContent value="performance">
-          <Card>
-            <CardHeader>
-              <CardTitle>تحليل الأداء المتقدم</CardTitle>
-              <CardDescription>مقاييس مفصلة للأداء والنمو</CardDescription>
-            </CardHeader>
-            <CardContent>
+          <UnifiedCard>
+            <UnifiedCardHeader>
+              <UnifiedCardTitle>تحليل الأداء المتقدم</UnifiedCardTitle>
+              <UnifiedCardDescription>مقاييس مفصلة للأداء والنمو</UnifiedCardDescription>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               <div className="space-y-6">
                 {/* Performance Metrics */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -537,23 +536,23 @@ export function UnifiedDashboard() {
                     { label: 'معدل النمو الشهري', value: '+15.2%', status: 'positive' },
                     { label: 'متوسط قيمة الطلب', value: '285 ر.س', status: 'positive' },
                     { label: 'معدل الاحتفاظ', value: '87%', status: 'positive' },
-                    { label: 'وقت الاستجابة', value: '1.2 ثانية', status: 'neutral' }
-                  ].map((metric, index) => (
-                    <Card key={index} className="text-center">
-                      <CardContent className="p-4">
-                        <div className="text-2xl font-bold">{metric.value}</div>
-                        <div className="text-sm text-muted-foreground">{metric.label}</div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                      { label: 'وقت الاستجابة', value: '1.2 ثانية', status: 'neutral' }
+                    ].map((metric, index) => (
+                      <UnifiedCard key={index} className="text-center">
+                        <UnifiedCardContent className="p-4">
+                          <div className="text-2xl font-bold">{metric.value}</div>
+                          <div className="text-sm text-muted-foreground">{metric.label}</div>
+                        </UnifiedCardContent>
+                      </UnifiedCard>
+                    ))}
                 </div>
 
                 {/* Goals Progress */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>تقدم الأهداف</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
+                <UnifiedCard>
+                  <UnifiedCardHeader>
+                    <UnifiedCardTitle>تقدم الأهداف</UnifiedCardTitle>
+                  </UnifiedCardHeader>
+                  <UnifiedCardContent className="space-y-4">
                     {[
                       { goal: 'مبيعات الشهر', current: 125000, target: 150000 },
                       { goal: 'عملاء جدد', current: 45, target: 60 },
@@ -570,11 +569,11 @@ export function UnifiedDashboard() {
                         />
                       </div>
                     ))}
-                  </CardContent>
-                </Card>
+                  </UnifiedCardContent>
+                </UnifiedCard>
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </TabsContent>
       </Tabs>
     </div>

@@ -290,8 +290,8 @@ export function UnifiedProductsManager() {
   };
 
   const ProductCard = ({ product }: { product: Product }) => (
-    <Card className="group hover:shadow-lg transition-shadow">
-      <CardContent className="p-3 md:p-4">
+    <UnifiedCard className="group hover:shadow-lg transition-shadow">
+      <UnifiedCardContent className="p-3 md:p-4">
         <div className="aspect-square bg-muted rounded-lg mb-3 relative overflow-hidden">
           {product.image_urls?.[0] ? (
             <img 
@@ -324,9 +324,9 @@ export function UnifiedProductsManager() {
               {product.price_sar} ر.س
             </span>
             {config.showCommission && product.commission_rate && (
-              <Badge variant="outline" className="text-xs">
+              <UnifiedBadge variant="outline" className="text-xs">
                 عمولة {product.commission_rate}%
-              </Badge>
+              </UnifiedBadge>
             )}
           </div>
           
@@ -353,7 +353,7 @@ export function UnifiedProductsManager() {
         
         {/* Mobile-first Action Buttons */}
         <div className="flex gap-1 md:gap-2 mt-3 md:mt-4 md:opacity-0 md:group-hover:opacity-100 md:transition-opacity">
-          <Button 
+          <UnifiedButton 
             size="sm" 
             variant="outline" 
             className="flex-1 text-xs md:text-sm h-8 md:h-9"
@@ -364,22 +364,22 @@ export function UnifiedProductsManager() {
           >
             <Eye className="h-3 w-3 md:h-4 md:w-4 md:mr-1" />
             <span className="hidden sm:inline">عرض</span>
-          </Button>
+          </UnifiedButton>
           {config.canEdit && (
-            <Button size="sm" variant="outline" className="flex-1 text-xs md:text-sm h-8 md:h-9">
+            <UnifiedButton size="sm" variant="outline" className="flex-1 text-xs md:text-sm h-8 md:h-9">
               <Edit className="h-3 w-3 md:h-4 md:w-4 md:mr-1" />
               <span className="hidden sm:inline">تعديل</span>
-            </Button>
+            </UnifiedButton>
           )}
           {managerType === 'affiliate' && (
-            <Button size="sm" className="flex-1 text-xs md:text-sm h-8 md:h-9">
+            <UnifiedButton size="sm" className="flex-1 text-xs md:text-sm h-8 md:h-9">
               <Plus className="h-3 w-3 md:h-4 md:w-4 md:mr-1" />
               <span className="hidden sm:inline">إضافة</span>
-            </Button>
+            </UnifiedButton>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </UnifiedCardContent>
+    </UnifiedCard>
   );
 
   if (loading) {
@@ -406,9 +406,9 @@ export function UnifiedProductsManager() {
           {config.actions.map((action, index) => {
             const ActionIcon = action.icon;
             return (
-              <Button
+              <UnifiedButton
                 key={index}
-                variant={action.variant}
+                variant={action.variant as any}
                 onClick={() => handleAction(action.action)}
                 size="sm"
                 className="flex-shrink-0"
@@ -416,21 +416,21 @@ export function UnifiedProductsManager() {
                 <ActionIcon className="h-4 w-4 md:mr-2" />
                 <span className="hidden md:inline">{action.label}</span>
                 <span className="md:hidden text-xs">{action.label.split(' ')[0]}</span>
-              </Button>
+              </UnifiedButton>
             );
           })}
         </div>
       </div>
 
       {/* Filters and Search - Enhanced Mobile */}
-      <Card>
-        <CardContent className="p-3 md:p-4">
+      <UnifiedCard>
+        <UnifiedCardContent className="p-3 md:p-4">
           <div className="space-y-3 md:space-y-0 md:flex md:items-center md:gap-4">
             {/* Search Input */}
             <div className="flex-1">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
+                <UnifiedInput
                   placeholder="البحث في المنتجات..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -456,31 +456,31 @@ export function UnifiedProductsManager() {
             {/* View Mode Buttons */}
             <div className="flex items-center gap-1 md:gap-2 justify-center md:justify-start">
               {config.viewModes.includes('grid') && (
-                <Button
-                  variant={viewMode === 'grid' ? 'default' : 'outline'}
+                <UnifiedButton
+                  variant={viewMode === 'grid' ? 'primary' : 'outline'}
                   size="sm"
                   onClick={() => setViewMode('grid')}
                   className="flex-1 md:flex-none min-w-[44px] h-10"
                 >
                   <Grid className="h-4 w-4" />
                   <span className="ml-1 hidden sm:inline text-xs">شبكة</span>
-                </Button>
+                </UnifiedButton>
               )}
               {config.viewModes.includes('list') && (
-                <Button
-                  variant={viewMode === 'list' ? 'default' : 'outline'}
+                <UnifiedButton
+                  variant={viewMode === 'list' ? 'primary' : 'outline'}
                   size="sm"
                   onClick={() => setViewMode('list')}
                   className="flex-1 md:flex-none min-w-[44px] h-10"
                 >
                   <List className="h-4 w-4" />
                   <span className="ml-1 hidden sm:inline text-xs">قائمة</span>
-                </Button>
+                </UnifiedButton>
               )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       {/* Products Grid - Enhanced Responsive */}
       {filteredProducts.length > 0 ? (
@@ -494,21 +494,21 @@ export function UnifiedProductsManager() {
           ))}
         </div>
       ) : (
-        <Card>
-          <CardContent className="p-6 md:p-12 text-center">
+        <UnifiedCard>
+          <UnifiedCardContent className="p-6 md:p-12 text-center">
             <Package className="h-8 w-8 md:h-12 md:w-12 text-muted-foreground mx-auto mb-3 md:mb-4" />
             <h3 className="text-base md:text-lg font-semibold mb-2">لا توجد منتجات</h3>
             <p className="text-sm md:text-base text-muted-foreground mb-3 md:mb-4">
               {searchQuery ? "لم يتم العثور على منتجات تطابق البحث" : "لا توجد منتجات متاحة حالياً"}
             </p>
             {config.canAdd && (
-              <Button onClick={() => setShowAddDialog(true)} size="sm">
+              <UnifiedButton onClick={() => setShowAddDialog(true)} size="sm">
                 <Plus className="h-4 w-4 mr-2" />
                 إضافة منتج جديد
-              </Button>
+              </UnifiedButton>
             )}
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       )}
 
       {/* Add Product Dialog - Mobile Responsive */}
@@ -569,11 +569,11 @@ export function UnifiedProductsManager() {
                   <div>
                     <h3 className="text-2xl font-bold">{selectedProduct.title}</h3>
                     <div className="flex items-center gap-2 mt-2">
-                      <Badge variant={selectedProduct.is_active ? 'default' : 'secondary'}>
+                      <UnifiedBadge variant={selectedProduct.is_active ? 'primary' : 'secondary'}>
                         {selectedProduct.is_active ? 'نشط' : 'غير نشط'}
-                      </Badge>
+                      </UnifiedBadge>
                       {selectedProduct.category && (
-                        <Badge variant="outline">{selectedProduct.category}</Badge>
+                        <UnifiedBadge variant="outline">{selectedProduct.category}</UnifiedBadge>
                       )}
                     </div>
                   </div>
@@ -584,9 +584,9 @@ export function UnifiedProductsManager() {
                     </span>
                     {config.showCommission && selectedProduct.commission_rate && (
                       <div className="mt-2">
-                        <Badge variant="outline">
+                        <UnifiedBadge variant="outline">
                           عمولة {selectedProduct.commission_rate}%
-                        </Badge>
+                        </UnifiedBadge>
                       </div>
                     )}
                   </div>
