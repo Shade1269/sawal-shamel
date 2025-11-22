@@ -99,7 +99,7 @@ const CustomerDetailsDrawer = ({ open, customer, reducedMotion, onClose, onViewO
       >
         <div className="flex items-center justify-between border-b border-[color:var(--glass-border)] px-4 py-3">
           <h2 className="text-lg font-semibold">بيانات العميل</h2>
-          <Button
+          <UnifiedButton
             ref={closeButtonRef}
             type="button"
             variant="ghost"
@@ -109,7 +109,7 @@ const CustomerDetailsDrawer = ({ open, customer, reducedMotion, onClose, onViewO
             className="rounded-full border border-transparent text-[color:var(--muted-foreground)] hover:border-[color:var(--glass-border)] hover:text-[color:var(--glass-fg)]"
           >
             <X className="h-5 w-5" aria-hidden />
-          </Button>
+          </UnifiedButton>
         </div>
 
         <div className="h-full overflow-y-auto p-5 space-y-6" data-section="customer-details-body">
@@ -127,7 +127,7 @@ const CustomerDetailsDrawer = ({ open, customer, reducedMotion, onClose, onViewO
               <span>{customer.lifetimeOrders}</span>
             </div>
             <div className="flex flex-wrap gap-2" data-section="customer-actions">
-              <Button
+              <UnifiedButton
                 variant="outline"
                 size="sm"
                 onClick={handleViewOrders}
@@ -135,7 +135,7 @@ const CustomerDetailsDrawer = ({ open, customer, reducedMotion, onClose, onViewO
               >
                 <ShoppingBag className="h-4 w-4" aria-hidden />
                 عرض في الطلبات
-              </Button>
+              </UnifiedButton>
             </div>
           </section>
 
@@ -206,7 +206,7 @@ const CustomerDetailsDrawer = ({ open, customer, reducedMotion, onClose, onViewO
           ) : null}
 
           <div className="flex flex-wrap gap-2" data-section="customer-cta">
-            <Button
+            <UnifiedButton
               variant="outline"
               size="sm"
               onClick={handleViewOrders}
@@ -214,7 +214,7 @@ const CustomerDetailsDrawer = ({ open, customer, reducedMotion, onClose, onViewO
             >
               <ArrowUpRight className="h-4 w-4" aria-hidden />
               فتح في الطلبات
-            </Button>
+            </UnifiedButton>
           </div>
         </div>
       </div>

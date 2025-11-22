@@ -52,7 +52,7 @@ const datePresets: { value: "today" | "7d" | "30d" | "custom"; label: string }[]
 ];
 
 const OrdersSkeleton = () => (
-  <Card
+  <UnifiedCard
     variant="glass"
     data-state="loading"
     className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/80"
@@ -73,7 +73,7 @@ const OrdersSkeleton = () => (
         ))}
       </div>
     </div>
-  </Card>
+  </UnifiedCard>
 );
 
 const currency = new Intl.NumberFormat("ar-SA", {
@@ -189,7 +189,7 @@ const AdminOrdersPage = () => {
       <PageTitle
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <Button
+            <UnifiedButton
               variant="outline"
               size="sm"
               onClick={refresh}
@@ -199,9 +199,9 @@ const AdminOrdersPage = () => {
             >
               <RefreshCw className="h-4 w-4" aria-hidden />
               <span>تحديث</span>
-            </Button>
-            <Button
-              variant="solid"
+            </UnifiedButton>
+            <UnifiedButton
+              variant="primary"
               size="sm"
               onClick={handleExport}
               disabled={isExporting || isLoading || total === 0}
@@ -210,7 +210,7 @@ const AdminOrdersPage = () => {
             >
               {isExporting ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
               <span>تصدير CSV</span>
-            </Button>
+            </UnifiedButton>
           </div>
         }
       />
@@ -218,7 +218,7 @@ const AdminOrdersPage = () => {
       {isLoading ? (
         <OrdersSkeleton />
       ) : (
-        <Card
+        <UnifiedCard
           variant="glass"
           data-section="orders-table"
           className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/88"
@@ -226,7 +226,7 @@ const AdminOrdersPage = () => {
           <div className="flex flex-col gap-5 p-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div className="relative flex-1">
-                <Input
+                <UnifiedInput
                   value={searchValue}
                   onChange={(event) => setSearchValue(event.target.value)}
                   placeholder="ابحث عن رقم الطلب أو العميل أو رقم الجوال"
@@ -245,9 +245,9 @@ const AdminOrdersPage = () => {
               {statusFilters.map((filter, index) => {
                 const isActive = filters.status === filter.value;
                 return (
-                  <Button
+                  <UnifiedButton
                     key={filter.value}
-                    variant={isActive ? "solid" : "outline"}
+                    variant={isActive ? "primary" : "outline"}
                     size="sm"
                     onClick={() => setStatusFilter(filter.value)}
                     aria-pressed={isActive}
@@ -255,7 +255,7 @@ const AdminOrdersPage = () => {
                     className="rounded-full border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/60 text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg)]/90"
                   >
                     {filter.label}
-                  </Button>
+                  </UnifiedButton>
                 );
               })}
             </div>
@@ -268,23 +268,23 @@ const AdminOrdersPage = () => {
               {datePresets.map((preset) => {
                 const isActive = filters.dateRange.preset === preset.value;
                 return (
-                  <Button
+                  <UnifiedButton
                     key={preset.value}
-                    variant={isActive ? "solid" : "outline"}
+                    variant={isActive ? "primary" : "outline"}
                     size="sm"
                     onClick={() => setDateRangePreset(preset.value)}
                     aria-pressed={isActive}
                     className="rounded-full border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/60 text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg)]/90"
                   >
                     {preset.label}
-                  </Button>
+                  </UnifiedButton>
                 );
               })}
               {filters.dateRange.preset === "custom" ? (
                 <div className="flex flex-wrap items-center gap-2 text-sm" data-custom-range>
                   <label className="flex items-center gap-2">
                     <span className="text-[color:var(--muted-foreground)]">من</span>
-                    <Input
+                    <UnifiedInput
                       type="date"
                       value={customFrom}
                       onChange={(event) => setCustomFrom(event.target.value)}
@@ -293,21 +293,21 @@ const AdminOrdersPage = () => {
                   </label>
                   <label className="flex items-center gap-2">
                     <span className="text-[color:var(--muted-foreground)]">إلى</span>
-                    <Input
+                    <UnifiedInput
                       type="date"
                       value={customTo}
                       onChange={(event) => setCustomTo(event.target.value)}
                       className="border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)]"
                     />
                   </label>
-                  <Button
+                  <UnifiedButton
                     size="sm"
                     variant="outline"
                     onClick={applyCustomRange}
                     className="border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg)]/90"
                   >
                     تطبيق
-                  </Button>
+                  </UnifiedButton>
                 </div>
               ) : null}
             </div>
@@ -377,7 +377,7 @@ const AdminOrdersPage = () => {
               <p className="text-sm text-[color:var(--muted-foreground)]">
                 عرض {visibleOrders.length} من {total}
               </p>
-              <Button
+              <UnifiedButton
                 variant="outline"
                 onClick={handleLoadMore}
                 disabled={!hasMore}
@@ -385,10 +385,10 @@ const AdminOrdersPage = () => {
                 className="border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg)]/90"
               >
                 {hasMore ? "تحميل المزيد" : "لا مزيد"}
-              </Button>
+              </UnifiedButton>
             </div>
           </div>
-        </Card>
+        </UnifiedCard>
       )}
 
       <Suspense fallback={null}>

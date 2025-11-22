@@ -133,7 +133,7 @@ const OrderDetailsDrawer = ({ open, order, onClose, reducedMotion }: OrderDetail
       >
         <div className="flex items-center justify-between border-b border-[color:var(--glass-border)] px-4 py-3">
           <h2 className="text-lg font-semibold">تفاصيل الطلب</h2>
-          <Button
+          <UnifiedButton
             ref={closeButtonRef}
             type="button"
             variant="ghost"
@@ -143,7 +143,7 @@ const OrderDetailsDrawer = ({ open, order, onClose, reducedMotion }: OrderDetail
             className="rounded-full border border-transparent text-[color:var(--muted-foreground)] hover:border-[color:var(--glass-border)] hover:text-[color:var(--glass-fg)]"
           >
             <X className="h-5 w-5" aria-hidden />
-          </Button>
+          </UnifiedButton>
         </div>
 
         <div className="h-full overflow-y-auto p-5 space-y-6" data-section="order-details-body">
@@ -163,11 +163,11 @@ const OrderDetailsDrawer = ({ open, order, onClose, reducedMotion }: OrderDetail
               <span className="text-base font-semibold">{currency.format(order.total)}</span>
             </div>
             <div className="flex flex-wrap gap-2" data-section="order-actions">
-              <Button variant="outline" size="sm" onClick={handleCopyOrderId} className="inline-flex items-center gap-2">
+              <UnifiedButton variant="outline" size="sm" onClick={handleCopyOrderId} className="inline-flex items-center gap-2">
                 <Copy className="h-4 w-4" aria-hidden />
                 انسخ رقم الطلب
-              </Button>
-              <Button
+              </UnifiedButton>
+              <UnifiedButton
                 variant="outline"
                 size="sm"
                 onClick={handleCopyConfirmation}
@@ -176,7 +176,7 @@ const OrderDetailsDrawer = ({ open, order, onClose, reducedMotion }: OrderDetail
               >
                 <ExternalLink className="h-4 w-4" aria-hidden />
                 انسخ رابط التأكيد
-              </Button>
+              </UnifiedButton>
             </div>
           </section>
 
@@ -185,9 +185,9 @@ const OrderDetailsDrawer = ({ open, order, onClose, reducedMotion }: OrderDetail
             <div className="rounded-[var(--radius-m)] border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/40 p-3 space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span>{order.customerName}</span>
-                <Button variant="ghost" size="sm" aria-label="اتصال بالعميل" className="text-[color:var(--muted-foreground)] hover:text-[color:var(--glass-fg)]">
+                <UnifiedButton variant="ghost" size="sm" aria-label="اتصال بالعميل" className="text-[color:var(--muted-foreground)] hover:text-[color:var(--glass-fg)]">
                   <Phone className="h-4 w-4" aria-hidden />
-                </Button>
+                </UnifiedButton>
               </div>
               <p className="text-xs text-[color:var(--muted-foreground)]">{showFullData ? order.customerEmail : maskEmail(order.customerEmail)}</p>
               <p className="text-xs text-[color:var(--muted-foreground)]">{showFullData ? order.customerPhone : maskPhone(order.customerPhone)}</p>
