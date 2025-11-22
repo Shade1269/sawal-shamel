@@ -14,9 +14,7 @@ import { useAdminOrders, getNextRowIndex } from "@/hooks/useAdminOrders";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useFastAuth } from "@/hooks/useFastAuth";
 import { maskPhone, shouldShowFullCustomerData } from "@/lib/privacy";
-import { Button } from "@/ui/Button";
-import { Card } from "@/ui/Card";
-import { Input } from "@/ui/Input";
+import { UnifiedButton, UnifiedCard, UnifiedInput } from "@/components/design-system";
 import { Skeleton } from "@/ui/Skeleton";
 
 const OrderDetailsDrawer = lazy(() => import("./components/OrderDetailsDrawer"));

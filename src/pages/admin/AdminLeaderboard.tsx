@@ -5,9 +5,7 @@ import { PageTitle } from "@/components/app-shell/PageTitle";
 import { useAdminLeaderboard } from "@/hooks/useAdminLeaderboard";
 import type { LeaderboardTrendPoint } from "@/hooks/useAdminLeaderboard";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { Badge } from "@/ui/Badge";
-import { Button } from "@/ui/Button";
-import { Card } from "@/ui/Card";
+import { UnifiedBadge, UnifiedButton, UnifiedCard } from "@/components/design-system";
 import { KpiCard, type KpiCardProps } from "@/components/home/KpiCard";
 import { Skeleton } from "@/ui/Skeleton";
 
@@ -112,36 +110,39 @@ const LeaderboardSkeleton = () => (
   <div className="space-y-6">
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       {Array.from({ length: 4 }).map((_, index) => (
-        <Card
+        <UnifiedCard
           key={`leaderboard-kpi-${index}`}
           variant="glass"
-          className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/80"
+          padding="md"
+          hover="none"
         >
           <div className="space-y-3 p-5">
             <Skeleton className="h-4 w-20 rounded-full" />
             <Skeleton className="h-8 w-32 rounded" />
             <Skeleton className="h-4 w-28 rounded" />
           </div>
-        </Card>
+        </UnifiedCard>
       ))}
     </div>
     <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-      <Card variant="glass" className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/80 p-5">
+      <UnifiedCard variant="glass" padding="md" hover="none" className="p-5">
         <Skeleton className="h-6 w-36 rounded" />
         <Skeleton className="mt-4 h-44 w-full rounded" />
-      </Card>
-      <Card variant="glass" className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/80 p-5">
+      </UnifiedCard>
+      <UnifiedCard variant="glass" padding="md" hover="none" className="p-5">
         <Skeleton className="h-6 w-32 rounded" />
         <Skeleton className="mt-4 h-12 w-full rounded" />
         <Skeleton className="mt-2 h-6 w-24 rounded" />
-      </Card>
+      </UnifiedCard>
     </div>
     <div className="grid gap-4 lg:grid-cols-2">
       {Array.from({ length: 2 }).map((_, columnIndex) => (
-        <Card
+        <UnifiedCard
           key={`leaderboard-table-${columnIndex}`}
           variant="glass"
-          className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/75 p-5"
+          padding="md"
+          hover="none"
+          className="p-5"
         >
           <Skeleton className="h-6 w-40 rounded" />
           <div className="mt-4 space-y-3">
@@ -149,7 +150,7 @@ const LeaderboardSkeleton = () => (
               <Skeleton key={`row-${columnIndex}-${rowIndex}`} className="h-12 w-full rounded" />
             ))}
           </div>
-        </Card>
+        </UnifiedCard>
       ))}
     </div>
   </div>
@@ -157,14 +158,14 @@ const LeaderboardSkeleton = () => (
 
 const buildDeltaBadge = (value: number) => {
   if (value === 0) {
-    return { label: "مستقر", icon: null, variant: "muted" as const };
+    return { label: "مستقر", icon: null, variant: "secondary" as const };
   }
 
   const isPositive = value > 0;
   return {
     label: `${Math.abs(value)}%`,
     icon: isPositive ? ArrowUpRight : ArrowDownRight,
-    variant: isPositive ? ("success" as const) : ("danger" as const),
+    variant: isPositive ? ("success" as const) : ("error" as const),
   };
 };
 
@@ -231,17 +232,16 @@ const AdminLeaderboardPage = () => {
     <div data-page="admin-leaderboard" className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
       <PageTitle
         actions={
-          <Button
+          <UnifiedButton
             variant="outline"
             size="sm"
             onClick={refresh}
             disabled={isLoading}
             aria-label="تحديث بيانات لوحة الترتيب"
-            className="inline-flex items-center gap-2 border-[color:var(--glass-border-strong, var(--glass-border))] bg-[color:var(--glass-bg)]/70 text-[color:var(--glass-fg)] hover:bg-[color:var(--glass-bg)]/90"
           >
             <RefreshCw className="h-4 w-4" aria-hidden />
             <span>تحديث</span>
-          </Button>
+          </UnifiedButton>
         }
       />
       <p className="text-sm text-muted-foreground">
@@ -266,27 +266,27 @@ const AdminLeaderboardPage = () => {
           </section>
 
           <section className="grid gap-4 lg:grid-cols-[2fr_1fr]" data-section="leaderboard-trend">
-            <Card
+            <UnifiedCard
               padding="lg"
               variant="glass"
-              shadow
-              className="flex flex-col gap-4 border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/90"
+              hover="none"
+              className="flex flex-col gap-4 shadow-card"
             >
               <header className="flex items-center justify-between gap-2">
                 <div>
                   <h3 className="text-base font-medium text-[color:var(--glass-fg)]">اتجاه الأداء</h3>
                   <p className="text-sm text-[color:var(--muted-foreground)]">نقاط وعمولات لأفضل المسوّقات خلال 14 يوم</p>
                 </div>
-                <Badge variant="outline">آخر تحديث: {summary.topPerformer.name}</Badge>
+                <UnifiedBadge variant="outline">آخر تحديث: {summary.topPerformer.name}</UnifiedBadge>
               </header>
               <TrendChart trend={trend} reducedMotion={reducedMotion} />
-            </Card>
+            </UnifiedCard>
 
-            <Card
+            <UnifiedCard
               padding="lg"
               variant="glass"
-              shadow
-              className="flex flex-col gap-4 border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85"
+              hover="none"
+              className="flex flex-col gap-4 shadow-card"
             >
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--glass-border)] bg-[color:var(--glass-bg-strong, var(--surface-2))] text-[color:var(--accent)]">
@@ -311,19 +311,19 @@ const AdminLeaderboardPage = () => {
                   <span className="font-semibold text-[color:var(--glass-fg)]">{pointsFormatter.format(summary.topPerformer.orders)}</span>
                 </div>
               </div>
-            </Card>
+            </UnifiedCard>
           </section>
 
           <section className="grid gap-4 lg:grid-cols-2" data-section="leaderboard-tables">
-            <Card
+            <UnifiedCard
               padding="lg"
               variant="glass"
-              shadow
-              className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/82"
+              hover="none"
+              className="shadow-card"
             >
               <header className="mb-4 flex items-center justify-between">
                 <h3 className="text-base font-medium text-[color:var(--glass-fg)]">ترتيب النقاط</h3>
-                <Badge variant="glass">أعلى 8</Badge>
+                <UnifiedBadge variant="glass">أعلى 8</UnifiedBadge>
               </header>
               <div role="table" aria-label="أفضل المسوّقات بحسب النقاط" className="space-y-2">
                 {topByPoints.map((entry) => {
@@ -347,26 +347,26 @@ const AdminLeaderboardPage = () => {
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="font-semibold">{pointsFormatter.format(entry.points)}</span>
-                        <Badge variant={delta.variant} className="inline-flex items-center gap-1 text-xs">
+                        <UnifiedBadge variant={delta.variant} className="inline-flex items-center gap-1 text-xs">
                           {DeltaIcon ? <DeltaIcon className="h-3.5 w-3.5" aria-hidden /> : null}
                           <span>{delta.label}</span>
-                        </Badge>
+                        </UnifiedBadge>
                       </div>
                     </div>
                   );
                 })}
               </div>
-            </Card>
+            </UnifiedCard>
 
-            <Card
+            <UnifiedCard
               padding="lg"
               variant="glass"
-              shadow
-              className="border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/82"
+              hover="none"
+              className="shadow-card"
             >
               <header className="mb-4 flex items-center justify-between">
                 <h3 className="text-base font-medium text-[color:var(--glass-fg)]">ترتيب العمولات</h3>
-                <Badge variant="glass">أعلى 8</Badge>
+                <UnifiedBadge variant="glass">أعلى 8</UnifiedBadge>
               </header>
               <div role="table" aria-label="أفضل المسوّقات بحسب العمولات" className="space-y-2">
                 {topByCommission.map((entry, index) => {
@@ -390,16 +390,16 @@ const AdminLeaderboardPage = () => {
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="font-semibold">{currencyFormatter.format(entry.commission)}</span>
-                        <Badge variant={delta.variant} className="inline-flex items-center gap-1 text-xs">
+                        <UnifiedBadge variant={delta.variant} className="inline-flex items-center gap-1 text-xs">
                           {DeltaIcon ? <DeltaIcon className="h-3.5 w-3.5" aria-hidden /> : null}
                           <span>{delta.label}</span>
-                        </Badge>
+                        </UnifiedBadge>
                       </div>
                     </div>
                   );
                 })}
               </div>
-            </Card>
+            </UnifiedCard>
           </section>
         </div>
       )}
