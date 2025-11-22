@@ -588,22 +588,22 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
 
 
       <section aria-labelledby="inventory-integration-admin">
-        <Card className="admin-card-enhanced">
-          <CardHeader className="pb-6">
-            <CardTitle id="inventory-integration-admin" className="text-3xl font-black admin-card">
+        <UnifiedCard className="admin-card-enhanced" variant="glass" hover="lift">
+          <UnifiedCardHeader className="pb-6">
+            <UnifiedCardTitle id="inventory-integration-admin" className="text-3xl font-black admin-card">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl gradient-icon-wrapper flex items-center justify-center shadow-glow">
                   <Package className="h-5 w-5 text-white" />
                 </div>
                 نظام المخزون الداخلي
               </div>
-            </CardTitle>
-            <CardDescription className="text-base admin-text">
+            </UnifiedCardTitle>
+            <UnifiedCardDescription className="text-base admin-text">
               تم إيقاف أي تكاملات خارجية، وتعمل المنصة الآن على إدارة الحجوزات والحركات عبر الجداول الداخلية والوظائف المخزنة في
               Supabase.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+            </UnifiedCardDescription>
+          </UnifiedCardHeader>
+          <UnifiedCardContent className="space-y-6">
             <div className="gradient-card-success rounded-xl p-6">
               <p className="admin-text text-emerald-800 dark:text-emerald-200">
                 تأكد من تطبيق الملف <code className="text-xs bg-emerald-100 dark:bg-emerald-900/50 px-3 py-1 rounded-md font-mono">sql/05_internal_inventory.sql</code> وضبط المتغير <code className="text-xs bg-emerald-100 dark:bg-emerald-900/50 px-3 py-1 rounded-md font-mono">DEFAULT_WAREHOUSE_CODE</code> ليشير إلى المستودع الأساسي.
@@ -612,36 +612,37 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                 بإمكانك مراقبة الحجوزات من جدول <code className="text-xs bg-emerald-100 dark:bg-emerald-900/50 px-3 py-1 rounded-md font-mono">inventory_reservations</code> والحركات الأخيرة من خلال واجهة <code className="text-xs bg-emerald-100 dark:bg-emerald-900/50 px-3 py-1 rounded-md font-mono">/inventory</code> الجديدة.
               </p>
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </section>
 
       {/* Cron Jobs Monitoring Section */}
       <section aria-labelledby="cron-monitoring">
-        <Card className="admin-card-enhanced">
-          <CardHeader className="pb-6">
-            <CardTitle id="cron-monitoring" className="text-3xl font-black admin-card">
+        <UnifiedCard className="admin-card-enhanced" variant="glass" hover="lift">
+          <UnifiedCardHeader className="pb-6">
+            <UnifiedCardTitle id="cron-monitoring" className="text-3xl font-black admin-card">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl gradient-info flex items-center justify-center shadow-glow">
                   <Clock className="h-5 w-5 text-white" />
                 </div>
                 سجل المهام التلقائية (Cron Jobs)
               </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <p className="text-sm text-muted-foreground">
                   آخر 50 عملية تلقائية لنظام المخزون الداخلي
                 </p>
-                <Button 
+                <UnifiedButton 
                   onClick={loadCronLogs} 
                   size="sm"
                   disabled={loading}
+                  variant="primary"
                 >
                   تحديث
-                </Button>
+                </UnifiedButton>
               </div>
               
               <div className="rounded-md border">
@@ -671,17 +672,17 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                             {log.executed_at ? new Date(log.executed_at).toLocaleString('ar') : 'غير محدد'}
                           </TableCell>
                           <TableCell>
-                            <Badge 
+                            <UnifiedBadge 
                               variant={
-                                log.status === 'success' ? 'default' : 
-                                log.status === 'partial_success' ? 'secondary' : 
-                                'destructive'
+                                log.status === 'success' ? 'success' : 
+                                log.status === 'partial_success' ? 'warning' : 
+                                'error'
                               }
                             >
                               {log.status === 'success' ? 'نجح' : 
                                log.status === 'partial_success' ? 'نجح جزئياً' : 
                                'فشل'}
-                            </Badge>
+                            </UnifiedBadge>
                           </TableCell>
                           <TableCell className="max-w-md">
                             <div className="truncate" title={log.message || ''}>
@@ -701,24 +702,24 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                 </div>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </section>
 
       {/* Emkan Integration Section */}
       <section aria-labelledby="emkan-integration-admin">
-        <Card>
-          <CardHeader>
-            <CardTitle id="emkan-integration-admin" className="text-2xl">تكامل إمكان - اشتري الآن وادفع لاحقاً</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <UnifiedCard variant="glass" hover="lift">
+          <UnifiedCardHeader>
+            <UnifiedCardTitle id="emkan-integration-admin" className="text-2xl">تكامل إمكان - اشتري الآن وادفع لاحقاً</UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <EmkanIntegration />
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </section>
 
-      <Card className="admin-card-enhanced">
-        <CardContent className="p-8">
+      <UnifiedCard className="admin-card-enhanced" variant="glass" hover="lift">
+        <UnifiedCardContent className="p-8">
           {/* Products Management Section */}
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-8">
@@ -741,29 +742,29 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
 
                 <div className="space-y-3">
                   <div className="flex gap-2">
-                    <Input 
+                    <UnifiedInput 
                       placeholder="اسم الصنف الجديد" 
                       value={newCategory} 
                       onChange={(e) => setNewCategory(e.target.value)} 
                     />
-                    <Button onClick={handleAddCategory} disabled={loading}>
+                    <UnifiedButton onClick={handleAddCategory} disabled={loading} variant="primary">
                       إضافة صنف
-                    </Button>
+                    </UnifiedButton>
                   </div>
 
                   <Dialog open={showAddProduct} onOpenChange={setShowAddProduct}>
                     <DialogTrigger asChild>
-                      <Button className="w-full">
+                      <UnifiedButton className="w-full" variant="primary">
                         <Plus className="h-4 w-4 mr-2" />
                         إضافة منتج جديد
-                      </Button>
+                      </UnifiedButton>
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                       <DialogHeader>
                         <DialogTitle>إضافة منتج جديد</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
-                        <Input
+                        <UnifiedInput
                           placeholder="اسم المنتج *"
                           value={newProduct.title}
                           onChange={(e) => setNewProduct({...newProduct, title: e.target.value})}
@@ -774,13 +775,13 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                           onChange={(e) => setNewProduct({...newProduct, description: e.target.value})}
                         />
                         <div className="grid grid-cols-2 gap-4">
-                          <Input
+                          <UnifiedInput
                             type="number"
                             placeholder="السعر الأساسي بالريال *"
                             value={newProduct.price_sar}
                             onChange={(e) => setNewProduct({...newProduct, price_sar: e.target.value})}
                           />
-                          <Input
+                          <UnifiedInput
                             type="number"
                             placeholder="المخزون الأساسي"
                             value={newProduct.stock}
@@ -792,14 +793,14 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                         <div className="space-y-4 border-t pt-4">
                           <div className="flex items-center justify-between">
                             <h4 className="font-semibold text-sm">تخصيص المنتج (مقاسات وألوان)</h4>
-                            <Button
+                            <UnifiedButton
                               type="button"
                               size="sm"
                               variant="outline"
                               onClick={addVariant}
                             >
                               + إضافة تركيبة جديدة
-                            </Button>
+                            </UnifiedButton>
                           </div>
                           
                           <div className="space-y-3 max-h-64 overflow-y-auto bg-muted/10 p-4 rounded-lg">
@@ -852,7 +853,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                                 
                                 <div className="col-span-3">
                                   <Label className="text-xs text-muted-foreground mb-1 block">العدد المتوفر</Label>
-                                  <Input
+                                  <UnifiedInput
                                     type="number"
                                     placeholder="0"
                                     value={variant.stock}
@@ -864,7 +865,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                                 
                                 {productVariants.length > 1 && (
                                   <div className="col-span-1 flex justify-center">
-                                    <Button
+                                    <UnifiedButton
                                       type="button"
                                       size="sm"
                                       variant="ghost"
@@ -872,7 +873,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                                       className="text-destructive hover:text-destructive h-9 w-9 p-0"
                                     >
                                       ×
-                                    </Button>
+                                    </UnifiedButton>
                                   </div>
                                 )}
                               </div>
@@ -894,7 +895,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                         <div className="space-y-4 border-t pt-4">
                           <div className="flex items-center justify-between">
                             <h4 className="font-semibold text-sm">صور المنتج (حتى 10 صور)</h4>
-                            <Badge variant="outline">{productImages.length}/10</Badge>
+                            <UnifiedBadge variant="outline">{productImages.length}/10</UnifiedBadge>
                           </div>
                           
                           <div className="space-y-4">
@@ -942,15 +943,15 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                                         className="w-full h-full object-cover"
                                       />
                                     </div>
-                                    <Button
+                                    <UnifiedButton
                                       type="button"
                                       size="sm"
-                                      variant="destructive"
+                                      variant="danger"
                                       className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                                       onClick={() => removeImage(index)}
                                     >
                                       ×
-                                    </Button>
+                                    </UnifiedButton>
                                     <div className="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-1 rounded">
                                       {index + 1}
                                     </div>
@@ -974,7 +975,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                               ))}
                             </SelectContent>
                           </Select>
-                          <Input
+                          <UnifiedInput
                             type="number"
                             placeholder="نسبة العمولة %"
                             value={newProduct.commission_rate}
@@ -982,12 +983,12 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                           />
                         </div>
                         <div className="flex gap-2">
-                          <Button onClick={handleAddProduct} disabled={addingProduct}>
+                          <UnifiedButton onClick={handleAddProduct} disabled={addingProduct} variant="primary">
                             إضافة المنتج
-                          </Button>
-                          <Button variant="outline" onClick={() => setShowAddProduct(false)}>
+                          </UnifiedButton>
+                          <UnifiedButton variant="outline" onClick={() => setShowAddProduct(false)}>
                             إلغاء
-                          </Button>
+                          </UnifiedButton>
                         </div>
                       </div>
                     </DialogContent>
@@ -1000,7 +1001,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                 <div className="flex items-center gap-2 mb-4">
                   <Package className="h-5 w-5 text-primary" />
                   <h3 className="font-semibold">قائمة المنتجات</h3>
-                  <Badge variant="outline">{products.length}</Badge>
+                  <UnifiedBadge variant="outline">{products.length}</UnifiedBadge>
                 </div>
 
                 <div className="max-h-96 overflow-y-auto space-y-3">
@@ -1010,27 +1011,27 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <h4 className="font-medium">{product.title}</h4>
-                            <Badge 
-                              variant={product.is_active ? "default" : "secondary"}
+                            <UnifiedBadge 
+                              variant={product.is_active ? "success" : "secondary"}
                               className="text-xs"
                             >
                               {product.is_active ? "ظاهر" : "مخفي"}
-                            </Badge>
+                            </UnifiedBadge>
                           </div>
                           <p className="text-sm text-muted-foreground mb-2">{product.description}</p>
                           <div className="flex items-center gap-4 text-sm">
                             <span className="font-medium text-primary">{product.price_sar} ريال</span>
                             <span>المخزون: {product.stock}</span>
                             {product.category && (
-                              <Badge variant="outline" className="text-xs">
+                              <UnifiedBadge variant="outline" className="text-xs">
                                 {product.category}
-                              </Badge>
+                              </UnifiedBadge>
                             )}
                           </div>
                         </div>
                         
                         <div className="flex gap-1">
-                          <Button
+                          <UnifiedButton
                             variant="ghost"
                             size="sm"
                             onClick={() => handleToggleProductVisibility(product)}
@@ -1038,16 +1039,16 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                             className={!product.is_active ? "ring-2 ring-primary/50 ring-offset-2 ring-offset-background shadow-lg" : undefined}
                           >
                             {product.is_active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </Button>
-                          <Button
+                          </UnifiedButton>
+                          <UnifiedButton
                             variant="ghost"
                             size="sm"
                             onClick={() => setEditingProduct(product)}
                             disabled={loading}
                           >
                             <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
+                          </UnifiedButton>
+                          <UnifiedButton
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteProduct(product)}
@@ -1055,7 +1056,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                             className="text-destructive hover:text-destructive"
                           >
                             <Trash2 className="h-4 w-4" />
-                          </Button>
+                          </UnifiedButton>
                         </div>
                       </div>
                     </div>
@@ -1091,22 +1092,22 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                 </div>
 
                 <div className="space-y-3">
-                  <Input
+                  <UnifiedInput
                     placeholder="معرف الوسيلة (مثل: tabby, tamara)"
                     value={newPaymentProvider.gateway_name}
                     onChange={(e) => setNewPaymentProvider({...newPaymentProvider, gateway_name: e.target.value})}
                   />
-                  <Input
+                  <UnifiedInput
                     placeholder="الاسم المعروض (مثل: تابي، تمارا)"
                     value={newPaymentProvider.display_name}
                     onChange={(e) => setNewPaymentProvider({...newPaymentProvider, display_name: e.target.value})}
                   />
-                  <Input
+                  <UnifiedInput
                     placeholder="API Key (اختياري)"
                     value={newPaymentProvider.api_key}
                     onChange={(e) => setNewPaymentProvider({...newPaymentProvider, api_key: e.target.value})}
                   />
-                  <Button
+                  <UnifiedButton
                     onClick={async () => {
                       if (!newPaymentProvider.gateway_name.trim() || !newPaymentProvider.display_name.trim()) {
                         toast({ title: "مطلوب", description: "المعرف والاسم المعروض مطلوبان", variant: "destructive" });
@@ -1130,9 +1131,10 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                     }}
                     className="w-full"
                     disabled={paymentLoading}
+                    variant="primary"
                   >
                     إضافة وسيلة دفع
-                  </Button>
+                  </UnifiedButton>
                 </div>
               </div>
 
@@ -1141,7 +1143,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                 <div className="flex items-center gap-2 mb-4">
                   <Settings className="h-5 w-5 text-primary" />
                   <h3 className="font-semibold">وسائل الدفع</h3>
-                  <Badge variant="outline">{paymentGateways.length}</Badge>
+                  <UnifiedBadge variant="outline">{paymentGateways.length}</UnifiedBadge>
                 </div>
 
                 <div className="max-h-96 overflow-y-auto space-y-3">
@@ -1154,11 +1156,11 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                           <p className="text-sm text-muted-foreground">
                             API Key: {gateway.api_key ? '••••••••' : 'غير محدد'}
                           </p>
-                          <Badge variant={gateway.is_enabled ? 'default' : 'secondary'} className="mt-1">
+                          <UnifiedBadge variant={gateway.is_enabled ? 'success' : 'secondary'} className="mt-1">
                             {gateway.is_enabled ? 'نشط' : 'غير نشط'}
-                          </Badge>
+                          </UnifiedBadge>
                         </div>
-                        <Button
+                        <UnifiedButton
                           variant="ghost"
                           size="sm"
                           onClick={async () => {
@@ -1169,7 +1171,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                           disabled={paymentLoading}
                         >
                           <Trash2 className="h-4 w-4" />
-                        </Button>
+                        </UnifiedButton>
                       </div>
                     </div>
                   ))}
@@ -1204,33 +1206,33 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                 </div>
 
                 <div className="space-y-3">
-                  <Input
+                  <UnifiedInput
                     placeholder="اسم الشركة بالعربية"
                     value={newShippingCompany.name}
                     onChange={(e) => setNewShippingCompany({...newShippingCompany, name: e.target.value})}
                   />
-                  <Input
+                  <UnifiedInput
                     placeholder="اسم الشركة بالإنجليزية"
                     value={newShippingCompany.name_en}
                     onChange={(e) => setNewShippingCompany({...newShippingCompany, name_en: e.target.value})}
                   />
-                  <Input
+                  <UnifiedInput
                     placeholder="رمز الشركة (مثل: aramex, smsa)"
                     value={newShippingCompany.code}
                     onChange={(e) => setNewShippingCompany({...newShippingCompany, code: e.target.value})}
                   />
-                  <Input
+                  <UnifiedInput
                     placeholder="رابط API (اختياري)"
                     value={newShippingCompany.api_endpoint}
                     onChange={(e) => setNewShippingCompany({...newShippingCompany, api_endpoint: e.target.value})}
                   />
-                  <Input
+                  <UnifiedInput
                     type="number"
                     placeholder="السعر الأساسي (ريال سعودي) *"
                     value={newShippingCompany.base_price_sar}
                     onChange={(e) => setNewShippingCompany({...newShippingCompany, base_price_sar: e.target.value})}
                   />
-                  <Button
+                  <UnifiedButton
                     onClick={async () => {
                       if (!newShippingCompany.name.trim() || !newShippingCompany.code.trim() || !newShippingCompany.base_price_sar) {
                         toast({ title: "مطلوب", description: "الاسم والرمز والسعر مطلوبان", variant: "destructive" });
@@ -1251,16 +1253,17 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                     }}
                     className="w-full"
                     disabled={shippingLoading}
+                    variant="primary"
                   >
                     إضافة شركة شحن
-                  </Button>
-                  <Button
+                  </UnifiedButton>
+                  <UnifiedButton
                     variant="outline"
                     onClick={() => navigate('/admin/shipping')}
                     className="w-full"
                   >
                     إدارة المناطق والأسعار
-                  </Button>
+                  </UnifiedButton>
                 </div>
               </div>
 
@@ -1269,7 +1272,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                 <div className="flex items-center gap-2 mb-4">
                   <Package className="h-5 w-5 text-primary" />
                   <h3 className="font-semibold">شركات الشحن</h3>
-                  <Badge variant="outline">{shippingProviders.length}</Badge>
+                  <UnifiedBadge variant="outline">{shippingProviders.length}</UnifiedBadge>
                 </div>
 
                 <div className="max-h-96 overflow-y-auto space-y-3">
@@ -1282,54 +1285,54 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                            <p className="text-sm font-semibold text-primary mt-1">
                              السعر: {provider.base_price_sar || 0} ريال
                            </p>
-                           {provider.api_endpoint && (
-                             <p className="text-xs text-muted-foreground mt-1">
-                               API: {provider.api_endpoint}
-                             </p>
-                           )}
-                           <Badge variant={provider.is_active ? 'default' : 'secondary'} className="mt-2">
-                             {provider.is_active ? 'نشط' : 'غير نشط'}
-                           </Badge>
-                         </div>
-                         <Button
-                           variant="ghost"
-                           size="sm"
-                           onClick={async () => {
-                             const nextActive = !provider.is_active;
-                             await updateShippingProvider(provider.id, { is_active: nextActive });
-                             toast({ 
-                               title: nextActive ? "تم التفعيل" : "تم التعطيل", 
-                               description: `تم ${nextActive ? 'تفعيل' : 'تعطيل'} الشركة بنجاح` 
-                             });
-                             await refetchShipping?.();
-                           }}
-                           disabled={shippingLoading}
-                         >
-                           {provider.is_active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                         </Button>
-                         <Button
-                           variant="ghost"
-                           size="sm"
-                           onClick={async () => {
-                             const newName = window.prompt("تعديل اسم الشركة", provider.name);
-                             if (newName === null) return;
-                             const newCode = window.prompt("تعديل رمز الشركة", provider.code);
-                             if (newCode === null) return;
-                             const newPrice = window.prompt("تعديل السعر الأساسي (ريال)", String(provider.base_price_sar || 0));
-                             if (newPrice === null) return;
-                             await updateShippingProvider(provider.id, { 
-                               name: newName.trim(), 
-                               code: newCode.trim(),
-                               base_price_sar: parseFloat(newPrice)
-                             });
-                             toast({ title: "تم التحديث", description: "تم تحديث بيانات شركة الشحن" });
-                             await refetchShipping?.();
-                           }}
-                           disabled={shippingLoading}
-                           title="تعديل"
-                         >
-                           <Edit className="h-4 w-4" />
-                         </Button>
+                            {provider.api_endpoint && (
+                              <p className="text-xs text-muted-foreground mt-1">
+                                API: {provider.api_endpoint}
+                              </p>
+                            )}
+                            <UnifiedBadge variant={provider.is_active ? 'success' : 'secondary'} className="mt-2">
+                              {provider.is_active ? 'نشط' : 'غير نشط'}
+                            </UnifiedBadge>
+                          </div>
+                          <UnifiedButton
+                            variant="ghost"
+                            size="sm"
+                            onClick={async () => {
+                              const nextActive = !provider.is_active;
+                              await updateShippingProvider(provider.id, { is_active: nextActive });
+                              toast({ 
+                                title: nextActive ? "تم التفعيل" : "تم التعطيل", 
+                                description: `تم ${nextActive ? 'تفعيل' : 'تعطيل'} الشركة بنجاح` 
+                              });
+                              await refetchShipping?.();
+                            }}
+                            disabled={shippingLoading}
+                          >
+                            {provider.is_active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </UnifiedButton>
+                          <UnifiedButton
+                            variant="ghost"
+                            size="sm"
+                            onClick={async () => {
+                              const newName = window.prompt("تعديل اسم الشركة", provider.name);
+                              if (newName === null) return;
+                              const newCode = window.prompt("تعديل رمز الشركة", provider.code);
+                              if (newCode === null) return;
+                              const newPrice = window.prompt("تعديل السعر الأساسي (ريال)", String(provider.base_price_sar || 0));
+                              if (newPrice === null) return;
+                              await updateShippingProvider(provider.id, { 
+                                name: newName.trim(), 
+                                code: newCode.trim(),
+                                base_price_sar: parseFloat(newPrice)
+                              });
+                              toast({ title: "تم التحديث", description: "تم تحديث بيانات شركة الشحن" });
+                              await refetchShipping?.();
+                            }}
+                            disabled={shippingLoading}
+                            title="تعديل"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </UnifiedButton>
                        </div>
                     </div>
                   ))}
@@ -1349,7 +1352,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
               <br />
               ✓ وسائل الدفع وشركات الشحن متاحة الآن لجميع المتاجر
               <br />
-              ✓ لتحديد أسعار ومناطق الشحن، استخدم <Button variant="link" className="p-0 h-auto" onClick={() => navigate('/admin/shipping')}>صفحة إدارة الشحن</Button>
+              ✓ لتحديد أسعار ومناطق الشحن، استخدم <UnifiedButton variant="link" className="p-0 h-auto" onClick={() => navigate('/admin/shipping')}>صفحة إدارة الشحن</UnifiedButton>
             </p>
           </div>
 
@@ -1365,17 +1368,17 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
               </div>
               
               <div className="space-y-3">
-                <Input 
+                <UnifiedInput 
                   placeholder="اسم الغرفة الجديدة" 
                   value={channelName} 
                   onChange={(e) => setChannelName(e.target.value)} 
                 />
-                <Input 
+                <UnifiedInput 
                   placeholder="وصف الغرفة (اختياري)" 
                   value={channelDesc} 
                   onChange={(e) => setChannelDesc(e.target.value)} 
                 />
-                <Button
+                <UnifiedButton
                   onClick={async () => {
                     if (!channelName.trim()) {
                       toast({ title: "الاسم مطلوب", variant: "destructive" });
@@ -1391,10 +1394,11 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                   }}
                   className="w-full"
                   disabled={loading}
+                  variant="primary"
                 >
                   <MessageCircle className="h-4 w-4 mr-2" />
                   إنشاء غرفة جديدة
-                </Button>
+                </UnifiedButton>
               </div>
 
               <div className="border-t pt-4 space-y-2">
@@ -1405,16 +1409,16 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{channel.name}</span>
-                          <Badge variant="outline" className="text-xs">
+                          <UnifiedBadge variant="outline" className="text-xs">
                             <Users className="h-3 w-3 mr-1" />
                             {channelMembers[channel.id] || 0}
-                          </Badge>
+                          </UnifiedBadge>
                         </div>
                         {channel.description && (
                           <p className="text-xs text-muted-foreground mt-1">{channel.description}</p>
                         )}
                       </div>
-                      <Button
+                      <UnifiedButton
                         variant="ghost"
                         size="sm"
                         onClick={(e) => {
@@ -1429,7 +1433,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                         disabled={loading}
                       >
                         <Trash2 className="h-4 w-4" />
-                      </Button>
+                      </UnifiedButton>
                     </div>
                   ))}
                 </div>
@@ -1446,19 +1450,19 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
               </div>
 
               <div className="space-y-3">
-                <Input 
+                <UnifiedInput 
                   placeholder="بريد المستخدم" 
                   value={targetEmail} 
                   onChange={(e) => setTargetEmail(e.target.value)} 
                 />
-                <Input 
+                <UnifiedInput 
                   placeholder="كلمة المرور (للمستخدمين الجدد)" 
                   type="password" 
                   value={newPassword} 
                   onChange={(e) => setNewPassword(e.target.value)} 
                 />
                 <div className="grid grid-cols-2 gap-2">
-                  <Button
+                  <UnifiedButton
                     onClick={async () => {
                       if (!targetEmail.trim()) return;
                       const res = await callAdminApi("assign_moderator", { email: targetEmail.trim().toLowerCase() });
@@ -1469,11 +1473,12 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                       }
                     }}
                     disabled={loading}
+                    variant="primary"
                   >
                     <UserCheck className="h-4 w-4 mr-2" />
                     تعيين مشرف
-                  </Button>
-                  <Button
+                  </UnifiedButton>
+                  <UnifiedButton
                     variant="outline"
                     onClick={async () => {
                       if (!targetEmail.trim() || !newPassword.trim()) {
@@ -1496,7 +1501,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                   >
                     <UserCheck className="h-4 w-4 mr-2" />
                     إنشاء مشرف
-                  </Button>
+                  </UnifiedButton>
                 </div>
               </div>
 
@@ -1509,7 +1514,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                         <div className="font-medium">{moderator.full_name || moderator.email}</div>
                         <div className="text-xs text-muted-foreground">{moderator.email}</div>
                       </div>
-                      <Button 
+                      <UnifiedButton 
                         variant="ghost" 
                         size="sm"
                         onClick={async () => {
@@ -1522,7 +1527,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                         className="text-destructive hover:text-destructive"
                       >
                         <UserX className="h-4 w-4" />
-                      </Button>
+                      </UnifiedButton>
                     </div>
                   ))}
                   {users.filter(u => u.role === 'moderator').length === 0 && (
@@ -1542,14 +1547,14 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
               </div>
 
               <div className="flex gap-2 mb-3">
-                <Input 
+                <UnifiedInput 
                   placeholder="بحث بالاسم أو البريد" 
                   value={search} 
                   onChange={(e) => setSearch(e.target.value)} 
                 />
-                <Button onClick={loadLists} disabled={loading} size="sm">
+                <UnifiedButton onClick={loadLists} disabled={loading} size="sm" variant="primary">
                   بحث
-                </Button>
+                </UnifiedButton>
               </div>
 
               <div className="max-h-80 overflow-y-auto space-y-2">
@@ -1585,10 +1590,10 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                             <span className="font-medium text-sm truncate">
                               {user.full_name || user.email}
                             </span>
-                            <Badge 
+                            <UnifiedBadge 
                               variant={
                                 user.role === 'admin' ? 'default' : 
-                                user.role === 'moderator' ? 'secondary' : 
+                                user.role === 'moderator' ? 'warning' : 
                                 'outline'
                               }
                               className="text-xs shrink-0"
@@ -1597,7 +1602,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                                user.role === 'moderator' ? 'مشرف' :
                                user.role === 'affiliate' || user.role === 'merchant' || user.role === 'marketer' ? 'مسوق' :
                                'مستخدم'}
-                            </Badge>
+                            </UnifiedBadge>
                           </div>
                           <div className="flex items-center gap-2">
                             <p className="text-xs text-muted-foreground truncate">{user.email}</p>
@@ -1625,8 +1630,8 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
             </div>
 
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       {/* User Profile Dialog */}
       <UserProfileDialog
@@ -1647,7 +1652,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
           </DialogHeader>
           {editingProduct && (
             <div className="space-y-4">
-              <Input
+              <UnifiedInput
                 placeholder="اسم المنتج *"
                 value={editingProduct.title}
                 onChange={(e) => setEditingProduct({...editingProduct, title: e.target.value})}
@@ -1658,13 +1663,13 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                 onChange={(e) => setEditingProduct({...editingProduct, description: e.target.value})}
               />
               <div className="grid grid-cols-2 gap-4">
-                <Input
+                <UnifiedInput
                   type="number"
                   placeholder="السعر بالريال *"
                   value={editingProduct.price_sar}
                   onChange={(e) => setEditingProduct({...editingProduct, price_sar: parseFloat(e.target.value)})}
                 />
-                <Input
+                <UnifiedInput
                   type="number"
                   placeholder="المخزون"
                   value={editingProduct.stock}
@@ -1684,7 +1689,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                     ))}
                   </SelectContent>
                 </Select>
-                <Input
+                <UnifiedInput
                   type="number"
                   placeholder="نسبة العمولة %"
                   value={editingProduct.commission_rate}
@@ -1692,7 +1697,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                 />
               </div>
               <div className="flex gap-2">
-                <Button 
+                <UnifiedButton 
                   onClick={async () => {
                     try {
                       await updateProduct(editingProduct.id, {
@@ -1712,12 +1717,13 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                     }
                   }}
                   disabled={loading}
+                  variant="primary"
                 >
                   حفظ التغييرات
-                </Button>
-                <Button variant="outline" onClick={() => setEditingProduct(null)}>
+                </UnifiedButton>
+                <UnifiedButton variant="outline" onClick={() => setEditingProduct(null)}>
                   إلغاء
-                </Button>
+                </UnifiedButton>
               </div>
             </div>
           )}
