@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Heart, Share2, Star, Truck, ShieldCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { cn } from '@/lib/utils';
 
 const sizes = [

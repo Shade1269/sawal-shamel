@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 

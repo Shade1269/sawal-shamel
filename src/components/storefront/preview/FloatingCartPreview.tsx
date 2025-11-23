@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton, UnifiedBadge } from '@/components/design-system';
 import { X, Minus, Plus, ShoppingBag, Trash2, Gift } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 

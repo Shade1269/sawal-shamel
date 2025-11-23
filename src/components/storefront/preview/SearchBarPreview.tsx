@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { Search, TrendingUp, Clock, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 

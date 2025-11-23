@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { motion } from 'framer-motion';
 
 export const HeroPreview = () => {
@@ -17,12 +17,12 @@ export const HeroPreview = () => {
                 أحدث التشكيلات
               </h1>
               
-              <Button 
-                size="lg" 
-                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-10 py-6 text-lg font-semibold"
+              <UnifiedButton 
+                variant="primary"
+                className="px-10 py-6 text-lg font-semibold"
               >
                 تسوق الآن
-              </Button>
+              </UnifiedButton>
             </motion.div>
 
             {/* Image - Right side in RTL */}
