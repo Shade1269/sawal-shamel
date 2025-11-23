@@ -213,21 +213,21 @@ export default function LuxuryShowcase() {
           </div>
           <div className="flex gap-2">
             <Button
-              variant={theme === "default" ? "default" : "outline"}
+              variant={theme === "default" ? "primary" : "outline"}
               onClick={() => applyTheme("default")}
               size="sm"
             >
               افتراضي
             </Button>
             <Button
-              variant={theme === "luxury" ? "default" : "outline"}
+              variant={theme === "luxury" ? "primary" : "outline"}
               onClick={() => applyTheme("luxury")}
               size="sm"
             >
               فاخر
             </Button>
             <Button
-              variant={theme === "ferrari" ? "default" : "outline"}
+              variant={theme === "ferrari" ? "primary" : "outline"}
               onClick={() => applyTheme("ferrari")}
               size="sm"
               className="bg-red-600 hover:bg-red-700"
