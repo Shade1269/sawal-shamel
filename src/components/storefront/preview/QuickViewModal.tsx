@@ -140,12 +140,12 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
             </div>
 
             {/* Add to Cart Button */}
-            <Button 
+            <UnifiedButton 
               size="lg" 
               className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold py-7 mt-8 shadow-lg"
             >
               أضف إلى السلة
-            </Button>
+            </UnifiedButton>
           </div>
         </div>
       </DialogContent>

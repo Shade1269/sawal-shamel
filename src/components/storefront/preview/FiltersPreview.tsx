@@ -68,9 +68,9 @@ export const FiltersPreview = () => {
         >
           <SlidersHorizontal className="w-6 h-6" />
           {activeFiltersCount > 0 && (
-            <Badge className="absolute -top-2 -right-2 w-6 h-6 rounded-full p-0 flex items-center justify-center bg-destructive animate-pulse">
+            <UnifiedBadge className="absolute -top-2 -right-2 w-6 h-6 rounded-full p-0 flex items-center justify-center bg-destructive animate-pulse">
               {activeFiltersCount}
-            </Badge>
+            </UnifiedBadge>
           )}
         </motion.button>
       </div>
@@ -113,14 +113,14 @@ export const FiltersPreview = () => {
               className="fixed left-0 top-0 h-full w-full sm:w-[400px] bg-background shadow-2xl z-50 flex flex-col lg:hidden"
             >
               <div className="p-6 border-b border-border flex items-center justify-between">
-                <Button
+                <UnifiedButton
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsOpen(false)}
                   className="rounded-full"
                 >
                   <X className="w-5 h-5" />
-                </Button>
+                </UnifiedButton>
                 <h2 className="text-xl font-bold">الفلاتر</h2>
               </div>
 
@@ -142,13 +142,13 @@ export const FiltersPreview = () => {
               </div>
 
               <div className="p-6 border-t border-border">
-                <Button
+                <UnifiedButton
                   size="lg"
                   className="w-full bg-gradient-luxury"
                   onClick={() => setIsOpen(false)}
                 >
                   عرض النتائج
-                </Button>
+                </UnifiedButton>
               </div>
             </motion.div>
           </>
@@ -178,16 +178,16 @@ const FiltersSidebar = ({
       {/* Active Filters */}
       {activeFiltersCount > 0 && (
         <div className="flex items-center justify-between pb-4 border-b border-border">
-          <Button
+          <UnifiedButton
             variant="ghost"
             size="sm"
             onClick={clearAllFilters}
             className="text-destructive hover:text-destructive"
           >
             مسح الكل
-          </Button>
+          </UnifiedButton>
           <div className="flex items-center gap-2">
-            <Badge variant="secondary">{activeFiltersCount}</Badge>
+            <UnifiedBadge variant="secondary">{activeFiltersCount}</UnifiedBadge>
             <span className="text-sm font-medium">فلاتر نشطة</span>
           </div>
         </div>

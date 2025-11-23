@@ -84,9 +84,9 @@ export const CartPreview = () => {
                   <ShoppingBag className="w-16 h-16 mx-auto mb-4 text-gray-400" />
                   <h3 className="text-xl font-bold text-gray-900 mb-2">السلة فارغة</h3>
                   <p className="text-gray-600 mb-6">لم تضف أي منتجات بعد</p>
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <UnifiedButton className="bg-blue-600 hover:bg-blue-700 text-white">
                     تسوق الآن
-                  </Button>
+                  </UnifiedButton>
                 </motion.div>
               ) : (
                 cartItems.map((item, index) => (
@@ -187,20 +187,20 @@ export const CartPreview = () => {
                   </div>
                 </div>
 
-                <Button
+                <UnifiedButton
                   disabled={cartItems.length === 0}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 text-lg mb-3"
                 >
                   إتمام الطلب
                   <ArrowRight className="w-5 h-5 mr-2" />
-                </Button>
+                </UnifiedButton>
 
-                <Button
+                <UnifiedButton
                   variant="outline"
                   className="w-full border-2 border-gray-300 hover:bg-gray-50 text-gray-900 font-bold py-6"
                 >
                   متابعة التسوق
-                </Button>
+                </UnifiedButton>
               </div>
             </motion.div>
           </div>

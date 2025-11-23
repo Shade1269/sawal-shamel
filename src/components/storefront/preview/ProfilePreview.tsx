@@ -82,9 +82,9 @@ export const ProfilePreview = () => {
 
             {/* Action Buttons */}
             <div className="mt-8">
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6">
+              <UnifiedButton className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6">
                 تعديل المعلومات
-              </Button>
+              </UnifiedButton>
             </div>
           </motion.div>
         </div>

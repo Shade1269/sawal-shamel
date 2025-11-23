@@ -50,9 +50,9 @@ export const FloatingCartPreview = () => {
       >
         <ShoppingBag className="w-6 h-6" />
         {totalItems > 0 && (
-          <Badge className="absolute -top-2 -right-2 w-6 h-6 rounded-full p-0 flex items-center justify-center bg-destructive animate-pulse">
+          <UnifiedBadge className="absolute -top-2 -right-2 w-6 h-6 rounded-full p-0 flex items-center justify-center bg-destructive animate-pulse">
             {totalItems}
-          </Badge>
+          </UnifiedBadge>
         )}
       </motion.button>
 
@@ -80,14 +80,14 @@ export const FloatingCartPreview = () => {
               {/* Header */}
               <div className="p-6 border-b border-border gradient-cart-header">
                 <div className="flex items-center justify-between mb-4">
-                  <Button
+                  <UnifiedButton
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsOpen(false)}
                     className="rounded-full hover:bg-secondary"
                   >
                     <X className="w-5 h-5" />
-                  </Button>
+                  </UnifiedButton>
                   <h2 className="text-2xl font-bold">سلة التسوق</h2>
                 </div>
 
@@ -207,10 +207,10 @@ export const FloatingCartPreview = () => {
                   </div>
 
                   {/* Checkout Button */}
-                  <Button size="lg" className="w-full text-lg bg-gradient-luxury hover-scale">
+                  <UnifiedButton size="lg" className="w-full text-lg bg-gradient-luxury hover-scale">
                     <ShoppingBag className="ml-2" />
                     إتمام الطلب
-                  </Button>
+                  </UnifiedButton>
 
                   <p className="text-xs text-center text-muted-foreground">
                     الشحن والضرائب محسوبة عند الدفع
