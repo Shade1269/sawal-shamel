@@ -11,7 +11,7 @@ import { useStorefrontOtp } from '@/hooks/useStorefrontOtp';
 import { useShippingManagement } from '@/hooks/useShippingManagement';
 import { GeideaPayment } from '@/components/payment/GeideaPayment';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { StoreThemeProvider } from '@/components/store/StoreThemeProvider';
+import { StoreThemeProvider } from '@/components/store/ThemeProvider';
 import { StorefrontSession } from '@/utils/storefrontSession';
 import { supabase } from '@/integrations/supabase/client';
 

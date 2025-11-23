@@ -47,7 +47,7 @@ import {
   Settings
 } from 'lucide-react';
 
-const ADMIN_EMAIL = "Shade199633@icloud.com";
+const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || "admin@example.com";
 
 const Admin = () => {
   const { user } = useSupabaseAuth();
