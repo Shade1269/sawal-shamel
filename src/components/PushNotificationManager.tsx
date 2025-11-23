@@ -285,44 +285,44 @@ export const PushNotificationManager: React.FC = () => {
 
   if (!isSupported) {
     return (
-      <Card className="w-full max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-muted-foreground">
+      <UnifiedCard variant="default" padding="md" className="w-full max-w-2xl mx-auto">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="flex items-center gap-2 text-muted-foreground">
             <BellOff className="h-5 w-5" />
             الإشعارات الفورية
-          </CardTitle>
-          <CardDescription>
+          </UnifiedCardTitle>
+          <UnifiedCardDescription>
             متصفحك لا يدعم الإشعارات الفورية
-          </CardDescription>
-        </CardHeader>
-      </Card>
+          </UnifiedCardDescription>
+        </UnifiedCardHeader>
+      </UnifiedCard>
     );
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
+    <UnifiedCard variant="default" padding="md" className="w-full max-w-2xl mx-auto">
+      <UnifiedCardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <UnifiedCardTitle className="flex items-center gap-2">
               <Bell className="h-5 w-5" />
               إدارة الإشعارات الفورية
-            </CardTitle>
-            <CardDescription>
+            </UnifiedCardTitle>
+            <UnifiedCardDescription>
               تخصيص إعدادات الإشعارات والتحكم في استقبالها
-            </CardDescription>
+            </UnifiedCardDescription>
           </div>
           
-          <Badge className={permissionStatus.color}>
+          <UnifiedBadge className={permissionStatus.color}>
             <div className="flex items-center gap-1">
               {permissionStatus.icon}
               {permissionStatus.text}
             </div>
-          </Badge>
+          </UnifiedBadge>
         </div>
-      </CardHeader>
+      </UnifiedCardHeader>
 
-      <CardContent className="space-y-6">
+      <UnifiedCardContent className="space-y-6">
         {/* حالة الإشعارات */}
         {configError && (
           <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
@@ -353,18 +353,19 @@ export const PushNotificationManager: React.FC = () => {
 
           <div className="flex items-center gap-2">
             {permission === 'granted' && !isSubscribed && (
-              <Button
+              <UnifiedButton
                 onClick={subscribeToPush}
                 disabled={isLoading || !!configError}
                 size="sm"
+                variant="primary"
               >
                 تفعيل الإشعارات
-              </Button>
+              </UnifiedButton>
             )}
 
             {permission === 'granted' && isSubscribed && (
               <>
-                <Button
+                <UnifiedButton
                   onClick={sendTestNotification}
                   variant="outline"
                   size="sm"
@@ -373,28 +374,29 @@ export const PushNotificationManager: React.FC = () => {
                 >
                   <Zap className="h-4 w-4" />
                   إشعار تجريبي
-                </Button>
-                <Button
+                </UnifiedButton>
+                <UnifiedButton
                   onClick={unsubscribeFromPush}
                   disabled={isLoading}
-                  variant="destructive"
+                  variant="danger"
                   size="sm"
                   className="hover-lift"
                 >
                   إلغاء التفعيل
-                </Button>
+                </UnifiedButton>
               </>
             )}
 
             {permission !== 'granted' && (
-              <Button
+              <UnifiedButton
                 onClick={requestPermission}
                 disabled={isLoading || !!configError}
                 size="sm"
+                variant="primary"
                 className="btn-atlantis animate-glow"
               >
                 {isLoading ? 'جاري المعالجة...' : 'تفعيل الإشعارات'}
-              </Button>
+              </UnifiedButton>
             )}
           </div>
         </div>
@@ -466,8 +468,8 @@ export const PushNotificationManager: React.FC = () => {
             </p>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </UnifiedCardContent>
+    </UnifiedCard>
   );
 };
 

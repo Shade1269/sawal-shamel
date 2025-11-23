@@ -44,8 +44,8 @@ export function InventoryDashboard() {
 
       {/* إحصائيات سريعة */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-        <Card>
-          <CardContent className="p-3 sm:p-6">
+        <UnifiedCard variant="default" padding="none">
+          <UnifiedCardContent className="p-3 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm text-muted-foreground">إجمالي المنتجات</p>
@@ -53,11 +53,11 @@ export function InventoryDashboard() {
               </div>
               <Package className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardContent className="p-6">
+        <UnifiedCard variant="default" padding="none">
+          <UnifiedCardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">مخزون منخفض</p>
@@ -65,11 +65,11 @@ export function InventoryDashboard() {
               </div>
               <AlertTriangle className="h-8 w-8 text-orange-600" />
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardContent className="p-6">
+        <UnifiedCard variant="default" padding="none">
+          <UnifiedCardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">نفد المخزون</p>
@@ -77,11 +77,11 @@ export function InventoryDashboard() {
               </div>
               <Package className="h-8 w-8 text-red-600" />
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardContent className="p-6">
+        <UnifiedCard variant="default" padding="none">
+          <UnifiedCardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">قيمة المخزون</p>
@@ -89,11 +89,11 @@ export function InventoryDashboard() {
               </div>
               <TrendingUp className="h-8 w-8 text-green-600" />
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
-        <Card>
-          <CardContent className="p-6">
+        <UnifiedCard variant="default" padding="none">
+          <UnifiedCardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">المخازن النشطة</p>
@@ -101,20 +101,20 @@ export function InventoryDashboard() {
               </div>
               <Warehouse className="h-8 w-8 text-blue-600" />
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* التنبيهات */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader>
+            <UnifiedCardTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5" />
               التنبيهات الحديثة
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="space-y-2">
               {alerts.length > 0 ? alerts.slice(0, 5).map((alert) => (
                 <div key={alert.id} className="flex items-center justify-between p-3 border rounded-lg">
@@ -122,26 +122,26 @@ export function InventoryDashboard() {
                     <p className="text-sm font-medium">{alert.title || alert.message}</p>
                     <p className="text-xs text-muted-foreground">{alert.alert_type}</p>
                   </div>
-                  <Badge variant={alert.priority === 'high' ? 'destructive' : 'secondary'}>
+                  <UnifiedBadge variant={alert.priority === 'high' ? 'error' : 'default'}>
                     {alert.priority}
-                  </Badge>
+                  </UnifiedBadge>
                 </div>
               )) : (
                 <p className="text-sm text-muted-foreground text-center py-4">لا توجد تنبيهات</p>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
 
         {/* آخر الحركات */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <UnifiedCard variant="default" padding="md">
+          <UnifiedCardHeader>
+            <UnifiedCardTitle className="flex items-center gap-2">
               <Activity className="h-5 w-5" />
               آخر الحركات
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </UnifiedCardTitle>
+          </UnifiedCardHeader>
+          <UnifiedCardContent>
             <div className="space-y-2">
               {movements.length > 0 ? movements.slice(0, 5).map((movement) => (
                 <div key={movement.id} className="flex items-center justify-between p-3 border rounded-lg">
@@ -172,19 +172,19 @@ export function InventoryDashboard() {
                 <p className="text-sm text-muted-foreground text-center py-4">لا توجد حركات</p>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </div>
 
       {/* حالة المخازن */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <UnifiedCard variant="default" padding="md">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="flex items-center gap-2">
             <Warehouse className="h-5 w-5" />
             حالة المخازن
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {warehouses.map((warehouse) => {
               const warehouseItems = inventoryItems.filter(item => item.warehouse_id === warehouse.id);
@@ -193,9 +193,9 @@ export function InventoryDashboard() {
                 <div key={warehouse.id} className="p-4 border rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold">{warehouse.name}</h3>
-                    <Badge variant={warehouse.is_active ? 'default' : 'secondary'}>
+                    <UnifiedBadge variant={warehouse.is_active ? 'default' : 'secondary'}>
                       {warehouse.is_active ? 'نشط' : 'غير نشط'}
-                    </Badge>
+                    </UnifiedBadge>
                   </div>
                   <p className="text-xs text-muted-foreground">{warehouse.address || warehouse.city}</p>
                   <div className="space-y-2 mt-3">
@@ -212,8 +212,8 @@ export function InventoryDashboard() {
               );
             })}
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 }

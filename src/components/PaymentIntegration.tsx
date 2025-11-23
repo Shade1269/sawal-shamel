@@ -73,25 +73,25 @@ export const PaymentIntegration: React.FC<PaymentIntegrationProps> = ({ shopId }
           <h2 className="text-2xl font-bold">تكاملات الدفع</h2>
           <p className="text-muted-foreground">إدارة وتكوين بوابات الدفع المختلفة</p>
         </div>
-        <Button>
+        <UnifiedButton variant="primary">
           <Settings className="ml-2 h-4 w-4" />
           إضافة بوابة دفع
-        </Button>
+        </UnifiedButton>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {gateways.map((gateway) => (
-          <Card key={gateway.id} className="relative overflow-hidden">
-            <CardHeader className="pb-3">
+          <UnifiedCard key={gateway.id} variant="default" padding="none" className="relative overflow-hidden">
+            <UnifiedCardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3 rtl:space-x-reverse">
                   {getProviderIcon(gateway.provider)}
                   <div>
-                    <CardTitle className="text-lg">{gateway.display_name}</CardTitle>
+                    <UnifiedCardTitle className="text-lg">{gateway.display_name}</UnifiedCardTitle>
                     <p className="text-sm text-muted-foreground">{gateway.gateway_name}</p>
                   </div>
                 </div>
-                <Badge className={getStatusColor(gateway.is_enabled)}>
+                <UnifiedBadge className={getStatusColor(gateway.is_enabled)}>
                   {gateway.is_enabled ? (
                     <>
                       <CheckCircle className="ml-1 h-3 w-3" />
@@ -103,11 +103,11 @@ export const PaymentIntegration: React.FC<PaymentIntegrationProps> = ({ shopId }
                       معطلة
                     </>
                   )}
-                </Badge>
+                </UnifiedBadge>
               </div>
-            </CardHeader>
+            </UnifiedCardHeader>
             
-            <CardContent className="space-y-4">
+            <UnifiedCardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-muted-foreground">رسوم النسبة:</span>
@@ -123,14 +123,14 @@ export const PaymentIntegration: React.FC<PaymentIntegrationProps> = ({ shopId }
                 </div>
                 <div>
                   <span className="text-muted-foreground">البيئة:</span>
-                  <Badge variant={gateway.is_test_mode ? "secondary" : "default"}>
+                  <UnifiedBadge variant={gateway.is_test_mode ? "secondary" : "default"}>
                     {gateway.is_test_mode ? "تجريبي" : "إنتاج"}
-                  </Badge>
+                  </UnifiedBadge>
                 </div>
               </div>
 
               <div className="flex space-x-2 rtl:space-x-reverse">
-                <Button
+                <UnifiedButton
                   variant="outline"
                   size="sm"
                   onClick={() => handleTestConnection(gateway.id)}
@@ -143,11 +143,11 @@ export const PaymentIntegration: React.FC<PaymentIntegrationProps> = ({ shopId }
                     <Zap className="ml-2 h-4 w-4" />
                   )}
                   اختبار الاتصال
-                </Button>
-                <Button variant="outline" size="sm">
+                </UnifiedButton>
+                <UnifiedButton variant="outline" size="sm">
                   <Settings className="ml-2 h-4 w-4" />
                   إعدادات
-                </Button>
+                </UnifiedButton>
               </div>
 
               <div className="pt-2 border-t">
@@ -155,22 +155,22 @@ export const PaymentIntegration: React.FC<PaymentIntegrationProps> = ({ shopId }
                   العملات المدعومة: {gateway.allowed_currencies.join(', ')}
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         ))}
       </div>
 
       {gateways.length === 0 && (
-        <Card className="p-8 text-center">
+        <UnifiedCard variant="default" padding="lg" className="text-center">
           <CreditCard className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
           <h3 className="text-lg font-semibold mb-2">لا توجد بوابات دفع</h3>
           <p className="text-muted-foreground mb-4">
             قم بإضافة بوابة دفع لبدء قبول المدفوعات من العملاء
           </p>
-          <Button>
+          <UnifiedButton variant="primary">
             إضافة بوابة دفع جديدة
-          </Button>
-        </Card>
+          </UnifiedButton>
+        </UnifiedCard>
       )}
     </div>
   );
