@@ -238,7 +238,7 @@ const ModerationPanel: React.FC<ModerationPanelProps> = ({
             <Button
               onClick={() => banUser(false)}
               disabled={loading}
-              variant="destructive"
+              variant="danger"
               size="sm"
               className="justify-start arabic-text"
             >

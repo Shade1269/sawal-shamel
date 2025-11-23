@@ -147,7 +147,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       
       <Button
         type="button"
-        variant={isRecording ? "destructive" : "ghost"}
+        variant={isRecording ? "danger" : "ghost"}
         size="icon"
         onClick={() => {
           if (isRecording) {
