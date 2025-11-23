@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Plus, Edit, Trash2, Image, ExternalLink, Package, Folder } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -218,7 +218,7 @@ export const BannerManagement: React.FC<BannerManagementProps> = ({ storeId }) =
                       تعديل
                     </Button>
                     <Button
-                      variant="destructive"
+                      variant="danger"
                       size="sm"
                       className="flex-1"
                       onClick={() => handleDeleteClick(banner.id)}

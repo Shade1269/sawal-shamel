@@ -12,7 +12,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { BarChart3, ShoppingCart, TrendingUp, Database, Crown, Wallet, CheckCircle, DollarSign, Building2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { UnifiedBadge as Badge } from "@/components/design-system";
 
 const mainMenuItems = [
   {

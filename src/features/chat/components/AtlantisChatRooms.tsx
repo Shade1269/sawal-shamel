@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -363,7 +363,7 @@ const AtlantisChatRooms = () => {
                     <Label>نوع الغرفة</Label>
                     <div className="flex gap-2 mt-2">
                       <Button
-                        variant={newRoomType === 'public' ? 'default' : 'outline'}
+                        variant={newRoomType === 'public' ? 'primary' : 'outline'}
                         onClick={() => setNewRoomType('public')}
                         className="flex-1"
                       >
@@ -371,7 +371,7 @@ const AtlantisChatRooms = () => {
                         عامة
                       </Button>
                       <Button
-                        variant={newRoomType === 'private' ? 'default' : 'outline'}
+                        variant={newRoomType === 'private' ? 'primary' : 'outline'}
                         onClick={() => setNewRoomType('private')}
                         className="flex-1"
                         disabled={!userLevel || !['silver', 'gold', 'legendary'].includes(userLevel.current_level)}

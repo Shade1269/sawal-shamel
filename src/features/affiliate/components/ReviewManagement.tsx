@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Star, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
@@ -87,19 +87,19 @@ export const ReviewManagement: React.FC<ReviewManagementProps> = ({ storeId }) =
         <CardContent>
           <div className="flex gap-2 mb-6">
             <Button
-              variant={selectedFilter === 'all' ? 'default' : 'outline'}
+              variant={selectedFilter === 'all' ? 'primary' : 'outline'}
               onClick={() => setSelectedFilter('all')}
             >
               الكل
             </Button>
             <Button
-              variant={selectedFilter === 'verified' ? 'default' : 'outline'}
+              variant={selectedFilter === 'verified' ? 'primary' : 'outline'}
               onClick={() => setSelectedFilter('verified')}
             >
               موثّقة
             </Button>
             <Button
-              variant={selectedFilter === 'hidden' ? 'default' : 'outline'}
+              variant={selectedFilter === 'hidden' ? 'primary' : 'outline'}
               onClick={() => setSelectedFilter('hidden')}
             >
               مخفية
@@ -127,7 +127,7 @@ export const ReviewManagement: React.FC<ReviewManagementProps> = ({ storeId }) =
                               </Badge>
                             )}
                             {review.is_hidden && (
-                              <Badge variant="destructive">
+                              <Badge variant="error">
                                 مخفي
                               </Badge>
                             )}

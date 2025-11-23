@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -188,7 +188,7 @@ const AffiliateStoreCustomizer = ({ store, onUpdateStore }: StoreCustomizerProps
         <CardContent>
           <div className="flex gap-2">
             <Button
-              variant={activeDevice === 'desktop' ? 'default' : 'outline'}
+              variant={activeDevice === 'desktop' ? 'primary' : 'outline'}
               size="sm"
               onClick={() => setActiveDevice('desktop')}
             >
@@ -196,7 +196,7 @@ const AffiliateStoreCustomizer = ({ store, onUpdateStore }: StoreCustomizerProps
               كمبيوتر
             </Button>
             <Button
-              variant={activeDevice === 'tablet' ? 'default' : 'outline'}
+              variant={activeDevice === 'tablet' ? 'primary' : 'outline'}
               size="sm"
               onClick={() => setActiveDevice('tablet')}
             >
@@ -204,7 +204,7 @@ const AffiliateStoreCustomizer = ({ store, onUpdateStore }: StoreCustomizerProps
               تابلت
             </Button>
             <Button
-              variant={activeDevice === 'mobile' ? 'default' : 'outline'}
+              variant={activeDevice === 'mobile' ? 'primary' : 'outline'}
               size="sm"
               onClick={() => setActiveDevice('mobile')}
             >

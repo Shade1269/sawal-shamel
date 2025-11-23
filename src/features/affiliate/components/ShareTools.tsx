@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Share2, Copy, Download, ExternalLink } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import type { AffiliateStoreSummary, AffiliateProductShare } from '../hooks/useAffiliateMetrics';

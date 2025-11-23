@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Sparkles, Trophy } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Skeleton } from '@/components/ui/skeleton';
 // TypeScript interfaces for removed server API
 type LeaderboardScope = 'users' | 'alliances';
