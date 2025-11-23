@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
+import { UnifiedCard } from '@/components/design-system';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageCircle, X, Send, Bot, User as UserIcon, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';

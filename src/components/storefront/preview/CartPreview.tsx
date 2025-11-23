@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 
 interface CartItem {
   id: number;

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { User, Phone, MapPin, Mail, Edit2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 
 export const ProfilePreview = () => {
   const mockProfile = {

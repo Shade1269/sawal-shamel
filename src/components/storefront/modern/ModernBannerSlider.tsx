@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 
 interface StoreBanner {
   id: string;
@@ -125,12 +125,12 @@ export const ModernBannerSlider = ({ banners, onBannerClick }: ModernBannerSlide
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                     >
-                      <Button 
-                        size="lg"
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl"
+                      <UnifiedButton 
+                        variant="primary"
+                        className="shadow-xl"
                       >
                         اكتشف المزيد
-                      </Button>
+                      </UnifiedButton>
                     </motion.div>
                   </div>
                 </div>
@@ -140,9 +140,8 @@ export const ModernBannerSlider = ({ banners, onBannerClick }: ModernBannerSlide
 
           {/* Navigation Buttons */}
           <div className="absolute inset-0 flex items-center justify-between p-4 pointer-events-none">
-            <Button
+            <UnifiedButton
               variant="outline"
-              size="icon"
               onClick={(e) => {
                 e.stopPropagation();
                 handlePrevious();
@@ -150,11 +149,10 @@ export const ModernBannerSlider = ({ banners, onBannerClick }: ModernBannerSlide
               className="pointer-events-auto bg-background/80 backdrop-blur-sm hover:bg-background border-border/50 shadow-lg h-10 w-10 md:h-12 md:w-12"
             >
               <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
-            </Button>
+            </UnifiedButton>
             
-            <Button
+            <UnifiedButton
               variant="outline"
-              size="icon"
               onClick={(e) => {
                 e.stopPropagation();
                 handleNext();
@@ -162,7 +160,7 @@ export const ModernBannerSlider = ({ banners, onBannerClick }: ModernBannerSlide
               className="pointer-events-auto bg-background/80 backdrop-blur-sm hover:bg-background border-border/50 shadow-lg h-10 w-10 md:h-12 md:w-12"
             >
               <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
-            </Button>
+            </UnifiedButton>
           </div>
 
           {/* Indicators */}
