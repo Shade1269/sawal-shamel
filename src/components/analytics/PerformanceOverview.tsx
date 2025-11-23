@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Activity, DollarSign, ShoppingCart, TrendingUp } from 'lucide-react';
 
 interface PerformanceData {
@@ -49,14 +49,14 @@ export function PerformanceOverview() {
       {stats.map((stat) => {
         const Icon = stat.icon;
         return (
-          <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+          <UnifiedCard key={stat.title}>
+            <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <UnifiedCardTitle className="text-sm font-medium">
                 {stat.title}
-              </CardTitle>
+              </UnifiedCardTitle>
               <Icon className={`h-4 w-4 ${stat.color}`} />
-            </CardHeader>
-            <CardContent>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
               {isLoading ? (
                 <div className="h-8 flex items-center">
                   <p className="text-sm text-muted-foreground">جاري التحميل...</p>
@@ -67,8 +67,8 @@ export function PerformanceOverview() {
               <p className="text-xs text-muted-foreground mt-1">
                 آخر 30 يوم
               </p>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
         );
       })}
     </div>

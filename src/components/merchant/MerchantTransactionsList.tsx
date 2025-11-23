@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { MerchantTransaction } from '@/hooks/useMerchantWallet';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
@@ -24,19 +24,19 @@ const getTransactionTypeLabel = (type: string) => {
 };
 
 const getTransactionBadgeVariant = (type: string) => {
-  if (type.includes('CONFIRMED') || type.includes('COMPLETED')) return 'default';
-  if (type.includes('PENDING')) return 'secondary';
-  if (type.includes('REJECTED') || type === 'REFUND') return 'destructive';
-  return 'outline';
+  if (type.includes('CONFIRMED') || type.includes('COMPLETED')) return 'success' as const;
+  if (type.includes('PENDING')) return 'warning' as const;
+  if (type.includes('REJECTED') || type === 'REFUND') return 'error' as const;
+  return 'default' as const;
 };
 
 export const MerchantTransactionsList = ({ transactions }: MerchantTransactionsListProps) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>سجل المعاملات</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <UnifiedCard>
+      <UnifiedCardHeader>
+        <UnifiedCardTitle>سجل المعاملات</UnifiedCardTitle>
+      </UnifiedCardHeader>
+      <UnifiedCardContent>
         {transactions.length === 0 ? (
           <p className="text-center text-muted-foreground py-8">
             لا توجد معاملات بعد
@@ -62,9 +62,9 @@ export const MerchantTransactionsList = ({ transactions }: MerchantTransactionsL
                       {format(new Date(transaction.created_at), 'dd MMM yyyy, HH:mm', { locale: ar })}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={getTransactionBadgeVariant(transaction.transaction_type)}>
+                      <UnifiedBadge variant={getTransactionBadgeVariant(transaction.transaction_type)}>
                         {getTransactionTypeLabel(transaction.transaction_type)}
-                      </Badge>
+                      </UnifiedBadge>
                     </TableCell>
                     <TableCell className="text-sm">
                       {transaction.description || '-'}
@@ -90,7 +90,7 @@ export const MerchantTransactionsList = ({ transactions }: MerchantTransactionsL
             </TableBody>
           </Table>
         )}
-      </CardContent>
-    </Card>
+      </UnifiedCardContent>
+    </UnifiedCard>
   );
 };

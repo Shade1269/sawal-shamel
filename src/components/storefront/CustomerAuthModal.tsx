@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
+import { UnifiedCard, UnifiedCardContent } from '@/components/design-system';
 import { Phone, Lock, CheckCircle, Loader2 } from 'lucide-react';
 import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 import { StorefrontSession } from '@/utils/storefrontSession';
@@ -111,8 +111,8 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <Card className="border-0 shadow-none">
-          <CardContent className="p-6 space-y-6">
+        <UnifiedCard variant="flat" padding="lg">
+          <UnifiedCardContent className="space-y-6">
             {/* خطوة 1: رقم الجوال */}
             {step === 'phone' && (
               <form onSubmit={handlePhoneSubmit} className="space-y-4">
@@ -137,8 +137,9 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
                   </p>
                 </div>
 
-                <Button 
+                <UnifiedButton 
                   type="submit" 
+                  variant="primary"
                   className="w-full h-12 text-lg"
                   disabled={isLoading || !phone.trim()}
                 >
@@ -153,7 +154,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
                       إرسال رمز التحقق
                     </>
                   )}
-                </Button>
+                </UnifiedButton>
               </form>
             )}
 
@@ -184,8 +185,9 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  <Button 
-                    type="submit" 
+                  <UnifiedButton 
+                    type="submit"
+                    variant="primary"
                     className="w-full h-12 text-lg"
                     disabled={isLoading || otp.length !== 6}
                   >
@@ -200,9 +202,9 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
                         تحقق
                       </>
                     )}
-                  </Button>
+                  </UnifiedButton>
 
-                  <Button
+                  <UnifiedButton
                     type="button"
                     variant="ghost"
                     className="w-full"
@@ -210,7 +212,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
                     disabled={isLoading}
                   >
                     إعادة إرسال الرمز
-                  </Button>
+                  </UnifiedButton>
                 </div>
               </form>
             )}
@@ -227,17 +229,17 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
                     يمكنك الآن تتبع طلباتك ومتابعة عملياتك الشرائية
                   </p>
                 </div>
-                <Button 
+                <UnifiedButton 
                   onClick={onClose}
+                  variant="primary"
                   className="w-full"
-                  size="lg"
                 >
                   ابدأ التسوق
-                </Button>
+                </UnifiedButton>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       </DialogContent>
     </Dialog>
   );

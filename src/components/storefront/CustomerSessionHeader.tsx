@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton, UnifiedBadge } from '@/components/design-system';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { User, Shield, Phone, LogOut, Clock } from 'lucide-react';
@@ -30,15 +29,14 @@ export const CustomerSessionHeader: React.FC<CustomerSessionHeaderProps> = ({
   
   if (!isAuthenticated || !customerInfo) {
     return (
-      <Button
+      <UnifiedButton
         variant="outline"
-        size="sm"
         onClick={onLoginClick}
         className="bg-white/10 border-white/20 text-foreground hover:bg-white/20"
       >
         <User className="h-4 w-4 mr-2" />
         تسجيل دخول سريع
-      </Button>
+      </UnifiedButton>
     );
   }
 
@@ -48,9 +46,8 @@ export const CustomerSessionHeader: React.FC<CustomerSessionHeaderProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <UnifiedButton 
+          variant="outline"
           className="bg-white/10 border-white/20 text-foreground hover:bg-white/20 flex items-center gap-2"
         >
           <Avatar className="h-5 w-5">
@@ -62,16 +59,16 @@ export const CustomerSessionHeader: React.FC<CustomerSessionHeaderProps> = ({
           <span className="hidden sm:inline max-w-24 truncate">
             {displayName}
           </span>
-        </Button>
+        </UnifiedButton>
       </DropdownMenuTrigger>
       
       <DropdownMenuContent align="end" className="w-56">
         <div className="px-3 py-2">
           <div className="flex items-center gap-2 mb-1">
             <Shield className="h-4 w-4 text-green-500" />
-            <Badge variant="secondary" className="text-xs">
+            <UnifiedBadge variant="success" size="sm" className="text-xs">
               محقق
-            </Badge>
+            </UnifiedBadge>
           </div>
           
           {customerInfo.name && (

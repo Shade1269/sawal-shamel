@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -55,14 +55,14 @@ export const MerchantWithdrawalForm = ({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>طلب سحب جديد</CardTitle>
-        <CardDescription>
+    <UnifiedCard>
+      <UnifiedCardHeader>
+        <UnifiedCardTitle>طلب سحب جديد</UnifiedCardTitle>
+        <UnifiedCardDescription>
           الحد الأدنى للسحب: {minimumWithdrawal} ريال
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </UnifiedCardDescription>
+      </UnifiedCardHeader>
+      <UnifiedCardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="amount">المبلغ المراد سحبه (ريال)</Label>
@@ -175,15 +175,16 @@ export const MerchantWithdrawalForm = ({
             </Alert>
           )}
 
-          <Button 
-            type="submit" 
+          <UnifiedButton 
+            type="submit"
+            variant="primary"
             className="w-full" 
             disabled={!canWithdraw || isSubmitting}
           >
             {isSubmitting ? 'جاري الإرسال...' : 'إرسال طلب السحب'}
-          </Button>
+          </UnifiedButton>
         </form>
-      </CardContent>
-    </Card>
+      </UnifiedCardContent>
+    </UnifiedCard>
   );
 };
