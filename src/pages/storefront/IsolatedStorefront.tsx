@@ -12,7 +12,7 @@ import {
   CardContent,
   Button
 } from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Loader2, ShoppingCart, Star } from 'lucide-react';
 import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 import { PromotionalBannerDisplay } from '@/components/storefront/PromotionalBannerDisplay';

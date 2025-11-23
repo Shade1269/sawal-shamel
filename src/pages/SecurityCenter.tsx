@@ -26,7 +26,7 @@ import {
   RefreshCw,
   Eye
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { UnifiedBadge as Badge } from "@/components/design-system";
 
 export default function SecurityCenter() {
   const [activeTab, setActiveTab] = useState("dashboard");
