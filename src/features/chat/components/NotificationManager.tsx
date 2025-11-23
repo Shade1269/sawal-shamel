@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Bell, BellOff } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent } from '@/components/design-system';
 
 interface NotificationManagerProps {
   className?: string;

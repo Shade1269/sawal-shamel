@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { UnifiedButton as Button } from "@/components/design-system";
+import { UnifiedCard as Card } from "@/components/design-system";
+import { UnifiedBadge as Badge } from "@/components/design-system";
 import { MessageCircle, Users, Shield, Zap, Globe, Heart, User, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSupabaseAuth } from "@/contexts/SupabaseAuthContext";

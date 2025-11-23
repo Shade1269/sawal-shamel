@@ -1,6 +1,6 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Progress } from '@/components/ui/progress';
 import { useAtlantisSystem } from '@/hooks/useAtlantisSystem';
 import { useNavigate } from 'react-router-dom';

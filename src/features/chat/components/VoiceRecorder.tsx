@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Mic, MicOff, Square } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 

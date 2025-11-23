@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CheckoutSteps } from './CheckoutSteps';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { Loader2, CheckCircle, Package, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';

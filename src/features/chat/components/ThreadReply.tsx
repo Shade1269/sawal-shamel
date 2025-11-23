@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { MessageSquare, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

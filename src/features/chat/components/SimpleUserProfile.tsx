@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { UnifiedBadge as Badge } from "@/components/design-system";
+import { UnifiedButton as Button } from "@/components/design-system";
 import { User, Mail, Shield, Crown, Users, Calendar, Award } from "lucide-react";
 
 interface SimpleUserProfileProps {
