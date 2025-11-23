@@ -230,7 +230,7 @@ export const ChatPreview = () => {
                   className="flex-1 bg-white border-2 border-gray-300 focus:border-blue-500 rounded-xl px-4 py-6 text-right text-base"
                   disabled={isLoading}
                 />
-                <Button
+                <UnifiedButton
                   onClick={handleSend}
                   disabled={!input.trim() || isLoading}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-xl"
@@ -241,7 +241,7 @@ export const ChatPreview = () => {
                   ) : (
                     <Send className="w-5 h-5" />
                   )}
-                </Button>
+                </UnifiedButton>
               </div>
 
               {/* Suggestions */}

@@ -168,10 +168,10 @@ export const ProductDetailPreview = () => {
               </div>
 
               {/* Add to Cart */}
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-7 text-lg shadow-lg">
+              <UnifiedButton className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-7 text-lg shadow-lg">
                 <ShoppingCart className="w-6 h-6 ml-2" />
                 أضف إلى السلة
-              </Button>
+              </UnifiedButton>
             </div>
           </div>
         </div>

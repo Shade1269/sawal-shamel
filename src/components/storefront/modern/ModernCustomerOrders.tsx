@@ -128,18 +128,18 @@ export const ModernCustomerOrders = ({ customerId, storeId, onViewInvoice }: Mod
           <h2 className="text-2xl font-bold text-foreground">طلباتي</h2>
           <p className="text-sm text-muted-foreground">عرض وإدارة طلباتك السابقة</p>
         </div>
-        <Button
+        <UnifiedButton
           variant="outline"
           size="sm"
           onClick={() => refetch()}
         >
           تحديث
-        </Button>
+        </UnifiedButton>
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4 space-y-4">
+      <UnifiedCard>
+        <UnifiedCardContent className="p-4 space-y-4">
           {/* Search */}
           <div className="relative">
             <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -153,35 +153,35 @@ export const ModernCustomerOrders = ({ customerId, storeId, onViewInvoice }: Mod
 
           {/* Status Filter */}
           <div className="flex flex-wrap gap-2">
-            <Button
-              variant={selectedStatus === 'all' ? 'default' : 'outline'}
+            <UnifiedButton
+              variant={selectedStatus === 'all' ? 'primary' : 'outline'}
               size="sm"
               onClick={() => setSelectedStatus('all')}
             >
               الكل ({orders?.length || 0})
-            </Button>
+            </UnifiedButton>
             {Object.entries(statusConfig).map(([status, config]) => {
               const count = orders?.filter(o => o.status === status).length || 0;
               if (count === 0) return null;
               return (
-                <Button
+                <UnifiedButton
                   key={status}
-                  variant={selectedStatus === status ? 'default' : 'outline'}
+                  variant={selectedStatus === status ? 'primary' : 'outline'}
                   size="sm"
                   onClick={() => setSelectedStatus(status)}
                 >
                   {config.label} ({count})
-                </Button>
+                </UnifiedButton>
               );
             })}
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       {/* Orders List */}
       {filteredOrders.length === 0 ? (
-        <Card>
-          <CardContent className="py-20 text-center">
+        <UnifiedCard>
+          <UnifiedCardContent className="py-20 text-center">
             <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
               <Package className="h-10 w-10 text-muted-foreground" />
             </div>
@@ -191,8 +191,8 @@ export const ModernCustomerOrders = ({ customerId, storeId, onViewInvoice }: Mod
                 ? 'لم يتم العثور على طلبات مطابقة للفلاتر المحددة'
                 : 'لم تقم بأي طلبات بعد'}
             </p>
-          </CardContent>
-        </Card>
+          </UnifiedCardContent>
+        </UnifiedCard>
       ) : (
         <ScrollArea className="h-[600px]">
           <div className="space-y-4">
@@ -205,8 +205,8 @@ export const ModernCustomerOrders = ({ customerId, storeId, onViewInvoice }: Mod
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                 >
-                  <Card className="hover:shadow-lg transition-shadow">
-                    <CardContent className="p-6">
+                  <UnifiedCard className="hover:shadow-lg transition-shadow">
+                    <UnifiedCardContent className="p-6">
                       {/* Order Header */}
                       <div className="flex items-start justify-between mb-4">
                         <div className="space-y-1">
@@ -214,13 +214,13 @@ export const ModernCustomerOrders = ({ customerId, storeId, onViewInvoice }: Mod
                             <h3 className="text-lg font-bold">
                               طلب #{order.order_number}
                             </h3>
-                            <Badge 
+                            <UnifiedBadge 
                               variant="outline" 
                               className={statusConf?.color}
                             >
                               <StatusIcon status={order.status} />
                               <span className="mr-1">{statusConf?.label}</span>
-                            </Badge>
+                            </UnifiedBadge>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Calendar className="h-4 w-4" />
@@ -289,32 +289,32 @@ export const ModernCustomerOrders = ({ customerId, storeId, onViewInvoice }: Mod
                                 {order.tracking_number}
                               </p>
                             </div>
-                            <Button variant="outline" size="sm">
+                            <UnifiedButton variant="outline" size="sm">
                               <Truck className="h-4 w-4 ml-2" />
                               تتبع الشحنة
-                            </Button>
+                            </UnifiedButton>
                           </div>
                         </div>
                       )}
 
                       {/* Actions */}
                       <div className="flex gap-2">
-                        <Button
+                        <UnifiedButton
                           onClick={() => onViewInvoice(order.id)}
                           className="flex-1"
                         >
                           <Eye className="h-4 w-4 ml-2" />
                           عرض الفاتورة
-                        </Button>
-                        <Button
+                        </UnifiedButton>
+                        <UnifiedButton
                           variant="outline"
                           onClick={() => onViewInvoice(order.id)}
                         >
                           <Download className="h-4 w-4" />
-                        </Button>
+                        </UnifiedButton>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </UnifiedCardContent>
+                  </UnifiedCard>
                 </motion.div>
               );
             })}

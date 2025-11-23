@@ -204,13 +204,13 @@ export const ModernAIChatWidget = ({ storeInfo, products }: ModernAIChatWidgetPr
             exit={{ scale: 0, opacity: 0 }}
             className="fixed bottom-6 left-6 z-50"
           >
-            <Button
+            <UnifiedButton
               onClick={() => setIsOpen(true)}
               size="lg"
               className="h-14 w-14 rounded-full gradient-btn-primary shadow-2xl"
             >
               <MessageCircle className="h-6 w-6" />
-            </Button>
+            </UnifiedButton>
             <div className="absolute -top-1 -right-1 flex h-5 w-5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex rounded-full h-5 w-5 bg-primary items-center justify-center">
@@ -231,7 +231,7 @@ export const ModernAIChatWidget = ({ storeInfo, products }: ModernAIChatWidgetPr
             transition={{ duration: 0.2 }}
             className="fixed bottom-6 left-6 z-50 w-[380px] md:w-[420px]"
           >
-            <Card className="flex flex-col h-[600px] shadow-2xl border-border/50 overflow-hidden">
+            <UnifiedCard className="flex flex-col h-[600px] shadow-2xl border-border/50 overflow-hidden">
               {/* Header */}
               <div className="gradient-btn-primary text-primary-foreground p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -246,14 +246,14 @@ export const ModernAIChatWidget = ({ storeInfo, products }: ModernAIChatWidgetPr
                     <p className="text-xs opacity-90">متصل الآن</p>
                   </div>
                 </div>
-                <Button
+                <UnifiedButton
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsOpen(false)}
                   className="hover:bg-primary-foreground/20 text-primary-foreground"
                 >
                   <X className="h-5 w-5" />
-                </Button>
+                </UnifiedButton>
               </div>
 
               {/* Messages */}
@@ -340,20 +340,20 @@ export const ModernAIChatWidget = ({ storeInfo, products }: ModernAIChatWidgetPr
                     className="flex-1 text-right"
                     dir="rtl"
                   />
-                  <Button
+                  <UnifiedButton
                     type="submit"
                     size="icon"
                     disabled={!input.trim() || isLoading}
                     className="bg-primary hover:bg-primary/90"
                   >
                     <Send className="h-5 w-5" />
-                  </Button>
+                  </UnifiedButton>
                 </form>
                 <p className="text-xs text-muted-foreground text-center mt-2">
                   مدعوم بتقنية Lovable AI ✨
                 </p>
               </div>
-            </Card>
+            </UnifiedCard>
           </motion.div>
         )}
       </AnimatePresence>

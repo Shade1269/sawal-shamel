@@ -136,9 +136,9 @@ export const SearchBarPreview = () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Badge variant="secondary" className="hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer">
+                      <UnifiedBadge variant="secondary" className="hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer">
                         {trend}
-                      </Badge>
+                      </UnifiedBadge>
                     </motion.button>
                   ))}
                 </div>
