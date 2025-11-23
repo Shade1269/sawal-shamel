@@ -79,6 +79,12 @@ const DocumentationPage = lazy(() => import("./pages/Documentation"));
 const RolloutPage = lazy(() => import("./pages/Rollout"));
 const ZohoCallback = lazy(() => import("./pages/ZohoCallback"));
 
+// Legal Pages
+const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
+const ReturnPolicy = lazy(() => import("./pages/legal/ReturnPolicy"));
+const ShippingPolicy = lazy(() => import("./pages/legal/ShippingPolicy"));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -130,6 +136,12 @@ const App = () => {
                               <Route path="/design-system" element={<DesignSystemShowcase />} />
           <Route path="/design-showcase" element={<DesignShowcase />} />
           <Route path="/design-system-showcase" element={<DesignSystemShowcase />} />
+
+          {/* Legal Pages */}
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/return-policy" element={<ReturnPolicy />} />
+          <Route path="/shipping-policy" element={<ShippingPolicy />} />
               <Route
                 path="/profile"
                 element={(
