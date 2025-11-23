@@ -42,11 +42,11 @@ export const AdminMerchantWithdrawals = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'secondary' | 'destructive'> = {
+    const variants: Record<string, 'default' | 'secondary' | 'error'> = {
       'PENDING': 'secondary',
       'APPROVED': 'default',
       'COMPLETED': 'default',
-      'REJECTED': 'destructive'
+      'REJECTED': 'error'
     };
     const labels: Record<string, string> = {
       'PENDING': 'قيد المراجعة',
@@ -102,7 +102,7 @@ export const AdminMerchantWithdrawals = () => {
                   <>
                     <Button
                       size="sm"
-                      variant="default"
+                      variant="primary"
                       onClick={() => handleAction(withdrawal, 'APPROVED')}
                       disabled={isProcessing}
                     >
@@ -111,7 +111,7 @@ export const AdminMerchantWithdrawals = () => {
                     </Button>
                     <Button
                       size="sm"
-                      variant="destructive"
+                      variant="danger"
                       onClick={() => handleAction(withdrawal, 'REJECTED')}
                       disabled={isProcessing}
                     >
@@ -278,7 +278,7 @@ export const AdminMerchantWithdrawals = () => {
                 إلغاء
               </Button>
               <Button
-                variant={action === 'APPROVED' ? 'default' : 'destructive'}
+                variant={action === 'APPROVED' ? 'primary' : 'danger'}
                 onClick={handleConfirm}
                 disabled={isProcessing || (action === 'REJECTED' && !adminNotes)}
               >

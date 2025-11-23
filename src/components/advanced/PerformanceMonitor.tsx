@@ -243,7 +243,7 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
               <div className="space-y-2">
                 <Label>حالة الشبكة</Label>
                 <div className="flex items-center gap-2">
-                  <Badge variant={metrics.responseTime < 500 ? "default" : "destructive"}>
+                  <Badge variant={metrics.responseTime < 500 ? "success" : "error"}>
                     {metrics.responseTime < 500 ? 'سريع' : 'بطيء'}
                   </Badge>
                   {metrics.responseTime < 500 ? (

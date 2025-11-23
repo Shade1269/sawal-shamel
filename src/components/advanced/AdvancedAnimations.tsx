@@ -187,7 +187,7 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                   {['custom', 'spring', 'parallax', 'scroll', 'mouse'].map((type) => (
                     <Button
                       key={type}
-                      variant={selectedDemo === type ? 'default' : 'outline'}
+                      variant={selectedDemo === type ? 'primary' : 'outline'}
                       size="sm"
                       onClick={() => setSelectedDemo(type)}
                     >

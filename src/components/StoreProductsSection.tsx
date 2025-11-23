@@ -433,7 +433,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                   <div className="flex gap-1">
                     <Button
                       size="sm"
-                      variant={item.is_featured ? "default" : "outline"}
+                      variant={item.is_featured ? "primary" : "outline"}
                       onClick={() => toggleFeatured(item.id, item.is_featured)}
                       className="flex-1"
                     >

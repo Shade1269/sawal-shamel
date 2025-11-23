@@ -394,7 +394,7 @@ export const SmartForms: React.FC<SmartFormsProps> = ({
                 النموذج صحيح
               </Badge>
             ) : (
-              <Badge variant="destructive">
+              <Badge variant="error">
                 <AlertTriangle className="w-3 h-3 mr-1" />
                 يحتاج مراجعة
               </Badge>

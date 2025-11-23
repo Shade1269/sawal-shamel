@@ -410,7 +410,7 @@ export const ReturnsManagement: React.FC = () => {
                     <div>
                       <CardTitle className="flex items-center gap-2">
                         {returnItem.return_number}
-                        <Badge variant={getStatusVariant(returnItem.status)}>
+                        <Badge variant={getStatusVariant(returnItem.status) === 'destructive' ? 'error' : getStatusVariant(returnItem.status) as any}>
                           {getStatusLabel(returnItem.status)}
                         </Badge>
                       </CardTitle>
@@ -465,11 +465,11 @@ export const ReturnsManagement: React.FC = () => {
                 {/* أزرار الإجراءات */}
                 {returnItem.status === 'pending' && (
                   <div className="flex gap-2">
-                    <Button size="sm" variant="default">
+                    <Button size="sm" variant="primary">
                       <CheckCircle className="h-4 w-4 ml-1" />
                       موافقة
                     </Button>
-                    <Button size="sm" variant="destructive">
+                    <Button size="sm" variant="danger">
                       <AlertTriangle className="h-4 w-4 ml-1" />
                       رفض
                     </Button>

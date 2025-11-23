@@ -318,7 +318,7 @@ const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
                       {searchCategories.map(category => (
                         <Button
                           key={category.type}
-                          variant={selectedCategory === category.type ? "default" : "outline"}
+                          variant={selectedCategory === category.type ? "primary" : "outline"}
                           size="sm"
                           className="gap-2"
                           onClick={() => setSelectedCategory(category.type)}

@@ -50,10 +50,10 @@ const statusIcons: Record<string, any> = {
   COMPLETED: CheckCircle,
 };
 
-const statusColors: Record<string, "default" | "secondary" | "destructive"> = {
+const statusColors: Record<string, "default" | "secondary" | "error"> = {
   PENDING: "default",
   APPROVED: "secondary",
-  REJECTED: "destructive",
+  REJECTED: "error",
   COMPLETED: "default",
 };
 
@@ -396,7 +396,7 @@ export const WithdrawalManagement = () => {
             <Button
               onClick={handleSubmitReview}
               disabled={processWithdrawalMutation.isPending}
-              variant={reviewAction === 'reject' ? 'destructive' : 'default'}
+              variant={reviewAction === 'reject' ? 'danger' : 'primary'}
             >
               {processWithdrawalMutation.isPending ? 'جاري التحديث...' : 'تأكيد'}
             </Button>

@@ -189,7 +189,7 @@ const UserSettingsMenu = ({ user, currentUserRole, onModerationAction, onRoleCha
               <Button
                 onClick={handleModerationSubmit}
                 disabled={loading}
-                variant={moderationAction === 'ban' ? 'destructive' : 'default'}
+                variant={moderationAction === 'ban' ? 'danger' : 'primary'}
                 className="flex-1"
               >
                 {moderationAction === 'mute' && <VolumeX className="h-4 w-4 mr-2" />}

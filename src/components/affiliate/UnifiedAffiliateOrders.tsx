@@ -40,11 +40,11 @@ const statusLabels = {
 
 const statusColors = {
   'PENDING': 'secondary' as const,
-  'CONFIRMED': 'default' as const,
+  'CONFIRMED': 'success' as const,
   'PROCESSING': 'outline' as const,
-  'SHIPPED': 'default' as const,
-  'DELIVERED': 'default' as const,
-  'CANCELLED': 'destructive' as const,
+  'SHIPPED': 'info' as const,
+  'DELIVERED': 'success' as const,
+  'CANCELLED': 'error' as const,
 };
 
 export default function UnifiedAffiliateOrders() {
