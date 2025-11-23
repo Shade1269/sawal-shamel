@@ -1,24 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  VirtualizedList,
-  EnhancedButton
-} from '@/components/ui/index';
-import { UnifiedBadge, UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from "@/components/design-system";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
+  UnifiedBadge as Badge, 
+  UnifiedButton as Button, 
+  UnifiedCard as Card, 
+  UnifiedCardContent as CardContent, 
+  UnifiedCardDescription as CardDescription, 
+  UnifiedCardHeader as CardHeader, 
+  UnifiedCardTitle as CardTitle,
+  UnifiedInput as Input
+} from "@/components/design-system";
+import { 
+  UnifiedSelect as Select, 
+  UnifiedSelectContent as SelectContent, 
+  UnifiedSelectItem as SelectItem, 
+  UnifiedSelectTrigger as SelectTrigger, 
+  UnifiedSelectValue as SelectValue 
+} from "@/components/design-system";
+import { 
+  UnifiedDialog as Dialog, 
+  UnifiedDialogContent as DialogContent, 
+  UnifiedDialogDescription as DialogDescription, 
+  UnifiedDialogHeader as DialogHeader, 
+  UnifiedDialogTitle as DialogTitle, 
+  UnifiedDialogTrigger as DialogTrigger 
+} from "@/components/design-system";
 import { 
   Users, 
   Search, 
@@ -228,16 +233,16 @@ const AdminUsers = () => {
             إدارة المستخدمين والصلاحيات والإعدادات
           </p>
         </div>
-        <UnifiedButton variant="primary">
+        <Button variant="primary">
           <Plus className="h-4 w-4 ml-2" />
           إضافة مستخدم جديد
-        </UnifiedButton>
+        </Button>
       </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <UnifiedCard variant="flat" hover="lift">
-          <UnifiedCardContent className="p-4">
+        <Card variant="flat" hover="lift">
+          <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">إجمالي المستخدمين</p>
@@ -245,35 +250,35 @@ const AdminUsers = () => {
               </div>
               <Users className="h-8 w-8 text-primary" />
             </div>
-          </UnifiedCardContent>
-        </UnifiedCard>
+          </CardContent>
+        </Card>
         
-        <UnifiedCard variant="flat" hover="lift">
-          <UnifiedCardContent className="p-4">
+        <Card variant="flat" hover="lift">
+          <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">المسوقون</p>
                 <p className="text-2xl font-bold">{users.filter(u => u.role === 'affiliate').length}</p>
               </div>
-              <UnifiedBadge variant="info" className="text-xs">مسوق</UnifiedBadge>
+              <Badge variant="info" className="text-xs">مسوق</Badge>
             </div>
-          </UnifiedCardContent>
-        </UnifiedCard>
+          </CardContent>
+        </Card>
 
-        <UnifiedCard variant="flat" hover="lift">
-          <UnifiedCardContent className="p-4">
+        <Card variant="flat" hover="lift">
+          <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">العملاء</p>
                 <p className="text-2xl font-bold">{users.filter(u => u.role === 'customer').length}</p>
               </div>
-              <UnifiedBadge variant="outline" className="text-xs">عميل</UnifiedBadge>
+              <Badge variant="outline" className="text-xs">عميل</Badge>
             </div>
-          </UnifiedCardContent>
-        </UnifiedCard>
+          </CardContent>
+        </Card>
 
-        <UnifiedCard variant="flat" hover="lift">
-          <UnifiedCardContent className="p-4">
+        <Card variant="flat" hover="lift">
+          <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">المحظورين</p>
@@ -281,8 +286,8 @@ const AdminUsers = () => {
               </div>
               <Ban className="h-8 w-8 text-destructive" />
             </div>
-          </UnifiedCardContent>
-        </UnifiedCard>
+          </CardContent>
+        </Card>
       </div>
 
       <Tabs defaultValue="users" className="space-y-6">

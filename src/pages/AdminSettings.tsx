@@ -1,24 +1,20 @@
 import React from 'react';
 import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  EnhancedButton,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button
-} from '@/components/ui/index';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+  UnifiedCard as Card, 
+  UnifiedCardContent as CardContent, 
+  UnifiedCardDescription as CardDescription, 
+  UnifiedCardHeader as CardHeader, 
+  UnifiedCardTitle as CardTitle,
+  UnifiedButton as Button,
+  UnifiedInput as Input
+} from '@/components/design-system';
+import { 
+  UnifiedSelect as Select,
+  UnifiedSelectContent as SelectContent,
+  UnifiedSelectItem as SelectItem,
+  UnifiedSelectTrigger as SelectTrigger,
+  UnifiedSelectValue as SelectValue
+} from '@/components/design-system';
 import IntegrationHealthChecker from '@/components/IntegrationHealthChecker';
 import PushNotificationManager from '@/components/PushNotificationManager';
 import { 
