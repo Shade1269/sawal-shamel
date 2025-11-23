@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from "@/components/design-system";
+import { UnifiedButton } from "@/components/design-system";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
+import { UnifiedBadge } from "@/components/design-system";
 import { useInvoiceManagement } from "@/hooks/useInvoiceManagement";
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -162,14 +162,14 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({ shopId }) =>
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <UnifiedCard variant="default" padding="none">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
             إنشاء فاتورة جديدة
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
+          </UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent className="space-y-6">
           {/* بيانات العميل */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">بيانات العميل</h3>
@@ -221,15 +221,14 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({ shopId }) =>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">الأصناف</h3>
-              <Button onClick={addItem} size="sm">
-                <Plus className="ml-2 h-4 w-4" />
+              <UnifiedButton onClick={addItem} size="sm" leftIcon={<Plus className="h-4 w-4" />}>
                 إضافة صنف
-              </Button>
+              </UnifiedButton>
             </div>
             
             <div className="space-y-3">
               {items.map((item, index) => (
-                <Card key={index} className="p-4">
+                <UnifiedCard key={index} variant="default" padding="md">
                   <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
                     <div className="md:col-span-2">
                       <Label>اسم الصنف</Label>
@@ -269,14 +268,14 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({ shopId }) =>
                       />
                     </div>
                     <div className="flex items-end">
-                      <Button
+                      <UnifiedButton
                         variant="outline"
                         size="sm"
                         onClick={() => removeItem(index)}
                         disabled={items.length === 1}
                       >
                         <Trash2 className="h-4 w-4" />
-                      </Button>
+                      </UnifiedButton>
                     </div>
                   </div>
                   <div className="mt-2">
@@ -287,7 +286,7 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({ shopId }) =>
                       rows={2}
                     />
                   </div>
-                </Card>
+                </UnifiedCard>
               ))}
             </div>
           </div>
@@ -337,8 +336,8 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({ shopId }) =>
           </div>
 
           {/* ملخص المبالغ */}
-          <Card className="bg-muted/50">
-            <CardContent className="p-4">
+          <UnifiedCard variant="flat" padding="md">
+            <UnifiedCardContent className="p-4">
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span>المجموع الفرعي:</span>
@@ -363,22 +362,20 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({ shopId }) =>
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </UnifiedCardContent>
+          </UnifiedCard>
 
           {/* أزرار العمليات */}
           <div className="flex gap-3">
-            <Button onClick={handleCreateInvoice} disabled={loading} className="flex-1">
+            <UnifiedButton onClick={handleCreateInvoice} disabled={loading} fullWidth leftIcon={loading ? null : <Calculator className="h-4 w-4" />}>
               {loading ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2" />
-              ) : (
-                <Calculator className="ml-2 h-4 w-4" />
-              )}
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground" />
+              ) : null}
               إنشاء الفاتورة
-            </Button>
+            </UnifiedButton>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard, UnifiedCardContent } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { Package, Warehouse, Settings } from 'lucide-react';
 import { useRealInventoryManagement } from '@/hooks/useRealInventoryManagement';
 
@@ -12,8 +12,8 @@ export const InventorySetupCard: React.FC = () => {
   }
 
   return (
-    <Card className="border-2 border-dashed border-primary/30 bg-gradient-subtle">
-      <CardContent className="p-8 text-center">
+    <UnifiedCard variant="elegant" padding="lg" className="border-2 border-dashed border-primary/30">
+      <UnifiedCardContent className="p-8 text-center">
         <div className="flex justify-center mb-6">
           <div className="p-4 bg-primary/20 rounded-full">
             <Settings className="h-12 w-12 text-primary animate-pulse" />
@@ -39,10 +39,12 @@ export const InventorySetupCard: React.FC = () => {
           </div>
         </div>
         
-        <Button
+        <UnifiedButton
           onClick={initializeSystem}
           disabled={isInitializing}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3 rounded-lg shadow-glow"
+          variant="primary"
+          size="lg"
+          className="font-semibold px-8"
         >
           {isInitializing ? (
             <>
@@ -52,12 +54,12 @@ export const InventorySetupCard: React.FC = () => {
           ) : (
             'إعداد المخزون الآن'
           )}
-        </Button>
+        </UnifiedButton>
         
         <p className="text-xs text-muted-foreground mt-4">
           العملية آمنة ولن تؤثر على منتجاتك الحالية
         </p>
-      </CardContent>
-    </Card>
+      </UnifiedCardContent>
+    </UnifiedCard>
   );
 };
