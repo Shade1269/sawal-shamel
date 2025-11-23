@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Smile } from 'lucide-react';
 
@@ -59,14 +59,14 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({ onEmojiSelect, className = ""
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button 
+        <UnifiedButton 
           variant="ghost" 
           size="icon" 
           className={`h-9 w-9 ${className}`}
           title="رموز تعبيرية"
         >
           <Smile className="h-4 w-4" />
-        </Button>
+        </UnifiedButton>
       </PopoverTrigger>
       
       <PopoverContent 
@@ -75,7 +75,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({ onEmojiSelect, className = ""
       >
         <div className="grid grid-cols-8 gap-1">
           {emojis.map((emoji, index) => (
-            <Button
+            <UnifiedButton
               key={index}
               variant="ghost"
               size="sm"
@@ -83,7 +83,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({ onEmojiSelect, className = ""
               onClick={() => handleEmojiClick(emoji)}
             >
               {emoji}
-            </Button>
+            </UnifiedButton>
           ))}
         </div>
       </PopoverContent>

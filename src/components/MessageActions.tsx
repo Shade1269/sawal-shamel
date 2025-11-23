@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { 
@@ -71,13 +71,13 @@ const MessageActions: React.FC<MessageActionsProps> = ({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button 
+          <UnifiedButton 
             variant="ghost" 
-            size="icon" 
+            size="icon-sm"
             className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
           >
             <MoreHorizontal className="h-3 w-3" />
-          </Button>
+          </UnifiedButton>
         </DropdownMenuTrigger>
         
         <DropdownMenuContent align="end" className="rtl">
@@ -135,12 +135,12 @@ const MessageActions: React.FC<MessageActionsProps> = ({
             />
             
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setIsEditing(false)}>
+              <UnifiedButton variant="outline" onClick={() => setIsEditing(false)}>
                 إلغاء
-              </Button>
-              <Button onClick={handleEdit}>
+              </UnifiedButton>
+              <UnifiedButton variant="primary" onClick={handleEdit}>
                 حفظ التعديل
-              </Button>
+              </UnifiedButton>
             </div>
           </div>
         </DialogContent>

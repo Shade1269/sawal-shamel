@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge } from '@/components/design-system';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -161,10 +161,10 @@ export const InventoryMovements: React.FC = () => {
     }
   };
 
-  const getMovementTypeVariant = (type: string): "default" | "secondary" | "destructive" | "outline" => {
+  const getMovementTypeVariant = (type: string): "default" | "secondary" | "error" | "outline" => {
     switch (type) {
       case 'IN': return 'default';
-      case 'OUT': return 'destructive';
+      case 'OUT': return 'error';
       case 'ADJUSTMENT': return 'secondary';
       case 'TRANSFER': return 'outline';
       default: return 'outline';
@@ -218,13 +218,13 @@ export const InventoryMovements: React.FC = () => {
         
         <Dialog open={showDialog} onOpenChange={setShowDialog}>
           <DialogTrigger asChild>
-            <Button 
+            <UnifiedButton 
               onClick={resetForm}
-              className="bg-gradient-primary hover:opacity-90 text-primary-foreground shadow-glow transition-all duration-300"
+              variant="primary"
+              leftIcon={<Plus className="h-4 w-4" />}
             >
-              <Plus className="h-4 w-4 ml-2" />
               حركة جديدة
-            </Button>
+            </UnifiedButton>
           </DialogTrigger>
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
@@ -345,12 +345,12 @@ export const InventoryMovements: React.FC = () => {
               </div>
               
               <div className="flex justify-end space-x-2 pt-4">
-                <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
+                <UnifiedButton type="button" variant="outline" onClick={() => setShowDialog(false)}>
                   إلغاء
-                </Button>
-                <Button type="submit" className="bg-gradient-primary hover:opacity-90">
+                </UnifiedButton>
+                <UnifiedButton type="submit" variant="primary">
                   إضافة الحركة
-                </Button>
+                </UnifiedButton>
               </div>
             </form>
           </DialogContent>
@@ -358,8 +358,8 @@ export const InventoryMovements: React.FC = () => {
       </div>
 
       {/* شريط البحث والفلاتر */}
-      <Card className="border border-border/50 bg-card/50 backdrop-blur-sm shadow-soft">
-        <CardContent className="p-6">
+      <UnifiedCard variant="glass" padding="md">
+        <UnifiedCardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -386,13 +386,13 @@ export const InventoryMovements: React.FC = () => {
               </SelectContent>
             </Select>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
 
       {/* قائمة الحركات */}
       {filteredMovements.length === 0 ? (
-        <Card className="border-dashed border-2 border-muted-foreground/30 bg-muted/20">
-          <CardContent className="text-center py-12">
+        <UnifiedCard variant="flat" padding="none" className="border-dashed border-2 border-muted-foreground/30">
+          <UnifiedCardContent className="text-center py-12">
             <div className="p-4 rounded-full bg-muted mb-4 mx-auto w-fit">
               <ArrowUpDown className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -400,16 +400,16 @@ export const InventoryMovements: React.FC = () => {
             <p className="text-muted-foreground mb-4">
               لم يتم تسجيل أي حركات مخزون بعد
             </p>
-            <Button onClick={resetForm} variant="outline" className="border-primary hover:bg-primary hover:text-primary-foreground">
+            <UnifiedButton onClick={resetForm} variant="outline" className="border-primary hover:bg-primary hover:text-primary-foreground">
               إضافة حركة جديدة
-            </Button>
-          </CardContent>
-        </Card>
+            </UnifiedButton>
+          </UnifiedCardContent>
+        </UnifiedCard>
       ) : (
         <div className="space-y-4">
           {filteredMovements.map((movement) => (
-            <Card key={movement.id} className={`relative overflow-hidden border transition-all duration-300 hover:shadow-luxury hover:-translate-y-1 ${getMovementCardClass(movement.movement_type)}`}>
-              <CardContent className="p-6">
+            <UnifiedCard key={movement.id} variant="default" padding="none" hover="lift" className={`relative overflow-hidden ${getMovementCardClass(movement.movement_type)}`}>
+              <UnifiedCardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">
                     <div className={`p-3 rounded-xl ${
@@ -426,9 +426,9 @@ export const InventoryMovements: React.FC = () => {
                         <h3 className="font-bold text-lg text-foreground">
                           {movement.movement_number || `حركة ${movement.id.slice(0, 8)}`}
                         </h3>
-                        <Badge variant={getMovementTypeVariant(movement.movement_type)} className="font-medium">
+                        <UnifiedBadge variant={getMovementTypeVariant(movement.movement_type)} className="font-medium">
                           {getMovementTypeLabel(movement.movement_type)}
-                        </Badge>
+                        </UnifiedBadge>
                       </div>
                       
                       <div className="space-y-2">
@@ -473,8 +473,8 @@ export const InventoryMovements: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </UnifiedCardContent>
+            </UnifiedCard>
           ))}
         </div>
       )}
