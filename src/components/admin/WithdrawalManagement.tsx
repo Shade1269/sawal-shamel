@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import {
@@ -50,10 +50,10 @@ const statusIcons: Record<string, any> = {
   COMPLETED: CheckCircle,
 };
 
-const statusColors: Record<string, "default" | "secondary" | "destructive"> = {
+const statusColors: Record<string, "default" | "secondary" | "error"> = {
   PENDING: "default",
   APPROVED: "secondary",
-  REJECTED: "destructive",
+  REJECTED: "error",
   COMPLETED: "default",
 };
 
@@ -230,7 +230,7 @@ export const WithdrawalManagement = () => {
             </Button>
             <Button
               onClick={() => handleReview(request, 'reject')}
-              variant="destructive"
+              variant="danger"
               size="sm"
               className="flex-1"
             >
@@ -396,7 +396,7 @@ export const WithdrawalManagement = () => {
             <Button
               onClick={handleSubmitReview}
               disabled={processWithdrawalMutation.isPending}
-              variant={reviewAction === 'reject' ? 'destructive' : 'default'}
+              variant={reviewAction === 'reject' ? 'danger' : 'primary'}
             >
               {processWithdrawalMutation.isPending ? 'جاري التحديث...' : 'تأكيد'}
             </Button>

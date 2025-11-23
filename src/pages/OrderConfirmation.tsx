@@ -13,8 +13,8 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/index";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { CheckCircle, ArrowLeft, Package } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 

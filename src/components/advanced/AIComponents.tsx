@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -164,7 +164,7 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
       <div className="flex flex-wrap gap-2">
         {(mode === 'full' || mode === 'search') && (
           <Button
-            variant={activeTab === 'search' ? 'default' : 'outline'}
+            variant={activeTab === 'search' ? 'primary' : 'outline'}
             onClick={() => setActiveTab('search')}
             className="flex items-center gap-2 text-xs sm:text-sm"
             size="sm"
@@ -176,7 +176,7 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
         )}
         {(mode === 'full' || mode === 'content') && (
           <Button
-            variant={activeTab === 'content' ? 'default' : 'outline'}
+            variant={activeTab === 'content' ? 'primary' : 'outline'}
             onClick={() => setActiveTab('content')}
             className="flex items-center gap-2 text-xs sm:text-sm"
             size="sm"
@@ -188,7 +188,7 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
         )}
         {mode === 'full' && (
           <Button
-            variant={activeTab === 'chat' ? 'default' : 'outline'}
+            variant={activeTab === 'chat' ? 'primary' : 'outline'}
             onClick={() => setActiveTab('chat')}
             className="flex items-center gap-2 text-xs sm:text-sm"
             size="sm"
@@ -341,7 +341,7 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
                     ].map((tone) => (
                       <Button
                         key={tone.value}
-                        variant={selectedTone === tone.value ? 'default' : 'outline'}
+                        variant={selectedTone === tone.value ? 'primary' : 'outline'}
                         size="sm"
                         onClick={() => setSelectedTone(tone.value as any)}
                         className="text-xs sm:text-sm py-1 px-2"

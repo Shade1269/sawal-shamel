@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { 
@@ -188,21 +188,21 @@ const PerformanceMetrics = () => {
         
         <div className="flex items-center gap-2">
           <Button 
-            variant={timeframe === '24h' ? 'default' : 'outline'} 
+            variant={timeframe === '24h' ? 'primary' : 'outline'} 
             size="sm"
             onClick={() => setTimeframe('24h')}
           >
             24 ساعة
           </Button>
           <Button 
-            variant={timeframe === '7d' ? 'default' : 'outline'} 
+            variant={timeframe === '7d' ? 'primary' : 'outline'} 
             size="sm"
             onClick={() => setTimeframe('7d')}
           >
             7 أيام
           </Button>
           <Button 
-            variant={timeframe === '30d' ? 'default' : 'outline'} 
+            variant={timeframe === '30d' ? 'primary' : 'outline'} 
             size="sm"
             onClick={() => setTimeframe('30d')}
           >
