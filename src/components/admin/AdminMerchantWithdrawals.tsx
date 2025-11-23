@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useAdminMerchantWithdrawals } from '@/hooks/useAdminMerchantWithdrawals';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { UnifiedBadge as Badge } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -42,11 +42,11 @@ export const AdminMerchantWithdrawals = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'secondary' | 'destructive'> = {
+    const variants: Record<string, 'default' | 'secondary' | 'error'> = {
       'PENDING': 'secondary',
       'APPROVED': 'default',
       'COMPLETED': 'default',
-      'REJECTED': 'destructive'
+      'REJECTED': 'error'
     };
     const labels: Record<string, string> = {
       'PENDING': 'قيد المراجعة',
@@ -102,7 +102,7 @@ export const AdminMerchantWithdrawals = () => {
                   <>
                     <Button
                       size="sm"
-                      variant="default"
+                      variant="primary"
                       onClick={() => handleAction(withdrawal, 'APPROVED')}
                       disabled={isProcessing}
                     >
@@ -111,7 +111,7 @@ export const AdminMerchantWithdrawals = () => {
                     </Button>
                     <Button
                       size="sm"
-                      variant="destructive"
+                      variant="danger"
                       onClick={() => handleAction(withdrawal, 'REJECTED')}
                       disabled={isProcessing}
                     >
@@ -278,7 +278,7 @@ export const AdminMerchantWithdrawals = () => {
                 إلغاء
               </Button>
               <Button
-                variant={action === 'APPROVED' ? 'default' : 'destructive'}
+                variant={action === 'APPROVED' ? 'primary' : 'danger'}
                 onClick={handleConfirm}
                 disabled={isProcessing || (action === 'REJECTED' && !adminNotes)}
               >

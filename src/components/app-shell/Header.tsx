@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, Bell, User, LogOut, History } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
 import { ActionBar, type ActionBarProps } from './ActionBar';
 import {
@@ -95,7 +95,6 @@ export const Header: React.FC<HeaderProps> = React.memo(
             <Button
               variant="ghost"
               size="icon"
-              asChild
               aria-label="عرض الإشعارات"
               className={`relative h-10 w-10 border border-transparent text-card-foreground hover:border-border hover:bg-muted ${motionClass}`}
             >
@@ -103,7 +102,7 @@ export const Header: React.FC<HeaderProps> = React.memo(
                 <Bell className="h-5 w-5" aria-hidden />
                 {notificationsCount > 0 ? (
                   <Badge
-                    variant="destructive"
+                    variant="error"
                     className="absolute -top-1 -left-1 h-5 min-w-[1.25rem] rounded-full px-1 text-[10px]"
                     aria-label={`${notificationsCount} إشعارات جديدة`}
                   >
