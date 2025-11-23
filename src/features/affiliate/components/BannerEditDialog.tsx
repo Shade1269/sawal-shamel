@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -182,7 +182,7 @@ export const BannerEditDialog: React.FC<BannerEditDialogProps> = ({
                     className="w-full h-full object-cover"
                   />
                   <Button
-                    variant="destructive"
+                    variant="danger"
                     size="icon"
                     className="absolute top-2 right-2"
                     onClick={() => {

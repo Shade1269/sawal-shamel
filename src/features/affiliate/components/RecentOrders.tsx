@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedBadge as Badge } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Clock, PackageCheck, PackageX, Truck } from 'lucide-react';
 import type { AffiliateRecentOrder } from '../hooks/useAffiliateMetrics';
@@ -102,7 +102,7 @@ export const RecentOrders = ({ orders, loading }: RecentOrdersProps) => {
               <Button
                 key={option.key}
                 size="sm"
-                variant={filter === option.key ? 'default' : 'outline'}
+                variant={filter === option.key ? 'primary' : 'outline'}
                 className={
                   filter === option.key
                     ? 'rounded-full bg-primary text-primary-foreground'

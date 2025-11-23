@@ -7,8 +7,8 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   DropdownMenu,
@@ -260,7 +260,7 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
                     
                     <TableCell>
                       <Badge 
-                        variant={user.is_active ? "default" : "destructive"}
+                        variant={user.is_active ? "default" : "error"}
                         className="text-xs"
                       >
                         {user.is_active ? 'نشط' : 'معطل'}
