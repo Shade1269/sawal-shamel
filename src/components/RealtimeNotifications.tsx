@@ -272,7 +272,7 @@ const RealtimeNotifications: React.FC = () => {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="relative">
+        <UnifiedButton variant="outline" size="sm" className="relative">
           <Bell className="w-4 h-4" />
           <AnimatePresence>
             {unreadCount > 0 && (
@@ -286,7 +286,7 @@ const RealtimeNotifications: React.FC = () => {
               </motion.div>
             )}
           </AnimatePresence>
-        </Button>
+        </UnifiedButton>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-80 p-0">
@@ -294,18 +294,18 @@ const RealtimeNotifications: React.FC = () => {
           <h3 className="font-semibold">الإشعارات</h3>
           <div className="flex items-center gap-2">
             {unreadCount > 0 && (
-              <Badge variant="secondary" className="text-xs">
+              <UnifiedBadge variant="secondary" className="text-xs">
                 {unreadCount} جديد
-              </Badge>
+              </UnifiedBadge>
             )}
-            <Button
+            <UnifiedButton
               variant="ghost"
               size="sm"
               onClick={markAllAsRead}
               disabled={unreadCount === 0}
             >
               <CheckCheck className="w-4 h-4" />
-            </Button>
+            </UnifiedButton>
           </div>
         </div>
 
@@ -353,9 +353,9 @@ const RealtimeNotifications: React.FC = () => {
                             {!notification.read && (
                               <div className="w-2 h-2 bg-primary rounded-full"></div>
                             )}
-                            <Button
+                            <UnifiedButton
                               variant="ghost"
-                              size="sm"
+                              size="icon-sm"
                               className="h-6 w-6 p-0 hover:bg-destructive/20 hover:text-destructive"
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -363,7 +363,7 @@ const RealtimeNotifications: React.FC = () => {
                               }}
                             >
                               <X className="w-3 h-3" />
-                            </Button>
+                            </UnifiedButton>
                           </div>
                         </div>
                         
@@ -380,9 +380,9 @@ const RealtimeNotifications: React.FC = () => {
                           </span>
                           
                           {notification.metadata?.amount && (
-                            <Badge variant="outline" className="text-xs">
+                            <UnifiedBadge variant="outline" className="text-xs">
                               {notification.metadata.amount} {notification.metadata.currency}
-                            </Badge>
+                            </UnifiedBadge>
                           )}
                         </div>
                       </div>
@@ -398,9 +398,9 @@ const RealtimeNotifications: React.FC = () => {
           <>
             <Separator />
             <div className="p-3">
-              <Button variant="outline" className="w-full text-sm">
+              <UnifiedButton variant="outline" className="w-full text-sm">
                 عرض جميع الإشعارات
-              </Button>
+              </UnifiedButton>
             </div>
           </>
         )}

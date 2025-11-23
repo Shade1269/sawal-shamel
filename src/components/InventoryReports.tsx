@@ -14,14 +14,14 @@ export function InventoryReports() {
     <div className="container mx-auto p-6 space-y-6">
       <h1 className="text-3xl font-bold">تقارير المخزون</h1>
       
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <UnifiedCard variant="default" padding="md">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
             تقرير المخزون
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
           {inventoryItems.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
@@ -49,8 +49,8 @@ export function InventoryReports() {
               <p className="text-muted-foreground">لا توجد بيانات للعرض</p>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 }
