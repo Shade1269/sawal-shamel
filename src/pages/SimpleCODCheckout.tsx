@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { SimpleCheckout } from '@/features/commerce/components/SimpleCheckout';
 import { safeJsonParse } from '@/lib/utils';
 

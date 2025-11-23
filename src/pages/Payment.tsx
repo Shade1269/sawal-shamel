@@ -13,7 +13,7 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/index";
-import { Button } from "@/components/ui/button";
+import { UnifiedButton as Button } from "@/components/design-system";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, CreditCard, Banknote, ShoppingBag } from "lucide-react";

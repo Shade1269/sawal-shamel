@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { UnifiedButton as Button } from "@/components/design-system";
+import { UnifiedBadge as Badge } from "@/components/design-system";
 import {
   ProductShowcase3D,
   SpecificationPanel,

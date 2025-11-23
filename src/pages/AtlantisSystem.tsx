@@ -12,7 +12,7 @@ import {
   CardHeader, 
   CardTitle 
 } from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { AtlantisLeaderboard } from '@/features/chat/components/AtlantisLeaderboard';
 import { AtlantisStatusWidget } from '@/features/chat/components/AtlantisStatusWidget';
 import { UserProgressCard } from '@/components/UserProgressCard';

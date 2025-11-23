@@ -685,7 +685,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
                           <Button 
                             type="button" 
                             onClick={() => removeImage(index)} 
-                            variant="destructive" 
+                            variant="danger" 
                             size="sm"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -760,7 +760,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
                         <Button 
                           type="button" 
                           onClick={() => removeAttribute(index)} 
-                          variant="destructive" 
+                          variant="danger" 
                           size="sm"
                         >
                           <X className="h-4 w-4" />

@@ -7,7 +7,7 @@ import { ChatPreview } from '@/components/storefront/preview/ChatPreview';
 import { CartPreview } from '@/components/storefront/preview/CartPreview';
 import { ProductDetailPreview } from '@/components/storefront/preview/ProductDetailPreview';
 import { BannerSliderPreview } from '@/components/storefront/preview/BannerSliderPreview';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Search, Heart, ShoppingBag, User, Package, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTheme } from '@/hooks/useTheme';

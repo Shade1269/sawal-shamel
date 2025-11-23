@@ -92,7 +92,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </div>
         {product.stock <= 5 && (
           <div className="absolute top-3 left-3">
-            <Badge variant="destructive" className="bg-red-500/90 backdrop-blur-sm">
+            <Badge variant="error" className="bg-red-500/90 backdrop-blur-sm">
               باقي {product.stock}
             </Badge>
           </div>

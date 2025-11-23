@@ -65,7 +65,7 @@ const ShoppingCartDrawer = ({ children }: ShoppingCartDrawerProps) => {
             <ShoppingCart className="h-4 w-4" />
             {totalItems > 0 && (
               <Badge 
-                variant="destructive" 
+                variant="error" 
                 className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs"
               >
                 {totalItems}
