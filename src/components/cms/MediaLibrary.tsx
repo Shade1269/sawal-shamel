@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { 
   Dialog,
   DialogContent,
@@ -166,7 +166,7 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                   return (
                     <Button
                       key={type}
-                      variant={filterType === type ? "default" : "outline"}
+                      variant={filterType === type ? "primary" : "outline"}
                       size="sm"
                       onClick={() => setFilterType(type)}
                     >
@@ -180,14 +180,14 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
 
             <div className="flex items-center gap-2">
               <Button
-                variant={viewMode === 'grid' ? "default" : "outline"}
+                variant={viewMode === 'grid' ? "primary" : "outline"}
                 size="sm"
                 onClick={() => setViewMode('grid')}
               >
                 <Grid className="w-4 h-4" />
               </Button>
               <Button
-                variant={viewMode === 'list' ? "default" : "outline"}
+                variant={viewMode === 'list' ? "primary" : "outline"}
                 size="sm"
                 onClick={() => setViewMode('list')}
               >
@@ -275,7 +275,7 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                           <Edit className="w-3 h-3" />
                         </Button>
                         <Button
-                          variant="destructive"
+                          variant="danger"
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation();

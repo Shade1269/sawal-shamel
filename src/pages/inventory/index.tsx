@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle, UnifiedCardDescription as CardDescription } from '@/components/design-system';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Loader2, Package, RefreshCw, ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
 import { AddInventoryDialog } from '@/components/inventory/AddInventoryDialog';
 import { SimpleProductForm } from '@/components/inventory/SimpleProductForm';

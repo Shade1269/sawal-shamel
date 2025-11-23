@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -318,7 +318,7 @@ const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
                       {searchCategories.map(category => (
                         <Button
                           key={category.type}
-                          variant={selectedCategory === category.type ? "default" : "outline"}
+                          variant={selectedCategory === category.type ? "primary" : "outline"}
                           size="sm"
                           className="gap-2"
                           onClick={() => setSelectedCategory(category.type)}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MessageCircle, Bot, Headphones, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ModernAIChatWidget } from '@/components/storefront/modern/ModernAIChatWidget';
 import { CustomerChatWidget } from '@/components/customer-service/CustomerChatWidget';

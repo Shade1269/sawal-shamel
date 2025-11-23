@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { 
   Table,
   TableBody,
@@ -68,7 +68,7 @@ export const PagesManager: React.FC<PagesManagerProps> = ({ storeId, onEditPage 
       draft: { label: 'مسودة', variant: 'secondary' as const },
       published: { label: 'منشورة', variant: 'default' as const },
       scheduled: { label: 'مجدولة', variant: 'outline' as const },
-      archived: { label: 'مؤرشفة', variant: 'destructive' as const }
+      archived: { label: 'مؤرشفة', variant: 'error' as const }
     };
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.draft;
