@@ -1,20 +1,3 @@
-
-/**
- * ProductsBrowser - صفحة تصفح المنتجات (مُعاد هيكلتها)
- *
- * تم إعادة هيكلة هذا الملف في 2025-11-22 لتحسين الصيانة
- * الملف الأصلي: 1,076 سطر → الملف الجديد: ~250 سطر (-77%)
- *
- * الهيكل الجديد:
- * - 3 Custom Hooks (useProductsData, useProductActions, useProductFilters)
- * - 7 Components (Header, Alerts, Filters, Card, ListItem, 2 Dialogs)
- * - معامل الصيانة: من 5/10 → 9/10
- */
-
-import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Package } from 'lucide-react';
-
 import { useState, useEffect } from 'react';
 import { 
   EnhancedCard,
@@ -31,8 +14,8 @@ import {
   CardHeader, 
   CardTitle 
 } from '@/components/ui/index';
-import { UnifiedBadge } from '@/components/design-system';
-import { UnifiedButton } from '@/components/design-system';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
@@ -59,69 +42,414 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
+import { ProductVariantDisplay } from '@/components/products/ProductVariantDisplay';
 
-// Custom Hooks
-import { useProductsData } from './products-browser/hooks/useProductsData';
-import { useProductActions } from './products-browser/hooks/useProductActions';
-import { useProductFilters } from './products-browser/hooks/useProductFilters';
-import type { Product } from './products-browser/hooks/useProductsData';
+interface ProductVariant {
+  type: string;
+  value: string;
+  stock: number;
+}
 
-// Components
-import { ProductsBrowserHeader } from './products-browser/components/ProductsBrowserHeader';
-import { StoreAlerts } from './products-browser/components/StoreAlerts';
-import { ProductFilters } from './products-browser/components/ProductFilters';
-import { ProductCard } from './products-browser/components/ProductCard';
-import { ProductListItem } from './products-browser/components/ProductListItem';
-import { PricingDialog } from './products-browser/components/PricingDialog';
-import { ProductDetailsDialog } from './products-browser/components/ProductDetailsDialog';
+interface Product {
+  id: string;
+  title: string;
+  description: string;
+  price_sar: number;
+  images: any;
+  image_urls: string[];
+  category: string;
+  is_active: boolean;
+  stock: number;
+  view_count: number;
+  merchant_id: string;
+  merchants: {
+    id: string;
+    business_name: string;
+    default_commission_rate: number;
+  };
+  variants?: ProductVariant[];
+}
 
 const ProductsBrowser = () => {
+  console.log('ProductsBrowser component mounted');
   const { profile } = useFastAuth();
+  console.log('ProductsBrowser - profile from useFastAuth:', profile);
   const { goToUserHome } = useSmartNavigation();
-
-  // Data & Actions Hooks
-  const { products, affiliateStore, myProducts, setMyProducts, loading } = useProductsData(profile);
-  const { addToMyStore, removeFromMyStore, addingProducts } = useProductActions(
-    affiliateStore,
-    myProducts,
-    setMyProducts
-  );
-
-  // Filters Hook
-  const {
-    filteredProducts,
-    searchQuery,
-    setSearchQuery,
-    selectedCategory,
-    setSelectedCategory,
-    priceRange,
-    setPriceRange,
-    viewMode,
-    setViewMode,
-    categories,
-  } = useProductFilters(products);
-
-  // Dialog States
+  const { toast } = useToast();
+  
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [affiliateStore, setAffiliateStore] = useState(null);
+  const [myProducts, setMyProducts] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(true);
+  const [addingProducts, setAddingProducts] = useState<Set<string>>(new Set());
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  
   const [pricingProduct, setPricingProduct] = useState<Product | null>(null);
-  const [detailsProduct, setDetailsProduct] = useState<Product | null>(null);
+  const [customPrice, setCustomPrice] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showViewDialog, setShowViewDialog] = useState(false);
+  
+  useEffect(() => {
+    console.log('useEffect triggered - profile check:', { profile });
+    if (profile) {
+      console.log('Profile exists, calling fetchData...');
+      fetchData();
+    } else {
+      console.log('No profile found, skipping fetchData');
+    }
+  }, [profile]);
 
-  // Handlers
-  const handleAddToStore = (product: Product) => {
+  useEffect(() => {
+    filterProducts();
+  }, [products, searchQuery, selectedCategory, priceRange]);
+
+  const fetchData = async () => {
+    console.log('fetchData started...', { profile });
+    setLoading(true);
+    try {
+      // تجربة جلب المنتجات بشكل مبسط أولاً
+      const { data: simpleProductsData, error: simpleError } = await supabase
+        .from('products')
+        .select('id, title, price_sar, is_active')
+        .eq('is_active', true)
+        .limit(5);
+
+      console.log('Simple products query:', { simpleProductsData, simpleError });
+
+      // جلب متجر المسوق - التحقق من الجدولين
+      let storeData = null;
+      
+      // أولاً، جرب user_profiles.id
+      const { data: storesByProfile, error: storesByProfileError } = await supabase
+        .from('affiliate_stores')
+        .select('*')
+        .eq('profile_id', profile.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+      
+      if (storesByProfileError) {
+        console.error('Error fetching affiliate store (by profile_id):', storesByProfileError);
+      }
+      const userProfileStore = Array.isArray(storesByProfile) && storesByProfile.length > 0 ? storesByProfile[0] : null;
+      
+      if (userProfileStore) {
+        storeData = userProfileStore;
+      } else {
+        // إذا لم نجده، جرب profiles.id
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('auth_user_id', profile.auth_user_id)
+          .maybeSingle();
+          
+        if (profileData) {
+          const { data: storesByProfile2, error: storesByProfileError2 } = await supabase
+            .from('affiliate_stores')
+            .select('*')
+            .eq('profile_id', profileData.id)
+            .order('created_at', { ascending: false })
+            .limit(1);
+            
+          if (storesByProfileError2) {
+            console.error('Error fetching affiliate store (by auth_user_id):', storesByProfileError2);
+          }
+          const profileStore = Array.isArray(storesByProfile2) && storesByProfile2.length > 0 ? storesByProfile2[0] : null;
+            
+          storeData = profileStore;
+        }
+      }
+
+      setAffiliateStore(storeData);
+
+      // جلب منتجات المسوق الحالية
+      if (storeData) {
+        const { data: myProductsData } = await supabase
+          .from('affiliate_products')
+          .select('product_id')
+          .eq('affiliate_store_id', storeData.id);
+
+        setMyProducts(new Set(myProductsData?.map(p => p.product_id) || []));
+      }
+
+      // جلب جميع المنتجات النشطة مع معلومات التجار
+      const { data: productsData, error: productsError } = await supabase
+        .from('products')
+        .select(`
+          *,
+          merchants (
+            id,
+            business_name,
+            default_commission_rate
+          )
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      console.log('Products query result:', { productsData, productsError });
+      console.log('Products count:', productsData?.length || 0);
+
+      // جلب المتغيرات لكل منتج
+      const productsWithVariants = await Promise.all(
+        (productsData || []).map(async (product) => {
+          const { data: variants, error: variantsError } = await supabase
+            .from('product_variants_advanced')
+            .select('color, size, sku, quantity, is_active')
+            .eq('product_id', product.id)
+            .eq('is_active', true);
+
+          if (variantsError) {
+            console.error('Error loading variants for product', product.id, variantsError);
+          }
+
+          // تحويل المتغيرات إلى الصيغة المطلوبة
+          const formattedVariants: ProductVariant[] = [];
+          const processedTypes = new Set<string>();
+
+          variants?.forEach(variant => {
+            if (variant.color && !processedTypes.has(`color-${variant.color}`)) {
+              formattedVariants.push({
+                type: 'color',
+                value: variant.color,
+                stock: variant.quantity || 0
+              });
+              processedTypes.add(`color-${variant.color}`);
+            }
+            
+            if (variant.size && !processedTypes.has(`size-${variant.size}`)) {
+              formattedVariants.push({
+                type: 'size',
+                value: variant.size,
+                stock: variant.quantity || 0
+              });
+              processedTypes.add(`size-${variant.size}`);
+            }
+          });
+
+          return {
+            ...product,
+            variants: formattedVariants
+          };
+        })
+      );
+
+      setProducts(productsWithVariants || []);
+      
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      toast({
+        title: "خطأ في جلب البيانات",
+        description: "تعذر جلب البيانات المطلوبة",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterProducts = () => {
+    let filtered = products;
+
+    // البحث النصي
+    if (searchQuery) {
+      filtered = filtered.filter(product => 
+        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.merchants?.business_name?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // فلتر الفئة
+    if (selectedCategory && selectedCategory !== 'all') {
+      filtered = filtered.filter(product => product.category === selectedCategory);
+    }
+
+    // فلتر السعر
+    if (priceRange.min || priceRange.max) {
+      filtered = filtered.filter(product => {
+        const price = product.price_sar;
+        const min = priceRange.min ? parseFloat(priceRange.min) : 0;
+        const max = priceRange.max ? parseFloat(priceRange.max) : Infinity;
+        return price >= min && price <= max;
+      });
+    }
+
+    setFilteredProducts(filtered);
+  };
+
+  const showPricingModal = (product: Product) => {
     setPricingProduct(product);
+    setCustomPrice(product.price_sar.toString());
   };
 
-  const handleConfirmPrice = (productId: string, customPrice: number) => {
-    addToMyStore(productId, customPrice);
+  const addToMyStore = async (productId: string, customPriceSar?: number) => {
+    if (!affiliateStore) {
+      toast({
+        title: "خطأ",
+        description: "يجب إنشاء متجر أولاً",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // تحقق من أن المنتج ليس قيد الإضافة بالفعل
+    if (addingProducts.has(productId)) {
+      return;
+    }
+
+    setAddingProducts(prev => new Set(prev).add(productId));
+
+    // Timeout للتأكد من عدم تعليق الواجهة
+    const timeoutId = setTimeout(() => {
+      setAddingProducts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
+      toast({
+        title: "تم تجاوز وقت الانتظار",
+        description: "العملية تأخذ وقت أطول من المتوقع",
+        variant: "destructive",
+      });
+    }, 10000); // 10 ثواني timeout
+
+    try {
+      // 1) Preferred path: RPC (bypasses RLS and handles duplicates)
+      const { data, error } = await supabase
+        .rpc('add_affiliate_product', {
+          p_store_id: affiliateStore.id,
+          p_product_id: productId,
+          p_is_visible: true,
+          p_sort_order: 0,
+          p_custom_price: typeof customPriceSar === 'number' && !Number.isNaN(customPriceSar)
+            ? customPriceSar
+            : null,
+        } as any);
+
+      clearTimeout(timeoutId);
+
+      if (error || !data) {
+        console.warn('RPC failed, falling back to upsert...', error);
+        // 2) Fallback: direct upsert with onConflict (may be blocked by RLS in some projects)
+        const { data: upsertData, error: upsertError } = await supabase
+          .from('affiliate_products')
+          .upsert(
+            [{
+              affiliate_store_id: affiliateStore.id,
+              product_id: productId,
+              is_visible: true,
+              sort_order: 0,
+              custom_price_sar: typeof customPriceSar === 'number' && !Number.isNaN(customPriceSar)
+                ? customPriceSar
+                : null,
+              price_set_at: typeof customPriceSar === 'number' && !Number.isNaN(customPriceSar)
+                ? new Date().toISOString()
+                : null,
+            }],
+            { onConflict: 'affiliate_store_id,product_id', ignoreDuplicates: true }
+          )
+          .select('product_id')
+          .maybeSingle();
+
+        if (upsertError) {
+          throw upsertError;
+        }
+
+        toast({ title: 'تم بنجاح', description: 'تم إضافة المنتج إلى متجرك' });
+        setMyProducts(prev => new Set(prev).add(productId));
+        return;
+      }
+
+      console.log('Add product result (RPC):', data);
+      const result = data as { already_exists?: boolean; success?: boolean };
+
+      if (result.already_exists) {
+        toast({ title: 'تنبيه', description: 'المنتج موجود بالفعل في متجرك' });
+      } else {
+        toast({ title: 'تم بنجاح', description: 'تم إضافة المنتج إلى متجرك' });
+      }
+      setMyProducts(prev => new Set(prev).add(productId));
+
+    } catch (error: any) {
+      clearTimeout(timeoutId);
+      console.error('Error adding product:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      
+      let errorMessage = "تعذر إضافة المنتج";
+      
+      if (error.message?.includes('Not authenticated')) {
+        errorMessage = "يجب تسجيل الدخول أولاً";
+      } else if (error.message?.includes('Unauthorized store access')) {
+        errorMessage = "غير مصرح لك بالوصول لهذا المتجر";
+      } else if (error.message) {
+        errorMessage = `خطأ: ${error.message}`;
+      }
+      
+      toast({
+        title: "فشل إضافة المنتج",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setAddingProducts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
+    }
   };
 
-  const handleViewDetails = (product: Product) => {
-    setDetailsProduct(product);
+  const removeFromMyStore = async (productId: string) => {
+    if (!affiliateStore) return;
+
+    setAddingProducts(prev => new Set(prev).add(productId));
+
+    try {
+      const { error } = await supabase
+        .from('affiliate_products')
+        .delete()
+        .eq('affiliate_store_id', affiliateStore.id)
+        .eq('product_id', productId);
+
+      if (error) throw error;
+
+      setMyProducts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
+
+      toast({
+        title: "تم الحذف",
+        description: "تم حذف المنتج من متجرك",
+      });
+
+    } catch (error) {
+      console.error('Error removing product:', error);
+      toast({
+        title: "خطأ",
+        description: "تعذر حذف المنتج",
+        variant: "destructive",
+      });
+    } finally {
+      setAddingProducts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
+    }
   };
 
-  // Loading State
+  // الحصول على الفئات المتاحة
+  const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
+
   if (loading) {
     return (
       <div className="container mx-auto p-6">
@@ -139,45 +467,19 @@ const ProductsBrowser = () => {
     <div className="min-h-screen bg-gradient-persian-bg">
       <div className="container mx-auto px-3 sm:px-6 py-4 sm:py-8">
         {/* Header */}
-
-        <ProductsBrowserHeader
-          productsCount={products.length}
-          myProductsCount={myProducts.size}
-          userRole={profile?.role}
-          onNavigateHome={() => goToUserHome(profile?.role)}
-        />
-
-        {/* Store Alerts */}
-        <StoreAlerts hasStore={!!affiliateStore} />
-
-        {/* Filters */}
-        <ProductFilters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          priceRange={priceRange}
-          setPriceRange={setPriceRange}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          categories={categories}
-        />
-
-        {/* Products Display */}
-
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
           <div>
             <div className="flex items-center gap-2 sm:gap-4 mb-4">
-              <UnifiedButton
+              <Button
                 variant="ghost"
                 onClick={() => goToUserHome(profile?.role)}
-                className="text-primary hover:bg-primary/10 text-sm sm:text-base px-2 sm:px-4"
-                leftIcon={<Home className="h-3 w-3 sm:h-4 sm:w-4" />}
-                rightIcon={<ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />}
+                className="text-primary hover:bg-primary/10 gap-1 sm:gap-2 text-sm sm:text-base px-2 sm:px-4"
               >
+                <Home className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">الصفحة الرئيسية</span>
                 <span className="sm:hidden">الرئيسية</span>
-              </UnifiedButton>
+                <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
+              </Button>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl bg-gradient-primary flex items-center justify-center">
@@ -293,29 +595,28 @@ const ProductsBrowser = () => {
 
               {/* تبديل العرض */}
               <div className="flex gap-2">
-                <UnifiedButton
-                  variant={viewMode === 'grid' ? 'primary' : 'outline'}
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setViewMode('grid')}
                   className="flex-1 px-2 sm:px-4"
                 >
                   <Grid className="h-3 w-3 sm:h-4 sm:w-4" />
-                </UnifiedButton>
-                <UnifiedButton
-                  variant={viewMode === 'list' ? 'primary' : 'outline'}
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setViewMode('list')}
                   className="flex-1 px-2 sm:px-4"
                 >
                   <List className="h-3 w-3 sm:h-4 sm:w-4" />
-                </UnifiedButton>
+                </Button>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* عرض المنتجات */}
-
         {filteredProducts.length === 0 ? (
           <Card className="border-0 bg-card/50 backdrop-blur-sm">
             <CardContent className="p-12 text-center">
@@ -324,45 +625,20 @@ const ProductsBrowser = () => {
               <p className="text-muted-foreground">
                 {searchQuery || selectedCategory !== 'all' || priceRange.min || priceRange.max
                   ? 'لا توجد منتجات تطابق معايير البحث'
-                  : 'لا توجد منتجات متاحة حالياً'}
+                  : 'لا توجد منتجات متاحة حالياً'
+                }
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div
-            className={
-              viewMode === 'grid'
-                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6'
-                : 'space-y-3 sm:space-y-4'
-            }
-          >
+          <div className={
+            viewMode === 'grid' 
+              ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6' 
+              : 'space-y-3 sm:space-y-4'
+          }>
             {filteredProducts.map((product) => {
               const isInMyStore = myProducts.has(product.id);
               const isProcessing = addingProducts.has(product.id);
-
-
-              return viewMode === 'grid' ? (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  isInMyStore={isInMyStore}
-                  isProcessing={isProcessing}
-                  showStoreActions={!!affiliateStore}
-                  onAddToStore={handleAddToStore}
-                  onRemoveFromStore={removeFromMyStore}
-                  onViewDetails={handleViewDetails}
-                />
-              ) : (
-                <ProductListItem
-                  key={product.id}
-                  product={product}
-                  isInMyStore={isInMyStore}
-                  isProcessing={isProcessing}
-                  showStoreActions={!!affiliateStore}
-                  onAddToStore={handleAddToStore}
-                  onRemoveFromStore={removeFromMyStore}
-                />
-
               
               return (
                 <Card key={product.id} className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300 group overflow-hidden">
@@ -380,28 +656,28 @@ const ProductsBrowser = () => {
                         
                         {/* شارة التاجر */}
                         <div className="absolute top-3 right-3">
-                          <UnifiedBadge variant="secondary" className="bg-background/80 backdrop-blur-sm">
+                          <Badge variant="secondary" className="bg-background/80 backdrop-blur-sm">
                             <Store className="h-3 w-3 ml-1" />
                             {product.merchants?.business_name}
-                          </UnifiedBadge>
+                          </Badge>
                         </div>
 
                         {/* حالة المنتج في متجري */}
                         {isInMyStore && (
                           <div className="absolute top-3 left-3">
-                            <UnifiedBadge variant="success" className="backdrop-blur-sm">
+                            <Badge className="bg-green-500/90 text-white backdrop-blur-sm">
                               <CheckCircle className="h-3 w-3 ml-1" />
                               في متجري
-                            </UnifiedBadge>
+                            </Badge>
                           </div>
                         )}
 
                         {/* تنبيه المخزون */}
                         {product.stock <= 10 && (
                           <div className="absolute bottom-3 right-3">
-                            <UnifiedBadge variant="error" className="backdrop-blur-sm">
+                            <Badge variant="destructive" className="bg-red-500/90 backdrop-blur-sm">
                               باقي {product.stock}
-                            </UnifiedBadge>
+                            </Badge>
                           </div>
                         )}
                       </div>
@@ -425,9 +701,9 @@ const ProductsBrowser = () => {
                                 العمولة: {product.merchants?.default_commission_rate || 10}%
                               </div>
                             </div>
-                            <UnifiedBadge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs">
                               {product.category}
-                            </UnifiedBadge>
+                            </Badge>
                           </div>
 
                           {/* عرض المتغيرات */}
@@ -445,7 +721,7 @@ const ProductsBrowser = () => {
                             {affiliateStore && (
                               <>
                                 {isInMyStore ? (
-                                  <UnifiedButton
+                                  <Button
                                     variant="outline"
                                     size="sm"
                                     onClick={() => removeFromMyStore(product.id)}
@@ -460,9 +736,9 @@ const ProductsBrowser = () => {
                                         حذف من متجري
                                       </>
                                     )}
-                                  </UnifiedButton>
+                                  </Button>
                                 ) : (
-                                  <UnifiedButton
+                                  <Button
                                     size="sm"
                                     onClick={() => showPricingModal(product)}
                                     disabled={isProcessing}
@@ -476,12 +752,12 @@ const ProductsBrowser = () => {
                                         إضافة لمتجري
                                       </>
                                     )}
-                                  </UnifiedButton>
+                                  </Button>
                                 )}
                               </>
                             )}
                             
-                            <UnifiedButton 
+                            <Button 
                               variant="outline" 
                               size="sm"
                               onClick={() => {
@@ -490,7 +766,7 @@ const ProductsBrowser = () => {
                               }}
                             >
                               <Eye className="h-3 w-3" />
-                            </UnifiedButton>
+                            </Button>
                           </div>
                         </div>
                       </CardContent>
@@ -516,16 +792,16 @@ const ProductsBrowser = () => {
                             <div>
                               <h3 className="font-semibold">{product.title}</h3>
                               <p className="text-sm text-muted-foreground mb-1">
-                              {product.merchants?.business_name}
+                                {product.merchants?.business_name}
                               </p>
                               <div className="flex items-center gap-2">
-                                <UnifiedBadge variant="outline" className="text-xs">
+                                <Badge variant="outline" className="text-xs">
                                   {product.category}
-                                </UnifiedBadge>
+                                </Badge>
                                 {isInMyStore && (
-                                  <UnifiedBadge variant="success" className="text-xs">
+                                  <Badge className="bg-green-100 text-green-800 text-xs">
                                     في متجري
-                                  </UnifiedBadge>
+                                  </Badge>
                                 )}
                               </div>
                             </div>
@@ -548,7 +824,7 @@ const ProductsBrowser = () => {
                             {affiliateStore && (
                               <div className="flex gap-2">
                                 {isInMyStore ? (
-                                  <UnifiedButton
+                                  <Button
                                     variant="outline"
                                     size="sm"
                                     onClick={() => removeFromMyStore(product.id)}
@@ -563,9 +839,9 @@ const ProductsBrowser = () => {
                                         حذف من متجري
                                       </>
                                     )}
-                                  </UnifiedButton>
+                                  </Button>
                                 ) : (
-                                  <UnifiedButton
+                                  <Button
                                     size="sm"
                                     onClick={() => showPricingModal(product)}
                                     disabled={isProcessing}
@@ -579,7 +855,7 @@ const ProductsBrowser = () => {
                                         إضافة لمتجري
                                       </>
                                     )}
-                                  </UnifiedButton>
+                                  </Button>
                                 )}
                               </div>
                             )}
@@ -589,41 +865,22 @@ const ProductsBrowser = () => {
                     </CardContent>
                   )}
                 </Card>
-
               );
             })}
           </div>
         )}
 
-        {/* Stats Footer */}
+        {/* إحصائيات في أسفل الصفحة */}
         <div className="mt-8 text-center text-sm text-muted-foreground">
           عرض {filteredProducts.length} من أصل {products.length} منتج
           {myProducts.size > 0 && (
-            <>
-              <span className="mx-2">•</span>
-              <span>{myProducts.size} منتج في متجرك</span>
-            </>
+            <span className="mx-2">•</span>
+          )}
+          {myProducts.size > 0 && (
+            <span>{myProducts.size} منتج في متجرك</span>
           )}
         </div>
       </div>
-
-
-      {/* Pricing Dialog */}
-      <PricingDialog
-        product={pricingProduct}
-        onClose={() => setPricingProduct(null)}
-        onConfirm={handleConfirmPrice}
-      />
-
-      {/* Product Details Dialog */}
-      <ProductDetailsDialog
-        product={detailsProduct}
-        isInMyStore={detailsProduct ? myProducts.has(detailsProduct.id) : false}
-        onClose={() => setDetailsProduct(null)}
-        onAddToStore={handleAddToStore}
-        onRemoveFromStore={removeFromMyStore}
-        showStoreActions={!!affiliateStore}
-      />
 
       <Dialog open={!!pricingProduct} onOpenChange={() => setPricingProduct(null)}>
         <DialogContent>
@@ -673,7 +930,7 @@ const ProductsBrowser = () => {
                 </div>
               )}
 
-              <UnifiedButton
+              <Button
                 className="w-full"
                 onClick={() => {
                   const price = parseFloat(customPrice);
@@ -692,7 +949,7 @@ const ProductsBrowser = () => {
                 disabled={!customPrice || parseFloat(customPrice) < pricingProduct.price_sar}
               >
                 إضافة للمتجر
-              </UnifiedButton>
+              </Button>
             </div>
           )}
         </DialogContent>
@@ -777,7 +1034,7 @@ const ProductsBrowser = () => {
               <div className="flex gap-3 pt-4">
                 {affiliateStore && (
                   myProducts.has(selectedProduct.id) ? (
-                    <UnifiedButton
+                    <Button
                       variant="outline"
                       onClick={() => {
                         removeFromMyStore(selectedProduct.id);
@@ -786,9 +1043,9 @@ const ProductsBrowser = () => {
                       className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
                     >
                       حذف من متجري
-                    </UnifiedButton>
+                    </Button>
                   ) : (
-                    <UnifiedButton
+                    <Button
                       onClick={() => {
                         showPricingModal(selectedProduct);
                         setShowViewDialog(false);
@@ -797,22 +1054,21 @@ const ProductsBrowser = () => {
                     >
                       <Plus className="h-4 w-4 ml-2" />
                       إضافة لمتجري
-                    </UnifiedButton>
+                    </Button>
                   )
                 )}
-                <UnifiedButton
+                <Button
                   variant="outline"
                   onClick={() => setShowViewDialog(false)}
                   className="flex-1"
                 >
                   إغلاق
-                </UnifiedButton>
+                </Button>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
-
     </div>
   );
 };
