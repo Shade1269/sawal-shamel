@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { 
   ShoppingCart, 
   Heart, 

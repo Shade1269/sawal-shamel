@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Package } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { cn } from '@/lib/utils';
 import {
   extractImagesFromVariant,

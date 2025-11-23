@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedButton as Button } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
 import {
   Sheet,
