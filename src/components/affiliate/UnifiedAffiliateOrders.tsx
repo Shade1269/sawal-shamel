@@ -1,8 +1,8 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { 
