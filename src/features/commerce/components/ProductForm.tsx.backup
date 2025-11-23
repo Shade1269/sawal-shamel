@@ -1,10 +1,3 @@
-/**
- * ProductForm - نموذج إنشاء/تعديل المنتج (مُحسّن)
- * تم تحسين هذا الملف في 2025-11-22
- * - استخراج handleSubmit logic (113 سطر) → useProductSave.ts hook
- * معامل الصيانة: من 7/10 → 9/10
- */
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,12 +7,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Upload,
-  X,
-  Plus,
-  Save,
-  ArrowLeft,
+import { 
+  Upload, 
+  X, 
+  Plus, 
+  Save, 
+  ArrowLeft, 
   Image as ImageIcon,
   Star,
   Package,
@@ -28,13 +21,10 @@ import {
   Info,
   Trash2
 } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useFastAuth } from '@/hooks/useFastAuth';
-
-// Custom Hook
-import { useProductSave } from './product-form/useProductSave';
 
 interface ProductFormProps {
   mode: 'create' | 'edit';
@@ -78,15 +68,9 @@ interface ProductAttribute {
 
 const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { profile } = useFastAuth();
-
-  // Custom Hook for saving product
-  const { saveProduct, isSaving } = useProductSave({
-    mode,
-    productId: id,
-    merchantProfileId: profile?.id,
-  });
 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -206,17 +190,118 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
     }
   };
 
-  /**
-   * Handle form submission - تم تبسيطه باستخدام useProductSave hook
-   * الكود الأصلي: 113 سطر → الجديد: 10 أسطر (-91%)
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
-      await saveProduct(formData, images, attributes);
+      // الحصول على معرف التاجر الحالي
+      const { data: merchantData } = await supabase
+        .from('merchants')
+        .select('id')
+        .eq('profile_id', profile?.id)
+        .maybeSingle();
+
+      if (!merchantData) {
+        throw new Error('لم يتم العثور على بيانات التاجر');
+      }
+
+      const productData = {
+        ...formData,
+        merchant_id: merchantData.id,
+        price_sar: Number(formData.price_sar),
+        stock: Number(formData.stock),
+        weight_kg: Number(formData.weight_kg) || null,
+        min_order_quantity: Number(formData.min_order_quantity) || 1,
+        max_order_quantity: Number(formData.max_order_quantity) || null,
+      };
+
+      let productId = id;
+
+      if (mode === 'create') {
+        // إنشاء منتج جديد
+        const { data: newProduct, error } = await supabase
+          .from('products')
+          .insert([productData])
+          .select()
+          .maybeSingle();
+
+        if (error) throw error;
+        productId = newProduct.id;
+      } else {
+        const { error } = await supabase
+          .from('products')
+          .update(productData)
+          .eq('id', id);
+      }
+
+      // حفظ الصور
+      if (images.length > 0) {
+        // حذف الصور القديمة في حالة التحديث
+        if (mode === 'edit') {
+          await supabase
+            .from('product_images')
+            .delete()
+            .eq('product_id', productId);
+        }
+
+        // إضافة الصور الجديدة
+        const imagesToInsert = images.map((img, index) => ({
+          product_id: productId,
+          image_url: img.image_url,
+          alt_text: img.alt_text || formData.title,
+          sort_order: img.sort_order || index,
+          is_primary: img.is_primary || index === 0,
+        }));
+
+        const { error: imagesError } = await supabase
+          .from('product_images')
+          .insert(imagesToInsert);
+
+        if (imagesError) throw imagesError;
+      }
+
+      // حفظ الخصائص
+      if (attributes.length > 0) {
+        // حذف الخصائص القديمة في حالة التحديث
+        if (mode === 'edit') {
+          await supabase
+            .from('product_attributes')
+            .delete()
+            .eq('product_id', productId);
+        }
+
+        // إضافة الخصائص الجديدة
+        const attributesToInsert = attributes.map(attr => ({
+          product_id: productId,
+          attribute_name: attr.attribute_name,
+          attribute_value: attr.attribute_value,
+          attribute_type: attr.attribute_type,
+          is_variant: attr.is_variant,
+        }));
+
+        const { error: attributesError } = await supabase
+          .from('product_attributes')
+          .insert(attributesToInsert);
+
+        if (attributesError) throw attributesError;
+      }
+
+      toast({
+        title: mode === 'create' ? "تم إنشاء المنتج" : "تم تحديث المنتج",
+        description: mode === 'create' ? "تم إنشاء المنتج بنجاح" : "تم تحديث المنتج بنجاح",
+      });
+
+      navigate('/admin/inventory');
     } catch (error) {
-      // Errors are handled by the hook
-      console.error('Form submission error:', error);
+      console.error('Error saving product:', error);
+      toast({
+        title: "خطأ في الحفظ",
+        description: "تعذر حفظ المنتج",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -350,12 +435,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
               </div>
             </div>
             
-            <Button
+            <Button 
               onClick={handleSubmit}
-              disabled={isSaving || loading}
+              disabled={loading}
               className="bg-gradient-primary gap-2"
             >
-              {(isSaving || loading) ? (
+              {loading ? (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               ) : (
                 <Save className="h-4 w-4" />

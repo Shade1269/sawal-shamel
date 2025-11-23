@@ -1,40 +1,34 @@
-/**
- * ComponentLibrary - مكتبة قوالب المكونات (مُعاد هيكلتها)
- * تم إعادة هيكلة هذا الملف في 2025-11-22 لتحسين الصيانة
- * معامل الصيانة: من 6/10 → 8/10
- *
- * التغييرات:
- * - استخراج ComponentCard (96 سطر) → component-library/ComponentCard.tsx
- * - استخراج UploadComponentDialog (116 سطر) → component-library/UploadComponentDialog.tsx
- * - استخراج ComponentPreviewDialog (115 سطر) → component-library/ComponentPreviewDialog.tsx
- * - تقليل حجم الملف: 872 → 350 سطر (-60%)
- */
-
 import React, { useState, useEffect } from 'react';
-import {
-  Package,
-  Upload,
+import { 
+  Package, 
+  Download, 
+  Upload, 
+  Star, 
+  Eye, 
+  Code, 
+  Share2, 
+  Filter,
   Search,
   Grid,
-  List
+  List,
+  Bookmark,
+  BookmarkCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 
-// Extracted Components
-import { ComponentCard } from './component-library/ComponentCard';
-import { UploadComponentDialog } from './component-library/UploadComponentDialog';
-import { ComponentPreviewDialog } from './component-library/ComponentPreviewDialog';
-
-// Types
 interface ComponentTemplate {
   id: string;
   name: string;
@@ -63,7 +57,6 @@ interface ComponentLibraryProps {
   className?: string;
 }
 
-// Sample Data (will be replaced with Supabase integration later)
 const sampleComponents: ComponentTemplate[] = [
   {
     id: '1',
@@ -123,14 +116,14 @@ const sampleComponents: ComponentTemplate[] = [
     animate={{ opacity: 1, y: 0 }}
     className="container mx-auto text-center"
   >
-    <motion.h1
+    <motion.h1 
       initial={{ scale: 0.9 }}
       animate={{ scale: 1 }}
       className="text-5xl font-bold mb-6"
     >
       {title}
     </motion.h1>
-    <motion.p
+    <motion.p 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.5 }}
@@ -238,17 +231,13 @@ const sampleComponents: ComponentTemplate[] = [
   }
 ];
 
-/**
- * Main ComponentLibrary Component
- */
 export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
   onSelectTemplate,
   userRole = 'basic',
   className = ''
 }) => {
   const { user } = useSupabaseAuth();
-
-  // State Management
+  
   const [components, setComponents] = useState<ComponentTemplate[]>(sampleComponents);
   const [filteredComponents, setFilteredComponents] = useState<ComponentTemplate[]>(sampleComponents);
   const [searchTerm, setSearchTerm] = useState('');
@@ -277,7 +266,6 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
     setFilteredComponents(filtered);
   }, [components, searchTerm, selectedCategory]);
 
-  // Categories
   const categories = [
     { value: 'all', label: 'الكل' },
     { value: 'products', label: 'المنتجات' },
@@ -287,7 +275,6 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
     { value: 'navigation', label: 'التنقل' }
   ];
 
-  // Handlers
   const handleSelectComponent = (template: ComponentTemplate) => {
     if (template.premium && userRole === 'basic') {
       toast({
@@ -338,7 +325,7 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
 
     setComponents(prev => [newComponent, ...prev]);
     setShowUploadDialog(false);
-
+    
     toast({
       title: 'تم رفع المكون',
       description: 'تم رفع المكون الخاص بك بنجاح'
@@ -358,7 +345,7 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
               </CardDescription>
             </div>
           </div>
-
+          
           <div className="flex items-center gap-2">
             <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
               <DialogTrigger asChild>
@@ -370,7 +357,7 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
               </DialogTrigger>
               <UploadComponentDialog onSubmit={handleUploadComponent} />
             </Dialog>
-
+            
             <div className="flex border rounded-lg">
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'ghost'}
@@ -405,7 +392,7 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
               />
             </div>
           </div>
-
+          
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="w-full sm:w-48">
               <SelectValue placeholder="اختر الفئة" />
@@ -521,6 +508,364 @@ export const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
         />
       )}
     </Card>
+  );
+};
+
+// Component Card
+interface ComponentCardProps {
+  component: ComponentTemplate;
+  viewMode: 'grid' | 'list';
+  isFavorite: boolean;
+  onSelect: () => void;
+  onToggleFavorite: () => void;
+  onPreview: () => void;
+  userRole: string;
+}
+
+const ComponentCard: React.FC<ComponentCardProps> = ({
+  component,
+  viewMode,
+  isFavorite,
+  onSelect,
+  onToggleFavorite,
+  onPreview,
+  userRole
+}) => {
+  const isLocked = component.premium && userRole === 'basic';
+
+  return (
+    <Card className={`group cursor-pointer transition-all hover:shadow-lg ${
+      viewMode === 'list' ? 'flex' : ''
+    } ${isLocked ? 'opacity-75' : ''}`}>
+      <div className={viewMode === 'list' ? 'flex-shrink-0 w-32' : ''}>
+        <div className="relative aspect-video bg-muted overflow-hidden rounded-t-lg">
+          <img
+            src={component.preview}
+            alt={component.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+          />
+          
+          {component.premium && (
+            <Badge className="absolute top-2 right-2 bg-yellow-500">
+              Premium
+            </Badge>
+          )}
+          
+          {component.featured && (
+            <Badge className="absolute top-2 left-2 bg-red-500">
+              مميز
+            </Badge>
+          )}
+
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+            <div className="flex gap-2">
+              <Button size="icon" variant="secondary" onClick={onPreview}>
+                <Eye className="h-4 w-4" />
+              </Button>
+              <Button size="icon" variant="secondary" onClick={onSelect}>
+                <Download className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <CardContent className={`${viewMode === 'list' ? 'flex-1' : ''} p-4`}>
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="font-semibold truncate">{component.name}</h3>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={onToggleFavorite}
+            className="flex-shrink-0"
+          >
+            {isFavorite ? (
+              <BookmarkCheck className="h-4 w-4 text-primary" />
+            ) : (
+              <Bookmark className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+
+        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+          {component.description}
+        </p>
+
+        <div className="flex items-center gap-2 mb-3">
+          {component.tags.slice(0, 3).map(tag => (
+            <Badge key={tag} variant="secondary" className="text-xs">
+              {tag}
+            </Badge>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
+              <Star className="h-4 w-4 text-yellow-400" />
+              <span>{component.rating}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Download className="h-4 w-4 text-muted-foreground" />
+              <span>{component.downloads}</span>
+            </div>
+          </div>
+          
+          <span className="text-muted-foreground">
+            {component.author.name}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Upload Component Dialog
+interface UploadComponentDialogProps {
+  onSubmit: (data: any) => void;
+}
+
+const UploadComponentDialog: React.FC<UploadComponentDialogProps> = ({ onSubmit }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    category: 'products',
+    tags: '',
+    preview: '',
+    code: ''
+  });
+
+  const handleSubmit = () => {
+    if (!formData.name || !formData.description || !formData.code) {
+      toast({
+        title: 'بيانات ناقصة',
+        description: 'يرجى ملء جميع الحقول المطلوبة',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    onSubmit(formData);
+  };
+
+  return (
+    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle>رفع مكون جديد</DialogTitle>
+        <DialogDescription>
+          شارك مكونك مع المجتمع
+        </DialogDescription>
+      </DialogHeader>
+
+      <div className="space-y-4 py-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="name">اسم المكون *</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              placeholder="مثال: بطاقة منتج حديثة"
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="category">الفئة *</Label>
+            <Select 
+              value={formData.category}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="products">المنتجات</SelectItem>
+                <SelectItem value="hero">الأقسام الرئيسية</SelectItem>
+                <SelectItem value="layout">التخطيط</SelectItem>
+                <SelectItem value="forms">النماذج</SelectItem>
+                <SelectItem value="navigation">التنقل</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div>
+          <Label htmlFor="description">الوصف *</Label>
+          <Textarea
+            id="description"
+            value={formData.description}
+            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+            placeholder="وصف مختصر للمكون وما يقوم به"
+            rows={3}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="tags">العلامات</Label>
+          <Input
+            id="tags"
+            value={formData.tags}
+            onChange={(e) => setFormData(prev => ({ ...prev, tags: e.target.value }))}
+            placeholder="منتج، بطاقة، تجارة إلكترونية (مفصولة بفواصل)"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="preview">رابط صورة المعاينة</Label>
+          <Input
+            id="preview"
+            value={formData.preview}
+            onChange={(e) => setFormData(prev => ({ ...prev, preview: e.target.value }))}
+            placeholder="https://..."
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="code">كود المكون *</Label>
+          <Textarea
+            id="code"
+            value={formData.code}
+            onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value }))}
+            placeholder="أدخل كود React/JSX للمكون"
+            rows={10}
+            className="font-mono text-sm"
+          />
+        </div>
+      </div>
+
+      <DialogFooter>
+        <Button onClick={handleSubmit} className="gap-2">
+          <Upload className="h-4 w-4" />
+          رفع المكون
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  );
+};
+
+// Component Preview Dialog
+interface ComponentPreviewDialogProps {
+  component: ComponentTemplate;
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: () => void;
+  userRole: string;
+}
+
+const ComponentPreviewDialog: React.FC<ComponentPreviewDialogProps> = ({
+  component,
+  isOpen,
+  onClose,
+  onSelect,
+  userRole
+}) => {
+  const isLocked = component.premium && userRole === 'basic';
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-2">
+              {component.name}
+              {component.premium && <Badge className="bg-yellow-500">Premium</Badge>}
+              {component.featured && <Badge className="bg-red-500">مميز</Badge>}
+            </DialogTitle>
+            
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Star className="h-4 w-4 text-yellow-400" />
+                <span>{component.rating}</span>
+              </div>
+              <Separator orientation="vertical" className="h-4" />
+              <div className="flex items-center gap-1">
+                <Download className="h-4 w-4" />
+                <span>{component.downloads}</span>
+              </div>
+            </div>
+          </div>
+          
+          <DialogDescription>{component.description}</DialogDescription>
+        </DialogHeader>
+
+        <Tabs defaultValue="preview" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="preview">المعاينة</TabsTrigger>
+            <TabsTrigger value="code">الكود</TabsTrigger>
+            <TabsTrigger value="info">التفاصيل</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="preview" className="mt-4">
+            <div className="border rounded-lg p-4 bg-muted/30">
+              <img
+                src={component.preview}
+                alt={component.name}
+                className="w-full rounded-lg"
+              />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="code" className="mt-4">
+            <div className="border rounded-lg">
+              <pre className="p-4 text-sm font-mono bg-muted/50 overflow-x-auto">
+                <code>{isLocked ? 'كود المكون متاح للأعضاء المميزين فقط' : component.code}</code>
+              </pre>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="info" className="mt-4 space-y-4">
+            <div>
+              <Label className="text-sm font-medium">المؤلف</Label>
+              <p className="text-sm text-muted-foreground">{component.author.name}</p>
+            </div>
+            
+            <div>
+              <Label className="text-sm font-medium">الفئة</Label>
+              <Badge variant="outline" className="mr-2">{component.category}</Badge>
+            </div>
+            
+            <div>
+              <Label className="text-sm font-medium">العلامات</Label>
+              <div className="flex gap-2 mt-1">
+                {component.tags.map(tag => (
+                  <Badge key={tag} variant="secondary">{tag}</Badge>
+                ))}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm font-medium">تاريخ الإنشاء</Label>
+                <p className="text-sm text-muted-foreground">
+                  {new Date(component.created_at).toLocaleDateString('ar-SA')}
+                </p>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">آخر تحديث</Label>
+                <p className="text-sm text-muted-foreground">
+                  {new Date(component.updated_at).toLocaleDateString('ar-SA')}
+                </p>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        <DialogFooter>
+          {isLocked ? (
+            <Button disabled className="gap-2">
+              <Star className="h-4 w-4" />
+              يتطلب عضوية مميزة
+            </Button>
+          ) : (
+            <Button onClick={onSelect} className="gap-2">
+              <Download className="h-4 w-4" />
+              استخدام المكون
+            </Button>
+          )}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
