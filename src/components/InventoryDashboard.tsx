@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedBadge } from '@/components/design-system';
 import { Progress } from '@/components/ui/progress';
 import { useInventoryManagement } from '@/hooks/useInventoryManagement';
 import { InventorySetupCard } from './InventorySetupCard';

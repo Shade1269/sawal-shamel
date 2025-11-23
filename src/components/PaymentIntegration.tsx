@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from "@/components/design-system";
+import { UnifiedButton } from "@/components/design-system";
+import { UnifiedBadge } from "@/components/design-system";
 import { usePaymentGateways } from "@/hooks/usePaymentGateways";
 import { useToast } from "@/hooks/use-toast";
 import { 
