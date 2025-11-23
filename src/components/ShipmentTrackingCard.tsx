@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard as Card, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle, UnifiedCardContent as CardContent } from '@/components/design-system';
+import { UnifiedBadge as Badge } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
 import { Package, MapPin, Calendar, Phone, User } from 'lucide-react';
 import { ShipmentTracking, useShipmentTracking } from '@/hooks/useShipmentTracking';

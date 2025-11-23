@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
+import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Plus, 
@@ -201,11 +201,11 @@ export const ReturnsManagement: React.FC = () => {
     }
   };
 
-  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
+  const getStatusVariant = (status: string): "default" | "secondary" | "error" | "outline" => {
     switch (status) {
       case 'pending': return 'outline';
       case 'approved': return 'default';
-      case 'rejected': return 'destructive';
+      case 'rejected': return 'error';
       case 'processed': return 'secondary';
       case 'completed': return 'secondary';
       default: return 'outline';
@@ -465,11 +465,11 @@ export const ReturnsManagement: React.FC = () => {
                 {/* أزرار الإجراءات */}
                 {returnItem.status === 'pending' && (
                   <div className="flex gap-2">
-                    <Button size="sm" variant="default">
-                      <CheckCircle className="h-4 w-4 ml-1" />
-                      موافقة
-                    </Button>
-                    <Button size="sm" variant="destructive">
+                <Button size="sm" variant="primary">
+                  <CheckCircle className="h-4 w-4 ml-1" />
+                  موافقة
+                </Button>
+                <Button size="sm" variant="danger">
                       <AlertTriangle className="h-4 w-4 ml-1" />
                       رفض
                     </Button>
