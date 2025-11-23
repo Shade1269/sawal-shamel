@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
-import { UnifiedButton } from '@/components/design-system';
-import { Input } from '@/components/ui/input';
-import { UnifiedBadge } from '@/components/design-system';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BackButton } from '@/components/ui/back-button';
+import { 
+  UnifiedCard as Card, 
+  UnifiedCardContent as CardContent, 
+  UnifiedCardHeader as CardHeader, 
+  UnifiedCardTitle as CardTitle,
+  UnifiedButton as Button,
+  UnifiedBadge as Badge,
+  UnifiedInput as Input
+} from '@/components/design-system';
 import { 
   Users, 
   Search, 
@@ -21,8 +24,6 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 import { useFastAuth } from '@/hooks/useFastAuth';
 
@@ -214,24 +215,22 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
         </div>
         
         <div className="flex flex-wrap items-center gap-2">
-          <UnifiedButton onClick={() => goToUserHome(profile?.role)} variant="outline" size="sm" className="text-xs sm:text-sm" leftIcon={<Home className="w-3 h-3 sm:w-4 sm:h-4" />}>
+          <Button onClick={() => goToUserHome(profile?.role)} variant="outline" size="sm" className="text-xs sm:text-sm" leftIcon={<Home className="w-3 h-3 sm:w-4 sm:h-4" />}>
             <span className="hidden sm:inline">الرئيسية</span>
             <span className="sm:hidden">الرئيسية</span>
-          </UnifiedButton>
+          </Button>
           
-          <UnifiedButton onClick={exportCustomers} variant="outline" size="sm" className="text-xs sm:text-sm" leftIcon={<Download className="w-3 h-3 sm:w-4 sm:h-4" />}>
+          <Button onClick={exportCustomers} variant="outline" size="sm" className="text-xs sm:text-sm" leftIcon={<Download className="w-3 h-3 sm:w-4 sm:h-4" />}>
             <span className="hidden sm:inline">تصدير البيانات</span>
             <span className="sm:hidden">تصدير</span>
-          </UnifiedButton>
-          
-          <BackButton />
+          </Button>
         </div>
       </div>
 
       {/* إحصائيات العملاء */}
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <UnifiedCard variant="glass">
-          <UnifiedCardContent className="p-4 sm:p-6">
+        <Card variant="glass">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground">إجمالي العملاء</p>
@@ -239,11 +238,11 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
               </div>
               <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
             </div>
-          </UnifiedCardContent>
-        </UnifiedCard>
+          </CardContent>
+        </Card>
 
-        <UnifiedCard variant="glass">
-          <UnifiedCardContent className="p-4 sm:p-6">
+        <Card variant="glass">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground">العملاء النشطون</p>
@@ -251,11 +250,11 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
               </div>
               <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
             </div>
-          </UnifiedCardContent>
-        </UnifiedCard>
+          </CardContent>
+        </Card>
 
-        <UnifiedCard variant="glass">
-          <UnifiedCardContent className="p-4 sm:p-6">
+        <Card variant="glass">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground line-clamp-1">عملاء جدد</p>
@@ -263,11 +262,11 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
               </div>
               <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600" />
             </div>
-          </UnifiedCardContent>
-        </UnifiedCard>
+          </CardContent>
+        </Card>
 
-        <UnifiedCard variant="glass">
-          <UnifiedCardContent className="p-4 sm:p-6">
+        <Card variant="glass">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground line-clamp-1">متوسط الإنفاق</p>
@@ -275,8 +274,8 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
               </div>
               <ShoppingBag className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
             </div>
-          </UnifiedCardContent>
-        </UnifiedCard>
+          </CardContent>
+        </Card>
       </div>
 
       {/* أدوات البحث والتصفية */}

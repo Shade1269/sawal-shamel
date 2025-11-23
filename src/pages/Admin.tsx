@@ -2,23 +2,31 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { UnifiedButton } from "@/components/design-system";
 import { UnifiedInput } from "@/components/design-system";
-import { Label } from "@/components/ui/label";
 import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from "@/components/design-system";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { UnifiedBadge } from "@/components/design-system";
 import { useToast } from "@/hooks/use-toast";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
+  UnifiedSelect as Select, 
+  UnifiedSelectContent as SelectContent, 
+  UnifiedSelectItem as SelectItem, 
+  UnifiedSelectTrigger as SelectTrigger, 
+  UnifiedSelectValue as SelectValue 
+} from "@/components/design-system";
+import { 
+  UnifiedDialog as Dialog, 
+  UnifiedDialogContent as DialogContent, 
+  UnifiedDialogHeader as DialogHeader, 
+  UnifiedDialogTitle as DialogTitle, 
+  UnifiedDialogTrigger as DialogTrigger 
+} from "@/components/design-system";
 import UserProfileDialog from "@/shared/components/UserProfileDialog";
 import UserSettingsMenu from "@/components/UserSettingsMenu";
 import EmkanIntegration from "@/components/EmkanIntegration";
 import { useSupabaseUserData } from "@/hooks/useSupabaseUserData";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from 'react-router-dom';
-import { BackButton } from '@/components/ui/back-button';
+
 import { useShippingManagement } from '@/hooks/useShippingManagement';
 import { usePaymentGateways } from '@/hooks/usePaymentGateways';
 
