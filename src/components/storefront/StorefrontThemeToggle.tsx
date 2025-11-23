@@ -1,6 +1,6 @@
 import { Moon, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { useStoreTheme } from '@/components/store/ThemeProvider';
 
 interface StorefrontThemeToggleProps {
@@ -43,9 +43,8 @@ export const StorefrontThemeToggle = ({ storeSlug }: StorefrontThemeToggleProps)
   };
 
   return (
-    <Button
+    <UnifiedButton
       variant="ghost"
-      size="icon"
       onClick={toggleTheme}
       className="rounded-lg transition-colors hover:bg-secondary/50"
       aria-label={isDark ? 'التبديل للوضع المشمس' : 'التبديل للوضع المظلم'}
@@ -55,6 +54,6 @@ export const StorefrontThemeToggle = ({ storeSlug }: StorefrontThemeToggleProps)
       ) : (
         <Moon className="h-5 w-5 text-foreground/70" />
       )}
-    </Button>
+    </UnifiedButton>
   );
 };

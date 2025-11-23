@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedButton } from '@/components/design-system';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -84,22 +84,22 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-subtle" dir="rtl">
-      <Card className="w-full max-w-md mx-4 shadow-2xl border border-border/50 bg-card backdrop-blur-sm">
-        <CardHeader className="text-center space-y-4">
+      <UnifiedCard className="w-full max-w-md mx-4 shadow-2xl border border-border/50 bg-card backdrop-blur-sm">
+        <UnifiedCardHeader className="text-center space-y-4">
           <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto shadow-glow">
             <Store className="w-8 h-8 text-primary-foreground" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold text-card-foreground">
+            <UnifiedCardTitle className="text-2xl font-bold text-card-foreground">
               إنشاء متجرك الخاص
-            </CardTitle>
-            <CardDescription className="text-base mt-2 text-muted-foreground">
+            </UnifiedCardTitle>
+            <UnifiedCardDescription className="text-base mt-2 text-muted-foreground">
               ابدئي رحلتك في التسويق وأنشئي متجرك الإلكتروني الخاص
-            </CardDescription>
+            </UnifiedCardDescription>
           </div>
-        </CardHeader>
+        </UnifiedCardHeader>
 
-          <CardContent>
+          <UnifiedCardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="store_name" className="text-sm font-medium text-foreground">
@@ -163,8 +163,9 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
                 </p>
               </div>
 
-              <Button
+              <UnifiedButton
                 type="submit"
+                variant="primary"
                 className="w-full h-12 text-base font-medium"
                 disabled={isCreating || !formData.store_name.trim()}
               >
@@ -179,7 +180,7 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
                     إنشاء المتجر
                   </>
                 )}
-              </Button>
+              </UnifiedButton>
             </form>
 
           <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
@@ -198,8 +199,8 @@ export const CreateAffiliateStore: React.FC<CreateAffiliateStoreProps> = ({ onSt
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };

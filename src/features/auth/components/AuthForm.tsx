@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useFastAuth } from '@/hooks/useFastAuth';
@@ -93,17 +93,17 @@ const AuthForm = () => {
 
   return (
     <div className="min-h-screen bg-gradient-persian-bg flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-luxury">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+      <UnifiedCard className="w-full max-w-md shadow-luxury">
+        <UnifiedCardHeader className="text-center">
+          <UnifiedCardTitle className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
             منصة الأفيليت
-          </CardTitle>
-          <CardDescription>
+          </UnifiedCardTitle>
+          <UnifiedCardDescription>
             منصة التسويق بالعمولة الرائدة في المملكة العربية السعودية
-          </CardDescription>
-        </CardHeader>
+          </UnifiedCardDescription>
+        </UnifiedCardHeader>
         
-        <CardContent>
+        <UnifiedCardContent>
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">تسجيل الدخول</TabsTrigger>
@@ -138,9 +138,10 @@ const AuthForm = () => {
                   />
                 </div>
                 
-                <Button 
+                <UnifiedButton 
                   type="submit" 
-                  className="w-full bg-gradient-primary hover:opacity-90"
+                  variant="primary"
+                  className="w-full"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -151,7 +152,7 @@ const AuthForm = () => {
                   ) : (
                     'تسجيل الدخول'
                   )}
-                </Button>
+                </UnifiedButton>
               </form>
             </TabsContent>
             
@@ -243,9 +244,10 @@ const AuthForm = () => {
                   </Select>
                 </div>
                 
-                <Button 
+                <UnifiedButton 
                   type="submit" 
-                  className="w-full bg-gradient-primary hover:opacity-90"
+                  variant="primary"
+                  className="w-full"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -256,12 +258,12 @@ const AuthForm = () => {
                   ) : (
                     'إنشاء حساب جديد'
                   )}
-                </Button>
+                </UnifiedButton>
               </form>
             </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
+        </UnifiedCardContent>
+      </UnifiedCard>
     </div>
   );
 };

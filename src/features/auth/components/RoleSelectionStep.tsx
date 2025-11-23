@@ -1,5 +1,5 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedButton } from '@/components/design-system';
 import { Store, Users } from "lucide-react";
 
 interface RoleSelectionStepProps {
@@ -9,15 +9,15 @@ interface RoleSelectionStepProps {
 
 export const RoleSelectionStep = ({ onRoleSelect, onBack }: RoleSelectionStepProps) => {
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader className="text-center">
-        <CardTitle>اختر نوع حسابك</CardTitle>
-        <CardDescription>
+    <UnifiedCard className="w-full max-w-md mx-auto">
+      <UnifiedCardHeader className="text-center">
+        <UnifiedCardTitle>اختر نوع حسابك</UnifiedCardTitle>
+        <UnifiedCardDescription>
           يرجى تحديد نوع الحساب الذي ترغب في إنشائه
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Button
+        </UnifiedCardDescription>
+      </UnifiedCardHeader>
+      <UnifiedCardContent className="space-y-4">
+        <UnifiedButton
           variant="outline"
           className="w-full h-auto py-6 flex flex-col items-center gap-3 hover:border-primary hover:bg-primary/5"
           onClick={() => onRoleSelect('merchant')}
@@ -29,9 +29,9 @@ export const RoleSelectionStep = ({ onRoleSelect, onBack }: RoleSelectionStepPro
               لبيع المنتجات وإدارة المتجر
             </div>
           </div>
-        </Button>
+        </UnifiedButton>
 
-        <Button
+        <UnifiedButton
           variant="outline"
           className="w-full h-auto py-6 flex flex-col items-center gap-3 hover:border-primary hover:bg-primary/5"
           onClick={() => onRoleSelect('affiliate')}
@@ -43,18 +43,18 @@ export const RoleSelectionStep = ({ onRoleSelect, onBack }: RoleSelectionStepPro
               للتسويق بالعمولة وكسب الأرباح
             </div>
           </div>
-        </Button>
+        </UnifiedButton>
 
         {onBack && (
-          <Button
+          <UnifiedButton
             variant="ghost"
             className="w-full"
             onClick={onBack}
           >
             رجوع
-          </Button>
+          </UnifiedButton>
         )}
-      </CardContent>
-    </Card>
+      </UnifiedCardContent>
+    </UnifiedCard>
   );
 };
