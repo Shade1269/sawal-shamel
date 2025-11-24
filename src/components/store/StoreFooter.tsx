@@ -1,12 +1,12 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Clock, 
-  Shield, 
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  Shield,
   Truck,
   CreditCard,
   RotateCcw
@@ -103,9 +103,18 @@ const StoreFooter = () => {
             </p>
             
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <span>سياسة الخصوصية</span>
-              <span>شروط الاستخدام</span>
-              <span>اتصل بنا</span>
+              <Link to="/privacy" className="hover:text-primary transition-colors">
+                سياسة الخصوصية
+              </Link>
+              <Link to="/terms" className="hover:text-primary transition-colors">
+                شروط الاستخدام
+              </Link>
+              <Link to="/return-policy" className="hover:text-primary transition-colors">
+                سياسة الاسترجاع
+              </Link>
+              <Link to="/shipping-policy" className="hover:text-primary transition-colors">
+                سياسة الشحن
+              </Link>
             </div>
           </div>
         </div>
