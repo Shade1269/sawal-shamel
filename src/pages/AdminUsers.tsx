@@ -1,29 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  UnifiedBadge as Badge, 
-  UnifiedButton as Button, 
-  UnifiedCard as Card, 
-  UnifiedCardContent as CardContent, 
-  UnifiedCardDescription as CardDescription, 
-  UnifiedCardHeader as CardHeader, 
-  UnifiedCardTitle as CardTitle,
-  UnifiedInput as Input
+  UnifiedBadge, 
+  UnifiedButton, 
+  UnifiedCard, 
+  UnifiedCardContent, 
+  UnifiedCardDescription, 
+  UnifiedCardHeader, 
+  UnifiedCardTitle,
+  UnifiedInput
 } from "@/components/design-system";
 import { 
-  UnifiedSelect as Select, 
-  UnifiedSelectContent as SelectContent, 
-  UnifiedSelectItem as SelectItem, 
-  UnifiedSelectTrigger as SelectTrigger, 
-  UnifiedSelectValue as SelectValue 
+  UnifiedSelect, 
+  UnifiedSelectContent, 
+  UnifiedSelectItem, 
+  UnifiedSelectTrigger, 
+  UnifiedSelectValue 
 } from "@/components/design-system";
 import { 
-  UnifiedDialog as Dialog, 
-  UnifiedDialogContent as DialogContent, 
-  UnifiedDialogDescription as DialogDescription, 
-  UnifiedDialogHeader as DialogHeader, 
-  UnifiedDialogTitle as DialogTitle, 
-  UnifiedDialogTrigger as DialogTrigger 
+  UnifiedDialog, 
+  UnifiedDialogContent, 
+  UnifiedDialogDescription, 
+  UnifiedDialogHeader, 
+  UnifiedDialogTitle, 
+  UnifiedDialogTrigger 
 } from "@/components/design-system";
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Users, 
   Search, 
