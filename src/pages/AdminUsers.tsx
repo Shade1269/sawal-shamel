@@ -304,14 +304,14 @@ const AdminUsers = () => {
         </TabsList>
 
         <TabsContent value="users" className="space-y-6">
-          <UnifiedCard variant="flat" hover="lift">
-            <UnifiedCardHeader>
-              <UnifiedCardTitle className="flex items-center gap-2">
+          <Card variant="flat" hover="lift">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5" />
                 قائمة المستخدمين
-              </UnifiedCardTitle>
-            </UnifiedCardHeader>
-            <UnifiedCardContent>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
               <div className="flex gap-4 mb-6">
                 <div className="flex-1">
                   <div className="relative">
@@ -335,15 +335,15 @@ const AdminUsers = () => {
                     <SelectItem value="affiliate">مسوق</SelectItem>
                   </SelectContent>
                 </Select>
-                <UnifiedButton variant="outline" size="sm">
+                <Button variant="outline" size="sm">
                   <Filter className="h-4 w-4" />
-                </UnifiedButton>
+                </Button>
               </div>
 
               {/* Users Table */}
               <div className="space-y-4">
                 {filteredUsers.map((user) => (
-                  <UnifiedCard key={user.id} variant="flat" className="p-4">
+                  <Card key={user.id} variant="flat" className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -353,11 +353,11 @@ const AdminUsers = () => {
                           <h3 className="font-medium">{user.full_name || 'غير محدد'}</h3>
                           <p className="text-sm text-muted-foreground">{user.email}</p>
                           <div className="flex gap-2 mt-1">
-                            <UnifiedBadge variant={user.role === 'admin' ? 'success' : 'info'}>
+                            <Badge variant={user.role === 'admin' ? 'success' : 'info'}>
                               {user.role}
-                            </UnifiedBadge>
+                            </Badge>
                             {user.is_banned && (
-                              <UnifiedBadge variant="error">محظور</UnifiedBadge>
+                              <Badge variant="error">محظور</Badge>
                             )}
                           </div>
                         </div>
@@ -366,9 +366,9 @@ const AdminUsers = () => {
                       <div className="flex items-center gap-2">
                         <Dialog>
                           <DialogTrigger asChild>
-                            <UnifiedButton size="sm" variant="ghost">
+                            <Button size="sm" variant="ghost">
                               <Edit className="h-4 w-4" />
-                            </UnifiedButton>
+                            </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-md">
                             <DialogHeader>
@@ -396,8 +396,8 @@ const AdminUsers = () => {
                                 </Select>
                               </div>
                               <div className="flex gap-2">
-                                <UnifiedButton variant="primary" fullWidth>حفظ</UnifiedButton>
-                                <UnifiedButton variant="outline" fullWidth>إلغاء</UnifiedButton>
+                                <Button variant="primary" fullWidth>حفظ</Button>
+                                <Button variant="outline" fullWidth>إلغاء</Button>
                               </div>
                             </div>
                           </DialogContent>
@@ -405,9 +405,9 @@ const AdminUsers = () => {
 
                         <Dialog>
                           <DialogTrigger asChild>
-                            <UnifiedButton size="sm" variant="ghost">
+                            <Button size="sm" variant="ghost">
                               <Bell className="h-4 w-4" />
-                            </UnifiedButton>
+                            </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-md">
                             <DialogHeader>
@@ -426,18 +426,18 @@ const AdminUsers = () => {
                                 <Textarea placeholder="نص الإشعار" />
                               </div>
                               <div className="flex gap-2">
-                                <UnifiedButton variant="primary" fullWidth>
+                                <Button variant="primary" fullWidth>
                                   <Send className="h-4 w-4 ml-2" />
                                   إرسال
-                                </UnifiedButton>
-                                <UnifiedButton variant="outline" fullWidth>إلغاء</UnifiedButton>
+                                </Button>
+                                <Button variant="outline" fullWidth>إلغاء</Button>
                               </div>
                             </div>
                           </DialogContent>
                         </Dialog>
                         
                         {user.role !== 'admin' && (
-                          <UnifiedButton 
+                          <Button 
                             size="sm" 
                             variant="ghost"
                             onClick={() => {
@@ -448,25 +448,25 @@ const AdminUsers = () => {
                             }}
                           >
                             <Ban className="h-4 w-4 text-orange-500" />
-                          </UnifiedButton>
+                          </Button>
                         )}
                         
                         {user.role !== 'admin' && (
-                          <UnifiedButton 
+                          <Button 
                             size="sm" 
                             variant="ghost"
                             onClick={() => handleDeleteUser(user.id)}
                           >
                             <Trash2 className="h-4 w-4 text-red-500" />
-                          </UnifiedButton>
+                          </Button>
                         )}
                       </div>
                     </div>
-                  </UnifiedCard>
+                  </Card>
                 ))}
               </div>
-            </UnifiedCardContent>
-          </UnifiedCard>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="permissions" className="space-y-6">
@@ -477,15 +477,15 @@ const AdminUsers = () => {
             </AlertDescription>
           </Alert>
           
-          <UnifiedCard variant="flat">
-            <UnifiedCardContent className="p-8 text-center">
+          <Card variant="flat">
+            <CardContent className="p-8 text-center">
               <Key className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium mb-2">اختر مستخدماً</h3>
               <p className="text-muted-foreground">
                 اختر مستخدماً من قائمة المستخدمين لعرض وإدارة صلاحياته
               </p>
-            </UnifiedCardContent>
-          </UnifiedCard>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="settings" className="space-y-6">
@@ -496,11 +496,11 @@ const AdminUsers = () => {
             </AlertDescription>
           </Alert>
 
-          <UnifiedCard variant="flat">
-            <UnifiedCardHeader>
-              <UnifiedCardTitle>إعدادات عامة</UnifiedCardTitle>
-            </UnifiedCardHeader>
-            <UnifiedCardContent className="space-y-4">
+          <Card variant="flat">
+            <CardHeader>
+              <CardTitle>إعدادات عامة</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <Label>السماح بالتسجيل الجديد</Label>
@@ -528,8 +528,8 @@ const AdminUsers = () => {
                 </div>
                 <Switch />
               </div>
-            </UnifiedCardContent>
-          </UnifiedCard>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

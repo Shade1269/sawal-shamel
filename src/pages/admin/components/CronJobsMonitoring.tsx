@@ -74,9 +74,9 @@ export function CronJobsMonitoring({ cronLogs, loading, onRefresh }: CronJobsMon
                         <TableCell>
                           <UnifiedBadge
                             variant={
-                              log.status === 'success' ? 'default' :
-                              log.status === 'partial_success' ? 'secondary' :
-                              'destructive'
+                              log.status === 'success' ? 'success' :
+                              log.status === 'partial_success' ? 'warning' :
+                              'error'
                             }
                           >
                             {log.status === 'success' ? 'نجح' :
