@@ -1,11 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { UnifiedButton } from "@/components/design-system";
-import { UnifiedInput } from "@/components/design-system";
+import { UnifiedButton as Button, UnifiedInput as Input, UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle, UnifiedBadge as Badge } from "@/components/design-system";
 import { Label } from "@/components/ui/label";
-import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from "@/components/design-system";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { UnifiedBadge } from "@/components/design-system";
 import { useToast } from "@/hooks/use-toast";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -838,7 +835,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                                     <Button
                                       type="button"
                                       size="sm"
-                                      variant="destructive"
+                                      variant="danger"
                                       className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                                       onClick={() => removeImage(index)}
                                     >
