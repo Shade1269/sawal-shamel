@@ -5,6 +5,7 @@ import { Camera, Upload, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { validateImageFile } from '@/utils/fileValidation';
 
 interface AvatarUploadProps {
   onAvatarUpload: (url: string) => void;
@@ -27,21 +28,15 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Check if it's an image
-    if (!file.type.startsWith('image/')) {
-      toast({
-        title: "نوع ملف خاطئ",
-        description: "يرجى اختيار صورة فقط",
-        variant: "destructive"
-      });
-      return;
-    }
+    // ✅ Secure validation: extension + MIME + magic bytes + size
+    const validation = await validateImageFile(file, {
+      maxSize: maxSize * 1024 * 1024,
+    });
 
-    // Check file size
-    if (file.size > maxSize * 1024 * 1024) {
+    if (!validation.valid) {
       toast({
-        title: "صورة كبيرة جداً",
-        description: `حجم الصورة يجب أن يكون أقل من ${maxSize} MB`,
+        title: "صورة غير صالحة",
+        description: validation.error,
         variant: "destructive"
       });
       return;

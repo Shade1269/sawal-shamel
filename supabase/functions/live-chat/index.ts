@@ -1,10 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-}
+import { getCorsHeaders, handleCorsPreflightRequest } from '../_shared/cors.ts';
 
 interface ChatConnection {
   userId: string
@@ -19,8 +14,10 @@ const rooms = new Map<string, Set<string>>()
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return handleCorsPreflightRequest(req);
   }
+
+  const corsHeaders = getCorsHeaders(req);
 
   try {
     if (req.headers.get("upgrade") === "websocket") {

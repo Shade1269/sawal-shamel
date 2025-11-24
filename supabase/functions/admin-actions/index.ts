@@ -21,21 +21,23 @@ const ALLOWED_ADMIN_EMAILS = new Set([
   "shade199633@icloud.com",
 ]);
 
-function jsonResponse(data: any, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-      "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-    },
-  });
-}
-
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
-    return jsonResponse({ ok: true });
+    return handleCorsPreflightRequest(req);
+  }
+
+  // Get secure CORS headers for this request
+  const corsHeaders = getCorsHeaders(req);
+
+  function jsonResponse(data: any, status = 200) {
+    return new Response(JSON.stringify(data), {
+      status,
+      headers: {
+        ...corsHeaders,
+        "content-type": "application/json; charset=utf-8",
+      },
+    });
   }
 
   try {

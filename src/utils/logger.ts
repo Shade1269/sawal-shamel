@@ -1,66 +1,39 @@
 /**
- * Logger utility for development and production
- * Replaces console.log statements with more controlled logging
+ * Unified Logger System
  */
 
-export enum LogLevel {
-  ERROR = 0,
-  WARN = 1,
-  INFO = 2,
-  DEBUG = 3
+type LogLevel = 'info' | 'warn' | 'error' | 'debug';
+
+interface LogContext {
+  [key: string]: any;
 }
 
-class Logger {
-  private level: LogLevel;
-  private isDevelopment: boolean;
+function log(level: LogLevel, message: string, context?: LogContext) {
+  const timestamp = new Date().toISOString();
+  const prefix = `[${timestamp}] ${level}:`;
 
-  constructor() {
-    this.isDevelopment = import.meta.env?.DEV ?? false;
-    this.level = this.isDevelopment ? LogLevel.DEBUG : LogLevel.WARN;
+  switch (level) {
+    case 'info':
+      console.log(prefix, message, context || '');
+      break;
+    case 'warn':
+      console.warn(prefix, message, context || '');
+      break;
+    case 'error':
+      console.error(prefix, message, context || '');
+      if (context?.error) console.error('Details:', context.error);
+      break;
+    case 'debug':
+      console.debug(prefix, message, context || '');
+      break;
   }
-
-  private formatMessage(level: string, message: string, data?: any): string {
-    const timestamp = new Date().toISOString();
-    const dataStr = data ? ` | ${JSON.stringify(data)}` : '';
-    return `[${timestamp}] ${level.toUpperCase()}: ${message}${dataStr}`;
-  }
-
-  error(message: string, data?: any) {
-    if (this.level >= LogLevel.ERROR) {
-      console.error(this.formatMessage('error', message, data));
-    }
-  }
-
-  warn(message: string, data?: any) {
-    if (this.level >= LogLevel.WARN) {
-      console.warn(this.formatMessage('warn', message, data));
-    }
-  }
-
-  info(message: string, data?: any) {
-    if (this.level >= LogLevel.INFO && this.isDevelopment) {
-      console.info(this.formatMessage('info', message, data));
-    }
-  }
-
-  debug(message: string, data?: any) {
-    if (this.level >= LogLevel.DEBUG && this.isDevelopment) {
-      console.log(this.formatMessage('debug', message, data));
-    }
-  }
-
-  // Atlantis specific logging
-  atlantis = {
-    pointsUpdate: (userId: string, points: number, reason: string) => {
-      this.debug(`Atlantis points update`, { userId, points, reason });
-    },
-    levelUp: (userId: string, newLevel: string) => {
-      this.info(`Atlantis level up`, { userId, newLevel });
-    },
-    allianceAction: (action: string, allianceId: string, userId: string) => {
-      this.debug(`Atlantis alliance action`, { action, allianceId, userId });
-    }
-  };
 }
 
-export const logger = new Logger();
+export const logger = {
+  info: (msg: string, ctx?: LogContext) => log('info', msg, ctx),
+  warn: (msg: string, ctx?: LogContext) => log('warn', msg, ctx),
+  error: (msg: string, ctx?: LogContext) => log('error', msg, ctx),
+  debug: (msg: string, ctx?: LogContext) => log('debug', msg, ctx),
+};
+
+export default logger;
