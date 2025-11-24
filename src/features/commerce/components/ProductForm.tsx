@@ -29,7 +29,6 @@ import {
   Info,
   Trash2
 } from 'lucide-react';
-import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useFastAuth } from '@/hooks/useFastAuth';

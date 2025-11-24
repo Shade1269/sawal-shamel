@@ -1,28 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  UnifiedBadge, 
-  UnifiedButton, 
-  UnifiedCard, 
-  UnifiedCardContent, 
-  UnifiedCardDescription, 
-  UnifiedCardHeader, 
-  UnifiedCardTitle,
-  UnifiedInput
+  UnifiedBadge as Badge, 
+  UnifiedButton as Button, 
+  UnifiedCard as Card, 
+  UnifiedCardContent as CardContent, 
+  UnifiedCardDescription as CardDescription, 
+  UnifiedCardHeader as CardHeader, 
+  UnifiedCardTitle as CardTitle,
+  UnifiedInput as Input
 } from "@/components/design-system";
 import { 
-  UnifiedSelect, 
-  UnifiedSelectContent, 
-  UnifiedSelectItem, 
-  UnifiedSelectTrigger, 
-  UnifiedSelectValue 
+  UnifiedSelect as Select, 
+  UnifiedSelectContent as SelectContent, 
+  UnifiedSelectItem as SelectItem, 
+  UnifiedSelectTrigger as SelectTrigger, 
+  UnifiedSelectValue as SelectValue 
 } from "@/components/design-system";
 import { 
-  UnifiedDialog, 
-  UnifiedDialogContent, 
-  UnifiedDialogDescription, 
-  UnifiedDialogHeader, 
-  UnifiedDialogTitle, 
-  UnifiedDialogTrigger 
+  UnifiedDialog as Dialog, 
+  UnifiedDialogContent as DialogContent, 
+  UnifiedDialogDescription as DialogDescription, 
+  UnifiedDialogHeader as DialogHeader, 
+  UnifiedDialogTitle as DialogTitle, 
+  UnifiedDialogTrigger as DialogTrigger 
 } from "@/components/design-system";
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
