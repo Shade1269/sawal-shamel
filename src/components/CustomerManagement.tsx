@@ -8,6 +8,13 @@ import {
   UnifiedBadge as Badge,
   UnifiedInput as Input
 } from '@/components/design-system';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { 
   Users, 
   Search, 
@@ -279,8 +286,8 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
       </div>
 
       {/* أدوات البحث والتصفية */}
-      <UnifiedCard variant="premium">
-        <UnifiedCardHeader className="pb-3 sm:pb-4">
+      <Card>
+        <CardHeader className="pb-3 sm:pb-4">
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="w-full">
               <div className="relative">
@@ -307,9 +314,9 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
               </select>
             </div>
           </div>
-        </UnifiedCardHeader>
+        </CardHeader>
 
-        <UnifiedCardContent>
+        <CardContent>
           {filteredCustomers.length === 0 ? (
             <div className="text-center py-12">
               <Users className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
@@ -353,18 +360,18 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
                         <div className="text-muted-foreground">{customer.total_spent_sar.toFixed(2)} ر.س</div>
                       </div>
                       
-                      <UnifiedBadge 
+                      <Badge 
                         variant={customer.customer_status === 'active' ? 'success' : 'secondary'}
                       >
                         {customer.customer_status === 'active' ? 'نشط' : 
                          customer.customer_status === 'inactive' ? 'غير نشط' : 'محظور'}
-                      </UnifiedBadge>
+                      </Badge>
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <UnifiedButton variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm">
                             <MoreVertical className="w-4 h-4" />
-                          </UnifiedButton>
+                          </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem>
@@ -388,8 +395,8 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
               ))}
             </div>
           )}
-        </UnifiedCardContent>
-      </UnifiedCard>
+        </CardContent>
+      </Card>
     </div>
   );
 };

@@ -1,36 +1,10 @@
 
 /**
  * ProductsBrowser - صفحة تصفح المنتجات (مُعاد هيكلتها)
- *
- * تم إعادة هيكلة هذا الملف في 2025-11-22 لتحسين الصيانة
- * الملف الأصلي: 1,076 سطر → الملف الجديد: ~250 سطر (-77%)
- *
- * الهيكل الجديد:
- * - 3 Custom Hooks (useProductsData, useProductActions, useProductFilters)
- * - 7 Components (Header, Alerts, Filters, Card, ListItem, 2 Dialogs)
- * - معامل الصيانة: من 5/10 → 9/10
  */
 
 import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Package } from 'lucide-react';
-
-import { useState, useEffect } from 'react';
-import { 
-  EnhancedCard,
-  EnhancedCardContent,
-  EnhancedCardDescription,
-  EnhancedCardHeader,
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  EnhancedButton,
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/index';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { UnifiedBadge } from '@/components/design-system';
 import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
