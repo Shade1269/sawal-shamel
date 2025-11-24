@@ -54,12 +54,12 @@ class TOTP {
   private async hmacSha1(key: Uint8Array, message: Uint8Array): Promise<Uint8Array> {
     const cryptoKey = await crypto.subtle.importKey(
       "raw",
-      key,
+      key.buffer,
       { name: "HMAC", hash: "SHA-1" },
       false,
       ["sign"]
     );
-    const signature = await crypto.subtle.sign("HMAC", cryptoKey, message);
+    const signature = await crypto.subtle.sign("HMAC", cryptoKey, message.buffer);
     return new Uint8Array(signature);
   }
 
@@ -238,7 +238,7 @@ serve(async (req) => {
     console.error("Error in setup-2fa:", error);
     return new Response(
       JSON.stringify({
-        error: error.message || "Internal server error",
+        error: error instanceof Error ? error.message : "Internal server error",
       }),
       {
         status: 500,
