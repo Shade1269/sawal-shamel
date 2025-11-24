@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Shield, Key, Copy, Check, AlertTriangle, Smartphone } from 'lucide-react';
-import { UnifiedCard, UnifiedButton, UnifiedBadge } from '@/components/design-system';
+import { UnifiedCard, UnifiedButton as Button, UnifiedBadge } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -323,14 +323,14 @@ export function TwoFactorAuthSettings() {
             >
               إلغاء
             </UnifiedButton>
-            <UnifiedButton
-              variant="destructive"
+            <Button
+              variant="danger"
               onClick={handleDisable}
               disabled={isLoading}
               className="flex-1"
             >
               {isLoading ? 'جاري الإيقاف...' : 'إيقاف 2FA'}
-            </UnifiedButton>
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
