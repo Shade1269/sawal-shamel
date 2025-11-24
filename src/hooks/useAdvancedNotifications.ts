@@ -242,15 +242,44 @@ export const useAdvancedNotifications = () => {
     return notifications;
   }, [templates]);
 
+  // Safe condition evaluator using allowlist
+  const evaluateCondition = useCallback((condition: string, data: any): boolean => {
+    // Allowlist of safe conditions - prevents code injection
+    const safeConditions: Record<string, (data: any) => boolean> = {
+      'threat.severity === "critical"': (data) => data?.threat?.severity === 'critical',
+      'threat.severity === "high"': (data) => data?.threat?.severity === 'high',
+      'threat.severity === "medium"': (data) => data?.threat?.severity === 'medium',
+      'system.maintenance_scheduled === true': (data) => data?.system?.maintenance_scheduled === true,
+      'system.maintenance_scheduled === false': (data) => data?.system?.maintenance_scheduled === false,
+      'sales.target_achieved >= 100': (data) => (data?.sales?.target_achieved || 0) >= 100,
+      'sales.target_achieved >= 80': (data) => (data?.sales?.target_achieved || 0) >= 80,
+      'sales.target_achieved >= 50': (data) => (data?.sales?.target_achieved || 0) >= 50,
+    };
+
+    // Check if condition is in allowlist
+    const evaluator = safeConditions[condition];
+    if (!evaluator) {
+      console.warn(`Condition "${condition}" not in allowlist. Skipping for security.`);
+      return false;
+    }
+
+    try {
+      return evaluator(data);
+    } catch (error) {
+      console.error(`Error evaluating condition "${condition}":`, error);
+      return false;
+    }
+  }, []);
+
   // Trigger notification based on conditions
   const triggerNotifications = useCallback(async (eventData: any) => {
     const activeRules = rules.filter(rule => rule.enabled);
-    
+
     for (const rule of activeRules) {
       try {
-        // Simple condition evaluation (in real app, use a proper expression parser)
-        const shouldTrigger = eval(rule.condition.replace(/\./g, '?.'));
-        
+        // Safe condition evaluation using allowlist (no eval!)
+        const shouldTrigger = evaluateCondition(rule.condition, eventData);
+
         if (shouldTrigger) {
           const template = templates.find(t => t.id === rule.template_id);
           if (template) {
@@ -260,7 +289,7 @@ export const useAdvancedNotifications = () => {
               // In real app, resolve role-based targets
               ...(rule.target_roles.length > 0 ? ['admin@example.com'] : [])
             ];
-            
+
             await sendNotification(rule.template_id, eventData, recipients);
           }
         }
@@ -268,7 +297,7 @@ export const useAdvancedNotifications = () => {
         console.error(`Failed to evaluate rule ${rule.name}:`, error);
       }
     }
-  }, [rules, templates, sendNotification]);
+  }, [rules, templates, sendNotification, evaluateCondition]);
 
   // Update statistics
   const updateStats = useCallback(() => {

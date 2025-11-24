@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Image, Upload, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { validateImageFile } from '@/utils/fileValidation';
 
 interface FileUploadProps {
   onFileUpload: (url: string, type: 'image' | 'file') => void;
@@ -27,11 +28,15 @@ const FileUpload: React.FC<FileUploadProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Check file size
-    if (file.size > maxSize * 1024 * 1024) {
+    // ✅ Secure validation: extension + MIME + magic bytes + size
+    const validation = await validateImageFile(file, {
+      maxSize: maxSize * 1024 * 1024,
+    });
+
+    if (!validation.valid) {
       toast({
-        title: "ملف كبير جداً",
-        description: `حجم الملف يجب أن يكون أقل من ${maxSize} MB`,
+        title: "ملف غير صالح",
+        description: validation.error,
         variant: "destructive"
       });
       return;
