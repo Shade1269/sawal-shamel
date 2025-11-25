@@ -57,9 +57,14 @@ const AtlantisChatRooms = () => {
   useEffect(() => {
     if (user) {
       getUserProfile();
-      loadRooms();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (currentProfile) {
+      loadRooms();
+    }
+  }, [currentProfile]);
 
   const getUserProfile = async () => {
     if (!user) return;
@@ -78,6 +83,11 @@ const AtlantisChatRooms = () => {
   };
 
   const loadRooms = async () => {
+    if (!currentProfile?.id) {
+      console.log('No profile ID available yet');
+      return;
+    }
+
     try {
       setLoading(true);
       
@@ -102,7 +112,7 @@ const AtlantisChatRooms = () => {
         `)
         .eq('is_active', true)
         .eq('type', 'private')
-        .eq('room_members.user_id', currentProfile?.id)
+        .eq('room_members.user_id', currentProfile.id)
         .order('created_at', { ascending: false });
 
       if (privateError) throw privateError;
