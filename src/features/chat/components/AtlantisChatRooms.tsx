@@ -162,11 +162,11 @@ const AtlantisChatRooms = () => {
     if (!newRoomName.trim() || !currentProfile) return;
 
     try {
-      // التحقق من صلاحية إنشاء الغرف (المستويات العليا فقط)
-      if (newRoomType === 'private' && (!userLevel || !['silver', 'gold', 'legendary'].includes(userLevel.current_level))) {
+      // التحقق من صلاحية إنشاء الغرف (المستوى الفضي وما فوق فقط)
+      if (!userLevel || !['silver', 'gold', 'legendary'].includes(userLevel.current_level)) {
         toast({
           title: "غير مسموح",
-          description: "إنشاء الغرف الخاصة متاح للمستوى الفضي وما فوق فقط",
+          description: "إنشاء الغرف متاح للمستوى الفضي وما فوق فقط",
           variant: "destructive"
         });
         return;
@@ -327,13 +327,14 @@ const AtlantisChatRooms = () => {
               </p>
             </div>
 
-            <Dialog open={showCreateRoom} onOpenChange={setShowCreateRoom}>
-              <DialogTrigger asChild>
-                <Button className="gradient-btn-primary gap-2">
-                  <Plus className="h-4 w-4" />
-                  إنشاء غرفة جديدة
-                </Button>
-              </DialogTrigger>
+            {userLevel && ['silver', 'gold', 'legendary'].includes(userLevel.current_level) && (
+              <Dialog open={showCreateRoom} onOpenChange={setShowCreateRoom}>
+                <DialogTrigger asChild>
+                  <Button className="gradient-btn-primary gap-2">
+                    <Plus className="h-4 w-4" />
+                    إنشاء غرفة جديدة
+                  </Button>
+                </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>إنشاء غرفة دردشة جديدة</DialogTitle>
@@ -398,6 +399,7 @@ const AtlantisChatRooms = () => {
                 </div>
               </DialogContent>
             </Dialog>
+            )}
           </div>
         </div>
       </div>
