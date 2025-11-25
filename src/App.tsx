@@ -84,6 +84,7 @@ const AtlantisSystem = lazy(() => import("./pages/AtlantisSystem"));
 const AtlantisGuide = lazy(() => import("./pages/AtlantisGuide"));
 const ChatLanding = lazy(() => import("./features/chat/components/ChatLanding"));
 const AtlantisChatRooms = lazy(() => import("./features/chat/components/AtlantisChatRooms"));
+const AtlantisChat = lazy(() => import("./features/chat/components/AtlantisChat"));
 
 // Legal Pages
 const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
@@ -146,6 +147,7 @@ const App = () => {
           {/* Atlantis System Routes */}
           <Route path="/atlantis" element={<AtlantisSystem />} />
           <Route path="/atlantis/chat" element={<AtlantisChatRooms />} />
+          <Route path="/atlantis/chat/:roomId" element={<AtlantisChat />} />
           <Route path="/atlantis/guide" element={<AtlantisGuide />} />
           <Route path="/chat-landing" element={<ChatLanding />} />
 
