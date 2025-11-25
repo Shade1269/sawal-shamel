@@ -13873,6 +13873,7 @@ export type Database = {
           total_earnings: number
         }[]
       }
+      get_current_profile_id: { Args: never; Returns: string }
       get_current_user_phone: { Args: never; Returns: string }
       get_current_user_role: { Args: never; Returns: string }
       get_latest_shipment_event: {
@@ -14049,6 +14050,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin: { Args: never; Returns: boolean }
       log_function_call: {
         Args: {
           additional_context?: Json
