@@ -79,6 +79,12 @@ const DocumentationPage = lazy(() => import("./pages/Documentation"));
 const RolloutPage = lazy(() => import("./pages/Rollout"));
 const ZohoCallback = lazy(() => import("./pages/ZohoCallback"));
 
+// Atlantis System Pages
+const AtlantisSystem = lazy(() => import("./pages/AtlantisSystem"));
+const AtlantisGuide = lazy(() => import("./pages/AtlantisGuide"));
+const ChatLanding = lazy(() => import("./features/chat/components/ChatLanding"));
+const AtlantisChatRooms = lazy(() => import("./features/chat/components/AtlantisChatRooms"));
+
 // Legal Pages
 const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
@@ -136,6 +142,12 @@ const App = () => {
                               <Route path="/design-system" element={<DesignSystemShowcase />} />
           <Route path="/design-showcase" element={<DesignShowcase />} />
           <Route path="/design-system-showcase" element={<DesignSystemShowcase />} />
+
+          {/* Atlantis System Routes */}
+          <Route path="/atlantis" element={<AtlantisSystem />} />
+          <Route path="/atlantis/chat" element={<AtlantisChatRooms />} />
+          <Route path="/atlantis/guide" element={<AtlantisGuide />} />
+          <Route path="/chat-landing" element={<ChatLanding />} />
 
           {/* Legal Pages */}
           <Route path="/privacy" element={<PrivacyPolicy />} />
