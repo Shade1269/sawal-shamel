@@ -12421,6 +12421,7 @@ export type Database = {
         Row: {
           auth_user_id: string | null
           avatar_url: string | null
+          bio: string | null
           created_at: string | null
           email: string | null
           full_name: string | null
@@ -12430,35 +12431,37 @@ export type Database = {
           phone: string | null
           points: number | null
           role: Database["public"]["Enums"]["user_role"] | null
-          whatsapp: string | null
+          updated_at: string | null
         }
         Insert: {
-          auth_user_id?: never
+          auth_user_id?: string | null
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string | null
-          email?: never
+          email?: string | null
           full_name?: string | null
           id?: string | null
           is_active?: boolean | null
           last_activity_at?: string | null
-          phone?: never
+          phone?: string | null
           points?: number | null
           role?: Database["public"]["Enums"]["user_role"] | null
-          whatsapp?: never
+          updated_at?: string | null
         }
         Update: {
-          auth_user_id?: never
+          auth_user_id?: string | null
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string | null
-          email?: never
+          email?: string | null
           full_name?: string | null
           id?: string | null
           is_active?: boolean | null
           last_activity_at?: string | null
-          phone?: never
+          phone?: string | null
           points?: number | null
           role?: Database["public"]["Enums"]["user_role"] | null
-          whatsapp?: never
+          updated_at?: string | null
         }
         Relationships: []
       }

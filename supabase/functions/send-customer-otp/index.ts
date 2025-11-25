@@ -165,7 +165,7 @@ serve(async (req) => {
           store_id: storeId,
           otp_code: preludeData.id, // نحفظ verification_id بدلاً من الكود
           verified: false,
-          expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 دقائق
+          expires_at: new Date(Date.now() + 2 * 60 * 1000).toISOString(), // دقيقتان للأمان
           attempts: 0
         })
         .select()
