@@ -490,7 +490,7 @@ export const useAtlantisSystem = () => {
       // Use the new points service
       const result = await AtlantisPointsService.addManualPoints(pointsToAdd, reason || 'تحديث يدوي');
       
-      if (result.success) {
+      if (result && result.success) {
         // Refresh user level
         await initializeUserLevel();
         
@@ -511,9 +511,10 @@ export const useAtlantisSystem = () => {
         }
         
         return true;
+      } else {
+        console.warn('Points service unavailable');
+        return false;
       }
-      
-      return false;
     } catch (error: any) {
       console.error('Error updating user points:', error);
       toast({
