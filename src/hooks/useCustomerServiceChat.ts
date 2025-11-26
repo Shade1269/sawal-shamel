@@ -19,13 +19,12 @@ interface ChatMessage {
 interface ChatRoom {
   id: string;
   name: string;
-  affiliate_store_id: string;
-  customer_profile_id: string;
-  last_message_at: string;
-  unread_count?: number;
-  profiles?: {
-    full_name: string;
-  };
+  type: string;
+  description?: string;
+  owner_id?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 interface UseCustomerServiceChatProps {
@@ -108,18 +107,15 @@ export const useCustomerServiceChat = ({
     if (!isStoreOwner) return;
 
     try {
-      const { data, error } = await (supabase
-        .from('chat_rooms') as any)
-        .select(`
-          *,
-          profiles!chat_rooms_customer_profile_id_fkey(full_name)
-        `)
-        .eq('affiliate_store_id', storeId)
-        .eq('type', 'direct')
-        .order('last_message_at', { ascending: false });
+      const { data, error } = await supabase
+        .from('chat_rooms')
+        .select('*')
+        .eq('type', 'atlantis')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setRooms(data || [] as any);
+      setRooms(data || []);
     } catch (error) {
       console.error('Error loading store chats:', error);
     }
