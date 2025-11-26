@@ -454,22 +454,22 @@ export const useAtlantisChat = (roomId: string) => {
         return m;
       }));
 
-      // منح نقاط أتلانتس للدردشة (سيتم عبر trigger)
-      if (messageType === 'text') {
-        try {
-          await AtlantisPointsService.addPoints({
-            action: 'manual_add',
-            amount: 1,
-            metadata: {
-              reason: 'نقطة دردشة',
-              room_id: roomId,
-              message_type: messageType
-            }
-          });
-        } catch (pointsError) {
-          console.log('Points service error (non-critical):', pointsError);
-        }
-      }
+      // منح نقاط أتلانتس للدردشة (معطل مؤقتاً حتى يتم إنشاء جدول atlantis_user_levels)
+      // if (messageType === 'text') {
+      //   try {
+      //     await AtlantisPointsService.addPoints({
+      //       action: 'manual_add',
+      //       amount: 1,
+      //       metadata: {
+      //         reason: 'نقطة دردشة',
+      //         room_id: roomId,
+      //         message_type: messageType
+      //       }
+      //     });
+      //   } catch (pointsError) {
+      //     console.log('Points service error (non-critical):', pointsError);
+      //   }
+      // }
 
     } catch (error) {
       setMessages(prev => prev.filter(m => m.id !== tempId));
