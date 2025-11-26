@@ -110,7 +110,7 @@ export const useCustomerServiceChat = ({
       const { data, error } = await supabase
         .from('chat_rooms')
         .select('*')
-        .eq('type', 'atlantis')
+        .eq('type', 'direct')
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
