@@ -60,7 +60,7 @@ export default function UnifiedAffiliateOrders() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className={`transition-colors duration-500 ${
-            isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+            text-muted-foreground
           }`}>جاري تحميل الطلبات...</p>
         </div>
       </div>
@@ -84,10 +84,10 @@ export default function UnifiedAffiliateOrders() {
     <div className="container mx-auto py-8">
       <div className="mb-8">
         <h1 className={`text-3xl font-bold mb-2 transition-colors duration-500 ${
-          isDarkMode ? 'text-white' : 'text-slate-800'
+          text-foreground
         }`}>إدارة الطلبات</h1>
         <p className={`transition-colors duration-500 ${
-          isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+          text-muted-foreground
         }`}>
           متابعة طلبات عملائك وحالاتها
         </p>
@@ -102,14 +102,14 @@ export default function UnifiedAffiliateOrders() {
         }`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className={`text-sm font-medium transition-colors duration-500 ${
-              isDarkMode ? 'text-slate-200' : 'text-slate-700'
+              text-foreground
             }`}>إجمالي الطلبات</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalOrders}</div>
             <p className={`text-xs transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+              text-muted-foreground
             }`}>
               إجمالي المبيعات: {stats.totalRevenue.toFixed(2)} ر.س
             </p>

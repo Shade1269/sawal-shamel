@@ -33,7 +33,7 @@ export function QuickActionsPanel({ actions }: QuickActionsPanelProps) {
         : 'border-slate-200/50 bg-white/90 shadow-lg'
     }`}>
       <h2 className={`text-sm font-semibold heading-ar transition-colors duration-500 ${
-        isDarkMode ? 'text-foreground' : 'text-slate-800'
+        text-foreground
       }`}>روابط سريعة</h2>
       <nav aria-label="روابط عمليات المسوق" className="flex flex-col gap-[var(--spacing-sm)]">
         {actions.map((action) => {
@@ -41,10 +41,10 @@ export function QuickActionsPanel({ actions }: QuickActionsPanelProps) {
           const content = (
             <span className="flex flex-1 flex-col text-right">
               <span className={`text-sm font-medium premium-text transition-colors duration-500 ${
-                isDarkMode ? 'text-foreground' : 'text-slate-800'
+                text-foreground
               }`}>{action.label}</span>
               <span className={`text-xs elegant-text transition-colors duration-500 ${
-                isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+                text-muted-foreground
               }`}>{action.description}</span>
             </span>
           );
@@ -52,7 +52,7 @@ export function QuickActionsPanel({ actions }: QuickActionsPanelProps) {
           return action.to ? (
             <Link key={action.id} to={action.to} className={cn(quickActionLinkClass, 'w-full')}>
               <Icon className={`h-5 w-5 transition-colors duration-500 ${
-                isDarkMode ? 'text-accent' : 'text-blue-600'
+                text-accent
               }`} aria-hidden />
               {content}
             </Link>
@@ -65,7 +65,7 @@ export function QuickActionsPanel({ actions }: QuickActionsPanelProps) {
               className={cn(quickActionLinkClass, 'group w-full')}
             >
               <Icon className={`h-5 w-5 transition-all duration-200 group-hover:scale-110 ${
-                isDarkMode ? 'text-accent' : 'text-blue-600'
+                text-accent
               }`} aria-hidden />
               {content}
             </UnifiedButton>

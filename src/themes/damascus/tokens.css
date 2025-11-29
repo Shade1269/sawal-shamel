@@ -161,6 +161,15 @@ html[data-theme="damascene"] {
   --state-disabled-bg: hsla(0, 0%, 10%, 0.6);
   --state-disabled-fg: hsla(40, 20%, 65%, 0.5);
   --state-disabled-border: hsla(30, 30%, 13%, 0.4);
+
+  /* Sidebar - Damascus Gold Theme */
+  --sidebar-bg: 0 0% 4%;
+  --sidebar-text: 40 20% 98%;
+  --sidebar-text-secondary: 40 20% 60%;
+  --sidebar-hover: 0 0% 8%;
+  --sidebar-active: 43 45% 48%;
+  --sidebar-active-glow: 43 45% 58%;
+  --sidebar-border: 30 30% 12%;
 }
 
 /* Damascus Utility Classes */

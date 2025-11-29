@@ -147,6 +147,15 @@ html[data-theme="luxury"] {
   --state-disabled-bg: hsla(0, 24%, 18%, 0.6);
   --state-disabled-fg: hsla(28, 30%, 79%, 0.55);
   --state-disabled-border: hsla(12, 28%, 24%, 0.35);
+
+  /* Sidebar - Luxury Gold Theme */
+  --sidebar-bg: 0 27% 6%;
+  --sidebar-text: 35 20% 98%;
+  --sidebar-text-secondary: 28 30% 65%;
+  --sidebar-hover: 0 22% 12%;
+  --sidebar-active: 46 65% 52%;
+  --sidebar-active-glow: 46 65% 62%;
+  --sidebar-border: 12 28% 16%;
 }
 
 html[data-theme="luxury"] body {

@@ -89,7 +89,7 @@ export default function AffiliateCommissionsPage() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className={`transition-colors duration-500 ${
-            isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+            text-muted-foreground
           }`}>جاري تحميل العمولات...</p>
         </div>
       </div>
@@ -100,10 +100,10 @@ export default function AffiliateCommissionsPage() {
     <div className="container mx-auto py-8">
       <div className="mb-8">
         <h1 className={`text-3xl font-bold mb-2 transition-colors duration-500 ${
-          isDarkMode ? 'text-white' : 'text-slate-800'
+          text-foreground
         }`}>إدارة العمولات</h1>
         <p className={`transition-colors duration-500 ${
-          isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+          text-muted-foreground
         }`}>
           متابعة عمولاتك وأرباحك من المبيعات
         </p>
@@ -114,14 +114,14 @@ export default function AffiliateCommissionsPage() {
         <UnifiedCard variant="glass">
           <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
-              isDarkMode ? 'text-slate-200' : 'text-slate-700'
+              text-foreground
             }`}>إجمالي العمولات</UnifiedCardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
             <div className="text-2xl font-bold">{totalCommissions.toFixed(2)} ر.س</div>
             <p className={`text-xs transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+              text-muted-foreground
             }`}>
               {commissions?.length || 0} عمولة
             </p>
@@ -131,14 +131,14 @@ export default function AffiliateCommissionsPage() {
         <UnifiedCard variant="glass">
           <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
-              isDarkMode ? 'text-slate-200' : 'text-slate-700'
+              text-foreground
             }`}>في الانتظار</UnifiedCardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
             <div className="text-2xl font-bold text-yellow-600">{pendingCommissions.toFixed(2)} ر.س</div>
             <p className={`text-xs transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+              text-muted-foreground
             }`}>
               {commissions?.filter(c => c.status === 'PENDING').length || 0} عمولة
             </p>
@@ -148,14 +148,14 @@ export default function AffiliateCommissionsPage() {
         <UnifiedCard variant="glass">
           <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
-              isDarkMode ? 'text-slate-200' : 'text-slate-700'
+              text-foreground
             }`}>مؤكدة</UnifiedCardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
             <div className="text-2xl font-bold text-green-600">{confirmedCommissions.toFixed(2)} ر.س</div>
             <p className={`text-xs transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+              text-muted-foreground
             }`}>
               {commissions?.filter(c => c.status === 'CONFIRMED').length || 0} عمولة
             </p>
@@ -165,14 +165,14 @@ export default function AffiliateCommissionsPage() {
         <UnifiedCard variant="glass">
           <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
-              isDarkMode ? 'text-slate-200' : 'text-slate-700'
+              text-foreground
             }`}>مدفوعة</UnifiedCardTitle>
             <Banknote className="h-4 w-4 text-muted-foreground" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
             <div className="text-2xl font-bold text-blue-600">{paidCommissions.toFixed(2)} ر.س</div>
             <p className={`text-xs transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+              text-muted-foreground
             }`}>
               {commissions?.filter(c => c.status === 'PAID').length || 0} عمولة
             </p>
@@ -186,10 +186,10 @@ export default function AffiliateCommissionsPage() {
           <UnifiedCardContent className="text-center py-12">
             <DollarSign className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
             <h3 className={`text-lg font-semibold mb-2 transition-colors duration-500 ${
-              isDarkMode ? 'text-white' : 'text-slate-800'
+              text-foreground
             }`}>لا توجد عمولات</h3>
             <p className={`transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+              text-muted-foreground
             }`}>
               لم تحصل على أي عمولات بعد
             </p>
@@ -199,7 +199,7 @@ export default function AffiliateCommissionsPage() {
         <UnifiedCard variant="glass">
           <UnifiedCardHeader>
             <UnifiedCardTitle className={`flex items-center gap-2 transition-colors duration-500 ${
-              isDarkMode ? 'text-white' : 'text-slate-800'
+              text-foreground
             }`}>
               <TrendingUp className="h-5 w-5" />
               تفاصيل العمولات
@@ -220,17 +220,17 @@ export default function AffiliateCommissionsPage() {
                       <StatusIcon className="h-5 w-5 text-muted-foreground" />
                       <div>
                         <p className={`font-medium transition-colors duration-500 ${
-                          isDarkMode ? 'text-white' : 'text-slate-800'
+                          text-foreground
                         }`}>
                           طلب #{commission.order_id.slice(-8)}
                         </p>
                         <p className={`text-sm transition-colors duration-500 ${
-                          isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+                          text-muted-foreground
                         }`}>
                           {format(new Date(commission.created_at), 'dd MMMM yyyy - HH:mm', { locale: ar })}
                         </p>
                         <p className={`text-sm transition-colors duration-500 ${
-                          isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+                          text-muted-foreground
                         }`}>
                           نسبة العمولة: {commission.commission_rate}%
                         </p>
@@ -239,7 +239,7 @@ export default function AffiliateCommissionsPage() {
                     
                     <div className="text-right">
                       <p className={`text-lg font-bold transition-colors duration-500 ${
-                        isDarkMode ? 'text-white' : 'text-slate-800'
+                        text-foreground
                       }`}>
                         {commission.amount_sar.toFixed(2)} ر.س
                       </p>
@@ -248,14 +248,14 @@ export default function AffiliateCommissionsPage() {
                       </UnifiedBadge>
                       {commission.confirmed_at && (
                         <p className={`text-xs mt-1 transition-colors duration-500 ${
-                          isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+                          text-muted-foreground
                         }`}>
                           تأكدت: {format(new Date(commission.confirmed_at), 'dd/MM/yyyy', { locale: ar })}
                         </p>
                       )}
                       {commission.paid_at && (
                         <p className={`text-xs mt-1 transition-colors duration-500 ${
-                          isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+                          text-muted-foreground
                         }`}>
                           دُفعت: {format(new Date(commission.paid_at), 'dd/MM/yyyy', { locale: ar })}
                         </p>

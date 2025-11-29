@@ -310,13 +310,13 @@ export default function AffiliateWalletPage() {
     <div className="container mx-auto py-8">
       <div className="mb-8">
         <h1 className={`text-3xl font-bold mb-2 flex items-center gap-2 transition-colors duration-500 ${
-          isDarkMode ? 'text-white' : 'text-slate-800'
+          text-foreground
         }`}>
           <Wallet className="h-8 w-8" />
           محفظتي
         </h1>
         <p className={`transition-colors duration-500 ${
-          isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+          text-muted-foreground
         }`}>
           إدارة رصيدك وطلبات السحب
         </p>
@@ -330,14 +330,14 @@ export default function AffiliateWalletPage() {
         }`}>
           <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
-              isDarkMode ? 'text-slate-200' : 'text-slate-700'
+              text-foreground
             }`}>الرصيد المتاح</UnifiedCardTitle>
             <DollarSign className="h-4 w-4 text-green-600" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
             <div className="text-2xl font-bold text-green-600">{availableBalance.toFixed(2)} ر.س</div>
             <p className={`text-xs mt-1 transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+              text-muted-foreground
             }`}>
               جاهز للسحب
             </p>
@@ -351,14 +351,14 @@ export default function AffiliateWalletPage() {
         }`}>
           <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
-              isDarkMode ? 'text-slate-200' : 'text-slate-700'
+              text-foreground
             }`}>رصيد معلق</UnifiedCardTitle>
             <Clock className="h-4 w-4 text-yellow-600" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
             <div className="text-2xl font-bold text-yellow-600">{pendingBalance.toFixed(2)} ر.س</div>
             <p className={`text-xs mt-1 transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+              text-muted-foreground
             }`}>
               في انتظار التأكيد
             </p>
@@ -372,14 +372,14 @@ export default function AffiliateWalletPage() {
         }`}>
           <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <UnifiedCardTitle className={`text-sm font-medium transition-colors duration-500 ${
-              isDarkMode ? 'text-slate-200' : 'text-slate-700'
+              text-foreground
             }`}>إجمالي المدفوعات</UnifiedCardTitle>
             <CheckCircle className="h-4 w-4 text-blue-600" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
             <div className="text-2xl font-bold text-blue-600">{paidBalance.toFixed(2)} ر.س</div>
             <p className={`text-xs mt-1 transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+              text-muted-foreground
             }`}>
               تم الدفع
             </p>
@@ -401,7 +401,7 @@ export default function AffiliateWalletPage() {
         </UnifiedButton>
         {availableBalance < minWithdrawal && (
           <p className={`text-sm mt-2 transition-colors duration-500 ${
-            isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+            text-muted-foreground
           }`}>
             الحد الأدنى للسحب: {minWithdrawal} ر.س
           </p>
@@ -415,7 +415,7 @@ export default function AffiliateWalletPage() {
       }`}>
         <UnifiedCardHeader>
           <UnifiedCardTitle className={`flex items-center gap-2 transition-colors duration-500 ${
-            isDarkMode ? 'text-white' : 'text-slate-800'
+            text-foreground
           }`}>
             <History className="h-5 w-5" />
             طلبات السحب
@@ -426,10 +426,10 @@ export default function AffiliateWalletPage() {
             <div className="text-center py-12">
               <Send className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
               <h3 className={`text-lg font-semibold mb-2 transition-colors duration-500 ${
-                isDarkMode ? 'text-white' : 'text-slate-800'
+                text-foreground
               }`}>لا توجد طلبات سحب</h3>
               <p className={`transition-colors duration-500 ${
-                isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+                text-muted-foreground
               }`}>
                 لم تقم بأي طلبات سحب بعد
               </p>

@@ -141,7 +141,7 @@ export const AffiliateAnalytics = ({
       {/* Time Range Selector */}
       <div className="flex items-center justify-between">
         <h2 className={`text-2xl font-bold transition-colors duration-500 ${
-          isDarkMode ? 'text-white' : 'text-slate-800'
+          text-foreground
         }`}>تحليلات الأداء</h2>
         <Select value={timeRange} onValueChange={onTimeRangeChange}>
           <SelectTrigger className="w-40">
