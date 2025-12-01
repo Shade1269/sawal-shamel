@@ -20,12 +20,8 @@ export function PerformanceHighlights({ highlights, userName }: PerformanceHighl
         : 'border-slate-200/50 bg-white/90 shadow-lg'
     }`}>
       <header className="mb-[var(--spacing-md)]">
-        <h2 className={`heading-ar text-xl font-extrabold tracking-tight transition-colors duration-500 ${
-          text-foreground
-        }`}>أداءك هذا الأسبوع</h2>
-        <p className={`elegant-text text-sm transition-colors duration-500 ${
-          text-muted-foreground
-        }`}>
+        <h2 className="heading-ar text-xl font-extrabold tracking-tight text-foreground transition-colors duration-500">أداءك هذا الأسبوع</h2>
+        <p className="elegant-text text-sm text-muted-foreground transition-colors duration-500">
           {userName}, هذه لمحة سريعة عن حملاتك النشطة.
         </p>
       </header>
@@ -39,9 +35,7 @@ export function PerformanceHighlights({ highlights, userName }: PerformanceHighl
                 : 'border-slate-200/50 bg-white/80 text-slate-800 hover:bg-slate-50/80 shadow-sm hover:shadow-md'
             }`}
           >
-            <p className={`text-xs transition-colors duration-500 ${
-              text-muted-foreground
-            }`}>{item.label}</p>
+            <p className="text-xs text-muted-foreground transition-colors duration-500">{item.label}</p>
             <p className="mt-2 text-lg font-semibold premium-text">{item.value}</p>
           </li>
         ))}

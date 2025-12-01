@@ -221,12 +221,8 @@ export default function AffiliateStorefrontPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Store className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <h1 className={`text-2xl font-bold mb-2 transition-colors duration-500 ${
-            text-foreground
-          }`}>المتجر غير موجود</h1>
-          <p className={`transition-colors duration-500 ${
-            text-muted-foreground
-          }`}>لم يتم العثور على المتجر المطلوب</p>
+          <h1 className="text-2xl font-bold mb-2 text-foreground transition-colors duration-500">المتجر غير موجود</h1>
+          <p className="text-muted-foreground transition-colors duration-500">لم يتم العثور على المتجر المطلوب</p>
         </div>
       </div>
     );
@@ -244,13 +240,9 @@ export default function AffiliateStorefrontPage() {
               className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
             />
           )}
-          <h1 className={`text-4xl font-bold mb-2 transition-colors duration-500 ${
-            text-foreground
-          }`}>{store.store_name}</h1>
+          <h1 className="text-4xl font-bold mb-2 text-foreground transition-colors duration-500">{store.store_name}</h1>
           {store.bio && (
-            <p className={`text-lg max-w-2xl mx-auto transition-colors duration-500 ${
-              text-muted-foreground
-            }`}>
+            <p className="text-lg max-w-2xl mx-auto text-muted-foreground transition-colors duration-500">
               {store.bio}
             </p>
           )}

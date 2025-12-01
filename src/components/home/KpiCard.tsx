@@ -87,13 +87,9 @@ export const KpiCard: React.FC<KpiCardProps> = React.memo(
         <div aria-hidden className="absolute left-0 right-0 top-0 h-1 rounded-t-[inherit]" style={{ background: `linear-gradient(90deg, ${accentColor}, ${accentColor}80, ${accentColor})` }} />
         <header className="flex items-center justify-between gap-[var(--spacing-md)]">
           <div className="space-y-1">
-            <p className={`text-xs font-bold uppercase tracking-wide drop-shadow-sm ${
-              text-foreground
-            }`}>{title}</p>
+            <p className="text-xs font-bold uppercase tracking-wide drop-shadow-sm text-foreground">{title}</p>
             {description ? (
-              <p className={`text-xs drop-shadow-sm ${
-                text-muted-foreground
-              }`}>{description}</p>
+              <p className="text-xs drop-shadow-sm text-muted-foreground">{description}</p>
             ) : null}
           </div>
           {Icon ? (
@@ -137,9 +133,7 @@ export const KpiCard: React.FC<KpiCardProps> = React.memo(
         </div>
 
         {footer ? (
-          <footer className={`text-sm drop-shadow-sm ${
-            text-muted-foreground
-          }`}>{footer}</footer>
+          <footer className="text-sm drop-shadow-sm text-muted-foreground">{footer}</footer>
         ) : null}
       </article>
     );
