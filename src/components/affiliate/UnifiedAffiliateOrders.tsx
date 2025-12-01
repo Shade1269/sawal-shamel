@@ -59,9 +59,7 @@ export default function UnifiedAffiliateOrders() {
       <div className="container mx-auto py-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className={`transition-colors duration-500 ${
-            text-muted-foreground
-          }`}>جاري تحميل الطلبات...</p>
+          <p className="text-muted-foreground transition-colors duration-500">جاري تحميل الطلبات...</p>
         </div>
       </div>
     );
@@ -83,12 +81,8 @@ export default function UnifiedAffiliateOrders() {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <h1 className={`text-3xl font-bold mb-2 transition-colors duration-500 ${
-          text-foreground
-        }`}>إدارة الطلبات</h1>
-        <p className={`transition-colors duration-500 ${
-          text-muted-foreground
-        }`}>
+        <h1 className="text-3xl font-bold mb-2 text-foreground transition-colors duration-500">إدارة الطلبات</h1>
+        <p className="text-muted-foreground transition-colors duration-500">
           متابعة طلبات عملائك وحالاتها
         </p>
       </div>
@@ -101,16 +95,12 @@ export default function UnifiedAffiliateOrders() {
             : 'bg-card border-border'
         }`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className={`text-sm font-medium transition-colors duration-500 ${
-              text-foreground
-            }`}>إجمالي الطلبات</CardTitle>
+            <CardTitle className="text-sm font-medium text-foreground transition-colors duration-500">إجمالي الطلبات</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalOrders}</div>
-            <p className={`text-xs transition-colors duration-500 ${
-              text-muted-foreground
-            }`}>
+            <p className="text-xs text-muted-foreground transition-colors duration-500">
               إجمالي المبيعات: {stats.totalRevenue.toFixed(2)} ر.س
             </p>
           </CardContent>

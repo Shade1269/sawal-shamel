@@ -32,28 +32,20 @@ export function QuickActionsPanel({ actions }: QuickActionsPanelProps) {
         ? 'border-border/50 bg-card/88 shadow-glass-soft'
         : 'border-slate-200/50 bg-white/90 shadow-lg'
     }`}>
-      <h2 className={`text-sm font-semibold heading-ar transition-colors duration-500 ${
-        text-foreground
-      }`}>روابط سريعة</h2>
+      <h2 className="text-sm font-semibold heading-ar text-foreground transition-colors duration-500">روابط سريعة</h2>
       <nav aria-label="روابط عمليات المسوق" className="flex flex-col gap-[var(--spacing-sm)]">
         {actions.map((action) => {
           const Icon = action.icon;
           const content = (
             <span className="flex flex-1 flex-col text-right">
-              <span className={`text-sm font-medium premium-text transition-colors duration-500 ${
-                text-foreground
-              }`}>{action.label}</span>
-              <span className={`text-xs elegant-text transition-colors duration-500 ${
-                text-muted-foreground
-              }`}>{action.description}</span>
+              <span className="text-sm font-medium premium-text text-foreground transition-colors duration-500">{action.label}</span>
+              <span className="text-xs elegant-text text-muted-foreground transition-colors duration-500">{action.description}</span>
             </span>
           );
 
           return action.to ? (
             <Link key={action.id} to={action.to} className={cn(quickActionLinkClass, 'w-full')}>
-              <Icon className={`h-5 w-5 transition-colors duration-500 ${
-                text-accent
-              }`} aria-hidden />
+              <Icon className="h-5 w-5 text-accent transition-colors duration-500" aria-hidden />
               {content}
             </Link>
           ) : (
@@ -64,9 +56,7 @@ export function QuickActionsPanel({ actions }: QuickActionsPanelProps) {
               onClick={action.action}
               className={cn(quickActionLinkClass, 'group w-full')}
             >
-              <Icon className={`h-5 w-5 transition-all duration-200 group-hover:scale-110 ${
-                text-accent
-              }`} aria-hidden />
+              <Icon className="h-5 w-5 text-accent transition-all duration-200 group-hover:scale-110" aria-hidden />
               {content}
             </UnifiedButton>
           );

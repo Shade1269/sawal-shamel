@@ -140,9 +140,7 @@ export const AffiliateAnalytics = ({
     <div className="space-y-6">
       {/* Time Range Selector */}
       <div className="flex items-center justify-between">
-        <h2 className={`text-2xl font-bold transition-colors duration-500 ${
-          text-foreground
-        }`}>تحليلات الأداء</h2>
+        <h2 className="text-2xl font-bold text-foreground transition-colors duration-500">تحليلات الأداء</h2>
         <Select value={timeRange} onValueChange={onTimeRangeChange}>
           <SelectTrigger className="w-40">
             <SelectValue />

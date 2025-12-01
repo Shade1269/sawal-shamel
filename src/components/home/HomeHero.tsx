@@ -37,15 +37,11 @@ export const HomeHero = ({ isDarkMode }: HomeHeroProps) => {
         </span>
       </h1>
 
-      <p className={`text-xl md:text-2xl mb-6 max-w-3xl mx-auto leading-relaxed elegant-text ${
-        text-muted-foreground/90
-      }`}>
+      <p className="text-xl md:text-2xl mb-6 max-w-3xl mx-auto leading-relaxed elegant-text text-muted-foreground/90">
         استكشف عالم التسوق الفاخر مع تجربة تجارة إلكترونية لا مثيل لها
       </p>
 
-      <div className={`flex items-center justify-center gap-4 text-sm ${
-        text-muted-foreground/70
-      }`}>
+      <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground/70">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
           <span className="premium-text">نشط الآن</span>
