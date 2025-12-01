@@ -271,7 +271,9 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
             const { storeId: savedStoreId } = JSON.parse(confirmationData);
             targetStoreId = savedStoreId;
           }
-        } catch {}
+        } catch {
+          // Ignore JSON parsing errors for confirmation data
+        }
       }
 
       // التحقق من OTP عبر Supabase Edge Function
@@ -359,7 +361,9 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
                 expiresAt,
               })
             );
-          } catch {}
+          } catch {
+            // Ignore localStorage errors in private browsing mode
+          }
         } catch (sessionError) {
           console.warn('Failed to create/extend store session:', sessionError);
         }

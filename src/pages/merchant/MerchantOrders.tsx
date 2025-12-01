@@ -46,8 +46,10 @@ const MerchantOrders = () => {
   }, [profile]);
 
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.order_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         order.customer_name.toLowerCase().includes(searchQuery.toLowerCase());
+    const orderNumber = order.order_number?.toLowerCase() || '';
+    const customerName = order.customer_name?.toLowerCase() || '';
+    const searchLower = searchQuery.toLowerCase();
+    const matchesSearch = orderNumber.includes(searchLower) || customerName.includes(searchLower);
     const matchesTab = activeTab === 'all' || order.status === activeTab;
     return matchesSearch && matchesTab;
   });
@@ -185,7 +187,7 @@ const MerchantOrders = () => {
                           {order.items.map((item, idx) => (
                             <div key={idx} className="text-sm text-muted-foreground flex justify-between">
                               <span>{item.product_title} × {item.quantity}</span>
-                              <span>{item.unit_price * item.quantity} ر.س</span>
+                              <span>{((item.unit_price || 0) * item.quantity).toFixed(2)} ر.س</span>
                             </div>
                           ))}
                         </div>

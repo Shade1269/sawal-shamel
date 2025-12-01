@@ -217,7 +217,7 @@ const MerchantDashboard = () => {
               <div className="text-center py-8">
                 <ShoppingCart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <p className="text-muted-foreground mb-4">إدارة طلباتك من هنا</p>
-                <UnifiedButton variant="primary" onClick={() => navigate('/admin/orders')}>
+                <UnifiedButton variant="primary" onClick={() => navigate('/merchant/orders')}>
                   عرض جميع الطلبات
                 </UnifiedButton>
               </div>
