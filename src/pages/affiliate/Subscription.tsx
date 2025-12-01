@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAffiliateSubscription } from '@/hooks/useAffiliateSubscription';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { UnifiedButton } from '@/components/design-system';
 import { UnifiedBadge } from '@/components/design-system';
@@ -13,14 +12,13 @@ import { ar } from 'date-fns/locale';
 const AffiliateSubscriptionPage = () => {
   const { subscription, isLoading, createSubscription } = useAffiliateSubscription();
   const { user } = useSupabaseAuth();
-  const { isDarkMode } = useDarkMode();
   const [showPayment, setShowPayment] = useState(false);
   const [orderId] = useState(`SUB_${Date.now()}`);
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       active: { label: 'نشط', variant: 'success' as const, icon: CheckCircle2, color: 'text-green-500' },
-      inactive: { label: 'غير نشط', variant: 'secondary' as const, icon: XCircle, color: 'text-gray-500' },
+      inactive: { label: 'غير نشط', variant: 'secondary' as const, icon: XCircle, color: 'text-muted-foreground' },
       expired: { label: 'منتهي', variant: 'error' as const, icon: XCircle, color: 'text-red-500' },
       pending: { label: 'قيد المعالجة', variant: 'outline' as const, icon: Clock, color: 'text-yellow-500' }
     };
@@ -55,9 +53,7 @@ const AffiliateSubscriptionPage = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
-          <p className={`transition-colors duration-500 ${
-            isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
-          }`}>جاري التحميل...</p>
+          <p className="text-muted-foreground">جاري التحميل...</p>
         </div>
       </div>
     );
@@ -92,29 +88,19 @@ const AffiliateSubscriptionPage = () => {
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="text-center space-y-2">
-          <h1 className={`text-3xl font-bold transition-colors duration-500 ${
-            isDarkMode ? 'text-white' : 'text-slate-900'
-          }`}>
+          <h1 className="text-3xl font-bold text-foreground">
             اشتراك المنصة
           </h1>
-          <p className={`transition-colors duration-500 ${
-            isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
-          }`}>
+          <p className="text-muted-foreground">
             إدارة اشتراكك في منصة التسويق بالعمولة
           </p>
         </div>
 
         {subscription ? (
-          <UnifiedCard variant="glass" className={`transition-all duration-500 ${
-            isDarkMode 
-              ? 'bg-card border-border' 
-              : 'bg-white border-slate-200'
-          }`}>
+          <UnifiedCard variant="glass" className="bg-card border-border">
             <UnifiedCardHeader>
               <div className="flex items-center justify-between">
-                <UnifiedCardTitle className={`transition-colors duration-500 ${
-                  isDarkMode ? 'text-white' : 'text-slate-900'
-                }`}>
+                <UnifiedCardTitle className="text-foreground">
                   معلومات الاشتراك
                 </UnifiedCardTitle>
                 {getStatusBadge(subscription.status)}
@@ -125,79 +111,55 @@ const AffiliateSubscriptionPage = () => {
             </UnifiedCardHeader>
             <UnifiedCardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className={`p-4 rounded-lg transition-colors duration-500 ${
-                  isDarkMode ? 'bg-muted/50' : 'bg-slate-50'
-                }`}>
+                <div className="p-4 rounded-lg bg-muted/50">
                   <div className="flex items-center gap-2 mb-2">
                     <CreditCard className="h-4 w-4 text-primary" />
-                    <span className={`text-sm font-medium transition-colors duration-500 ${
-                      isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
-                    }`}>
+                    <span className="text-sm font-medium text-muted-foreground">
                       قيمة الاشتراك
                     </span>
                   </div>
-                  <p className={`text-2xl font-bold transition-colors duration-500 ${
-                    isDarkMode ? 'text-white' : 'text-slate-900'
-                  }`}>
+                  <p className="text-2xl font-bold text-foreground">
                     {subscription.subscription_amount} ريال
                   </p>
                 </div>
 
                 {subscription.start_date && (
-                  <div className={`p-4 rounded-lg transition-colors duration-500 ${
-                    isDarkMode ? 'bg-muted/50' : 'bg-slate-50'
-                  }`}>
+                  <div className="p-4 rounded-lg bg-muted/50">
                     <div className="flex items-center gap-2 mb-2">
                       <Calendar className="h-4 w-4 text-primary" />
-                      <span className={`text-sm font-medium transition-colors duration-500 ${
-                        isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
-                      }`}>
+                      <span className="text-sm font-medium text-muted-foreground">
                         تاريخ البداية
                       </span>
                     </div>
-                    <p className={`text-lg font-semibold transition-colors duration-500 ${
-                      isDarkMode ? 'text-white' : 'text-slate-900'
-                    }`}>
+                    <p className="text-lg font-semibold text-foreground">
                       {format(new Date(subscription.start_date), 'dd MMMM yyyy', { locale: ar })}
                     </p>
                   </div>
                 )}
 
                 {subscription.end_date && (
-                  <div className={`p-4 rounded-lg transition-colors duration-500 ${
-                    isDarkMode ? 'bg-muted/50' : 'bg-slate-50'
-                  }`}>
+                  <div className="p-4 rounded-lg bg-muted/50">
                     <div className="flex items-center gap-2 mb-2">
                       <Calendar className="h-4 w-4 text-primary" />
-                      <span className={`text-sm font-medium transition-colors duration-500 ${
-                        isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
-                      }`}>
+                      <span className="text-sm font-medium text-muted-foreground">
                         تاريخ الانتهاء
                       </span>
                     </div>
-                    <p className={`text-lg font-semibold transition-colors duration-500 ${
-                      isDarkMode ? 'text-white' : 'text-slate-900'
-                    }`}>
+                    <p className="text-lg font-semibold text-foreground">
                       {format(new Date(subscription.end_date), 'dd MMMM yyyy', { locale: ar })}
                     </p>
                   </div>
                 )}
 
                 {subscription.payment_method && (
-                  <div className={`p-4 rounded-lg transition-colors duration-500 ${
-                    isDarkMode ? 'bg-muted/50' : 'bg-slate-50'
-                  }`}>
+                  <div className="p-4 rounded-lg bg-muted/50">
                     <div className="flex items-center gap-2 mb-2">
                       <CreditCard className="h-4 w-4 text-primary" />
-                      <span className={`text-sm font-medium transition-colors duration-500 ${
-                        isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
-                      }`}>
+                      <span className="text-sm font-medium text-muted-foreground">
                         طريقة الدفع
                       </span>
                     </div>
-                    <p className={`text-lg font-semibold transition-colors duration-500 ${
-                      isDarkMode ? 'text-white' : 'text-slate-900'
-                    }`}>
+                    <p className="text-lg font-semibold text-foreground">
                       {subscription.payment_method === 'geidea' ? 'جيديا' : subscription.payment_method}
                     </p>
                   </div>
@@ -217,15 +179,9 @@ const AffiliateSubscriptionPage = () => {
             </UnifiedCardContent>
           </UnifiedCard>
         ) : (
-          <UnifiedCard variant="glass" className={`transition-all duration-500 ${
-            isDarkMode 
-              ? 'bg-card border-border' 
-              : 'bg-white border-slate-200'
-          }`}>
+          <UnifiedCard variant="glass" className="bg-card border-border">
             <UnifiedCardHeader>
-              <UnifiedCardTitle className={`transition-colors duration-500 ${
-                isDarkMode ? 'text-white' : 'text-slate-900'
-              }`}>
+              <UnifiedCardTitle className="text-foreground">
                 اشترك الآن
               </UnifiedCardTitle>
               <UnifiedCardDescription>
@@ -234,14 +190,10 @@ const AffiliateSubscriptionPage = () => {
             </UnifiedCardHeader>
             <UnifiedCardContent className="space-y-6">
               <div className="text-center space-y-2">
-                <div className={`text-5xl font-bold transition-colors duration-500 ${
-                  isDarkMode ? 'text-white' : 'text-slate-900'
-                }`}>
+                <div className="text-5xl font-bold text-foreground">
                   ١ ريال
                 </div>
-                <p className={`transition-colors duration-500 ${
-                  isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
-                }`}>
+                <p className="text-muted-foreground">
                   شهرياً
                 </p>
               </div>
@@ -249,33 +201,25 @@ const AffiliateSubscriptionPage = () => {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  <span className={`transition-colors duration-500 ${
-                    isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
-                  }`}>
+                  <span className="text-muted-foreground">
                     إنشاء متجر خاص بك
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  <span className={`transition-colors duration-500 ${
-                    isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
-                  }`}>
+                  <span className="text-muted-foreground">
                     عرض وبيع المنتجات
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  <span className={`transition-colors duration-500 ${
-                    isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
-                  }`}>
+                  <span className="text-muted-foreground">
                     عمولة على كل عملية بيع
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  <span className={`transition-colors duration-500 ${
-                    isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
-                  }`}>
+                  <span className="text-muted-foreground">
                     تحليلات ومتابعة دقيقة
                   </span>
                 </div>

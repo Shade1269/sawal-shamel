@@ -589,10 +589,10 @@ export const AffiliateStoreManager = ({
               </div>
               <div className="space-y-1 md:space-y-2 flex-1 min-w-0">
                 <h1 className={`text-lg md:text-2xl font-bold truncate transition-colors duration-500 ${
-                  isDarkMode ? 'text-white' : 'text-slate-800'
+                  text-foreground
                 }`}>{store.store_name}</h1>
                 <p className={`text-sm md:text-base line-clamp-2 transition-colors duration-500 ${
-                  isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+                  text-muted-foreground
                 }`}>{store.bio}</p>
                 <div className="flex items-center gap-2 flex-wrap">
                   <Badge variant="outline" className={`text-xs transition-colors duration-500 ${
@@ -729,13 +729,13 @@ export const AffiliateStoreManager = ({
           }`}>
             <CardHeader className="p-4 md:p-6">
               <CardTitle className={`flex items-center gap-2 text-base md:text-lg transition-colors duration-500 ${
-                isDarkMode ? 'text-white' : 'text-slate-800'
+                text-foreground
               }`}>
                 <Settings className="h-4 w-4 md:h-5 md:w-5" />
                 الإعدادات العامة
               </CardTitle>
               <CardDescription className={`text-xs md:text-sm transition-colors duration-500 ${
-                isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+                text-muted-foreground
               }`}>
                 تحديث معلومات متجرك الأساسية
               </CardDescription>
@@ -744,7 +744,7 @@ export const AffiliateStoreManager = ({
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="store_name" className={`text-sm font-semibold transition-colors duration-500 ${
-                    isDarkMode ? 'text-slate-200' : 'text-slate-800'
+                    text-foreground
                   }`}>اسم المتجر</Label>
                   <Input
                     id="store_name"
@@ -760,7 +760,7 @@ export const AffiliateStoreManager = ({
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="store_slug" className={`text-sm font-semibold transition-colors duration-500 ${
-                    isDarkMode ? 'text-slate-200' : 'text-slate-800'
+                    text-foreground
                   }`}>رابط المتجر</Label>
                   <div className="flex items-center gap-2">
                     <Input
@@ -782,7 +782,7 @@ export const AffiliateStoreManager = ({
               
               <div className="space-y-2">
                 <Label htmlFor="bio" className={`text-sm font-semibold transition-colors duration-500 ${
-                  isDarkMode ? 'text-slate-200' : 'text-slate-800'
+                  text-foreground
                 }`}>وصف المتجر</Label>
                 <Textarea
                   id="bio"
@@ -830,13 +830,13 @@ export const AffiliateStoreManager = ({
           }`}>
             <CardHeader className="p-4 md:p-6">
               <CardTitle className={`flex items-center gap-2 text-base md:text-lg transition-colors duration-500 ${
-                isDarkMode ? 'text-white' : 'text-slate-900'
+                text-foreground
               }`}>
                 <ImageIcon className="h-4 w-4 md:h-5 md:w-5" />
                 إعدادات إضافية
               </CardTitle>
               <CardDescription className={`text-xs md:text-sm transition-colors duration-500 ${
-                isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+                text-muted-foreground
               }`}>
                 تخصيص الشعار والإعدادات الأخرى
               </CardDescription>
@@ -845,7 +845,7 @@ export const AffiliateStoreManager = ({
 
               <div className="space-y-2">
                 <Label className={`text-sm font-semibold transition-colors duration-500 ${
-                  isDarkMode ? 'text-slate-200' : 'text-slate-900'
+                  text-foreground
                 }`}>شعار المتجر</Label>
                 <div className="flex flex-col md:flex-row items-center gap-4">
                   <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center">

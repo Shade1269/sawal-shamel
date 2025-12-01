@@ -145,6 +145,15 @@ html[data-theme="default"] {
   --state-disabled-bg: hsla(215, 18%, 16%, 0.6);
   --state-disabled-fg: hsla(213, 17%, 66%, 0.45);
   --state-disabled-border: hsla(212, 12%, 25%, 0.35);
+
+  /* Sidebar - Default Dark Theme */
+  --sidebar-bg: 216 28% 9%;
+  --sidebar-text: 210 20% 98%;
+  --sidebar-text-secondary: 213 17% 66%;
+  --sidebar-hover: 215 20% 14%;
+  --sidebar-active: 212 100% 67%;
+  --sidebar-active-glow: 212 100% 77%;
+  --sidebar-border: 212 12% 21%;
 }
 
 html[data-theme="default"] body {

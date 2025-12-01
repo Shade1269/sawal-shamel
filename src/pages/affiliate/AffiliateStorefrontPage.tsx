@@ -222,10 +222,10 @@ export default function AffiliateStorefrontPage() {
         <div className="text-center">
           <Store className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
           <h1 className={`text-2xl font-bold mb-2 transition-colors duration-500 ${
-            isDarkMode ? 'text-white' : 'text-slate-800'
+            text-foreground
           }`}>المتجر غير موجود</h1>
           <p className={`transition-colors duration-500 ${
-            isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+            text-muted-foreground
           }`}>لم يتم العثور على المتجر المطلوب</p>
         </div>
       </div>
@@ -245,11 +245,11 @@ export default function AffiliateStorefrontPage() {
             />
           )}
           <h1 className={`text-4xl font-bold mb-2 transition-colors duration-500 ${
-            isDarkMode ? 'text-white' : 'text-slate-800'
+            text-foreground
           }`}>{store.store_name}</h1>
           {store.bio && (
             <p className={`text-lg max-w-2xl mx-auto transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+              text-muted-foreground
             }`}>
               {store.bio}
             </p>

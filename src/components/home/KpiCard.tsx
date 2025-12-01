@@ -88,11 +88,11 @@ export const KpiCard: React.FC<KpiCardProps> = React.memo(
         <header className="flex items-center justify-between gap-[var(--spacing-md)]">
           <div className="space-y-1">
             <p className={`text-xs font-bold uppercase tracking-wide drop-shadow-sm ${
-              isDarkMode ? 'text-foreground' : 'text-foreground'
+              text-foreground
             }`}>{title}</p>
             {description ? (
               <p className={`text-xs drop-shadow-sm ${
-                isDarkMode ? 'text-muted-foreground' : 'text-muted-foreground'
+                text-muted-foreground
               }`}>{description}</p>
             ) : null}
           </div>
@@ -138,7 +138,7 @@ export const KpiCard: React.FC<KpiCardProps> = React.memo(
 
         {footer ? (
           <footer className={`text-sm drop-shadow-sm ${
-            isDarkMode ? 'text-muted-foreground' : 'text-muted-foreground'
+            text-muted-foreground
           }`}>{footer}</footer>
         ) : null}
       </article>

@@ -21,10 +21,10 @@ export function PerformanceHighlights({ highlights, userName }: PerformanceHighl
     }`}>
       <header className="mb-[var(--spacing-md)]">
         <h2 className={`heading-ar text-xl font-extrabold tracking-tight transition-colors duration-500 ${
-          isDarkMode ? 'text-foreground' : 'text-slate-800'
+          text-foreground
         }`}>أداءك هذا الأسبوع</h2>
         <p className={`elegant-text text-sm transition-colors duration-500 ${
-          isDarkMode ? 'text-muted-foreground' : 'text-slate-600'
+          text-muted-foreground
         }`}>
           {userName}, هذه لمحة سريعة عن حملاتك النشطة.
         </p>
@@ -40,7 +40,7 @@ export function PerformanceHighlights({ highlights, userName }: PerformanceHighl
             }`}
           >
             <p className={`text-xs transition-colors duration-500 ${
-              isDarkMode ? 'text-muted-foreground' : 'text-slate-500'
+              text-muted-foreground
             }`}>{item.label}</p>
             <p className="mt-2 text-lg font-semibold premium-text">{item.value}</p>
           </li>

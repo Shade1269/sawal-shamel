@@ -56,7 +56,7 @@ const Index = () => {
   };
 
   return (
-    <div className={`min-h-screen relative overflow-hidden ${isDarkMode ? 'bg-dark' : 'bg-light'}`}>
+    <div className="min-h-screen relative overflow-hidden bg-background">
       {/* Decorative Background */}
       <div className="decorative-bg" />
       
