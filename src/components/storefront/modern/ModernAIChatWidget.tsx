@@ -171,7 +171,9 @@ export const ModernAIChatWidget = ({ storeInfo, products }: ModernAIChatWidgetPr
                 return newMessages;
               });
             }
-          } catch {}
+          } catch {
+            // Ignore JSON parsing errors for incomplete streaming data
+          }
         }
       }
 

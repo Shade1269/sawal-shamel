@@ -21,35 +21,35 @@ import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { toast } from 'sonner';
 
-const transactionTypeIcons = {
+const transactionTypeIcons: Record<string, typeof TrendingUp> = {
   COMMISSION: TrendingUp,
   WITHDRAWAL: ArrowDownToLine,
   ADJUSTMENT: ArrowUpFromLine,
   REFUND: XCircle,
 };
 
-const transactionTypeLabels = {
+const transactionTypeLabels: Record<string, string> = {
   COMMISSION: 'عمولة',
   WITHDRAWAL: 'سحب',
   ADJUSTMENT: 'تعديل',
   REFUND: 'استرجاع',
 };
 
-const transactionTypeColors = {
+const transactionTypeColors: Record<string, string> = {
   COMMISSION: 'text-green-600',
   WITHDRAWAL: 'text-red-600',
   ADJUSTMENT: 'text-blue-600',
   REFUND: 'text-orange-600',
 };
 
-const withdrawalStatusIcons = {
+const withdrawalStatusIcons: Record<string, typeof Clock> = {
   PENDING: Clock,
   APPROVED: CheckCircle,
   REJECTED: XCircle,
   COMPLETED: CheckCircle,
 };
 
-const withdrawalStatusLabels = {
+const withdrawalStatusLabels: Record<string, string> = {
   PENDING: 'قيد المراجعة',
   APPROVED: 'موافق عليه',
   REJECTED: 'مرفوض',
@@ -182,8 +182,8 @@ export default function WalletPage() {
               ) : (
                 <div className="space-y-3">
                   {transactions.map((transaction) => {
-                    const Icon = transactionTypeIcons[transaction.transaction_type];
-                    const isPositive = transaction.transaction_type === 'COMMISSION' || 
+                    const Icon = transactionTypeIcons[transaction.transaction_type] || TrendingUp;
+                    const isPositive = transaction.transaction_type === 'COMMISSION' ||
                                       transaction.transaction_type === 'ADJUSTMENT';
                     
                     return (
@@ -258,7 +258,7 @@ export default function WalletPage() {
               ) : (
                 <div className="space-y-3">
                   {withdrawals.map((withdrawal) => {
-                    const StatusIcon = withdrawalStatusIcons[withdrawal.status];
+                    const StatusIcon = withdrawalStatusIcons[withdrawal.status] || Clock;
                     
                     return (
                       <div

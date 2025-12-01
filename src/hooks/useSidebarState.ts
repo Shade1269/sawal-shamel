@@ -18,6 +18,7 @@ export function useSidebarState() {
       try {
         return JSON.parse(stored);
       } catch {
+        // Return default state if stored data is corrupted
         return getDefaultState();
       }
     }
@@ -35,7 +36,9 @@ export function useSidebarState() {
         try {
           const next = JSON.parse(e.newValue) as SidebarState;
           setState(next);
-        } catch {}
+        } catch {
+          // Ignore JSON parsing errors for storage events
+        }
       }
     };
 
@@ -43,7 +46,9 @@ export function useSidebarState() {
       try {
         const ce = e as CustomEvent<SidebarState>;
         if (ce.detail) setState(ce.detail);
-      } catch {}
+      } catch {
+        // Ignore errors for custom sidebar events
+      }
     };
 
     window.addEventListener('storage', onStorage);
@@ -57,9 +62,9 @@ export function useSidebarState() {
   const toggleCollapse = () => {
     setState(prev => {
       const next = { ...prev, isCollapsed: !prev.isCollapsed };
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch { /* Ignore storage errors */ }
       // Broadcast to same tab listeners
-      try { window.dispatchEvent(new CustomEvent('sidebar-state', { detail: next })); } catch {}
+      try { window.dispatchEvent(new CustomEvent('sidebar-state', { detail: next })); } catch { /* Ignore dispatch errors */ }
       return next;
     });
   };

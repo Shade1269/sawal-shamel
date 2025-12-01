@@ -172,7 +172,9 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
         const parsed = typeof serverBody === 'string' ? JSON.parse(serverBody) : serverBody;
         const serverMsg = parsed?.error || parsed?.message;
         if (serverMsg) details = serverMsg;
-      } catch {}
+      } catch {
+        // Ignore JSON parsing errors for server body
+      }
 
       // توضيح أخطاء Geidea الشائعة
       if (details.includes('[023]')) {

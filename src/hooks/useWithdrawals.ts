@@ -39,11 +39,21 @@ export const useWithdrawals = () => {
     queryKey: ['withdrawal-requests', user?.id],
     queryFn: async () => {
       if (!user) return [];
-      
+
+      // First, get the profile ID from the profiles table
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .maybeSingle();
+
+      if (profileError) throw profileError;
+      if (!profileData?.id) return [];
+
       const { data, error } = await supabase
         .from('withdrawal_requests')
         .select('*')
-        .eq('affiliate_profile_id', user.id)
+        .eq('affiliate_profile_id', profileData.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -57,10 +67,20 @@ export const useWithdrawals = () => {
     mutationFn: async (data: CreateWithdrawalData) => {
       if (!user) throw new Error('User not authenticated');
 
+      // First, get the profile ID from the profiles table
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .maybeSingle();
+
+      if (profileError) throw profileError;
+      if (!profileData?.id) throw new Error('Profile not found');
+
       const { data: withdrawal, error } = await supabase
         .from('withdrawal_requests')
         .insert({
-          affiliate_profile_id: user.id,
+          affiliate_profile_id: profileData.id,
           amount_sar: data.amount_sar,
           payment_method: data.payment_method,
           bank_details: data.bank_details || null,

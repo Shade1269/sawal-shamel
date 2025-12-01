@@ -72,6 +72,8 @@ async function checkTableStructure(tableName) {
   }
 }
 
+// Helper function to check database functions (currently unused, kept for future use)
+// eslint-disable-next-line no-unused-vars
 async function checkFunction(functionName) {
   console.log(`\n🔧 اختبار Function: ${functionName}`);
   console.log('═'.repeat(50));
