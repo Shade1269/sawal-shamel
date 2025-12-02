@@ -39,14 +39,16 @@ class TOTP {
 
   // Generate HMAC-SHA1
   private async hmacSha1(key: Uint8Array, message: Uint8Array): Promise<Uint8Array> {
+    const keyBuffer = new Uint8Array(key).buffer as ArrayBuffer;
     const cryptoKey = await crypto.subtle.importKey(
       "raw",
-      key,
+      keyBuffer,
       { name: "HMAC", hash: "SHA-1" },
       false,
       ["sign"]
     );
-    const signature = await crypto.subtle.sign("HMAC", cryptoKey, message);
+    const messageBuffer = new Uint8Array(message).buffer as ArrayBuffer;
+    const signature = await crypto.subtle.sign("HMAC", cryptoKey, messageBuffer);
     return new Uint8Array(signature);
   }
 
