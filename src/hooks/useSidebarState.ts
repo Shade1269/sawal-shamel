@@ -117,7 +117,7 @@ function getDefaultState(): SidebarState {
   
   return {
     isCollapsed: isMobile, // Start collapsed on mobile
-    expandedSections: [],
+    expandedSections: ['main', 'business', 'users', 'inventory', 'finance', 'settings', 'products', 'orders', 'wallet'], // All sections expanded by default
     recentPages: [],
     favorites: [],
     searchQuery: ''

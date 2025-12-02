@@ -24,12 +24,13 @@ export function SidebarSection({
   icon,
   children,
   isCollapsed,
-  isExpanded = true,
+  isExpanded,
   onToggle,
   color
 }: SidebarSectionProps) {
-  const [localExpanded, setLocalExpanded] = useState(isExpanded);
-  const expanded = onToggle ? isExpanded : localExpanded;
+  // Default to expanded if not explicitly set
+  const [localExpanded, setLocalExpanded] = useState(true);
+  const expanded = onToggle ? (isExpanded ?? true) : localExpanded;
 
   const handleToggle = () => {
     if (onToggle) {
