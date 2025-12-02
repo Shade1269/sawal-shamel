@@ -43,15 +43,6 @@ export const PaymentCallback: React.FC = () => {
         const amount = searchParams.get('amount');
         const currency = searchParams.get('currency') || 'SAR';
 
-        console.log('Payment callback data:', {
-          orderId,
-          sessionId,
-          paymentStatus,
-          paymentId,
-          detailedResponseCode,
-          detailedResponseMessage,
-        });
-
         if (!orderId) {
           setStatus('failed');
           setMessage('خطأ: لم يتم العثور على رقم الطلب');
@@ -78,8 +69,6 @@ export const PaymentCallback: React.FC = () => {
           setMessage('حدث خطأ أثناء معالجة الدفع');
           return;
         }
-
-        console.log('Callback processed:', data);
 
         if (data.success) {
           if (data.status === 'COMPLETED' || data.status === 'PAID') {

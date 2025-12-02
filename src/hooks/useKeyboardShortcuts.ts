@@ -206,10 +206,7 @@ export function useKeyboardShortcuts({
         description: 'فتح أدوات المطور',
         action: () => {
           // فتح أدوات المطور (إذا كانت متاحة)
-          if ((window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__) {
-            console.log('React DevTools detected');
-          }
-          // يمكن إضافة المزيد من أدوات التطوير هنا
+          // يمكن إضافة أدوات التطوير هنا
         },
         category: 'custom' as const,
         global: true
@@ -257,13 +254,11 @@ export function useKeyboardShortcuts({
       helpText += '\n';
     });
 
-    // عرض التوست أو يمكن فتح modal
+    // عرض التوست
     toast({
       title: "اختصارات المفاتيح",
-      description: "تم عرض الاختصارات في وحدة التحكم"
+      description: "اضغط '/' لعرض قائمة الاختصارات المتاحة"
     });
-    
-    console.log(helpText);
   }, [shortcuts, toast]);
 
   // معالجة ضغط المفاتيح

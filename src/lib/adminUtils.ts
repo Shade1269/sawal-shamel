@@ -1,16 +1,10 @@
 import { updateUserInFirestore } from './firestore';
 
 // تعيين دور admin لمستخدم معين
-export const setUserRole = async (email: string, role: 'admin' | 'affiliate' | 'moderator') => {
+export const setUserRole = async (_email: string, _role: 'admin' | 'affiliate' | 'moderator') => {
   try {
     // هذه وظيفة مؤقتة لتعيين الأدوار
     // في الواقع تحتاج صلاحيات admin للقيام بهذا
-    console.log(`Setting role ${role} for user ${email}`);
-    
-    // يمكن استخدام هذا في console المطور:
-    // import { setUserRole } from './lib/adminUtils';
-    // setUserRole('shade199633@icloud.com', 'admin');
-    
     return { success: true };
   } catch (error) {
     console.error('Error setting user role:', error);
@@ -26,7 +20,6 @@ export const makeUserAdmin = async (userUid: string) => {
       updatedAt: new Date()
     });
     
-    console.log('User role updated to admin:', result);
     return result;
   } catch (error) {
     console.error('Error making user admin:', error);
