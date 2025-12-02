@@ -38,10 +38,9 @@ const FirebaseSMSAuth = () => {
     return new RecaptchaVerifier(auth, 'recaptcha-container', {
       'size': 'invisible',
       'callback': () => {
-        console.log('reCAPTCHA solved');
+        // reCAPTCHA solved
       },
       'expired-callback': () => {
-        console.log('reCAPTCHA expired');
         toast({
           title: 'انتهت صلاحية التحقق',
           description: 'يرجى المحاولة مرة أخرى',
@@ -65,7 +64,7 @@ const FirebaseSMSAuth = () => {
     return createRecaptchaManager<RecaptchaVerifier>({
       createInstance: createVerifier,
       resetContainer: resetRecaptchaContainer,
-      onClearError: (error) => console.log('Error clearing reCAPTCHA:', error),
+      onClearError: () => { /* Ignore clear errors */ },
     });
   }, [createVerifier, resetRecaptchaContainer]);
 
@@ -305,7 +304,7 @@ const FirebaseSMSAuth = () => {
         .maybeSingle();
 
       if (existingProfile) {
-        console.log('Profile already exists, updating activity');
+        // Profile already exists
         return;
       }
 
@@ -323,16 +322,12 @@ const FirebaseSMSAuth = () => {
         })
       });
 
-      if (!response.ok) {
-        console.log('Edge function not available, profile will be created on next login');
-      } else {
-        const result = await response.json();
-        console.log('Profile created via edge function:', result);
+      if (response.ok) {
+        await response.json();
       }
-    } catch (error) {
-      console.error('Error ensuring Supabase profile:', error);
-      // لا نرمي خطأ هنا لأن Firebase authentication نجح
-      console.log('Profile creation deferred');
+      // Profile will be created on next login if edge function fails
+    } catch {
+      // Profile creation deferred - Firebase authentication succeeded
     }
   };
 
