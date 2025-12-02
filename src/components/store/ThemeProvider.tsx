@@ -21,7 +21,6 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
   // تحميل إعدادات الثيم للمتجر
   useEffect(() => {
     if (storeId) {
-      console.log('🎨 StoreThemeProvider: Loading theme for store', storeId);
       loadThemeConfig(storeId);
     }
   }, [storeId]);
@@ -42,8 +41,6 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
 
   const loadThemeConfig = async (storeId: string) => {
     try {
-      console.log('🎨 Loading theme config for store:', storeId);
-      
       // استخدام supabasePublic مباشرة لجلب إعدادات الثيم
       const { data, error } = await supabasePublic.rpc('get_store_theme_config', {
         p_store_id: storeId
@@ -54,22 +51,12 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
         return;
       }
 
-      console.log('✅ Raw theme data:', data);
-      
       const rawData = data as any;
       const config = rawData?.theme_config ? rawData.theme_config : rawData;
-      
-      console.log('🎨 Processed theme config:', {
-        hasConfig: !!config,
-        colors: config?.colors,
-        typography: config?.typography,
-      });
       
       if (config && Object.keys(config).length > 0) {
         setCurrentThemeConfig(config as StoreThemeConfig);
         applyThemeToDOM(config as StoreThemeConfig);
-      } else {
-        console.warn('⚠️ No theme config found');
       }
     } catch (error) {
       console.error('❌ خطأ في تحميل إعدادات الثيم:', error);
@@ -77,16 +64,11 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
   };
 
   const applyThemeToDOM = (configParam: StoreThemeConfig | any) => {
-    console.log('🎨 Starting to apply theme to DOM...', configParam);
-    
     // دعم الأشكال: { theme_config: {...} } أو { colors: {...} } أو خريطة ألوان مسطحة
     const themeConfig: any = (configParam as any)?.theme_config ?? configParam;
     const colorsSource: Record<string, any> = themeConfig?.colors ?? themeConfig;
     
-    console.log('🎨 Color source:', colorsSource);
-    
     if (!colorsSource || Object.keys(colorsSource).length === 0) {
-      console.warn('⚠️ No colors found in theme config');
       return;
     }
 
@@ -170,19 +152,11 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
       destructive_foreground: 'destructive-foreground', destructiveForeground: 'destructive-foreground',
     };
 
-    const appliedKeys: string[] = [];
     Object.entries(colorsSource).forEach(([rawKey, value]) => {
       const key = keyAliasMap[rawKey] || rawKey;
       const normalized = normalizeColor(String(value));
       // استخدام القيمة المنظمة مباشرة بدون إضافة hsl() لأن Tailwind يتوقع ثلاثية فقط
       root.style.setProperty(`--${key}`, normalized);
-      appliedKeys.push(key);
-      console.log(`✅ Applied color: --${key} = ${normalized}`);
-    });
-    
-    console.log('🎨 All applied colors:', { 
-      appliedKeys, 
-      originalColors: Object.keys(colorsSource),
     });
 
     // Apply storefront dark override if active
@@ -252,16 +226,7 @@ export const StoreThemeProvider = ({ children, storeId }: ThemeProviderProps) =>
     
     const themeName = themeClass.replace('theme-', '');
     root.setAttribute('data-theme', themeName);
-    
-    console.log('🎨 ✅ Theme applied successfully!', { 
-      appliedKeys: appliedKeys.length, 
-      themeClass,
-      dataTheme: themeName,
-      hasTypography: !!typography,
-      hasLayout: !!layout,
-      hasEffects: !!effects
-    });
-    
+
     // فرض إعادة render للتأكد من تطبيق الألوان
     document.body.style.visibility = 'hidden';
     setTimeout(() => {

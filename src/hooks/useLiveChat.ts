@@ -65,11 +65,9 @@ export const useLiveChat = (): UseLiveChatReturn => {
       const projectId = window.location.hostname.split('.')[0];
       const wsUrl = `wss://${projectId}.functions.supabase.co/functions/v1/live-chat`;
       
-      console.log('💬 Connecting to live chat WebSocket:', wsUrl);
       wsRef.current = new WebSocket(wsUrl);
 
       wsRef.current.onopen = () => {
-        console.log('✅ Connected to live chat');
         setIsConnected(true);
         reconnectAttempts.current = 0;
       };
@@ -77,7 +75,6 @@ export const useLiveChat = (): UseLiveChatReturn => {
       wsRef.current.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log('💬 Chat message received:', data);
 
           switch (data.type) {
             case 'ROOM_JOINED':
@@ -169,7 +166,6 @@ export const useLiveChat = (): UseLiveChatReturn => {
       };
 
       wsRef.current.onclose = (event) => {
-        console.log('🔌 Live chat WebSocket closed:', event.code);
         setIsConnected(false);
         setCurrentRoom(null);
 

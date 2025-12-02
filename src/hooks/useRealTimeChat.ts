@@ -229,11 +229,11 @@ export const useRealTimeChat = (channelId: string) => {
         const newState = channelRef.current.presenceState();
         setTypingUsers(newState);
       })
-      .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-        console.log('join', key, newPresences);
+      .on('presence', { event: 'join' }, () => {
+        // User joined
       })
-      .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-        console.log('leave', key, leftPresences);
+      .on('presence', { event: 'leave' }, () => {
+        // User left
       })
       .subscribe();
   };

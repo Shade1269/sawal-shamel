@@ -258,14 +258,12 @@ export function UnifiedDashboard() {
 
   const IconComponent = config.icon;
 
-  const handleNotificationRead = (id: string) => {
+  const handleNotificationRead = (_id: string) => {
     // في التطبيق الحقيقي، سيتم تحديث قاعدة البيانات
-    console.log('Marking notification as read:', id);
   };
 
-  const handleNotificationAction = (notification: any) => {
+  const handleNotificationAction = (_notification: any) => {
     // في التطبيق الحقيقي، سيتم التنقل للصفحة المطلوبة
-    console.log('Notification action:', notification);
   };
 
   if (loading) {
@@ -508,7 +506,7 @@ export function UnifiedDashboard() {
             period={period}
             onPeriodChange={(p) => setPeriod(p as any)}
             onRefresh={refreshData}
-            onExport={(chartId) => console.log('Exporting chart:', chartId)}
+            onExport={(_chartId) => { /* Export chart functionality */ }}
           />
         </TabsContent>
 
@@ -517,8 +515,8 @@ export function UnifiedDashboard() {
             notifications={notifications}
             onNotificationRead={handleNotificationRead}
             onNotificationAction={handleNotificationAction}
-            onMarkAllRead={() => console.log('Mark all read')}
-            onClearAll={() => console.log('Clear all')}
+            onMarkAllRead={() => { /* Mark all as read functionality */ }}
+            onClearAll={() => { /* Clear all notifications functionality */ }}
           />
         </TabsContent>
 
