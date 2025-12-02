@@ -22,7 +22,7 @@ import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
 import { CustomerAuthProvider } from "@/contexts/CustomerAuthContext";
 
 const HomePage = lazy(() => import("./pages/Index"));
-import AuthPage from "./features/auth/components/AuthPage"
+const AuthPage = lazy(() => import("./features/auth/components/AuthPage"));
 const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
 const AuthCallbackPage = lazy(() => import("./pages/auth/AuthCallbackPage"));
 const StorefrontIntegration = lazy(() => import("./pages/public-storefront/StorefrontIntegration"));

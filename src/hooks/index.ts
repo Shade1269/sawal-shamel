@@ -53,6 +53,7 @@ export { useAtlantisSystem } from './useAtlantisSystem';
 export { useAffiliateCommissions } from './useAffiliateCommissions';
 export { useAffiliateOrders } from './useAffiliateOrders';
 export { useAffiliateStore } from './useAffiliateStore';
+export { useAffiliateSubscription } from './useAffiliateSubscription';
 export { useAutoMigration } from './useAutoMigration';
 export { useCustomerAuth } from './useCustomerAuth';
 export { useExecutiveAnalytics } from './useExecutiveAnalytics';
