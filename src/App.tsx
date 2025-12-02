@@ -86,6 +86,9 @@ const ChatLanding = lazy(() => import("./features/chat/components/ChatLanding"))
 const AtlantisChatRooms = lazy(() => import("./features/chat/components/AtlantisChatRooms"));
 const AtlantisChat = lazy(() => import("./features/chat/components/AtlantisChat"));
 
+// AI Studio
+const AIStudio = lazy(() => import("./pages/AIStudio"));
+
 // Legal Pages
 const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
@@ -148,6 +151,9 @@ const App = () => {
           <Route path="/atlantis" element={<AtlantisSystem />} />
           <Route path="/atlantis/chat" element={<AtlantisChatRooms />} />
           <Route path="/atlantis/chat/:roomId" element={<AtlantisChat />} />
+
+          {/* AI Studio */}
+          <Route path="/ai-studio" element={<AIStudio />} />
           <Route path="/atlantis/guide" element={<AtlantisGuide />} />
           <Route path="/chat-landing" element={<ChatLanding />} />
 
