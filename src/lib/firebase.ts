@@ -79,8 +79,8 @@ export const setupRecaptcha = async (containerId: string) => {
     try {
       await window.recaptchaVerifier.clear();
       delete window.recaptchaVerifier;
-    } catch (error) {
-      console.log('Clearing existing reCAPTCHA:', error);
+    } catch {
+      // Ignore clear errors
     }
   }
 
@@ -88,8 +88,8 @@ export const setupRecaptcha = async (containerId: string) => {
   if (window.grecaptcha && window.grecaptcha.reset) {
     try {
       window.grecaptcha.reset();
-    } catch (error) {
-      console.log('Reset grecaptcha error:', error);
+    } catch {
+      // Ignore reset errors
     }
   }
   
@@ -102,27 +102,24 @@ export const setupRecaptcha = async (containerId: string) => {
   
   // Force DOM update and wait
   await new Promise(resolve => setTimeout(resolve, 300));
-  
-  console.log('Setting up fresh reCAPTCHA verifier...');
-  
+
   try {
     // Create completely fresh reCAPTCHA verifier
     window.recaptchaVerifier = new RecaptchaVerifier(authInstance, containerId, {
       'size': 'invisible',
-      'callback': (response: any) => {
-        console.log('reCAPTCHA solved successfully');
+      'callback': () => {
+        // reCAPTCHA solved
       },
       'expired-callback': () => {
-        console.log('reCAPTCHA expired, please try again');
+        // reCAPTCHA expired
       },
-      'error-callback': (error: any) => {
-        console.error('reCAPTCHA error:', error);
+      'error-callback': () => {
+        // reCAPTCHA error
       }
     });
-    
+
     return window.recaptchaVerifier;
   } catch (error) {
-    console.error('Error creating reCAPTCHA:', error);
     throw error;
   }
 };
@@ -131,23 +128,14 @@ export const setupRecaptcha = async (containerId: string) => {
 export const sendSMSOTP = async (phoneNumber: string, recaptchaVerifier: RecaptchaVerifier) => {
   try {
     const authInstance = await getFirebaseAuth();
-    
+
     if (!authInstance) {
       return { success: false, error: 'خدمة Firebase غير متوفرة حالياً' };
     }
-    
-    console.log('Attempting to send SMS to:', phoneNumber);
+
     const confirmationResult = await signInWithPhoneNumber(authInstance, phoneNumber, recaptchaVerifier);
-    console.log('SMS sent successfully, confirmation result:', confirmationResult);
     return { success: true, confirmationResult };
   } catch (error: any) {
-    console.error('Error sending SMS:', error);
-    console.error('Error details:', {
-      code: error.code,
-      message: error.message,
-      phoneNumber: phoneNumber
-    });
-    
     let errorMessage = error.message;
     if (error.code === 'auth/invalid-phone-number') {
       errorMessage = 'رقم الهاتف غير صحيح. تأكد من صيغة الرقم.';
@@ -156,7 +144,7 @@ export const sendSMSOTP = async (phoneNumber: string, recaptchaVerifier: Recaptc
     } else if (error.code === 'auth/quota-exceeded') {
       errorMessage = 'تم تجاوز حصة SMS اليومية في Firebase.';
     }
-    
+
     return { success: false, error: errorMessage };
   }
 };
@@ -167,7 +155,6 @@ export const verifySMSOTP = async (confirmationResult: any, otp: string) => {
     const result = await confirmationResult.confirm(otp);
     return { success: true, user: result.user };
   } catch (error: any) {
-    console.error('Error verifying OTP:', error);
     return { success: false, error: error.message };
   }
 };
