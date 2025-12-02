@@ -180,8 +180,8 @@ export function PerformanceOptimizer() {
             compressionLevel: settings.compressionLevel
           }
         });
-      } catch (error) {
-        console.log('Service Worker not available');
+      } catch {
+        // Service Worker not available
       }
     }
 
