@@ -47,22 +47,15 @@ export const useUnifiedUserData = () => {
     try {
       // إذا كان المستخدم مسجل دخول عبر Supabase
       if (supabaseUser) {
-        console.log('Unifying Supabase user:', supabaseUser.id);
-        
         const { data: supabaseProfile, error: fetchError } = await supabase
           .from('profiles')
           .select('*')
           .eq('auth_user_id', supabaseUser.id)
           .maybeSingle();
         
-        if (fetchError) {
-          console.error('Error fetching Supabase profile:', fetchError);
-        }
-        
         if (supabaseProfile) {
           profile = supabaseProfile;
-          console.log('Found existing Supabase profile:', profile.id);
-          
+
           // إذا كان هناك مستخدم Firebase أيضاً، نحفظ بياناته في Firebase
           if (firebaseUser && !firebaseProfile) {
             try {
@@ -71,14 +64,12 @@ export const useUnifiedUserData = () => {
                 fullName: supabaseProfile.full_name,
                 role: supabaseProfile.role
               });
-            } catch (error) {
-              console.error('Error saving to Firestore:', error);
+            } catch {
+              // Ignore Firestore save errors
             }
           }
         } else {
           // إنشاء profile جديد في Supabase إذا لم يكن موجود
-          console.log('Creating new Supabase profile for user:', supabaseUser.id);
-          
           const { data: newProfile, error } = await supabase
             .from('profiles')
             .insert({
@@ -90,25 +81,17 @@ export const useUnifiedUserData = () => {
             .select()
             .maybeSingle();
             
-          if (error) {
-            console.error('Error creating Supabase profile:', error);
-          } else {
+          if (!error) {
             profile = newProfile;
-            console.log('Created new Supabase profile:', profile.id);
           }
         }
       }
       
       // إذا كان المستخدم مسجل دخول عبر Firebase فقط
       else if (firebaseUser) {
-        console.log('Unifying Firebase user:', firebaseUser.uid);
-        console.log('Firebase profile:', firebaseProfile);
-        
         const phoneNumber = firebaseProfile?.phone || firebaseUser.phoneNumber;
-        
+
         if (phoneNumber) {
-          // استخدام service role لتجنب مشاكل RLS
-          console.log('Looking for profile with phone:', phoneNumber);
           
           // محاولة إنشاء profile جديد مباشرة، سيفشل إذا كان موجود
           const { data: newProfile, error: insertError } = await supabase
@@ -122,32 +105,23 @@ export const useUnifiedUserData = () => {
             .maybeSingle();
             
           if (insertError) {
-            // إذا فشل الإدراج، ربما الملف موجود
-            console.log('Profile creation failed, might already exist:', insertError.message);
-            
-            // محاولة البحث عن profile موجود بهذا الجوال
+            // إذا فشل الإدراج، ربما الملف موجود - محاولة البحث عن profile موجود
             try {
-              const { data: existingProfile, error: selectError } = await supabase
+              const { data: existingProfile } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('phone', phoneNumber)
                 .maybeSingle();
-                
+
               if (existingProfile) {
                 profile = existingProfile;
-                console.log('Found existing profile:', profile.id);
-              } else {
-                console.error('Could not find or create profile for phone:', phoneNumber);
               }
-            } catch (fetchError) {
-              console.error('Error fetching existing profile:', fetchError);
+            } catch {
+              // Ignore fetch errors
             }
           } else {
             profile = newProfile;
-            console.log('Created new profile for Firebase user:', profile.id);
           }
-        } else {
-          console.error('Firebase user has no phone number');
         }
       }
     } catch (error) {
