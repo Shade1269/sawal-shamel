@@ -81,11 +81,9 @@ export const useActivityFeed = (): UseActivityFeedReturn => {
       const projectId = window.location.hostname.split('.')[0];
       const wsUrl = `wss://${projectId}.functions.supabase.co/functions/v1/activity-feed`;
       
-      console.log('📊 Connecting to activity feed WebSocket:', wsUrl);
       wsRef.current = new WebSocket(wsUrl);
 
       wsRef.current.onopen = () => {
-        console.log('✅ Connected to activity feed');
         setIsConnected(true);
         reconnectAttempts.current = 0;
 
@@ -99,7 +97,6 @@ export const useActivityFeed = (): UseActivityFeedReturn => {
       wsRef.current.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log('📊 Activity feed message received:', data);
 
           switch (data.type) {
             case 'INITIAL_ACTIVITIES':
@@ -112,7 +109,6 @@ export const useActivityFeed = (): UseActivityFeedReturn => {
 
             case 'ACTIVITY_LOGGED':
               // Activity successfully logged
-              console.log('✅ Activity logged:', data.activity);
               break;
 
             case 'TEAM_ACTIVITIES':
@@ -133,7 +129,6 @@ export const useActivityFeed = (): UseActivityFeedReturn => {
       };
 
       wsRef.current.onclose = (event) => {
-        console.log('🔌 Activity feed WebSocket closed:', event.code);
         setIsConnected(false);
 
         // Attempt to reconnect

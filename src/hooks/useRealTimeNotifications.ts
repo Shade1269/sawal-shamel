@@ -44,11 +44,9 @@ export const useRealTimeNotifications = (): UseRealTimeNotificationsReturn => {
       const projectId = window.location.hostname.split('.')[0];
       const wsUrl = `wss://${projectId}.functions.supabase.co/functions/v1/realtime-notifications`;
       
-      console.log('🔗 Connecting to notifications WebSocket:', wsUrl);
       wsRef.current = new WebSocket(wsUrl);
 
       wsRef.current.onopen = () => {
-        console.log('✅ Connected to real-time notifications');
         setIsConnected(true);
         reconnectAttempts.current = 0;
 
@@ -77,7 +75,6 @@ export const useRealTimeNotifications = (): UseRealTimeNotificationsReturn => {
       wsRef.current.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log('📨 Notification received:', data);
 
           switch (data.type) {
             case 'INITIAL_NOTIFICATIONS':
@@ -133,14 +130,12 @@ export const useRealTimeNotifications = (): UseRealTimeNotificationsReturn => {
       };
 
       wsRef.current.onclose = (event) => {
-        console.log('🔌 Notifications WebSocket closed:', event.code, event.reason);
         setIsConnected(false);
 
         // Attempt to reconnect with exponential backoff
         if (reconnectAttempts.current < maxReconnectAttempts) {
           const delay = Math.pow(2, reconnectAttempts.current) * 1000;
-          console.log(`🔄 Reconnecting in ${delay}ms...`);
-          
+
           reconnectTimeoutRef.current = setTimeout(() => {
             reconnectAttempts.current++;
             connect();
@@ -224,9 +219,7 @@ export const useRealTimeNotifications = (): UseRealTimeNotificationsReturn => {
   // Request notification permission on mount
   useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission().then(permission => {
-        console.log('🔔 Notification permission:', permission);
-      });
+      Notification.requestPermission();
     }
   }, []);
 
