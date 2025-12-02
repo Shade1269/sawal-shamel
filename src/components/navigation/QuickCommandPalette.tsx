@@ -62,7 +62,7 @@ const QuickCommandPalette: React.FC<QuickCommandPaletteProps> = ({
         title: 'البحث العالمي',
         description: 'البحث في جميع أنحاء النظام',
         icon: Search,
-        action: () => console.log('Global search'),
+        action: () => { /* Open global search modal */ },
         category: 'أدوات',
         keywords: ['search', 'find', 'بحث', 'عثور']
       }

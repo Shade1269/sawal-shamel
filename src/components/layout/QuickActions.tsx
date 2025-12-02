@@ -39,7 +39,7 @@ export function QuickActions() {
 
   const { shortcuts } = useKeyboardShortcuts({
     onSearchOpen: () => setSearchOpen(true),
-    onNotificationsOpen: () => console.log('Open notifications'),
+    onNotificationsOpen: () => { /* Open notifications panel */ },
     onSettingsOpen: () => navigate('/settings')
   });
 
@@ -61,11 +61,11 @@ export function QuickActions() {
       shortcut: 'Ctrl+A',
       action: () => navigate('/analytics')
     },
-    { 
-      icon: Filter, 
-      label: 'الفلاتر المتقدمة', 
+    {
+      icon: Filter,
+      label: 'الفلاتر المتقدمة',
       shortcut: 'Ctrl+F',
-      action: () => console.log('Advanced filters')
+      action: () => { /* Open advanced filters */ }
     }
   ];
 
@@ -121,7 +121,7 @@ export function QuickActions() {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="flex items-center gap-2 cursor-pointer"
-              onClick={() => console.log('Show all shortcuts')}
+              onClick={() => { /* Show all shortcuts modal */ }}
             >
               <HelpCircle className="h-4 w-4" />
               <span>عرض جميع الاختصارات</span>

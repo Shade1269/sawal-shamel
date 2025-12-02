@@ -1,5 +1,4 @@
 // Commerce Feature Exports
-console.log('Commerce index.ts: Loading commerce components...');
 export { ProductCard } from './components/ProductCard';
 export { default as ProductForm } from './components/ProductForm';
 export { default as ShoppingCartDrawer } from './components/ShoppingCartDrawer';
@@ -14,4 +13,3 @@ export { default as SimpleCheckout } from './components/SimpleCheckout';
 // Product Components
 export { default as ProductImageCarousel } from './components/ProductImageCarousel';
 export { default as ProductVariantManager } from './components/ProductVariantManager';
-console.log('Commerce index.ts: All components loaded successfully');
