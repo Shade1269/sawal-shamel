@@ -27,7 +27,6 @@ const StoreThemeSettings: React.FC = () => {
 
   const handleThemeApplied = () => {
     // يمكن إضافة إجراءات إضافية هنا عند تطبيق الثيم
-    console.log('تم تطبيق الثيم بنجاح');
   };
 
   return (

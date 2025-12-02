@@ -97,7 +97,6 @@ export function useProductActions(
         return;
       }
 
-      console.log('Add product result (RPC):', data);
       const result = data as { already_exists?: boolean; success?: boolean };
 
       if (result.already_exists) {

@@ -291,7 +291,7 @@ export default function UXEnhancementsPage() {
                   </div>
                   
                   <div className="text-center pt-4">
-                    <UnifiedButton variant="outline" onClick={() => console.log('Show all shortcuts')}>
+                    <UnifiedButton variant="outline" onClick={() => {}}>
                       عرض جميع الاختصارات ({shortcuts.length})
                     </UnifiedButton>
                   </div>

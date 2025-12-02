@@ -53,8 +53,7 @@ export const useFirebaseUserData = () => {
       const productRef = doc(db, 'users', user.id, 'products', productId);
       
       await updateDoc(productRef, updates);
-      
-      console.log('Product updated successfully in Firebase');
+
       return { success: true };
       
     } catch (error) {

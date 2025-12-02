@@ -314,7 +314,7 @@ export const useSmartRecommendations = (
       setStats(calculateStats(newRecommendations));
       
       if (enableNotifications) {
-        console.log('تم توليد توصيات جديدة!');
+        // يمكن إضافة إشعار للمستخدم هنا
       }
     } catch (err) {
       setError('فشل في توليد توصيات جديدة');

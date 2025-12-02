@@ -54,17 +54,8 @@ export function useProductsData(profile: any) {
   }, [profile]);
 
   const fetchData = async () => {
-    console.log('fetchData started...', { profile });
     setLoading(true);
     try {
-      // تجربة جلب المنتجات بشكل مبسط أولاً
-      const { data: simpleProductsData, error: simpleError } = await supabase
-        .from('products')
-        .select('id, title, price_sar, is_active')
-        .eq('is_active', true)
-        .limit(5);
-
-      console.log('Simple products query:', { simpleProductsData, simpleError });
 
       // جلب متجر المسوق - التحقق من الجدولين
       let storeData = null;
@@ -134,9 +125,6 @@ export function useProductsData(profile: any) {
         `)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
-
-      console.log('Products query result:', { productsData, productsError });
-      console.log('Products count:', productsData?.length || 0);
 
       // جلب المتغيرات لكل منتج
       const productsWithVariants = await Promise.all(
