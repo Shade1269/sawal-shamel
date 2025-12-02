@@ -146,8 +146,8 @@ class ErrorTracker {
 
       try {
         navObserver.observe({ entryTypes: ['navigation'] });
-      } catch (e) {
-        console.warn('Navigation timing not supported');
+      } catch {
+        // Navigation timing not supported
       }
 
       // Track resource loading
@@ -171,8 +171,8 @@ class ErrorTracker {
 
       try {
         resourceObserver.observe({ entryTypes: ['resource'] });
-      } catch (e) {
-        console.warn('Resource timing not supported');
+      } catch {
+        // Resource timing not supported
       }
     }
   }
@@ -198,18 +198,7 @@ class ErrorTracker {
     this.logs.push(errorLog);
     this.maintainLogLimit();
     
-    // Send to console with context
-    console.group(`🚨 Error Tracked: ${errorLog.level.toUpperCase()}`);
-    console.error('Message:', errorLog.message);
-    console.log('Context:', {
-      component: errorLog.component,
-      action: errorLog.action,
-      userId: errorLog.userId,
-      sessionId: errorLog.sessionId
-    });
-    if (errorLog.stack) console.log('Stack:', errorLog.stack);
-    if (errorLog.metadata) console.log('Metadata:', errorLog.metadata);
-    console.groupEnd();
+    // Error logged to internal tracking system
 
     // Send to external service in production
     if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined') {
@@ -233,8 +222,6 @@ class ErrorTracker {
 
     this.metrics.push(perfMetric);
     this.maintainMetricsLimit();
-
-    console.log(`📊 Performance: ${perfMetric.name} = ${perfMetric.value}${perfMetric.unit}`);
 
     return perfMetric;
   }
@@ -347,8 +334,8 @@ class ErrorTracker {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(errorLog)
       });
-    } catch (e) {
-      console.warn('Failed to send error to external service:', e);
+    } catch {
+      // Failed to send error to external service
     }
   }
 }

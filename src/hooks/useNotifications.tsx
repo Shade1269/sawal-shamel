@@ -35,7 +35,6 @@ export const useNotifications = (userId?: string) => {
     try {
       // Register service worker
       const registration = await navigator.serviceWorker.register('/sw.js');
-      console.log('Service Worker registered:', registration);
 
       // Get existing subscription
       const subscription = await registration.pushManager.getSubscription();
@@ -113,9 +112,8 @@ export const useNotifications = (userId?: string) => {
         await saveSubscription(subscription, userId);
       }
 
-      console.log('Push subscription successful:', subscription);
-    } catch (error) {
-      console.error('Push subscription failed:', error);
+    } catch {
+      // Push subscription failed
     }
   };
 
@@ -127,9 +125,8 @@ export const useNotifications = (userId?: string) => {
         subscription: subscription.toJSON(),
         timestamp: Date.now()
       }));
-      console.log('Subscription saved locally');
-    } catch (error) {
-      console.error('Failed to save subscription:', error);
+    } catch {
+      // Failed to save subscription
     }
   };
 
@@ -165,9 +162,9 @@ export const useNotifications = (userId?: string) => {
       const audio = new Audio();
       audio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAIAC...'; // Notification sound data
       audio.volume = 0.5;
-      audio.play().catch(e => console.log('Could not play sound:', e));
-    } catch (error) {
-      console.log('Sound playback not available:', error);
+      audio.play().catch(() => { /* Sound playback not available */ });
+    } catch {
+      // Sound playback not available
     }
   };
 

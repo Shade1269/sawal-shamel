@@ -191,15 +191,7 @@ export const useAnalytics = () => {
 
 // Send analytics event to various services
 const sendAnalyticsEvent = (event: AnalyticsEvent) => {
-  // Console logging for development
-  if (process.env.NODE_ENV === 'development') {
-    console.group(`📊 Analytics: ${event.category}/${event.action}`);
-    console.log('Event:', event.event);
-    console.log('Label:', event.label);
-    console.log('Value:', event.value);
-    console.log('Metadata:', event.metadata);
-    console.groupEnd();
-  }
+  // Analytics events are processed silently
 
   // Send to Google Analytics (gtag)
   if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -238,8 +230,8 @@ const sendToAnalyticsEndpoint = async (event: AnalyticsEvent) => {
         userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined
       })
     });
-  } catch (error) {
-    console.warn('Failed to send analytics:', error);
+  } catch {
+    // Ignore analytics send errors
   }
 };
 
@@ -258,8 +250,8 @@ const storeAnalyticsLocally = (event: AnalyticsEvent) => {
     }
     
     localStorage.setItem('analytics_events', JSON.stringify(stored));
-  } catch (error) {
-    console.warn('Failed to store analytics locally:', error);
+  } catch {
+    // Ignore localStorage errors
   }
 };
 

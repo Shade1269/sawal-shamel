@@ -365,11 +365,11 @@ export const useAtlantisChat = (roomId: string) => {
         const newState = channelRef.current.presenceState();
         setTypingUsers(newState);
       })
-      .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-        console.log('User joined:', key, newPresences);
+      .on('presence', { event: 'join' }, () => {
+        // User joined the room
       })
-      .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-        console.log('User left:', key, leftPresences);
+      .on('presence', { event: 'leave' }, () => {
+        // User left the room
       })
       .subscribe();
   };
