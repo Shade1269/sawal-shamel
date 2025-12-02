@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import type { LucideIcon } from 'lucide-react';
 
-interface QuickAction {
+export interface ActionCardProps {
   id: string;
   label: string;
   description: string;
@@ -14,7 +14,7 @@ interface QuickAction {
 }
 
 interface QuickActionsPanelProps {
-  actions: QuickAction[];
+  actions: ActionCardProps[];
 }
 
 export function QuickActionsPanel({ actions }: QuickActionsPanelProps) {
