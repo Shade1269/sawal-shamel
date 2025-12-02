@@ -24,11 +24,12 @@ interface UseRealTimeNotificationsReturn {
 export const useRealTimeNotifications = (): UseRealTimeNotificationsReturn => {
   const { user } = useSupabaseAuth();
   const { toast } = useToast();
-  
+
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
 
@@ -57,12 +58,18 @@ export const useRealTimeNotifications = (): UseRealTimeNotificationsReturn => {
           userId: user.id
         }));
 
+        // Clear any existing ping interval before creating new one
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current);
+        }
+
         // Set up ping to keep connection alive
-        const pingInterval = setInterval(() => {
+        pingIntervalRef.current = setInterval(() => {
           if (wsRef.current?.readyState === WebSocket.OPEN) {
             wsRef.current.send(JSON.stringify({ type: 'PING' }));
-          } else {
-            clearInterval(pingInterval);
+          } else if (pingIntervalRef.current) {
+            clearInterval(pingIntervalRef.current);
+            pingIntervalRef.current = null;
           }
         }, 30000);
       };
@@ -160,16 +167,22 @@ export const useRealTimeNotifications = (): UseRealTimeNotificationsReturn => {
 
   // Disconnect from WebSocket
   const disconnect = useCallback(() => {
+    // Clear ping interval
+    if (pingIntervalRef.current) {
+      clearInterval(pingIntervalRef.current);
+      pingIntervalRef.current = null;
+    }
+
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
       reconnectTimeoutRef.current = null;
     }
-    
+
     if (wsRef.current) {
       wsRef.current.close();
       wsRef.current = null;
     }
-    
+
     setIsConnected(false);
   }, []);
 

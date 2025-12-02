@@ -93,7 +93,20 @@ const StorefrontCheckout = () => {
           return;
         }
 
-        const session = JSON.parse(sessionData);
+        let session;
+        try {
+          session = JSON.parse(sessionData);
+        } catch {
+          // Invalid session data, clear it and redirect
+          localStorage.removeItem(`ea_session_${slug}`);
+          toast({
+            title: "خطأ في البيانات",
+            description: "بيانات الجلسة غير صالحة، يرجى المحاولة مرة أخرى",
+            variant: "destructive"
+          });
+          navigate(`/${slug}`);
+          return;
+        }
         
         // البحث عن السلة المرتبطة بهذه الجلسة والمتجر
         const { data: cart } = await supabasePublic
