@@ -221,7 +221,6 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
       return { error: "unauthorized" };
     }
     try {
-      console.log('Admin action:', action);
       // For now, return mock data since we're moving to Firestore
       return { data: { data: [] } };
     } catch (e: any) {
@@ -427,7 +426,6 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
           is_active: true
         };
         // Firebase moderation logic will be implemented here
-        console.log('Mute action:', insertData);
       } else {
         insertData = {
           user_id: targetUser.id,
@@ -438,7 +436,6 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
           is_active: true
         };
         // Firebase ban logic will be implemented here
-        console.log('Ban action:', insertData);
       }
 
       toast({
@@ -462,7 +459,6 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
   };
 
   const handleUserProfileClick = (user: any) => {
-    console.log('Profile clicked for user:', user?.email || user?.id);
     if (!user) {
       toast({ 
         title: "خطأ", 
@@ -512,8 +508,6 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
     
     try {
       setLoading(true);
-      console.log('Clearing messages for channel:', channelId, channelName);
-      
       const res = await callAdminApi("clear_channel_messages", { channel_id: channelId });
       
       if (!res.error) {
@@ -1310,7 +1304,6 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          console.log(`Attempting to clear messages for channel: ${channel.name} (${channel.id})`);
                           if (confirm(`هل أنت متأكد من حذف جميع رسائل غرفة "${channel.name}"؟\n\nتحذير: هذا الإجراء لا يمكن التراجع عنه!`)) {
                             clearChannelMessages(channel.id, channel.name);
                           }

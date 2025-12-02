@@ -116,20 +116,11 @@ export const storeOrderService = {
   },
 
   async updateStoreCustomerSimple(
-    storeId: string,
-    customerData: CreateOrderData,
-    orderTotal: number
+    _storeId: string,
+    _customerData: CreateOrderData,
+    _orderTotal: number
   ) {
-    try {
-      console.log('Customer order snapshot:', {
-        storeId,
-        phone: customerData.customerPhone,
-        name: customerData.customerName,
-        total: orderTotal,
-      });
-    } catch (error) {
-      console.error('Error updating store customer snapshot:', error);
-    }
+    // Customer order snapshot - يمكن تنفيذ التحديث هنا
   },
 
   async getStoreOrders(storeId: string, sessionId: string | null) {
