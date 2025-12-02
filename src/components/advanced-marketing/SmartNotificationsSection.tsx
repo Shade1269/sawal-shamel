@@ -136,8 +136,7 @@ export const SmartNotificationsSection: React.FC = () => {
   };
 
   const handleSendNotification = () => {
-    // منطق إرسال الإشعار
-    console.log('Sending notification:', newNotificationData);
+    // منطق إرسال الإشعار - يمكن إضافة استدعاء API هنا
     setIsDialogOpen(false);
     setNewNotificationData({
       notification_type: 'email',

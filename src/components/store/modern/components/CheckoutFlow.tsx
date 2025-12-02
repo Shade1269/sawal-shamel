@@ -191,8 +191,6 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
         order_number: orderNumber
       };
       
-      console.log('إنشاء طلب بالبيانات:', orderData);
-      
       const { error: orderError } = await supabase
         .from('ecommerce_orders')
         .insert(orderData);
@@ -201,8 +199,6 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
         console.error('خطأ في إنشاء الطلب:', orderError);
         throw orderError;
       }
-      
-      console.log('✅ تم إنشاء الطلب:', { id: orderId, order_number: orderNumber });
       
       // Create order items
       const orderItems = cart.map(item => ({
@@ -215,8 +211,6 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
         commission_sar: ((item.product.final_price || item.product.price_sar) * item.quantity * 0.1)
       }));
       
-      console.log('إضافة عناصر الطلب:', orderItems);
-      
       const { error: itemsError } = await supabase
         .from('ecommerce_order_items')
         .insert(orderItems);
@@ -225,8 +219,6 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
         console.error('خطأ في إضافة عناصر الطلب:', itemsError);
         throw itemsError;
       }
-      
-      console.log('✅ تم إنشاء الطلب بنجاح!');
       
       setIsProcessing(false);
       onSuccess();

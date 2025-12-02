@@ -73,7 +73,6 @@ export const CustomerSegmentBuilder: React.FC = () => {
       return;
     }
     
-    console.log('Creating customer segment:', formData);
     // Here you would typically call an API to create the segment
   };
 

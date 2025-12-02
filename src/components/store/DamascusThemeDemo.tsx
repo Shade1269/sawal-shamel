@@ -83,13 +83,11 @@ export const DamascusThemeDemo: React.FC = () => {
     },
   ];
 
-  const handleAddToCart = (productId: string) => {
-    console.log('Adding to cart:', productId);
+  const handleAddToCart = (_productId: string) => {
     // Implement your cart logic here
   };
 
-  const handleProductSelect = (productId: string) => {
-    console.log('Product selected:', productId);
+  const handleProductSelect = (_productId: string) => {
     // Navigate to product details or open modal
   };
 
