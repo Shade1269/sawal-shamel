@@ -370,8 +370,6 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       }
 
       // جلب أو إنشاء بيانات العميل
-      console.log('Fetching customer by phone:', fullPhone);
-      
       // إذا حصلنا على بيانات العميل من edge function، استخدمها
       if (data?.customer && data.customer.id && data?.customerId) {
         const customer: CustomerProfile = {
@@ -387,7 +385,6 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
           updated_at: new Date().toISOString()
         };
         
-        console.log('Using customer data from edge function:', customer.id);
         saveSession(customer);
 
         toast({
@@ -402,7 +399,6 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       const customerData = await fetchCustomerByPhone(fullPhone, targetStoreId);
       
       if (customerData) {
-        console.log('Customer data fetched successfully:', customerData.id);
         saveSession(customerData);
 
         toast({

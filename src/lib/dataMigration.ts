@@ -26,8 +26,6 @@ const getSupabaseAdmin = () => {
 // نقل المستخدمين من Supabase إلى Firebase
 export const migrateUsers = async () => {
   try {
-    console.log('بدء نقل المستخدمين...');
-    
     // جلب المستخدمين من Supabase باستخدام admin client
     const supabaseAdmin = getSupabaseAdmin();
     const { data: profiles, error: profilesError } = await supabaseAdmin
@@ -40,7 +38,6 @@ export const migrateUsers = async () => {
     }
 
     if (!profiles || profiles.length === 0) {
-      console.log('لا توجد ملفات شخصية للنقل');
       return { success: true, count: 0 };
     }
 
@@ -68,19 +65,16 @@ export const migrateUsers = async () => {
         // حفظ المستخدم في Firebase
         const userRef = doc(firestore, 'users', userData.uid);
         await setDoc(userRef, userData, { merge: true });
-        
+
         successCount++;
-        console.log(`تم نقل المستخدم: ${userData.email || userData.phone}`);
       } catch (error) {
-        console.error(`خطأ في نقل المستخدم ${profile.email}:`, error);
+        // Ignore individual user migration errors
       }
     }
 
-    console.log(`تم نقل ${successCount} مستخدم من أصل ${profiles.length}`);
     return { success: true, count: successCount, total: profiles.length };
-    
+
   } catch (error) {
-    console.error('خطأ في نقل المستخدمين:', error);
     return { success: false, error };
   }
 };
@@ -88,8 +82,6 @@ export const migrateUsers = async () => {
 // نقل المتاجر من Supabase إلى Firebase
 export const migrateShops = async () => {
   try {
-    console.log('بدء نقل المتاجر...');
-    
     const supabaseAdmin = getSupabaseAdmin();
     const { data: shops, error: shopsError } = await supabaseAdmin
       .from('shops')
@@ -105,7 +97,6 @@ export const migrateShops = async () => {
     }
 
     if (!shops || shops.length === 0) {
-      console.log('لا توجد متاجر للنقل');
       return { success: true, count: 0 };
     }
 
@@ -116,7 +107,6 @@ export const migrateShops = async () => {
       try {
         const ownerUid = shop.profiles?.auth_user_id || shop.owner_id;
         if (!ownerUid) {
-          console.warn(`متجر بدون مالك: ${shop.display_name}`);
           continue;
         }
 
@@ -150,18 +140,14 @@ export const migrateShops = async () => {
         }, { merge: true });
 
         successCount++;
-        console.log(`تم نقل المتجر: ${shop.display_name}`);
-        
       } catch (error) {
-        console.error(`خطأ في نقل المتجر ${shop.display_name}:`, error);
+        // Ignore individual shop migration errors
       }
     }
 
-    console.log(`تم نقل ${successCount} متجر من أصل ${shops.length}`);
     return { success: true, count: successCount, total: shops.length };
-    
+
   } catch (error) {
-    console.error('خطأ في نقل المتاجر:', error);
     return { success: false, error };
   }
 };
@@ -169,8 +155,6 @@ export const migrateShops = async () => {
 // نقل المنتجات من Supabase إلى Firebase
 export const migrateProducts = async () => {
   try {
-    console.log('بدء نقل المنتجات...');
-    
     const supabaseAdmin = getSupabaseAdmin();
     const { data: products, error: productsError } = await supabaseAdmin
       .from('products')
@@ -186,7 +170,6 @@ export const migrateProducts = async () => {
     }
 
     if (!products || products.length === 0) {
-      console.log('لا توجد منتجات للنقل');
       return { success: true, count: 0 };
     }
 
@@ -196,7 +179,6 @@ export const migrateProducts = async () => {
       try {
         const ownerUid = product.merchants?.profiles?.auth_user_id;
         if (!ownerUid) {
-          console.warn(`منتج بدون مالك: ${product.title}`);
           continue;
         }
 
@@ -234,20 +216,16 @@ export const migrateProducts = async () => {
 
         // إضافة المنتج للمستخدم
         await addProductToUserStore(ownerUid, productData);
-        
+
         successCount++;
-        console.log(`تم نقل المنتج: ${product.title}`);
-        
       } catch (error) {
-        console.error(`خطأ في نقل المنتج ${product.title}:`, error);
+        // Ignore individual product migration errors
       }
     }
 
-    console.log(`تم نقل ${successCount} منتج من أصل ${products.length}`);
     return { success: true, count: successCount, total: products.length };
-    
+
   } catch (error) {
-    console.error('خطأ في نقل المنتجات:', error);
     return { success: false, error };
   }
 };
@@ -255,8 +233,6 @@ export const migrateProducts = async () => {
 // نقل مكتبة المنتجات من Supabase إلى Firebase
 export const migrateProductLibrary = async () => {
   try {
-    console.log('بدء نقل مكتبة المنتجات...');
-    
     const supabaseAdmin = getSupabaseAdmin();
     const { data: libraryItems, error: libraryError } = await supabaseAdmin
       .from('product_library')
@@ -272,7 +248,6 @@ export const migrateProductLibrary = async () => {
     }
 
     if (!libraryItems || libraryItems.length === 0) {
-      console.log('لا توجد عناصر مكتبة للنقل');
       return { success: true, count: 0 };
     }
 
@@ -282,7 +257,6 @@ export const migrateProductLibrary = async () => {
       try {
         const ownerUid = item.shops?.profiles?.auth_user_id;
         if (!ownerUid || !item.products) {
-          console.warn(`عنصر مكتبة غير مكتمل البيانات`);
           continue;
         }
 
@@ -308,20 +282,16 @@ export const migrateProductLibrary = async () => {
 
         // إضافة العنصر لمكتبة المستخدم
         await addProductToUserStore(ownerUid, libraryItemData);
-        
+
         successCount++;
-        console.log(`تم نقل عنصر المكتبة: ${item.products.title}`);
-        
       } catch (error) {
-        console.error(`خطأ في نقل عنصر المكتبة:`, error);
+        // Ignore individual library item migration errors
       }
     }
 
-    console.log(`تم نقل ${successCount} عنصر مكتبة من أصل ${libraryItems.length}`);
     return { success: true, count: successCount, total: libraryItems.length };
-    
+
   } catch (error) {
-    console.error('خطأ في نقل مكتبة المنتجات:', error);
     return { success: false, error };
   }
 };
@@ -329,8 +299,6 @@ export const migrateProductLibrary = async () => {
 // نقل أنشطة المستخدمين من Supabase إلى Firebase
 export const migrateUserActivities = async () => {
   try {
-    console.log('بدء نقل أنشطة المستخدمين...');
-    
     const supabaseAdmin = getSupabaseAdmin();
     const { data: activities, error: activitiesError } = await supabaseAdmin
       .from('user_activities')
@@ -345,7 +313,6 @@ export const migrateUserActivities = async () => {
     }
 
     if (!activities || activities.length === 0) {
-      console.log('لا توجد أنشطة للنقل');
       return { success: true, count: 0 };
     }
 
@@ -356,7 +323,6 @@ export const migrateUserActivities = async () => {
       try {
         const ownerUid = activity.profiles?.auth_user_id;
         if (!ownerUid) {
-          console.warn(`نشاط بدون مستخدم`);
           continue;
         }
 
@@ -370,19 +336,16 @@ export const migrateUserActivities = async () => {
           metadata: activity.metadata || {},
           createdAt: activity.created_at ? new Date(activity.created_at) : new Date()
         });
-        
+
         successCount++;
-        
       } catch (error) {
-        console.error(`خطأ في نقل النشاط:`, error);
+        // Ignore individual activity migration errors
       }
     }
 
-    console.log(`تم نقل ${successCount} نشاط من أصل ${activities.length}`);
     return { success: true, count: successCount, total: activities.length };
-    
+
   } catch (error) {
-    console.error('خطأ في نقل الأنشطة:', error);
     return { success: false, error };
   }
 };
@@ -390,8 +353,6 @@ export const migrateUserActivities = async () => {
 // نقل جميع البيانات مباشرة إلى Firebase
 export const migrateAllData = async () => {
   try {
-    console.log('بدء النقل الشامل للبيانات من Supabase إلى Firebase...');
-    
     const results = {
       users: { success: false, count: 0, total: 0, error: null },
       shops: { success: false, count: 0, total: 0, error: null },
@@ -406,7 +367,6 @@ export const migrateAllData = async () => {
     });
 
     if (error) {
-      console.error('خطأ في جلب البيانات:', error);
       return { success: false, error: error.message };
     }
 
@@ -443,9 +403,8 @@ export const migrateAllData = async () => {
           const userRef = doc(firestore, 'users', userData.uid);
           await setDoc(userRef, userData, { merge: true });
           results.users.count++;
-          console.log(`✓ نُقل المستخدم: ${userData.email || userData.phone}`);
         } catch (error) {
-          console.error(`✗ خطأ في نقل المستخدم ${profile.email}:`, error);
+          // Ignore individual user migration errors
         }
       }
       results.users.success = true;
@@ -459,7 +418,6 @@ export const migrateAllData = async () => {
         try {
           const ownerUid = shop.profiles?.auth_user_id || shop.owner_id;
           if (!ownerUid) {
-            console.warn(`⚠ متجر بدون مالك: ${shop.display_name}`);
             continue;
           }
 
@@ -493,9 +451,8 @@ export const migrateAllData = async () => {
           await setDoc(statsRef, stats, { merge: true });
 
           results.shops.count++;
-          console.log(`✓ نُقل المتجر: ${shop.display_name}`);
         } catch (error) {
-          console.error(`✗ خطأ في نقل المتجر ${shop.display_name}:`, error);
+          // Ignore individual shop migration errors
         }
       }
       results.shops.success = true;
@@ -509,7 +466,6 @@ export const migrateAllData = async () => {
         try {
           const ownerUid = product.merchants?.profiles?.auth_user_id;
           if (!ownerUid) {
-            console.warn(`⚠ منتج بدون مالك: ${product.title}`);
             continue;
           }
 
@@ -548,23 +504,16 @@ export const migrateAllData = async () => {
           await setDoc(productRef, productData, { merge: true });
 
           results.products.count++;
-          console.log(`✓ نُقل المنتج: ${product.title}`);
         } catch (error) {
-          console.error(`✗ خطأ في نقل المنتج ${product.title}:`, error);
+          // Ignore individual product migration errors
         }
       }
       results.products.success = true;
     }
 
-    console.log('\n=== ملخص النقل ===');
-    console.log(`المستخدمون: ${results.users.count}/${results.users.total}`);
-    console.log(`المتاجر: ${results.shops.count}/${results.shops.total}`);
-    console.log(`المنتجات: ${results.products.count}/${results.products.total}`);
-
     return { success: true, results };
-    
+
   } catch (error) {
-    console.error('خطأ في النقل الشامل:', error);
     return { success: false, error };
   }
 };
@@ -613,9 +562,8 @@ export const checkMigratedData = async (userId?: string) => {
       totalUsers,
       message: `يوجد ${totalUsers} مستخدم في Firebase`
     };
-    
+
   } catch (error) {
-    console.error('خطأ في فحص البيانات:', error);
     return { success: false, error };
   }
 };

@@ -92,9 +92,6 @@ const AdminProductApproval = () => {
   const handleApprove = async (productId: string) => {
     setIsReviewing(true);
     try {
-      console.log('Profile data:', profile);
-      console.log('Profile ID:', profile?.id);
-      
       if (!profile?.id) {
         throw new Error('لم يتم العثور على بيانات المستخدم');
       }
@@ -118,7 +115,6 @@ const AdminProductApproval = () => {
 
       // If error with approved_by, try without it
       if (error && error.code === '23503') {
-        console.log('Foreign key error, trying without approved_by');
         const { error: retryError } = await supabase
           .from('products')
           .update({
@@ -193,7 +189,6 @@ const AdminProductApproval = () => {
 
       // If error with approved_by, try without it
       if (error && error.code === '23503') {
-        console.log('Foreign key error, trying without approved_by');
         const { error: retryError } = await supabase
           .from('products')
           .update({

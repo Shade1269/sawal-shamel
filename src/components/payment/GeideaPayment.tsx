@@ -54,7 +54,6 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
     script.src = 'https://www.ksamerchant.geidea.net/hpp/geideaCheckout.min.js';
     script.async = true;
     script.onload = () => {
-      console.log('Geidea SDK loaded');
       setSdkLoaded(true);
     };
     script.onerror = () => {
@@ -107,7 +106,6 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
       if (window.GeideaCheckout && sdkLoaded) {
         const checkout = new window.GeideaCheckout(
           (response: any) => {
-            console.log('Payment successful:', response);
             toast({
               title: 'تم الدفع بنجاح',
               description: 'تم إتمام عملية الدفع بنجاح',
@@ -124,7 +122,6 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
             onError(error.message || 'Payment failed');
           },
           () => {
-            console.log('Payment cancelled by user');
             toast({
               title: 'تم الإلغاء',
               description: 'تم إلغاء عملية الدفع',
@@ -150,10 +147,8 @@ export const GeideaPayment: React.FC<GeideaPaymentProps> = ({
       const redirectUrl = redirectCandidates.find((u: any) => typeof u === 'string' && u.length > 0);
 
       if (redirectUrl) {
-        console.log('SDK not loaded, redirecting to HPP:', redirectUrl);
         window.location.href = redirectUrl as string;
       } else {
-        console.warn('No SDK and no redirect URL found in session data', sessionData);
         toast({
           title: 'تم إنشاء جلسة الدفع',
           description: 'تعذر تحميل مكون الدفع تلقائياً. حاول مرة أخرى أو استخدم متصفحاً آخر.',

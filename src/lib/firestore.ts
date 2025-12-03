@@ -138,7 +138,6 @@ export const initializeUserDatabase = async (uid: string) => {
       updatedAt: new Date()
     });
 
-    console.log('User database structure initialized successfully');
     return { success: true };
   } catch (error) {
     console.error('Error initializing user database:', error);

@@ -129,8 +129,6 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
         throw new Error('يجب تسجيل الدخول أولاً');
       }
 
-      console.log('Current user ID:', user.id);
-
       // الحصول على معرف الملف الشخصي ثم التاجر والمتجر
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
@@ -178,8 +176,6 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
         shop_id: shop?.id ?? null,
       } as any;
 
-      console.log('Creating product with data:', productData);
-
       const { data: product, error: productError } = await supabase
         .from('products')
         .insert(productData)
@@ -190,8 +186,6 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
         console.error('Product creation error:', productError);
         throw productError;
       }
-
-      console.log('Product created successfully:', product);
 
       // إنشاء متغيرات المنتج
       for (const variant of variants) {

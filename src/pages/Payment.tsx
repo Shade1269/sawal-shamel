@@ -230,8 +230,7 @@ const Payment = () => {
     }
   };
 
-  const handleGeideaSuccess = async (paymentData: any) => {
-    console.log('Geidea payment success:', paymentData);
+  const handleGeideaSuccess = async (_paymentData: any) => {
     toast.success("تم الدفع بنجاح!");
     
     // Clear cart and saved data

@@ -154,23 +154,9 @@ export function UserActivityTracker() {
   useEffect(() => {
     if (!isTracking) return;
 
-    const handleClick = (event: MouseEvent) => {
+    const handleClick = (_event: MouseEvent) => {
       clicksRef.current += 1;
-      
-      // تتبع نوع العنصر المنقور
-      const target = event.target as HTMLElement;
-      const elementType = target.tagName.toLowerCase();
-      const elementClass = target.className;
-      const elementId = target.id;
-      
-      // يمكن إرسال هذه البيانات لخادم التحليلات
-      console.log('Click tracked:', {
-        elementType,
-        elementClass,
-        elementId,
-        timestamp: new Date(),
-        coordinates: { x: event.clientX, y: event.clientY }
-      });
+      // يمكن إرسال بيانات النقرات لخادم التحليلات
     };
 
     document.addEventListener('click', handleClick);

@@ -226,9 +226,11 @@ export const useFastAuth = () => {
 
       if (session?.user) {
         // Defer profile fetch to avoid deadlocks inside auth callback
+        // Check isMounted inside timeout to prevent setState on unmounted component
+        const userId = session.user.id;
         setTimeout(() => {
-          if (session?.user) {
-            fetchUserProfile(session.user.id, false);
+          if (isMounted && userId) {
+            fetchUserProfile(userId, false);
           }
         }, 0);
       } else {

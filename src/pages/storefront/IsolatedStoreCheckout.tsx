@@ -298,8 +298,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
     }
   };
 
-  const handleGeideaSuccess = async (paymentData: any) => {
-    console.log('Geidea payment successful:', paymentData);
+  const handleGeideaSuccess = async (_paymentData: any) => {
     await clearCart();
     navigate(`/${storeSlug}/order/${createdOrderId}/confirmation`);
   };

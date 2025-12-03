@@ -190,7 +190,7 @@ export const PageEditor: React.FC<PageEditorProps> = ({ pageId, storeId, onSave 
                           key={block.type}
                           variant="outline"
                           className="h-20 flex-col gap-2"
-                          onClick={() => console.log(`Add ${block.type} block`)}
+                          onClick={() => {}}
                         >
                           <IconComponent className="w-6 h-6" />
                           <span className="text-xs">{block.name}</span>

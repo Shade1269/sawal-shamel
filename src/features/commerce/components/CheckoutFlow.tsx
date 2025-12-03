@@ -40,13 +40,6 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
   affiliateStoreId,
   customerSessionId
 }) => {
-  console.log('CheckoutFlow: Component initialized with:', { 
-    cartItems: cart.length, 
-    shopId, 
-    hasStoreSettings: !!storeSettings,
-    storeSettings: storeSettings 
-  });
-
   const [loading, setLoading] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
@@ -54,7 +47,6 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
   const [showSteps, setShowSteps] = useState(true);
 
   const handleStepsComplete = async (orderData: any) => {
-    console.log('CheckoutFlow: Steps completed with order data:', orderData);
     setShowSteps(false);
     setOrderNumber(orderData.orderNumber);
     await processOrder(orderData);
@@ -132,7 +124,6 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
         });
 
       // Handle non-payment gateway orders (COD, etc.)
-      console.log('CheckoutFlow: Processing non-Emkan payment');
       toast({
         title: "جاري معالجة الطلب",
         description: "يرجى الانتظار..."
@@ -149,11 +140,9 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
       }
 
       // Inventory reservations/fulfillment now run inside the database triggers
-      console.log('CheckoutFlow: inventory updates handled by internal pipeline');
-      
+
       // Simulate payment processing for other methods
       setTimeout(() => {
-        console.log('CheckoutFlow: Payment processing completed');
         setOrderCompleted(true);
         
         toast({
@@ -176,8 +165,6 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
       setLoading(false);
     }
   };
-
-  console.log('CheckoutFlow: Rendering component');
 
   if (loading) {
     return (

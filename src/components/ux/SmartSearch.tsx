@@ -339,9 +339,7 @@ export function SmartSearch({ isOpen, onClose, placeholder = "البحث في ك
       return updated;
     });
 
-    // تسجيل الوصول
-    // في التطبيق الحقيقي، سيتم حفظ هذا في قاعدة البيانات
-    console.log('Accessing:', result.url);
+    // في التطبيق الحقيقي، سيتم تسجيل الوصول في قاعدة البيانات
 
     navigate(result.url);
     onClose();

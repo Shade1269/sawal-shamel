@@ -20,45 +20,33 @@ export const usePlatformPhoneAuth = () => {
   const formatPhone = (input: string) => {
     try {
       const digits = input.replace(/\D/g, '');
-      console.log('Raw digits:', digits);
-      
+
       // If already formatted with +, normalize +9660XXXXXXXX -> +966XXXXXXXX
       if (input.startsWith('+')) {
         if (digits.startsWith('966')) {
           const national = digits.slice(3);
           const normalized = national.startsWith('0') ? national.slice(1) : national;
-          const result = `+966${normalized}`;
-          console.log('Formatted from + prefix:', result);
-          return result;
+          return `+966${normalized}`;
         }
         return input; // other countries not supported in this flow
       }
       // 00 -> +
       if (digits.startsWith('00')) {
-        const result = `+${digits.slice(2)}`;
-        console.log('Formatted from 00 prefix:', result);
-        return result;
+        return `+${digits.slice(2)}`;
       }
       // Starts with country code 966
       if (digits.startsWith('966')) {
         const national = digits.slice(3);
         const normalized = national.startsWith('0') ? national.slice(1) : national;
-        const result = `+966${normalized}`;
-        console.log('Formatted from 966 prefix:', result);
-        return result;
+        return `+966${normalized}`;
       }
       // Local format starting with 0 (e.g., 05...)
       if (digits.startsWith('0')) {
-        const result = `+966${digits.slice(1)}`;
-        console.log('Formatted from 0 prefix:', result);
-        return result;
+        return `+966${digits.slice(1)}`;
       }
       // Fallback: treat as national number without leading 0
-      const result = `+966${digits}`;
-      console.log('Formatted fallback:', result);
-      return result;
-    } catch (error) {
-      console.error('Error formatting phone:', error);
+      return `+966${digits}`;
+    } catch {
       return input;
     }
   };
@@ -67,18 +55,7 @@ export const usePlatformPhoneAuth = () => {
   const isValidSaudiPhone = (formatted: string): boolean => {
     // Saudi numbers: +966 followed by 9 digits (total 13 characters)
     const saudiPattern = /^\+966[5-9]\d{8}$/; // +966 + 5-9 + 8 digits
-    const isValid = saudiPattern.test(formatted);
-
-    if (!isValid) {
-      console.log('Saudi phone validation failed:', {
-        input: formatted,
-        pattern: 'Expected Saudi E.164 like +9665XXXXXXXX',
-        length: formatted.length,
-        note: 'Saudi numbers must start with +966 followed by 5-9 and 8 more digits'
-      });
-    }
-
-    return isValid;
+    return saudiPattern.test(formatted);
   };
   const sendOTP = async (phone: string): Promise<PhoneAuthResponse> => {
     setLoading(true);
@@ -86,36 +63,23 @@ export const usePlatformPhoneAuth = () => {
       // تنسيق رقم الجوال
       const formattedPhone = formatPhone(phone);
 
-      console.log('Original input:', phone);
-      console.log('Formatted phone:', formattedPhone);
-
       // التحقق من صحة الرقم
       if (!isValidSaudiPhone(formattedPhone)) {
-        const errorMessage = `رقم الجوال غير صالح. تأكد من الصيغة: ${formattedPhone}`;
-        console.error('Invalid phone format:', formattedPhone);
-        
         toast.error('رقم غير صحيح', {
-          description: errorMessage,
+          description: 'رقم الجوال غير صالح. تأكد من الصيغة',
         });
-
-        return { success: false, error: errorMessage };
+        return { success: false, error: 'رقم الجوال غير صالح' };
       }
-
-      console.log('✓ Phone validation passed, sending OTP via Twilio');
-      console.log('Sending to Edge Function - formattedPhone:', formattedPhone);
 
       // استدعاء Edge Function لإرسال OTP للمنصة الرئيسية
       const { data, error } = await supabase.functions.invoke('send-platform-otp', {
-        body: { 
+        body: {
           phone: formattedPhone
         }
       });
 
-      console.log('Edge Function response:', { data, error });
-
       // التحقق من البيانات أولاً (حتى مع وجود error، قد تكون data موجودة)
       if (data && !data.success) {
-        console.error('OTP send failed from data:', data);
         const errText: string = data?.error || 'فشل في إرسال رمز التحقق';
         const details = data?.details || data?.twilioCode || '';
         const fullError = details ? `${errText} - ${details}` : errText;
@@ -146,24 +110,20 @@ export const usePlatformPhoneAuth = () => {
       }
 
       if (error) {
-        console.error('Edge Function error object:', error);
         const context = (error as any)?.context;
-        
+
         // محاولة قراءة Response body من context
         let responseData: any = null;
         if (context && context instanceof Response) {
           try {
             responseData = await context.json();
-            console.log('Response body:', responseData);
-          } catch (e) {
-            console.error('Failed to parse response:', e);
+          } catch {
+            // Ignore parse errors
           }
         }
-        
+
         const status = context?.status || (error as any)?.status;
         const message = (error as any)?.message || '';
-
-        console.log('Error details:', { status, message, responseData });
 
         // فقط عند 429 الحقيقي نعرض cooldown
         if (status === 429 || /too\s*many\s*requests/i.test(message)) {
@@ -204,8 +164,6 @@ export const usePlatformPhoneAuth = () => {
         return { success: false, error: displayError, code: 'GENERIC' };
       }
 
-      console.log('OTP sent successfully via Twilio');
-
       // إظهار OTP في التطوير إذا كان متوفراً
       const otpMessage = data?.otp 
         ? `تم إرسال رمز التحقق إلى ${formattedPhone}\nالرمز: ${data.otp}`
@@ -221,7 +179,6 @@ export const usePlatformPhoneAuth = () => {
         existingRole: data?.existing_role || null
       };
     } catch (error: any) {
-      console.error('Error sending OTP:', error);
       const errorMessage = error?.message || 'حدث خطأ غير متوقع';
       
       toast.error('خطأ', {
@@ -239,11 +196,9 @@ export const usePlatformPhoneAuth = () => {
     try {
       const formattedPhone = formatPhone(phone);
 
-      console.log('Verifying OTP for:', formattedPhone);
-
       // استدعاء Edge Function للتحقق من OTP للمنصة الرئيسية
       const { data, error } = await supabase.functions.invoke('verify-platform-otp', {
-        body: { 
+        body: {
           phone: formattedPhone,
           otp: otp,
           role: role
@@ -251,7 +206,6 @@ export const usePlatformPhoneAuth = () => {
       });
 
       if (error) {
-        console.error('Edge Function error:', error);
         toast.error('خطأ في التحقق', {
           description: 'فشل في التحقق من الرمز',
         });
@@ -260,7 +214,6 @@ export const usePlatformPhoneAuth = () => {
 
       // التحقق من نجاح العملية أولاً
       if (!data?.success) {
-        console.error('Verification failed:', data);
         let errorMessage = data?.error || 'رمز التحقق غير صحيح';
         if (typeof errorMessage === 'string' && (errorMessage.includes('expired') || errorMessage.includes('منتهي'))) {
           errorMessage = 'انتهت صلاحية الرمز. اطلب رمزاً جديداً.';
@@ -272,40 +225,30 @@ export const usePlatformPhoneAuth = () => {
       // التحقق الناجح - استخدام magic_link للمصادقة
       if (data?.magic_link || data?.redirect_url) {
         const authUrl = data.magic_link || data.redirect_url;
-        console.log('OTP verified, redirecting to auth URL:', authUrl);
-        
         // إعادة التوجيه للرابط السحري لإكمال المصادقة
         window.location.href = authUrl;
         return { success: true };
-      } 
-      
+      }
+
       // Fallback: للتوافق مع البنية القديمة
       if (data?.session?.email && data?.session?.email_otp) {
-        console.log('OTP verified, creating Supabase session via email_otp');
-        const { data: authData, error: authError } = await supabase.auth.verifyOtp({
+        const { error: authError } = await supabase.auth.verifyOtp({
           email: data.session.email,
           token: data.session.email_otp,
           type: 'email',
         });
 
         if (authError) {
-          console.error('Failed to create session:', authError);
           toast.error('خطأ', { description: 'فشل في تسجيل الدخول' });
           return { success: false, error: authError.message };
         }
-        console.log('Supabase session created successfully:', authData?.user?.id);
         return { success: true };
       }
-      
+
       // لم يتم إرجاع بيانات جلسة صالحة
-      console.error('No valid session data returned from verification');
       toast.error('خطأ', { description: 'فشل في إنشاء الجلسة' });
       return { success: false, error: 'No session data' };
-
-      toast.success('تم التحقق بنجاح!', { description: 'مرحباً بك في المنصة' });
-      return { success: true };
     } catch (error: any) {
-      console.error('Error verifying OTP:', error);
       const errorMessage = error?.message || 'حدث خطأ غير متوقع';
       
       toast.error('خطأ', {
@@ -323,11 +266,10 @@ export const usePlatformPhoneAuth = () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      
+
       toast.success('تم تسجيل الخروج بنجاح');
       return { success: true };
     } catch (error: any) {
-      console.error('Error signing out:', error);
       toast.error('خطأ في تسجيل الخروج');
       return { success: false, error: error.message };
     }

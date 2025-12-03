@@ -72,8 +72,6 @@ export const FirebaseAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
         }
         
         unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
-          console.log('Firebase auth state changed:', firebaseUser?.uid);
-          console.log('Firebase user phone:', firebaseUser?.phoneNumber);
           setUser(firebaseUser);
           
           if (firebaseUser) {

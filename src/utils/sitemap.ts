@@ -205,8 +205,7 @@ export const autoUpdateSitemap = async () => {
     // Store in localStorage for demo purposes
     // In production, this would be sent to your backend
     localStorage.setItem('generated-sitemap', xml);
-    
-    console.log('✅ Sitemap updated successfully');
+
     return xml;
   } catch (error) {
     console.error('❌ Failed to update sitemap:', error);

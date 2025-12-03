@@ -45,8 +45,7 @@ export const CheckoutTest = () => {
             cart={testCart}
             shopId="test-shop-id"
             onCancel={() => setShowCheckout(false)}
-            onOrderComplete={(orderNumber) => {
-              console.log('Order completed:', orderNumber);
+            onOrderComplete={(_orderNumber) => {
               setCompleted(true);
               setShowCheckout(false);
             }}
@@ -66,9 +65,8 @@ export const CheckoutTest = () => {
         <p className="text-sm text-muted-foreground">
           هذا اختبار لصفحة الدفع للتأكد من أنها تعمل بشكل صحيح
         </p>
-        <Button 
+        <Button
           onClick={() => {
-            console.log('Opening checkout test...');
             setShowCheckout(true);
           }}
           className="w-full"

@@ -84,7 +84,6 @@ const AtlantisChatRooms = () => {
 
   const loadRooms = async () => {
     if (!currentProfile?.id) {
-      console.log('No profile ID available yet');
       return;
     }
 

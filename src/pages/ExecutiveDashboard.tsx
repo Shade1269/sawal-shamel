@@ -27,8 +27,7 @@ export default function ExecutiveDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
 
   const handleExport = () => {
-    // Mock export functionality
-    console.log("Exporting dashboard data...");
+    // Mock export functionality - يمكن إضافة وظيفة التصدير هنا
   };
 
   if (error) {

@@ -22,19 +22,17 @@ export const cleanExpiredSession = (sessionKey: string): boolean => {
     // فحص انتهاء الصلاحية
     if (parsedData.expiresAt && currentTime > parsedData.expiresAt) {
       localStorage.removeItem(sessionKey);
-      console.log(`تم حذف الجلسة المنتهية: ${sessionKey}`);
       return true;
     }
 
     // فحص الجلسات القديمة جداً (أكثر من 30 يوم)
     if (parsedData.createdAt && (currentTime - parsedData.createdAt) > (30 * 24 * 60 * 60 * 1000)) {
       localStorage.removeItem(sessionKey);
-      console.log(`تم حذف الجلسة القديمة: ${sessionKey}`);
       return true;
     }
 
     return false;
-  } catch (error) {
+  } catch {
     // إذا كانت البيانات فاسدة، احذف الجلسة بأمان
     try {
       if (typeof window !== 'undefined') {
@@ -43,7 +41,6 @@ export const cleanExpiredSession = (sessionKey: string): boolean => {
     } catch {
       // تجاهل أخطاء التخزين (Safari Private Mode)
     }
-    console.warn(`تم حذف جلسة فاسدة: ${sessionKey}`, error);
     return true;
   }
 };
@@ -80,7 +77,6 @@ export const cleanupExpiredSessions = (): void => {
             if (parsedData.expiresAt && Date.now() > parsedData.expiresAt) {
               localStorage.removeItem(key);
               cleanedCount++;
-              console.log(`تم حذف جلسة منتهية إضافية: ${key}`);
             }
           }
         } catch {
@@ -88,12 +84,8 @@ export const cleanupExpiredSessions = (): void => {
         }
       }
     });
-  } catch (error) {
-    console.warn('خطأ في تنظيف localStorage:', error);
-  }
-
-  if (cleanedCount > 0) {
-    console.log(`تم تنظيف ${cleanedCount} جلسة منتهية من localStorage`);
+  } catch {
+    // Ignore localStorage cleanup errors
   }
 };
 

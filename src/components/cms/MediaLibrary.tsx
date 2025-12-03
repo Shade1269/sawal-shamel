@@ -90,15 +90,13 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
     const files = Array.from(event.target.files || []);
     if (files.length > 0) {
       // Here we would handle file upload to Supabase storage
-      console.log('Files selected for upload:', files);
       setShowUploadDialog(true);
     }
   };
 
-  const handleDeleteFile = (fileId: string) => {
+  const handleDeleteFile = (_fileId: string) => {
     if (window.confirm('هل أنت متأكد من حذف هذا الملف؟')) {
-      // Handle file deletion
-      console.log('Delete file:', fileId);
+      // Handle file deletion - يمكن تنفيذ الحذف هنا
     }
   };
 

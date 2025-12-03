@@ -31,6 +31,8 @@ export const useShoppingCart = (storeId?: string) => {
   const [cartId, setCartId] = useState<string | null>(null);
   const cartIdRef = useRef<string | null>(null);
   const [activeStoreId, setActiveStoreId] = useState<string | null>(storeId ?? null);
+  const isInitializedRef = useRef(false);
+  const lastProfileIdRef = useRef<string | null>(null);
 
   const resolveStoreContext = useCallback(async () => {
     let resolvedStoreId = storeId ?? null;
@@ -419,10 +421,20 @@ export const useShoppingCart = (storeId?: string) => {
     };
   }, [cart]);
 
-  // Initialize cart on mount
+  // Initialize cart on mount or when profile changes
   useEffect(() => {
+    const currentProfileId = profile?.id ?? null;
+
+    // Skip if already initialized with the same profile
+    if (isInitializedRef.current && lastProfileIdRef.current === currentProfileId) {
+      return;
+    }
+
+    // Re-initialize if profile changed (e.g., user logged in/out)
+    isInitializedRef.current = true;
+    lastProfileIdRef.current = currentProfileId;
     initializeCart();
-  }, [initializeCart]);
+  }, [profile?.id, initializeCart]);
 
   return {
     cart,

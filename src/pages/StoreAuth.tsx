@@ -83,7 +83,6 @@ const StoreAuth: React.FC = () => {
 
   // معالجة نجاح تسجيل الدخول
   const handleAuthSuccess = (customer: any) => {
-    console.log('✅ Auth success, redirecting to:', returnUrl);
     // فك تشفير URL وإزالة البادئة إذا كانت موجودة
     const decodedUrl = decodeURIComponent(returnUrl).replace(/^\//, '');
     const finalUrl = decodedUrl.startsWith('store/') ? `/${decodedUrl}` : returnUrl;

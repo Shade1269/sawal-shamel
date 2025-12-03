@@ -100,12 +100,6 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
         throw new Error('معرف المتجر غير متوفر');
       }
 
-      console.log('Placing order with SimpleCheckout data:', {
-        affiliate_store_id: shopId,
-        customer: customerInfo,
-        items: cartItems
-      });
-
       // تحويل عناصر السلة إلى الصيغة المطلوبة للنظام الموحد
       const formattedItems = cartItems.map(item => ({
         id: item.id,
@@ -134,10 +128,7 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
         }
       });
 
-      console.log('Edge Function response:', { data, error });
-
       if (error) {
-        console.error('Edge function error:', error);
         throw new Error(error.message || 'فشل في إنشاء الطلب');
       }
 
@@ -145,8 +136,6 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
         throw new Error(data?.error || 'فشل في إنشاء الطلب');
       }
 
-      console.log('Order created successfully:', data);
-      
       const newOrderNumber = data.order_number || generateOrderNumber();
       setOrderNumber(newOrderNumber);
       setOrderCompleted(true);

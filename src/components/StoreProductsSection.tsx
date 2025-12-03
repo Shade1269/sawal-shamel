@@ -63,7 +63,6 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
   useEffect(() => {
     const handleFocus = () => {
       if (userShop) {
-        console.log('Page focused, refreshing store products...');
         fetchStoreProducts();
       }
     };
@@ -77,7 +76,6 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
       if (!user) return;
       
       const items = await getProductLibraryItems();
-      console.log('Loaded product library items:', items);
       setStoreProducts(items as ProductLibraryItem[]);
     } catch (error) {
       console.error('Error fetching store products:', error);
@@ -305,9 +303,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {storeProducts
               .filter((item) => (item as any)?.products)
-              .map((item) => {
-                console.log('Rendering product:', item);
-                return (
+              .map((item) => (
                   <Card key={item.id} className="overflow-hidden">
                     <div className="relative">
                       <ProductImageCarousel 
@@ -468,8 +464,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                   </div>
                 </CardContent>
               </Card>
-            );
-          })}
+          ))}
           </div>
         )}
       </CardContent>

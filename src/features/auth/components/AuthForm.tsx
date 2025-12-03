@@ -49,7 +49,6 @@ const AuthForm = () => {
       const result = await signIn(signInData.email, signInData.password);
       if (!result?.error) {
         // سيتم التوجيه تلقائياً للداشبورد من useAuth
-        console.log('تم تسجيل الدخول بنجاح');
       }
     } catch (error) {
       console.error('خطأ في تسجيل الدخول:', error);
@@ -71,7 +70,7 @@ const AuthForm = () => {
         role: signUpData.role
       });
       if (!result?.error) {
-        console.log('تم إنشاء الحساب بنجاح');
+        // تم إنشاء الحساب بنجاح
       }
     } catch (error) {
       console.error('خطأ في إنشاء الحساب:', error);
