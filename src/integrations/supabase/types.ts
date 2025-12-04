@@ -70,6 +70,13 @@ export type Database = {
             foreignKeyName: "admin_order_reviews_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "archived_legacy_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_order_reviews_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -2436,6 +2443,13 @@ export type Database = {
             foreignKeyName: "commissions_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "archived_legacy_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commissions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -4499,6 +4513,13 @@ export type Database = {
             foreignKeyName: "invoices_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "archived_legacy_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -5844,6 +5865,13 @@ export type Database = {
             foreignKeyName: "order_items_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "archived_legacy_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -6480,6 +6508,13 @@ export type Database = {
             foreignKeyName: "payment_transactions_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "archived_legacy_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -6524,6 +6559,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "archived_legacy_orders"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "payments_order_id_fkey"
             columns: ["order_id"]
@@ -8640,6 +8682,13 @@ export type Database = {
             foreignKeyName: "refunds_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "archived_legacy_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -9581,6 +9630,13 @@ export type Database = {
             foreignKeyName: "shipments_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "archived_legacy_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -10136,6 +10192,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "simple_order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "archived_legacy_simple_orders"
             referencedColumns: ["id"]
           },
           {
@@ -12230,6 +12293,221 @@ export type Database = {
       }
     }
     Views: {
+      archived_legacy_orders: {
+        Row: {
+          affiliate_commission_sar: number | null
+          affiliate_store_id: string | null
+          created_at: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          customer_profile_id: string | null
+          delivered_at: string | null
+          id: string | null
+          order_number: string | null
+          payment_method: string | null
+          shipping_address: Json | null
+          shipping_sar: number | null
+          shop_id: string | null
+          status: Database["public"]["Enums"]["order_status"] | null
+          subtotal_sar: number | null
+          tax_sar: number | null
+          total_sar: number | null
+          tracking_number: string | null
+          updated_at: string | null
+          vat_sar: number | null
+        }
+        Insert: {
+          affiliate_commission_sar?: number | null
+          affiliate_store_id?: string | null
+          created_at?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          customer_profile_id?: string | null
+          delivered_at?: string | null
+          id?: string | null
+          order_number?: string | null
+          payment_method?: string | null
+          shipping_address?: Json | null
+          shipping_sar?: number | null
+          shop_id?: string | null
+          status?: Database["public"]["Enums"]["order_status"] | null
+          subtotal_sar?: number | null
+          tax_sar?: number | null
+          total_sar?: number | null
+          tracking_number?: string | null
+          updated_at?: string | null
+          vat_sar?: number | null
+        }
+        Update: {
+          affiliate_commission_sar?: number | null
+          affiliate_store_id?: string | null
+          created_at?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          customer_profile_id?: string | null
+          delivered_at?: string | null
+          id?: string | null
+          order_number?: string | null
+          payment_method?: string | null
+          shipping_address?: Json | null
+          shipping_sar?: number | null
+          shop_id?: string | null
+          status?: Database["public"]["Enums"]["order_status"] | null
+          subtotal_sar?: number | null
+          tax_sar?: number | null
+          total_sar?: number | null
+          tracking_number?: string | null
+          updated_at?: string | null
+          vat_sar?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_customer_profile_id_fkey"
+            columns: ["customer_profile_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      archived_legacy_simple_orders: {
+        Row: {
+          affiliate_commission_sar: number | null
+          affiliate_store_id: string | null
+          created_at: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          customer_session_id: string | null
+          id: string | null
+          order_status: string | null
+          payment_method: string | null
+          payment_status: string | null
+          session_id: string | null
+          shipping_address: Json | null
+          stripe_payment_intent_id: string | null
+          total_amount_sar: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          affiliate_commission_sar?: number | null
+          affiliate_store_id?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          customer_session_id?: string | null
+          id?: string | null
+          order_status?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          session_id?: string | null
+          shipping_address?: Json | null
+          stripe_payment_intent_id?: string | null
+          total_amount_sar?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          affiliate_commission_sar?: number | null
+          affiliate_store_id?: string | null
+          created_at?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          customer_session_id?: string | null
+          id?: string | null
+          order_status?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          session_id?: string | null
+          shipping_address?: Json | null
+          stripe_payment_intent_id?: string | null
+          total_amount_sar?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "simple_orders_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "simple_orders_customer_session_id_fkey"
+            columns: ["customer_session_id"]
+            isOneToOne: false
+            referencedRelation: "customer_otp_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "simple_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "simple_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "simple_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "simple_orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assistant_functions: {
         Row: {
           data_type: string | null
@@ -12419,49 +12697,28 @@ export type Database = {
       }
       safe_profiles: {
         Row: {
-          auth_user_id: string | null
           avatar_url: string | null
-          bio: string | null
           created_at: string | null
-          email: string | null
           full_name: string | null
           id: string | null
           is_active: boolean | null
-          last_activity_at: string | null
-          phone: string | null
-          points: number | null
           role: Database["public"]["Enums"]["user_role"] | null
-          updated_at: string | null
         }
         Insert: {
-          auth_user_id?: string | null
           avatar_url?: string | null
-          bio?: string | null
           created_at?: string | null
-          email?: string | null
           full_name?: string | null
           id?: string | null
           is_active?: boolean | null
-          last_activity_at?: string | null
-          phone?: string | null
-          points?: number | null
           role?: Database["public"]["Enums"]["user_role"] | null
-          updated_at?: string | null
         }
         Update: {
-          auth_user_id?: string | null
           avatar_url?: string | null
-          bio?: string | null
           created_at?: string | null
-          email?: string | null
           full_name?: string | null
           id?: string | null
           is_active?: boolean | null
-          last_activity_at?: string | null
-          phone?: string | null
-          points?: number | null
           role?: Database["public"]["Enums"]["user_role"] | null
-          updated_at?: string | null
         }
         Relationships: []
       }
@@ -12674,6 +12931,13 @@ export type Database = {
             foreignKeyName: "shipments_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
+            referencedRelation: "archived_legacy_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -12748,52 +13012,37 @@ export type Database = {
         Row: {
           auth_user_id: string | null
           avatar_url: string | null
-          bio: string | null
           created_at: string | null
           email: string | null
           full_name: string | null
           id: string | null
           is_active: boolean | null
-          last_activity_at: string | null
-          level: Database["public"]["Enums"]["user_level"] | null
           phone: string | null
-          points: number | null
           role: Database["public"]["Enums"]["user_role"] | null
-          total_earnings: number | null
           updated_at: string | null
         }
         Insert: {
           auth_user_id?: string | null
           avatar_url?: string | null
-          bio?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
           id?: string | null
           is_active?: boolean | null
-          last_activity_at?: string | null
-          level?: Database["public"]["Enums"]["user_level"] | null
           phone?: string | null
-          points?: number | null
           role?: Database["public"]["Enums"]["user_role"] | null
-          total_earnings?: number | null
           updated_at?: string | null
         }
         Update: {
           auth_user_id?: string | null
           avatar_url?: string | null
-          bio?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
           id?: string | null
           is_active?: boolean | null
-          last_activity_at?: string | null
-          level?: Database["public"]["Enums"]["user_level"] | null
           phone?: string | null
-          points?: number | null
           role?: Database["public"]["Enums"]["user_role"] | null
-          total_earnings?: number | null
           updated_at?: string | null
         }
         Relationships: []
@@ -13350,6 +13599,13 @@ export type Database = {
             foreignKeyName: "refunds_order_id_fkey"
             columns: ["source_order_id"]
             isOneToOne: false
+            referencedRelation: "archived_legacy_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_order_id_fkey"
+            columns: ["source_order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -13563,6 +13819,13 @@ export type Database = {
             foreignKeyName: "shipments_order_id_fkey"
             columns: ["source_order_id"]
             isOneToOne: false
+            referencedRelation: "archived_legacy_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shipments_order_id_fkey"
+            columns: ["source_order_id"]
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
@@ -13614,24 +13877,34 @@ export type Database = {
       }
       v_user_stats: {
         Row: {
-          auth_user_id: string | null
           created_at: string | null
-          created_shops_count: number | null
-          current_level: Database["public"]["Enums"]["user_level"] | null
-          current_level_points: number | null
+          email: string | null
           full_name: string | null
           id: string | null
           is_active: boolean | null
-          last_activity_at: string | null
-          level: Database["public"]["Enums"]["user_level"] | null
-          level_achieved_at: string | null
-          level_points: number | null
-          next_level_threshold: number | null
-          points: number | null
           role: Database["public"]["Enums"]["user_role"] | null
-          total_earnings: number | null
-          total_points: number | null
-          user_level_points: number | null
+          total_orders: number | null
+          total_spent: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          total_orders?: never
+          total_spent?: never
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          total_orders?: never
+          total_spent?: never
         }
         Relationships: []
       }
