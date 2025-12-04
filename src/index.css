@@ -7,6 +7,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 /* Theme Tokens */
+@import './themes/anaqati/tokens.css';
 @import './themes/default/tokens.css';
 @import './themes/luxury/tokens.css';
 @import './themes/damascus/tokens.css';
