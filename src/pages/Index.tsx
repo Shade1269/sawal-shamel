@@ -56,7 +56,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-background">
+    <div className="min-h-screen relative overflow-hidden bg-anaqati-cream">
       {/* Decorative Background */}
       <div className="decorative-bg" />
       
