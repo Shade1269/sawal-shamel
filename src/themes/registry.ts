@@ -186,11 +186,52 @@ const ferrariConfig = {
   }
 };
 
+const oliveGoldConfig = {
+  id: "olive-gold",
+  name: "زيتي ذهبي",
+  colors: {
+    bg: "#faf9f7",
+    fg: "#2a3018",
+    primary: "#5a6b3c",
+    secondary: "#c9a227",
+    background: "#faf9f7",
+    foreground: "#2a3018",
+    muted: "#f0ede8",
+    accent: "#b8860b",
+    card: "#ffffff",
+    border: "#e5e0d5"
+  },
+  radii: {
+    sm: "0.25rem",
+    md: "0.5rem",
+    lg: "0.75rem",
+    xl: "1rem"
+  },
+  spacing: {
+    xs: "0.5rem",
+    sm: "1rem",
+    md: "1.5rem",
+    lg: "2rem",
+    xl: "3rem"
+  },
+  typography: {
+    fontFamily: "Noto Sans Arabic, Inter, sans-serif",
+    baseSize: 16,
+    lineHeight: 1.6
+  },
+  effects: {
+    shadows: "soft",
+    gradients: true,
+    animations: "subtle"
+  }
+};
+
 export const THEMES = {
   [defaultConfig.id]: defaultConfig,
   [luxuryConfig.id]: luxuryConfig,
   [damascusConfig.id]: damascusConfig,
   [ferrariConfig.id]: ferrariConfig,
+  [oliveGoldConfig.id]: oliveGoldConfig,
   anaqti: {
     id: "anaqti",
     name: "Anaqti",
@@ -224,5 +265,5 @@ export const THEMES = {
 };
 
 export function getTheme(themeId: string) {
-  return THEMES[themeId] ?? defaultConfig;
+  return THEMES[themeId] ?? oliveGoldConfig;
 }

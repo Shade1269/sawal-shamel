@@ -17,9 +17,10 @@ export interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 const THEME_STORAGE_KEY = 'app-theme';
-const DEFAULT_THEME = 'ferrari';
+const DEFAULT_THEME = 'olive-gold';
 
 const AVAILABLE_THEMES = [
+  { id: 'olive-gold', name: 'زيتي ذهبي' },
   { id: 'default', name: 'التصميم الافتراضي' },
   { id: 'luxury', name: 'الفخامة الذهبية' },
   { id: 'damascus', name: 'تراث دمشق' },
