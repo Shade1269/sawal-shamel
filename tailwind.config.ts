@@ -180,7 +180,20 @@ export default {
                                 status: {
                                         online: 'hsl(var(--status-online) / <alpha-value>)',
                                         offline: 'hsl(var(--status-offline) / <alpha-value>)',
-                                }
+                                },
+				// Anaqati Theme Colors
+				anaqati: {
+					burgundy: '#5A2647',
+					'burgundy-hover': '#743366',
+					'burgundy-active': '#401132',
+					pink: '#F4C2C2',
+					'pink-light': '#FBECEC',
+					'pink-hover': '#EDB3B3',
+					gold: '#C89B3C',
+					'gold-light': '#D4AF4F',
+					cream: '#FDF8F6',
+					'cream-warm': '#FFF3EF',
+				}
 			},
 			backgroundImage: {
 				// Primary gradients using CSS variables for theme support
@@ -226,6 +239,11 @@ export default {
 				'forest': '0 8px 32px rgba(5, 150, 105, 0.3), 0 0 20px rgba(5, 150, 105, 0.2)',
 				'purple': '0 8px 32px rgba(139, 92, 246, 0.3), 0 0 20px rgba(139, 92, 246, 0.2)',
 				'gold': '0 8px 32px rgba(212, 175, 55, 0.3), 0 0 20px rgba(212, 175, 55, 0.2)',
+				// Anaqati Theme Shadows
+				'anaqati': '0 4px 24px rgba(90, 38, 71, 0.06)',
+				'anaqati-hover': '0 8px 40px rgba(90, 38, 71, 0.1)',
+				'anaqati-gold': '0 4px 20px rgba(200, 155, 60, 0.2)',
+				'anaqati-pink': '0 4px 20px rgba(244, 194, 194, 0.3)',
 			},
 			transitionTimingFunction: {
 				'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
