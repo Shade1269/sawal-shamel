@@ -8,18 +8,24 @@ import { cva, type VariantProps } from 'class-variance-authority';
  */
 
 const unifiedCardVariants = cva(
-  'rounded-card overflow-hidden transition-all duration-300',
+  'rounded-xl overflow-hidden transition-all duration-300',
   {
     variants: {
       variant: {
-        default: 'bg-card text-card-foreground border border-border shadow-card',
-        glass: 'glass-card text-foreground',
-        'glass-strong': 'glass-card-strong text-foreground',
-        luxury: 'gradient-luxury text-luxury-foreground shadow-luxury',
-        persian: 'gradient-persian text-persian-foreground shadow-persian',
-        premium: 'gradient-premium text-premium-foreground shadow-premium',
+        default: 'bg-card text-card-foreground border border-border shadow-anaqati hover:shadow-anaqati-hover',
+        glass: 'bg-white/80 backdrop-blur-md text-foreground border border-border/50 shadow-soft',
+        'glass-strong': 'bg-white/90 backdrop-blur-lg text-foreground border border-border/60 shadow-anaqati',
+        luxury: 'bg-gradient-to-br from-primary to-accent text-white shadow-anaqati-gold',
+        persian: 'bg-gradient-to-br from-primary to-secondary text-primary-foreground shadow-anaqati-pink',
+        premium: 'bg-gradient-to-r from-accent via-primary to-accent text-white shadow-anaqati-gold',
         elegant: 'bg-card/95 backdrop-blur-sm text-card-foreground border border-border/50 shadow-elegant',
         flat: 'bg-muted/30 text-foreground border-none',
+        // تصنيفات - زهري فاتح
+        category: 'bg-[hsl(0,50%,97%)] text-primary border-none hover:bg-secondary',
+        // مميزات - كريمي دافئ  
+        feature: 'bg-[hsl(15,50%,97%)] text-foreground border-none',
+        // منتج
+        product: 'bg-card text-card-foreground border border-border shadow-anaqati hover:shadow-anaqati-hover hover:-translate-y-1',
       },
       padding: {
         none: 'p-0',
@@ -30,9 +36,10 @@ const unifiedCardVariants = cva(
       },
       hover: {
         none: '',
-        lift: 'interactive-lift cursor-pointer',
-        glow: 'interactive-glow cursor-pointer',
-        scale: 'interactive-scale cursor-pointer',
+        lift: 'hover:-translate-y-1 hover:shadow-anaqati-hover cursor-pointer',
+        glow: 'hover:shadow-anaqati-gold cursor-pointer',
+        scale: 'hover:scale-[1.02] cursor-pointer',
+        border: 'hover:border-accent/30 cursor-pointer',
       },
     },
     defaultVariants: {

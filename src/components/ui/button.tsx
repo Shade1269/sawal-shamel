@@ -5,31 +5,41 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "btn-press-effect inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-200 disabled:pointer-events-none disabled:bg-[hsl(320,17%,82%)] disabled:text-[hsl(320,8%,52%)] disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        // Primary Button - عنابي ملكي
+        default: "bg-primary text-primary-foreground hover:bg-[hsl(310,38%,30%)] active:bg-[hsl(323,57%,16%)] shadow-anaqati hover:shadow-anaqati-hover",
+        // Destructive/Danger Button - أحمر
+        destructive: "bg-danger text-white hover:bg-danger/90 active:bg-danger/80",
+        // Outline/Secondary Button - شفاف مع إطار عنابي
+        outline: "border-2 border-primary bg-transparent text-primary hover:bg-secondary hover:border-secondary active:bg-secondary/80",
+        // Secondary Button - زهري بودري
+        secondary: "bg-secondary text-secondary-foreground hover:bg-[hsl(0,50%,80%)] active:bg-[hsl(0,50%,75%)]",
+        // Ghost Button - شفاف
+        ghost: "bg-transparent text-foreground hover:bg-[hsl(15,50%,96%)] active:bg-[hsl(15,50%,94%)]",
+        // Link Button
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-hero text-white hover:shadow-glow transition-all duration-300 font-semibold",
-        luxury: "bg-gradient-luxury text-white shadow-luxury hover:shadow-glow hover:scale-105 transition-all duration-500 font-bold",
-        premium: "bg-gradient-premium text-white shadow-soft hover:shadow-luxury hover:-translate-y-1 transition-all duration-300 font-semibold",
-        persian: "bg-gradient-persian text-white shadow-persian hover:shadow-glow hover:scale-105 transition-all duration-400 font-bold",
-        commerce: "bg-gradient-commerce text-white shadow-elegant hover:shadow-persian hover:-translate-y-0.5 transition-all duration-300 font-semibold",
-        glass: "bg-gradient-glass backdrop-blur-md border border-white/30 text-foreground shadow-glass hover:bg-white/15 transition-all duration-300",
+        // Hero Gradient Button
+        hero: "bg-gradient-to-r from-primary to-accent text-white hover:shadow-anaqati-gold transition-all duration-300 font-semibold",
+        // Luxury Button - ذهبي
+        luxury: "bg-accent text-white shadow-anaqati-gold hover:bg-[hsl(43,54%,45%)] hover:scale-[1.02] transition-all duration-300 font-bold",
+        // Premium Button
+        premium: "bg-gradient-to-r from-primary via-accent to-primary text-white shadow-soft hover:shadow-anaqati-gold hover:-translate-y-0.5 transition-all duration-300 font-semibold",
+        // Persian Button
+        persian: "bg-gradient-to-r from-primary to-secondary text-white shadow-anaqati-pink hover:scale-[1.02] transition-all duration-300 font-bold",
+        // Commerce Button
+        commerce: "bg-primary text-white shadow-elegant hover:bg-[hsl(310,38%,30%)] hover:-translate-y-0.5 transition-all duration-300 font-semibold",
+        // Glass Button
+        glass: "bg-white/80 backdrop-blur-md border border-border text-foreground shadow-soft hover:bg-white/90 transition-all duration-300",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        default: "h-11 px-6 py-2.5",
+        sm: "h-9 rounded-lg px-4",
+        lg: "h-12 rounded-xl px-8 text-base",
+        xl: "h-14 rounded-xl px-10 text-lg",
+        icon: "h-10 w-10 rounded-lg",
       },
     },
     defaultVariants: {
