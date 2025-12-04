@@ -193,6 +193,15 @@ export default {
 					'gold-light': '#D4AF4F',
 					cream: '#FDF8F6',
 					'cream-warm': '#FFF3EF',
+					text: '#2F2B2C',
+					'text-secondary': '#7B6E70',
+					border: '#E6D8D3',
+					'product-bg': '#F4ECE8',
+					success: '#2E7D32',
+					danger: '#D64545',
+					warning: '#D4A574',
+					info: '#A7B3E8',
+					accent: '#C89B3C',
 				}
 			},
 			backgroundImage: {

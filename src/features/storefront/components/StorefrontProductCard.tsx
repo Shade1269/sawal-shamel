@@ -71,13 +71,13 @@ export const StorefrontProductCard = ({
     >
       <Card
         className={cn(
-          "group overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg border-border/50 hover:border-primary/50",
+          "group overflow-hidden cursor-pointer transition-all duration-300 bg-white border border-anaqati-border rounded-xl shadow-anaqati hover:shadow-anaqati-hover hover:border-primary/40",
           isOutOfStock && "opacity-60"
         )}
         onClick={() => onProductClick(product)}
       >
         {/* Image Container */}
-        <div className="relative aspect-square overflow-hidden bg-muted">
+        <div className="relative aspect-square overflow-hidden bg-anaqati-product-bg rounded-t-xl">
           {/* Image */}
           {product.image_urls && product.image_urls[0] ? (
             <>
@@ -105,17 +105,17 @@ export const StorefrontProductCard = ({
           {/* Badges */}
           <div className="absolute top-2 right-2 flex flex-col gap-1">
             {hasDiscount && (
-              <Badge className="bg-red-500 text-white font-bold shadow-lg">
+              <Badge className="bg-anaqati-danger text-white font-bold shadow-lg">
                 -{product.discount_percentage}%
               </Badge>
             )}
             {isOutOfStock && (
-              <Badge variant="destructive" className="shadow-lg">
+              <Badge variant="destructive" className="shadow-lg bg-anaqati-danger">
                 نفذت الكمية
               </Badge>
             )}
             {!isOutOfStock && product.stock <= 5 && (
-              <Badge className="bg-orange-500 text-white shadow-lg">
+              <Badge className="bg-anaqati-warning text-white shadow-lg">
                 <TrendingUp className="w-3 h-3 mr-1" />
                 {product.stock} متبقي
               </Badge>
@@ -178,13 +178,13 @@ export const StorefrontProductCard = ({
         <CardContent className="p-4 space-y-2">
           {/* Category */}
           {product.category && (
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">
+            <p className="text-xs text-anaqati-text-secondary uppercase tracking-wide">
               {product.category}
             </p>
           )}
 
           {/* Title */}
-          <h3 className="font-semibold text-sm md:text-base line-clamp-2 min-h-[2.5rem] group-hover:text-primary transition-colors">
+          <h3 className="font-semibold text-sm md:text-base line-clamp-2 min-h-[2.5rem] text-anaqati-text group-hover:text-primary transition-colors">
             {product.title}
           </h3>
 
@@ -224,7 +224,7 @@ export const StorefrontProductCard = ({
                 {product.price_sar.toFixed(2)} ر.س
               </span>
               {hasDiscount && (
-                <span className="text-xs text-muted-foreground line-through">
+                <span className="text-xs text-anaqati-text-secondary line-through">
                   {(product.price_sar / (1 - (product.discount_percentage ?? 0) / 100)).toFixed(2)} ر.س
                 </span>
               )}
