@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Sparkles, Copy, Loader2, FileText, Share2, Mail, Search, Megaphone } from 'lucide-react';
 
@@ -26,6 +25,8 @@ const contentTypes = [
   { id: 'ad_copy', label: 'نص إعلاني', icon: Megaphone },
 ];
 
+const CONTENT_GEN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-content-generator`;
+
 export function AIContentGenerator({ productContext, onContentGenerated }: AIContentGeneratorProps) {
   const [selectedType, setSelectedType] = useState('product_description');
   const [customPrompt, setCustomPrompt] = useState('');
@@ -35,6 +36,8 @@ export function AIContentGenerator({ productContext, onContentGenerated }: AICon
 
   const handleGenerate = async () => {
     setIsLoading(true);
+    setGeneratedContent('');
+    
     try {
       const context = {
         ...productContext,
@@ -44,11 +47,20 @@ export function AIContentGenerator({ productContext, onContentGenerated }: AICon
         productName: productContext?.name,
       };
 
-      const { data, error } = await supabase.functions.invoke('ai-content-generator', {
-        body: { type: selectedType, context }
+      const response = await fetch(CONTENT_GEN_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ type: selectedType, context })
       });
 
-      if (error) throw error;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'فشل في توليد المحتوى');
+      }
 
       setGeneratedContent(data.content);
       onContentGenerated?.(data.content, selectedType);

@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Bot, 
@@ -35,6 +34,8 @@ interface UnifiedAIAssistantProps {
   floating?: boolean;
 }
 
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-assistant`;
+
 export function UnifiedAIAssistant({ 
   context = 'customer', 
   storeInfo, 
@@ -50,7 +51,6 @@ export function UnifiedAIAssistant({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Add welcome message based on context
     const welcomeMessages: Record<string, string> = {
       marketer: 'مرحباً! أنا مساعدك الذكي. يمكنني مساعدتك في إدارة متجرك، كتابة المحتوى، وتحليل الأداء. كيف يمكنني مساعدتك؟',
       customer: `مرحباً بك في ${storeInfo?.store_name || 'متجرنا'}! كيف يمكنني مساعدتك اليوم؟`,
@@ -81,82 +81,123 @@ export function UnifiedAIAssistant({
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    const allMessages = [...messages, userMessage];
+    setMessages(allMessages);
     setInput('');
     setIsLoading(true);
 
+    // Add empty assistant message for streaming
+    const assistantMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      role: 'assistant',
+      content: '',
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, assistantMessage]);
+
     try {
-      const endpoint = context === 'customer' ? 'ai-chat' : 'chat-assistant';
-      
-      const { data, error } = await supabase.functions.invoke(endpoint, {
-        body: { 
-          messages: [...messages, userMessage].map(m => ({
+      const response = await fetch(CHAT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          messages: allMessages.filter(m => m.id !== '1').map(m => ({
             role: m.role,
             content: m.content
-          })),
-          storeInfo,
-          products
-        }
+          }))
+        })
       });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'فشل في الاتصال');
+      }
 
-      // Handle streaming response
-      if (data?.body) {
-        const reader = data.body.getReader();
-        const decoder = new TextDecoder();
-        let assistantContent = '';
+      if (!response.body) {
+        throw new Error('لا يوجد استجابة');
+      }
 
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: '',
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, assistantMessage]);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantContent = '';
+      let buffer = '';
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n');
+        buffer += decoder.decode(value, { stream: true });
+        
+        let newlineIndex;
+        while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
+          let line = buffer.slice(0, newlineIndex);
+          buffer = buffer.slice(newlineIndex + 1);
 
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const jsonStr = line.slice(6).trim();
-              if (jsonStr === '[DONE]') continue;
-              
-              try {
-                const parsed = JSON.parse(jsonStr);
-                const content = parsed.choices?.[0]?.delta?.content;
-                if (content) {
-                  assistantContent += content;
-                  setMessages(prev => 
-                    prev.map(m => 
-                      m.id === assistantMessage.id 
-                        ? { ...m, content: assistantContent }
-                        : m
-                    )
-                  );
-                }
-              } catch (e) {
-                // Ignore parse errors for partial chunks
-              }
+          if (line.endsWith('\r')) line = line.slice(0, -1);
+          if (line.startsWith(':') || line.trim() === '') continue;
+          if (!line.startsWith('data: ')) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === '[DONE]') continue;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantContent += content;
+              setMessages(prev => 
+                prev.map(m => 
+                  m.id === assistantMessage.id 
+                    ? { ...m, content: assistantContent }
+                    : m
+                )
+              );
             }
+          } catch {
+            // Incomplete JSON, put back in buffer
+            buffer = line + '\n' + buffer;
+            break;
           }
         }
       }
+
+      // Final flush
+      if (buffer.trim()) {
+        for (let raw of buffer.split('\n')) {
+          if (!raw || raw.startsWith(':')) continue;
+          if (!raw.startsWith('data: ')) continue;
+          const jsonStr = raw.slice(6).trim();
+          if (jsonStr === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantContent += content;
+            }
+          } catch { /* ignore */ }
+        }
+        if (assistantContent) {
+          setMessages(prev => 
+            prev.map(m => 
+              m.id === assistantMessage.id 
+                ? { ...m, content: assistantContent }
+                : m
+            )
+          );
+        }
+      }
+
     } catch (error: any) {
       console.error('Error sending message:', error);
-      toast.error('فشل في إرسال الرسالة');
+      toast.error(error.message || 'فشل في إرسال الرسالة');
       
-      setMessages(prev => [...prev, {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: 'عذراً، حدث خطأ. الرجاء المحاولة مرة أخرى.',
-        timestamp: new Date()
-      }]);
+      setMessages(prev => prev.map(m => 
+        m.id === assistantMessage.id 
+          ? { ...m, content: 'عذراً، حدث خطأ. الرجاء المحاولة مرة أخرى.' }
+          : m
+      ));
     } finally {
       setIsLoading(false);
       inputRef.current?.focus();
@@ -244,13 +285,13 @@ export function UnifiedAIAssistant({
                       ? 'bg-primary text-primary-foreground' 
                       : 'bg-muted'
                   }`}>
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    <p className="text-sm whitespace-pre-wrap">{message.content || '...'}</p>
                   </div>
                 </motion.div>
               ))}
             </AnimatePresence>
 
-            {isLoading && (
+            {isLoading && messages[messages.length - 1]?.content === '' && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
