@@ -15,7 +15,7 @@ export const HomeAuthCard: React.FC<HomeAuthCardProps> = ({ onNavigate }) => {
       transition={{ delay: 0.4 }}
       className="text-center"
     >
-      <div className="max-w-md mx-auto bg-card rounded-2xl border border-border/50 p-8">
+      <div className="max-w-md mx-auto bg-white rounded-2xl border border-anaqati-border p-8 shadow-anaqati">
         {/* Icon */}
         <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
           <Sparkles className="w-7 h-7 text-primary" />

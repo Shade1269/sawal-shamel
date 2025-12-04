@@ -17,7 +17,7 @@ export const HomeDashboardCard: React.FC<HomeDashboardCardProps> = ({ onClick })
     >
       <div 
         onClick={onClick}
-        className="bg-card rounded-2xl border border-border/50 p-8 hover:border-primary/30 hover:shadow-xl transition-all duration-300 cursor-pointer"
+        className="bg-white rounded-2xl border border-anaqati-border p-8 hover:border-primary/40 shadow-anaqati hover:shadow-anaqati-hover transition-all duration-300 cursor-pointer"
       >
         <div className="flex flex-col md:flex-row items-center gap-6">
           {/* Icon */}

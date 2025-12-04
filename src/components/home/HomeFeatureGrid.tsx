@@ -69,7 +69,7 @@ const AffiliateStoreCard: React.FC<{
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-card rounded-xl border border-border/50 p-6 hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+      className="bg-white rounded-xl border border-anaqati-border p-6 hover:border-primary/40 shadow-anaqati hover:shadow-anaqati-hover transition-all duration-300"
     >
       {/* Icon */}
       <div className="w-14 h-14 rounded-xl bg-secondary/20 flex items-center justify-center mb-5">
@@ -130,7 +130,7 @@ const CommunityCard: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-card rounded-xl border border-border/50 p-6 hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+      className="bg-white rounded-xl border border-anaqati-border p-6 hover:border-primary/40 shadow-anaqati hover:shadow-anaqati-hover transition-all duration-300"
     >
       {/* Icon */}
       <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
