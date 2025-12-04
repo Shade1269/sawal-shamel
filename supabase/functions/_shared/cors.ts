@@ -9,8 +9,22 @@ const ALLOWED_ORIGINS = [
   'https://sawal-shamel.lovable.app',
   'http://localhost:8080',
   'http://localhost:5173', // Vite dev server
-  // أضف نطاقك الخاص هنا
 ];
+
+/**
+ * التحقق إذا كان origin مسموح
+ */
+function isAllowedOrigin(origin: string): boolean {
+  if (!origin) return false;
+  
+  // السماح لكل نطاقات lovable.app (بما في ذلك preview)
+  if (origin.endsWith('.lovable.app') || origin.includes('lovable.app')) {
+    return true;
+  }
+  
+  // السماح للنطاقات في القائمة
+  return ALLOWED_ORIGINS.includes(origin);
+}
 
 /**
  * الحصول على CORS headers الآمنة بناءً على origin
@@ -19,7 +33,7 @@ export function getCorsHeaders(request: Request): Record<string, string> {
   const origin = request.headers.get('origin') || '';
 
   // التحقق إذا كان origin مسموح
-  const allowedOrigin = ALLOWED_ORIGINS.includes(origin)
+  const allowedOrigin = isAllowedOrigin(origin)
     ? origin
     : ALLOWED_ORIGINS[0]; // fallback إلى أول نطاق
 
