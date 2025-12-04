@@ -1,0 +1,240 @@
+/* ============================================
+   Olive Gold Theme - عصري ونظيف
+   زيتي + ذهبي | Minimalist & Clean
+   ============================================ */
+
+html[data-theme="olive-gold"] {
+  /* === Core Palette === */
+  /* Olive (زيتي) - اللون الأساسي */
+  --olive-50: 84 25% 95%;
+  --olive-100: 84 22% 88%;
+  --olive-200: 84 20% 75%;
+  --olive-300: 84 18% 55%;
+  --olive-400: 84 22% 42%;
+  --olive-500: 84 25% 32%;
+  --olive-600: 84 28% 25%;
+  --olive-700: 84 30% 18%;
+  --olive-800: 84 32% 12%;
+  --olive-900: 84 35% 8%;
+
+  /* Gold (ذهبي) - اللون الثانوي */
+  --gold-50: 45 70% 96%;
+  --gold-100: 45 65% 88%;
+  --gold-200: 45 60% 75%;
+  --gold-300: 45 55% 60%;
+  --gold-400: 42 58% 50%;
+  --gold-500: 40 65% 45%;
+  --gold-600: 38 70% 38%;
+  --gold-700: 36 75% 30%;
+  --gold-800: 34 80% 22%;
+  --gold-900: 32 85% 15%;
+
+  /* === Base Colors === */
+  --background-hsl: 60 10% 98%;
+  --foreground-hsl: 84 30% 12%;
+  --primary-hsl: 84 25% 32%;
+  --primary-foreground-hsl: 60 10% 98%;
+  --secondary-hsl: 42 58% 50%;
+  --secondary-foreground-hsl: 84 30% 12%;
+  --accent-hsl: 40 65% 45%;
+  --accent-foreground-hsl: 60 10% 98%;
+  --muted-hsl: 60 8% 93%;
+  --muted-foreground-hsl: 84 15% 45%;
+  --success-hsl: 142 55% 42%;
+  --warning-hsl: 42 90% 50%;
+  --danger-hsl: 0 72% 52%;
+  --info-hsl: 200 85% 50%;
+  --border-hsl: 60 12% 88%;
+  --card-hsl: 0 0% 100%;
+  --card-foreground-hsl: 84 30% 12%;
+  --popover-hsl: 0 0% 100%;
+  --popover-foreground-hsl: 84 30% 12%;
+  --chat-bg-hsl: 60 10% 98%;
+  --chat-sent-hsl: 84 25% 32%;
+  --chat-received-hsl: 60 8% 93%;
+  --status-online-hsl: 142 55% 42%;
+  --status-offline-hsl: 84 10% 55%;
+
+  /* === Actual Color Tokens === */
+  --background: hsl(var(--background-hsl));
+  --foreground: hsl(var(--foreground-hsl));
+  --primary: hsl(var(--primary-hsl));
+  --primary-fg: hsl(var(--primary-foreground-hsl));
+  --secondary: hsl(var(--secondary-hsl));
+  --secondary-fg: hsl(var(--secondary-foreground-hsl));
+  --accent: hsl(var(--accent-hsl));
+  --accent-fg: hsl(var(--accent-foreground-hsl));
+  --muted: hsl(var(--muted-hsl));
+  --muted-foreground: hsl(var(--muted-foreground-hsl));
+  --success: hsl(var(--success-hsl));
+  --warning: hsl(var(--warning-hsl));
+  --danger: hsl(var(--danger-hsl));
+  --info: hsl(var(--info-hsl));
+  --border: hsl(var(--border-hsl));
+  --card: hsl(var(--card-hsl));
+  --card-foreground: hsl(var(--card-foreground-hsl));
+  --popover: hsl(var(--popover-hsl));
+  --popover-foreground: hsl(var(--popover-foreground-hsl));
+  --chat-bg: hsl(var(--chat-bg-hsl));
+  --chat-sent: hsl(var(--chat-sent-hsl));
+  --chat-received: hsl(var(--chat-received-hsl));
+  --status-online: hsl(var(--status-online-hsl));
+  --status-offline: hsl(var(--status-offline-hsl));
+  --destructive: var(--danger);
+  --destructive-foreground: var(--foreground);
+
+  /* === Extended Palette === */
+  --luxury-hsl: var(--gold-600);
+  --luxury: hsl(var(--luxury-hsl));
+  --luxury-foreground-hsl: 0 0% 100%;
+  --luxury-foreground: hsl(var(--luxury-foreground-hsl));
+  --premium-hsl: var(--gold-500);
+  --premium: hsl(var(--premium-hsl));
+  --premium-foreground-hsl: 0 0% 100%;
+  --premium-foreground: hsl(var(--premium-foreground-hsl));
+  --persian-hsl: var(--olive-600);
+  --persian: hsl(var(--persian-hsl));
+  --persian-foreground-hsl: 0 0% 100%;
+  --persian-foreground: hsl(var(--persian-foreground-hsl));
+  --turquoise-hsl: 168 55% 40%;
+  --turquoise: hsl(var(--turquoise-hsl));
+  --turquoise-foreground-hsl: 0 0% 100%;
+  --turquoise-foreground: hsl(var(--turquoise-foreground-hsl));
+  --bronze-hsl: var(--gold-700);
+  --bronze: hsl(var(--bronze-hsl));
+  --bronze-foreground-hsl: 0 0% 100%;
+  --bronze-foreground: hsl(var(--bronze-foreground-hsl));
+  --olive-hsl: var(--olive-500);
+  --olive: hsl(var(--olive-hsl));
+  --olive-foreground-hsl: 0 0% 100%;
+  --olive-foreground: hsl(var(--olive-foreground-hsl));
+  --coral-hsl: 16 70% 58%;
+  --coral: hsl(var(--coral-hsl));
+  --coral-foreground-hsl: 0 0% 100%;
+  --coral-foreground: hsl(var(--coral-foreground-hsl));
+  --pearl-hsl: 45 30% 95%;
+  --pearl: hsl(var(--pearl-hsl));
+  --pearl-foreground-hsl: 84 30% 15%;
+  --pearl-foreground: hsl(var(--pearl-foreground-hsl));
+  --jasmine-hsl: var(--gold-200);
+  --jasmine: hsl(var(--jasmine-hsl));
+  --jasmine-foreground-hsl: 84 30% 15%;
+  --jasmine-foreground: hsl(var(--jasmine-foreground-hsl));
+
+  /* === Glass & Surface Tokens === */
+  --bg: var(--background);
+  --fg: var(--foreground);
+  --surface: hsla(0, 0%, 100%, 0.95);
+  --surface-2: hsla(60, 8%, 96%, 0.98);
+  --glass-border: hsla(84, 15%, 70%, 0.25);
+  --shadow-glass-soft: 0 4px 24px hsla(84, 20%, 20%, 0.06);
+  --shadow-glass-strong: 0 8px 40px hsla(84, 20%, 20%, 0.1);
+  --glass-bg: var(--surface);
+  --glass-bg-strong: var(--surface-2);
+  --glass-fg: var(--fg);
+  --glass-backdrop: hsl(var(--background-hsl) / 0.85);
+
+  /* === Spacing Scale === */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+
+  /* === Radii === */
+  --radius-xs: 0.25rem;
+  --radius-s: 0.375rem;
+  --radius-m: 0.5rem;
+  --radius-l: 0.75rem;
+  --radius-xl: 1rem;
+  --radius: var(--radius-m);
+  --radius-sm: var(--radius-s);
+  --radius-md: var(--radius-m);
+  --radius-lg: var(--radius-l);
+
+  /* === Typography === */
+  --font-sans: 'Noto Sans Arabic', 'Inter', system-ui, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-line-height: 1.6;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;
+
+  /* === Interaction States === */
+  --state-hover-bg: hsla(84, 25%, 32%, 0.06);
+  --state-active-bg: hsla(84, 25%, 32%, 0.12);
+  --state-focus-ring: hsla(84, 25%, 32%, 0.35);
+  --state-disabled-bg: hsla(60, 8%, 93%, 0.8);
+  --state-disabled-fg: hsla(84, 15%, 45%, 0.5);
+  --state-disabled-border: hsla(60, 12%, 88%, 0.6);
+
+  /* === Sidebar === */
+  --sidebar-bg: 60 10% 98%;
+  --sidebar-text: 84 30% 12%;
+  --sidebar-text-secondary: 84 15% 45%;
+  --sidebar-hover: 84 20% 95%;
+  --sidebar-active: 84 25% 32%;
+  --sidebar-active-glow: 42 58% 50%;
+  --sidebar-border: 60 12% 88%;
+}
+
+/* Apply to body */
+html[data-theme="olive-gold"] body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* === Dark Mode === */
+html[data-theme="olive-gold"].dark {
+  color-scheme: dark;
+
+  --background-hsl: 84 25% 8%;
+  --foreground-hsl: 60 15% 95%;
+  --primary-hsl: 84 30% 50%;
+  --primary-foreground-hsl: 84 25% 8%;
+  --secondary-hsl: 42 60% 55%;
+  --secondary-foreground-hsl: 84 25% 8%;
+  --accent-hsl: 40 65% 50%;
+  --accent-foreground-hsl: 84 25% 8%;
+  --muted-hsl: 84 20% 15%;
+  --muted-foreground-hsl: 60 10% 65%;
+  --border-hsl: 84 15% 20%;
+  --card-hsl: 84 22% 12%;
+  --card-foreground-hsl: 60 15% 95%;
+  --popover-hsl: 84 22% 12%;
+  --popover-foreground-hsl: 60 15% 95%;
+  --chat-bg-hsl: 84 25% 8%;
+  --chat-sent-hsl: 84 30% 50%;
+  --chat-received-hsl: 84 20% 15%;
+
+  --surface: hsla(84, 22%, 14%, 0.92);
+  --surface-2: hsla(84, 20%, 18%, 0.95);
+  --glass-border: hsla(84, 15%, 35%, 0.3);
+  --shadow-glass-soft: 0 8px 32px hsla(84, 30%, 5%, 0.4);
+  --shadow-glass-strong: 0 16px 48px hsla(84, 30%, 5%, 0.5);
+  --glass-backdrop: hsl(84 25% 8% / 0.85);
+
+  --state-hover-bg: hsla(60, 15%, 95%, 0.08);
+  --state-active-bg: hsla(60, 15%, 95%, 0.15);
+  --state-focus-ring: hsla(84, 30%, 50%, 0.4);
+  --state-disabled-bg: hsla(84, 20%, 15%, 0.7);
+  --state-disabled-fg: hsla(60, 10%, 65%, 0.5);
+  --state-disabled-border: hsla(84, 15%, 20%, 0.5);
+
+  --sidebar-bg: 84 22% 10%;
+  --sidebar-text: 60 15% 95%;
+  --sidebar-text-secondary: 60 10% 65%;
+  --sidebar-hover: 84 20% 14%;
+  --sidebar-active: 84 30% 50%;
+  --sidebar-active-glow: 42 60% 55%;
+  --sidebar-border: 84 15% 18%;
+}

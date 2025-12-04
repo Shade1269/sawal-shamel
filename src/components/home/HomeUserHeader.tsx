@@ -19,49 +19,45 @@ export const HomeUserHeader = ({
   onSignOut
 }: HomeUserHeaderProps) => {
   return (
-    <div className="border-b glass-card-strong border-border/20 shadow-soft">
-      <div className="container mx-auto px-4 py-4">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+      <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 glass-button px-4 py-2 rounded-xl border border-border/30 shadow-soft">
-            <User className="h-5 w-5 text-primary animate-float" />
-            <span className="text-base font-semibold text-primary">
-              مرحباً، {userName}
+          {/* User Info */}
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-lg">
+            <User className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium text-foreground">
+              {userName}
             </span>
           </div>
           
-          <div className="flex items-center gap-3">
+          {/* Actions */}
+          <div className="flex items-center gap-2">
             <UnifiedButton
               variant="ghost"
               size="sm"
               onClick={onLanguageToggle}
-              className="gap-2 interactive-scale glass-button border border-border/20"
             >
               <Languages className="h-4 w-4" />
-              {language === 'ar' ? 'EN' : 'AR'}
             </UnifiedButton>
             
             <UnifiedButton
               variant="ghost"
               size="sm"
               onClick={onDarkModeToggle}
-              className="gap-2 interactive-scale glass-button border border-border/20"
             >
               {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              {isDarkMode ? 'نهاري' : 'ليلي'}
             </UnifiedButton>
             
             <UnifiedButton
               variant="ghost"
               size="sm"
               onClick={onSignOut}
-              className="gap-2 interactive-scale glass-button border border-border/20"
             >
               <LogOut className="h-4 w-4" />
-              تسجيل خروج
             </UnifiedButton>
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
