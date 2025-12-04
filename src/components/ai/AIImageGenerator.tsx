@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { ImageIcon, Loader2, Download, Sparkles } from 'lucide-react';
 
@@ -19,6 +18,8 @@ const imageStyles = [
   { id: 'social', label: 'سوشيال ميديا' },
 ];
 
+const IMAGE_GEN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-image-generator`;
+
 export function AIImageGenerator({ onImageGenerated }: AIImageGeneratorProps) {
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState('professional');
@@ -32,16 +33,31 @@ export function AIImageGenerator({ onImageGenerated }: AIImageGeneratorProps) {
     }
 
     setIsLoading(true);
+    setGeneratedImage(null);
+    
     try {
-      const { data, error } = await supabase.functions.invoke('ai-image-generator', {
-        body: { prompt, style }
+      const response = await fetch(IMAGE_GEN_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ prompt, style })
       });
 
-      if (error) throw error;
+      const data = await response.json();
 
-      setGeneratedImage(data.imageUrl);
-      onImageGenerated?.(data.imageUrl);
-      toast.success('تم توليد الصورة بنجاح');
+      if (!response.ok) {
+        throw new Error(data.error || 'فشل في توليد الصورة');
+      }
+
+      if (data.imageUrl) {
+        setGeneratedImage(data.imageUrl);
+        onImageGenerated?.(data.imageUrl);
+        toast.success('تم توليد الصورة بنجاح');
+      } else {
+        throw new Error('لم يتم توليد الصورة');
+      }
     } catch (error: any) {
       console.error('Error generating image:', error);
       toast.error(error.message || 'فشل في توليد الصورة');

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { 
   Brain, 
@@ -27,6 +26,8 @@ const analysisTypes = [
   { id: 'forecast', label: 'التوقعات', icon: LineChart },
 ];
 
+const ANALYTICS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-analytics`;
+
 export function AIAnalyticsDashboard({ storeId }: AIAnalyticsDashboardProps) {
   const [selectedType, setSelectedType] = useState('sales_analysis');
   const [analysis, setAnalysis] = useState<string | null>(null);
@@ -35,12 +36,23 @@ export function AIAnalyticsDashboard({ storeId }: AIAnalyticsDashboardProps) {
 
   const handleAnalyze = async () => {
     setIsLoading(true);
+    setAnalysis(null);
+    
     try {
-      const { data, error } = await supabase.functions.invoke('ai-analytics', {
-        body: { type: selectedType, storeId }
+      const response = await fetch(ANALYTICS_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ type: selectedType, storeId })
       });
 
-      if (error) throw error;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'فشل في إنشاء التحليل');
+      }
 
       setAnalysis(data.analysis);
       setDataPoints(data.dataPoints);
