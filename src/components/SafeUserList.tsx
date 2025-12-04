@@ -9,7 +9,6 @@ interface SafeProfile {
   avatar_url: string | null;
   role: string;
   is_active: boolean;
-  points: number;
   created_at: string;
 }
 
@@ -38,7 +37,7 @@ export const SafeUserList: React.FC<SafeUserListProps> = ({
       // Use the safe_profiles view to get only non-sensitive data
       const { data, error } = await supabase
         .from('safe_profiles')
-        .select('id, full_name, avatar_url, role, is_active, points, created_at')
+        .select('id, full_name, avatar_url, role, is_active, created_at')
         .eq('is_active', true)
         .order('created_at', { ascending: false })
         .limit(limit);
@@ -78,7 +77,7 @@ export const SafeUserList: React.FC<SafeUserListProps> = ({
                 </Badge>
               )}
               {showPoints && (
-                <span>{user.points} نقطة</span>
+                <span>0 نقطة</span>
               )}
             </div>
           </div>
