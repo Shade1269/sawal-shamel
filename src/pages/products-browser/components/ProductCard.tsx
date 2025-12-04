@@ -29,9 +29,9 @@ export function ProductCard({
   onViewDetails,
 }: ProductCardProps) {
   return (
-    <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-luxury transition-all duration-300 group overflow-hidden">
+    <Card className="bg-white border border-anaqati-border rounded-xl shadow-anaqati hover:shadow-anaqati-hover transition-all duration-300 group overflow-hidden">
       {/* صورة المنتج */}
-      <div className="relative aspect-square overflow-hidden">
+      <div className="relative aspect-square overflow-hidden bg-anaqati-product-bg rounded-t-xl">
         <img
           src={
             (Array.isArray(product.images) && product.images[0]?.url) ||
@@ -74,18 +74,18 @@ export function ProductCard({
       <CardContent className="p-4">
         <div className="space-y-3">
           <div>
-            <h3 className="font-semibold mb-1 line-clamp-1">{product.title}</h3>
-            <p className="text-sm text-muted-foreground line-clamp-2">{product.description}</p>
+            <h3 className="font-semibold mb-1 line-clamp-1 text-anaqati-text">{product.title}</h3>
+            <p className="text-sm text-anaqati-text-secondary line-clamp-2">{product.description}</p>
           </div>
 
           <div className="flex items-center justify-between">
             <div>
               <div className="text-xl font-bold text-primary">{product.price_sar} ريال</div>
-              <div className="text-xs text-muted-foreground">
+              <div className="text-xs text-anaqati-text-secondary">
                 العمولة: {product.merchants?.default_commission_rate || 10}%
               </div>
             </div>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs border-anaqati-border">
               {product.category}
             </Badge>
           </div>
