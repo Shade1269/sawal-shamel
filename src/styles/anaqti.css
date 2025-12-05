@@ -1,43 +1,44 @@
 /* Anaqti Design System - Matching Design Guide */
+/* Updated to use design system tokens for theme support */
 
 :root {
   /* Primary Colors */
-  --anaqti-burgundy: #5A2647;
-  --anaqti-burgundy-hover: #743366;
-  --anaqti-burgundy-active: #401132;
+  --anaqti-burgundy: hsl(var(--primary));
+  --anaqti-burgundy-hover: hsl(var(--primary) / 0.8);
+  --anaqti-burgundy-active: hsl(var(--primary) / 0.9);
   
   /* Secondary - Pink */
-  --anaqti-pink: #F4C2C2;
-  --anaqti-pink-light: #FBECEC;
-  --anaqti-pink-hover: #EDB3B3;
+  --anaqti-pink: hsl(var(--secondary));
+  --anaqti-pink-light: hsl(var(--secondary) / 0.4);
+  --anaqti-pink-hover: hsl(var(--secondary) / 0.7);
   
   /* Accent - Gold */
-  --anaqti-gold: #C89B3C;
-  --anaqti-gold-light: #D4AF4F;
+  --anaqti-gold: hsl(var(--accent));
+  --anaqti-gold-light: hsl(var(--accent) / 0.7);
   
   /* Background */
-  --anaqti-bg: #FDF8F6;
-  --anaqti-bg-warm: #FFF3EF;
-  --anaqti-card: #FFFFFF;
+  --anaqti-bg: hsl(var(--background));
+  --anaqti-bg-warm: hsl(var(--muted));
+  --anaqti-card: hsl(var(--card));
   
   /* Text */
-  --anaqti-text: #2F2B2C;
-  --anaqti-text-secondary: #7B6E70;
+  --anaqti-text: hsl(var(--foreground));
+  --anaqti-text-secondary: hsl(var(--muted-foreground));
   
   /* Borders */
-  --anaqti-border: #E6D8D3;
+  --anaqti-border: hsl(var(--border));
   
-  /* Shadows */
-  --anaqti-shadow: 0 4px 24px rgba(90, 38, 71, 0.06);
-  --anaqti-shadow-hover: 0 8px 40px rgba(90, 38, 71, 0.1);
-  --anaqti-shadow-gold: 0 4px 20px rgba(200, 155, 60, 0.2);
-  --anaqti-shadow-pink: 0 4px 20px rgba(244, 194, 194, 0.3);
+  /* Shadows - Using CSS var for primary color */
+  --anaqti-shadow: var(--shadow-glass-soft, 0 4px 24px rgba(90, 38, 71, 0.06));
+  --anaqti-shadow-hover: var(--shadow-glass-strong, 0 8px 40px rgba(90, 38, 71, 0.1));
+  --anaqti-shadow-gold: 0 4px 20px hsl(var(--accent) / 0.2);
+  --anaqti-shadow-pink: 0 4px 20px hsl(var(--secondary) / 0.3);
 }
 
 /* Utility Classes */
 .anaqti-card {
-  background: var(--anaqti-card);
-  border: 1px solid var(--anaqti-border);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   box-shadow: var(--anaqti-shadow);
   border-radius: 1rem;
   transition: all 0.3s ease;
@@ -45,11 +46,11 @@
 
 .anaqti-card:hover {
   box-shadow: var(--anaqti-shadow-hover);
-  border-color: rgba(90, 38, 71, 0.2);
+  border-color: hsl(var(--primary) / 0.2);
 }
 
 .anaqti-gradient-title {
-  background: linear-gradient(135deg, var(--anaqti-burgundy), var(--anaqti-gold));
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -61,17 +62,23 @@
   gap: 0.5rem;
   border-radius: 999px;
   padding: 0.35rem 0.9rem;
-  background: var(--anaqti-pink-light);
-  color: var(--anaqti-burgundy);
+  background: hsl(var(--secondary) / 0.3);
+  color: hsl(var(--primary));
   font-weight: 600;
 }
 
 .anaqti-muted {
-  color: var(--anaqti-text-secondary);
+  color: hsl(var(--muted-foreground));
 }
 
 .anaqti-section-title {
   font-weight: 800;
   letter-spacing: -0.01em;
-  color: var(--anaqti-text);
+  color: hsl(var(--foreground));
+}
+
+/* Anaqti Skin - Applied to body */
+.anaqti-skin {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
