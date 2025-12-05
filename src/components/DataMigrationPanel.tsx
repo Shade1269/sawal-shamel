@@ -229,7 +229,7 @@ const DataMigrationPanel = () => {
   const getStatusBadge = (status: MigrationResult | null) => {
     if (!status) return <UnifiedBadge variant="secondary">في الانتظار</UnifiedBadge>;
     if (status.success) {
-      return <UnifiedBadge variant="success" className="bg-green-500">تم النقل ({status.count}/{status.total})</UnifiedBadge>;
+      return <UnifiedBadge variant="success" className="bg-success">تم النقل ({status.count}/{status.total})</UnifiedBadge>;
     }
     return <UnifiedBadge variant="error">فشل</UnifiedBadge>;
   };
@@ -237,9 +237,9 @@ const DataMigrationPanel = () => {
   const getStatusIcon = (status: MigrationResult | null) => {
     if (!status) return null;
     if (status.success) {
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
+      return <CheckCircle className="h-4 w-4 text-success" />;
     }
-    return <AlertCircle className="h-4 w-4 text-red-500" />;
+    return <AlertCircle className="h-4 w-4 text-destructive" />;
   };
 
   return (
@@ -326,10 +326,10 @@ const DataMigrationPanel = () => {
           </div>
 
           {/* Warning */}
-          <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+          <div className="p-4 bg-warning/10 rounded-lg border border-warning/30">
             <div className="flex items-start gap-2">
-              <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-yellow-800 dark:text-yellow-200">
+              <AlertCircle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-foreground">
                 <p className="font-medium mb-1">تحذير مهم:</p>
                 <ul className="space-y-1">
                   <li>• تأكد من وجود اتصال مستقر بالإنترنت</li>

@@ -47,32 +47,32 @@ export const AdvancedMarketingDashboard: React.FC = () => {
       value: activeCampaigns,
       icon: Target,
       description: 'حملة تسويقية فعالة',
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
+      color: 'text-info',
+      bgColor: 'bg-info/10'
     },
     {
       title: 'العملاء المؤهلون',
       value: qualifiedLeads,
       icon: Users,
       description: 'عميل محتمل مؤهل',
-      color: 'text-green-600',
-      bgColor: 'bg-green-50'
+      color: 'text-success',
+      bgColor: 'bg-success/10'
     },
     {
       title: 'المحفزات النشطة',
       value: activeTriggers,
       icon: Zap,
       description: 'محفز سلوكي فعال',
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50'
+      color: 'text-premium',
+      bgColor: 'bg-premium/10'
     },
     {
       title: 'رؤى تنبؤية',
       value: recentInsights,
       icon: Brain,
       description: 'رؤية تنبؤية حديثة',
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50'
+      color: 'text-warning',
+      bgColor: 'bg-warning/10'
     }
   ];
 
@@ -241,13 +241,13 @@ export const AdvancedMarketingDashboard: React.FC = () => {
                   <p className="text-sm text-muted-foreground">إجمالي الرسائل المرسلة</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-2xl font-bold text-success">
                     {campaigns.reduce((acc, c) => acc + c.stats.opened, 0)}
                   </p>
                   <p className="text-sm text-muted-foreground">الرسائل المفتوحة</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-blue-600">
+                  <p className="text-2xl font-bold text-info">
                     {campaigns.reduce((acc, c) => acc + c.stats.converted, 0)}
                   </p>
                   <p className="text-sm text-muted-foreground">التحويلات</p>

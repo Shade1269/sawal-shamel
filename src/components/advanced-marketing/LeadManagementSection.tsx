@@ -87,11 +87,11 @@ export const LeadManagementSection: React.FC = () => {
 
   const getStatusColor = (status: Lead['lead_status']) => {
     const colors = {
-      new: 'bg-blue-100 text-blue-800',
-      contacted: 'bg-yellow-100 text-yellow-800',
-      qualified: 'bg-green-100 text-green-800',
-      converted: 'bg-purple-100 text-purple-800',
-      lost: 'bg-red-100 text-red-800'
+      new: 'bg-info/10 text-info',
+      contacted: 'bg-warning/10 text-warning',
+      qualified: 'bg-success/10 text-success',
+      converted: 'bg-premium/10 text-premium',
+      lost: 'bg-destructive/10 text-destructive'
     };
     return colors[status];
   };
@@ -119,9 +119,9 @@ export const LeadManagementSection: React.FC = () => {
 
   const getInterestColor = (level: Lead['interest_level']) => {
     const colors = {
-      low: 'text-gray-600',
-      medium: 'text-blue-600',
-      high: 'text-red-600'
+      low: 'text-muted-foreground',
+      medium: 'text-info',
+      high: 'text-destructive'
     };
     return colors[level];
   };
@@ -264,25 +264,25 @@ export const LeadManagementSection: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-blue-600">{leadStats.new}</p>
+            <p className="text-2xl font-bold text-info">{leadStats.new}</p>
             <p className="text-sm text-muted-foreground">عملاء جدد</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-green-600">{leadStats.qualified}</p>
+            <p className="text-2xl font-bold text-success">{leadStats.qualified}</p>
             <p className="text-sm text-muted-foreground">عملاء مؤهلون</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-purple-600">{leadStats.converted}</p>
+            <p className="text-2xl font-bold text-premium">{leadStats.converted}</p>
             <p className="text-sm text-muted-foreground">تحويلات</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-orange-600">{leadStats.avgScore}</p>
+            <p className="text-2xl font-bold text-warning">{leadStats.avgScore}</p>
             <p className="text-sm text-muted-foreground">متوسط النقاط</p>
           </CardContent>
         </Card>

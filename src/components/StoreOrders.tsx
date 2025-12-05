@@ -48,12 +48,12 @@ const formatDate = (dateString: string) => {
 };
 
 const statusColors = {
-  'PENDING': 'bg-yellow-100 text-yellow-800',
-  'CONFIRMED': 'bg-blue-100 text-blue-800',
-  'PROCESSING': 'bg-purple-100 text-purple-800',
-  'SHIPPED': 'bg-indigo-100 text-indigo-800',
-  'DELIVERED': 'bg-green-100 text-green-800',
-  'CANCELLED': 'bg-red-100 text-red-800'
+  'PENDING': 'bg-warning/10 text-warning',
+  'CONFIRMED': 'bg-info/10 text-info',
+  'PROCESSING': 'bg-premium/10 text-premium',
+  'SHIPPED': 'bg-primary/10 text-primary',
+  'DELIVERED': 'bg-success/10 text-success',
+  'CANCELLED': 'bg-destructive/10 text-destructive'
 };
 
 const statusLabels = {
@@ -127,8 +127,8 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Package className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-info/10 rounded-lg">
+                <Package className="h-5 w-5 text-info" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">إجمالي الطلبات</p>
@@ -141,8 +141,8 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <DollarSign className="h-5 w-5 text-green-600" />
+              <div className="p-2 bg-success/10 rounded-lg">
+                <DollarSign className="h-5 w-5 text-success" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">إجمالي المبيعات</p>
@@ -155,8 +155,8 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <Clock className="h-5 w-5 text-yellow-600" />
+              <div className="p-2 bg-warning/10 rounded-lg">
+                <Clock className="h-5 w-5 text-warning" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">طلبات في الانتظار</p>
@@ -169,8 +169,8 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-purple-600" />
+              <div className="p-2 bg-premium/10 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-premium" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">الطلبات المؤكدة</p>

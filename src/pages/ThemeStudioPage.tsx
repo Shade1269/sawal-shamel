@@ -36,11 +36,11 @@ const ThemeStudioPage: React.FC = () => {
   const [currentTheme, setCurrentTheme] = useState<any>(null);
   const [previewConfig, setPreviewConfig] = useState<any>({
     colors: {
-      primary: '#0066FF',
-      secondary: '#F0F4F8',
-      accent: '#0052CC',
-      background: '#FFFFFF',
-      foreground: '#1A1D21'
+      primary: 'hsl(var(--primary))',
+      secondary: 'hsl(var(--secondary))',
+      accent: 'hsl(var(--accent))',
+      background: 'hsl(var(--background))',
+      foreground: 'hsl(var(--foreground))'
     }
   });
 
@@ -95,7 +95,7 @@ const ThemeStudioPage: React.FC = () => {
               
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl gradient-btn-accent shadow-lg">
-                  <Palette className="w-6 h-6 text-white" />
+                  <Palette className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold gradient-text-accent">
@@ -303,8 +303,8 @@ const ThemeStudioPage: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <UnifiedCard variant="default" padding="md" hover="lift">
                       <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 rounded-lg bg-blue-100">
-                          <Zap className="w-5 h-5 text-blue-600" />
+                        <div className="p-2 rounded-lg bg-info/10">
+                          <Zap className="w-5 h-5 text-info" />
                         </div>
                         <h3 className="font-semibold">توليد تلقائي للثيمات</h3>
                       </div>
@@ -318,8 +318,8 @@ const ThemeStudioPage: React.FC = () => {
 
                     <UnifiedCard variant="default" padding="md" hover="lift">
                       <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 rounded-lg bg-green-100">
-                          <Eye className="w-5 h-5 text-green-600" />
+                        <div className="p-2 rounded-lg bg-success/10">
+                          <Eye className="w-5 h-5 text-success" />
                         </div>
                         <h3 className="font-semibold">تحليل المنافسين</h3>
                       </div>
@@ -333,8 +333,8 @@ const ThemeStudioPage: React.FC = () => {
 
                     <UnifiedCard variant="default" padding="md" hover="lift">
                       <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 rounded-lg bg-purple-100">
-                          <Palette className="w-5 h-5 text-purple-600" />
+                        <div className="p-2 rounded-lg bg-premium/10">
+                          <Palette className="w-5 h-5 text-premium" />
                         </div>
                         <h3 className="font-semibold">اقتراحات الألوان الذكية</h3>
                       </div>
@@ -348,8 +348,8 @@ const ThemeStudioPage: React.FC = () => {
 
                     <UnifiedCard variant="default" padding="md" hover="lift">
                       <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 rounded-lg bg-orange-100">
-                          <Wand2 className="w-5 h-5 text-orange-600" />
+                        <div className="p-2 rounded-lg bg-warning/10">
+                          <Wand2 className="w-5 h-5 text-warning" />
                         </div>
                         <h3 className="font-semibold">تحسين تلقائي</h3>
                       </div>
