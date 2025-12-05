@@ -238,9 +238,9 @@ export const UserAnalytics = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">المستخدمون النشطون</p>
-                    <p className="text-2xl font-bold text-green-600">{stats.activeUsers}</p>
+                    <p className="text-2xl font-bold text-success">{stats.activeUsers}</p>
                   </div>
-                  <Activity className="h-8 w-8 text-green-600" />
+                  <Activity className="h-8 w-8 text-success" />
                 </div>
               </CardContent>
             </Card>
@@ -250,9 +250,9 @@ export const UserAnalytics = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">جدد اليوم</p>
-                    <p className="text-2xl font-bold text-blue-600">{stats.newUsersToday}</p>
+                    <p className="text-2xl font-bold text-info">{stats.newUsersToday}</p>
                   </div>
-                  <TrendingUp className="h-8 w-8 text-blue-600" />
+                  <TrendingUp className="h-8 w-8 text-info" />
                 </div>
               </CardContent>
             </Card>
@@ -262,11 +262,11 @@ export const UserAnalytics = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">معدل النشاط</p>
-                    <p className="text-2xl font-bold text-purple-600">
+                    <p className="text-2xl font-bold text-accent">
                       {stats.totalUsers > 0 ? Math.round((stats.activeUsers / stats.totalUsers) * 100) : 0}%
                     </p>
                   </div>
-                  <Star className="h-8 w-8 text-purple-600" />
+                  <Star className="h-8 w-8 text-accent" />
                 </div>
               </CardContent>
             </Card>
@@ -283,7 +283,7 @@ export const UserAnalytics = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-green-600 mb-2">
+                <div className="text-3xl font-bold text-success mb-2">
                   {stats.newUsersToday}
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -300,7 +300,7 @@ export const UserAnalytics = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-blue-600 mb-2">
+                <div className="text-3xl font-bold text-info mb-2">
                   {stats.newUsersThisWeek}
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -317,7 +317,7 @@ export const UserAnalytics = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-purple-600 mb-2">
+                <div className="text-3xl font-bold text-accent mb-2">
                   {stats.newUsersThisMonth}
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -442,7 +442,7 @@ export const UserAnalytics = () => {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-3 border rounded-lg">
                   <span>المستخدمون النشطون</span>
-                  <Badge className="bg-green-100 text-green-800">
+                  <Badge className="bg-success/10 text-success">
                     {stats.activeUsers}
                   </Badge>
                 </div>

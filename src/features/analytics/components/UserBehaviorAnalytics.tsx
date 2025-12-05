@@ -543,9 +543,9 @@ const UserBehaviorAnalytics = () => {
                   {data.deviceTypes.map((device, index) => (
                     <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center gap-3">
-                        {device.device === 'الهاتف المحمول' && <Smartphone className="h-5 w-5 text-blue-500" />}
-                        {device.device === 'سطح المكتب' && <Monitor className="h-5 w-5 text-green-500" />}
-                        {device.device === 'الجهاز اللوحي' && <Tablet className="h-5 w-5 text-orange-500" />}
+                        {device.device === 'الهاتف المحمول' && <Smartphone className="h-5 w-5 text-info" />}
+                        {device.device === 'سطح المكتب' && <Monitor className="h-5 w-5 text-success" />}
+                        {device.device === 'الجهاز اللوحي' && <Tablet className="h-5 w-5 text-warning" />}
                         <div>
                           <p className="font-medium">{device.device}</p>
                           <p className="text-sm text-muted-foreground">

@@ -286,9 +286,9 @@ const AtlantisChatRooms = () => {
 
   const getRoomBadge = (type: string) => {
     const badges = {
-      public: { label: 'عامة', color: 'bg-green-100 text-green-800' },
-      private: { label: 'خاصة', color: 'bg-blue-100 text-blue-800' },
-      direct: { label: 'مباشرة', color: 'bg-purple-100 text-purple-800' }
+      public: { label: 'عامة', color: 'bg-success/10 text-success' },
+      private: { label: 'خاصة', color: 'bg-info/10 text-info' },
+      direct: { label: 'مباشرة', color: 'bg-accent/10 text-accent' }
     };
 
     const badge = badges[type as keyof typeof badges] || badges.public;
@@ -449,12 +449,12 @@ const AtlantisChatRooms = () => {
           <Card className="bg-gradient-warning border-warning/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-500 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-white" />
+                <div className="p-2 bg-warning rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-warning-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm text-yellow-600">نقاط الدردشة</p>
-                  <p className="text-2xl font-bold text-yellow-700">
+                  <p className="text-sm text-warning">نقاط الدردشة</p>
+                  <p className="text-2xl font-bold text-warning">
                     {userLevel?.total_points || 0}
                   </p>
                 </div>
@@ -465,12 +465,12 @@ const AtlantisChatRooms = () => {
           <Card className="bg-gradient-premium border-primary/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-500 rounded-lg">
-                  <Crown className="h-5 w-5 text-white" />
+                <div className="p-2 bg-accent rounded-lg">
+                  <Crown className="h-5 w-5 text-accent-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm text-purple-600">مستواك</p>
-                  <p className="text-2xl font-bold text-purple-700">
+                  <p className="text-sm text-accent">مستواك</p>
+                  <p className="text-2xl font-bold text-accent">
                     {userLevel?.current_level === 'bronze' && 'برونزي'}
                     {userLevel?.current_level === 'silver' && 'فضي'}
                     {userLevel?.current_level === 'gold' && 'ذهبي'}

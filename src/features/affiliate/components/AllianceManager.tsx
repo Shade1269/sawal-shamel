@@ -158,17 +158,17 @@ export const AllianceManager = () => {
                   <p className="text-sm text-muted-foreground">عضو</p>
                 </div>
                 <div className="text-center">
-                  <Star className="h-6 w-6 mx-auto mb-2 text-yellow-500" />
+                  <Star className="h-6 w-6 mx-auto mb-2 text-premium" />
                   <p className="text-2xl font-bold">{userAlliance.total_points}</p>
                   <p className="text-sm text-muted-foreground">نقطة</p>
                 </div>
                 <div className="text-center">
-                  <Trophy className="h-6 w-6 mx-auto mb-2 text-orange-500" />
+                  <Trophy className="h-6 w-6 mx-auto mb-2 text-warning" />
                   <p className="text-2xl font-bold">{userAlliance.total_sales.toLocaleString()}</p>
                   <p className="text-sm text-muted-foreground">ر.س</p>
                 </div>
                 <div className="text-center">
-                  <Zap className="h-6 w-6 mx-auto mb-2 text-purple-500" />
+                  <Zap className="h-6 w-6 mx-auto mb-2 text-accent" />
                   <p className="text-2xl font-bold">{userMembership.contribution_points}</p>
                   <p className="text-sm text-muted-foreground">مساهمتي</p>
                 </div>

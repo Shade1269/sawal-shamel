@@ -184,7 +184,7 @@ export const BannerManagement: React.FC<BannerManagementProps> = ({ storeId }) =
                 />
                 <div className="absolute top-2 left-2 flex gap-2">
                   {banner.is_active ? (
-                    <Badge className="bg-green-500">نشط</Badge>
+                    <Badge className="bg-success">نشط</Badge>
                   ) : (
                     <Badge variant="secondary">غير نشط</Badge>
                   )}

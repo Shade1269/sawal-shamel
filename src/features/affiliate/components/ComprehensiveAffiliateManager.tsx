@@ -140,24 +140,24 @@ export const ComprehensiveAffiliateManager = () => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <CheckCircle className="h-4 w-4 text-success" />
                     <span>إعداد المتجر</span>
                   </div>
-                  <span className="text-sm text-green-600">مكتمل</span>
+                  <span className="text-sm text-success">مكتمل</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 text-yellow-500" />
+                    <AlertCircle className="h-4 w-4 text-warning" />
                     <span>إضافة المنتجات</span>
                   </div>
-                  <span className="text-sm text-yellow-600">في الانتظار</span>
+                  <span className="text-sm text-warning">في الانتظار</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 text-yellow-500" />
+                    <AlertCircle className="h-4 w-4 text-warning" />
                     <span>تفعيل المدفوعات</span>
                   </div>
-                  <span className="text-sm text-yellow-600">في الانتظار</span>
+                  <span className="text-sm text-warning">في الانتظار</span>
                 </div>
               </div>
             </CardContent>

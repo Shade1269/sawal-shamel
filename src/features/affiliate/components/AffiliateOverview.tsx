@@ -66,32 +66,32 @@ export const AffiliateOverview = ({
       value: `${stats.totalCommissions.toFixed(2)} ريال`,
       change: "+12%",
       icon: DollarSign,
-      color: "text-green-600",
-      bgColor: "bg-green-50 dark:bg-green-900/20"
+      color: "text-success",
+      bgColor: "bg-success/10 dark:bg-success/20"
     },
     {
       title: "عمولات هذا الشهر",
       value: `${stats.thisMonthCommissions.toFixed(2)} ريال`,
       change: `+${stats.monthlyGrowth}%`,
       icon: TrendingUp,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50 dark:bg-blue-900/20"
+      color: "text-info",
+      bgColor: "bg-info/10 dark:bg-info/20"
     },
     {
       title: "إجمالي المبيعات",
       value: `${stats.totalSales.toFixed(2)} ريال`,
       change: "+8%",
       icon: ShoppingCart,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50 dark:bg-purple-900/20"
+      color: "text-accent",
+      bgColor: "bg-accent/10 dark:bg-accent/20"
     },
     {
       title: "معدل التحويل",
       value: `${stats.conversionRate}%`,
       change: "+2%",
       icon: Target,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50 dark:bg-orange-900/20"
+      color: "text-warning",
+      bgColor: "bg-warning/10 dark:bg-warning/20"
     }
   ];
 
@@ -224,21 +224,21 @@ export const AffiliateOverview = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="text-center">
           <CardContent className="p-4">
-            <Eye className="h-8 w-8 mx-auto mb-2 text-blue-500" />
+            <Eye className="h-8 w-8 mx-auto mb-2 text-info" />
             <div className="text-2xl font-bold">{stats.totalVisits.toLocaleString()}</div>
             <div className="text-sm text-muted-foreground">إجمالي المشاهدات</div>
           </CardContent>
         </Card>
         <Card className="text-center">
           <CardContent className="p-4">
-            <Users className="h-8 w-8 mx-auto mb-2 text-green-500" />
+            <Users className="h-8 w-8 mx-auto mb-2 text-success" />
             <div className="text-2xl font-bold">{stats.totalClicks.toLocaleString()}</div>
             <div className="text-sm text-muted-foreground">إجمالي النقرات</div>
           </CardContent>
         </Card>
         <Card className="text-center">
           <CardContent className="p-4">
-            <Crown className="h-8 w-8 mx-auto mb-2 text-yellow-500" />
+            <Crown className="h-8 w-8 mx-auto mb-2 text-premium" />
             <div className="text-2xl font-bold">{level}</div>
             <div className="text-sm text-muted-foreground">مستوى العضوية</div>
           </CardContent>

@@ -148,8 +148,8 @@ export const AtlantisStatusWidget = ({ compact = false }: AtlantisStatusWidgetPr
               <p className="text-xs text-muted-foreground">الترتيب</p>
               <p className="text-sm font-semibold">-</p>
             </div>
-            <div className="p-2 bg-purple-50 rounded-lg">
-              <Star className="h-4 w-4 mx-auto mb-1 text-purple-600" />
+            <div className="p-2 bg-accent/10 rounded-lg">
+              <Star className="h-4 w-4 mx-auto mb-1 text-accent" />
               <p className="text-xs text-muted-foreground">المساهمة</p>
               <p className="text-sm font-semibold">
                 {userMembership?.contribution_points || 0}

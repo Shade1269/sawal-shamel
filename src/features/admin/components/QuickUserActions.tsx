@@ -83,14 +83,14 @@ export const QuickUserActions: React.FC<QuickUserActionsProps> = ({
               <div className="text-2xl font-bold text-primary">{userStats.total}</div>
               <div className="text-sm text-muted-foreground">إجمالي المستخدمين</div>
             </div>
-            <div className="text-center p-3 bg-green-50 rounded-lg dark:bg-green-900/20">
-              <div className="text-2xl font-bold text-green-600">{userStats.active}</div>
+            <div className="text-center p-3 bg-success/10 rounded-lg dark:bg-success/20">
+              <div className="text-2xl font-bold text-success">{userStats.active}</div>
               <div className="text-sm text-muted-foreground">المستخدمين النشطين</div>
             </div>
           </div>
           
-          <div className="text-center p-3 bg-blue-50 rounded-lg dark:bg-blue-900/20">
-            <div className="text-xl font-bold text-blue-600 flex items-center justify-center gap-2">
+          <div className="text-center p-3 bg-info/10 rounded-lg dark:bg-info/20">
+            <div className="text-xl font-bold text-info flex items-center justify-center gap-2">
               <TrendingUp className="h-4 w-4" />
               {userStats.newThisMonth}
             </div>

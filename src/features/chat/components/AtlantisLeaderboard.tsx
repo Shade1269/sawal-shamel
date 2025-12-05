@@ -83,10 +83,10 @@ export const AtlantisLeaderboard = () => {
           <CardContent>
             {castleController ? (
               <div className="space-y-2">
-                <p className="font-semibold text-yellow-800">
+                <p className="font-semibold text-premium">
                   {castleController.name}
                 </p>
-                <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                <Badge variant="secondary" className="bg-premium/10 text-premium">
                   {castleController.member_count} أعضاء
                 </Badge>
               </div>
@@ -109,18 +109,18 @@ export const AtlantisLeaderboard = () => {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <h3 className="font-semibold text-purple-800">{currentChallenge.name}</h3>
-                <p className="text-sm text-purple-600">{currentChallenge.description}</p>
+                <h3 className="font-semibold text-accent">{currentChallenge.name}</h3>
+                <p className="text-sm text-accent/80">{currentChallenge.description}</p>
               </div>
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">الهدف</p>
-                <p className="text-2xl font-bold text-purple-800">
+                <p className="text-2xl font-bold text-accent">
                   {currentChallenge.target_value.toLocaleString()}
                 </p>
               </div>
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">مكافأة</p>
-                <p className="text-xl font-bold text-purple-800">
+                <p className="text-xl font-bold text-accent">
                   +{currentChallenge.bonus_points} نقطة
                 </p>
               </div>
@@ -233,7 +233,7 @@ export const AtlantisLeaderboard = () => {
                         </div>
 
                         {entry.castle_controlled && (
-                          <Badge className="bg-yellow-100 text-yellow-800">
+                          <Badge className="bg-premium/10 text-premium">
                             🏰 يسيطر على القلعة
                           </Badge>
                         )}

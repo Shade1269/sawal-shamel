@@ -110,29 +110,29 @@ export const AffiliateCommissions = ({
       title: "إجمالي العمولات",
       value: `${stats.totalCommissions.toFixed(2)} ريال`,
       icon: DollarSign,
-      color: "text-green-600",
-      bgColor: "bg-green-50 dark:bg-green-900/20"
+      color: "text-success",
+      bgColor: "bg-success/10 dark:bg-success/20"
     },
     {
       title: "عمولات هذا الشهر",
       value: `${stats.thisMonthCommissions.toFixed(2)} ريال`,
       icon: TrendingUp,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50 dark:bg-blue-900/20"
+      color: "text-info",
+      bgColor: "bg-info/10 dark:bg-info/20"
     },
     {
       title: "في الانتظار",
       value: `${stats.pendingCommissions.toFixed(2)} ريال`,
       icon: Clock,
-      color: "text-yellow-600",
-      bgColor: "bg-yellow-50 dark:bg-yellow-900/20"
+      color: "text-warning",
+      bgColor: "bg-warning/10 dark:bg-warning/20"
     },
     {
       title: "تم الدفع",
       value: `${stats.paidCommissions.toFixed(2)} ريال`,
       icon: CheckCircle,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50 dark:bg-purple-900/20"
+      color: "text-accent",
+      bgColor: "bg-accent/10 dark:bg-accent/20"
     }
   ];
 
@@ -246,7 +246,7 @@ export const AffiliateCommissions = ({
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-green-600">
+                        <div className="text-2xl font-bold text-success">
                           {commission.amount_sar.toFixed(2)} ريال
                         </div>
                       </div>

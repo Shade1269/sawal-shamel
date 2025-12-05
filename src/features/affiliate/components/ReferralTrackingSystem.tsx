@@ -608,13 +608,13 @@ export const ReferralTrackingSystem = ({ storeId, baseUrl = 'https://example.com
                     <h4 className="font-medium text-blue-900">استخدم أكواد إحالة وصفية</h4>
                     <p className="text-blue-700">مثل: INSTAGRAM2024 أو FACEBOOK-SALE</p>
                   </div>
-                  <div className="p-3 bg-green-50 rounded-lg">
-                    <h4 className="font-medium text-green-900">تتبع المصادر المختلفة</h4>
-                    <p className="text-green-700">أنشئ رابط منفصل لكل منصة أو حملة</p>
+                  <div className="p-3 bg-success/10 rounded-lg">
+                    <h4 className="font-medium text-success">تتبع المصادر المختلفة</h4>
+                    <p className="text-success/80">أنشئ رابط منفصل لكل منصة أو حملة</p>
                   </div>
-                  <div className="p-3 bg-purple-50 rounded-lg">
-                    <h4 className="font-medium text-purple-900">استخدم رموز QR</h4>
-                    <p className="text-purple-700">للمواد المطبوعة والعروض التقديمية</p>
+                  <div className="p-3 bg-accent/10 rounded-lg">
+                    <h4 className="font-medium text-accent">استخدم رموز QR</h4>
+                    <p className="text-accent/80">للمواد المطبوعة والعروض التقديمية</p>
                   </div>
                 </div>
               </CardContent>
