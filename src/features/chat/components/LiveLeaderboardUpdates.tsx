@@ -193,9 +193,9 @@ export const LiveLeaderboardUpdates = () => {
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1">
                     {change.type === 'alliance' ? (
-                      <Users className="h-4 w-4 text-purple-500" />
+                      <Users className="h-4 w-4 text-accent" />
                     ) : (
-                      <Trophy className="h-4 w-4 text-yellow-500" />
+                      <Trophy className="h-4 w-4 text-premium" />
                     )}
                     {change.currentRank <= 3 && (
                       <Crown className="h-3 w-3 text-yellow-600" />

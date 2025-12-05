@@ -216,7 +216,7 @@ const AtlantisChat = () => {
     };
     
     const roleColors = {
-      owner: 'bg-yellow-100 text-yellow-800',
+      owner: 'bg-premium/10 text-premium',
       admin: 'bg-destructive/10 text-destructive',
       moderator: 'bg-accent/10 text-accent-foreground',
       member: 'bg-muted text-muted-foreground'

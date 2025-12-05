@@ -53,7 +53,7 @@ const MessageSearch: React.FC<MessageSearchProps> = ({
     
     return parts.map((part, index) => 
       regex.test(part) ? (
-        <mark key={index} className="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">
+        <mark key={index} className="bg-warning/30 dark:bg-warning/50 px-1 rounded">
           {part}
         </mark>
       ) : (

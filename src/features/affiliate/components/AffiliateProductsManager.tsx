@@ -262,7 +262,7 @@ export const AffiliateProductsManager: React.FC<AffiliateProductsManagerProps> =
                       {/* العمولة المتوقعة */}
                       <div className="space-y-2">
                         <Label className="text-sm font-medium">العمولة المتوقعة</Label>
-                        <div className="text-lg font-bold text-green-600">
+                        <div className="text-lg font-bold text-success">
                           {calculatePotentialEarning(
                             getDisplayPrice(product),
                             editingProduct === product.id 

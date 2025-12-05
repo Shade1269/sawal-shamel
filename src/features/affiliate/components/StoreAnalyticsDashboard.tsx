@@ -73,7 +73,7 @@ const StoreAnalyticsDashboard = ({ storeId }: StoreAnalyticsProps) => {
       change: '-0.3%',
       trend: 'down',
       icon: Target,
-      color: 'text-orange-600'
+      color: 'text-warning'
     },
     {
       title: 'متوسط قيمة الطلب',
@@ -81,7 +81,7 @@ const StoreAnalyticsDashboard = ({ storeId }: StoreAnalyticsProps) => {
       change: '+15.4%',
       trend: 'up',
       icon: DollarSign,
-      color: 'text-purple-600'
+      color: 'text-accent'
     }
   ];
 
@@ -337,7 +337,7 @@ const StoreAnalyticsDashboard = ({ storeId }: StoreAnalyticsProps) => {
                       <span className="text-sm text-muted-foreground">30%</span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2">
-                      <div className="bg-purple-500 h-2 rounded-full" style={{ width: '30%' }}></div>
+                      <div className="bg-accent h-2 rounded-full" style={{ width: '30%' }}></div>
                     </div>
                   </div>
                   <div>
@@ -346,7 +346,7 @@ const StoreAnalyticsDashboard = ({ storeId }: StoreAnalyticsProps) => {
                       <span className="text-sm text-muted-foreground">10%</span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2">
-                      <div className="bg-orange-500 h-2 rounded-full" style={{ width: '10%' }}></div>
+                      <div className="bg-warning h-2 rounded-full" style={{ width: '10%' }}></div>
                     </div>
                   </div>
                 </div>
@@ -437,10 +437,10 @@ const StoreAnalyticsDashboard = ({ storeId }: StoreAnalyticsProps) => {
 
             <Card>
               <CardContent className="p-6 text-center">
-                <Target className="h-12 w-12 mx-auto mb-4 text-purple-500" />
+                <Target className="h-12 w-12 mx-auto mb-4 text-accent" />
                 <div className="text-2xl font-bold mb-2">32%</div>
                 <div className="text-sm text-muted-foreground">معدل الارتداد</div>
-                <div className="text-xs text-red-500 mt-1">-5% من الشهر الماضي</div>
+                <div className="text-xs text-destructive mt-1">-5% من الشهر الماضي</div>
               </CardContent>
             </Card>
           </div>

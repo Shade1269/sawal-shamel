@@ -203,9 +203,9 @@ export const UserPermissions = ({ user }: { user: User }) => {
 
   const getPermissionIcon = (granted: boolean) => {
     return granted ? (
-      <CheckCircle className="h-4 w-4 text-green-500" />
+      <CheckCircle className="h-4 w-4 text-success" />
     ) : (
-      <XCircle className="h-4 w-4 text-red-500" />
+      <XCircle className="h-4 w-4 text-destructive" />
     );
   };
 
@@ -260,9 +260,9 @@ export const UserPermissions = ({ user }: { user: User }) => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-full ${
-                        allGranted ? 'bg-green-100 text-green-600' :
-                        someGranted ? 'bg-yellow-100 text-yellow-600' :
-                        'bg-red-100 text-red-600'
+                        allGranted ? 'bg-success/10 text-success' :
+                        someGranted ? 'bg-warning/10 text-warning' :
+                        'bg-destructive/10 text-destructive'
                       }`}>
                         <Key className="h-4 w-4" />
                       </div>
@@ -334,7 +334,7 @@ export const UserPermissions = ({ user }: { user: User }) => {
           
           <div className="flex items-center gap-2">
             {hasChanges && (
-              <Badge variant="outline" className="text-orange-600">
+              <Badge variant="outline" className="text-warning">
                 يوجد تغييرات غير محفوظة
               </Badge>
             )}

@@ -111,28 +111,28 @@ export const AffiliateAnalytics = ({
       value: "2,847",
       change: "+15.3%",
       icon: Users,
-      color: "text-blue-600"
+      color: "text-info"
     },
     {
       title: "معدل التحويل",
       value: "3.2%",
       change: "+0.5%",
       icon: Target,
-      color: "text-green-600"
+      color: "text-success"
     },
     {
       title: "متوسط وقت التصفح",
       value: "2:34",
       change: "+12s",
       icon: Clock,
-      color: "text-purple-600"
+      color: "text-accent"
     },
     {
       title: "معدل النقر",
       value: "4.8%",
       change: "+0.3%",
       icon: MousePointer,
-      color: "text-orange-600"
+      color: "text-warning"
     }
   ];
 
@@ -318,7 +318,7 @@ export const AffiliateAnalytics = ({
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-green-600">{product.commission} ريال</p>
+                      <p className="font-bold text-success">{product.commission} ريال</p>
                       <p className="text-sm text-muted-foreground">إجمالي العمولة</p>
                     </div>
                   </div>
@@ -338,9 +338,9 @@ export const AffiliateAnalytics = ({
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-info/10 dark:bg-info/20 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <Eye className="h-5 w-5 text-blue-600" />
+                    <Eye className="h-5 w-5 text-info" />
                     <span>زيارات الصفحة</span>
                   </div>
                   <div className="text-right">
@@ -349,9 +349,9 @@ export const AffiliateAnalytics = ({
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-success/10 dark:bg-success/20 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <MousePointer className="h-5 w-5 text-green-600" />
+                    <MousePointer className="h-5 w-5 text-success" />
                     <span>نقرات على المنتجات</span>
                   </div>
                   <div className="text-right">
@@ -360,9 +360,9 @@ export const AffiliateAnalytics = ({
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-warning/10 dark:bg-warning/20 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <Target className="h-5 w-5 text-orange-600" />
+                    <Target className="h-5 w-5 text-warning" />
                     <span>إضافة للسلة</span>
                   </div>
                   <div className="text-right">
@@ -371,9 +371,9 @@ export const AffiliateAnalytics = ({
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-accent/10 dark:bg-accent/20 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <ArrowRight className="h-5 w-5 text-purple-600" />
+                    <ArrowRight className="h-5 w-5 text-accent" />
                     <span>إتمام الشراء</span>
                   </div>
                   <div className="text-right">

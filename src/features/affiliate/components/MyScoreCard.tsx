@@ -83,7 +83,7 @@ export const MyScoreCard = ({ scope = 'users', summary, loading, storeName }: My
             </div>
           </div>
         ) : error ? (
-          <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+          <div className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
             حدث خطأ أثناء تحميل النقاط. حاول مرة أخرى لاحقًا.
           </div>
         ) : (

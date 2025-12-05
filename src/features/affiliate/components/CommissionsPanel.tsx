@@ -41,9 +41,9 @@ export const CommissionsPanel: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'CONFIRMED':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 ml-1" />مؤكد</Badge>;
+        return <Badge className="bg-success/10 text-success"><CheckCircle className="w-3 h-3 ml-1" />مؤكد</Badge>;
       case 'PENDING':
-        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="w-3 h-3 ml-1" />قيد الانتظار</Badge>;
+        return <Badge className="bg-warning/10 text-warning"><Clock className="w-3 h-3 ml-1" />قيد الانتظار</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -70,9 +70,9 @@ export const CommissionsPanel: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">عمولات مؤكدة</p>
-                <p className="text-2xl font-bold text-green-600">{confirmedCommissions.toFixed(2)} ريال</p>
+                <p className="text-2xl font-bold text-success">{confirmedCommissions.toFixed(2)} ريال</p>
               </div>
-              <CheckCircle className="h-8 w-8 text-green-600" />
+              <CheckCircle className="h-8 w-8 text-success" />
             </div>
           </CardContent>
         </Card>

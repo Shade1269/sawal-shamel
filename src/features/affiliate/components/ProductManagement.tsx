@@ -160,7 +160,7 @@ export const ProductManagement = ({ storeId }: ProductManagementProps) => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-orange-500" />
+              <TrendingUp className="h-5 w-5 text-warning" />
               <div>
                 <p className="text-sm text-muted-foreground">معدل التحويل</p>
                 <p className="text-2xl font-bold">{avgConversion.toFixed(1)}%</p>
