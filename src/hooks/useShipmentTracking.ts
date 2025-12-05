@@ -231,16 +231,16 @@ export const useShipmentTracking = () => {
 
   const getStatusColor = (status: string) => {
     const statusColors: Record<string, string> = {
-      'PREPARING': 'bg-yellow-100 text-yellow-800',
-      'PICKED_UP': 'bg-blue-100 text-blue-800',
-      'IN_TRANSIT': 'bg-purple-100 text-purple-800',
-      'OUT_FOR_DELIVERY': 'bg-orange-100 text-orange-800',
-      'DELIVERED': 'bg-green-100 text-green-800',
-      'FAILED_DELIVERY': 'bg-red-100 text-red-800',
-      'RETURNED': 'bg-gray-100 text-gray-800',
-      'CANCELLED': 'bg-red-100 text-red-800'
+      'PREPARING': 'bg-warning/10 text-warning',
+      'PICKED_UP': 'bg-info/10 text-info',
+      'IN_TRANSIT': 'bg-accent/10 text-accent',
+      'OUT_FOR_DELIVERY': 'bg-warning/10 text-warning',
+      'DELIVERED': 'bg-success/10 text-success',
+      'FAILED_DELIVERY': 'bg-destructive/10 text-destructive',
+      'RETURNED': 'bg-muted text-muted-foreground',
+      'CANCELLED': 'bg-destructive/10 text-destructive'
     };
-    return statusColors[status] || 'bg-gray-100 text-gray-800';
+    return statusColors[status] || 'bg-muted text-muted-foreground';
   };
 
   return {

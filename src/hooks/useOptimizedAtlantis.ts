@@ -33,22 +33,22 @@ const getLevelStyling = memoize((level: string) => {
     bronze: {
       color: 'from-orange-400 to-orange-600',
       name: 'برونزي',
-      badge: 'bg-orange-100 text-orange-800'
+      badge: 'bg-warning/10 text-warning'
     },
     silver: {
       color: 'from-gray-300 to-gray-500',
       name: 'فضي',
-      badge: 'bg-gray-100 text-gray-800'
+      badge: 'bg-muted text-muted-foreground'
     },
     gold: {
       color: 'from-yellow-400 to-yellow-600',
       name: 'ذهبي',
-      badge: 'bg-yellow-100 text-yellow-800'
+      badge: 'bg-premium/10 text-premium'
     },
     legendary: {
       color: 'from-purple-500 to-purple-600',
       name: 'أسطوري',
-      badge: 'bg-purple-100 text-purple-800'
+      badge: 'bg-accent/10 text-accent'
     }
   };
   

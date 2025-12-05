@@ -101,7 +101,7 @@ export function useDashboardData() {
         changeType: stats.previousPeriodStats && stats.totalRevenue > stats.previousPeriodStats.totalRevenue ? 'positive' : 'negative',
         description: `متوسط قيمة الطلب: ${Math.round(stats.averageOrderValue)} ر.س`,
         icon: DollarSign,
-        color: 'bg-green-500',
+        color: 'bg-success',
         status: 'success',
         progress: 75,
         target: Math.round(stats.totalRevenue * 1.2),
@@ -117,7 +117,7 @@ export function useDashboardData() {
         changeType: stats.previousPeriodStats && stats.totalOrders > stats.previousPeriodStats.totalOrders ? 'positive' : 'negative',
         description: 'عدد الطلبات المكتملة',
         icon: ShoppingCart,
-        color: 'bg-blue-500',
+        color: 'bg-info',
         status: 'info',
         progress: 68,
         lastUpdated: new Date()
