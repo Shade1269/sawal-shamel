@@ -119,10 +119,10 @@ const EnhancedAffiliateDashboard = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'bg-blue-100 text-blue-800';
-      case 'shipped': return 'bg-yellow-100 text-yellow-800';
-      case 'delivered': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'confirmed': return 'bg-info/10 text-info';
+      case 'shipped': return 'bg-warning/10 text-warning';
+      case 'delivered': return 'bg-success/10 text-success';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -137,10 +137,10 @@ const EnhancedAffiliateDashboard = () => {
 
   const getLevelIcon = (level: string) => {
     switch (level) {
-      case 'bronze': return <Award className="h-5 w-5 text-amber-600" />;
-      case 'silver': return <Star className="h-5 w-5 text-gray-500" />;
-      case 'gold': return <Crown className="h-5 w-5 text-yellow-500" />;
-      case 'legendary': return <Sparkles className="h-5 w-5 text-purple-500" />;
+      case 'bronze': return <Award className="h-5 w-5 text-bronze" />;
+      case 'silver': return <Star className="h-5 w-5 text-muted-foreground" />;
+      case 'gold': return <Crown className="h-5 w-5 text-warning" />;
+      case 'legendary': return <Sparkles className="h-5 w-5 text-premium" />;
       default: return <Award className="h-5 w-5" />;
     }
   };

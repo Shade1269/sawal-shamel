@@ -138,18 +138,18 @@ const PerformanceMetrics = () => {
   const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
     switch (trend) {
       case 'up':
-        return <TrendingUp className="h-4 w-4 text-green-500" />;
+        return <TrendingUp className="h-4 w-4 text-success" />;
       case 'down':
-        return <TrendingDown className="h-4 w-4 text-red-500" />;
+        return <TrendingDown className="h-4 w-4 text-destructive" />;
       default:
-        return <Activity className="h-4 w-4 text-gray-500" />;
+        return <Activity className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
   const getTrendColor = (trend: 'up' | 'down' | 'stable', isPositive: boolean = true) => {
-    if (trend === 'stable') return 'text-gray-500';
+    if (trend === 'stable') return 'text-muted-foreground';
     const positive = trend === 'up';
-    return positive === isPositive ? 'text-green-500' : 'text-red-500';
+    return positive === isPositive ? 'text-success' : 'text-destructive';
   };
 
   if (loading || !data) {
@@ -288,22 +288,22 @@ const PerformanceMetrics = () => {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-muted/30 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">{data.traffic.visitors.toLocaleString()}</div>
+                    <div className="text-2xl font-bold text-info">{data.traffic.visitors.toLocaleString()}</div>
                     <div className="text-sm text-muted-foreground">إجمالي الزوار</div>
                   </div>
                   <div className="text-center p-4 bg-muted/30 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">{data.traffic.pageViews.toLocaleString()}</div>
+                    <div className="text-2xl font-bold text-success">{data.traffic.pageViews.toLocaleString()}</div>
                     <div className="text-sm text-muted-foreground">مشاهدات الصفحات</div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-muted/30 rounded-lg">
-                    <div className="text-2xl font-bold text-orange-600">{data.traffic.bounceRate}%</div>
+                    <div className="text-2xl font-bold text-warning">{data.traffic.bounceRate}%</div>
                     <div className="text-sm text-muted-foreground">معدل الارتداد</div>
                   </div>
                   <div className="text-center p-4 bg-muted/30 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">{data.traffic.avgSessionTime} دقيقة</div>
+                    <div className="text-2xl font-bold text-premium">{data.traffic.avgSessionTime} دقيقة</div>
                     <div className="text-sm text-muted-foreground">متوسط مدة الزيارة</div>
                   </div>
                 </div>
@@ -350,24 +350,24 @@ const PerformanceMetrics = () => {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-muted/30 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">
+                    <div className="text-2xl font-bold text-success">
                       {data.sales.revenue.toLocaleString()} ر.س
                     </div>
                     <div className="text-sm text-muted-foreground">إجمالي الإيرادات</div>
                   </div>
                   <div className="text-center p-4 bg-muted/30 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">{data.sales.orders}</div>
+                    <div className="text-2xl font-bold text-info">{data.sales.orders}</div>
                     <div className="text-sm text-muted-foreground">عدد الطلبات</div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-4 bg-muted/30 rounded-lg">
-                    <div className="text-2xl font-bold text-orange-600">{data.sales.conversionRate}%</div>
+                    <div className="text-2xl font-bold text-warning">{data.sales.conversionRate}%</div>
                     <div className="text-sm text-muted-foreground">معدل التحويل</div>
                   </div>
                   <div className="text-center p-4 bg-muted/30 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">
+                    <div className="text-2xl font-bold text-premium">
                       {data.sales.avgOrderValue.toFixed(2)} ر.س
                     </div>
                     <div className="text-sm text-muted-foreground">متوسط قيمة الطلب</div>
@@ -400,7 +400,7 @@ const PerformanceMetrics = () => {
                         </div>
                       </div>
                       <div className="text-left">
-                        <div className="font-bold text-sm text-green-600">
+                        <div className="font-bold text-sm text-success">
                           {product.revenue.toLocaleString()} ر.س
                         </div>
                       </div>
@@ -416,7 +416,7 @@ const PerformanceMetrics = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
               <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-blue-600 mb-2">
+                <div className="text-3xl font-bold text-info mb-2">
                   {data.engagement.clickThroughRate}%
                 </div>
                 <div className="text-sm text-muted-foreground">معدل النقر</div>
@@ -426,7 +426,7 @@ const PerformanceMetrics = () => {
             
             <Card>
               <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-green-600 mb-2">
+                <div className="text-3xl font-bold text-success mb-2">
                   {data.engagement.addToCartRate}%
                 </div>
                 <div className="text-sm text-muted-foreground">إضافة للسلة</div>
@@ -436,7 +436,7 @@ const PerformanceMetrics = () => {
             
             <Card>
               <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-orange-600 mb-2">
+                <div className="text-3xl font-bold text-warning mb-2">
                   {data.engagement.checkoutRate}%
                 </div>
                 <div className="text-sm text-muted-foreground">إتمام الشراء</div>
@@ -446,7 +446,7 @@ const PerformanceMetrics = () => {
             
             <Card>
               <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-purple-600 mb-2">
+                <div className="text-3xl font-bold text-premium mb-2">
                   {data.engagement.returnCustomers}%
                 </div>
                 <div className="text-sm text-muted-foreground">عملاء عائدون</div>

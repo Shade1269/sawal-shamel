@@ -14,7 +14,7 @@ export function AIQuickActions() {
       title: 'توليد محتوى',
       description: 'أوصاف منتجات ومنشورات',
       icon: FileText,
-      color: 'from-blue-500 to-blue-600',
+      color: 'from-info to-info/80',
       path: '/ai-studio?tab=content'
     },
     {
@@ -22,7 +22,7 @@ export function AIQuickActions() {
       title: 'توليد صور',
       description: 'صور منتجات وبانرات',
       icon: ImageIcon,
-      color: 'from-purple-500 to-purple-600',
+      color: 'from-premium to-premium/80',
       path: '/ai-studio?tab=images'
     },
     {
@@ -30,7 +30,7 @@ export function AIQuickActions() {
       title: 'تحليلات ذكية',
       description: 'تحليل الأداء والتوقعات',
       icon: Brain,
-      color: 'from-emerald-500 to-emerald-600',
+      color: 'from-success to-success/80',
       path: '/ai-studio?tab=analytics'
     },
     {
@@ -38,7 +38,7 @@ export function AIQuickActions() {
       title: 'المساعد الذكي',
       description: 'دردشة ومساعدة فورية',
       icon: MessageSquare,
-      color: 'from-orange-500 to-orange-600',
+      color: 'from-warning to-warning/80',
       path: '/ai-studio?tab=assistant'
     },
   ];
@@ -77,7 +77,7 @@ export function AIQuickActions() {
               className="group p-4 rounded-xl bg-card border hover:border-primary/50 hover:shadow-md transition-all text-right"
             >
               <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${action.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                <action.icon className="h-5 w-5 text-white" />
+                <action.icon className="h-5 w-5 text-primary-foreground" />
               </div>
               <h4 className="font-medium text-sm mb-1">{action.title}</h4>
               <p className="text-xs text-muted-foreground">{action.description}</p>

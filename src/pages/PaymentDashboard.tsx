@@ -97,11 +97,11 @@ const PaymentDashboard = () => {
   ]);
 
   const gatewayDistribution = [
-    { name: 'مدى', value: 35, color: '#059669' },
-    { name: 'فيزا', value: 28, color: '#3B82F6' },
-    { name: 'ماستركارد', value: 20, color: '#EF4444' },
-    { name: 'STC Pay', value: 12, color: '#8B5CF6' },
-    { name: 'أخرى', value: 5, color: '#6B7280' }
+    { name: 'مدى', value: 35, color: 'hsl(var(--success))' },
+    { name: 'فيزا', value: 28, color: 'hsl(var(--info))' },
+    { name: 'ماستركارد', value: 20, color: 'hsl(var(--destructive))' },
+    { name: 'STC Pay', value: 12, color: 'hsl(var(--premium))' },
+    { name: 'أخرى', value: 5, color: 'hsl(var(--muted-foreground))' }
   ];
 
   useEffect(() => {
@@ -189,26 +189,26 @@ const PaymentDashboard = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'PAID':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-4 w-4 text-success" />;
       case 'PENDING':
-        return <Clock className="h-4 w-4 text-yellow-500" />;
+        return <Clock className="h-4 w-4 text-warning" />;
       case 'FAILED':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
       default:
-        return <AlertTriangle className="h-4 w-4 text-gray-500" />;
+        return <AlertTriangle className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'PAID':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+        return 'bg-success/10 text-success dark:bg-success/20 dark:text-success';
       case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+        return 'bg-warning/10 text-warning dark:bg-warning/20 dark:text-warning';
       case 'FAILED':
-        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+        return 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+        return 'bg-muted text-muted-foreground dark:bg-muted dark:text-muted-foreground';
     }
   };
 
@@ -412,14 +412,14 @@ const PaymentDashboard = () => {
                 <Line 
                   type="monotone" 
                   dataKey="revenue" 
-                  stroke="#059669" 
+                  stroke="hsl(var(--success))" 
                   strokeWidth={2}
                   name="الإيرادات (ر.س)"
                 />
                 <Line 
                   type="monotone" 
                   dataKey="transactions" 
-                  stroke="#3B82F6" 
+                  stroke="hsl(var(--info))" 
                   strokeWidth={2}
                   name="عدد المعاملات"
                 />
