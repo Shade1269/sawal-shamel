@@ -299,7 +299,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
                                     فتح
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
-                                  <DropdownMenuItem className="gap-2 text-red-600">
+                                  <DropdownMenuItem className="gap-2 text-destructive">
                                     <Trash2 className="w-4 h-4" />
                                     حذف
                                   </DropdownMenuItem>

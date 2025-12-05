@@ -133,9 +133,9 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({
                   {stat.change && (
                     <div className="flex items-center gap-1 text-xs">
                       {stat.change.type === 'increase' ? (
-                        <TrendingUp className="w-3 h-3 text-green-500" />
+                        <TrendingUp className="w-3 h-3 text-success" />
                       ) : (
-                        <TrendingDown className="w-3 h-3 text-red-500" />
+                        <TrendingDown className="w-3 h-3 text-destructive" />
                       )}
                       <Badge
                         variant={stat.change.type === 'increase' ? 'default' : 'destructive'}
