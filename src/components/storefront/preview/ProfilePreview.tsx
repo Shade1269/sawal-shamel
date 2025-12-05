@@ -30,7 +30,7 @@ export const ProfilePreview = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl shadow-lg p-8 mb-6"
+            className="bg-card rounded-2xl shadow-lg p-8 mb-6"
           >
             {/* Avatar Section */}
             <div className="flex flex-col items-center mb-8">
@@ -38,51 +38,51 @@ export const ProfilePreview = () => {
                 <img
                   src={mockProfile.avatar}
                   alt={mockProfile.name}
-                  className="w-32 h-32 rounded-full object-cover border-4 border-blue-100"
+                  className="w-32 h-32 rounded-full object-cover border-4 border-primary/20"
                 />
-                <button className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors">
+                <button className="absolute bottom-0 right-0 bg-primary text-primary-foreground p-2 rounded-full hover:bg-primary/90 transition-colors">
                   <Edit2 className="w-4 h-4" />
                 </button>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">{mockProfile.name}</h2>
+              <h2 className="text-2xl font-bold text-foreground">{mockProfile.name}</h2>
             </div>
 
             {/* Info Grid */}
             <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-                <div className="bg-blue-100 p-3 rounded-full">
-                  <Mail className="w-5 h-5 text-blue-600" />
+              <div className="flex items-center gap-4 p-4 bg-muted rounded-lg">
+                <div className="bg-primary/10 p-3 rounded-full">
+                  <Mail className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex-1 text-right">
-                  <p className="text-sm text-gray-600 mb-1">البريد الإلكتروني</p>
-                  <p className="font-semibold text-gray-900">{mockProfile.email}</p>
+                  <p className="text-sm text-muted-foreground mb-1">البريد الإلكتروني</p>
+                  <p className="font-semibold text-foreground">{mockProfile.email}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-                <div className="bg-blue-100 p-3 rounded-full">
-                  <Phone className="w-5 h-5 text-blue-600" />
+              <div className="flex items-center gap-4 p-4 bg-muted rounded-lg">
+                <div className="bg-primary/10 p-3 rounded-full">
+                  <Phone className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex-1 text-right">
-                  <p className="text-sm text-gray-600 mb-1">رقم الجوال</p>
-                  <p className="font-semibold text-gray-900">{mockProfile.phone}</p>
+                  <p className="text-sm text-muted-foreground mb-1">رقم الجوال</p>
+                  <p className="font-semibold text-foreground">{mockProfile.phone}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-                <div className="bg-blue-100 p-3 rounded-full">
-                  <MapPin className="w-5 h-5 text-blue-600" />
+              <div className="flex items-center gap-4 p-4 bg-muted rounded-lg">
+                <div className="bg-primary/10 p-3 rounded-full">
+                  <MapPin className="w-5 h-5 text-primary" />
                 </div>
                 <div className="flex-1 text-right">
-                  <p className="text-sm text-gray-600 mb-1">العنوان</p>
-                  <p className="font-semibold text-gray-900">{mockProfile.address}</p>
+                  <p className="text-sm text-muted-foreground mb-1">العنوان</p>
+                  <p className="font-semibold text-foreground">{mockProfile.address}</p>
                 </div>
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="mt-8">
-              <UnifiedButton className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6">
+              <UnifiedButton className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-6">
                 تعديل المعلومات
               </UnifiedButton>
             </div>

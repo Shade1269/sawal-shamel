@@ -81,12 +81,12 @@ export const UserActivityLog = ({ userId }: { userId?: string }) => {
 
   const getActivityIcon = (type: string) => {
     switch (type) {
-      case 'login': return <User className="h-4 w-4 text-green-500" />;
-      case 'logout': return <User className="h-4 w-4 text-red-500" />;
-      case 'profile_update': return <User className="h-4 w-4 text-blue-500" />;
-      case 'order_created': return <Activity className="h-4 w-4 text-purple-500" />;
-      case 'shop_created': return <Activity className="h-4 w-4 text-orange-500" />;
-      default: return <Activity className="h-4 w-4 text-gray-500" />;
+      case 'login': return <User className="h-4 w-4 text-success" />;
+      case 'logout': return <User className="h-4 w-4 text-destructive" />;
+      case 'profile_update': return <User className="h-4 w-4 text-info" />;
+      case 'order_created': return <Activity className="h-4 w-4 text-accent" />;
+      case 'shop_created': return <Activity className="h-4 w-4 text-warning" />;
+      default: return <Activity className="h-4 w-4 text-muted-foreground" />;
     }
   };
 

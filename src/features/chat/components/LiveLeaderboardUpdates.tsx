@@ -161,8 +161,8 @@ export const LiveLeaderboardUpdates = () => {
             التحديثات المباشرة
           </CardTitle>
           <div className="flex items-center gap-2">
-            <div className={`flex items-center gap-1 ${isLive ? 'text-green-600' : 'text-gray-500'}`}>
-              <div className={`w-2 h-2 rounded-full ${isLive ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
+            <div className={`flex items-center gap-1 ${isLive ? 'text-success' : 'text-muted-foreground'}`}>
+              <div className={`w-2 h-2 rounded-full ${isLive ? 'bg-success animate-pulse' : 'bg-muted-foreground'}`} />
               <span className="text-xs font-medium">
                 {isLive ? 'مباشر' : 'متوقف'}
               </span>

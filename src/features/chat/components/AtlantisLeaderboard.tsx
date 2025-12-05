@@ -195,9 +195,9 @@ export const AtlantisLeaderboard = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2">
-                          {index === 0 && <Crown className="h-6 w-6 text-yellow-500" />}
-                          {index === 1 && <Trophy className="h-6 w-6 text-gray-400" />}
-                          {index === 2 && <Trophy className="h-6 w-6 text-amber-600" />}
+                          {index === 0 && <Crown className="h-6 w-6 text-premium" />}
+                          {index === 1 && <Trophy className="h-6 w-6 text-muted-foreground" />}
+                          {index === 2 && <Trophy className="h-6 w-6 text-warning" />}
                           <Badge variant={index < 3 ? "default" : "outline"} className="font-bold">
                             #{index + 1}
                           </Badge>

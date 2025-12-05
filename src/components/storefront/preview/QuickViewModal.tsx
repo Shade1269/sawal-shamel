@@ -77,18 +77,18 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
 
           {/* Product Info - Left side with beige background */}
           <div className="space-y-6 order-1 md:order-2">
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3 text-right">
+            <div className="bg-card p-6 rounded-lg shadow-sm">
+              <h2 className="text-3xl font-bold text-foreground mb-3 text-right">
                 {product.title}
               </h2>
-              <p className="text-3xl font-bold text-gray-900 text-right">
+              <p className="text-3xl font-bold text-foreground text-right">
                 {product.price} ر.س
               </p>
             </div>
 
             {/* Size Selector */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="font-bold mb-4 text-right text-gray-900 text-lg">المقاسات</h3>
+            <div className="bg-card p-6 rounded-lg shadow-sm">
+              <h3 className="font-bold mb-4 text-right text-foreground text-lg">المقاسات</h3>
               <div className="flex gap-3 justify-end flex-wrap">
                 {sizes.map((size) => (
                   <button
@@ -98,8 +98,8 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
                     className={cn(
                       "w-14 h-14 rounded-lg border-2 font-bold text-base transition-all",
                       selectedSize === size.value
-                        ? "border-blue-500 bg-blue-500 text-white shadow-lg"
-                        : "border-gray-300 bg-white text-gray-900 hover:border-blue-400",
+                        ? "border-primary bg-primary text-primary-foreground shadow-lg"
+                        : "border-border bg-card text-foreground hover:border-primary/50",
                       !size.available && "opacity-30 cursor-not-allowed"
                     )}
                   >
@@ -110,8 +110,8 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
             </div>
 
             {/* Color Selector */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="font-bold mb-4 text-right text-gray-900 text-lg">اللون</h3>
+            <div className="bg-card p-6 rounded-lg shadow-sm">
+              <h3 className="font-bold mb-4 text-right text-foreground text-lg">اللون</h3>
               <div className="flex gap-3 justify-end flex-wrap">
                 {colors.map((color) => (
                   <motion.button
@@ -123,15 +123,15 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
                     className={cn(
                       "relative w-12 h-12 rounded-full border-3 transition-all shadow-md",
                       selectedColor === color.value
-                        ? "border-blue-500 ring-4 ring-blue-500/30 ring-offset-2"
-                        : "border-gray-300 hover:border-blue-400",
+                        ? "border-primary ring-4 ring-primary/30 ring-offset-2"
+                        : "border-border hover:border-primary/50",
                       !color.available && "opacity-30 cursor-not-allowed"
                     )}
                     style={{ backgroundColor: color.hex }}
                   >
                     {!color.available && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-[2px] h-full bg-gray-900 rotate-45" />
+                        <div className="w-[2px] h-full bg-foreground rotate-45" />
                       </div>
                     )}
                   </motion.button>
@@ -142,7 +142,7 @@ export const QuickViewModal = ({ isOpen, onClose, product }: QuickViewModalProps
             {/* Add to Cart Button */}
             <UnifiedButton 
               size="lg" 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold py-7 mt-8 shadow-lg"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-bold py-7 mt-8 shadow-lg"
             >
               أضف إلى السلة
             </UnifiedButton>

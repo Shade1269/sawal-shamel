@@ -227,13 +227,13 @@ export const ChatPreview = () => {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="اكتب سؤالك هنا..."
-                  className="flex-1 bg-white border-2 border-gray-300 focus:border-blue-500 rounded-xl px-4 py-6 text-right text-base"
+                  className="flex-1 bg-card border-2 border-border focus:border-primary rounded-xl px-4 py-6 text-right text-base"
                   disabled={isLoading}
                 />
                 <UnifiedButton
                   onClick={handleSend}
                   disabled={!input.trim() || isLoading}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-xl"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 rounded-xl"
                   size="lg"
                 >
                   {isLoading ? (

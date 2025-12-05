@@ -229,7 +229,7 @@ export const AdvancedThemeBuilder: React.FC<AdvancedThemeBuilderProps> = ({
                               <h3 className="font-semibold flex items-center gap-2">
                                 {template.name_ar}
                                 {template.is_premium && (
-                                  <Crown className="w-4 h-4 text-yellow-500" />
+                                  <Crown className="w-4 h-4 text-premium" />
                                 )}
                               </h3>
                               <p className="text-sm text-muted-foreground">
@@ -254,7 +254,7 @@ export const AdvancedThemeBuilder: React.FC<AdvancedThemeBuilderProps> = ({
 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <Star className="w-4 h-4 text-yellow-500" />
+                              <Star className="w-4 h-4 text-premium" />
                               <span className="text-sm font-medium">
                                 {template.popularity_score}
                               </span>
@@ -631,14 +631,14 @@ export const AdvancedThemeBuilder: React.FC<AdvancedThemeBuilderProps> = ({
                   <div className="flex items-center justify-between">
                     <span className="font-medium">{selectedTemplate.name_ar}</span>
                     {selectedTemplate.is_premium && (
-                      <Crown className="w-4 h-4 text-yellow-500" />
+                      <Crown className="w-4 h-4 text-premium" />
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground">
                     {selectedTemplate.description_ar}
                   </p>
                   <div className="flex items-center gap-2">
-                    <Star className="w-4 h-4 text-yellow-500" />
+                    <Star className="w-4 h-4 text-premium" />
                     <span className="text-sm">{selectedTemplate.popularity_score} نقطة</span>
                   </div>
                 </div>

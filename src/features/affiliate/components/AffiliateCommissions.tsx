@@ -54,13 +54,13 @@ export const AffiliateCommissions = ({
     switch (status.toLowerCase()) {
       case 'confirmed':
       case 'paid':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300';
+        return 'bg-success/10 text-success dark:bg-success/20 dark:text-success';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300';
+        return 'bg-warning/10 text-warning dark:bg-warning/20 dark:text-warning';
       case 'cancelled':
-        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300';
+        return 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300';
+        return 'bg-muted text-muted-foreground dark:bg-muted/20 dark:text-muted-foreground';
     }
   };
 
