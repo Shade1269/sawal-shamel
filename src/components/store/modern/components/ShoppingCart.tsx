@@ -214,7 +214,7 @@ export const ShoppingCart = ({
                 </div>
                 <div className="flex justify-between">
                   <span>الشحن:</span>
-                  <span className={shippingCost === 0 ? 'text-green-600 font-medium' : ''}>
+                  <span className={shippingCost === 0 ? 'text-success font-medium' : ''}>
                     {shippingCost === 0 ? 'مجاني' : `${shippingCost} ر.س`}
                   </span>
                 </div>

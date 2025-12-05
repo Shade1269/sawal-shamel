@@ -155,9 +155,9 @@ const ProgressiveLoader: React.FC<ProgressiveLoaderProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {isCompleted ? (
-                <CheckCircle className="h-5 w-5 text-green-500" />
+                <CheckCircle className="h-5 w-5 text-success" />
               ) : hasErrors ? (
-                <XCircle className="h-5 w-5 text-red-500" />
+                <XCircle className="h-5 w-5 text-destructive" />
               ) : (
                 <Loader2 className="h-5 w-5 animate-spin text-primary" />
               )}

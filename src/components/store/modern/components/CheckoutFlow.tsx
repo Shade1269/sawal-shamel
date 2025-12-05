@@ -608,7 +608,7 @@ export const CheckoutFlow = ({ cart, store, total, onClose, onSuccess }: Checkou
                 <Button
                   onClick={handleSubmit}
                   disabled={!isStepValid() || isProcessing}
-                  className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                  className="flex items-center gap-2 bg-success hover:bg-success/90"
                 >
                   {isProcessing ? (
                     <>

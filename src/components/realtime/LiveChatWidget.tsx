@@ -157,7 +157,7 @@ const LiveChatWidget: React.FC<LiveChatWidgetProps> = ({
               <CardTitle className="text-sm">
                 الدردشة المباشرة
               </CardTitle>
-              <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`} />
+              <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-success' : 'bg-destructive'}`} />
             </div>
             
             <div className="flex items-center gap-1">
