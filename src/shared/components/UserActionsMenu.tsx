@@ -56,7 +56,7 @@ const UserActionsMenu: React.FC<UserActionsMenuProps> = ({
           {isAdmin && (
             <DropdownMenuItem 
               onClick={() => setShowModerationPanel(true)}
-              className="arabic-text cursor-pointer text-red-600 focus:text-red-600"
+              className="arabic-text cursor-pointer text-destructive focus:text-destructive"
             >
               <Shield className="h-4 w-4 ml-2" />
               إجراءات الإشراف

@@ -234,7 +234,7 @@ const EnhancedDashboard: React.FC = () => {
             className="relative"
           >
             <Bell className="w-4 h-4" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs"></span>
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full text-xs"></span>
           </Button>
           <Button size="sm" className="bg-primary">
             <Settings className="w-4 h-4 mr-2" />
@@ -395,7 +395,7 @@ const EnhancedDashboard: React.FC = () => {
                           <p className="text-sm text-muted-foreground">{achievement.description}</p>
                         </div>
                         {achievement.progress >= achievement.maxProgress && (
-                          <Badge className="bg-green-500">
+                          <Badge className="bg-success">
                             <Gift className="w-3 h-3 mr-1" />
                             مكتمل
                           </Badge>
@@ -427,7 +427,7 @@ const EnhancedDashboard: React.FC = () => {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                    <div className="p-2 rounded-full bg-green-100 text-green-600">
+                    <div className="p-2 rounded-full bg-success/10 text-success">
                       <Activity className="w-4 h-4" />
                     </div>
                     <div className="flex-1">
@@ -437,7 +437,7 @@ const EnhancedDashboard: React.FC = () => {
                   </div>
                   
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                    <div className="p-2 rounded-full bg-blue-100 text-blue-600">
+                    <div className="p-2 rounded-full bg-info/10 text-info">
                       <Star className="w-4 h-4" />
                     </div>
                     <div className="flex-1">

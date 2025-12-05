@@ -43,7 +43,7 @@ const UserProfileMenu = () => {
           
           {/* Notification dot for unread notifications */}
           {shouldShowNotificationsPrompt && (
-            <div className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-background animate-pulse" />
+            <div className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full border-2 border-background animate-pulse" />
           )}
         </Button>
       </DropdownMenuTrigger>
@@ -82,7 +82,7 @@ const UserProfileMenu = () => {
           <Bell className="mr-2 h-4 w-4" />
           <span>التنبيهات</span>
           {shouldShowNotificationsPrompt && (
-            <div className="mr-auto h-2 w-2 bg-red-500 rounded-full" />
+            <div className="mr-auto h-2 w-2 bg-destructive rounded-full" />
           )}
         </DropdownMenuItem>
         

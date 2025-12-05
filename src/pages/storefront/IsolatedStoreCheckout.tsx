@@ -670,12 +670,12 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   </Label>
 
                   {appliedCoupon ? (
-                    <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-success/10 border border-success/20 rounded-lg">
                       <div className="flex items-center gap-2">
-                        <UnifiedBadge variant="success" className="bg-green-600 hover:bg-green-700">
+                        <UnifiedBadge variant="success" className="bg-success hover:bg-success/90">
                           {appliedCoupon.coupon_code}
                         </UnifiedBadge>
-                        <span className="text-sm text-green-700 dark:text-green-300 font-medium">
+                        <span className="text-sm text-success font-medium">
                           {appliedCoupon.discount_type === 'percentage'
                             ? `${appliedCoupon.discount_value}% خصم`
                             : `${appliedCoupon.discount_value} ر.س خصم`}
@@ -686,7 +686,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                         variant="ghost"
                         size="sm"
                         onClick={removeCoupon}
-                        className="h-7 px-2 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        className="h-7 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
                         <X className="h-4 w-4" />
                       </UnifiedButton>
@@ -731,7 +731,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
                   </div>
 
                   {appliedCoupon && discountAmount > 0 && (
-                    <div className="flex justify-between text-base text-green-600 dark:text-green-400">
+                    <div className="flex justify-between text-base text-success">
                       <span className="flex items-center gap-1">
                         <Tag className="h-4 w-4" />
                         الخصم ({appliedCoupon.coupon_code})

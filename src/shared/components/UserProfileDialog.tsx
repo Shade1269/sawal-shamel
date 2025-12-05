@@ -72,7 +72,7 @@ const UserProfileDialog = ({ user, isOpen, onClose, showNotificationSettings = f
                 {/* Online Status Indicator */}
                 <div 
                   className={`absolute -bottom-1 -right-1 h-6 w-6 rounded-full border-2 border-background ${
-                    user?.is_active ? 'bg-green-500' : 'bg-red-500'
+                    user?.is_active ? 'bg-success' : 'bg-destructive'
                   } flex items-center justify-center shadow-lg`}
                 >
                   <div className="h-3 w-3 rounded-full bg-white/90" />

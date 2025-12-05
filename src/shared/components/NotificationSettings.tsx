@@ -138,7 +138,7 @@ const NotificationSettings = () => {
         <div className="flex items-center justify-between space-x-2 space-x-reverse">
           <div className="flex items-center gap-3">
             {preferences.pushEnabled ? (
-              <Bell className="h-5 w-5 text-green-500" />
+              <Bell className="h-5 w-5 text-success" />
             ) : (
               <BellOff className="h-5 w-5 text-muted-foreground" />
             )}
