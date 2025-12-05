@@ -454,7 +454,7 @@ export function UnifiedOrdersManager() {
                                 {config.showCommissions && (
                                   <TableCell>
                                     {order.commission_amount ? (
-                                      <span className="text-green-600 font-medium">
+                                      <span className="text-success font-medium">
                                         {formatCurrency(order.commission_amount)}
                                       </span>
                                     ) : (
@@ -562,10 +562,10 @@ export function UnifiedOrdersManager() {
 
                                   {config.showCommissions && order.commission_amount && (
                                     <div className="flex items-center gap-2 col-span-2">
-                                      <DollarSign className="h-4 w-4 text-green-600" />
+                                      <DollarSign className="h-4 w-4 text-success" />
                                       <div>
                                         <p className="text-muted-foreground">العمولة</p>
-                                        <p className="font-semibold text-green-600">
+                                        <p className="font-semibold text-success">
                                           {formatCurrency(order.commission_amount)}
                                         </p>
                                       </div>

@@ -121,21 +121,21 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         description: "استعرض أحدث المؤشرات",
         icon: Crown,
         href: "/admin/dashboard",
-        color: "bg-blue-500"
+        color: "bg-info"
       },
       {
         title: "إدارة الطلبات",
         description: "متابعة ومعالجة طلبات العملاء",
         icon: ShoppingCart,
         href: "/admin/orders",
-        color: "bg-green-500"
+        color: "bg-success"
       },
       {
         title: "مركز المخزون",
         description: "تحكم في توفر المنتجات",
         icon: Package,
         href: "/admin/inventory",
-        color: "bg-amber-500"
+        color: "bg-warning"
       },
       {
         title: "تحليلات الإدارة",
@@ -165,7 +165,7 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         change: "+18%",
         changeType: "positive",
         icon: DollarSign,
-        color: "bg-green-500"
+        color: "bg-success"
       },
       {
         title: "المبيعات هذا الشهر",
@@ -173,7 +173,7 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         change: "+12%",
         changeType: "positive",
         icon: TrendingUp,
-        color: "bg-blue-500"
+        color: "bg-info"
       },
       {
         title: "المنتجات المروجة",
@@ -213,7 +213,7 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         description: "متابعة حالة الطلبات",
         icon: ShoppingCart,
         href: "/affiliate/orders",
-        color: "bg-blue-500"
+        color: "bg-info"
       }
     ],
     tabs: [
@@ -287,8 +287,8 @@ export function UnifiedDashboard() {
       <UnifiedCard>
         <UnifiedCardContent className="flex items-center justify-center py-12">
           <div className="text-center">
-            <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
-              <AlertTriangle className="h-6 w-6 text-red-500" />
+            <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
+              <AlertTriangle className="h-6 w-6 text-destructive" />
             </div>
             <h3 className="font-medium mb-2">خطأ في تحميل البيانات</h3>
             <p className="text-sm text-muted-foreground mb-4">{error}</p>

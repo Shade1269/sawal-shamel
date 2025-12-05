@@ -97,11 +97,11 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'admin': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 border-red-200';
+      case 'admin': return 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive border-destructive/20';
       case 'affiliate':
       case 'merchant':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 border-green-200';
-      case 'moderator': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400 border-purple-200';
+        return 'bg-success/10 text-success dark:bg-success/20 dark:text-success border-success/20';
+      case 'moderator': return 'bg-accent/10 text-accent dark:bg-accent/20 dark:text-accent border-accent/20';
       default: return 'bg-muted text-muted-foreground border-border';
     }
   };
@@ -142,7 +142,7 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
 
   const getLastActivityStatus = (lastActivity?: string) => {
     if (!lastActivity) {
-      return { color: 'text-red-500', text: 'لم يسجل دخول مطلقاً', icon: XCircle };
+      return { color: 'text-destructive', text: 'لم يسجل دخول مطلقاً', icon: XCircle };
     }
     
     const now = new Date();
@@ -150,12 +150,12 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
     const hoursDiff = Math.floor((now.getTime() - activityDate.getTime()) / (1000 * 60 * 60));
     
     if (hoursDiff <= 1) {
-      return { color: 'text-green-500', text: 'نشط الآن', icon: CheckCircle };
+      return { color: 'text-success', text: 'نشط الآن', icon: CheckCircle };
     } else if (hoursDiff <= 24) {
-      return { color: 'text-yellow-500', text: `نشط منذ ${hoursDiff} ساعة`, icon: Clock };
+      return { color: 'text-warning', text: `نشط منذ ${hoursDiff} ساعة`, icon: Clock };
     } else {
       const daysDiff = Math.floor(hoursDiff / 24);
-      return { color: 'text-red-500', text: `نشط منذ ${daysDiff} يوم`, icon: XCircle };
+      return { color: 'text-destructive', text: `نشط منذ ${daysDiff} يوم`, icon: XCircle };
     }
   };
 
@@ -247,11 +247,11 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
                     <TableCell>
                       <div className="space-y-1 text-xs">
                         <div className="flex items-center gap-1">
-                          <Star className="h-3 w-3 text-yellow-500" />
+                          <Star className="h-3 w-3 text-premium" />
                           <span>{formatNumber(user.points || 0)} نقطة</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span className="text-green-600">
+                          <span className="text-success">
                             {formatNumber(user.total_earnings || 0)} ر.س
                           </span>
                         </div>
@@ -300,7 +300,7 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
                               onClick={() => onToggleStatus(user.id, user.is_active)}
-                              className={user.is_active ? "text-red-600" : "text-green-600"}
+                              className={user.is_active ? "text-destructive" : "text-success"}
                             >
                               <Ban className="h-4 w-4 ml-2" />
                               {user.is_active ? 'تعطيل الحساب' : 'تفعيل الحساب'}
@@ -309,7 +309,7 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
                               <AlertDialogTrigger asChild>
                                 <DropdownMenuItem 
                                   onSelect={(e) => e.preventDefault()}
-                                  className="text-red-600 focus:text-red-600"
+                                  className="text-destructive focus:text-destructive"
                                 >
                                   <Trash2 className="h-4 w-4 ml-2" />
                                   حذف المستخدم
@@ -327,7 +327,7 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
                                   <AlertDialogCancel>إلغاء</AlertDialogCancel>
                                   <AlertDialogAction 
                                     onClick={() => onDelete(user.id)}
-                                    className="bg-red-600 hover:bg-red-700"
+                                    className="bg-destructive hover:bg-destructive/90"
                                   >
                                     حذف
                                   </AlertDialogAction>

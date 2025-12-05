@@ -235,7 +235,7 @@ export const ThemeSelector = ({ storeId, currentTheme, onThemeChange }: ThemeSel
                   <Button 
                     variant="default" 
                     size="sm" 
-                    className="w-full bg-green-600 hover:bg-green-700"
+                    className="w-full bg-success hover:bg-success/90"
                     disabled
                   >
                     <Check className="h-4 w-4 mr-2" />
