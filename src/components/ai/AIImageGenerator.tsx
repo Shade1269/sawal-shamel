@@ -18,7 +18,7 @@ const imageStyles = [
   { id: 'social', label: 'سوشيال ميديا' },
 ];
 
-const IMAGE_GEN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-image-generator`;
+const IMAGE_GEN_URL = 'https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/ai-image-generator';
 
 export function AIImageGenerator({ onImageGenerated }: AIImageGeneratorProps) {
   const [prompt, setPrompt] = useState('');

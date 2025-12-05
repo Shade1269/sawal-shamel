@@ -34,7 +34,7 @@ interface UnifiedAIAssistantProps {
   floating?: boolean;
 }
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-assistant`;
+const CHAT_URL = 'https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/chat-assistant';
 
 export function UnifiedAIAssistant({ 
   context = 'customer', 
