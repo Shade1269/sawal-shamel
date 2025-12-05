@@ -243,7 +243,7 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground">إجمالي العملاء</p>
                 <p className="text-lg sm:text-2xl font-bold">{stats.total_customers}</p>
               </div>
-              <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
+              <Users className="w-6 h-6 sm:w-8 sm:h-8 text-info" />
             </div>
           </CardContent>
         </Card>
@@ -255,7 +255,7 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground">العملاء النشطون</p>
                 <p className="text-lg sm:text-2xl font-bold">{stats.active_customers}</p>
               </div>
-              <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
+              <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-success" />
             </div>
           </CardContent>
         </Card>
@@ -267,7 +267,7 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground line-clamp-1">عملاء جدد</p>
                 <p className="text-lg sm:text-2xl font-bold">{stats.new_customers_this_month}</p>
               </div>
-              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600" />
+              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-warning" />
             </div>
           </CardContent>
         </Card>
@@ -279,7 +279,7 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground line-clamp-1">متوسط الإنفاق</p>
                 <p className="text-sm sm:text-2xl font-bold">{stats.average_order_value.toFixed(0)} ر.س</p>
               </div>
-              <ShoppingBag className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
+              <ShoppingBag className="w-6 h-6 sm:w-8 sm:h-8 text-premium" />
             </div>
           </CardContent>
         </Card>

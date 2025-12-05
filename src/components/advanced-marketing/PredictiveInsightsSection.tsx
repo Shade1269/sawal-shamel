@@ -43,20 +43,20 @@ export const PredictiveInsightsSection: React.FC = () => {
 
   const getInsightColor = (type: PredictiveInsight['insight_type']) => {
     const colors = {
-      sales_forecast: 'text-green-600',
-      customer_churn: 'text-red-600',
-      product_demand: 'text-blue-600',
-      seasonal_trends: 'text-purple-600',
-      customer_lifetime_value: 'text-orange-600'
+      sales_forecast: 'text-success',
+      customer_churn: 'text-destructive',
+      product_demand: 'text-info',
+      seasonal_trends: 'text-premium',
+      customer_lifetime_value: 'text-warning'
     };
     return colors[type];
   };
 
   const getConfidenceColor = (score?: number) => {
-    if (!score) return 'text-gray-500';
-    if (score >= 0.8) return 'text-green-600';
-    if (score >= 0.6) return 'text-yellow-600';
-    return 'text-red-600';
+    if (!score) return 'text-muted-foreground';
+    if (score >= 0.8) return 'text-success';
+    if (score >= 0.6) return 'text-warning';
+    return 'text-destructive';
   };
 
   const getConfidenceLabel = (score?: number) => {
@@ -147,8 +147,8 @@ export const PredictiveInsightsSection: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-green-600">
+            <CheckCircle className="h-8 w-8 text-success mx-auto mb-2" />
+            <p className="text-2xl font-bold text-success">
               {displayInsights.filter(i => (i.confidence_score || 0) >= 0.8).length}
             </p>
             <p className="text-sm text-muted-foreground">رؤى عالية الدقة</p>
@@ -156,8 +156,8 @@ export const PredictiveInsightsSection: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <AlertTriangle className="h-8 w-8 text-orange-600 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-orange-600">
+            <AlertTriangle className="h-8 w-8 text-warning mx-auto mb-2" />
+            <p className="text-2xl font-bold text-warning">
               {displayInsights.filter(i => i.insight_type === 'customer_churn').length}
             </p>
             <p className="text-sm text-muted-foreground">تنبيهات هامة</p>
@@ -210,11 +210,11 @@ export const PredictiveInsightsSection: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <h4 className="font-semibold text-sm">المبيعات المتوقعة</h4>
-                        <p className="text-2xl font-bold text-green-600">
+                        <p className="text-2xl font-bold text-success">
                           {insight.insight_data.predicted_sales?.toLocaleString('ar-SA')} ر.س
                         </p>
                         <div className="flex items-center gap-2 text-sm">
-                          <TrendingUp className="h-4 w-4 text-green-600" />
+                          <TrendingUp className="h-4 w-4 text-success" />
                           نمو متوقع: {insight.insight_data.growth_rate}%
                         </div>
                       </div>
@@ -235,12 +235,12 @@ export const PredictiveInsightsSection: React.FC = () => {
                   {insight.insight_type === 'customer_churn' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-3">
-                        <div className="bg-red-50 p-3 rounded-lg">
-                          <h4 className="font-semibold text-red-800 mb-2">عملاء في خطر</h4>
-                          <p className="text-2xl font-bold text-red-600">
+                        <div className="bg-destructive/10 p-3 rounded-lg">
+                          <h4 className="font-semibold text-destructive mb-2">عملاء في خطر</h4>
+                          <p className="text-2xl font-bold text-destructive">
                             {insight.insight_data.at_risk_customers}
                           </p>
-                          <p className="text-sm text-red-600">
+                          <p className="text-sm text-destructive">
                             احتمالية الفقدان: {Math.round((insight.insight_data.churn_probability || 0) * 100)}%
                           </p>
                         </div>
@@ -250,7 +250,7 @@ export const PredictiveInsightsSection: React.FC = () => {
                         <ul className="text-sm space-y-1">
                           {insight.insight_data.recommended_actions?.map((action: string, index: number) => (
                             <li key={index} className="flex items-center gap-2">
-                              <CheckCircle className="w-4 h-4 text-green-600" />
+                              <CheckCircle className="w-4 h-4 text-success" />
                               {action}
                             </li>
                           ))}
@@ -273,16 +273,16 @@ export const PredictiveInsightsSection: React.FC = () => {
                               >
                                 {product.expected_demand}
                               </Badge>
-                              <span className={`text-sm ${product.growth > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              <span className={`text-sm ${product.growth > 0 ? 'text-success' : 'text-destructive'}`}>
                                 {product.growth > 0 ? '+' : ''}{product.growth}%
                               </span>
                             </div>
                           </div>
                         ))}
                       </div>
-                      <div className="bg-blue-50 p-3 rounded-lg">
-                        <h5 className="font-medium text-blue-800 mb-1">توصية المخزون</h5>
-                        <p className="text-sm text-blue-700">{insight.insight_data.inventory_recommendations}</p>
+                      <div className="bg-info/10 p-3 rounded-lg">
+                        <h5 className="font-medium text-info mb-1">توصية المخزون</h5>
+                        <p className="text-sm text-info">{insight.insight_data.inventory_recommendations}</p>
                       </div>
                     </div>
                   )}

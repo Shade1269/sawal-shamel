@@ -120,10 +120,10 @@ const CouponManager = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-500';
-      case 'expired': return 'bg-red-500';
-      case 'paused': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
+      case 'active': return 'bg-success';
+      case 'expired': return 'bg-destructive';
+      case 'paused': return 'bg-warning';
+      default: return 'bg-muted-foreground';
     }
   };
 
@@ -165,7 +165,7 @@ const CouponManager = () => {
                     <div className="space-y-3 flex-1">
                       <div className="flex items-center gap-3">
                         <h4 className="font-semibold">{coupon.name}</h4>
-                        <Badge className={`${getStatusColor(coupon.status)} text-white`}>
+                        <Badge className={`${getStatusColor(coupon.status)} text-primary-foreground`}>
                           {getStatusText(coupon.status)}
                         </Badge>
                       </div>
@@ -200,7 +200,7 @@ const CouponManager = () => {
                         </div>
                         <div>
                           <span className="text-muted-foreground">إجمالي الوفورات:</span>
-                          <div className="font-medium text-green-500">{coupon.totalSavings.toLocaleString()} ريال</div>
+                          <div className="font-medium text-success">{coupon.totalSavings.toLocaleString()} ريال</div>
                         </div>
                       </div>
 

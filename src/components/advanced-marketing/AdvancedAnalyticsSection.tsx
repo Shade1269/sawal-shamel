@@ -152,36 +152,36 @@ export const AdvancedAnalyticsSection: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <Eye className="h-6 w-6 text-blue-600 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-blue-600">{analyticsData.overview.unique_visitors.toLocaleString()}</p>
+            <Eye className="h-6 w-6 text-info mx-auto mb-2" />
+            <p className="text-2xl font-bold text-info">{analyticsData.overview.unique_visitors.toLocaleString()}</p>
             <p className="text-sm text-muted-foreground">زوار فريدون</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <MousePointer className="h-6 w-6 text-green-600 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-green-600">{analyticsData.overview.page_views.toLocaleString()}</p>
+            <MousePointer className="h-6 w-6 text-success mx-auto mb-2" />
+            <p className="text-2xl font-bold text-success">{analyticsData.overview.page_views.toLocaleString()}</p>
             <p className="text-sm text-muted-foreground">مشاهدات الصفحة</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <TrendingUp className="h-6 w-6 text-purple-600 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-purple-600">{analyticsData.overview.bounce_rate}%</p>
+            <TrendingUp className="h-6 w-6 text-premium mx-auto mb-2" />
+            <p className="text-2xl font-bold text-premium">{analyticsData.overview.bounce_rate}%</p>
             <p className="text-sm text-muted-foreground">معدل الارتداد</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <Clock className="h-6 w-6 text-orange-600 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-orange-600">{formatDuration(analyticsData.overview.avg_session_duration)}</p>
+            <Clock className="h-6 w-6 text-warning mx-auto mb-2" />
+            <p className="text-2xl font-bold text-warning">{formatDuration(analyticsData.overview.avg_session_duration)}</p>
             <p className="text-sm text-muted-foreground">متوسط مدة الجلسة</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <ShoppingCart className="h-6 w-6 text-red-600 mx-auto mb-2" />
-            <p className="text-2xl font-bold text-red-600">{analyticsData.overview.conversion_rate}%</p>
+            <ShoppingCart className="h-6 w-6 text-destructive mx-auto mb-2" />
+            <p className="text-2xl font-bold text-destructive">{analyticsData.overview.conversion_rate}%</p>
             <p className="text-sm text-muted-foreground">معدل التحويل</p>
           </CardContent>
         </Card>

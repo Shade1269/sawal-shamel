@@ -81,10 +81,10 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
       { name: 'رياضة', value: 100, color: COLORS[3] }
     ],
     kpiData: [
-      { name: 'المبيعات', value: 45231, trend: 12.5, icon: DollarSign, color: 'text-green-600' },
-      { name: 'الطلبات', value: 1234, trend: -2.3, icon: ShoppingCart, color: 'text-blue-600' },
-      { name: 'المستخدمين', value: 8965, trend: 8.1, icon: Users, color: 'text-purple-600' },
-      { name: 'التحويلات', value: 234, trend: 5.7, icon: Activity, color: 'text-orange-600' }
+      { name: 'المبيعات', value: 45231, trend: 12.5, icon: DollarSign, color: 'text-success' },
+      { name: 'الطلبات', value: 1234, trend: -2.3, icon: ShoppingCart, color: 'text-info' },
+      { name: 'المستخدمين', value: 8965, trend: 8.1, icon: Users, color: 'text-premium' },
+      { name: 'التحويلات', value: 234, trend: 5.7, icon: Activity, color: 'text-warning' }
     ],
     performanceData: [
       { name: 'الأداء', value: 85, fullMark: 100 },

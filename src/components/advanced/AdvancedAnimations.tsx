@@ -468,19 +468,19 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">60</div>
+              <div className="text-2xl font-bold text-success">60</div>
               <div className="text-xs text-muted-foreground">إطار/ثانية</div>
             </div>
             <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">12ms</div>
+              <div className="text-2xl font-bold text-info">12ms</div>
               <div className="text-xs text-muted-foreground">زمن الرندر</div>
             </div>
             <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600">4.2MB</div>
+              <div className="text-2xl font-bold text-premium">4.2MB</div>
               <div className="text-xs text-muted-foreground">استخدام الذاكرة</div>
             </div>
             <div className="text-center p-3 bg-muted/50 rounded-lg">
-              <div className="text-2xl font-bold text-orange-600">98%</div>
+              <div className="text-2xl font-bold text-warning">98%</div>
               <div className="text-xs text-muted-foreground">كفاءة GPU</div>
             </div>
           </div>

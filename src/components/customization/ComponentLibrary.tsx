@@ -74,17 +74,17 @@ const sampleComponents: ComponentTemplate[] = [
     author: { id: '1', name: 'أحمد محمد', avatar: '/avatars/1.jpg' },
     preview: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300',
     code: `
-<div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+<div className="bg-card rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
   <img src="{product.image}" alt="{product.name}" className="w-full h-48 object-cover" />
   <div className="p-4">
     <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
     <div className="flex items-center mb-3">
-      <div className="flex text-yellow-400">
+      <div className="flex text-warning">
         {Array.from({length: 5}).map((_, i) => (
           <Star key={i} className="w-4 h-4 fill-current" />
         ))}
       </div>
-      <span className="text-gray-600 text-sm mr-2">({product.reviews})</span>
+      <span className="text-muted-foreground text-sm mr-2">({product.reviews})</span>
     </div>
     <div className="flex items-center justify-between">
       <span className="text-2xl font-bold text-primary">{product.price} ريال</span>
@@ -117,7 +117,7 @@ const sampleComponents: ComponentTemplate[] = [
     author: { id: '2', name: 'سارة أحمد', avatar: '/avatars/2.jpg' },
     preview: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300',
     code: `
-<div className="relative gradient-hero text-white py-20 overflow-hidden">
+<div className="relative gradient-hero text-primary-foreground py-20 overflow-hidden">
   <motion.div
     initial={{ opacity: 0, y: 50 }}
     animate={{ opacity: 1, y: 0 }}
@@ -169,19 +169,19 @@ const sampleComponents: ComponentTemplate[] = [
     author: { id: '3', name: 'محمد عبدالله', avatar: '/avatars/3.jpg' },
     preview: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300',
     code: `
-<footer className="bg-gray-900 text-white">
+<footer className="bg-card text-foreground">
   <div className="container mx-auto py-12 px-4">
     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
       <div>
         <h3 className="text-lg font-semibold mb-4">{company}</h3>
-        <p className="text-gray-300 text-sm">{description}</p>
+        <p className="text-muted-foreground text-sm">{description}</p>
       </div>
       <div>
         <h4 className="font-semibold mb-4">روابط سريعة</h4>
         <ul className="space-y-2 text-sm">
           {quickLinks.map(link => (
             <li key={link.name}>
-              <a href={link.url} className="text-gray-300 hover:text-white">
+              <a href={link.url} className="text-muted-foreground hover:text-foreground">
                 {link.name}
               </a>
             </li>
@@ -190,7 +190,7 @@ const sampleComponents: ComponentTemplate[] = [
       </div>
       <div>
         <h4 className="font-semibold mb-4">خدمة العملاء</h4>
-        <div className="text-sm text-gray-300 space-y-1">
+        <div className="text-sm text-muted-foreground space-y-1">
           <p>هاتف: {phone}</p>
           <p>إيميل: {email}</p>
         </div>
@@ -199,14 +199,14 @@ const sampleComponents: ComponentTemplate[] = [
         <h4 className="font-semibold mb-4">تابعنا</h4>
         <div className="flex space-x-4">
           {socialLinks.map(social => (
-            <a key={social.name} href={social.url} className="text-gray-300 hover:text-white">
+            <a key={social.name} href={social.url} className="text-muted-foreground hover:text-foreground">
               {social.icon}
             </a>
           ))}
         </div>
       </div>
     </div>
-    <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
+    <div className="border-t border-border mt-8 pt-8 text-center text-sm text-muted-foreground">
       <p>© 2024 {company}. جميع الحقوق محفوظة.</p>
     </div>
   </div>

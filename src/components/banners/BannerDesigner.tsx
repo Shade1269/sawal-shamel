@@ -320,7 +320,7 @@ export const BannerDesigner: React.FC<BannerDesignerProps> = ({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="bg-gray-100 p-4 rounded-lg flex items-center justify-center min-h-[300px]">
+            <div className="bg-muted p-4 rounded-lg flex items-center justify-center min-h-[300px]">
               <div
                 ref={canvasRef}
                 style={generateBannerStyles()}
