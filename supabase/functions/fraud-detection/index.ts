@@ -2,6 +2,11 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getCorsHeaders, handleCorsPreflightRequest } from '../_shared/cors.ts';
 
+/**
+ * 🛡️ AI-Enhanced Fraud Detection - كشف احتيال محسّن بالذكاء الاصطناعي
+ *
+ * يستخدم نماذج AI لتحليل أنماط الاحتيال المعقدة
+ */
 
 interface FraudCheckRequest {
   user_id: string;
@@ -156,6 +161,70 @@ serve(async (req) => {
     // تحديد مستوى المخاطر والإجراء الموصى به
     let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
     let recommendedAction: 'APPROVE' | 'REVIEW' | 'BLOCK' | 'REQUIRE_VERIFICATION';
+    let aiAnalysis: string | null = null;
+
+    // 🤖 تحليل AI للحالات المشبوهة
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (LOVABLE_API_KEY && (riskScore >= 40 || triggeredRules.length >= 2)) {
+      try {
+        console.log("Running AI fraud analysis...");
+        const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash",
+            messages: [
+              {
+                role: "system",
+                content: `أنت خبير في كشف الاحتيال المالي. حلل البيانات التالية وحدد:
+1. مؤشرات الاحتيال المحتملة
+2. أنماط مشبوهة
+3. توصيات محددة
+4. مستوى الثقة في التحليل
+
+كن موضوعياً ودقيقاً. لا تتهم بدون دليل قوي.`
+              },
+              {
+                role: "user",
+                content: `تحليل معاملة مشبوهة:
+
+بيانات المعاملة:
+- المبلغ: ${requestData.transaction_data.amount} ريال
+- طريقة الدفع: ${requestData.transaction_data.payment_method}
+- معاملة دولية: ${requestData.transaction_data.is_international ? 'نعم' : 'لا'}
+
+بيانات المستخدم:
+- عميل جديد: ${requestData.user_data.is_new_customer ? 'نعم' : 'لا'}
+- عمر الحساب: ${requestData.user_data.account_age_days || 0} يوم
+- عدد الطلبات السابقة: ${requestData.user_data.previous_orders_count || 0}
+
+البيانات التاريخية:
+- معاملات آخر ساعة: ${historicalData.transactions_last_hour}
+- معاملات آخر 24 ساعة: ${historicalData.transactions_last_24h}
+- إجمالي المصروف 24 ساعة: ${historicalData.total_spent_24h} ريال
+
+القواعد المفعّلة: ${triggeredRules.join(', ') || 'لا يوجد'}
+نقاط المخاطر الحالية: ${riskScore}/100
+
+قدم تحليلاً موجزاً (3-4 جمل).`
+              }
+            ],
+            stream: false,
+          }),
+        });
+
+        if (aiResponse.ok) {
+          const aiData = await aiResponse.json();
+          aiAnalysis = aiData.choices?.[0]?.message?.content || null;
+          console.log("AI analysis completed");
+        }
+      } catch (aiError) {
+        console.warn("AI analysis failed:", aiError);
+      }
+    }
 
     if (riskScore >= 80) {
       riskLevel = 'CRITICAL';
@@ -219,12 +288,13 @@ serve(async (req) => {
       console.warn('Error logging security event:', logError);
     }
 
-    const response: FraudCheckResponse = {
+    const response: FraudCheckResponse & { ai_analysis?: string } = {
       risk_score: riskScore,
       risk_level: riskLevel,
       recommended_action: recommendedAction,
       triggered_rules: triggeredRules,
-      fraud_alert_id: fraudAlertId
+      fraud_alert_id: fraudAlertId,
+      ...(aiAnalysis && { ai_analysis: aiAnalysis })
     };
 
     console.log('Fraud check response:', response);
