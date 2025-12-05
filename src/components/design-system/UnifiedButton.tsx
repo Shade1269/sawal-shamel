@@ -14,9 +14,9 @@ const unifiedButtonVariants = cva(
     variants: {
       variant: {
         // Primary - عنابي ملكي
-        primary: 'bg-primary text-primary-foreground hover:bg-[hsl(310,38%,30%)] active:bg-[hsl(323,57%,16%)] shadow-anaqati hover:shadow-anaqati-hover',
+        primary: 'bg-anaqati-burgundy text-white hover:bg-anaqati-burgundy-hover active:bg-anaqati-burgundy-active shadow-anaqati hover:shadow-anaqati-hover',
         // Secondary - زهري بودري
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-[hsl(0,50%,80%)] active:bg-[hsl(0,50%,75%)] shadow-anaqati-pink',
+        secondary: 'bg-anaqati-pink text-anaqati-burgundy hover:bg-anaqati-pink-hover active:opacity-80 shadow-anaqati-pink',
         
         // Outline - شفاف مع إطار
         outline: 'border-2 border-primary bg-transparent text-primary hover:bg-secondary hover:border-secondary active:bg-secondary/80',
