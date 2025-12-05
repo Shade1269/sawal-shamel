@@ -48,15 +48,15 @@ export const PromotionsDashboard: React.FC = () => {
       title: 'عروض المجموعات',
       value: bundles.length,
       icon: Package,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
+      color: 'text-accent',
+      bgColor: 'bg-accent/10',
     },
     {
       title: 'إجمالي التوفير',
       value: '15%',
       icon: Percent,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
+      color: 'text-warning',
+      bgColor: 'bg-warning/10',
     },
   ];
 

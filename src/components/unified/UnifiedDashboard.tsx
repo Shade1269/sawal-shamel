@@ -103,7 +103,7 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         change: "+15%",
         changeType: "positive",
         icon: ShoppingCart,
-        color: "bg-purple-500"
+        color: "bg-accent"
       },
       {
         title: "المنتجات النشطة",
@@ -111,7 +111,7 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         change: "+3%",
         changeType: "positive",
         icon: Package,
-        color: "bg-orange-500"
+        color: "bg-warning"
       }
     ],
     charts: [],
@@ -142,7 +142,7 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         description: "استكشف تقارير الأداء",
         icon: BarChart3,
         href: "/admin/analytics",
-        color: "bg-purple-500"
+        color: "bg-accent"
       }
     ],
     tabs: [
@@ -156,7 +156,7 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
   affiliate: {
     title: "لوحة المسوق",
     description: "تتبع أدائك وعمولاتك",
-    primaryColor: "text-purple-500",
+    primaryColor: "text-accent",
     icon: Star,
     stats: [
       {
@@ -181,7 +181,7 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         change: "+5",
         changeType: "positive",
         icon: Package,
-        color: "bg-purple-500"
+        color: "bg-accent"
       },
       {
         title: "معدل التحويل",
@@ -189,7 +189,7 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         change: "+0.8%",
         changeType: "positive",
         icon: Eye,
-        color: "bg-orange-500"
+        color: "bg-warning"
       }
     ],
     charts: [],
@@ -199,14 +199,14 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         description: "إضافة منتج جديد للترويج",
         icon: Plus,
         href: "/affiliate/storefront?action=add",
-        color: "bg-green-500"
+        color: "bg-success"
       },
       {
         title: "عرض العمولات",
         description: "تتبع العمولات المكتسبة",
         icon: DollarSign,
         href: "/affiliate/analytics",
-        color: "bg-purple-500"
+        color: "bg-accent"
       },
       {
         title: "الطلبات",

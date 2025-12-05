@@ -155,8 +155,8 @@ export function EnhancedStockIndicator({
             animate={{ opacity: 1 }}
             className="flex items-center gap-1 text-xs"
           >
-            <TrendingUp className="h-3 w-3 text-orange-500" />
-            <span className="text-orange-500 font-medium">
+            <TrendingUp className="h-3 w-3 text-warning" />
+            <span className="text-warning font-medium">
               🔥 {viewCount} شخص يشاهدون الآن
             </span>
           </motion.div>
@@ -190,7 +190,7 @@ export function CompactStockIndicator({ stock, className = '' }: CompactStockInd
 
     if (stock < 10) {
       return (
-        <Badge variant="outline" className={cn('text-xs border-orange-500 text-orange-500', className)}>
+        <Badge variant="outline" className={cn('text-xs border-warning text-warning', className)}>
           <AlertTriangle className="h-3 w-3 mr-1" />
           {stock} فقط
         </Badge>

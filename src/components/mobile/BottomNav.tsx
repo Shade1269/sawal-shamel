@@ -67,7 +67,7 @@ export function BottomNav({ storeSlug, cartCount = 0, wishlistCount = 0 }: Botto
       labelEn: 'Cart',
       path: storeSlug ? `/${storeSlug}/cart` : '/cart',
       badge: cartCount,
-      color: 'text-green-500',
+      color: 'text-success',
     },
     {
       id: 'profile',
@@ -75,7 +75,7 @@ export function BottomNav({ storeSlug, cartCount = 0, wishlistCount = 0 }: Botto
       label: 'حسابي',
       labelEn: 'Account',
       path: storeSlug ? `/${storeSlug}/orders` : '/profile',
-      color: 'text-purple-500',
+      color: 'text-accent',
     },
   ];
 

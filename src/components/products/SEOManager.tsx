@@ -220,7 +220,7 @@ const SEOManager: React.FC<SEOManagerProps> = ({
                 <ul className="space-y-1">
                   {suggestions.map((suggestion, index) => (
                     <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                      <AlertCircle className="h-4 w-4 mt-0.5 text-orange-500 flex-shrink-0" />
+                      <AlertCircle className="h-4 w-4 mt-0.5 text-warning flex-shrink-0" />
                       {suggestion}
                     </li>
                   ))}
@@ -248,10 +248,10 @@ const SEOManager: React.FC<SEOManagerProps> = ({
               <Label htmlFor="seo_title">عنوان SEO</Label>
               <div className="flex items-center gap-2">
                 <span className={`text-sm ${
-                  !seo.seo_title ? 'text-gray-400' :
-                  seo.seo_title.length < 30 ? 'text-orange-500' :
-                  seo.seo_title.length > 60 ? 'text-red-500' :
-                  'text-green-500'
+                  !seo.seo_title ? 'text-muted-foreground' :
+                  seo.seo_title.length < 30 ? 'text-warning' :
+                  seo.seo_title.length > 60 ? 'text-destructive' :
+                  'text-success'
                 }`}>
                   {seo.seo_title?.length || 0}/60
                 </span>
@@ -318,10 +318,10 @@ const SEOManager: React.FC<SEOManagerProps> = ({
               <Label htmlFor="seo_description">وصف SEO</Label>
               <div className="flex items-center gap-2">
                 <span className={`text-sm ${
-                  !seo.seo_description ? 'text-gray-400' :
-                  seo.seo_description.length < 120 ? 'text-orange-500' :
-                  seo.seo_description.length > 160 ? 'text-red-500' :
-                  'text-green-500'
+                  !seo.seo_description ? 'text-muted-foreground' :
+                  seo.seo_description.length < 120 ? 'text-warning' :
+                  seo.seo_description.length > 160 ? 'text-destructive' :
+                  'text-success'
                 }`}>
                   {seo.seo_description?.length || 0}/160
                 </span>

@@ -50,12 +50,12 @@ interface ModernCustomerOrdersProps {
 }
 
 const statusConfig = {
-  pending: { label: 'قيد الانتظار', color: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20', icon: Clock },
-  confirmed: { label: 'مؤكد', color: 'bg-blue-500/10 text-blue-600 border-blue-500/20', icon: CheckCircle },
-  processing: { label: 'قيد التجهيز', color: 'bg-purple-500/10 text-purple-600 border-purple-500/20', icon: Package },
-  shipped: { label: 'تم الشحن', color: 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20', icon: Truck },
-  delivered: { label: 'تم التسليم', color: 'bg-green-500/10 text-green-600 border-green-500/20', icon: CheckCircle },
-  cancelled: { label: 'ملغي', color: 'bg-red-500/10 text-red-600 border-red-500/20', icon: XCircle },
+  pending: { label: 'قيد الانتظار', color: 'bg-warning/10 text-warning border-warning/20', icon: Clock },
+  confirmed: { label: 'مؤكد', color: 'bg-info/10 text-info border-info/20', icon: CheckCircle },
+  processing: { label: 'قيد التجهيز', color: 'bg-accent/10 text-accent border-accent/20', icon: Package },
+  shipped: { label: 'تم الشحن', color: 'bg-primary/10 text-primary border-primary/20', icon: Truck },
+  delivered: { label: 'تم التسليم', color: 'bg-success/10 text-success border-success/20', icon: CheckCircle },
+  cancelled: { label: 'ملغي', color: 'bg-destructive/10 text-destructive border-destructive/20', icon: XCircle },
 };
 
 export const ModernCustomerOrders = ({ customerId, storeId, onViewInvoice }: ModernCustomerOrdersProps) => {

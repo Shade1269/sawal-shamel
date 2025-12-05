@@ -263,17 +263,17 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
               <span className="text-lg">ℹ️</span>
               كيف يعمل نظام التسعير؟
             </h3>
-            <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+            <div className="text-sm text-info space-y-1">
               <p>• <strong>سعرك الأساسي:</strong> المبلغ الذي تحصل عليه مباشرة من كل بيعة</p>
               <p>• <strong>سعر الكتالوج:</strong> سعرك + 25% (نصيب المنصة) = {catalogPrice.toFixed(2)} ريال</p>
               <p>• <strong>السعر النهائي:</strong> المسوق يحدده ويحصل على الفرق كعمولة</p>
             </div>
             {merchantBasePrice > 0 && (
               <div className="mt-3 p-3 bg-card dark:bg-info/30 rounded border border-info/30 dark:border-info/70">
-                <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">
+                <p className="text-sm font-semibold text-info">
                   مثال على منتجك:
                 </p>
-                <div className="text-xs text-blue-700 dark:text-blue-300 mt-2 space-y-1">
+                <div className="text-xs text-info/80 mt-2 space-y-1">
                   <p>✓ أنت تحصل على: <strong>{merchantBasePrice.toFixed(2)} ريال</strong></p>
                   <p>✓ المنصة تحصل على: <strong>{(merchantBasePrice * 0.25).toFixed(2)} ريال</strong></p>
                   <p>✓ سعر الكتالوج: <strong>{catalogPrice.toFixed(2)} ريال</strong></p>

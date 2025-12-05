@@ -130,7 +130,7 @@ export const ProductGrid = ({
                   </UnifiedBadge>
                 )}
                 {product.stock < 5 && product.stock > 0 && (
-                  <UnifiedBadge variant="warning" className="bg-orange-100 text-orange-700 border-orange-300">
+                  <UnifiedBadge variant="warning" className="bg-warning/20 text-warning border-warning/50">
                     <Zap className="h-3 w-3 mr-1" />
                     كمية محدودة
                   </UnifiedBadge>

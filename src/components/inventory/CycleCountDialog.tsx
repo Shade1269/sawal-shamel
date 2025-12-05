@@ -101,19 +101,19 @@ export function CycleCountDialog({ inventoryItems, warehouses, onSuccess }: Cycl
   };
 
   const getVarianceColor = (variance: number) => {
-    if (variance === 0) return 'text-green-600';
-    if (variance > 0) return 'text-blue-600';
-    return 'text-red-600';
+    if (variance === 0) return 'text-success';
+    if (variance > 0) return 'text-info';
+    return 'text-destructive';
   };
 
   const getVarianceBadge = (variance: number) => {
     if (variance === 0) {
-      return <Badge variant="outline" className="text-green-600 border-green-600">متطابق</Badge>;
+      return <Badge variant="outline" className="text-success border-success">متطابق</Badge>;
     }
     if (variance > 0) {
-      return <Badge variant="outline" className="text-blue-600 border-blue-600">زيادة +{variance}</Badge>;
+      return <Badge variant="outline" className="text-info border-info">زيادة +{variance}</Badge>;
     }
-    return <Badge variant="outline" className="text-red-600 border-red-600">نقص {variance}</Badge>;
+    return <Badge variant="outline" className="text-destructive border-destructive">نقص {variance}</Badge>;
   };
 
   return (

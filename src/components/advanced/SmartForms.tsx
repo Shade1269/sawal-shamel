@@ -181,7 +181,7 @@ export const SmartForms: React.FC<SmartFormsProps> = ({
     return (
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor={fieldName} className={required ? 'after:content-["*"] after:ml-0.5 after:text-red-500' : ''}>
+          <Label htmlFor={fieldName} className={required ? 'after:content-["*"] after:ml-0.5 after:text-destructive' : ''}>
             {label}
           </Label>
           {aiAssistance && value.length >= 3 && (
@@ -227,7 +227,7 @@ export const SmartForms: React.FC<SmartFormsProps> = ({
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
             {validation && (
               validation.isValid ? (
-                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                <CheckCircle2 className="w-4 h-4 text-success" />
               ) : (
                 <AlertTriangle className="w-4 h-4 text-destructive" />
               )

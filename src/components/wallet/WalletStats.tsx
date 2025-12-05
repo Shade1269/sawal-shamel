@@ -50,8 +50,8 @@ export const WalletStats = () => {
       title: 'سحوبات هذا الشهر',
       value: `${monthlyWithdrawals.toFixed(2)} ر.س`,
       icon: TrendingDown,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
+      color: 'text-accent',
+      bgColor: 'bg-accent/10',
     },
   ];
 

@@ -113,15 +113,15 @@ export function DeviceDebugger({
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Touch:</span>
               <div className="flex items-center gap-1">
-                {device.hasTouch ? (
+              {device.hasTouch ? (
                   <>
-                    <TouchpadIcon className="h-3 w-3 text-green-500" />
-                    <span className="text-green-500">Yes</span>
+                    <TouchpadIcon className="h-3 w-3 text-success" />
+                    <span className="text-success">Yes</span>
                   </>
                 ) : (
                   <>
-                    <Mouse className="h-3 w-3 text-gray-500" />
-                    <span className="text-gray-500">No</span>
+                    <Mouse className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-muted-foreground">No</span>
                   </>
                 )}
               </div>

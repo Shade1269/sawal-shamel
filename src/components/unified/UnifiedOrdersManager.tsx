@@ -81,12 +81,12 @@ interface TabConfig {
 }
 
 const orderStatuses: OrderStatus[] = [
-  { value: 'pending', label: 'في الانتظار', color: 'bg-yellow-500', icon: Clock },
-  { value: 'confirmed', label: 'مؤكد', color: 'bg-blue-500', icon: CheckCircle },
-  { value: 'processing', label: 'قيد المعالجة', color: 'bg-purple-500', icon: Package },
-  { value: 'shipped', label: 'تم الشحن', color: 'bg-indigo-500', icon: Truck },
-  { value: 'delivered', label: 'تم التسليم', color: 'bg-green-500', icon: CheckCircle },
-  { value: 'cancelled', label: 'ملغي', color: 'bg-red-500', icon: XCircle }
+  { value: 'pending', label: 'في الانتظار', color: 'bg-warning', icon: Clock },
+  { value: 'confirmed', label: 'مؤكد', color: 'bg-info', icon: CheckCircle },
+  { value: 'processing', label: 'قيد المعالجة', color: 'bg-accent', icon: Package },
+  { value: 'shipped', label: 'تم الشحن', color: 'bg-primary', icon: Truck },
+  { value: 'delivered', label: 'تم التسليم', color: 'bg-success', icon: CheckCircle },
+  { value: 'cancelled', label: 'ملغي', color: 'bg-destructive', icon: XCircle }
 ];
 
 const ordersConfigs: Record<string, OrdersConfig> = {
