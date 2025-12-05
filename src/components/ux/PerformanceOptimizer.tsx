@@ -235,15 +235,15 @@ export function PerformanceOptimizer() {
   }, [measurePerformance, calculateOptimizationScore, settings]);
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-500';
-    if (score >= 70) return 'text-yellow-500';
-    return 'text-red-500';
+    if (score >= 90) return 'text-success';
+    if (score >= 70) return 'text-warning';
+    return 'text-destructive';
   };
 
   const getScoreStatus = (score: number) => {
-    if (score >= 90) return { icon: CheckCircle, label: 'ممتاز', color: 'bg-green-500' };
-    if (score >= 70) return { icon: AlertTriangle, label: 'جيد', color: 'bg-yellow-500' };
-    return { icon: AlertTriangle, label: 'يحتاج تحسين', color: 'bg-red-500' };
+    if (score >= 90) return { icon: CheckCircle, label: 'ممتاز', color: 'bg-success' };
+    if (score >= 70) return { icon: AlertTriangle, label: 'جيد', color: 'bg-warning' };
+    return { icon: AlertTriangle, label: 'يحتاج تحسين', color: 'bg-destructive' };
   };
 
   const status = getScoreStatus(optimizationScore);
@@ -315,28 +315,28 @@ export function PerformanceOptimizer() {
               title: 'وقت التحميل',
               value: `${metrics.loadTime}ms`,
               icon: Clock,
-              color: metrics.loadTime < 2000 ? 'text-green-500' : metrics.loadTime < 5000 ? 'text-yellow-500' : 'text-red-500',
+              color: metrics.loadTime < 2000 ? 'text-success' : metrics.loadTime < 5000 ? 'text-warning' : 'text-destructive',
               trend: metrics.loadTime < 3000 ? 'up' : 'down'
             },
             {
               title: 'استخدام الذاكرة',
               value: `${metrics.memoryUsage}%`,
               icon: HardDrive,
-              color: metrics.memoryUsage < 70 ? 'text-green-500' : metrics.memoryUsage < 90 ? 'text-yellow-500' : 'text-red-500',
+              color: metrics.memoryUsage < 70 ? 'text-success' : metrics.memoryUsage < 90 ? 'text-warning' : 'text-destructive',
               trend: metrics.memoryUsage < 80 ? 'up' : 'down'
             },
             {
               title: 'معدل نجاح Cache',
               value: `${metrics.cacheHitRate}%`,
               icon: Database,
-              color: metrics.cacheHitRate > 85 ? 'text-green-500' : metrics.cacheHitRate > 70 ? 'text-yellow-500' : 'text-red-500',
+              color: metrics.cacheHitRate > 85 ? 'text-success' : metrics.cacheHitRate > 70 ? 'text-warning' : 'text-destructive',
               trend: 'up'
             },
             {
               title: 'زمن الاستجابة',
               value: `${metrics.networkLatency}ms`,
               icon: Wifi,
-              color: metrics.networkLatency < 100 ? 'text-green-500' : metrics.networkLatency < 200 ? 'text-yellow-500' : 'text-red-500',
+              color: metrics.networkLatency < 100 ? 'text-success' : metrics.networkLatency < 200 ? 'text-warning' : 'text-destructive',
               trend: metrics.networkLatency < 150 ? 'up' : 'down'
             }
           ].map((metric, index) => (
@@ -357,7 +357,7 @@ export function PerformanceOptimizer() {
                     </div>
                     <div className="flex flex-col items-center gap-1">
                       <metric.icon className={`h-5 w-5 ${metric.color}`} />
-                      <TrendingUp className={`h-3 w-3 ${metric.trend === 'up' ? 'text-green-500' : 'text-red-500 rotate-180'}`} />
+                      <TrendingUp className={`h-3 w-3 ${metric.trend === 'up' ? 'text-success' : 'text-destructive rotate-180'}`} />
                     </div>
                   </div>
                 </CardContent>

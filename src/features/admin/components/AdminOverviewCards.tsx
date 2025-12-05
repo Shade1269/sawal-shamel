@@ -92,14 +92,14 @@ export const AdminOverviewCards = ({ stats }: OverviewCardsProps) => {
   const getColorClasses = (color: string) => {
     const colorMap = {
       blue: {
-        icon: "text-blue-600 dark:text-blue-400",
-        bg: "bg-blue-50 dark:bg-blue-900/20",
-        border: "border-blue-200/50 dark:border-blue-800/50"
+        icon: "text-info dark:text-info",
+        bg: "bg-info/10 dark:bg-info/20",
+        border: "border-info/20 dark:border-info/30"
       },
       green: {
-        icon: "text-green-600 dark:text-green-400",
-        bg: "bg-green-50 dark:bg-green-900/20",
-        border: "border-green-200/50 dark:border-green-800/50"
+        icon: "text-success dark:text-success",
+        bg: "bg-success/10 dark:bg-success/20",
+        border: "border-success/20 dark:border-success/30"
       },
       purple: {
         icon: "text-accent dark:text-accent",
@@ -150,8 +150,8 @@ export const AdminOverviewCards = ({ stats }: OverviewCardsProps) => {
                     variant="secondary" 
                     className={`text-xs ${
                       card.changeType === 'increase' 
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' 
-                        : 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'
+                        ? 'bg-success/10 text-success dark:bg-success/20 dark:text-success' 
+                        : 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive'
                     }`}
                   >
                     {card.changeType === 'increase' ? (

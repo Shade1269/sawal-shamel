@@ -267,10 +267,10 @@ export function UserActivityTracker() {
   };
 
   const getEngagementLevel = (score: number): { label: string; color: string } => {
-    if (score >= 80) return { label: 'ممتاز', color: 'text-green-500' };
-    if (score >= 60) return { label: 'جيد', color: 'text-blue-500' };
-    if (score >= 40) return { label: 'متوسط', color: 'text-yellow-500' };
-    return { label: 'ضعيف', color: 'text-red-500' };
+    if (score >= 80) return { label: 'ممتاز', color: 'text-success' };
+    if (score >= 60) return { label: 'جيد', color: 'text-info' };
+    if (score >= 40) return { label: 'متوسط', color: 'text-warning' };
+    return { label: 'ضعيف', color: 'text-destructive' };
   };
 
   const exportData = () => {
@@ -362,22 +362,22 @@ export function UserActivityTracker() {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <Clock className="h-8 w-8 mx-auto mb-2 text-blue-500" />
+                  <Clock className="h-8 w-8 mx-auto mb-2 text-info" />
                   <div className="text-2xl font-bold">{formatDuration(currentSession.duration)}</div>
                   <div className="text-sm text-muted-foreground">مدة الجلسة</div>
                 </div>
                 <div className="text-center">
-                  <Eye className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                  <Eye className="h-8 w-8 mx-auto mb-2 text-success" />
                   <div className="text-2xl font-bold">{currentSession.pageViews}</div>
                   <div className="text-sm text-muted-foreground">مشاهدات الصفحة</div>
                 </div>
                 <div className="text-center">
-                  <MousePointer className="h-8 w-8 mx-auto mb-2 text-purple-500" />
+                  <MousePointer className="h-8 w-8 mx-auto mb-2 text-accent" />
                   <div className="text-2xl font-bold">{currentSession.clicks}</div>
                   <div className="text-sm text-muted-foreground">النقرات</div>
                 </div>
                 <div className="text-center">
-                  <Navigation className="h-8 w-8 mx-auto mb-2 text-orange-500" />
+                  <Navigation className="h-8 w-8 mx-auto mb-2 text-warning" />
                   <div className="text-2xl font-bold">{Math.round(currentSession.scrollDepth)}%</div>
                   <div className="text-sm text-muted-foreground">عمق التمرير</div>
                 </div>
@@ -418,21 +418,21 @@ export function UserActivityTracker() {
                 title: 'إجمالي الجلسات',
                 value: behavior.totalSessions.toLocaleString(),
                 icon: Users,
-                color: 'text-blue-500',
+                color: 'text-info',
                 change: '+12%'
               },
               {
                 title: 'إجمالي الوقت',
                 value: formatDuration(behavior.totalTime),
                 icon: Clock,
-                color: 'text-green-500',
+                color: 'text-success',
                 change: '+8%'
               },
               {
                 title: 'متوسط مدة الجلسة',
                 value: formatDuration(behavior.averageSessionDuration),
                 icon: Activity,
-                color: 'text-purple-500',
+                color: 'text-accent',
                 change: '+5%'
               },
               {
@@ -605,31 +605,31 @@ export function UserActivityTracker() {
                 title: 'المستخدمون الحاليون',
                 value: realTimeMetrics.currentUsers.toLocaleString(),
                 icon: Users,
-                color: 'text-green-500'
+                color: 'text-success'
               },
               {
                 title: 'مشاهدات الصفحة',
                 value: realTimeMetrics.pageViews.toLocaleString(),
                 icon: Eye,
-                color: 'text-blue-500'
+                color: 'text-info'
               },
               {
                 title: 'زوار فريدون',
                 value: realTimeMetrics.uniqueVisitors.toLocaleString(),
                 icon: Globe,
-                color: 'text-purple-500'
+                color: 'text-accent'
               },
               {
                 title: 'متوسط الجلسة',
                 value: formatDuration(realTimeMetrics.averageSessionTime),
                 icon: Clock,
-                color: 'text-orange-500'
+                color: 'text-warning'
               },
               {
                 title: 'معدل التحويل',
                 value: `${realTimeMetrics.conversionRate}%`,
                 icon: TrendingUp,
-                color: 'text-red-500'
+                color: 'text-destructive'
               }
             ].map((metric, index) => (
               <motion.div
@@ -653,7 +653,7 @@ export function UserActivityTracker() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
                 النشاط المباشر
               </CardTitle>
               <CardDescription>

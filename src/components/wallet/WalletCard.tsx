@@ -80,7 +80,7 @@ export const WalletCard = ({ onWithdrawClick }: WalletCardProps) => {
           {/* Lifetime Earnings */}
           <div className="bg-card border rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="h-4 w-4 text-green-500" />
+              <TrendingUp className="h-4 w-4 text-success" />
               <span className="text-xs text-muted-foreground">إجمالي الأرباح</span>
             </div>
             <div className="text-xl font-semibold">
@@ -91,7 +91,7 @@ export const WalletCard = ({ onWithdrawClick }: WalletCardProps) => {
           {/* Total Withdrawn */}
           <div className="bg-card border rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Wallet className="h-4 w-4 text-blue-500" />
+              <Wallet className="h-4 w-4 text-info" />
               <span className="text-xs text-muted-foreground">تم سحبه</span>
             </div>
             <div className="text-xl font-semibold">
