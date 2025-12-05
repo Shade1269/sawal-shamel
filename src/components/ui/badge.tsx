@@ -4,31 +4,31 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2",
   {
     variants: {
       variant: {
-        default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80 hover:scale-105",
+        default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
         secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground hover:bg-accent hover:text-accent-foreground",
+        outline: "border-border text-foreground hover:bg-secondary/50",
         
-        // Persian Heritage Variants
-        luxury: "border-transparent bg-gradient-luxury text-white shadow-luxury hover:shadow-persian hover:scale-105",
-        premium: "border-transparent bg-gradient-premium text-white shadow-elegant hover:shadow-glow",
-        persian: "border-transparent bg-gradient-persian text-white shadow-persian hover:scale-105",
-        heritage: "border-persian/20 bg-gradient-heritage text-white shadow-heritage",
+        // Anaqti Variants
+        luxury: "border-transparent bg-accent text-accent-foreground shadow-[0_4px_20px_rgba(200,155,60,0.2)]",
+        premium: "border-transparent bg-primary text-primary-foreground shadow-[0_4px_24px_rgba(90,38,71,0.15)]",
+        persian: "border-transparent bg-primary text-primary-foreground",
+        heritage: "border-primary/20 bg-primary/10 text-primary",
         
         // Status Variants
-        success: "border-transparent bg-status-online text-white hover:bg-status-online/90 hover:shadow-glow",
-        warning: "border-transparent bg-premium text-white hover:bg-premium/90",
-        error: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        info: "border-transparent bg-accent text-accent-foreground hover:bg-accent/90",
+        success: "border-transparent bg-success text-white",
+        warning: "border-transparent bg-warning text-white",
+        error: "border-transparent bg-destructive text-destructive-foreground",
+        info: "border-transparent bg-info text-foreground",
         
         // Style Variants
-        glass: "border-white/20 bg-white/10 backdrop-blur-sm text-foreground hover:bg-white/20",
-        gradient: "border-transparent gradient-btn-accent text-white hover:scale-105",
-        glow: "border-transparent bg-primary text-primary-foreground shadow-glow animate-pulse-glow",
+        glass: "border-border/20 bg-card/50 backdrop-blur-sm text-foreground",
+        gradient: "border-transparent bg-gradient-to-r from-primary to-accent text-white",
+        glow: "border-transparent bg-primary text-primary-foreground shadow-[0_0_20px_rgba(90,38,71,0.3)]",
         
         // Size-specific variants
         dot: "h-2 w-2 p-0 rounded-full",
@@ -43,10 +43,10 @@ const badgeVariants = cva(
       },
       animation: {
         none: "",
-        bounce: "hover:animate-bounce-in",
-        glow: "animate-pulse-glow",
-        float: "animate-persian-float",
-        shimmer: "animate-persian-shimmer",
+        bounce: "hover:scale-105",
+        glow: "animate-pulse",
+        float: "hover:-translate-y-0.5 transition-transform",
+        shimmer: "",
       }
     },
     defaultVariants: {
