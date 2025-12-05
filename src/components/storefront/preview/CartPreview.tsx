@@ -82,9 +82,9 @@ export const CartPreview = () => {
                   className="bg-white rounded-2xl p-12 text-center shadow-lg"
                 >
                   <ShoppingBag className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">السلة فارغة</h3>
-                  <p className="text-gray-600 mb-6">لم تضف أي منتجات بعد</p>
-                  <UnifiedButton className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <h3 className="text-xl font-bold text-foreground mb-2">السلة فارغة</h3>
+                  <p className="text-muted-foreground mb-6">لم تضف أي منتجات بعد</p>
+                  <UnifiedButton className="bg-info hover:bg-info/90 text-primary-foreground">
                     تسوق الآن
                   </UnifiedButton>
                 </motion.div>

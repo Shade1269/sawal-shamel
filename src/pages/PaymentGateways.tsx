@@ -74,7 +74,7 @@ const availableGateways = [
     provider: 'saudi_payments',
     description: 'نظام مدى للدفع الإلكتروني',
     icon: <Banknote className="h-6 w-6" />,
-    color: 'bg-green-500',
+    color: 'bg-success',
     features: ['آمن ومحلي', 'رسوم منخفضة', 'دعم 24/7']
   },
   {
@@ -83,7 +83,7 @@ const availableGateways = [
     provider: 'visa_international',
     description: 'بطاقات فيزا الدولية',
     icon: <CreditCard className="h-6 w-6" />,
-    color: 'bg-blue-500',
+    color: 'bg-info',
     features: ['قبول دولي', 'حماية متقدمة', 'تحويل العملات']
   },
   {
@@ -92,7 +92,7 @@ const availableGateways = [
     provider: 'mastercard_international',
     description: 'بطاقات ماستركارد الدولية',
     icon: <CreditCard className="h-6 w-6" />,
-    color: 'bg-red-500',
+    color: 'bg-destructive',
     features: ['شبكة عالمية', 'حماية الاحتيال', 'مكافآت']
   },
   {
@@ -101,7 +101,7 @@ const availableGateways = [
     provider: 'stc_group',
     description: 'محفظة STC Pay الرقمية',
     icon: <Smartphone className="h-6 w-6" />,
-    color: 'bg-purple-500',
+    color: 'bg-premium',
     features: ['دفع فوري', 'بدون رسوم', 'ربط سهل']
   },
   {
@@ -110,7 +110,7 @@ const availableGateways = [
     provider: 'tamara_bnpl',
     description: 'اشتري الآن وادفع لاحقاً',
     icon: <Building className="h-6 w-6" />,
-    color: 'bg-teal-500',
+    color: 'bg-info',
     features: ['دفع بالتقسيط', 'بدون فوائد', 'موافقة فورية']
   },
   {
@@ -119,7 +119,7 @@ const availableGateways = [
     provider: 'tabby_bnpl',
     description: 'قسط مشترياتك على 4 دفعات',
     icon: <Building className="h-6 w-6" />,
-    color: 'bg-orange-500',
+    color: 'bg-warning',
     features: ['4 دفعات', 'بدون فوائد', 'اعتماد سريع']
   },
   {
@@ -128,7 +128,7 @@ const availableGateways = [
     provider: 'apple_inc',
     description: 'الدفع بواسطة Apple Pay',
     icon: <Smartphone className="h-6 w-6" />,
-    color: 'bg-gray-900',
+    color: 'bg-foreground',
     features: ['Touch/Face ID', 'أمان عالي', 'دفع سريع']
   },
   {
@@ -137,7 +137,7 @@ const availableGateways = [
     provider: 'google_inc',
     description: 'الدفع بواسطة Google Pay',
     icon: <Smartphone className="h-6 w-6" />,
-    color: 'bg-blue-600',
+    color: 'bg-info',
     features: ['NFC Payment', 'حماية متقدمة', 'تكامل Android']
   }
 ];
@@ -554,12 +554,12 @@ const PaymentGateways = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">البوابات المفعلة</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-success">
                   {gateways.filter(g => g.is_enabled).length}
                 </p>
               </div>
-              <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                <Check className="h-5 w-5 text-green-600" />
+              <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                <Check className="h-5 w-5 text-success" />
               </div>
             </div>
           </CardContent>
@@ -570,12 +570,12 @@ const PaymentGateways = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">الوضع التجريبي</p>
-                <p className="text-2xl font-bold text-yellow-600">
+                <p className="text-2xl font-bold text-warning">
                   {gateways.filter(g => g.is_test_mode).length}
                 </p>
               </div>
-              <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center">
-                <TestTube className="h-5 w-5 text-yellow-600" />
+              <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
+                <TestTube className="h-5 w-5 text-warning" />
               </div>
             </div>
           </CardContent>
@@ -586,10 +586,10 @@ const PaymentGateways = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">إجمالي البوابات</p>
-                <p className="text-2xl font-bold text-blue-600">{gateways.length}</p>
+                <p className="text-2xl font-bold text-info">{gateways.length}</p>
               </div>
-              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                <CreditCard className="h-5 w-5 text-blue-600" />
+              <div className="w-10 h-10 bg-info/10 rounded-lg flex items-center justify-center">
+                <CreditCard className="h-5 w-5 text-info" />
               </div>
             </div>
           </CardContent>
@@ -600,12 +600,12 @@ const PaymentGateways = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">متوسط الرسوم</p>
-                <p className="text-2xl font-bold text-purple-600">
+                <p className="text-2xl font-bold text-premium">
                   {gateways.length ? (gateways.reduce((sum, g) => sum + g.percentage_fee, 0) / gateways.length).toFixed(1) : 0}%
                 </p>
               </div>
-              <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
-                <Percent className="h-5 w-5 text-purple-600" />
+              <div className="w-10 h-10 bg-premium/10 rounded-lg flex items-center justify-center">
+                <Percent className="h-5 w-5 text-premium" />
               </div>
             </div>
           </CardContent>
@@ -648,14 +648,14 @@ const PaymentGateways = () => {
                               {gateway.provider}
                             </Badge>
                             {gateway.is_enabled ? (
-                              <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                              <Badge className="bg-success/10 text-success">
                                 مفعلة
                               </Badge>
                             ) : (
                               <Badge variant="secondary">غير مفعلة</Badge>
                             )}
                             {gateway.is_test_mode && (
-                              <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">
+                              <Badge className="bg-warning/10 text-warning">
                                 <TestTube className="h-3 w-3 ml-1" />
                                 تجريبي
                               </Badge>

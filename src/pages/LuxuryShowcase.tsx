@@ -104,7 +104,7 @@ export default function LuxuryShowcase() {
       progress: 75,
       target: 1000000,
       trend: [45, 52, 48, 65, 72, 68, 85],
-      color: "bg-green-600"
+      color: "bg-success"
     },
     {
       id: "orders",
@@ -115,7 +115,7 @@ export default function LuxuryShowcase() {
       icon: ShoppingCart,
       description: "هذا الشهر",
       trend: [30, 35, 40, 38, 45, 48, 52],
-      color: "bg-blue-600"
+      color: "bg-info"
     },
     {
       id: "customers",
@@ -126,7 +126,7 @@ export default function LuxuryShowcase() {
       icon: Users,
       description: "مستخدم",
       progress: 62,
-      color: "bg-purple-600"
+      color: "bg-premium"
     },
     {
       id: "views",
@@ -137,7 +137,7 @@ export default function LuxuryShowcase() {
       icon: Eye,
       description: "هذا الأسبوع",
       trend: [120, 145, 165, 152, 180, 195, 210],
-      color: "bg-yellow-600"
+      color: "bg-warning"
     },
     {
       id: "products",
@@ -148,7 +148,7 @@ export default function LuxuryShowcase() {
       description: "متاح للبيع",
       progress: 85,
       target: 200,
-      color: "bg-red-600"
+      color: "bg-destructive"
     },
     {
       id: "conversion",
@@ -159,7 +159,7 @@ export default function LuxuryShowcase() {
       icon: TrendingUp,
       description: "من الزيارات",
       progress: 32,
-      color: "bg-indigo-600"
+      color: "bg-info"
     }
   ];
 
@@ -170,7 +170,7 @@ export default function LuxuryShowcase() {
       description: "منتج جديد للمتجر",
       icon: Plus,
       onClick: () => alert("إضافة منتج"),
-      color: "bg-green-600"
+      color: "bg-success"
     },
     {
       id: "view-reports",
@@ -178,7 +178,7 @@ export default function LuxuryShowcase() {
       description: "تحليلات مفصلة",
       icon: FileText,
       onClick: () => alert("عرض التقارير"),
-      color: "bg-blue-600"
+      color: "bg-info"
     },
     {
       id: "manage-orders",
@@ -186,7 +186,7 @@ export default function LuxuryShowcase() {
       description: "طلبات قيد المعالجة",
       icon: ShoppingCart,
       onClick: () => alert("إدارة الطلبات"),
-      color: "bg-purple-600"
+      color: "bg-premium"
     },
     {
       id: "settings",
@@ -230,7 +230,7 @@ export default function LuxuryShowcase() {
               variant={theme === "ferrari" ? "default" : "outline"}
               onClick={() => applyTheme("ferrari")}
               size="sm"
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-destructive hover:bg-destructive/90"
             >
               Ferrari
             </Button>
@@ -239,7 +239,7 @@ export default function LuxuryShowcase() {
 
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <Badge className="bg-red-600 text-white">1</Badge>
+            <Badge className="bg-destructive text-destructive-foreground">1</Badge>
             <h2 className="text-2xl font-bold text-white">
               ProductShowcase3D - عرض منتج ثلاثي الأبعاد
             </h2>
@@ -257,7 +257,7 @@ export default function LuxuryShowcase() {
 
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <Badge className="bg-red-600 text-white">2</Badge>
+            <Badge className="bg-destructive text-destructive-foreground">2</Badge>
             <h2 className="text-2xl font-bold text-white">
               SpecificationPanel - لوحة المواصفات التقنية
             </h2>
@@ -274,7 +274,7 @@ export default function LuxuryShowcase() {
 
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <Badge className="bg-red-600 text-white">3</Badge>
+            <Badge className="bg-destructive text-destructive-foreground">3</Badge>
             <h2 className="text-2xl font-bold text-white">
               InteractiveDashboard - لوحة التحكم التفاعلية
             </h2>
@@ -292,7 +292,7 @@ export default function LuxuryShowcase() {
 
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <Badge className="bg-red-600 text-white">4</Badge>
+            <Badge className="bg-destructive text-destructive-foreground">4</Badge>
             <h2 className="text-2xl font-bold text-white">
               LuxuryCardV2 - البطاقات الفاخرة المحسنة
             </h2>
@@ -315,7 +315,7 @@ export default function LuxuryShowcase() {
                 </p>
               </LuxuryCardContent>
               <LuxuryCardFooter>
-                <Button className="w-full bg-red-600 hover:bg-red-700">
+                <Button className="w-full bg-destructive hover:bg-destructive/90">
                   <Zap className="h-4 w-4 ml-2" />
                   إجراء رئيسي
                 </Button>
