@@ -76,7 +76,7 @@ export const SecurityDashboard = () => {
             <CardTitle className="text-sm font-medium">
               تنبيهات الاحتيال
             </CardTitle>
-            <AlertTriangle className="h-4 w-4 text-orange-600" />
+            <AlertTriangle className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground mb-1">
@@ -167,10 +167,10 @@ export const SecurityDashboard = () => {
             <CardTitle className="text-sm font-medium">
               مستوى الامتثال
             </CardTitle>
-            <TrendingUp className="h-4 w-4 text-purple-600" />
+            <TrendingUp className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600 mb-1">
+            <div className="text-2xl font-bold text-accent mb-1">
               Level 1
             </div>
             <div className="text-xs text-muted-foreground mb-2">
@@ -215,24 +215,24 @@ export const SecurityDashboard = () => {
         <CardContent>
           <div className="space-y-3">
             {insights.pendingAlerts > 5 && (
-              <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                <p className="text-sm text-orange-800">
+              <div className="p-3 bg-warning/10 border border-warning/30 rounded-lg">
+                <p className="text-sm text-warning">
                   <strong>تحذير:</strong> لديك {insights.pendingAlerts} تنبيه احتيال في انتظار المراجعة. يُنصح بمراجعتها فوراً.
                 </p>
               </div>
             )}
             
             {insights.recentBackups === 0 && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-800">
+              <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
+                <p className="text-sm text-destructive">
                   <strong>تحذير:</strong> لم يتم إنشاء نسخ احتياطية مؤخراً. يُنصح بجدولة نسخ احتياطية دورية.
                 </p>
               </div>
             )}
 
             {insights.securityScore >= 90 && (
-              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-sm text-green-800">
+              <div className="p-3 bg-success/10 border border-success/30 rounded-lg">
+                <p className="text-sm text-success">
                   <strong>ممتاز!</strong> نظام الأمان يعمل بكفاءة عالية. استمر في المراقبة المنتظمة.
                 </p>
               </div>

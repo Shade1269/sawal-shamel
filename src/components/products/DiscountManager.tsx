@@ -443,7 +443,7 @@ const DiscountManager: React.FC<DiscountManagerProps> = ({
 
                   {/* تحقق من انتهاء صلاحية الخصم */}
                   {discount.end_date && new Date(discount.end_date) < new Date() && (
-                    <div className="flex items-center gap-2 mt-2 text-orange-600 text-sm">
+                    <div className="flex items-center gap-2 mt-2 text-warning text-sm">
                       <AlertCircle className="h-4 w-4" />
                       انتهت صلاحية هذا الخصم
                     </div>

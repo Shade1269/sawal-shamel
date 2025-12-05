@@ -198,7 +198,7 @@ export function InventoryAlerts({ refreshTrigger }: InventoryAlertsProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-green-600">
+          <CardTitle className="flex items-center gap-2 text-success">
             <Bell className="h-5 w-5" />
             تنبيهات المخزون
           </CardTitle>
@@ -225,7 +225,7 @@ export function InventoryAlerts({ refreshTrigger }: InventoryAlertsProps) {
         {/* التنبيهات الحرجة */}
         {criticalAlerts.length > 0 && (
           <div className="space-y-2">
-            <h4 className="font-semibold text-red-600">تنبيهات حرجة ({criticalAlerts.length})</h4>
+            <h4 className="font-semibold text-destructive">تنبيهات حرجة ({criticalAlerts.length})</h4>
             {criticalAlerts.map((alert) => (
               <Alert key={alert.id} variant={getAlertVariant(alert.severity) as any}>
                 <div className="flex items-center gap-2">

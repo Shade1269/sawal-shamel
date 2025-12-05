@@ -236,12 +236,12 @@ const EnhancedAffiliateDashboard = () => {
         transition={{ delay: 0.2 }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
       >
-        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-green-500">
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-success">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">إجمالي المبيعات</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-success">
                   {formatCurrency(stats.totalSales)}
                 </p>
                 <div className="flex items-center gap-1 mt-1">

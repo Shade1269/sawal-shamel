@@ -308,8 +308,8 @@ export const PerformanceRecommendations: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         {recommendations.map((rec, index) => (
-          <div key={index} className="border-l-4 border-orange-500 pl-4">
-            <h4 className="font-medium text-orange-700 dark:text-orange-400">
+          <div key={index} className="border-l-4 border-warning pl-4">
+            <h4 className="font-medium text-warning">
               {rec.issue}
             </h4>
             <ul className="mt-2 text-sm text-muted-foreground space-y-1">

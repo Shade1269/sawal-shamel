@@ -330,7 +330,7 @@ export const IntegrationHealthChecker: React.FC = () => {
                   <h4 className="font-semibold">{integration.name}</h4>
                   <p className="text-sm text-muted-foreground">{integration.message}</p>
                   {integration.details && (
-                    <p className="text-xs text-red-600 mt-1">{integration.details}</p>
+                    <p className="text-xs text-destructive mt-1">{integration.details}</p>
                   )}
                 </div>
               </div>

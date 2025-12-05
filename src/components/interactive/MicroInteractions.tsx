@@ -103,7 +103,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({
             className={cn(
               sizeClasses[size],
               "transition-all duration-300",
-              isLiked ? "fill-red-500 text-red-500 scale-110" : "text-muted-foreground group-hover:text-red-400",
+              isLiked ? "fill-destructive text-destructive scale-110" : "text-muted-foreground group-hover:text-destructive/60",
               isAnimating && "animate-ping absolute"
             )} 
           />
@@ -111,7 +111,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({
             <Heart 
               className={cn(
                 sizeClasses[size],
-                "fill-red-500 text-red-500 animate-pulse"
+                "fill-destructive text-destructive animate-pulse"
               )} 
             />
           )}
@@ -120,7 +120,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({
         {showCount && (
           <span className={cn(
             "text-sm font-medium transition-colors duration-200",
-            isLiked ? "text-red-500" : "text-muted-foreground"
+            isLiked ? "text-destructive" : "text-muted-foreground"
           )}>
             {currentCount.toLocaleString('ar')}
           </span>
@@ -134,7 +134,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({
             <Heart
               key={i}
               className={cn(
-                "absolute h-3 w-3 fill-red-500 text-red-500 animate-float-up opacity-80",
+                "absolute h-3 w-3 fill-destructive text-destructive animate-float-up opacity-80",
                 i === 0 && "left-0 top-0",
                 i === 1 && "left-1/2 top-0 animation-delay-100",
                 i === 2 && "right-0 top-0 animation-delay-200"
@@ -167,7 +167,7 @@ const StarRating: React.FC<StarRatingProps> = ({
   onChange,
   readonly = false,
   size = 'md',
-  color = 'text-yellow-500',
+  color = 'text-warning',
   className
 }) => {
   const [hoverRating, setHoverRating] = useState(0);

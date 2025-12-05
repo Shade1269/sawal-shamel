@@ -85,19 +85,19 @@ export function InventoryReports({ refreshTrigger }: InventoryReportsProps) {
 
   const getMovementIcon = (type: string) => {
     return type === 'IN' ? (
-      <TrendingUp className="h-4 w-4 text-green-600" />
+      <TrendingUp className="h-4 w-4 text-success" />
     ) : (
-      <TrendingDown className="h-4 w-4 text-red-600" />
+      <TrendingDown className="h-4 w-4 text-destructive" />
     );
   };
 
   const getMovementBadge = (type: string) => {
     return type === 'IN' ? (
-      <Badge variant="outline" className="text-green-600 border-green-600">
+      <Badge variant="outline" className="text-success border-success">
         دخول
       </Badge>
     ) : (
-      <Badge variant="outline" className="text-red-600 border-red-600">
+      <Badge variant="outline" className="text-destructive border-destructive">
         خروج
       </Badge>
     );
@@ -190,10 +190,10 @@ export function InventoryReports({ refreshTrigger }: InventoryReportsProps) {
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-green-600" />
+                    <TrendingUp className="h-4 w-4 text-success" />
                     <div>
                       <p className="text-sm text-muted-foreground">إجمالي الدخول</p>
-                      <p className="text-2xl font-bold text-green-600">{formatNumber(totalIn)}</p>
+                      <p className="text-2xl font-bold text-success">{formatNumber(totalIn)}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -202,10 +202,10 @@ export function InventoryReports({ refreshTrigger }: InventoryReportsProps) {
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2">
-                    <TrendingDown className="h-4 w-4 text-red-600" />
+                    <TrendingDown className="h-4 w-4 text-destructive" />
                     <div>
                       <p className="text-sm text-muted-foreground">إجمالي الخروج</p>
-                      <p className="text-2xl font-bold text-red-600">{formatNumber(totalOut)}</p>
+                      <p className="text-2xl font-bold text-destructive">{formatNumber(totalOut)}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -214,10 +214,10 @@ export function InventoryReports({ refreshTrigger }: InventoryReportsProps) {
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2">
-                    <ArrowUpDown className="h-4 w-4 text-blue-600" />
+                    <ArrowUpDown className="h-4 w-4 text-info" />
                     <div>
                       <p className="text-sm text-muted-foreground">صافي الحركة</p>
-                      <p className={`text-2xl font-bold ${netMovement >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      <p className={`text-2xl font-bold ${netMovement >= 0 ? 'text-success' : 'text-destructive'}`}>
                         {netMovement >= 0 ? '+' : ''}{formatNumber(netMovement)}
                       </p>
                     </div>

@@ -42,7 +42,7 @@ export function MerchantHeader() {
           {/* Notifications */}
           <Button variant="ghost" size="sm" className="relative h-10 w-10 rounded-xl hover:bg-accent/50 transition-all duration-200 hover:scale-105">
             <Bell className="h-5 w-5" />
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full animate-pulse"></div>
           </Button>
 
           {/* User Menu */}
@@ -78,7 +78,7 @@ export function MerchantHeader() {
                 <span className="font-medium">لوحة التحكم</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-gradient-muted" />
-              <DropdownMenuItem onClick={handleSignOut} className="px-4 py-3 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors duration-200">
+              <DropdownMenuItem onClick={handleSignOut} className="px-4 py-3 text-destructive hover:bg-destructive/10 transition-colors duration-200">
                 <span className="font-medium">تسجيل الخروج</span>
               </DropdownMenuItem>
             </DropdownMenuContent>

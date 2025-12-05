@@ -212,10 +212,10 @@ export const BackupManagement = () => {
             <CardTitle className="text-sm font-medium">
               آخر نسخة احتياطية
             </CardTitle>
-            <Clock className="h-4 w-4 text-purple-600" />
+            <Clock className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-sm font-bold text-purple-600">
+            <div className="text-sm font-bold text-accent">
               {backupLogs.length > 0 
                 ? new Date(backupLogs[0].created_at).toLocaleDateString('ar-SA')
                 : "لا توجد نسخ"

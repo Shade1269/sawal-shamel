@@ -237,7 +237,7 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
 
                 <Card>
                   <CardContent className="p-4 text-center">
-                    <TrendingDown className="h-6 w-6 mx-auto mb-2 text-purple-500" />
+                    <TrendingDown className="h-6 w-6 mx-auto mb-2 text-accent" />
                     <div className="text-2xl font-bold">{metrics.cls.toFixed(3)}</div>
                     <div className="text-sm text-muted-foreground">CLS</div>
                   </CardContent>
@@ -245,7 +245,7 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
 
                 <Card>
                   <CardContent className="p-4 text-center">
-                    <Clock className="h-6 w-6 mx-auto mb-2 text-orange-500" />
+                    <Clock className="h-6 w-6 mx-auto mb-2 text-warning" />
                     <div className="text-2xl font-bold">{formatTime(loadTime)}</div>
                     <div className="text-sm text-muted-foreground">Load Time</div>
                   </CardContent>

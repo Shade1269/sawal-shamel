@@ -187,12 +187,12 @@ export const ProductModal = ({
                   )}
                 </div>
                 <div className="flex items-center gap-4 text-sm">
-                  <span className={`flex items-center gap-1 ${product.stock > 5 ? 'text-green-600' : 'text-orange-600'}`}>
+                  <span className={`flex items-center gap-1 ${product.stock > 5 ? 'text-success' : 'text-warning'}`}>
                     <Package className="h-4 w-4" />
                     {product.stock > 0 ? `متوفر ${product.stock} قطعة` : 'نفد المخزون'}
                   </span>
                   {product.stock < 5 && product.stock > 0 && (
-                    <Badge variant="outline" className="text-orange-600 border-orange-300">
+                    <Badge variant="outline" className="text-warning border-warning/50">
                       <Zap className="h-3 w-3 mr-1" />
                       كمية محدودة
                     </Badge>

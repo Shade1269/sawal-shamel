@@ -76,7 +76,7 @@ const ShipmentTrackingCard: React.FC<ShipmentTrackingCardProps> = ({
           
           {shipment.actual_delivery_date && (
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-green-600" />
+              <Calendar className="h-4 w-4 text-success" />
               <span>تم التسليم: {new Date(shipment.actual_delivery_date).toLocaleDateString('ar-SA')}</span>
             </div>
           )}

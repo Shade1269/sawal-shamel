@@ -193,7 +193,7 @@ export function QuickActions() {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="cursor-pointer text-red-500 focus:text-red-500"
+              className="cursor-pointer text-destructive focus:text-destructive"
               onClick={handleSignOut}
             >
               <LogOut className="mr-2 h-4 w-4" />

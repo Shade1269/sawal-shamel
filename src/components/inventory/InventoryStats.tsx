@@ -121,10 +121,10 @@ export function InventoryStats({ items, warehouses }: InventoryStatsProps) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">الكمية المتاحة</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-600" />
+            <TrendingUp className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{formatNumber(stats.totalAvailable)}</div>
+            <div className="text-2xl font-bold text-success">{formatNumber(stats.totalAvailable)}</div>
             <p className="text-xs text-muted-foreground">
               وحدة متاحة للبيع
             </p>
@@ -134,10 +134,10 @@ export function InventoryStats({ items, warehouses }: InventoryStatsProps) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">الكمية المحجوزة</CardTitle>
-            <TrendingDown className="h-4 w-4 text-orange-600" />
+            <TrendingDown className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{formatNumber(stats.totalReserved)}</div>
+            <div className="text-2xl font-bold text-warning">{formatNumber(stats.totalReserved)}</div>
             <p className="text-xs text-muted-foreground">
               وحدة محجوزة للطلبات
             </p>
@@ -147,10 +147,10 @@ export function InventoryStats({ items, warehouses }: InventoryStatsProps) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">قيمة المخزون</CardTitle>
-            <Package2 className="h-4 w-4 text-blue-600" />
+            <Package2 className="h-4 w-4 text-info" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{formatCurrency(stats.totalValue)}</div>
+            <div className="text-2xl font-bold text-info">{formatCurrency(stats.totalValue)}</div>
             <p className="text-xs text-muted-foreground">
               إجمالي قيمة المخزون
             </p>
@@ -240,7 +240,7 @@ export function InventoryStats({ items, warehouses }: InventoryStatsProps) {
                     </Badge>
                   )}
                   {warehouse.outOfStockCount === 0 && warehouse.lowStockCount === 0 && (
-                    <Badge variant="outline" className="text-green-600 border-green-600">
+                    <Badge variant="outline" className="text-success border-success">
                       جيد
                     </Badge>
                   )}

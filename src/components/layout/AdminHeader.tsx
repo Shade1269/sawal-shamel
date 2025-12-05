@@ -83,7 +83,7 @@ export function AdminHeader() {
                 لوحة الإدارة
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+              <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                 تسجيل الخروج
               </DropdownMenuItem>
             </DropdownMenuContent>
