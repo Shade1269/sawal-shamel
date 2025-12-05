@@ -161,7 +161,7 @@ const AffiliateCouponManager = () => {
                       <div className="space-y-3 flex-1">
                         <div className="flex items-center gap-3">
                           <h4 className="font-semibold">{coupon.coupon_name}</h4>
-                          <Badge className={`${getStatusColor(coupon.is_active, coupon.valid_until || undefined)} text-white`}>
+                          <Badge className={`${getStatusColor(coupon.is_active, coupon.valid_until || undefined)} text-primary-foreground`}>
                             {getStatusText(coupon.is_active, coupon.valid_until || undefined)}
                           </Badge>
                         </div>

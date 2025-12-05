@@ -229,7 +229,7 @@ const SocialMediaManager = () => {
                           <Badge
                             key={platform}
                             variant="secondary"
-                            className={`${getPlatformColor(platform)} text-white`}
+                            className={`${getPlatformColor(platform)} text-primary-foreground`}
                           >
                             {getPlatformIcon(platform)}
                             <span className="mr-1">{platform}</span>
