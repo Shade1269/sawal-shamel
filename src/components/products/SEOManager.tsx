@@ -281,17 +281,17 @@ const SEOManager: React.FC<SEOManagerProps> = ({
 
           {/* معاينة في نتائج البحث */}
           {seo.seo_title && (
-            <div className="p-4 border rounded-lg bg-gray-50">
+            <div className="p-4 border rounded-lg bg-muted/30">
               <p className="text-xs text-muted-foreground mb-1">معاينة في جوجل:</p>
               <div className="space-y-1">
-                <h3 className="text-blue-600 text-lg font-medium hover:underline cursor-pointer">
+                <h3 className="text-info text-lg font-medium hover:underline cursor-pointer">
                   {seo.seo_title}
                 </h3>
-                <p className="text-green-700 text-sm">
+                <p className="text-success text-sm">
                   example.com/{seo.slug || 'product-name'}
                 </p>
                 {seo.seo_description && (
-                  <p className="text-gray-700 text-sm">
+                  <p className="text-foreground/80 text-sm">
                     {seo.seo_description}
                   </p>
                 )}

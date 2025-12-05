@@ -47,13 +47,13 @@ export const AdminQuickActions = () => {
     {
       title: "تحليلات الأداء",
       icon: BarChart3,
-      color: "bg-purple-100 dark:bg-purple-900/20",
+      color: "bg-accent/20 dark:bg-accent/20",
       action: () => navigate('/admin/analytics')
     },
     {
       title: "لوحة التحكم",
       icon: Crown,
-      color: "bg-indigo-100 dark:bg-indigo-900/20",
+      color: "bg-primary/20 dark:bg-primary/20",
       action: () => navigate('/admin/dashboard')
     },
     {

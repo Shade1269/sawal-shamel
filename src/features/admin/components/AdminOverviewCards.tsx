@@ -102,24 +102,24 @@ export const AdminOverviewCards = ({ stats }: OverviewCardsProps) => {
         border: "border-green-200/50 dark:border-green-800/50"
       },
       purple: {
-        icon: "text-purple-600 dark:text-purple-400",
-        bg: "bg-purple-50 dark:bg-purple-900/20",
-        border: "border-purple-200/50 dark:border-purple-800/50"
+        icon: "text-accent dark:text-accent",
+        bg: "bg-accent/10 dark:bg-accent/20",
+        border: "border-accent/20 dark:border-accent/30"
       },
       orange: {
-        icon: "text-orange-600 dark:text-orange-400",
-        bg: "bg-orange-50 dark:bg-orange-900/20",
-        border: "border-orange-200/50 dark:border-orange-800/50"
+        icon: "text-warning dark:text-warning",
+        bg: "bg-warning/10 dark:bg-warning/20",
+        border: "border-warning/20 dark:border-warning/30"
       },
       indigo: {
-        icon: "text-indigo-600 dark:text-indigo-400",
-        bg: "bg-indigo-50 dark:bg-indigo-900/20",
-        border: "border-indigo-200/50 dark:border-indigo-800/50"
+        icon: "text-primary dark:text-primary",
+        bg: "bg-primary/10 dark:bg-primary/20",
+        border: "border-primary/20 dark:border-primary/30"
       },
       teal: {
-        icon: "text-teal-600 dark:text-teal-400",
-        bg: "bg-teal-50 dark:bg-teal-900/20",
-        border: "border-teal-200/50 dark:border-teal-800/50"
+        icon: "text-info dark:text-info",
+        bg: "bg-info/10 dark:bg-info/20",
+        border: "border-info/20 dark:border-info/30"
       }
     };
     return colorMap[color as keyof typeof colorMap] || colorMap.blue;

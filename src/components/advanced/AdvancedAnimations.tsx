@@ -445,7 +445,7 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                   
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
-                      <div className="text-lg font-bold text-indigo-600">تفاعلي</div>
+                      <div className="text-lg font-bold text-primary">تفاعلي</div>
                       <div className="text-sm text-muted-foreground">مرر للاستكشاف</div>
                     </div>
                   </div>

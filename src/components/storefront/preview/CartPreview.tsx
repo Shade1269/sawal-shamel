@@ -63,9 +63,9 @@ export const CartPreview = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <div className="inline-flex items-center gap-3 bg-blue-100 px-6 py-3 rounded-full mb-4">
-              <ShoppingBag className="w-6 h-6 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">سلة التسوق</h1>
+            <div className="inline-flex items-center gap-3 bg-info/20 px-6 py-3 rounded-full mb-4">
+              <ShoppingBag className="w-6 h-6 text-info" />
+              <h1 className="text-2xl font-bold text-foreground">سلة التسوق</h1>
             </div>
             <p className="text-foreground/70">
               لديك {cartItems.length} {cartItems.length === 1 ? 'منتج' : 'منتجات'} في السلة
@@ -79,9 +79,9 @@ export const CartPreview = () => {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="bg-white rounded-2xl p-12 text-center shadow-lg"
+                  className="bg-card rounded-2xl p-12 text-center shadow-lg"
                 >
-                  <ShoppingBag className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                  <ShoppingBag className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
                   <h3 className="text-xl font-bold text-foreground mb-2">السلة فارغة</h3>
                   <p className="text-muted-foreground mb-6">لم تضف أي منتجات بعد</p>
                   <UnifiedButton className="bg-info hover:bg-info/90 text-primary-foreground">
@@ -95,7 +95,7 @@ export const CartPreview = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow"
+                    className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow"
                   >
                     <div className="flex gap-6">
                       {/* Image */}
@@ -109,18 +109,18 @@ export const CartPreview = () => {
 
                       {/* Details */}
                       <div className="flex-1 text-right">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        <h3 className="text-xl font-bold text-foreground mb-2">
                           {item.title}
                         </h3>
                         <div className="space-y-2 mb-4">
-                          <p className="text-gray-600">
+                          <p className="text-muted-foreground">
                             <span className="font-semibold">المقاس:</span> {item.size}
                           </p>
-                          <p className="text-gray-600">
+                          <p className="text-muted-foreground">
                             <span className="font-semibold">اللون:</span> {item.color}
                           </p>
                         </div>
-                        <p className="text-2xl font-bold text-gray-900">
+                        <p className="text-2xl font-bold text-foreground">
                           {item.price} ر.س
                         </p>
                       </div>
@@ -129,15 +129,15 @@ export const CartPreview = () => {
                       <div className="flex flex-col items-center justify-between">
                         <button
                           onClick={() => removeItem(item.id)}
-                          className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-2 hover:bg-destructive/10 rounded-lg transition-colors"
                         >
-                          <Trash2 className="w-5 h-5 text-red-600" />
+                          <Trash2 className="w-5 h-5 text-destructive" />
                         </button>
 
-                        <div className="flex items-center gap-3 bg-gray-100 rounded-lg px-3 py-2">
+                        <div className="flex items-center gap-3 bg-muted rounded-lg px-3 py-2">
                           <button
                             onClick={() => updateQuantity(item.id, -1)}
-                            className="p-1 hover:bg-white rounded transition-colors"
+                            className="p-1 hover:bg-card rounded transition-colors"
                           >
                             <Minus className="w-4 h-4" />
                           </button>
@@ -146,7 +146,7 @@ export const CartPreview = () => {
                           </span>
                           <button
                             onClick={() => updateQuantity(item.id, 1)}
-                            className="p-1 hover:bg-white rounded transition-colors"
+                            className="p-1 hover:bg-card rounded transition-colors"
                           >
                             <Plus className="w-4 h-4" />
                           </button>
@@ -165,31 +165,31 @@ export const CartPreview = () => {
               transition={{ delay: 0.2 }}
               className="lg:col-span-1"
             >
-              <div className="bg-white rounded-2xl p-6 shadow-lg sticky top-24">
-                <h3 className="text-xl font-bold text-gray-900 mb-6 text-right">
+              <div className="bg-card rounded-2xl p-6 shadow-lg sticky top-24">
+                <h3 className="text-xl font-bold text-foreground mb-6 text-right">
                   ملخص الطلب
                 </h3>
 
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between text-right">
-                    <span className="text-gray-600">المجموع الفرعي</span>
-                    <span className="font-semibold text-gray-900">{subtotal} ر.س</span>
+                    <span className="text-muted-foreground">المجموع الفرعي</span>
+                    <span className="font-semibold text-foreground">{subtotal} ر.س</span>
                   </div>
                   <div className="flex justify-between text-right">
-                    <span className="text-gray-600">الشحن</span>
-                    <span className="font-semibold text-gray-900">{shipping} ر.س</span>
+                    <span className="text-muted-foreground">الشحن</span>
+                    <span className="font-semibold text-foreground">{shipping} ر.س</span>
                   </div>
-                  <div className="border-t border-gray-200 pt-4">
+                  <div className="border-t border-border pt-4">
                     <div className="flex justify-between text-right">
-                      <span className="text-lg font-bold text-gray-900">المجموع</span>
-                      <span className="text-2xl font-bold text-blue-600">{total} ر.س</span>
+                      <span className="text-lg font-bold text-foreground">المجموع</span>
+                      <span className="text-2xl font-bold text-info">{total} ر.س</span>
                     </div>
                   </div>
                 </div>
 
                 <UnifiedButton
                   disabled={cartItems.length === 0}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 text-lg mb-3"
+                  className="w-full bg-info hover:bg-info/90 text-primary-foreground font-bold py-6 text-lg mb-3"
                 >
                   إتمام الطلب
                   <ArrowRight className="w-5 h-5 mr-2" />
@@ -197,7 +197,7 @@ export const CartPreview = () => {
 
                 <UnifiedButton
                   variant="outline"
-                  className="w-full border-2 border-gray-300 hover:bg-gray-50 text-gray-900 font-bold py-6"
+                  className="w-full border-2 border-border hover:bg-muted text-foreground font-bold py-6"
                 >
                   متابعة التسوق
                 </UnifiedButton>
