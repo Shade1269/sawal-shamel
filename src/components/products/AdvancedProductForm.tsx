@@ -304,7 +304,7 @@ const AdvancedProductForm: React.FC<AdvancedProductFormProps> = ({ mode }) => {
                   <span className="text-muted-foreground line-through">
                     {formData.product.price_sar.toFixed(2)} ر.س
                   </span>
-                  <span className="text-green-600 font-semibold">
+                  <span className="text-success font-semibold">
                     {finalPrice.toFixed(2)} ر.س
                   </span>
                 </div>
@@ -394,10 +394,10 @@ const AdvancedProductForm: React.FC<AdvancedProductFormProps> = ({ mode }) => {
                           product: { ...prev.product, title: e.target.value }
                         }))}
                         placeholder="اسم المنتج (3-120 حرف)"
-                        className={validationErrors.title ? 'border-red-500' : ''}
+                        className={validationErrors.title ? 'border-destructive' : ''}
                       />
                       {validationErrors.title && (
-                        <p className="text-sm text-red-500">{validationErrors.title}</p>
+                        <p className="text-sm text-destructive">{validationErrors.title}</p>
                       )}
                     </div>
                     
@@ -411,10 +411,10 @@ const AdvancedProductForm: React.FC<AdvancedProductFormProps> = ({ mode }) => {
                           product: { ...prev.product, sku_root: e.target.value }
                         }))}
                         placeholder="PRD-2025-001"
-                        className={validationErrors.sku_root ? 'border-red-500' : ''}
+                        className={validationErrors.sku_root ? 'border-destructive' : ''}
                       />
                       {validationErrors.sku_root && (
-                        <p className="text-sm text-red-500">{validationErrors.sku_root}</p>
+                        <p className="text-sm text-destructive">{validationErrors.sku_root}</p>
                       )}
                     </div>
                   </div>

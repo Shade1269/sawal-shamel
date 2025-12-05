@@ -219,7 +219,7 @@ export function InteractiveDashboard({
         <Card className="border border-primary/15 bg-gradient-subtle backdrop-blur-sm shadow-lg shadow-black/30">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2">
-              <Zap className="h-5 w-5 text-red-500" />
+              <Zap className="h-5 w-5 text-primary" />
               إجراءات سريعة
             </CardTitle>
           </CardHeader>

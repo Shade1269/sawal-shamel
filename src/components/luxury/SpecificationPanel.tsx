@@ -81,7 +81,7 @@ export function SpecificationPanel({
         <div className="flex items-start justify-between">
           <div>
             <CardTitle className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
-              <Info className="h-6 w-6 text-red-500" />
+              <Info className="h-6 w-6 text-primary" />
               {title}
             </CardTitle>
             {description && (
@@ -132,9 +132,9 @@ export function SpecificationPanel({
                   transition={{ duration: 0.3 }}
                 >
                   {isExpanded ? (
-                    <ChevronUp className="h-5 w-5 text-red-400" />
+                    <ChevronUp className="h-5 w-5 text-primary" />
                   ) : (
-                    <ChevronDown className="h-5 w-5 text-slate-400" />
+                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
                   )}
                 </motion.div>
               </button>
@@ -161,8 +161,8 @@ export function SpecificationPanel({
                             className={cn(
                               "flex items-start justify-between p-4 rounded-lg transition-all duration-300",
                               spec.highlight
-                                ? "bg-red-900/15 border border-red-600/25"
-                                : "bg-slate-800/40 border border-slate-700/25 hover:border-slate-600/40"
+                                ? "bg-primary/15 border border-primary/25"
+                                : "bg-card/40 border border-border/25 hover:border-border/40"
                             )}
                           >
                             <div className="flex-1 min-w-0">
@@ -171,14 +171,14 @@ export function SpecificationPanel({
                                   <SpecIcon
                                     className={cn(
                                       "h-4 w-4",
-                                      spec.highlight ? "text-red-400" : "text-slate-400"
+                                      spec.highlight ? "text-primary" : "text-muted-foreground"
                                     )}
                                   />
                                 )}
                                 <span
                                   className={cn(
                                     "text-sm font-medium",
-                                    spec.highlight ? "text-red-300" : "text-slate-300"
+                                    spec.highlight ? "text-primary" : "text-muted-foreground"
                                   )}
                                 >
                                   {spec.label}
@@ -186,7 +186,7 @@ export function SpecificationPanel({
                                 {spec.badge && (
                                   <Badge
                                     variant="secondary"
-                                    className="text-xs bg-green-600/20 text-green-400 border-green-600/30"
+                                    className="text-xs bg-success/20 text-success border-success/30"
                                   >
                                     {spec.badge}
                                   </Badge>
@@ -223,7 +223,7 @@ export function SpecificationPanel({
                             </div>
 
                             {spec.highlight && (
-                              <CheckCircle2 className="h-5 w-5 text-red-400 flex-shrink-0 mr-2" />
+                              <CheckCircle2 className="h-5 w-5 text-primary flex-shrink-0 mr-2" />
                             )}
                           </motion.div>
                         );

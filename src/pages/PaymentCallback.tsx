@@ -148,8 +148,8 @@ export const PaymentCallback: React.FC = () => {
     return (
       <div className="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-4 py-8">
         {/* رسالة النجاح */}
-        <UnifiedCard className="w-full border border-green-500/20 bg-[color:var(--glass-bg)]/85 p-6 text-center">
-          <CheckCircle2 className="h-12 w-12 mx-auto mb-3 text-green-500" />
+        <UnifiedCard className="w-full border border-success/20 bg-[color:var(--glass-bg)]/85 p-6 text-center">
+          <CheckCircle2 className="h-12 w-12 mx-auto mb-3 text-success" />
           <h1 className="text-2xl font-semibold text-[color:var(--glass-fg)] mb-2">
             تم الدفع بنجاح!
           </h1>
@@ -304,7 +304,7 @@ export const PaymentCallback: React.FC = () => {
   return (
     <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center gap-6 px-4">
       <UnifiedCard className="w-full max-w-xl border border-[color:var(--glass-border)] bg-[color:var(--glass-bg)]/85 p-8 text-center">
-        <XCircle className="h-16 w-16 mx-auto mb-4 text-red-500" />
+        <XCircle className="h-16 w-16 mx-auto mb-4 text-destructive" />
         <h1 className="text-2xl font-semibold text-[color:var(--glass-fg)] mb-2">
           فشل الدفع
         </h1>

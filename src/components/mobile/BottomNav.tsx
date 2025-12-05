@@ -49,7 +49,7 @@ export function BottomNav({ storeSlug, cartCount = 0, wishlistCount = 0 }: Botto
       label: 'بحث',
       labelEn: 'Search',
       path: storeSlug ? `/${storeSlug}` : '/search',
-      color: 'text-blue-500',
+      color: 'text-info',
     },
     {
       id: 'wishlist',

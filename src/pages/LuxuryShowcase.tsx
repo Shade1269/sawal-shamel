@@ -204,7 +204,7 @@ export default function LuxuryShowcase() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-              <Palette className="h-10 w-10 text-red-500" />
+              <Palette className="h-10 w-10 text-primary" />
               عرض المكونات الفاخرة
             </h1>
             <p className="text-slate-300">

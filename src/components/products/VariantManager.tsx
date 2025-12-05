@@ -472,7 +472,7 @@ const VariantManager: React.FC<VariantManagerProps> = ({
           </CardHeader>
           <CardContent>
             {validationError && (
-              <div className="flex items-center gap-2 text-red-500 text-sm mb-4">
+              <div className="flex items-center gap-2 text-destructive text-sm mb-4">
                 <AlertCircle className="h-4 w-4" />
                 {validationError}
               </div>

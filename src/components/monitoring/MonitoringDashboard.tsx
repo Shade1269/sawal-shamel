@@ -375,7 +375,7 @@ const AnalyticsOverview: React.FC<{ timeRange: string }> = ({ timeRange }) => {
           </div>
           <div className="flex justify-between items-center">
             <span>الأخطاء</span>
-            <span className="font-bold text-red-600">{analyticsSummary.errors}</span>
+            <span className="font-bold text-destructive">{analyticsSummary.errors}</span>
           </div>
         </CardContent>
       </Card>

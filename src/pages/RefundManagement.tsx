@@ -344,7 +344,7 @@ const RefundManagement = () => {
       case 'REJECTED':
         return 'bg-destructive/10 text-destructive';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -544,12 +544,12 @@ const RefundManagement = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">موافق عليها</p>
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-2xl font-bold text-info">
                   {refunds.filter(r => r.status === 'APPROVED').length}
                 </p>
               </div>
-              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                <Check className="h-5 w-5 text-blue-600" />
+              <div className="w-10 h-10 bg-info/10 rounded-lg flex items-center justify-center">
+                <Check className="h-5 w-5 text-info" />
               </div>
             </div>
           </CardContent>
@@ -560,12 +560,12 @@ const RefundManagement = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">قيد المعالجة</p>
-                <p className="text-2xl font-bold text-purple-600">
+                <p className="text-2xl font-bold text-accent">
                   {refunds.filter(r => r.status === 'PROCESSING').length}
                 </p>
               </div>
-              <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
-                <RefreshCw className="h-5 w-5 text-purple-600" />
+              <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                <RefreshCw className="h-5 w-5 text-accent" />
               </div>
             </div>
           </CardContent>
@@ -576,12 +576,12 @@ const RefundManagement = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">مكتملة</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-success">
                   {refunds.filter(r => r.status === 'COMPLETED').length}
                 </p>
               </div>
-              <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
-                <CheckCircle className="h-5 w-5 text-green-600" />
+              <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 text-success" />
               </div>
             </div>
           </CardContent>
@@ -592,12 +592,12 @@ const RefundManagement = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">إجمالي المبلغ</p>
-                <p className="text-xl font-bold text-red-600">
+                <p className="text-xl font-bold text-destructive">
                   {refunds.reduce((sum, r) => sum + (r.refund_amount_sar || 0), 0).toLocaleString()} ر.س
                 </p>
               </div>
-              <div className="w-10 h-10 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center">
-                <DollarSign className="h-5 w-5 text-red-600" />
+              <div className="w-10 h-10 bg-destructive/10 rounded-lg flex items-center justify-center">
+                <DollarSign className="h-5 w-5 text-destructive" />
               </div>
             </div>
           </CardContent>
@@ -686,7 +686,7 @@ const RefundManagement = () => {
                       )}
                     </td>
                     <td className="p-3">
-                      <div className="font-bold text-red-600">
+                      <div className="font-bold text-destructive">
                         -{refund.refund_amount_sar.toLocaleString()} ر.س
                       </div>
                       {refund.refund_fee_sar > 0 && (
@@ -726,7 +726,7 @@ const RefundManagement = () => {
                               variant="ghost" 
                               size="sm"
                               onClick={() => approveRefund(refund.id)}
-                              className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                              className="text-success hover:text-success/80 hover:bg-success/10"
                             >
                               <Check className="h-4 w-4" />
                             </Button>
@@ -734,7 +734,7 @@ const RefundManagement = () => {
                               variant="ghost" 
                               size="sm"
                               onClick={() => rejectRefund(refund.id, 'رفض من قبل الإدارة')}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              className="text-destructive hover:text-destructive/80 hover:bg-destructive/10"
                             >
                               <X className="h-4 w-4" />
                             </Button>
@@ -746,7 +746,7 @@ const RefundManagement = () => {
                             variant="ghost" 
                             size="sm"
                             onClick={() => processRefund(refund.id)}
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            className="text-info hover:text-info/80 hover:bg-info/10"
                           >
                             <RefreshCw className="h-4 w-4" />
                           </Button>
@@ -757,7 +757,7 @@ const RefundManagement = () => {
                             variant="ghost" 
                             size="sm"
                             onClick={() => completeRefund(refund.id)}
-                            className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                            className="text-success hover:text-success/80 hover:bg-success/10"
                           >
                             <CheckCircle className="h-4 w-4" />
                           </Button>

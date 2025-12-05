@@ -272,10 +272,10 @@ const SEOManager: React.FC<SEOManagerProps> = ({
               onChange={(e) => updateSEO('seo_title', e.target.value)}
               placeholder="عنوان جذاب يحتوي على كلمة مفتاحية"
               maxLength={60}
-              className={validationErrors.seo_title ? 'border-red-500' : ''}
+              className={validationErrors.seo_title ? 'border-destructive' : ''}
             />
             {validationErrors.seo_title && (
-              <p className="text-sm text-red-500">{validationErrors.seo_title}</p>
+              <p className="text-sm text-destructive">{validationErrors.seo_title}</p>
             )}
           </div>
 
@@ -343,10 +343,10 @@ const SEOManager: React.FC<SEOManagerProps> = ({
               placeholder="وصف مقنع يشرح فوائد المنتج ويحفز على الشراء..."
               maxLength={160}
               rows={3}
-              className={validationErrors.seo_description ? 'border-red-500' : ''}
+              className={validationErrors.seo_description ? 'border-destructive' : ''}
             />
             {validationErrors.seo_description && (
-              <p className="text-sm text-red-500">{validationErrors.seo_description}</p>
+              <p className="text-sm text-destructive">{validationErrors.seo_description}</p>
             )}
           </div>
         </CardContent>
@@ -479,8 +479,8 @@ const SEOManager: React.FC<SEOManagerProps> = ({
           </div>
 
           {seo.slug && (
-            <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-              <p className="text-sm text-green-700">
+            <div className="p-3 bg-success/10 rounded-lg border border-success/30">
+              <p className="text-sm text-success">
                 <CheckCircle className="h-4 w-4 inline mr-1" />
                 الرابط النهائي: <span className="font-mono">example.com/products/{seo.slug}</span>
               </p>

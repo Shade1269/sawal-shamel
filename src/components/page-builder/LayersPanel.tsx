@@ -252,7 +252,7 @@ export const LayersPanel: React.FC = () => {
               <div className="text-xs text-muted-foreground">إجمالي العناصر</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-green-500">
+              <div className="text-2xl font-bold text-success">
                 {layers.filter(layer => layer.isVisible).length}
               </div>
               <div className="text-xs text-muted-foreground">عناصر مرئية</div>
