@@ -26,14 +26,14 @@ export const AffiliateHomeViewRuntime = ({
   if (state === 'loading') {
     return React.createElement(
       'div',
-      { className: 'flex min-h-screen items-center justify-center bg-[color:var(--anaqti-bg,#fdf8f4)]', dir: 'rtl' },
+      { className: 'flex min-h-screen items-center justify-center bg-background', dir: 'rtl' },
       React.createElement(
         'div',
-        { className: 'text-center text-[color:var(--anaqti-text,#3d2b2b)]' },
+        { className: 'text-center text-foreground' },
         React.createElement(Loader2, {
-          className: 'mx-auto h-8 w-8 animate-spin text-[color:var(--anaqti-primary,#c64262)]',
+          className: 'mx-auto h-8 w-8 animate-spin text-primary',
         }),
-        React.createElement('p', { className: 'mt-3 text-sm' }, 'جاري تجهيز لوحة المسوّقة...'),
+        React.createElement('p', { className: 'mt-3 text-sm text-muted-foreground' }, 'جاري تجهيز لوحة المسوّقة...'),
       ),
     );
   }
@@ -41,14 +41,14 @@ export const AffiliateHomeViewRuntime = ({
   if (state === 'unauthorized') {
     return React.createElement(
       'div',
-      { className: 'flex min-h-screen items-center justify-center bg-[color:var(--anaqti-bg,#fdf8f4)]', dir: 'rtl' },
+      { className: 'flex min-h-screen items-center justify-center bg-background', dir: 'rtl' },
       React.createElement(
         'div',
-        { className: 'max-w-md rounded-3xl bg-white/90 p-8 text-center shadow-xl' },
-        React.createElement('p', { className: 'text-lg font-semibold text-[color:var(--anaqti-text,#3d2b2b)]' }, 'هذه الصفحة مخصصة لمسوقات أناقتي.'),
+        { className: 'max-w-md rounded-3xl bg-card p-8 text-center shadow-xl border border-border' },
+        React.createElement('p', { className: 'text-lg font-semibold text-foreground' }, 'هذه الصفحة مخصصة لمسوقات أناقتي.'),
         React.createElement(
           'p',
-          { className: 'mt-2 text-sm text-[color:var(--anaqti-muted,rgba(61,43,43,0.45))]' },
+          { className: 'mt-2 text-sm text-muted-foreground' },
           'يرجى تسجيل الدخول بحساب مسوّقة أو استخدام وضع الانتحال المخصص من فريق الإدارة.',
         ),
       ),
@@ -61,14 +61,14 @@ export const AffiliateHomeViewRuntime = ({
 
   return React.createElement(
     'div',
-    { className: 'min-h-screen bg-[color:var(--anaqti-bg,#fdf8f4)]', dir: 'rtl' },
+    { className: 'min-h-screen bg-background', dir: 'rtl' },
     React.createElement(
       'div',
       { className: 'mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8' },
       error
         ? React.createElement(
             'div',
-            { className: 'rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700 shadow' },
+            { className: 'rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive shadow border border-destructive/20' },
             error,
           )
         : null,
