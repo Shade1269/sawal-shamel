@@ -41,7 +41,6 @@ import {
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import {
   parseFeaturedCategories,
   useStoreSettings,
@@ -100,7 +99,6 @@ export const AffiliateStoreManager = ({
   onGenerateQR
 }: AffiliateStoreManagerProps) => {
   const { toast } = useToast();
-  const { isDarkMode } = useDarkMode();
   const [searchParams, setSearchParams] = useSearchParams();
   const tabFromUrl = searchParams.get('tab') || 'general';
   const [activeTab, setActiveTab] = useState(tabFromUrl);
@@ -591,16 +589,10 @@ export const AffiliateStoreManager = ({
                 <h1 className="text-lg md:text-2xl font-bold truncate text-foreground transition-colors duration-500">{store.store_name}</h1>
                 <p className="text-sm md:text-base line-clamp-2 text-muted-foreground transition-colors duration-500">{store.bio}</p>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="outline" className={`text-xs transition-colors duration-500 ${
-                    isDarkMode 
-                      ? 'border-slate-600 text-slate-200' 
-                      : 'border-slate-300 text-slate-700 bg-slate-50'
-                  }`}>{store.theme}</Badge>
-                  <Badge variant="secondary" className={`text-xs transition-colors duration-500 ${
-                    isDarkMode 
-                      ? 'bg-slate-700 text-slate-200' 
-                      : 'bg-slate-200 text-slate-800'
-                  }`}>
+                  <Badge variant="outline" className="text-xs border-border text-foreground bg-muted/30">
+                    {store.theme}
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs bg-secondary text-secondary-foreground">
                     {store.total_orders} طلب
                   </Badge>
                 </div>
@@ -655,111 +647,51 @@ export const AffiliateStoreManager = ({
         </div>
 
         {/* تبويبات للشاشات الكبيرة */}
-        <TabsList className={`hidden md:grid w-full grid-cols-11 transition-colors duration-500 ${
-          isDarkMode 
-            ? 'bg-slate-800/50 border-slate-700/50' 
-            : 'bg-gradient-subtle border-border shadow-lg'
-        }`}>
-          <TabsTrigger value="general" className={`transition-colors duration-500 ${
-            isDarkMode 
-              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
-              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
-          }`}>الإعدادات العامة</TabsTrigger>
-          <TabsTrigger value="appearance" className={`transition-colors duration-500 ${
-            isDarkMode 
-              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
-              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
-          }`}>المظهر</TabsTrigger>
-          <TabsTrigger value="hero" className={`transition-colors duration-500 ${
-            isDarkMode 
-              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
-              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
-          }`}>القسم الرئيسي</TabsTrigger>
-          <TabsTrigger value="banners" className={`transition-colors duration-500 ${
-            isDarkMode 
-              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
-              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
-          }`}>البانرات</TabsTrigger>
-          <TabsTrigger value="categories" className={`transition-colors duration-500 ${
-            isDarkMode 
-              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
-              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
-          }`}>الفئات</TabsTrigger>
-          <TabsTrigger value="products" className={`transition-colors duration-500 ${
-            isDarkMode 
-              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
-              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
-          }`}>المنتجات</TabsTrigger>
-          <TabsTrigger value="coupons" className={`transition-colors duration-500 ${
-            isDarkMode 
-              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
-              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
-          }`}>الكوبونات</TabsTrigger>
-          <TabsTrigger value="reviews" className={`transition-colors duration-500 ${
-            isDarkMode 
-              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
-              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
-          }`}>المراجعات</TabsTrigger>
-          <TabsTrigger value="chat" className={`transition-colors duration-500 ${
-            isDarkMode 
-              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
-              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
-          }`}>الدردشة</TabsTrigger>
-          <TabsTrigger value="sharing" className={`transition-colors duration-500 ${
-            isDarkMode 
-              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
-              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
-          }`}>المشاركة</TabsTrigger>
-          <TabsTrigger value="analytics" className={`transition-colors duration-500 ${
-            isDarkMode 
-              ? 'text-muted-foreground data-[state=active]:bg-card data-[state=active]:text-card-foreground' 
-              : 'text-foreground data-[state=active]:bg-gradient-hero data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg'
-          }`}>الإحصائيات</TabsTrigger>
+        <TabsList className="hidden md:grid w-full grid-cols-11 bg-muted/50 border border-border shadow-sm">
+          <TabsTrigger value="general" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">الإعدادات العامة</TabsTrigger>
+          <TabsTrigger value="appearance" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">المظهر</TabsTrigger>
+          <TabsTrigger value="hero" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">القسم الرئيسي</TabsTrigger>
+          <TabsTrigger value="banners" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">البانرات</TabsTrigger>
+          <TabsTrigger value="categories" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">الفئات</TabsTrigger>
+          <TabsTrigger value="products" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">المنتجات</TabsTrigger>
+          <TabsTrigger value="coupons" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">الكوبونات</TabsTrigger>
+          <TabsTrigger value="reviews" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">المراجعات</TabsTrigger>
+          <TabsTrigger value="chat" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">الدردشة</TabsTrigger>
+          <TabsTrigger value="sharing" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">المشاركة</TabsTrigger>
+          <TabsTrigger value="analytics" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">الإحصائيات</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="space-y-4 md:space-y-6">
-          <Card className={`rounded-none md:rounded-xl border-x-0 md:border-x transition-colors duration-500 ${
-            isDarkMode 
-              ? 'bg-slate-800/50 border-slate-700/50' 
-              : 'bg-white/95 border-slate-300/60 shadow-lg'
-          }`}>
+          <Card className="rounded-none md:rounded-xl border-x-0 md:border-x bg-card border-border shadow-sm">
             <CardHeader className="p-4 md:p-6">
-              <CardTitle className="flex items-center gap-2 text-base md:text-lg text-foreground transition-colors duration-500">
+              <CardTitle className="flex items-center gap-2 text-base md:text-lg text-foreground">
                 <Settings className="h-4 w-4 md:h-5 md:w-5" />
                 الإعدادات العامة
               </CardTitle>
-              <CardDescription className="text-xs md:text-sm text-muted-foreground transition-colors duration-500">
+              <CardDescription className="text-xs md:text-sm text-muted-foreground">
                 تحديث معلومات متجرك الأساسية
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 p-4 md:p-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="store_name" className="text-sm font-semibold text-foreground transition-colors duration-500">اسم المتجر</Label>
+                  <Label htmlFor="store_name" className="text-sm font-semibold text-foreground">اسم المتجر</Label>
                   <Input
                     id="store_name"
                     value={isEditing ? editData.store_name : store.store_name}
                     onChange={(e) => setEditData({...editData, store_name: e.target.value})}
                     disabled={!isEditing}
-                    className={`text-sm transition-colors duration-500 ${
-                      isDarkMode 
-                        ? 'bg-slate-700/50 border-slate-600/50 text-white' 
-                        : 'bg-white border-slate-200 text-slate-800'
-                    }`}
+                    className="text-sm bg-background border-input text-foreground"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="store_slug" className="text-sm font-semibold text-foreground transition-colors duration-500">رابط المتجر</Label>
+                  <Label htmlFor="store_slug" className="text-sm font-semibold text-foreground">رابط المتجر</Label>
                   <div className="flex items-center gap-2">
                     <Input
                       id="store_slug"
                       value={store.store_slug}
                       disabled
-                      className={`flex-1 text-sm transition-colors duration-500 ${
-                        isDarkMode 
-                          ? 'bg-slate-700/50 border-slate-600/50 text-white' 
-                          : 'bg-slate-100 border-slate-200 text-slate-800'
-                      }`}
+                      className="flex-1 text-sm bg-muted border-input text-foreground"
                     />
                     <Button size="sm" variant="outline" onClick={copyStoreLink}>
                       <Copy className="h-4 w-4" />
@@ -769,17 +701,13 @@ export const AffiliateStoreManager = ({
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="bio" className="text-sm font-semibold text-foreground transition-colors duration-500">وصف المتجر</Label>
+                <Label htmlFor="bio" className="text-sm font-semibold text-foreground">وصف المتجر</Label>
                 <Textarea
                   id="bio"
                   value={isEditing ? editData.bio : store.bio}
                   onChange={(e) => setEditData({...editData, bio: e.target.value})}
                   disabled={!isEditing}
-                  className={`min-h-20 text-sm transition-colors duration-500 ${
-                    isDarkMode 
-                      ? 'bg-slate-700/50 border-slate-600/50 text-white' 
-                      : 'bg-white border-slate-300 text-slate-900'
-                  }`}
+                  className="min-h-20 text-sm bg-background border-input text-foreground"
                 />
               </div>
 
@@ -809,24 +737,20 @@ export const AffiliateStoreManager = ({
             }}
           />
           
-          <Card className={`rounded-none md:rounded-xl border-x-0 md:border-x transition-colors duration-500 ${
-            isDarkMode 
-              ? 'bg-slate-800/50 border-slate-700/50' 
-              : 'bg-white/95 border-slate-300/60 shadow-lg'
-          }`}>
+          <Card className="rounded-none md:rounded-xl border-x-0 md:border-x bg-card border-border shadow-sm">
             <CardHeader className="p-4 md:p-6">
-              <CardTitle className="flex items-center gap-2 text-base md:text-lg text-foreground transition-colors duration-500">
+              <CardTitle className="flex items-center gap-2 text-base md:text-lg text-foreground">
                 <ImageIcon className="h-4 w-4 md:h-5 md:w-5" />
                 إعدادات إضافية
               </CardTitle>
-              <CardDescription className="text-xs md:text-sm text-muted-foreground transition-colors duration-500">
+              <CardDescription className="text-xs md:text-sm text-muted-foreground">
                 تخصيص الشعار والإعدادات الأخرى
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 p-4 md:p-6">
 
               <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground transition-colors duration-500">شعار المتجر</Label>
+                <Label className="text-sm font-semibold text-foreground">شعار المتجر</Label>
                 <div className="flex flex-col md:flex-row items-center gap-4">
                   <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center">
                     {store.logo_url ? (
