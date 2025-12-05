@@ -100,7 +100,7 @@ const UnifiedAdminOrders = () => {
         <div>
           <h1 className="text-3xl font-bold">إدارة الطلبات</h1>
           <p className="text-muted-foreground mt-1">عرض وإدارة جميع الطلبات ({orders.length})</p>
-          <UnifiedBadge className="mt-2 bg-green-500 text-white">
+          <UnifiedBadge className="mt-2 bg-success text-success-foreground">
             النظام الموحد - order_hub
           </UnifiedBadge>
         </div>
@@ -212,7 +212,7 @@ const UnifiedAdminOrders = () => {
       ) : error ? (
         <UnifiedCard>
           <div className="p-8 text-center text-muted-foreground">
-            <p className="text-red-500 mb-2">حدث خطأ في تحميل الطلبات</p>
+            <p className="text-destructive mb-2">حدث خطأ في تحميل الطلبات</p>
             <p className="text-sm">{error}</p>
             <UnifiedButton onClick={refreshOrders} className="mt-4">
               إعادة المحاولة

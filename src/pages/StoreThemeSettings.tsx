@@ -68,8 +68,8 @@ const StoreThemeSettings: React.FC = () => {
 
         {/* Info Alert */}
         <Alert className="mb-8 bg-gradient-info border-info/20">
-          <Info className="h-4 w-4 text-blue-600" />
-          <AlertDescription className="text-blue-800">
+          <Info className="h-4 w-4 text-info" />
+          <AlertDescription className="text-info">
             <strong>نصيحة:</strong> يمكنك تغيير ثيم متجرك في أي وقت. سيتم تطبيق التغييرات فوراً على جميع صفحات متجرك.
           </AlertDescription>
         </Alert>

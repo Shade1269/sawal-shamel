@@ -175,7 +175,7 @@ const MerchantProducts = () => {
             <UnifiedCardTitle className="text-sm font-medium">مرفوضة</UnifiedCardTitle>
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
+            <div className="text-2xl font-bold text-destructive">{stats.rejected}</div>
           </UnifiedCardContent>
         </UnifiedCard>
       </div>
@@ -237,7 +237,7 @@ const MerchantProducts = () => {
                               <>
                               <div className="flex items-center justify-between text-sm">
                                 <span className="text-muted-foreground">سعرك الأساسي:</span>
-                                <span className="font-bold text-green-600">
+                                <span className="font-bold text-success">
                                   {product.merchant_base_price_sar.toFixed(2)} ر.س
                                 </span>
                               </div>

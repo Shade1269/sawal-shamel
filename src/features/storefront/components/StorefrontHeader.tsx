@@ -59,9 +59,9 @@ export const StorefrontHeader = ({
                 className="hidden md:flex p-2.5 rounded-lg transition-colors relative hover:bg-secondary/50 group"
                 aria-label="المفضلة"
               >
-                <Heart className="w-6 h-6 text-foreground/70 group-hover:text-red-500 transition-colors" />
+                <Heart className="w-6 h-6 text-foreground/70 group-hover:text-destructive transition-colors" />
                 <Badge
-                  className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold"
+                  className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold"
                   variant="destructive"
                 >
                   {wishlistCount}

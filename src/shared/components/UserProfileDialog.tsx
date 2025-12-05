@@ -44,7 +44,7 @@ const UserProfileDialog = ({ user, isOpen, onClose, showNotificationSettings = f
   };
 
   const getStatusColor = (isActive: boolean) => {
-    return isActive ? 'text-green-500' : 'text-red-500';
+    return isActive ? 'text-success' : 'text-destructive';
   };
 
   return (
@@ -116,7 +116,7 @@ const UserProfileDialog = ({ user, isOpen, onClose, showNotificationSettings = f
                 <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                   <span className="font-medium">الحالة</span>
                   <div className="flex items-center gap-2">
-                    <div className={`h-2 w-2 rounded-full ${user?.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
+                    <div className={`h-2 w-2 rounded-full ${user?.is_active ? 'bg-success' : 'bg-destructive'}`} />
                     <span className={`font-medium ${getStatusColor(user?.is_active)}`}>
                       {user?.is_active ? 'متصل الآن' : 'غير متصل'}
                     </span>
@@ -164,12 +164,12 @@ const UserProfileDialog = ({ user, isOpen, onClose, showNotificationSettings = f
 
                 {/* WhatsApp (if available) */}
                 {user?.whatsapp && (
-                  <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-950/30 rounded-lg">
+                  <div className="flex items-center justify-between p-3 bg-success/10 dark:bg-success/5 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4 text-green-600" />
+                      <MessageSquare className="h-4 w-4 text-success" />
                       <span className="font-medium">واتساب</span>
                     </div>
-                    <span className="text-green-600">{user.whatsapp}</span>
+                    <span className="text-success">{user.whatsapp}</span>
                   </div>
                 )}
               </div>

@@ -200,25 +200,25 @@ const AffiliateSubscriptionPage = () => {
 
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <CheckCircle2 className="h-5 w-5 text-success" />
                   <span className="text-muted-foreground">
                     إنشاء متجر خاص بك
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <CheckCircle2 className="h-5 w-5 text-success" />
                   <span className="text-muted-foreground">
                     عرض وبيع المنتجات
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <CheckCircle2 className="h-5 w-5 text-success" />
                   <span className="text-muted-foreground">
                     عمولة على كل عملية بيع
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <CheckCircle2 className="h-5 w-5 text-success" />
                   <span className="text-muted-foreground">
                     تحليلات ومتابعة دقيقة
                   </span>

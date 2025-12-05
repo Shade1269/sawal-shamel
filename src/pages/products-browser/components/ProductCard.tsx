@@ -53,7 +53,7 @@ export function ProductCard({
         {/* حالة المنتج في متجري */}
         {isInMyStore && (
           <div className="absolute top-3 left-3">
-            <Badge className="bg-green-500/90 text-white backdrop-blur-sm">
+            <Badge className="bg-success/90 text-success-foreground backdrop-blur-sm">
               <CheckCircle className="h-3 w-3 ml-1" />
               في متجري
             </Badge>
@@ -63,7 +63,7 @@ export function ProductCard({
         {/* تنبيه المخزون */}
         {product.stock <= 10 && (
           <div className="absolute bottom-3 right-3">
-            <Badge variant="destructive" className="bg-red-500/90 backdrop-blur-sm">
+            <Badge variant="destructive" className="bg-destructive/90 backdrop-blur-sm">
               باقي {product.stock}
             </Badge>
           </div>
@@ -107,10 +107,10 @@ export function ProductCard({
                     size="sm"
                     onClick={() => onRemoveFromStore(product.id)}
                     disabled={isProcessing}
-                    className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
+                    className="flex-1 border-destructive/20 text-destructive hover:bg-destructive/5"
                   >
                     {isProcessing ? (
-                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-red-600" />
+                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-destructive" />
                     ) : (
                       <>
                         <Check className="h-3 w-3 ml-1" />

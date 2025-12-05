@@ -54,7 +54,7 @@ const systemPhases: SystemPhase[] = [
     status: 'completed',
     progress: 100,
     icon: Navigation,
-    color: 'text-green-500',
+    color: 'text-success',
     features: [
       'Sidebar ذكي مع تصنيف حسب الأدوار',
       'نظام Breadcrumbs تلقائي',
@@ -77,7 +77,7 @@ const systemPhases: SystemPhase[] = [
     status: 'completed',
     progress: 100,
     icon: Layers,
-    color: 'text-blue-500',
+    color: 'text-info',
     features: [
       'لوحة تحكم موحدة لجميع الأدوار',
       'إدارة منتجات شاملة',
@@ -237,7 +237,7 @@ export default function SystemOverviewPage() {
           </UnifiedCardHeader>
           <UnifiedCardContent className="space-y-4">
             <div className="flex items-center justify-center">
-              <div className="text-6xl font-bold text-green-500">
+              <div className="text-6xl font-bold text-success">
                 {Math.round(overallProgress)}%
               </div>
             </div>
@@ -347,13 +347,13 @@ export default function SystemOverviewPage() {
                       
                       <div>
                         <h4 className="font-semibold mb-3 flex items-center gap-2">
-                          <Code2 className="h-4 w-4 text-blue-500" />
+                          <Code2 className="h-4 w-4 text-info" />
                           التحسينات التقنية
                         </h4>
                         <ul className="space-y-2">
                           {phase.technicalImprovements.map((improvement, index) => (
                             <li key={index} className="flex items-start gap-2 text-sm">
-                              <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
+                              <CheckCircle2 className="h-4 w-4 text-info flex-shrink-0 mt-0.5" />
                               <span className="font-mono text-xs bg-muted px-2 py-1 rounded">
                                 {improvement}
                               </span>
@@ -379,7 +379,7 @@ export default function SystemOverviewPage() {
         <UnifiedCard variant="elegant" hover="lift">
           <UnifiedCardHeader>
             <UnifiedCardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-blue-500" />
+              <Shield className="h-5 w-5 text-info" />
               الهيكل التقني للنظام
             </UnifiedCardTitle>
             <UnifiedCardDescription>

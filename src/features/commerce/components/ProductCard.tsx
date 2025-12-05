@@ -92,7 +92,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </div>
         {product.stock <= 5 && (
           <div className="absolute top-3 left-3">
-            <Badge variant="destructive" className="bg-red-500/90 backdrop-blur-sm">
+            <Badge variant="destructive" className="bg-destructive/90 backdrop-blur-sm">
               باقي {product.stock}
             </Badge>
           </div>
@@ -125,7 +125,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             أضف للسلة
           </Button>
           <Button size="icon" variant="outline" className="group/btn">
-            <Heart className="h-4 w-4 group-hover/btn:text-red-500 transition-colors" />
+            <Heart className="h-4 w-4 group-hover/btn:text-destructive transition-colors" />
           </Button>
         </div>
       </CardContent>

@@ -139,7 +139,7 @@ export const StorefrontProductCard = ({
                 <Heart
                   className={cn(
                     "h-4 w-4 transition-colors",
-                    isInWishlist && "fill-red-500 text-red-500"
+                    isInWishlist && "fill-destructive text-destructive"
                   )}
                 />
               </Button>

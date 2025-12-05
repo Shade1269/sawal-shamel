@@ -34,7 +34,7 @@ export default function UXEnhancementsPage() {
       title: 'محسّن الأداء',
       description: 'مراقبة وتحسين أداء التطبيق في الوقت الفعلي',
       icon: Zap,
-      color: 'text-blue-500',
+      color: 'text-info',
       tab: 'performance'
     },
     {
@@ -197,7 +197,7 @@ export default function UXEnhancementsPage() {
             <UnifiedCard variant="glass-strong">
               <UnifiedCardHeader>
                 <UnifiedCardTitle className="flex items-center gap-2">
-                  <Search className="h-5 w-5 text-green-500" />
+                  <Search className="h-5 w-5 text-success" />
                   البحث الذكي
                 </UnifiedCardTitle>
                 <UnifiedCardDescription>
@@ -221,11 +221,11 @@ export default function UXEnhancementsPage() {
                     <h4 className="font-semibold">الإحصائيات:</h4>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="text-center p-3 bg-muted/50 rounded-lg">
-                        <div className="text-2xl font-bold text-green-500">68%</div>
+                        <div className="text-2xl font-bold text-success">68%</div>
                         <div className="text-xs text-muted-foreground">تحسن الكفاءة</div>
                       </div>
                       <div className="text-center p-3 bg-muted/50 rounded-lg">
-                        <div className="text-2xl font-bold text-blue-500">&lt;200ms</div>
+                        <div className="text-2xl font-bold text-info">&lt;200ms</div>
                         <div className="text-xs text-muted-foreground">زمن الاستجابة</div>
                       </div>
                     </div>

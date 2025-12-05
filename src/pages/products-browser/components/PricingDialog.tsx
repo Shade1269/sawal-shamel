@@ -85,8 +85,8 @@ export function PricingDialog({ product, onClose, onConfirm }: PricingDialogProp
             </div>
 
             {customPrice && parseFloat(customPrice) >= product.price_sar && (
-              <div className="bg-green-500/10 border border-green-500/20 p-3 rounded-lg">
-                <p className="text-sm text-green-600">
+              <div className="bg-success/10 border border-success/20 p-3 rounded-lg">
+                <p className="text-sm text-success">
                   <strong>ربحك المتوقع:</strong>{' '}
                   {(parseFloat(customPrice) - product.price_sar).toFixed(2)} ر.س
                 </p>

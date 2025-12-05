@@ -68,7 +68,7 @@ export const IsolatedStoreCart: React.FC = () => {
             variant="ghost" 
             size="sm" 
             onClick={() => navigate(`/${storeSlug}`)}
-            className="text-red-400 hover:text-red-300 hover:bg-red-950/20"
+            className="text-muted-foreground hover:text-foreground hover:bg-muted/20"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             العودة للمتجر
@@ -77,8 +77,8 @@ export const IsolatedStoreCart: React.FC = () => {
 
         <UnifiedCard variant="glass" hover="none" className="max-w-md mx-auto">
           <UnifiedCardContent className="text-center py-16">
-            <div className="w-32 h-32 gradient-dark-card rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-red-600/20 shadow-lg shadow-red-600/10">
-              <ShoppingCart className="h-16 w-16 text-red-500/50" />
+            <div className="w-32 h-32 gradient-dark-card rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-muted/20 shadow-lg shadow-muted/10">
+              <ShoppingCart className="h-16 w-16 text-muted-foreground/50" />
             </div>
             <h3 className="text-2xl font-bold mb-3 text-white">السلة فارغة</h3>
             <p className="text-slate-400 mb-6 text-lg">
@@ -107,7 +107,7 @@ export const IsolatedStoreCart: React.FC = () => {
           variant="ghost" 
           size="sm" 
           onClick={() => navigate(`/${storeSlug}`)}
-          className="text-red-400 hover:text-red-300 hover:bg-red-950/20"
+          className="text-muted-foreground hover:text-foreground hover:bg-muted/20"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           العودة للمتجر
@@ -151,7 +151,7 @@ export const IsolatedStoreCart: React.FC = () => {
                               <UnifiedBadge 
                                 key={type} 
                                 variant="outline" 
-                                className="border-red-600/30 bg-red-950/20 text-red-300"
+                                className="border-primary/30 bg-primary/10 text-primary-foreground"
                               >
                                 {type === 'size' ? 'المقاس' : type === 'color' ? 'اللون' : type}: {value}
                               </UnifiedBadge>
@@ -170,7 +170,7 @@ export const IsolatedStoreCart: React.FC = () => {
                               size="sm"
                               onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
                               disabled={updatingItems.has(item.id)}
-                              className="h-9 w-9 p-0 hover:bg-red-950/30 hover:text-red-400"
+                              className="h-9 w-9 p-0 hover:bg-muted/30 hover:text-primary"
                             >
                               <Minus className="h-4 w-4" />
                             </UnifiedButton>
@@ -187,7 +187,7 @@ export const IsolatedStoreCart: React.FC = () => {
                               size="sm"
                               onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                               disabled={updatingItems.has(item.id)}
-                              className="h-9 w-9 p-0 hover:bg-red-950/30 hover:text-red-400"
+                              className="h-9 w-9 p-0 hover:bg-muted/30 hover:text-primary"
                             >
                               <Plus className="h-4 w-4" />
                             </UnifiedButton>
@@ -203,7 +203,7 @@ export const IsolatedStoreCart: React.FC = () => {
                               size="sm"
                               onClick={() => handleRemoveItem(item.id)}
                               disabled={updatingItems.has(item.id)}
-                              className="text-red-400 hover:text-red-300 hover:bg-red-950/30 h-9 w-9 p-0"
+                              className="text-destructive hover:text-destructive/80 hover:bg-destructive/10 h-9 w-9 p-0"
                             >
                               <Trash2 className="h-5 w-5" />
                             </UnifiedButton>

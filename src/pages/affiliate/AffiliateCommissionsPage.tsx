@@ -135,7 +135,7 @@ export default function AffiliateCommissionsPage() {
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-green-600">{confirmedCommissions.toFixed(2)} ر.س</div>
+            <div className="text-2xl font-bold text-success">{confirmedCommissions.toFixed(2)} ر.س</div>
             <p className="text-xs text-muted-foreground">
               {commissions?.filter(c => c.status === 'CONFIRMED').length || 0} عمولة
             </p>
@@ -148,7 +148,7 @@ export default function AffiliateCommissionsPage() {
             <Banknote className="h-4 w-4 text-muted-foreground" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-blue-600">{paidCommissions.toFixed(2)} ر.س</div>
+            <div className="text-2xl font-bold text-info">{paidCommissions.toFixed(2)} ر.س</div>
             <p className="text-xs text-muted-foreground">
               {commissions?.filter(c => c.status === 'PAID').length || 0} عمولة
             </p>

@@ -295,17 +295,17 @@ const StoreOrderConfirmation = () => {
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Success Message */}
-        <Card className="mb-6 border-green-200 bg-green-50/50">
+        <Card className="mb-6 border-success/20 bg-success/5">
           <CardContent className="py-6">
             <div className="flex items-center gap-4">
-              <div className="bg-green-100 p-3 rounded-full">
-                <CheckCircle className="h-8 w-8 text-green-600" />
+              <div className="bg-success/10 p-3 rounded-full">
+                <CheckCircle className="h-8 w-8 text-success" />
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-green-900 mb-1">
+                <h2 className="text-2xl font-bold text-success mb-1">
                   تم إنشاء طلبك بنجاح!
                 </h2>
-                <p className="text-green-700">
+                <p className="text-success/80">
                   شكراً لك، سنتواصل معك قريباً لتأكيد الطلب
                 </p>
               </div>
