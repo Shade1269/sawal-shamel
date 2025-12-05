@@ -21,7 +21,7 @@ export function PerformanceMetrics({ metrics }: PerformanceMetricsProps) {
           <div className={`rounded-[inherit] p-[var(--spacing-md)] transition-transform duration-200 group-hover:-translate-y-0.5 ${
             isDarkMode 
               ? 'bg-card/90'
-              : 'bg-white/90'
+              : 'bg-card/90'
           }`}>
             <KpiCard {...metric} />
           </div>

@@ -321,8 +321,8 @@ export const ReturnsManagement: React.FC = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Clock className="h-5 w-5 text-orange-600" />
+              <div className="p-2 bg-warning/10 rounded-lg">
+                <Clock className="h-5 w-5 text-warning" />
               </div>
               <div>
                 <div className="text-2xl font-bold">
@@ -337,8 +337,8 @@ export const ReturnsManagement: React.FC = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-green-600" />
+              <div className="p-2 bg-success/10 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-success" />
               </div>
               <div>
                 <div className="text-2xl font-bold">
@@ -353,8 +353,8 @@ export const ReturnsManagement: React.FC = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <AlertTriangle className="h-5 w-5 text-red-600" />
+              <div className="p-2 bg-destructive/10 rounded-lg">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
               </div>
               <div>
                 <div className="text-2xl font-bold">
@@ -369,8 +369,8 @@ export const ReturnsManagement: React.FC = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <RotateCcw className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-info/10 rounded-lg">
+                <RotateCcw className="h-5 w-5 text-info" />
               </div>
               <div>
                 <div className="text-2xl font-bold">{productReturns.length}</div>
@@ -400,10 +400,10 @@ export const ReturnsManagement: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className={`p-2 rounded-lg ${
-                      returnItem.status === 'pending' ? 'bg-orange-100 text-orange-600' :
-                      returnItem.status === 'approved' ? 'bg-green-100 text-green-600' :
-                      returnItem.status === 'rejected' ? 'bg-red-100 text-red-600' :
-                      'bg-blue-100 text-blue-600'
+                      returnItem.status === 'pending' ? 'bg-warning/10 text-warning' :
+                      returnItem.status === 'approved' ? 'bg-success/10 text-success' :
+                      returnItem.status === 'rejected' ? 'bg-destructive/10 text-destructive' :
+                      'bg-info/10 text-info'
                     }`}>
                       {getStatusIcon(returnItem.status)}
                     </div>

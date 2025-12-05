@@ -89,12 +89,12 @@ export const MarketingAutomationSection: React.FC = () => {
 
   const getCampaignTypeColor = (type: MarketingCampaign['campaign_type']) => {
     const colors = {
-      email_sequence: 'bg-blue-100 text-blue-800',
-      abandoned_cart: 'bg-orange-100 text-orange-800',
-      post_purchase: 'bg-green-100 text-green-800',
-      welcome_series: 'bg-purple-100 text-purple-800',
-      re_engagement: 'bg-yellow-100 text-yellow-800',
-      birthday_campaign: 'bg-pink-100 text-pink-800'
+      email_sequence: 'bg-info/10 text-info',
+      abandoned_cart: 'bg-warning/10 text-warning',
+      post_purchase: 'bg-success/10 text-success',
+      welcome_series: 'bg-premium/10 text-premium',
+      re_engagement: 'bg-warning/10 text-warning',
+      birthday_campaign: 'bg-primary/10 text-primary'
     };
     return colors[type];
   };
@@ -230,31 +230,31 @@ export const MarketingAutomationSection: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-green-600">{campaignStats.active}</p>
+            <p className="text-2xl font-bold text-success">{campaignStats.active}</p>
             <p className="text-sm text-muted-foreground">حملات نشطة</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-blue-600">{campaignStats.totalSent}</p>
+            <p className="text-2xl font-bold text-info">{campaignStats.totalSent}</p>
             <p className="text-sm text-muted-foreground">رسائل مرسلة</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-purple-600">{campaignStats.totalOpened}</p>
+            <p className="text-2xl font-bold text-premium">{campaignStats.totalOpened}</p>
             <p className="text-sm text-muted-foreground">رسائل مفتوحة</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-orange-600">{campaignStats.totalConverted}</p>
+            <p className="text-2xl font-bold text-warning">{campaignStats.totalConverted}</p>
             <p className="text-sm text-muted-foreground">تحويلات</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-red-600">{campaignStats.openRate}%</p>
+            <p className="text-2xl font-bold text-destructive">{campaignStats.openRate}%</p>
             <p className="text-sm text-muted-foreground">معدل الفتح</p>
           </CardContent>
         </Card>
@@ -325,19 +325,19 @@ export const MarketingAutomationSection: React.FC = () => {
                 <div className="mt-4 p-3 bg-muted rounded-lg">
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
-                      <p className="text-lg font-semibold text-blue-600">
+                      <p className="text-lg font-semibold text-info">
                         {campaign.stats.sent > 0 ? Math.round((campaign.stats.opened / campaign.stats.sent) * 100) : 0}%
                       </p>
                       <p className="text-xs text-muted-foreground">معدل الفتح</p>
                     </div>
                     <div>
-                      <p className="text-lg font-semibold text-green-600">
+                      <p className="text-lg font-semibold text-success">
                         {campaign.stats.sent > 0 ? Math.round((campaign.stats.clicked / campaign.stats.sent) * 100) : 0}%
                       </p>
                       <p className="text-xs text-muted-foreground">معدل النقر</p>
                     </div>
                     <div>
-                      <p className="text-lg font-semibold text-purple-600">
+                      <p className="text-lg font-semibold text-premium">
                         {campaign.stats.sent > 0 ? Math.round((campaign.stats.converted / campaign.stats.sent) * 100) : 0}%
                       </p>
                       <p className="text-xs text-muted-foreground">معدل التحويل</p>

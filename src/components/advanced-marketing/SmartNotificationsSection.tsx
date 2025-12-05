@@ -95,13 +95,13 @@ export const SmartNotificationsSection: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     const colors = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      sent: 'bg-blue-100 text-blue-800',
-      delivered: 'bg-green-100 text-green-800',
-      failed: 'bg-red-100 text-red-800',
-      bounced: 'bg-red-100 text-red-800'
+      pending: 'bg-warning/10 text-warning',
+      sent: 'bg-info/10 text-info',
+      delivered: 'bg-success/10 text-success',
+      failed: 'bg-destructive/10 text-destructive',
+      bounced: 'bg-destructive/10 text-destructive'
     };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[status as keyof typeof colors] || 'bg-muted text-muted-foreground';
   };
 
   const getStatusIcon = (status: string) => {
@@ -259,25 +259,25 @@ export const SmartNotificationsSection: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-green-600">{notificationStats.delivered}</p>
+            <p className="text-2xl font-bold text-success">{notificationStats.delivered}</p>
             <p className="text-sm text-muted-foreground">تم تسليمها</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-blue-600">{notificationStats.opened}</p>
+            <p className="text-2xl font-bold text-info">{notificationStats.opened}</p>
             <p className="text-sm text-muted-foreground">تم فتحها</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-purple-600">{notificationStats.clicked}</p>
+            <p className="text-2xl font-bold text-premium">{notificationStats.clicked}</p>
             <p className="text-sm text-muted-foreground">تم النقر عليها</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-yellow-600">{notificationStats.pending}</p>
+            <p className="text-2xl font-bold text-warning">{notificationStats.pending}</p>
             <p className="text-sm text-muted-foreground">في الانتظار</p>
           </CardContent>
         </Card>
@@ -350,7 +350,7 @@ export const SmartNotificationsSection: React.FC = () => {
                       )}
                       {notification.clicked_at && (
                         <div className="flex items-center gap-1">
-                          <CheckCircle className="h-3 w-3 text-green-600" />
+                          <CheckCircle className="h-3 w-3 text-success" />
                           <span>نُقر</span>
                         </div>
                       )}
@@ -362,17 +362,17 @@ export const SmartNotificationsSection: React.FC = () => {
                     <div className="mt-3 p-2 bg-muted rounded-lg">
                       <div className="flex justify-between text-xs">
                         {notification.sent_at && (
-                          <span className="text-blue-600">
+                          <span className="text-info">
                             أرسل: {new Date(notification.sent_at).toLocaleTimeString('ar-SA')}
                           </span>
                         )}
                         {notification.read_at && (
-                          <span className="text-purple-600">
+                          <span className="text-premium">
                             فُتح: {new Date(notification.read_at).toLocaleTimeString('ar-SA')}
                           </span>
                         )}
                         {notification.clicked_at && (
-                          <span className="text-green-600">
+                          <span className="text-success">
                             نُقر: {new Date(notification.clicked_at).toLocaleTimeString('ar-SA')}
                           </span>
                         )}

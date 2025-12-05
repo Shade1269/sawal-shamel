@@ -98,9 +98,9 @@ const ShipmentTrackingCard: React.FC<ShipmentTrackingCardProps> = ({
         </div>
 
         {shipment.special_instructions && (
-          <div className="bg-yellow-50 p-3 rounded-lg border-l-4 border-yellow-400">
-            <h4 className="font-medium text-yellow-800 mb-1">تعليمات خاصة</h4>
-            <p className="text-sm text-yellow-700">{shipment.special_instructions}</p>
+          <div className="bg-warning/10 p-3 rounded-lg border-l-4 border-warning">
+            <h4 className="font-medium text-foreground mb-1">تعليمات خاصة</h4>
+            <p className="text-sm text-muted-foreground">{shipment.special_instructions}</p>
           </div>
         )}
 

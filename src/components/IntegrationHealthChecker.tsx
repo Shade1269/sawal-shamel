@@ -268,22 +268,22 @@ export const IntegrationHealthChecker: React.FC = () => {
   const getStatusIcon = (status: IntegrationStatus['status']) => {
     switch (status) {
       case 'healthy':
-        return <CheckCircle2 className="h-4 w-4 text-green-600" />;
+        return <CheckCircle2 className="h-4 w-4 text-success" />;
       case 'warning':
-        return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
+        return <AlertTriangle className="h-4 w-4 text-warning" />;
       case 'error':
-        return <XCircle className="h-4 w-4 text-red-600" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
       case 'checking':
-        return <RefreshCw className="h-4 w-4 text-blue-600 animate-spin" />;
+        return <RefreshCw className="h-4 w-4 text-info animate-spin" />;
     }
   };
 
   const getStatusBadge = (status: IntegrationStatus['status']) => {
     switch (status) {
       case 'healthy':
-        return <UnifiedBadge variant="success" className="bg-green-100 text-green-800 hover:bg-green-100">سليم</UnifiedBadge>;
+        return <UnifiedBadge variant="success" className="bg-success/10 text-success hover:bg-success/10">سليم</UnifiedBadge>;
       case 'warning':
-        return <UnifiedBadge variant="warning" className="border-yellow-400 text-yellow-800">تحذير</UnifiedBadge>;
+        return <UnifiedBadge variant="warning" className="border-warning text-warning">تحذير</UnifiedBadge>;
       case 'error':
         return <UnifiedBadge variant="error">خطأ</UnifiedBadge>;
       case 'checking':
