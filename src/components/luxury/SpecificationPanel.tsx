@@ -90,7 +90,7 @@ export function SpecificationPanel({
           </div>
           <Badge
             variant="secondary"
-            className="bg-red-600/20 text-red-400 border-red-600/30"
+            className="bg-primary/20 text-primary border-primary/30"
           >
             {groups.length} مجموعات
           </Badge>
@@ -108,15 +108,15 @@ export function SpecificationPanel({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: groupIndex * 0.1 }}
-              className="rounded-xl border border-slate-700/40 bg-slate-800/50 overflow-hidden hover:border-red-600/25 transition-all duration-300"
+              className="rounded-xl border border-border/40 bg-card/50 overflow-hidden hover:border-primary/25 transition-all duration-300"
             >
               <button
                 onClick={() => toggleGroup(group.id)}
-                className="w-full flex items-center justify-between p-5 text-right hover:bg-slate-800/60 transition-colors duration-200"
+                className="w-full flex items-center justify-between p-5 text-right hover:bg-muted/60 transition-colors duration-200"
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-red-600/15 border border-red-600/25">
-                    <IconComponent className="h-5 w-5 text-red-400" />
+                  <div className="p-2 rounded-lg bg-primary/15 border border-primary/25">
+                    <IconComponent className="h-5 w-5 text-primary" />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-foreground">

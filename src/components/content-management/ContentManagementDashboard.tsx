@@ -55,10 +55,10 @@ export function ContentManagementDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="border-l-4 border-l-green-500">
+            <Card className="border-l-4 border-l-success">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <Layout className="h-5 w-5 text-green-500" />
+                  <Layout className="h-5 w-5 text-success" />
                   <Badge variant="secondary">8</Badge>
                 </div>
               </CardHeader>
@@ -68,10 +68,10 @@ export function ContentManagementDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="border-l-4 border-l-orange-500">
+            <Card className="border-l-4 border-l-warning">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <Blocks className="h-5 w-5 text-orange-500" />
+                  <Blocks className="h-5 w-5 text-warning" />
                   <Badge variant="secondary">5</Badge>
                 </div>
               </CardHeader>
@@ -81,7 +81,7 @@ export function ContentManagementDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="border-l-4 border-l-blue-500">
+            <Card className="border-l-4 border-l-info">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <BarChart3 className="h-5 w-5 text-info" />

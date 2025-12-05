@@ -125,15 +125,15 @@ export const BannerAnalytics: React.FC<BannerAnalyticsProps> = ({
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-100 rounded-lg">
-                  <Eye className="w-6 h-6 text-blue-600" />
+                <div className="p-3 bg-info/10 rounded-lg">
+                  <Eye className="w-6 h-6 text-info" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">المشاهدات</p>
                   <p className="text-2xl font-bold">
                     {bannerAnalytics?.impressions?.toLocaleString() || '12,450'}
                   </p>
-                  <p className="text-xs text-green-600 flex items-center gap-1">
+                  <p className="text-xs text-success flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
                     +15% من الأسبوع الماضي
                   </p>
@@ -151,15 +151,15 @@ export const BannerAnalytics: React.FC<BannerAnalyticsProps> = ({
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-green-100 rounded-lg">
-                  <MousePointer className="w-6 h-6 text-green-600" />
+                <div className="p-3 bg-success/10 rounded-lg">
+                  <MousePointer className="w-6 h-6 text-success" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">النقرات</p>
                   <p className="text-2xl font-bold">
                     {bannerAnalytics?.clicks?.toLocaleString() || '1,245'}
                   </p>
-                  <p className="text-xs text-green-600 flex items-center gap-1">
+                  <p className="text-xs text-success flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
                     +8% من الأسبوع الماضي
                   </p>
@@ -177,15 +177,15 @@ export const BannerAnalytics: React.FC<BannerAnalyticsProps> = ({
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-purple-100 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-purple-600" />
+                <div className="p-3 bg-premium/10 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-premium" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">معدل النقر (CTR)</p>
                   <p className="text-2xl font-bold">
                     {bannerAnalytics?.ctr?.toFixed(2) || '10.0'}%
                   </p>
-                  <p className="text-xs text-green-600 flex items-center gap-1">
+                  <p className="text-xs text-success flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
                     +2.3% من الأسبوع الماضي
                   </p>
@@ -203,15 +203,15 @@ export const BannerAnalytics: React.FC<BannerAnalyticsProps> = ({
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-orange-100 rounded-lg">
-                  <Users className="w-6 h-6 text-orange-600" />
+                <div className="p-3 bg-warning/10 rounded-lg">
+                  <Users className="w-6 h-6 text-warning" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">التحويلات</p>
                   <p className="text-2xl font-bold">
                     {bannerAnalytics?.conversions?.toLocaleString() || '124'}
                   </p>
-                  <p className="text-xs text-green-600 flex items-center gap-1">
+                  <p className="text-xs text-success flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
                     +12% من الأسبوع الماضي
                   </p>
@@ -321,33 +321,33 @@ export const BannerAnalytics: React.FC<BannerAnalyticsProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="font-medium">65%</span>
                       <div className="w-20 h-2 bg-muted rounded-full">
-                        <div className="w-[65%] h-2 bg-blue-600 rounded-full" />
+                        <div className="w-[65%] h-2 bg-info rounded-full" />
                       </div>
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Monitor className="w-5 h-5 text-green-600" />
+                      <Monitor className="w-5 h-5 text-success" />
                       <span>سطح المكتب</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">28%</span>
                       <div className="w-20 h-2 bg-muted rounded-full">
-                        <div className="w-[28%] h-2 bg-green-600 rounded-full" />
+                        <div className="w-[28%] h-2 bg-success rounded-full" />
                       </div>
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Tablet className="w-5 h-5 text-purple-600" />
+                      <Tablet className="w-5 h-5 text-premium" />
                       <span>الجهاز اللوحي</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">7%</span>
                       <div className="w-20 h-2 bg-muted rounded-full">
-                        <div className="w-[7%] h-2 bg-purple-600 rounded-full" />
+                        <div className="w-[7%] h-2 bg-premium rounded-full" />
                       </div>
                     </div>
                   </div>

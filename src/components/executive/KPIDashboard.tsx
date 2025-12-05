@@ -33,56 +33,56 @@ export const KPIDashboard = ({ kpis, loading }: KPIDashboardProps) => {
       value: `${kpis.totalRevenue.toLocaleString('ar-SA')} ريال`,
       icon: DollarSign,
       trend: kpis.monthlyGrowth,
-      color: "text-green-600"
+      color: "text-success"
     },
     {
       title: "إجمالي الطلبات",
       value: kpis.totalOrders.toLocaleString('ar-SA'),
       icon: ShoppingCart,
       trend: 12.5,
-      color: "text-blue-600"
+      color: "text-info"
     },
     {
       title: "إجمالي العملاء",
       value: kpis.totalCustomers.toLocaleString('ar-SA'),
       icon: Users,
       trend: 8.2,
-      color: "text-purple-600"
+      color: "text-premium"
     },
     {
       title: "إجمالي المنتجات",
       value: kpis.totalProducts.toLocaleString('ar-SA'),
       icon: Package,
       trend: 5.1,
-      color: "text-orange-600"
+      color: "text-warning"
     },
     {
       title: "متوسط قيمة الطلب",
       value: `${kpis.averageOrderValue.toFixed(0)} ريال`,
       icon: TrendingUp,
       trend: 3.7,
-      color: "text-emerald-600"
+      color: "text-success"
     },
     {
       title: "معدل الاحتفاظ بالعملاء",
       value: `${kpis.customerRetention.toFixed(1)}%`,
       icon: Users,
       trend: -2.1,
-      color: "text-cyan-600"
+      color: "text-info"
     },
     {
       title: "معدل التحويل",
       value: `${kpis.conversionRate.toFixed(1)}%`,
       icon: TrendingUp,
       trend: 4.3,
-      color: "text-indigo-600"
+      color: "text-premium"
     },
     {
       title: "النمو الشهري",
       value: `${kpis.monthlyGrowth.toFixed(1)}%`,
       icon: kpis.monthlyGrowth >= 0 ? TrendingUp : TrendingDown,
       trend: kpis.monthlyGrowth,
-      color: kpis.monthlyGrowth >= 0 ? "text-green-600" : "text-red-600"
+      color: kpis.monthlyGrowth >= 0 ? "text-success" : "text-destructive"
     }
   ];
 
@@ -102,9 +102,9 @@ export const KPIDashboard = ({ kpis, loading }: KPIDashboardProps) => {
             </div>
             <div className="flex items-center gap-1">
               {item.trend >= 0 ? (
-                <TrendingUp className="h-3 w-3 text-green-600" />
+                <TrendingUp className="h-3 w-3 text-success" />
               ) : (
-                <TrendingDown className="h-3 w-3 text-red-600" />
+                <TrendingDown className="h-3 w-3 text-destructive" />
               )}
               <Badge 
                 variant={item.trend >= 0 ? "secondary" : "destructive"}

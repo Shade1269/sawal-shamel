@@ -165,7 +165,7 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
                         variant="luxury"
                       />
                     </div>
-                    <div className={`flex items-center text-sm ${kpi.trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <div className={`flex items-center text-sm ${kpi.trend > 0 ? 'text-success' : 'text-destructive'}`}>
                       {kpi.trend > 0 ? (
                         <TrendingUp className="w-3 h-3 mr-1" />
                       ) : (

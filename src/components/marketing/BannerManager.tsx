@@ -154,8 +154,8 @@ export const BannerManager: React.FC<BannerManagerProps> = ({
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Eye className="w-5 h-5 text-green-600" />
+              <div className="p-2 bg-success/10 rounded-lg">
+                <Eye className="w-5 h-5 text-success" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">البانرات النشطة</p>
@@ -170,8 +170,8 @@ export const BannerManager: React.FC<BannerManagerProps> = ({
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <BarChart3 className="w-5 h-5 text-blue-600" />
+              <div className="p-2 bg-info/10 rounded-lg">
+                <BarChart3 className="w-5 h-5 text-info" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">إجمالي المشاهدات</p>
@@ -186,8 +186,8 @@ export const BannerManager: React.FC<BannerManagerProps> = ({
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Calendar className="w-5 h-5 text-purple-600" />
+              <div className="p-2 bg-premium/10 rounded-lg">
+                <Calendar className="w-5 h-5 text-premium" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">النقرات</p>

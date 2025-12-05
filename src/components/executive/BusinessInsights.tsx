@@ -50,7 +50,7 @@ export const BusinessInsights = ({ business, loading }: BusinessInsightsProps) =
                 <div key={index} className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                     {index < 3 ? (
-                      <Award className="h-4 w-4 text-yellow-500" />
+                      <Award className="h-4 w-4 text-warning" />
                     ) : (
                       <span className="text-sm font-medium text-primary">
                         {index + 1}
@@ -94,7 +94,7 @@ export const BusinessInsights = ({ business, loading }: BusinessInsightsProps) =
                 <div key={index} className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                     {index < 3 ? (
-                      <Award className="h-4 w-4 text-yellow-500" />
+                      <Award className="h-4 w-4 text-warning" />
                     ) : (
                       <span className="text-sm font-medium text-primary">
                         {index + 1}

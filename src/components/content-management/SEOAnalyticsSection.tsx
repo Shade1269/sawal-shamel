@@ -65,9 +65,9 @@ export function SEOAnalyticsSection() {
   );
 
   const getPositionColor = (position: number) => {
-    if (position <= 3) return 'text-green-600';
-    if (position <= 10) return 'text-orange-600';
-    return 'text-red-600';
+    if (position <= 3) return 'text-success';
+    if (position <= 10) return 'text-warning';
+    return 'text-destructive';
   };
 
   const getPositionBadge = (position: number) => {
@@ -151,7 +151,7 @@ export function SEOAnalyticsSection() {
             <Card>
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <Eye className="h-5 w-5 text-blue-500" />
+                  <Eye className="h-5 w-5 text-info" />
                   <Badge variant="secondary" className="gap-1">
                     <TrendingUp className="h-3 w-3" />
                     +12%
@@ -167,7 +167,7 @@ export function SEOAnalyticsSection() {
             <Card>
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <MousePointer className="h-5 w-5 text-green-500" />
+                  <MousePointer className="h-5 w-5 text-success" />
                   <Badge variant="secondary" className="gap-1">
                     <TrendingUp className="h-3 w-3" />
                     +8%
@@ -183,7 +183,7 @@ export function SEOAnalyticsSection() {
             <Card>
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <Target className="h-5 w-5 text-orange-500" />
+                  <Target className="h-5 w-5 text-warning" />
                   <Badge variant="secondary" className="gap-1">
                     <TrendingUp className="h-3 w-3" />
                     +2.1%
@@ -199,7 +199,7 @@ export function SEOAnalyticsSection() {
             <Card>
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <BarChart3 className="h-5 w-5 text-purple-500" />
+                  <BarChart3 className="h-5 w-5 text-premium" />
                   <Badge variant="secondary" className="gap-1">
                     <TrendingDown className="h-3 w-3" />
                     -0.5
@@ -360,8 +360,8 @@ export function SEOAnalyticsSection() {
                     </div>
                     <div className="text-right">
                       <div className={`text-lg font-bold ${
-                        page.bounceRate <= 30 ? 'text-green-600' : 
-                        page.bounceRate <= 50 ? 'text-orange-600' : 'text-red-600'
+                        page.bounceRate <= 30 ? 'text-success' : 
+                        page.bounceRate <= 50 ? 'text-warning' : 'text-destructive'
                       }`}>
                         {page.bounceRate}%
                       </div>

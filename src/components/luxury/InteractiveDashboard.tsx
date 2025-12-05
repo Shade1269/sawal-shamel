@@ -51,11 +51,11 @@ export interface InteractiveDashboardProps {
 }
 
 const defaultColors = {
-  primary: "bg-red-600",
-  success: "bg-green-600",
-  warning: "bg-yellow-600",
-  info: "bg-blue-600",
-  purple: "bg-purple-600"
+  primary: "bg-primary",
+  success: "bg-success",
+  warning: "bg-warning",
+  info: "bg-info",
+  purple: "bg-premium"
 };
 
 export function InteractiveDashboard({
@@ -72,9 +72,9 @@ export function InteractiveDashboard({
   };
 
   const getChangeColor = (type?: string) => {
-    if (type === 'increase') return "text-green-400 bg-green-600/20 border-green-600/30";
-    if (type === 'decrease') return "text-red-400 bg-red-600/20 border-red-600/30";
-    return "text-slate-400 bg-slate-600/20 border-slate-600/30";
+    if (type === 'increase') return "text-success bg-success/20 border-success/30";
+    if (type === 'decrease') return "text-destructive bg-destructive/20 border-destructive/30";
+    return "text-muted-foreground bg-muted border-border";
   };
 
   return (
@@ -82,17 +82,17 @@ export function InteractiveDashboard({
       {(title || subtitle) && (
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-foreground mb-1 flex items-center gap-2">
-              <Activity className="h-8 w-8 text-red-500" />
+          <h2 className="text-3xl font-bold text-foreground mb-1 flex items-center gap-2">
+              <Activity className="h-8 w-8 text-primary" />
               {title}
             </h2>
             {subtitle && (
-              <p className="text-sm text-slate-300">{subtitle}</p>
+              <p className="text-sm text-muted-foreground">{subtitle}</p>
             )}
           </div>
           <Badge
             variant="secondary"
-            className="bg-red-600/20 text-red-400 border-red-600/30 animate-pulse"
+            className="bg-primary/20 text-primary border-primary/30 animate-pulse"
           >
             <Zap className="h-3 w-3 ml-1" />
             تحديث مباشر

@@ -30,10 +30,10 @@ export const CustomerInsights = ({ customer, loading }: CustomerInsightsProps) =
   if (!customer) return null;
 
   const getSegmentIcon = (segment: string) => {
-    if (segment.includes('VIP')) return <Crown className="h-4 w-4 text-yellow-500" />;
-    if (segment.includes('متميزون')) return <Star className="h-4 w-4 text-purple-500" />;
-    if (segment.includes('عاديون')) return <Users className="h-4 w-4 text-blue-500" />;
-    return <TrendingUp className="h-4 w-4 text-green-500" />;
+    if (segment.includes('VIP')) return <Crown className="h-4 w-4 text-warning" />;
+    if (segment.includes('متميزون')) return <Star className="h-4 w-4 text-premium" />;
+    if (segment.includes('عاديون')) return <Users className="h-4 w-4 text-info" />;
+    return <TrendingUp className="h-4 w-4 text-success" />;
   };
 
   return (

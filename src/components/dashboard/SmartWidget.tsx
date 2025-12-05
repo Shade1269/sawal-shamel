@@ -76,10 +76,10 @@ export function SmartWidget({
 
   const getStatusIcon = () => {
     switch (data.status) {
-      case 'success': return <CheckCircle className="h-3 w-3 md:h-4 md:w-4 text-green-500" />;
-      case 'warning': return <AlertTriangle className="h-3 w-3 md:h-4 md:w-4 text-yellow-500" />;
-      case 'error': return <AlertTriangle className="h-3 w-3 md:h-4 md:w-4 text-red-500" />;
-      case 'info': return <Clock className="h-3 w-3 md:h-4 md:w-4 text-blue-500" />;
+      case 'success': return <CheckCircle className="h-3 w-3 md:h-4 md:w-4 text-success" />;
+      case 'warning': return <AlertTriangle className="h-3 w-3 md:h-4 md:w-4 text-warning" />;
+      case 'error': return <AlertTriangle className="h-3 w-3 md:h-4 md:w-4 text-destructive" />;
+      case 'info': return <Clock className="h-3 w-3 md:h-4 md:w-4 text-info" />;
       default: return null;
     }
   };
