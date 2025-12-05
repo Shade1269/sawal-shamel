@@ -22,15 +22,15 @@ const NotificationCenter: React.FC = () => {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-4 w-4 text-success" />;
       case 'error':
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
+        return <AlertCircle className="h-4 w-4 text-destructive" />;
       case 'warning':
-        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+        return <AlertTriangle className="h-4 w-4 text-warning" />;
       case 'support':
-        return <AlertCircle className="h-4 w-4 text-blue-500" />;
+        return <AlertCircle className="h-4 w-4 text-info" />;
       default:
-        return <Info className="h-4 w-4 text-blue-500" />;
+        return <Info className="h-4 w-4 text-info" />;
     }
   };
 
@@ -39,13 +39,13 @@ const NotificationCenter: React.FC = () => {
     
     switch (type) {
       case 'success':
-        return `bg-green-50 dark:bg-green-950 ${opacity}`;
+        return `bg-success/10 ${opacity}`;
       case 'error':
-        return `bg-red-50 dark:bg-red-950 ${opacity}`;
+        return `bg-destructive/10 ${opacity}`;
       case 'warning':
-        return `bg-yellow-50 dark:bg-yellow-950 ${opacity}`;
+        return `bg-warning/10 ${opacity}`;
       case 'support':
-        return `bg-blue-50 dark:bg-blue-950 ${opacity}`;
+        return `bg-info/10 ${opacity}`;
       default:
         return `bg-muted ${opacity}`;
     }
@@ -193,9 +193,9 @@ const NotificationCenter: React.FC = () => {
 
         {!isConnected && (
           <div className="absolute bottom-4 left-4 right-4">
-            <Card className="bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800">
+            <Card className="bg-warning/10 border-warning/30">
               <CardContent className="p-3">
-                <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
+                <div className="flex items-center gap-2 text-warning">
                   <AlertTriangle className="h-4 w-4" />
                   <span className="text-sm">
                     فقدان الاتصال - جاري إعادة المحاولة...

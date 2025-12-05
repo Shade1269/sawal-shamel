@@ -178,9 +178,9 @@ const SEOManager: React.FC<SEOManagerProps> = ({
     <div className="space-y-6">
       {/* نقاط SEO */}
       <Card className={`border-2 ${
-        seoScore >= 80 ? 'border-green-200 bg-green-50/50' :
-        seoScore >= 50 ? 'border-yellow-200 bg-yellow-50/50' :
-        'border-red-200 bg-red-50/50'
+        seoScore >= 80 ? 'border-success/30 bg-success/5' :
+        seoScore >= 50 ? 'border-warning/30 bg-warning/5' :
+        'border-destructive/30 bg-destructive/5'
       }`}>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">

@@ -157,8 +157,8 @@ export const ReviewSubmissionDialog: React.FC<ReviewSubmissionDialogProps> = ({
                   <Star
                     className={`h-8 w-8 cursor-pointer transition-colors ${
                       star <= (hoveredRating || rating)
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-gray-300'
+                        ? 'fill-warning text-warning'
+                        : 'text-muted-foreground/30'
                     }`}
                   />
                 </motion.button>

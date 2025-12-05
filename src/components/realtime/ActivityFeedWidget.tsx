@@ -57,13 +57,13 @@ const ActivityFeedWidget: React.FC<ActivityFeedWidgetProps> = ({
   const getActivityIcon = (activityType: string) => {
     switch (activityType) {
       case 'sale':
-        return <TrendingUp className="h-4 w-4 text-green-500" />;
+        return <TrendingUp className="h-4 w-4 text-success" />;
       case 'signup':
-        return <Users className="h-4 w-4 text-blue-500" />;
+        return <Users className="h-4 w-4 text-info" />;
       case 'achievement':
-        return <Award className="h-4 w-4 text-yellow-500" />;
+        return <Award className="h-4 w-4 text-warning" />;
       case 'login':
-        return <Zap className="h-4 w-4 text-purple-500" />;
+        return <Zap className="h-4 w-4 text-premium" />;
       default:
         return <Activity className="h-4 w-4 text-muted-foreground" />;
     }
@@ -72,13 +72,13 @@ const ActivityFeedWidget: React.FC<ActivityFeedWidgetProps> = ({
   const getActivityBg = (activityType: string) => {
     switch (activityType) {
       case 'sale':
-        return 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800';
+        return 'bg-success/10 border-success/30';
       case 'signup':
-        return 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800';
+        return 'bg-info/10 border-info/30';
       case 'achievement':
-        return 'bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800';
+        return 'bg-warning/10 border-warning/30';
       case 'login':
-        return 'bg-purple-50 dark:bg-purple-950 border-purple-200 dark:border-purple-800';
+        return 'bg-premium/10 border-premium/30';
       default:
         return 'bg-muted/30';
     }

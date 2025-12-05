@@ -188,7 +188,7 @@ export function ContentBlocksSection() {
                           {block.usage_count} استخدام
                         </div>
                         <div className="flex items-center gap-1">
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                          <Star className="h-3 w-3 fill-warning text-warning" />
                           4.9
                         </div>
                       </div>

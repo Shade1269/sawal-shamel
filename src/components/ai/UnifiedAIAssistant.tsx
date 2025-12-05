@@ -229,7 +229,7 @@ export function UnifiedAIAssistant({
               <Bot className="h-4 w-4 text-primary" />
             </div>
             <span>المساعد الذكي</span>
-            <Sparkles className="h-3 w-3 text-yellow-500" />
+            <Sparkles className="h-3 w-3 text-warning" />
           </CardTitle>
           <div className="flex items-center gap-1">
             {floating && (

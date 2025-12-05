@@ -73,9 +73,9 @@ export const FraudDetectionPanel = () => {
   };
 
   const getAlertIcon = (riskScore: number) => {
-    if (riskScore >= 80) return <AlertTriangle className="h-5 w-5 text-red-600" />;
-    if (riskScore >= 60) return <AlertTriangle className="h-5 w-5 text-orange-600" />;
-    return <Shield className="h-5 w-5 text-yellow-600" />;
+    if (riskScore >= 80) return <AlertTriangle className="h-5 w-5 text-destructive" />;
+    if (riskScore >= 60) return <AlertTriangle className="h-5 w-5 text-warning" />;
+    return <Shield className="h-5 w-5 text-warning" />;
   };
 
   if (loading) {

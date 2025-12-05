@@ -367,7 +367,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{result.title}</span>
                           {result.score && result.score > 0.8 && (
-                            <Star className="h-3 w-3 text-yellow-500 fill-current" />
+                            <Star className="h-3 w-3 text-warning fill-current" />
                           )}
                         </div>
                         {result.description && (

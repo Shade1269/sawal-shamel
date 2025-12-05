@@ -139,9 +139,9 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 70) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 90) return 'text-success';
+    if (score >= 70) return 'text-warning';
+    return 'text-destructive';
   };
 
   const getScoreBadgeVariant = (score: number) => {
@@ -199,17 +199,17 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
                 
                 <div className="flex justify-center">
                   {performanceScore >= 90 ? (
-                    <div className="flex items-center gap-2 text-green-600">
+                    <div className="flex items-center gap-2 text-success">
                       <CheckCircle className="h-5 w-5" />
                       <span className="font-medium">أداء ممتاز</span>
                     </div>
                   ) : performanceScore >= 70 ? (
-                    <div className="flex items-center gap-2 text-yellow-600">
+                    <div className="flex items-center gap-2 text-warning">
                       <Clock className="h-5 w-5" />
                       <span className="font-medium">أداء جيد</span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2 text-red-600">
+                    <div className="flex items-center gap-2 text-destructive">
                       <AlertTriangle className="h-5 w-5" />
                       <span className="font-medium">يحتاج تحسين</span>
                     </div>
@@ -356,9 +356,9 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
               {recommendations.map((rec, index) => (
                 <Alert key={index}>
                   <div className="flex items-start gap-3">
-                    {rec.type === 'error' && <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5" />}
-                    {rec.type === 'warning' && <Clock className="h-5 w-5 text-yellow-500 mt-0.5" />}
-                    {rec.type === 'info' && <Info className="h-5 w-5 text-blue-500 mt-0.5" />}
+                    {rec.type === 'error' && <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />}
+                    {rec.type === 'warning' && <Clock className="h-5 w-5 text-warning mt-0.5" />}
+                    {rec.type === 'info' && <Info className="h-5 w-5 text-info mt-0.5" />}
                     
                     <div className="flex-1">
                       <AlertTitle className="mb-1">{rec.title}</AlertTitle>

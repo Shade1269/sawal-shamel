@@ -104,8 +104,8 @@ export const SEODashboard: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <div className={`p-2 rounded-lg ${
                     item.status === 'success' 
-                      ? 'bg-green-100 text-green-600 dark:bg-green-900/20' 
-                      : 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/20'
+                      ? 'bg-success/10 text-success' 
+                      : 'bg-warning/10 text-warning'
                   }`}>
                     <Icon className="h-4 w-4" />
                   </div>
@@ -113,9 +113,9 @@ export const SEODashboard: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <h3 className="font-medium">{item.name}</h3>
                       {item.status === 'success' ? (
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <CheckCircle className="h-4 w-4 text-success" />
                       ) : (
-                        <AlertCircle className="h-4 w-4 text-yellow-600" />
+                        <AlertCircle className="h-4 w-4 text-warning" />
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground">
