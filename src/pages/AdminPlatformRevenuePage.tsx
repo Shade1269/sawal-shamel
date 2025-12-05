@@ -72,7 +72,7 @@ export default function AdminPlatformRevenuePage() {
             <TableCell className="text-right">
               {record.merchant_base_price_sar.toFixed(2)} ريال
             </TableCell>
-            <TableCell className="text-right font-medium text-green-600">
+            <TableCell className="text-right font-medium text-success">
               {record.platform_share_sar.toFixed(2)} ريال
             </TableCell>
             <TableCell className="text-right">

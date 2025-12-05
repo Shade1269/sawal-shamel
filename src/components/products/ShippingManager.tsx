@@ -164,25 +164,25 @@ const ShippingManager: React.FC<ShippingManagerProps> = ({
 
             {/* معلومات إضافية */}
             {(shipping.length_cm && shipping.width_cm && shipping.height_cm) && (
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="p-4 bg-info/10 rounded-lg border border-info/30">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                   <div>
-                    <p className="font-medium text-blue-800">الحجم الإجمالي:</p>
-                    <p className="text-blue-700">
+                    <p className="font-medium text-info">الحجم الإجمالي:</p>
+                    <p className="text-info/80">
                       {((shipping.length_cm * shipping.width_cm * shipping.height_cm) / 1000).toFixed(2)} لتر
                     </p>
                   </div>
                   
                   <div>
-                    <p className="font-medium text-blue-800">الوزن الحجمي:</p>
-                    <p className="text-blue-700">
+                    <p className="font-medium text-info">الوزن الحجمي:</p>
+                    <p className="text-info/80">
                       {((shipping.length_cm * shipping.width_cm * shipping.height_cm) / 5000).toFixed(2)} كجم
                     </p>
                   </div>
                   
                   <div>
-                    <p className="font-medium text-blue-800">تكلفة شحن تقديرية:</p>
-                    <p className="text-blue-700 font-bold">
+                    <p className="font-medium text-info">تكلفة شحن تقديرية:</p>
+                    <p className="text-info/80 font-bold">
                       {calculateShippingCost()} ر.س
                     </p>
                   </div>
@@ -252,12 +252,12 @@ const ShippingManager: React.FC<ShippingManagerProps> = ({
           </div>
 
           {/* معلومات التحضير */}
-          <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+          <div className="p-4 bg-success/10 rounded-lg border border-success/30">
             <div className="flex items-center gap-2 mb-2">
-              <Clock className="h-4 w-4 text-green-600" />
-              <span className="font-medium text-green-800">معلومات التحضير:</span>
+              <Clock className="h-4 w-4 text-success" />
+              <span className="font-medium text-success">معلومات التحضير:</span>
             </div>
-            <p className="text-sm text-green-700">
+            <p className="text-sm text-success/80">
               سيتم تحضير هذا المنتج خلال{' '}
               <span className="font-bold">{shipping.handling_time_days || 1}</span>{' '}
               {shipping.handling_time_days === 1 ? 'يوم' : 'أيام'} من تأكيد الطلب

@@ -151,7 +151,7 @@ export function ProductShowcase3D({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 hover:bg-red-600/20 hover:text-red-400"
+                  className="h-7 w-7 hover:bg-primary/20 hover:text-primary"
                   onClick={toggleZoom}
                 >
                   {isZoomed ? (
@@ -198,7 +198,7 @@ export function ProductShowcase3D({
           <div className="flex flex-col justify-between">
             <div className="space-y-5">
               <div className="flex items-center gap-4">
-                <div className="text-4xl font-bold text-red-500">
+                <div className="text-4xl font-bold text-primary">
                   {product.price_sar.toLocaleString('ar')} ريال
                 </div>
                 {product.rating && (

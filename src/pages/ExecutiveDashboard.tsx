@@ -36,7 +36,7 @@ export default function ExecutiveDashboard() {
         <UnifiedCard variant="elegant">
           <UnifiedCardContent className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="text-red-500 mb-2">⚠️</div>
+              <div className="text-destructive mb-2">⚠️</div>
               <p className="text-muted-foreground">حدث خطأ في تحميل البيانات</p>
               <UnifiedButton variant="outline" onClick={refetch} className="mt-4">
                 <RefreshCw className="h-4 w-4 mr-2" />

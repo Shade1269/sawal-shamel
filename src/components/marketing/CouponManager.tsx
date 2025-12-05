@@ -470,7 +470,7 @@ const CouponManager = () => {
                     </div>
                     <div className="text-right">
                       <div className="font-medium">{coupon.usageCount} استخدام</div>
-                      <div className="text-sm text-green-500">{coupon.totalSavings.toLocaleString()} ريال</div>
+                      <div className="text-sm text-success">{coupon.totalSavings.toLocaleString()} ريال</div>
                     </div>
                   </div>
                 ))}

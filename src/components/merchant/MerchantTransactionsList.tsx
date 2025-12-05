@@ -72,11 +72,11 @@ export const MerchantTransactionsList = ({ transactions }: MerchantTransactionsL
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
                         {isCredit ? (
-                          <ArrowUpCircle className="h-4 w-4 text-green-500" />
+                          <ArrowUpCircle className="h-4 w-4 text-success" />
                         ) : (
-                          <ArrowDownCircle className="h-4 w-4 text-red-500" />
+                          <ArrowDownCircle className="h-4 w-4 text-destructive" />
                         )}
-                        <span className={isCredit ? 'text-green-600' : 'text-red-600'}>
+                        <span className={isCredit ? 'text-success' : 'text-destructive'}>
                           {isCredit ? '+' : '-'}{Math.abs(transaction.amount_sar).toFixed(2)} ريال
                         </span>
                       </div>

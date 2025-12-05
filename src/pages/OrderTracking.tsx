@@ -157,16 +157,16 @@ const OrderTracking = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'PENDING':
-        return <Clock className="h-5 w-5 text-yellow-500" />;
+        return <Clock className="h-5 w-5 text-warning" />;
       case 'CONFIRMED':
       case 'PREPARING':
-        return <Package className="h-5 w-5 text-blue-500" />;
+        return <Package className="h-5 w-5 text-info" />;
       case 'SHIPPED':
-        return <Truck className="h-5 w-5 text-purple-500" />;
+        return <Truck className="h-5 w-5 text-accent" />;
       case 'DELIVERED':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
+        return <CheckCircle className="h-5 w-5 text-success" />;
       default:
-        return <Clock className="h-5 w-5 text-gray-500" />;
+        return <Clock className="h-5 w-5 text-muted-foreground" />;
     }
   };
 

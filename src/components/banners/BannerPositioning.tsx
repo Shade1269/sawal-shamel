@@ -493,9 +493,9 @@ export const BannerPositioning: React.FC<BannerPositioningProps> = ({
                     <div className="grid grid-cols-12 gap-4">
                       <div className="col-span-8">
                         <div className="space-y-2">
-                          <div className="h-4 bg-gray-200 rounded"></div>
-                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                          <div className="h-4 bg-muted rounded"></div>
+                          <div className="h-4 bg-muted rounded w-3/4"></div>
+                          <div className="h-4 bg-muted rounded w-1/2"></div>
                         </div>
                       </div>
                       
@@ -531,8 +531,8 @@ export const BannerPositioning: React.FC<BannerPositioningProps> = ({
                     </div>
                   )}
                   
-                  <div className="h-8 bg-gray-200 rounded-b flex items-center px-4">
-                    <div className="text-xs text-gray-600">الفوتر</div>
+                  <div className="h-8 bg-muted rounded-b flex items-center px-4">
+                    <div className="text-xs text-muted-foreground">الفوتر</div>
                   </div>
                 </div>
                 

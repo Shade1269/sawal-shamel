@@ -221,7 +221,7 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Card>
                   <CardContent className="p-4 text-center">
-                    <Zap className="h-6 w-6 mx-auto mb-2 text-blue-500" />
+                    <Zap className="h-6 w-6 mx-auto mb-2 text-info" />
                     <div className="text-2xl font-bold">{formatTime(metrics.fcp)}</div>
                     <div className="text-sm text-muted-foreground">FCP</div>
                   </CardContent>
@@ -229,7 +229,7 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
 
                 <Card>
                   <CardContent className="p-4 text-center">
-                    <TrendingUp className="h-6 w-6 mx-auto mb-2 text-green-500" />
+                    <TrendingUp className="h-6 w-6 mx-auto mb-2 text-success" />
                     <div className="text-2xl font-bold">{formatTime(metrics.lcp)}</div>
                     <div className="text-sm text-muted-foreground">LCP</div>
                   </CardContent>

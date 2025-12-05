@@ -266,10 +266,10 @@ const ProductManagement = () => {
             <UnifiedCardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-green-600">المنتجات النشطة</p>
-                  <p className="text-2xl font-bold text-green-600">{stats.active}</p>
+                  <p className="text-sm text-success">المنتجات النشطة</p>
+                  <p className="text-2xl font-bold text-success">{stats.active}</p>
                 </div>
-                <Eye className="h-8 w-8 text-green-600 opacity-80" />
+                <Eye className="h-8 w-8 text-success opacity-80" />
               </div>
             </UnifiedCardContent>
           </UnifiedCard>
@@ -286,14 +286,14 @@ const ProductManagement = () => {
             </UnifiedCardContent>
           </UnifiedCard>
 
-          <UnifiedCard variant="default" padding="md" className="bg-danger/10">
+          <UnifiedCard variant="default" padding="md" className="bg-destructive/10">
             <UnifiedCardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-red-600">نفد المخزون</p>
-                  <p className="text-2xl font-bold text-red-600">{stats.outOfStock}</p>
+                  <p className="text-sm text-destructive">نفد المخزون</p>
+                  <p className="text-2xl font-bold text-destructive">{stats.outOfStock}</p>
                 </div>
-                <TrendingUp className="h-8 w-8 text-red-600 opacity-80" />
+                <TrendingUp className="h-8 w-8 text-destructive opacity-80" />
               </div>
             </UnifiedCardContent>
           </UnifiedCard>

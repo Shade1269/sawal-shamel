@@ -217,11 +217,11 @@ const DiscountManager: React.FC<DiscountManagerProps> = ({
       </Card>
 
       {/* معاينة السعر النهائي */}
-      <Card className="border-green-200 bg-green-50/50">
+      <Card className="border-success/30 bg-success/5">
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-2xl font-bold text-green-700">
+              <p className="text-2xl font-bold text-success">
                 {finalPrice.toFixed(2)} ر.س
               </p>
               <p className="text-sm text-muted-foreground">السعر النهائي</p>
@@ -235,7 +235,7 @@ const DiscountManager: React.FC<DiscountManagerProps> = ({
                     وفر {savingsAmount.toFixed(2)} ر.س
                   </Badge>
                 </div>
-                <p className="text-sm text-green-600 mt-1">
+                <p className="text-sm text-success mt-1">
                   خصم {savingsPercentage.toFixed(1)}%
                 </p>
               </div>
@@ -243,14 +243,14 @@ const DiscountManager: React.FC<DiscountManagerProps> = ({
           </div>
 
           {basePrice !== finalPrice && (
-            <div className="mt-3 pt-3 border-t border-green-200">
+            <div className="mt-3 pt-3 border-t border-success/30">
               <div className="flex justify-between text-sm">
                 <span>السعر الأساسي:</span>
                 <span className="line-through text-muted-foreground">
                   {basePrice.toFixed(2)} ر.س
                 </span>
               </div>
-              <div className="flex justify-between text-sm font-medium text-green-700">
+              <div className="flex justify-between text-sm font-medium text-success">
                 <span>بعد الخصم:</span>
                 <span>{finalPrice.toFixed(2)} ر.س</span>
               </div>
@@ -360,15 +360,15 @@ const DiscountManager: React.FC<DiscountManagerProps> = ({
 
           {/* معاينة الخصم الجديد */}
           {newDiscount.discount_value && newDiscount.discount_value > 0 && (
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg border">
-              <p className="text-sm font-medium text-blue-800">معاينة الخصم:</p>
-              <div className="text-sm text-blue-700 mt-1">
+            <div className="mt-4 p-3 bg-info/10 rounded-lg border border-info/30">
+              <p className="text-sm font-medium text-info">معاينة الخصم:</p>
+              <div className="text-sm text-info/80 mt-1">
                 {newDiscount.discount_type === 'percent' 
                   ? `خصم ${newDiscount.discount_value}% = ${(basePrice * (newDiscount.discount_value / 100)).toFixed(2)} ر.س`
                   : `خصم ${newDiscount.discount_value} ر.س`
                 }
               </div>
-              <div className="text-sm font-medium text-blue-800 mt-1">
+              <div className="text-sm font-medium text-info mt-1">
                 السعر بعد الخصم: {calculateFinalPrice(basePrice, newDiscount as ProductDiscount).toFixed(2)} ر.س
               </div>
             </div>
@@ -388,7 +388,7 @@ const DiscountManager: React.FC<DiscountManagerProps> = ({
                 <div 
                   key={index} 
                   className={`border rounded-lg p-4 ${
-                    discount.is_active ? 'border-green-200 bg-green-50/50' : 'border-gray-200'
+                    discount.is_active ? 'border-success/30 bg-success/5' : 'border-border'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -427,14 +427,14 @@ const DiscountManager: React.FC<DiscountManagerProps> = ({
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-green-600">
+                      <span className="text-lg font-bold text-success">
                         {calculateFinalPrice(basePrice, discount).toFixed(2)} ر.س
                       </span>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => removeDiscount(index)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-destructive hover:text-destructive/80"
                       >
                         <X className="h-4 w-4" />
                       </Button>

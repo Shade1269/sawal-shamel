@@ -199,7 +199,7 @@ export function CompactStockIndicator({ stock, className = '' }: CompactStockInd
 
     return (
       <Badge variant="secondary" className={cn('text-xs', className)}>
-        <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
+        <CheckCircle className="h-3 w-3 mr-1 text-success" />
         متوفر ({stock})
       </Badge>
     );

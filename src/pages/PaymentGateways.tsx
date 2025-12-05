@@ -405,7 +405,7 @@ const PaymentGateways = () => {
                           <div className="space-y-1">
                             {gateway.features.map((feature, index) => (
                               <div key={index} className="flex items-center gap-2 text-sm">
-                                <Check className="h-3 w-3 text-green-500" />
+                                <Check className="h-3 w-3 text-success" />
                                 <span>{feature}</span>
                               </div>
                             ))}

@@ -240,12 +240,12 @@ export function WidgetsManagementSection() {
             <Card key={i} className="animate-pulse">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 bg-gray-300 rounded"></div>
+                  <div className="h-10 w-10 bg-muted-foreground/30 rounded"></div>
                   <div className="flex-1">
-                    <div className="h-4 bg-gray-300 rounded w-1/4 mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-4 bg-muted-foreground/30 rounded w-1/4 mb-2"></div>
+                    <div className="h-3 bg-muted rounded w-1/2"></div>
                   </div>
-                  <div className="h-8 w-16 bg-gray-200 rounded"></div>
+                  <div className="h-8 w-16 bg-muted rounded"></div>
                 </div>
               </CardContent>
             </Card>
@@ -277,7 +277,7 @@ export function WidgetsManagementSection() {
                               
                               <div className="flex-shrink-0">
                                 <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
-                                  widget.is_visible ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-400'
+                                  widget.is_visible ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
                                 }`}>
                                   <Icon className="h-5 w-5" />
                                 </div>

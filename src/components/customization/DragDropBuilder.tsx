@@ -589,7 +589,7 @@ export const DragDropBuilder: React.FC<DragDropBuilderProps> = ({
           </div>
 
           {/* Canvas */}
-          <div className="flex-1 overflow-auto bg-gray-50 p-8">
+          <div className="flex-1 overflow-auto bg-muted/50 p-8">
             <div className={getDeviceClass()}>
               <DroppableCanvas
                 onDrop={handleDrop}

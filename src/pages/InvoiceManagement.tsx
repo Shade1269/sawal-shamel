@@ -588,7 +588,7 @@ const InvoiceManagement = () => {
                       </div>
                     </td>
                     <td className="p-3">
-                      <div className="font-bold text-green-600">
+                      <div className="font-bold text-success">
                         {invoice.total_sar.toLocaleString()} ر.س
                       </div>
                       <div className="text-sm text-muted-foreground">

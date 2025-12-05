@@ -322,7 +322,7 @@ const PaymentDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">إجمالي الإيرادات</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-success">
                   {stats.totalRevenue.toLocaleString()} ر.س
                 </p>
                 <p className="text-xs text-muted-foreground flex items-center mt-1">
@@ -545,12 +545,12 @@ const PaymentDashboard = () => {
                       </div>
                     </td>
                     <td className="p-3">
-                      <div className="font-medium text-green-600">
+                      <div className="font-medium text-success">
                         {transaction.amount_sar.toLocaleString()} ر.س
                       </div>
                     </td>
                     <td className="p-3">
-                      <div className="text-red-600">
+                      <div className="text-destructive">
                         -{(transaction.gateway_fee_sar || 0).toLocaleString()} ر.س
                       </div>
                     </td>

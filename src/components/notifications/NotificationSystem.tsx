@@ -92,7 +92,7 @@ const NotificationSystem = () => {
         message: 'احصل على 20% خصم إضافي على جميع الأحذية لمدة محدودة',
         timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
         read: true,
-        icon: <Gift className="h-4 w-4 text-green-500" />,
+        icon: <Gift className="h-4 w-4 text-success" />,
         priority: 'medium'
       }
     ];
