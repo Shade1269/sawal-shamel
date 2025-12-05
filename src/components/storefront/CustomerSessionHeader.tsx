@@ -55,7 +55,7 @@ export const CustomerSessionHeader: React.FC<CustomerSessionHeaderProps> = ({
               {initials}
             </AvatarFallback>
           </Avatar>
-          <Shield className="h-3 w-3 text-green-400" />
+          <Shield className="h-3 w-3 text-success" />
           <span className="hidden sm:inline max-w-24 truncate">
             {displayName}
           </span>
@@ -65,7 +65,7 @@ export const CustomerSessionHeader: React.FC<CustomerSessionHeaderProps> = ({
       <DropdownMenuContent align="end" className="w-56">
         <div className="px-3 py-2">
           <div className="flex items-center gap-2 mb-1">
-            <Shield className="h-4 w-4 text-green-500" />
+            <Shield className="h-4 w-4 text-success" />
             <UnifiedBadge variant="success" size="sm" className="text-xs">
               محقق
             </UnifiedBadge>

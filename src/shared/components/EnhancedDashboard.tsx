@@ -378,14 +378,14 @@ const EnhancedDashboard: React.FC = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className={achievement.progress >= achievement.maxProgress ? 'border-green-500' : ''}>
+                    <Card className={achievement.progress >= achievement.maxProgress ? 'border-success' : ''}>
                     <CardContent className="p-4">
                       <div className="flex items-center gap-3 mb-3">
                         <div 
                           className={`p-2 rounded-lg ${
                             achievement.progress >= achievement.maxProgress 
-                              ? 'bg-green-100 text-green-600' 
-                              : 'bg-gray-100 text-gray-600'
+                              ? 'bg-success/10 text-success' 
+                              : 'bg-muted text-muted-foreground'
                           }`}
                         >
                           {achievement.icon}

@@ -145,14 +145,14 @@ export const OrderCommissionManagement = ({ storeId }: OrderCommissionManagement
       case 'delivered':
       case 'confirmed':
       case 'paid':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-4 w-4 text-success" />;
       case 'pending':
-        return <Clock className="h-4 w-4 text-yellow-500" />;
+        return <Clock className="h-4 w-4 text-warning" />;
       case 'cancelled':
       case 'failed':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
       default:
-        return <AlertCircle className="h-4 w-4 text-gray-500" />;
+        return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
     }
   };
 

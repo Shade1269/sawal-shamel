@@ -284,7 +284,7 @@ export function TwoFactorAuthSettings() {
                         className="text-muted-foreground hover:text-foreground"
                       >
                         {copiedIndex === index ? (
-                          <Check className="h-4 w-4 text-green-500" />
+                          <Check className="h-4 w-4 text-success" />
                         ) : (
                           <Copy className="h-4 w-4" />
                         )}

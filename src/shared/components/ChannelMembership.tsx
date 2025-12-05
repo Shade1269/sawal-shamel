@@ -221,22 +221,22 @@ const ChannelMembership: React.FC<ChannelMembershipProps> = ({
   const getStatusIcon = (status?: string) => {
     switch (status) {
       case 'online':
-        return <Circle className="h-2 w-2 fill-green-500 text-green-500" />;
+        return <Circle className="h-2 w-2 fill-success text-success" />;
       case 'busy':
-        return <Circle className="h-2 w-2 fill-red-500 text-red-500" />;
+        return <Circle className="h-2 w-2 fill-destructive text-destructive" />;
       case 'away':
-        return <Clock className="h-2 w-2 text-yellow-500" />;
+        return <Clock className="h-2 w-2 text-warning" />;
       default:
-        return <WifiOff className="h-2 w-2 text-gray-400" />;
+        return <WifiOff className="h-2 w-2 text-muted-foreground" />;
     }
   };
 
   const getRoleIcon = (role: string) => {
     switch (role) {
       case 'admin':
-        return <Crown className="h-3 w-3 text-yellow-500" />;
+        return <Crown className="h-3 w-3 text-premium" />;
       case 'moderator':
-        return <Shield className="h-3 w-3 text-blue-500" />;
+        return <Shield className="h-3 w-3 text-info" />;
       default:
         return <User className="h-3 w-3 text-muted-foreground" />;
     }

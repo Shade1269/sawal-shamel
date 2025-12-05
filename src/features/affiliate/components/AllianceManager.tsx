@@ -352,10 +352,10 @@ export const AllianceManager = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">المستوى</p>
-                <Badge className={`text-lg ${
-                  userLevel.current_level === 'legendary' ? 'bg-purple-500' :
-                  userLevel.current_level === 'gold' ? 'bg-yellow-500' :
-                  userLevel.current_level === 'silver' ? 'bg-gray-400' : 'bg-orange-500'
+              <Badge className={`text-lg ${
+                  userLevel.current_level === 'legendary' ? 'bg-luxury' :
+                  userLevel.current_level === 'gold' ? 'bg-premium' :
+                  userLevel.current_level === 'silver' ? 'bg-muted-foreground' : 'bg-warning'
                 }`}>
                   {userLevel.current_level === 'legendary' ? 'أسطوري' :
                    userLevel.current_level === 'gold' ? 'ذهبي' :

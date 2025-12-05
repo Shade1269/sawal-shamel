@@ -137,10 +137,10 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
       product: 'text-luxury bg-luxury/10 border-luxury/20',
       user: 'text-premium bg-premium/10 border-premium/20',
       message: 'text-persian bg-persian/10 border-persian/20',
-      review: 'text-amber-500 bg-amber-500/10 border-amber-500/20',
-      payment: 'text-green-500 bg-green-500/10 border-green-500/20',
-      inventory: 'text-blue-500 bg-blue-500/10 border-blue-500/20',
-      system: 'text-gray-500 bg-gray-500/10 border-gray-500/20'
+      review: 'text-warning bg-warning/10 border-warning/20',
+      payment: 'text-success bg-success/10 border-success/20',
+      inventory: 'text-info bg-info/10 border-info/20',
+      system: 'text-muted-foreground bg-muted border-border'
     };
     return colorMap[type];
   };

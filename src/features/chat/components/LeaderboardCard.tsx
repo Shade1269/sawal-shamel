@@ -13,11 +13,11 @@ export const LeaderboardCard = ({ entry, position }: LeaderboardCardProps) => {
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return <Crown className="h-6 w-6 text-yellow-500" />;
+        return <Crown className="h-6 w-6 text-premium" />;
       case 2:
-        return <Trophy className="h-6 w-6 text-gray-400" />;
+        return <Trophy className="h-6 w-6 text-muted-foreground" />;
       case 3:
-        return <Medal className="h-6 w-6 text-amber-600" />;
+        return <Medal className="h-6 w-6 text-warning" />;
       default:
         return <Star className="h-5 w-5 text-muted-foreground" />;
     }
@@ -157,9 +157,9 @@ export const LeaderboardCard = ({ entry, position }: LeaderboardCardProps) => {
           <div className="mt-3 pt-3 border-t border-primary/10">
             <div className="flex justify-center">
               <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                position === 1 ? 'bg-yellow-100 text-yellow-800' :
-                position === 2 ? 'bg-gray-100 text-gray-800' :
-                'bg-amber-100 text-amber-800'
+                position === 1 ? 'bg-premium/10 text-premium' :
+                position === 2 ? 'bg-muted text-muted-foreground' :
+                'bg-warning/10 text-warning'
               }`}>
                 {position === 1 ? '🏆 المركز الأول - ثيم ذهبي خاص' :
                  position === 2 ? '🥈 المركز الثاني - مكافأة عمولة 5%' :

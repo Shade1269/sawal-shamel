@@ -173,12 +173,12 @@ export const AtlantisNotifications = () => {
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'level_up': return <Star className="h-5 w-5 text-yellow-500" />;
-      case 'new_challenge': return <Target className="h-5 w-5 text-blue-500" />;
-      case 'alliance_update': return <Users className="h-5 w-5 text-purple-500" />;
-      case 'leaderboard_change': return <TrendingUp className="h-5 w-5 text-green-500" />;
-      case 'castle_control': return <Crown className="h-5 w-5 text-orange-500" />;
-      default: return <Bell className="h-5 w-5 text-gray-500" />;
+      case 'level_up': return <Star className="h-5 w-5 text-premium" />;
+      case 'new_challenge': return <Target className="h-5 w-5 text-info" />;
+      case 'alliance_update': return <Users className="h-5 w-5 text-accent" />;
+      case 'leaderboard_change': return <TrendingUp className="h-5 w-5 text-success" />;
+      case 'castle_control': return <Crown className="h-5 w-5 text-warning" />;
+      default: return <Bell className="h-5 w-5 text-muted-foreground" />;
     }
   };
 

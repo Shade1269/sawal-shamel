@@ -70,7 +70,7 @@ const SimpleUserProfile = ({ user, isOpen, onClose }: SimpleUserProfileProps) =>
               {/* Status Indicator */}
               <div 
                 className={`absolute -bottom-1 -right-1 h-5 w-5 rounded-full border-2 border-background ${
-                  isOnline ? 'bg-green-500' : 'bg-gray-400'
+                  isOnline ? 'bg-success' : 'bg-muted-foreground'
                 }`}
               />
             </div>
@@ -99,8 +99,8 @@ const SimpleUserProfile = ({ user, isOpen, onClose }: SimpleUserProfileProps) =>
 
             {/* Status */}
             <div className="flex items-center gap-2">
-              <div className={`h-2 w-2 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-400'}`} />
-              <span className={`text-sm ${isOnline ? 'text-green-600' : 'text-gray-500'}`}>
+              <div className={`h-2 w-2 rounded-full ${isOnline ? 'bg-success' : 'bg-muted-foreground'}`} />
+              <span className={`text-sm ${isOnline ? 'text-success' : 'text-muted-foreground'}`}>
                 {isOnline ? 'متصل الآن' : 'غير متصل'}
               </span>
             </div>

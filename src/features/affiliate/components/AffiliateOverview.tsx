@@ -44,10 +44,10 @@ export const AffiliateOverview = ({
 }: AffiliateOverviewProps) => {
   const getLevelColor = (level: string) => {
     switch (level) {
-      case 'legendary': return 'text-yellow-600';
-      case 'gold': return 'text-yellow-500';
-      case 'silver': return 'text-gray-500';
-      default: return 'text-orange-600';
+      case 'legendary': return 'text-premium';
+      case 'gold': return 'text-premium';
+      case 'silver': return 'text-muted-foreground';
+      default: return 'text-warning';
     }
   };
 

@@ -241,7 +241,7 @@ export const ModernAIChatWidget = ({ storeInfo, products }: ModernAIChatWidgetPr
                     <div className="h-10 w-10 rounded-full bg-primary-foreground/20 flex items-center justify-center backdrop-blur-sm">
                       <Bot className="h-6 w-6" />
                     </div>
-                    <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 border-2 border-primary"></div>
+                    <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-success border-2 border-primary"></div>
                   </div>
                   <div>
                     <h3 className="font-bold">مساعد {storeInfo.store_name}</h3>

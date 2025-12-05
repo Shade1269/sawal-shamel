@@ -44,7 +44,7 @@ export const StoreHeader = ({ store, cartItemsCount, onCartClick, onWishlistClic
                   className="w-14 h-14 rounded-xl object-cover shadow-lg ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300"
                   loading="lazy"
                 />
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background animate-pulse"></div>
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-success rounded-full border-2 border-background animate-pulse"></div>
               </div>
             )}
             <div>
@@ -133,7 +133,7 @@ export const StoreHeader = ({ store, cartItemsCount, onCartClick, onWishlistClic
         >
           <div className="flex items-center justify-center gap-8 text-sm">
             <div className="flex items-center gap-2 text-muted-foreground">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
               متصل الآن
             </div>
             <div className="text-muted-foreground">

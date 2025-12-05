@@ -220,8 +220,8 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
             {/* خطوة 3: تم التحقق */}
             {step === 'authenticated' && (
               <div className="text-center space-y-4 py-4">
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle className="h-12 w-12 text-green-600" />
+                <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle className="h-12 w-12 text-success" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">تم تسجيل الدخول بنجاح!</h3>
