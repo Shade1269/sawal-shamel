@@ -471,11 +471,11 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   aria-invalid={touched.name && !!validationErrors.name}
                   aria-describedby="checkout-name-hint"
                 />
-                <div className="min-h-[1.25rem] text-xs text-[color:var(--danger-fg, #b91c1c)]">
+                <div className="min-h-[1.25rem] text-xs text-destructive">
                   {touched.name && validationErrors.name}
                 </div>
                 {nameTooLong ? (
-                  <p id="checkout-name-hint" className="text-xs text-[color:var(--warning-fg,#b45309)]">
+                  <p id="checkout-name-hint" className="text-xs text-warning">
                     الاسم طويل جداً؛ تأكد من ظهوره بشكل صحيح على الشحن.
                   </p>
                 ) : (
@@ -497,7 +497,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   onBlur={() => markTouched("phone")}
                   aria-invalid={touched.phone && !!validationErrors.phone}
                 />
-                <div className="min-h-[1.25rem] text-xs text-[color:var(--danger-fg, #b91c1c)]">
+                <div className="min-h-[1.25rem] text-xs text-destructive">
                   {touched.phone && validationErrors.phone}
                 </div>
               </div>
@@ -541,7 +541,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 onBlur={() => markTouched("street")}
                 aria-invalid={touched.street && !!validationErrors.street}
               />
-              <div className="min-h-[1.25rem] text-xs text-[color:var(--danger-fg, #b91c1c)]">
+              <div className="min-h-[1.25rem] text-xs text-destructive">
                 {touched.street && validationErrors.street}
               </div>
             </div>
@@ -558,7 +558,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                   onBlur={() => markTouched("city")}
                   aria-invalid={touched.city && !!validationErrors.city}
                 />
-                <div className="min-h-[1.25rem] text-xs text-[color:var(--danger-fg, #b91c1c)]">
+                <div className="min-h-[1.25rem] text-xs text-destructive">
                   {touched.city && validationErrors.city}
                 </div>
               </div>
@@ -655,7 +655,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 }}
               />
             </Suspense>
-            <div className="min-h-[1.25rem] text-xs text-[color:var(--danger-fg, #b91c1c)]">
+            <div className="min-h-[1.25rem] text-xs text-destructive">
               {touched.paymentMethod && validationErrors.paymentMethod}
             </div>
           </UnifiedCard>
@@ -705,10 +705,10 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                         />
                       </div>
                       <div className="flex-1 space-y-[var(--spacing-xs)]">
-                        <p className="text-sm font-medium text-[color:var(--glass-fg)]">{item.product_title}</p>
-                        <p className="text-xs text-[color:var(--fg-muted)]">{formatCurrency(item.unit_price_sar)}</p>
+                        <p className="text-sm font-medium text-foreground">{item.product_title}</p>
+                        <p className="text-xs text-muted-foreground">{formatCurrency(item.unit_price_sar)}</p>
                         {lowStock ? (
-                          <p className="text-xs text-[color:var(--warning-fg,#b45309)]">
+                          <p className="text-xs text-warning">
                             الكمية المطلوبة تتجاوز المخزون المتاح ({(item as any).available_stock}).
                           </p>
                         ) : null}

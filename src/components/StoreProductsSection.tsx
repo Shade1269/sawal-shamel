@@ -314,13 +314,13 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
                       {/* Status Badges */}
                       <div className="absolute top-2 left-2 flex flex-col gap-1">
                         {item.is_featured && (
-                          <Badge className="bg-yellow-500">
+                          <Badge className="bg-warning text-warning-foreground">
                             <Star className="h-3 w-3 mr-1" />
                             مميز
                           </Badge>
                         )}
                         {!item.is_visible && (
-                          <Badge variant="secondary" className="bg-gray-500">
+                          <Badge variant="secondary" className="bg-muted text-muted-foreground">
                             <EyeOff className="h-3 w-3 mr-1" />
                             مخفي
                           </Badge>

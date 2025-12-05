@@ -28,12 +28,12 @@ const Header = () => {
   const getRoleIcon = (role: string) => {
     switch (role) {
       case 'admin':
-        return <Crown className="h-4 w-4 text-yellow-500" />;
+        return <Crown className="h-4 w-4 text-warning" />;
       case 'affiliate':
       case 'merchant':
-        return <Star className="h-4 w-4 text-purple-500" />;
+        return <Star className="h-4 w-4 text-premium" />;
       default:
-        return <User className="h-4 w-4 text-gray-500" />;
+        return <User className="h-4 w-4 text-muted-foreground" />;
     }
   };
 

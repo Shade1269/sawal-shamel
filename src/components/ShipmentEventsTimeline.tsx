@@ -26,17 +26,17 @@ const ShipmentEventsTimeline: React.FC<ShipmentEventsTimelineProps> = ({ events 
   const getEventColor = (eventType: string) => {
     switch (eventType) {
       case 'DELIVERED':
-        return 'bg-green-100 border-green-300 text-green-800';
+        return 'bg-success/10 border-success/30 text-success';
       case 'FAILED_DELIVERY':
       case 'CANCELLED':
-        return 'bg-red-100 border-red-300 text-red-800';
+        return 'bg-destructive/10 border-destructive/30 text-destructive';
       case 'IN_TRANSIT':
       case 'OUT_FOR_DELIVERY':
-        return 'bg-blue-100 border-blue-300 text-blue-800';
+        return 'bg-info/10 border-info/30 text-info';
       case 'PICKED_UP':
-        return 'bg-purple-100 border-purple-300 text-purple-800';
+        return 'bg-premium/10 border-premium/30 text-premium';
       default:
-        return 'bg-gray-100 border-gray-300 text-gray-800';
+        return 'bg-muted border-border text-muted-foreground';
     }
   };
 

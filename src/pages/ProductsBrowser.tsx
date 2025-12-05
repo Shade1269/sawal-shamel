@@ -155,7 +155,7 @@ const ProductsBrowser = () => {
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl bg-gradient-primary flex items-center justify-center">
-                <Package className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
+                <Package className="h-4 w-4 sm:h-6 sm:w-6 text-primary-foreground" />
               </div>
               <div>
                 <h1 className="text-xl sm:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">

@@ -42,20 +42,20 @@ export const PaymentIntegration: React.FC<PaymentIntegrationProps> = ({ shopId }
   const getProviderIcon = (provider: string) => {
     switch (provider.toLowerCase()) {
       case 'stripe':
-        return <CreditCard className="h-6 w-6 text-blue-500" />;
+        return <CreditCard className="h-6 w-6 text-info" />;
       case 'paypal':
-        return <Wallet className="h-6 w-6 text-blue-600" />;
+        return <Wallet className="h-6 w-6 text-info" />;
       case 'emkan':
-        return <Building className="h-6 w-6 text-green-500" />;
+        return <Building className="h-6 w-6 text-success" />;
       case 'mada':
-        return <DollarSign className="h-6 w-6 text-purple-500" />;
+        return <DollarSign className="h-6 w-6 text-premium" />;
       default:
-        return <CreditCard className="h-6 w-6 text-gray-500" />;
+        return <CreditCard className="h-6 w-6 text-muted-foreground" />;
     }
   };
 
   const getStatusColor = (isEnabled: boolean) => {
-    return isEnabled ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800";
+    return isEnabled ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive";
   };
 
   if (loading) {

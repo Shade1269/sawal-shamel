@@ -189,14 +189,14 @@ const EmkanIntegration: React.FC = () => {
     switch (status.toLowerCase()) {
       case 'completed':
       case 'success':
-        return <UnifiedBadge variant="success" className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1" />مكتمل</UnifiedBadge>;
+        return <UnifiedBadge variant="success"><CheckCircle className="w-3 h-3 mr-1" />مكتمل</UnifiedBadge>;
       case 'pending':
-        return <UnifiedBadge variant="warning" className="bg-yellow-100 text-yellow-800"><Clock className="w-3 h-3 mr-1" />معلق</UnifiedBadge>;
+        return <UnifiedBadge variant="warning"><Clock className="w-3 h-3 mr-1" />معلق</UnifiedBadge>;
       case 'failed':
       case 'error':
-        return <UnifiedBadge variant="error" className="bg-red-100 text-red-800"><XCircle className="w-3 h-3 mr-1" />فاشل</UnifiedBadge>;
+        return <UnifiedBadge variant="error"><XCircle className="w-3 h-3 mr-1" />فاشل</UnifiedBadge>;
       default:
-        return <UnifiedBadge variant="secondary" className="bg-gray-100 text-gray-800"><AlertCircle className="w-3 h-3 mr-1" />غير معروف</UnifiedBadge>;
+        return <UnifiedBadge variant="secondary"><AlertCircle className="w-3 h-3 mr-1" />غير معروف</UnifiedBadge>;
     }
   };
 
@@ -332,17 +332,17 @@ const EmkanIntegration: React.FC = () => {
                 <p className="text-sm text-muted-foreground">الحالة</p>
                 <p className="text-lg font-semibold">
                   {settings.is_enabled ? (
-                    <span className="text-green-600">مفعل</span>
+                    <span className="text-success">مفعل</span>
                   ) : (
-                    <span className="text-red-600">غير مفعل</span>
+                    <span className="text-destructive">غير مفعل</span>
                   )}
                 </p>
               </div>
-              <div className={`p-2 rounded-full ${settings.is_enabled ? 'bg-green-100' : 'bg-red-100'}`}>
+              <div className={`p-2 rounded-full ${settings.is_enabled ? 'bg-success/10' : 'bg-destructive/10'}`}>
                 {settings.is_enabled ? (
-                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <CheckCircle className="h-5 w-5 text-success" />
                 ) : (
-                  <XCircle className="h-5 w-5 text-red-600" />
+                  <XCircle className="h-5 w-5 text-destructive" />
                 )}
               </div>
             </div>
@@ -356,8 +356,8 @@ const EmkanIntegration: React.FC = () => {
                 <p className="text-sm text-muted-foreground">إجمالي المعاملات</p>
                 <p className="text-lg font-semibold">{transactions.length}</p>
               </div>
-              <div className="p-2 bg-blue-100 rounded-full">
-                <CreditCard className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-info/10 rounded-full">
+                <CreditCard className="h-5 w-5 text-info" />
               </div>
             </div>
           </UnifiedCardContent>
@@ -372,8 +372,8 @@ const EmkanIntegration: React.FC = () => {
                   {transactions.filter(t => ['completed', 'success'].includes(t.status.toLowerCase())).length}
                 </p>
               </div>
-              <div className="p-2 bg-green-100 rounded-full">
-                <CheckCircle className="h-5 w-5 text-green-600" />
+              <div className="p-2 bg-success/10 rounded-full">
+                <CheckCircle className="h-5 w-5 text-success" />
               </div>
             </div>
           </UnifiedCardContent>
@@ -388,8 +388,8 @@ const EmkanIntegration: React.FC = () => {
                   {formatAmount(transactions.reduce((sum, t) => sum + t.amount, 0))}
                 </p>
               </div>
-              <div className="p-2 bg-yellow-100 rounded-full">
-                <DollarSign className="h-5 w-5 text-yellow-600" />
+              <div className="p-2 bg-warning/10 rounded-full">
+                <DollarSign className="h-5 w-5 text-warning" />
               </div>
             </div>
           </UnifiedCardContent>
