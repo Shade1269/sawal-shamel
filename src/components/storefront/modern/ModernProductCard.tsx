@@ -41,10 +41,10 @@ export const ModernProductCard = ({
       whileHover={{ y: -8 }}
       transition={{ duration: 0.3 }}
     >
-      <UnifiedCard variant="glass" className="group overflow-hidden h-full flex flex-col hover:shadow-xl transition-all duration-300">
+      <UnifiedCard variant="glass" className="group overflow-hidden h-full flex flex-col hover:shadow-[0_8px_40px_rgba(90,38,71,0.1)] hover:border-primary/20 transition-all duration-300">
         {/* Image Section */}
         <div 
-          className="relative aspect-square overflow-hidden bg-muted cursor-pointer"
+          className="relative aspect-square overflow-hidden bg-secondary/30 cursor-pointer"
           onClick={() => onProductClick(product)}
         >
           <img
@@ -63,7 +63,7 @@ export const ModernProductCard = ({
                 e.stopPropagation();
                 onProductClick(product);
               }}
-              className="shadow-lg"
+              className="shadow-lg bg-secondary text-secondary-foreground hover:bg-secondary/80"
             >
               <Eye className="h-5 w-5" />
             </UnifiedButton>
@@ -74,7 +74,7 @@ export const ModernProductCard = ({
                 e.stopPropagation();
                 onToggleWishlist(product.id);
               }}
-              className={`shadow-lg ${isInWishlist ? 'bg-destructive text-destructive-foreground' : ''}`}
+              className={`shadow-lg ${isInWishlist ? 'bg-destructive text-destructive-foreground' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'}`}
             >
               <Heart className={`h-5 w-5 ${isInWishlist ? 'fill-current' : ''}`} />
             </UnifiedButton>
@@ -83,12 +83,12 @@ export const ModernProductCard = ({
           {/* Badges */}
           <div className="absolute top-3 right-3 flex flex-col gap-2">
             {product.discount_percentage && product.discount_percentage > 0 && (
-              <UnifiedBadge variant="error" className="shadow-lg font-bold">
+              <UnifiedBadge variant="error" className="shadow-lg font-bold bg-accent text-accent-foreground">
                 {product.discount_percentage}% خصم
               </UnifiedBadge>
             )}
             {product.stock === 0 && (
-              <UnifiedBadge variant="secondary" className="shadow-lg">
+              <UnifiedBadge variant="secondary" className="shadow-lg bg-muted text-muted-foreground">
                 نفد المخزون
               </UnifiedBadge>
             )}
@@ -119,7 +119,7 @@ export const ModernProductCard = ({
                     key={star}
                     className={`h-4 w-4 ${
                       star <= Math.round(product.average_rating || 0)
-                        ? 'fill-warning text-warning'
+                        ? 'fill-accent text-accent'
                         : 'fill-muted text-muted'
                     }`}
                   />
@@ -148,7 +148,7 @@ export const ModernProductCard = ({
           <UnifiedButton 
             onClick={() => onAddToCart(product)}
             variant="primary"
-            className="w-full shadow-lg"
+            className="w-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90"
             size="lg"
             disabled={product.stock === 0}
           >
