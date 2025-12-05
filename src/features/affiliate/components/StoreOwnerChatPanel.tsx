@@ -117,7 +117,7 @@ export const StoreOwnerChatPanel: React.FC<StoreOwnerChatPanelProps> = ({ storeI
                         </p>
                       </div>
                       {room.unread_count > 0 && (
-                        <Badge className="bg-red-500">
+                        <Badge className="bg-destructive">
                           {room.unread_count}
                         </Badge>
                       )}

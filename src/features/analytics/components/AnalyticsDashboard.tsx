@@ -416,11 +416,11 @@ const AnalyticsDashboard = () => {
             <div className="text-2xl font-bold">{data.overview.totalSales.toLocaleString()} ريال</div>
             <div className="flex items-center text-xs text-muted-foreground">
               {data.overview.salesGrowth >= 0 ? (
-                <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
+                <TrendingUp className="h-3 w-3 text-success mr-1" />
               ) : (
-                <TrendingDown className="h-3 w-3 text-red-500 mr-1" />
+                <TrendingDown className="h-3 w-3 text-destructive mr-1" />
               )}
-              <span className={data.overview.salesGrowth >= 0 ? 'text-green-500' : 'text-red-500'}>
+              <span className={data.overview.salesGrowth >= 0 ? 'text-success' : 'text-destructive'}>
                 {Math.abs(data.overview.salesGrowth).toFixed(1)}%
               </span>
               <span className="mr-1">من الفترة السابقة</span>
@@ -437,11 +437,11 @@ const AnalyticsDashboard = () => {
             <div className="text-2xl font-bold">{data.overview.totalOrders.toLocaleString()}</div>
             <div className="flex items-center text-xs text-muted-foreground">
               {data.overview.ordersGrowth >= 0 ? (
-                <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
+                <TrendingUp className="h-3 w-3 text-success mr-1" />
               ) : (
-                <TrendingDown className="h-3 w-3 text-red-500 mr-1" />
+                <TrendingDown className="h-3 w-3 text-destructive mr-1" />
               )}
-              <span className={data.overview.ordersGrowth >= 0 ? 'text-green-500' : 'text-red-500'}>
+              <span className={data.overview.ordersGrowth >= 0 ? 'text-success' : 'text-destructive'}>
                 {Math.abs(data.overview.ordersGrowth).toFixed(1)}%
               </span>
               <span className="mr-1">من الفترة السابقة</span>
@@ -457,8 +457,8 @@ const AnalyticsDashboard = () => {
           <CardContent>
             <div className="text-2xl font-bold">{data.overview.totalCustomers.toLocaleString()}</div>
             <div className="flex items-center text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
-              <span className="text-green-500">+{data.overview.customersGrowth.toFixed(1)}%</span>
+              <TrendingUp className="h-3 w-3 text-success mr-1" />
+              <span className="text-success">+{data.overview.customersGrowth.toFixed(1)}%</span>
               <span className="mr-1">من الفترة السابقة</span>
             </div>
           </CardContent>

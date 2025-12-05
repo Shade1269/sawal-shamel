@@ -575,7 +575,7 @@ const UserBehaviorAnalytics = () => {
                 {data.geographicData.map((location, index) => (
                   <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center gap-3">
-                      <MapPin className="h-5 w-5 text-blue-500" />
+                      <MapPin className="h-5 w-5 text-info" />
                       <div>
                         <p className="font-medium">{location.city}</p>
                         <p className="text-sm text-muted-foreground">

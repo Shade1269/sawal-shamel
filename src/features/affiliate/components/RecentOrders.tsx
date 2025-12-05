@@ -41,14 +41,14 @@ const dateFormatter = new Intl.DateTimeFormat('ar-SA', {
 const statusBadgeClass = (status: string) => {
   switch (status) {
     case 'PAID':
-      return 'bg-emerald-100 text-emerald-700';
+      return 'bg-success/10 text-success';
     case 'FAILED':
     case 'CANCELLED':
-      return 'bg-red-100 text-red-700';
+      return 'bg-destructive/10 text-destructive';
     case 'PENDING':
-      return 'bg-amber-100 text-amber-700';
+      return 'bg-warning/10 text-warning';
     default:
-      return 'bg-slate-100 text-slate-700';
+      return 'bg-muted text-muted-foreground';
   }
 };
 
@@ -56,11 +56,11 @@ const fulfillmentBadgeClass = (status: string) => {
   switch (status) {
     case 'FULFILLED':
     case 'SHIPPED':
-      return 'bg-sky-100 text-sky-700';
+      return 'bg-info/10 text-info';
     case 'CANCELLED':
-      return 'bg-red-100 text-red-700';
+      return 'bg-destructive/10 text-destructive';
     default:
-      return 'bg-slate-100 text-slate-700';
+      return 'bg-muted text-muted-foreground';
   }
 };
 

@@ -439,7 +439,7 @@ export const ReferralTrackingSystem = ({ storeId, baseUrl = 'https://example.com
                           </div>
                           <div>
                             <span className="text-muted-foreground">التحويلات:</span>
-                            <div className="text-lg font-bold text-green-600">{link.conversions_count}</div>
+                            <div className="text-lg font-bold text-success">{link.conversions_count}</div>
                           </div>
                           <div>
                             <span className="text-muted-foreground">معدل التحويل:</span>
@@ -452,7 +452,7 @@ export const ReferralTrackingSystem = ({ storeId, baseUrl = 'https://example.com
                           </div>
                           <div>
                             <span className="text-muted-foreground">الإيرادات:</span>
-                            <div className="text-lg font-bold text-blue-600">
+                            <div className="text-lg font-bold text-info">
                               {link.revenue_generated.toFixed(2)} ر.س
                             </div>
                           </div>
@@ -604,9 +604,9 @@ export const ReferralTrackingSystem = ({ storeId, baseUrl = 'https://example.com
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <h4 className="font-medium text-blue-900">استخدم أكواد إحالة وصفية</h4>
-                    <p className="text-blue-700">مثل: INSTAGRAM2024 أو FACEBOOK-SALE</p>
+                  <div className="p-3 bg-info/10 rounded-lg">
+                    <h4 className="font-medium text-info">استخدم أكواد إحالة وصفية</h4>
+                    <p className="text-info/80">مثل: INSTAGRAM2024 أو FACEBOOK-SALE</p>
                   </div>
                   <div className="p-3 bg-success/10 rounded-lg">
                     <h4 className="font-medium text-success">تتبع المصادر المختلفة</h4>

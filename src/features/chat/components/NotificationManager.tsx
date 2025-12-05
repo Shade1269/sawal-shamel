@@ -24,7 +24,7 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ className }) 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {notifications.isEnabled ? (
-                <Bell className="h-5 w-5 text-green-500" />
+                <Bell className="h-5 w-5 text-success" />
               ) : (
                 <BellOff className="h-5 w-5 text-muted-foreground" />
               )}

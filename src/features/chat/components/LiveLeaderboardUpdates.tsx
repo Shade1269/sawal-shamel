@@ -135,9 +135,9 @@ export const LiveLeaderboardUpdates = () => {
 
   const getRankChangeIcon = (previousRank: number, currentRank: number) => {
     if (currentRank < previousRank) {
-      return <TrendingUp className="h-4 w-4 text-green-500" />;
+      return <TrendingUp className="h-4 w-4 text-success" />;
     } else if (currentRank > previousRank) {
-      return <TrendingDown className="h-4 w-4 text-red-500" />;
+      return <TrendingDown className="h-4 w-4 text-destructive" />;
     }
     return null;
   };
@@ -156,7 +156,7 @@ export const LiveLeaderboardUpdates = () => {
     <Card className="bg-gradient-success border-success/20">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-green-800">
+          <CardTitle className="flex items-center gap-2 text-success">
             <Zap className="h-5 w-5" />
             التحديثات المباشرة
           </CardTitle>
@@ -198,7 +198,7 @@ export const LiveLeaderboardUpdates = () => {
                       <Trophy className="h-4 w-4 text-premium" />
                     )}
                     {change.currentRank <= 3 && (
-                      <Crown className="h-3 w-3 text-yellow-600" />
+                      <Crown className="h-3 w-3 text-premium" />
                     )}
                   </div>
                   
@@ -218,7 +218,7 @@ export const LiveLeaderboardUpdates = () => {
                   <div className="flex items-center gap-1">
                     {getRankChangeIcon(change.previousRank, change.currentRank)}
                     <span className={`text-xs font-medium ${
-                      change.currentRank < change.previousRank ? 'text-green-600' : 'text-red-600'
+                      change.currentRank < change.previousRank ? 'text-success' : 'text-destructive'
                     }`}>
                       {getRankChangeText(change.previousRank, change.currentRank)}
                     </span>

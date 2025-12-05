@@ -149,7 +149,7 @@ export const AtlantisSystem = () => {
 
           <EnhancedCard variant="info" className="gradient-info">
             <EnhancedCardHeader>
-              <EnhancedCardTitle className="flex items-center gap-2 text-blue-800">
+              <EnhancedCardTitle className="flex items-center gap-2 text-info">
                 <Target className="h-5 w-5" />
                 التحديات
               </EnhancedCardTitle>
@@ -166,7 +166,7 @@ export const AtlantisSystem = () => {
 
           <EnhancedCard variant="success" className="gradient-card-success">
             <EnhancedCardHeader>
-              <EnhancedCardTitle className="flex items-center gap-2 text-green-800">
+              <EnhancedCardTitle className="flex items-center gap-2 text-success">
                 <Sparkles className="h-5 w-5" />
                 المكافآت
               </EnhancedCardTitle>

@@ -195,11 +195,11 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
     return (
       <Card className="w-full max-w-md mx-auto" dir="rtl">
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-          <div className="bg-green-100 rounded-full p-4 mb-6">
-            <CheckCircle className="h-12 w-12 text-green-600" />
+          <div className="bg-success/10 rounded-full p-4 mb-6">
+            <CheckCircle className="h-12 w-12 text-success" />
           </div>
           
-          <h3 className="text-xl font-bold text-green-800 mb-2">
+          <h3 className="text-xl font-bold text-success mb-2">
             تم إنشاء طلبك بنجاح!
           </h3>
           

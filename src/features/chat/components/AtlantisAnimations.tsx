@@ -54,7 +54,7 @@ export const AtlantisAnimations = ({
             transition={{ duration: 1, delay: 0.3 }}
             className="mb-6"
           >
-            <Crown className="h-16 w-16 mx-auto text-yellow-500" />
+            <Crown className="h-16 w-16 mx-auto text-premium" />
           </motion.div>
           
           <motion.h2 
@@ -113,7 +113,7 @@ export const AtlantisAnimations = ({
                   repeat: 2
                 }}
               >
-                <Sparkles className="h-4 w-4 text-yellow-400" />
+                <Sparkles className="h-4 w-4 text-premium" />
               </motion.div>
             ))}
           </motion.div>
@@ -171,7 +171,7 @@ export const AtlantisAnimations = ({
             animate={{ scale: 1 }}
             transition={{ delay: 0.3, type: "spring" }}
           >
-            <Trophy className="h-16 w-16 mx-auto text-yellow-500" />
+            <Trophy className="h-16 w-16 mx-auto text-premium" />
           </motion.div>
           
           <motion.h2 

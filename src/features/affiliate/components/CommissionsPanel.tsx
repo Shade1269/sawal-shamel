@@ -82,9 +82,9 @@ export const CommissionsPanel: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">عمولات معلقة</p>
-                <p className="text-2xl font-bold text-yellow-600">{pendingCommissions.toFixed(2)} ريال</p>
+                <p className="text-2xl font-bold text-warning">{pendingCommissions.toFixed(2)} ريال</p>
               </div>
-              <Clock className="h-8 w-8 text-yellow-600" />
+              <Clock className="h-8 w-8 text-warning" />
             </div>
           </CardContent>
         </Card>

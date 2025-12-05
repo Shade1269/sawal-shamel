@@ -24,7 +24,7 @@ export const CheckoutTest = () => {
     return (
       <Card className="max-w-md mx-auto">
         <CardContent className="p-6 text-center">
-          <h3 className="text-lg font-semibold text-green-600 mb-2">تم الاختبار بنجاح!</h3>
+          <h3 className="text-lg font-semibold text-success mb-2">تم الاختبار بنجاح!</h3>
           <p className="text-sm text-muted-foreground mb-4">CheckoutFlow يعمل بشكل صحيح</p>
           <Button onClick={() => {
             setCompleted(false);

@@ -57,7 +57,7 @@ const StoreAnalyticsDashboard = ({ storeId }: StoreAnalyticsProps) => {
       change: '+12.5%',
       trend: 'up',
       icon: Eye,
-      color: 'text-blue-600'
+      color: 'text-info'
     },
     {
       title: 'النقرات على المنتجات',
@@ -65,7 +65,7 @@ const StoreAnalyticsDashboard = ({ storeId }: StoreAnalyticsProps) => {
       change: '+8.2%',
       trend: 'up',
       icon: ShoppingCart,
-      color: 'text-green-600'
+      color: 'text-success'
     },
     {
       title: 'معدل التحويل',
@@ -167,11 +167,11 @@ const StoreAnalyticsDashboard = ({ storeId }: StoreAnalyticsProps) => {
                   <p className="text-2xl font-bold">{stat.value}</p>
                   <div className="flex items-center gap-1 mt-1">
                     {stat.trend === 'up' ? (
-                      <ArrowUpRight className="h-4 w-4 text-green-500" />
+                      <ArrowUpRight className="h-4 w-4 text-success" />
                     ) : (
-                      <ArrowDownRight className="h-4 w-4 text-red-500" />
+                      <ArrowDownRight className="h-4 w-4 text-destructive" />
                     )}
-                    <span className={`text-sm ${stat.trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+                    <span className={`text-sm ${stat.trend === 'up' ? 'text-success' : 'text-destructive'}`}>
                       {stat.change}
                     </span>
                   </div>
@@ -319,7 +319,7 @@ const StoreAnalyticsDashboard = ({ storeId }: StoreAnalyticsProps) => {
                       <span className="text-sm text-muted-foreground">25%</span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2">
-                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: '25%' }}></div>
+                      <div className="bg-info h-2 rounded-full" style={{ width: '25%' }}></div>
                     </div>
                   </div>
                   <div>
@@ -328,7 +328,7 @@ const StoreAnalyticsDashboard = ({ storeId }: StoreAnalyticsProps) => {
                       <span className="text-sm text-muted-foreground">35%</span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2">
-                      <div className="bg-green-500 h-2 rounded-full" style={{ width: '35%' }}></div>
+                      <div className="bg-success h-2 rounded-full" style={{ width: '35%' }}></div>
                     </div>
                   </div>
                   <div>
@@ -419,19 +419,19 @@ const StoreAnalyticsDashboard = ({ storeId }: StoreAnalyticsProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Card>
               <CardContent className="p-6 text-center">
-                <Clock className="h-12 w-12 mx-auto mb-4 text-blue-500" />
+                <Clock className="h-12 w-12 mx-auto mb-4 text-info" />
                 <div className="text-2xl font-bold mb-2">3:45</div>
                 <div className="text-sm text-muted-foreground">متوسط وقت التصفح</div>
-                <div className="text-xs text-green-500 mt-1">+15% من الشهر الماضي</div>
+                <div className="text-xs text-success mt-1">+15% من الشهر الماضي</div>
               </CardContent>
             </Card>
 
             <Card>
               <CardContent className="p-6 text-center">
-                <Eye className="h-12 w-12 mx-auto mb-4 text-green-500" />
+                <Eye className="h-12 w-12 mx-auto mb-4 text-success" />
                 <div className="text-2xl font-bold mb-2">4.2</div>
                 <div className="text-sm text-muted-foreground">متوسط الصفحات المشاهدة</div>
-                <div className="text-xs text-green-500 mt-1">+8% من الشهر الماضي</div>
+                <div className="text-xs text-success mt-1">+8% من الشهر الماضي</div>
               </CardContent>
             </Card>
 
