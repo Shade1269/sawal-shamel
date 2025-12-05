@@ -110,9 +110,9 @@ const AtlantisGuide = () => {
                   </p>
                 </div>
 
-                <div className="p-4 bg-indigo-50 rounded-lg">
-                  <h4 className="font-semibold text-indigo-800 mb-2">🔊 الأصوات</h4>
-                  <p className="text-sm text-indigo-700">
+                <div className="p-4 bg-info/10 rounded-lg">
+                  <h4 className="font-semibold text-info mb-2">🔊 الأصوات</h4>
+                  <p className="text-sm text-info/80">
                     فعّل الأصوات للحصول على تجربة تفاعلية أفضل وتنبيهات فورية
                   </p>
                 </div>

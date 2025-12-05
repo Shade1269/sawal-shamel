@@ -44,13 +44,13 @@ interface Order {
 }
 
 const statusConfig = {
-  PENDING: { label: 'قيد المراجعة', icon: Clock, color: 'bg-yellow-500' },
-  PAID: { label: 'تم الدفع', icon: CheckCircle, color: 'bg-green-500' },
-  PROCESSING: { label: 'قيد التجهيز', icon: Package, color: 'bg-indigo-500' },
-  SHIPPED: { label: 'تم الشحن', icon: TruckIcon, color: 'bg-purple-500' },
-  DELIVERED: { label: 'تم التوصيل', icon: CheckCircle, color: 'bg-green-600' },
-  CANCELLED: { label: 'ملغي', icon: XCircle, color: 'bg-red-500' },
-  FAILED: { label: 'فشل', icon: XCircle, color: 'bg-red-600' },
+  PENDING: { label: 'قيد المراجعة', icon: Clock, color: 'bg-warning' },
+  PAID: { label: 'تم الدفع', icon: CheckCircle, color: 'bg-success' },
+  PROCESSING: { label: 'قيد التجهيز', icon: Package, color: 'bg-primary' },
+  SHIPPED: { label: 'تم الشحن', icon: TruckIcon, color: 'bg-accent' },
+  DELIVERED: { label: 'تم التوصيل', icon: CheckCircle, color: 'bg-success' },
+  CANCELLED: { label: 'ملغي', icon: XCircle, color: 'bg-destructive' },
+  FAILED: { label: 'فشل', icon: XCircle, color: 'bg-destructive' },
 };
 
 const CustomerOrders: React.FC = () => {

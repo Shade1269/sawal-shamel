@@ -147,9 +147,9 @@ export const ChatPreview = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8"
           >
-            <div className="inline-flex items-center gap-3 bg-blue-100 px-6 py-3 rounded-full mb-4">
-              <Bot className="w-6 h-6 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">المساعد الذكي</h1>
+            <div className="inline-flex items-center gap-3 bg-info/20 px-6 py-3 rounded-full mb-4">
+              <Bot className="w-6 h-6 text-info" />
+              <h1 className="text-2xl font-bold text-foreground">المساعد الذكي</h1>
             </div>
             <p className="text-foreground/70">اسألني عن أي شيء يتعلق بالتسوق والمنتجات</p>
           </motion.div>
@@ -159,7 +159,7 @@ export const ChatPreview = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl shadow-lg overflow-hidden"
+            className="bg-card rounded-2xl shadow-lg overflow-hidden"
           >
             {/* Messages */}
             <div className="h-[500px] overflow-y-auto p-6 space-y-4">
@@ -175,13 +175,13 @@ export const ChatPreview = () => {
                     {/* Avatar */}
                     <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
                       message.role === 'user' 
-                        ? 'bg-blue-600' 
-                        : 'bg-gray-200'
+                        ? 'bg-info' 
+                        : 'bg-muted'
                     }`}>
                       {message.role === 'user' ? (
-                        <User className="w-5 h-5 text-white" />
+                        <User className="w-5 h-5 text-primary-foreground" />
                       ) : (
-                        <Bot className="w-5 h-5 text-gray-700" />
+                        <Bot className="w-5 h-5 text-foreground" />
                       )}
                     </div>
 
@@ -189,8 +189,8 @@ export const ChatPreview = () => {
                     <div className={`flex-1 max-w-[80%] ${message.role === 'user' ? 'text-right' : 'text-right'}`}>
                       <div className={`inline-block px-4 py-3 rounded-2xl ${
                         message.role === 'user'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-900'
+                          ? 'bg-info text-primary-foreground'
+                          : 'bg-muted text-foreground'
                       }`}>
                         <p className="whitespace-pre-wrap leading-relaxed">
                           {message.content}
@@ -207,11 +207,11 @@ export const ChatPreview = () => {
                   animate={{ opacity: 1 }}
                   className="flex gap-3"
                 >
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                    <Bot className="w-5 h-5 text-gray-700" />
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-foreground" />
                   </div>
-                  <div className="bg-gray-100 px-4 py-3 rounded-2xl">
-                    <Loader2 className="w-5 h-5 animate-spin text-gray-600" />
+                  <div className="bg-muted px-4 py-3 rounded-2xl">
+                    <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
                   </div>
                 </motion.div>
               )}
@@ -220,7 +220,7 @@ export const ChatPreview = () => {
             </div>
 
             {/* Input Area */}
-            <div className="border-t border-gray-200 p-4 bg-gray-50">
+            <div className="border-t border-border p-4 bg-muted/30">
               <div className="flex gap-3">
                 <Input
                   value={input}
@@ -254,7 +254,7 @@ export const ChatPreview = () => {
                       handleSend();
                     }}
                     disabled={isLoading}
-                    className="px-4 py-2 bg-white border-2 border-gray-300 hover:border-blue-500 rounded-full text-sm text-gray-700 hover:text-blue-600 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-card border-2 border-border hover:border-info rounded-full text-sm text-foreground hover:text-info transition-colors disabled:opacity-50"
                   >
                     {suggestion}
                   </button>

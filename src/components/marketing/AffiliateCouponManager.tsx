@@ -105,9 +105,9 @@ const AffiliateCouponManager = () => {
   };
 
   const getStatusColor = (isActive: boolean, validUntil?: string) => {
-    if (!isActive) return 'bg-gray-500';
-    if (validUntil && new Date(validUntil) < new Date()) return 'bg-red-500';
-    return 'bg-green-500';
+    if (!isActive) return 'bg-muted';
+    if (validUntil && new Date(validUntil) < new Date()) return 'bg-destructive';
+    return 'bg-success';
   };
 
   const getStatusText = (isActive: boolean, validUntil?: string) => {

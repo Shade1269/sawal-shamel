@@ -9,7 +9,7 @@ export const OrdersPreview = () => {
       status: 'تم التوصيل',
       total: 599,
       items: 3,
-      statusColor: 'bg-green-100 text-green-700',
+      statusColor: 'bg-success/20 text-success',
       image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=200&h=200&fit=crop'
     },
     {
@@ -18,7 +18,7 @@ export const OrdersPreview = () => {
       status: 'قيد التوصيل',
       total: 349,
       items: 2,
-      statusColor: 'bg-blue-100 text-blue-700',
+      statusColor: 'bg-info/20 text-info',
       image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=200&h=200&fit=crop'
     },
     {
@@ -27,7 +27,7 @@ export const OrdersPreview = () => {
       status: 'تم التوصيل',
       total: 899,
       items: 4,
-      statusColor: 'bg-green-100 text-green-700',
+      statusColor: 'bg-success/20 text-success',
       image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=200&h=200&fit=crop'
     }
   ];
@@ -54,16 +54,16 @@ export const OrdersPreview = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                className="bg-card rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
               >
                 <div className="p-6">
                   {/* Order Header */}
-                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-border">
                     <div className="text-right">
-                      <h3 className="text-xl font-bold text-gray-900 mb-1">
+                      <h3 className="text-xl font-bold text-foreground mb-1">
                         طلب رقم {order.id}
                       </h3>
-                      <div className="flex items-center gap-2 text-gray-600 text-sm">
+                      <div className="flex items-center gap-2 text-muted-foreground text-sm">
                         <Calendar className="w-4 h-4" />
                         <span>{order.date}</span>
                       </div>
@@ -88,32 +88,32 @@ export const OrdersPreview = () => {
                     <div className="flex-1 text-right">
                       <div className="grid grid-cols-2 gap-4">
                         <div className="flex items-center gap-3">
-                          <div className="bg-blue-50 p-2 rounded-lg">
-                            <Package className="w-5 h-5 text-blue-600" />
+                          <div className="bg-info/10 p-2 rounded-lg">
+                            <Package className="w-5 h-5 text-info" />
                           </div>
                           <div>
-                            <p className="text-sm text-gray-600">عدد المنتجات</p>
-                            <p className="font-bold text-gray-900">{order.items} منتجات</p>
+                            <p className="text-sm text-muted-foreground">عدد المنتجات</p>
+                            <p className="font-bold text-foreground">{order.items} منتجات</p>
                           </div>
                         </div>
 
                         <div className="flex items-center gap-3">
-                          <div className="bg-green-50 p-2 rounded-lg">
-                            <CreditCard className="w-5 h-5 text-green-600" />
+                          <div className="bg-success/10 p-2 rounded-lg">
+                            <CreditCard className="w-5 h-5 text-success" />
                           </div>
                           <div>
-                            <p className="text-sm text-gray-600">المجموع</p>
-                            <p className="font-bold text-gray-900">{order.total} ر.س</p>
+                            <p className="text-sm text-muted-foreground">المجموع</p>
+                            <p className="font-bold text-foreground">{order.total} ر.س</p>
                           </div>
                         </div>
                       </div>
 
                       {/* Action Buttons */}
                       <div className="mt-4 flex gap-3">
-                        <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors">
+                        <button className="flex-1 bg-info hover:bg-info/90 text-primary-foreground font-bold py-3 rounded-lg transition-colors">
                           تتبع الطلب
                         </button>
-                        <button className="flex-1 border-2 border-gray-300 hover:bg-gray-50 text-gray-900 font-bold py-3 rounded-lg transition-colors">
+                        <button className="flex-1 border-2 border-border hover:bg-muted text-foreground font-bold py-3 rounded-lg transition-colors">
                           عرض التفاصيل
                         </button>
                       </div>
@@ -127,9 +127,9 @@ export const OrdersPreview = () => {
           {/* Empty State Message */}
           {mockOrders.length === 0 && (
             <div className="text-center py-16">
-              <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-              <h3 className="text-xl font-bold text-gray-900 mb-2">لا توجد طلبات بعد</h3>
-              <p className="text-gray-600">ابدأ التسوق لإضافة طلباتك الأولى</p>
+              <Package className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+              <h3 className="text-xl font-bold text-foreground mb-2">لا توجد طلبات بعد</h3>
+              <p className="text-muted-foreground">ابدأ التسوق لإضافة طلباتك الأولى</p>
             </div>
           )}
         </div>

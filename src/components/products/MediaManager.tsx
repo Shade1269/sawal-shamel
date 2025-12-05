@@ -245,7 +245,7 @@ const MediaManager: React.FC<MediaManagerProps> = ({
                 }`}
                 onClick={() => fileInputRef.current?.click()}
               >
-                <ImageIcon className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                 <p className="text-lg font-medium">اختر الصورة الرئيسية</p>
                 <p className="text-sm text-muted-foreground">
                   JPG, PNG, WEBP - حد أقصى 2MB
@@ -389,8 +389,8 @@ const MediaManager: React.FC<MediaManagerProps> = ({
           <div className="space-y-4">
             {media.find(m => m.media_type === 'video') && (
               <div className="relative">
-                <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
-                  <Video className="h-12 w-12 text-gray-400" />
+                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+                  <Video className="h-12 w-12 text-muted-foreground" />
                 </div>
                 <Button
                   size="sm"

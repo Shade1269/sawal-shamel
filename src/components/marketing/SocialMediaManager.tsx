@@ -65,11 +65,11 @@ const SocialMediaManager = () => {
 
   const getPlatformColor = (platform: string) => {
     switch (platform) {
-      case 'Twitter': return 'bg-blue-500';
-      case 'Instagram': return 'bg-pink-500';
-      case 'Facebook': return 'bg-blue-600';
-      case 'LinkedIn': return 'bg-blue-700';
-      default: return 'bg-gray-500';
+      case 'Twitter': return 'bg-info';
+      case 'Instagram': return 'bg-destructive';
+      case 'Facebook': return 'bg-primary';
+      case 'LinkedIn': return 'bg-accent';
+      default: return 'bg-muted';
     }
   };
 
