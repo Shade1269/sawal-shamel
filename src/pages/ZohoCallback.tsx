@@ -67,14 +67,14 @@ export default function ZohoCallback() {
         {/* Zoho Logo */}
         <div className="flex justify-center mb-6">
           <div className="flex gap-2">
-            <div className="w-12 h-12 bg-red-500 rounded-lg"></div>
-            <div className="w-12 h-12 bg-green-500 rounded-lg"></div>
-            <div className="w-12 h-12 bg-blue-500 rounded-lg"></div>
-            <div className="w-12 h-12 bg-yellow-500 rounded-lg"></div>
+            <div className="w-12 h-12 bg-destructive rounded-lg"></div>
+            <div className="w-12 h-12 bg-success rounded-lg"></div>
+            <div className="w-12 h-12 bg-info rounded-lg"></div>
+            <div className="w-12 h-12 bg-warning rounded-lg"></div>
           </div>
         </div>
 
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+        <h1 className="text-3xl font-bold text-center mb-8 text-foreground">
           Zoho OAuth Callback
         </h1>
 
@@ -82,15 +82,15 @@ export default function ZohoCallback() {
         <div className="flex flex-col items-center gap-4">
           {status === 'loading' && (
             <>
-              <Loader2 className="w-16 h-16 text-purple-600 animate-spin" />
-              <p className="text-lg text-gray-700">{message}</p>
+              <Loader2 className="w-16 h-16 text-accent animate-spin" />
+              <p className="text-lg text-muted-foreground">{message}</p>
             </>
           )}
 
           {status === 'success' && (
             <>
-              <CheckCircle className="w-16 h-16 text-green-600" />
-              <p className="text-lg text-green-700 font-semibold">{message}</p>
+              <CheckCircle className="w-16 h-16 text-success" />
+              <p className="text-lg text-success font-semibold">{message}</p>
 
               {/* Refresh Token Display */}
               <div className="w-full mt-6">
@@ -122,9 +122,9 @@ export default function ZohoCallback() {
 
           {status === 'error' && (
             <>
-              <XCircle className="w-16 h-16 text-red-600" />
-              <p className="text-lg text-red-700 font-semibold">{message}</p>
-              <p className="text-sm text-gray-600 mt-2">
+              <XCircle className="w-16 h-16 text-destructive" />
+              <p className="text-lg text-destructive font-semibold">{message}</p>
+              <p className="text-sm text-muted-foreground mt-2">
                 الرجاء المحاولة مرة أخرى أو التواصل مع الدعم
               </p>
             </>

@@ -447,7 +447,7 @@ const AdminUsers = () => {
                               }
                             }}
                           >
-                            <Ban className="h-4 w-4 text-orange-500" />
+                            <Ban className="h-4 w-4 text-warning" />
                           </Button>
                         )}
                         

@@ -93,30 +93,30 @@ export default function SecurityCenter() {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-purple-500">
+        <Card className="border-l-4 border-l-accent">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Database className="h-4 w-4 text-purple-600" />
+              <Database className="h-4 w-4 text-accent" />
               النسخ الاحتياطية
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold text-purple-600 mb-1">تلقائي</div>
+            <div className="text-2xl font-bold text-accent mb-1">تلقائي</div>
             <p className="text-xs text-muted-foreground">
               نسخ احتياطية مشفرة ومجدولة يومياً
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-orange-500">
+        <Card className="border-l-4 border-l-warning">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <FileText className="h-4 w-4 text-orange-600" />
+              <FileText className="h-4 w-4 text-warning" />
               الامتثال
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold text-orange-600 mb-1">100%</div>
+            <div className="text-2xl font-bold text-warning mb-1">100%</div>
             <p className="text-xs text-muted-foreground">
               متوافق مع معايير PCI DSS والأنظمة السعودية
             </p>
@@ -194,9 +194,9 @@ export default function SecurityCenter() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                    <h4 className="font-medium text-purple-800 mb-2">الشهادات الرقمية</h4>
-                    <ul className="space-y-1 text-sm text-purple-700">
+                  <div className="p-4 bg-accent/10 border border-accent/30 rounded-lg">
+                    <h4 className="font-medium text-accent mb-2">الشهادات الرقمية</h4>
+                    <ul className="space-y-1 text-sm text-accent/80">
                       <li>• SSL Certificate: Valid</li>
                       <li>• Code Signing: Active</li>
                       <li>• API Authentication: JWT</li>
@@ -204,9 +204,9 @@ export default function SecurityCenter() {
                     </ul>
                   </div>
                   
-                  <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                    <h4 className="font-medium text-orange-800 mb-2">التدقيق والمراقبة</h4>
-                    <ul className="space-y-1 text-sm text-orange-700">
+                  <div className="p-4 bg-warning/10 border border-warning/30 rounded-lg">
+                    <h4 className="font-medium text-warning mb-2">التدقيق والمراقبة</h4>
+                    <ul className="space-y-1 text-sm text-warning/80">
                       <li>• مراقبة المفاتيح: 24/7</li>
                       <li>• تسجيل العمليات: شامل</li>
                       <li>• التنبيهات الأمنية: فوري</li>

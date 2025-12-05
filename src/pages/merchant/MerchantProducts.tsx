@@ -115,11 +115,11 @@ const MerchantProducts = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <UnifiedBadge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20"><AlertCircle className="h-3 w-3 ml-1" />قيد المراجعة</UnifiedBadge>;
+        return <UnifiedBadge variant="outline" className="bg-warning/10 text-warning border-warning/20"><AlertCircle className="h-3 w-3 ml-1" />قيد المراجعة</UnifiedBadge>;
       case 'approved':
-        return <UnifiedBadge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20"><CheckCircle className="h-3 w-3 ml-1" />موافق عليه</UnifiedBadge>;
+        return <UnifiedBadge variant="outline" className="bg-success/10 text-success border-success/20"><CheckCircle className="h-3 w-3 ml-1" />موافق عليه</UnifiedBadge>;
       case 'rejected':
-        return <UnifiedBadge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20"><XCircle className="h-3 w-3 ml-1" />مرفوض</UnifiedBadge>;
+        return <UnifiedBadge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20"><XCircle className="h-3 w-3 ml-1" />مرفوض</UnifiedBadge>;
       default:
         return null;
     }
@@ -159,7 +159,7 @@ const MerchantProducts = () => {
             <UnifiedCardTitle className="text-sm font-medium">قيد المراجعة</UnifiedCardTitle>
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+            <div className="text-2xl font-bold text-warning">{stats.pending}</div>
           </UnifiedCardContent>
         </UnifiedCard>
         <UnifiedCard variant="glass">
@@ -167,7 +167,7 @@ const MerchantProducts = () => {
             <UnifiedCardTitle className="text-sm font-medium">موافق عليها</UnifiedCardTitle>
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
+            <div className="text-2xl font-bold text-success">{stats.approved}</div>
           </UnifiedCardContent>
         </UnifiedCard>
         <UnifiedCard variant="glass">
@@ -221,7 +221,7 @@ const MerchantProducts = () => {
                         </div>
                         {!product.is_active && (
                           <div className="absolute top-2 left-2">
-                            <UnifiedBadge variant="outline" className="bg-gray-500/10">غير نشط</UnifiedBadge>
+                            <UnifiedBadge variant="outline" className="bg-muted/50">غير نشط</UnifiedBadge>
                           </div>
                         )}
                       </div>

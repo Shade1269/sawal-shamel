@@ -115,13 +115,13 @@ const AdminActivity = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'success':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+        return 'bg-success/10 text-success';
       case 'warning':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+        return 'bg-warning/10 text-warning';
       case 'danger':
-        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+        return 'bg-destructive/10 text-destructive';
       default:
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+        return 'bg-info/10 text-info';
     }
   };
 
@@ -213,19 +213,19 @@ const AdminActivity = () => {
         </UnifiedCard>
         <UnifiedCard variant="flat" hover="lift">
           <UnifiedCardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">892</div>
+            <div className="text-2xl font-bold text-success">892</div>
             <div className="text-sm text-muted-foreground">عمليات ناجحة</div>
           </UnifiedCardContent>
         </UnifiedCard>
         <UnifiedCard variant="flat" hover="lift">
           <UnifiedCardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-yellow-600">23</div>
+            <div className="text-2xl font-bold text-warning">23</div>
             <div className="text-sm text-muted-foreground">تحذيرات</div>
           </UnifiedCardContent>
         </UnifiedCard>
         <UnifiedCard variant="flat" hover="lift">
           <UnifiedCardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-red-600">5</div>
+            <div className="text-2xl font-bold text-destructive">5</div>
             <div className="text-sm text-muted-foreground">أخطاء</div>
           </UnifiedCardContent>
         </UnifiedCard>

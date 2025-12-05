@@ -333,10 +333,10 @@ export default function AffiliateWalletPage() {
         <UnifiedCard className="bg-card border-border">
           <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <UnifiedCardTitle className="text-sm font-medium text-foreground">رصيد معلق</UnifiedCardTitle>
-            <Clock className="h-4 w-4 text-yellow-600" />
+            <Clock className="h-4 w-4 text-warning" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-yellow-600">{pendingBalance.toFixed(2)} ر.س</div>
+            <div className="text-2xl font-bold text-warning">{pendingBalance.toFixed(2)} ر.س</div>
             <p className="text-xs mt-1 text-muted-foreground">
               في انتظار التأكيد
             </p>

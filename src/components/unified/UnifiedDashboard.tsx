@@ -78,7 +78,7 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
   admin: {
     title: "لوحة الإدارة",
     description: "نظرة شاملة على النظام والمستخدمين",
-    primaryColor: "text-yellow-500",
+    primaryColor: "text-warning",
     icon: Crown,
     stats: [
       {
@@ -87,7 +87,7 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         change: "+12%",
         changeType: "positive",
         icon: Users,
-        color: "bg-blue-500"
+        color: "bg-info"
       },
       {
         title: "إجمالي المبيعات",
@@ -95,7 +95,7 @@ const dashboardConfigs: Record<string, DashboardConfig> = {
         change: "+8.2%",
         changeType: "positive", 
         icon: DollarSign,
-        color: "bg-green-500"
+        color: "bg-success"
       },
       {
         title: "الطلبات الجديدة",

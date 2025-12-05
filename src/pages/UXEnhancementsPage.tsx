@@ -41,30 +41,30 @@ export default function UXEnhancementsPage() {
       title: 'تتبع نشاط المستخدم',
       description: 'تحليل شامل لسلوك المستخدمين والتفاعل',
       icon: Activity,
-      color: 'text-purple-500',
+      color: 'text-accent',
       tab: 'activity'
     },
     {
       title: 'البحث الذكي',
       description: 'بحث متقدم وسريع عبر النظام بالكامل',
       icon: Search,
-      color: 'text-green-500',
+      color: 'text-success',
       tab: 'search'
     },
     {
       title: 'اختصارات المفاتيح',
       description: 'اختصارات لتسريع العمل وزيادة الإنتاجية',
       icon: Keyboard,
-      color: 'text-orange-500',
+      color: 'text-warning',
       tab: 'shortcuts'
     }
   ];
 
   const stats = [
-    { label: 'تحسين السرعة', value: '+45%', icon: TrendingUp, color: 'text-green-500' },
-    { label: 'مشاركة المستخدمين', value: '+32%', icon: Users, color: 'text-blue-500' },
-    { label: 'كفاءة البحث', value: '+68%', icon: Search, color: 'text-purple-500' },
-    { label: 'سرعة الإنجاز', value: '+55%', icon: Target, color: 'text-orange-500' }
+    { label: 'تحسين السرعة', value: '+45%', icon: TrendingUp, color: 'text-success' },
+    { label: 'مشاركة المستخدمين', value: '+32%', icon: Users, color: 'text-info' },
+    { label: 'كفاءة البحث', value: '+68%', icon: Search, color: 'text-accent' },
+    { label: 'سرعة الإنجاز', value: '+55%', icon: Target, color: 'text-warning' }
   ];
 
   return (
@@ -245,8 +245,8 @@ export default function UXEnhancementsPage() {
           <TabsContent value="shortcuts" className="space-y-6">
             <UnifiedCard variant="glass-strong">
               <UnifiedCardHeader>
-                <UnifiedCardTitle className="flex items-center gap-2">
-                  <Keyboard className="h-5 w-5 text-orange-500" />
+              <UnifiedCardTitle className="flex items-center gap-2">
+                  <Keyboard className="h-5 w-5 text-warning" />
                   اختصارات المفاتيح
                 </UnifiedCardTitle>
                 <UnifiedCardDescription>

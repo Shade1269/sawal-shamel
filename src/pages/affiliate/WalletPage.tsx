@@ -36,10 +36,10 @@ const transactionTypeLabels: Record<string, string> = {
 };
 
 const transactionTypeColors: Record<string, string> = {
-  COMMISSION: 'text-green-600',
-  WITHDRAWAL: 'text-red-600',
-  ADJUSTMENT: 'text-blue-600',
-  REFUND: 'text-orange-600',
+  COMMISSION: 'text-success',
+  WITHDRAWAL: 'text-destructive',
+  ADJUSTMENT: 'text-info',
+  REFUND: 'text-warning',
 };
 
 const withdrawalStatusIcons: Record<string, typeof Clock> = {

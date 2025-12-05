@@ -100,7 +100,7 @@ const systemPhases: SystemPhase[] = [
     status: 'completed', 
     progress: 100,
     icon: BarChart3,
-    color: 'text-purple-500',
+    color: 'text-accent',
     features: [
       'Smart Widgets مع بيانات فورية',
       'رسوم بيانية تفاعلية متقدمة',
@@ -123,7 +123,7 @@ const systemPhases: SystemPhase[] = [
     status: 'completed',
     progress: 100,
     icon: Sparkles,
-    color: 'text-orange-500',
+    color: 'text-warning',
     features: [
       'Performance Optimizer مع مراقبة فورية',
       'Smart Search عبر النظام بالكامل',
@@ -142,10 +142,10 @@ const systemPhases: SystemPhase[] = [
 ];
 
 const overallStats = [
-  { label: 'إجمالي المكونات المطورة', value: '47+', icon: Code2, color: 'text-blue-500' },
-  { label: 'الصفحات الموحدة', value: '15+', icon: Layout, color: 'text-green-500' },
-  { label: 'التحسينات التقنية', value: '23+', icon: Cpu, color: 'text-purple-500' },
-  { label: 'المميزات الجديدة', value: '32+', icon: Star, color: 'text-orange-500' }
+  { label: 'إجمالي المكونات المطورة', value: '47+', icon: Code2, color: 'text-info' },
+  { label: 'الصفحات الموحدة', value: '15+', icon: Layout, color: 'text-success' },
+  { label: 'التحسينات التقنية', value: '23+', icon: Cpu, color: 'text-accent' },
+  { label: 'المميزات الجديدة', value: '32+', icon: Star, color: 'text-warning' }
 ];
 
 const technicalArchitecture = [
@@ -154,28 +154,28 @@ const technicalArchitecture = [
     technologies: ['React 18', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
     description: 'واجهة مستخدم حديثة ومتجاوبة',
     icon: Palette,
-    color: 'bg-blue-500'
+    color: 'bg-info'
   },
   {
     layer: 'طبقة المكونات',
     technologies: ['shadcn/ui', 'Radix UI', 'Lucide Icons', 'React Hook Form'],
     description: 'مكونات قابلة لإعادة الاستخدام ومتسقة',
     icon: Layout,
-    color: 'bg-green-500'
+    color: 'bg-success'
   },
   {
     layer: 'طبقة إدارة الحالة',
     technologies: ['React Query', 'Context API', 'Custom Hooks', 'Zustand'],
     description: 'إدارة ذكية للبيانات والحالة',
     icon: Database,
-    color: 'bg-purple-500'
+    color: 'bg-accent'
   },
   {
     layer: 'طبقة الخدمات',
     technologies: ['Supabase', 'REST APIs', 'Real-time Subscriptions', 'Authentication'],
     description: 'خدمات backend متكاملة',
     icon: Globe,
-    color: 'bg-orange-500'
+    color: 'bg-warning'
   }
 ];
 
@@ -332,13 +332,13 @@ export default function SystemOverviewPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       <div>
                         <h4 className="font-semibold mb-3 flex items-center gap-2">
-                          <Star className="h-4 w-4 text-yellow-500" />
+                          <Star className="h-4 w-4 text-warning" />
                           المميزات الرئيسية
                         </h4>
                         <ul className="space-y-2">
                           {phase.features.map((feature, index) => (
                             <li key={index} className="flex items-start gap-2 text-sm">
-                              <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                              <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
                               <span>{feature}</span>
                             </li>
                           ))}
@@ -437,7 +437,7 @@ export default function SystemOverviewPage() {
           <div className="absolute inset-0 bg-gradient-muted" />
           <UnifiedCardHeader className="text-center">
             <UnifiedCardTitle className="text-2xl flex items-center justify-center gap-2">
-              <Trophy className="h-7 w-7 text-yellow-500" />
+              <Trophy className="h-7 w-7 text-warning" />
               إنجازات المشروع
             </UnifiedCardTitle>
             <UnifiedCardDescription>
@@ -447,15 +447,15 @@ export default function SystemOverviewPage() {
           <UnifiedCardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
               <div className="space-y-2">
-                <div className="text-3xl font-bold text-green-500">100%</div>
+                <div className="text-3xl font-bold text-success">100%</div>
                 <div className="text-sm text-muted-foreground">معدل إتمام المراحل</div>
               </div>
               <div className="space-y-2">
-                <div className="text-3xl font-bold text-blue-500">4/4</div>
+                <div className="text-3xl font-bold text-info">4/4</div>
                 <div className="text-sm text-muted-foreground">مراحل مكتملة</div>
               </div>
               <div className="space-y-2">
-                <div className="text-3xl font-bold text-purple-500">47+</div>
+                <div className="text-3xl font-bold text-accent">47+</div>
                 <div className="text-sm text-muted-foreground">مكون جديد</div>
               </div>
             </div>
