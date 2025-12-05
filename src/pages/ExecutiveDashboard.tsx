@@ -95,7 +95,7 @@ export default function ExecutiveDashboard() {
       {!loading && (
         <div className="flex items-center gap-2 flex-wrap">
           <UnifiedBadge variant="success" className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-success rounded-full"></div>
             النظام متصل
           </UnifiedBadge>
           <UnifiedBadge variant="default">

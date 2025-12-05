@@ -330,8 +330,8 @@ const PaymentDashboard = () => {
                   +12.5% من الشهر الماضي
                 </p>
               </div>
-              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-xl flex items-center justify-center">
-                <DollarSign className="h-6 w-6 text-green-600" />
+              <div className="w-12 h-12 bg-success/10 rounded-xl flex items-center justify-center">
+                <DollarSign className="h-6 w-6 text-success" />
               </div>
             </div>
           </CardContent>
@@ -342,7 +342,7 @@ const PaymentDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">هذا الشهر</p>
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-2xl font-bold text-info">
                   {stats.monthlyRevenue.toLocaleString()} ر.س
                 </p>
                 <p className="text-xs text-muted-foreground flex items-center mt-1">
@@ -350,8 +350,8 @@ const PaymentDashboard = () => {
                   +8.2% من المتوقع
                 </p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-xl flex items-center justify-center">
-                <Calendar className="h-6 w-6 text-blue-600" />
+              <div className="w-12 h-12 bg-info/10 rounded-xl flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-info" />
               </div>
             </div>
           </CardContent>
@@ -362,13 +362,13 @@ const PaymentDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">معاملات مكتملة</p>
-                <p className="text-2xl font-bold text-green-600">{stats.completedPayments}</p>
+                <p className="text-2xl font-bold text-success">{stats.completedPayments}</p>
                 <p className="text-xs text-muted-foreground">
                   من {stats.completedPayments + stats.pendingPayments + stats.failedPayments} معاملة
                 </p>
               </div>
-              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-xl flex items-center justify-center">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+              <div className="w-12 h-12 bg-success/10 rounded-xl flex items-center justify-center">
+                <CheckCircle className="h-6 w-6 text-success" />
               </div>
             </div>
           </CardContent>
@@ -379,7 +379,7 @@ const PaymentDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">رسوم البوابات</p>
-                <p className="text-2xl font-bold text-red-600">
+                <p className="text-2xl font-bold text-destructive">
                   {stats.gatewayFees.toLocaleString()} ر.س
                 </p>
                 <p className="text-xs text-muted-foreground flex items-center mt-1">
@@ -387,8 +387,8 @@ const PaymentDashboard = () => {
                   {((stats.gatewayFees / Math.max(stats.totalRevenue, 1)) * 100).toFixed(1)}% من الإيرادات
                 </p>
               </div>
-              <div className="w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-xl flex items-center justify-center">
-                <CreditCard className="h-6 w-6 text-red-600" />
+              <div className="w-12 h-12 bg-destructive/10 rounded-xl flex items-center justify-center">
+                <CreditCard className="h-6 w-6 text-destructive" />
               </div>
             </div>
           </CardContent>

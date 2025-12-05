@@ -389,7 +389,7 @@ export const SmartForms: React.FC<SmartFormsProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {isFormValid() ? (
-              <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+              <Badge className="bg-success/10 text-success">
                 <CheckCircle2 className="w-3 h-3 mr-1" />
                 النموذج صحيح
               </Badge>

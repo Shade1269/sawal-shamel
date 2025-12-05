@@ -194,9 +194,9 @@ const CreateAdmin = () => {
           </form>
 
           {success && (
-            <Alert className="mt-4 border-green-500/50 bg-green-500/10">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              <AlertDescription className="text-green-700 dark:text-green-300">
+            <Alert className="mt-4 border-success/50 bg-success/10">
+              <CheckCircle className="h-4 w-4 text-success" />
+              <AlertDescription className="text-success">
                 <strong>تم إنشاء الحساب بنجاح!</strong>
                 <br />
                 تم إرسال رسالة تأكيد إلى بريدك الإلكتروني <strong>{formData.email}</strong>

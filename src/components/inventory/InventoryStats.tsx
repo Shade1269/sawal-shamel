@@ -160,52 +160,52 @@ export function InventoryStats({ items, warehouses }: InventoryStatsProps) {
 
       {/* تنبيهات سريعة */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className={stats.outOfStockItems > 0 ? "border-red-200 bg-red-50" : ""}>
+        <Card className={stats.outOfStockItems > 0 ? "border-destructive/30 bg-destructive/10" : ""}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">نفد المخزون</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-red-600" />
+            <AlertTriangle className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.outOfStockItems}</div>
+            <div className="text-2xl font-bold text-destructive">{stats.outOfStockItems}</div>
             <p className="text-xs text-muted-foreground">
               صنف نفد من المخزون
             </p>
           </CardContent>
         </Card>
 
-        <Card className={stats.lowStockItems > 0 ? "border-orange-200 bg-orange-50" : ""}>
+        <Card className={stats.lowStockItems > 0 ? "border-warning/30 bg-warning/10" : ""}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">مخزون منخفض</CardTitle>
-            <TrendingDown className="h-4 w-4 text-orange-600" />
+            <TrendingDown className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{stats.lowStockItems}</div>
+            <div className="text-2xl font-bold text-warning">{stats.lowStockItems}</div>
             <p className="text-xs text-muted-foreground">
               صنف بحاجة لإعادة طلب
             </p>
           </CardContent>
         </Card>
 
-        <Card className={stats.expiredItems > 0 ? "border-red-200 bg-red-50" : ""}>
+        <Card className={stats.expiredItems > 0 ? "border-destructive/30 bg-destructive/10" : ""}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">منتهي الصلاحية</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-red-600" />
+            <AlertTriangle className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.expiredItems}</div>
+            <div className="text-2xl font-bold text-destructive">{stats.expiredItems}</div>
             <p className="text-xs text-muted-foreground">
               صنف منتهي الصلاحية
             </p>
           </CardContent>
         </Card>
 
-        <Card className={stats.expiringSoonItems > 0 ? "border-yellow-200 bg-yellow-50" : ""}>
+        <Card className={stats.expiringSoonItems > 0 ? "border-warning/30 bg-warning/10" : ""}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">ينتهي قريباً</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-yellow-600" />
+            <AlertTriangle className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.expiringSoonItems}</div>
+            <div className="text-2xl font-bold text-warning">{stats.expiringSoonItems}</div>
             <p className="text-xs text-muted-foreground">
               صنف ينتهي خلال أسبوعين
             </p>

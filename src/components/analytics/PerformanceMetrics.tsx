@@ -466,32 +466,32 @@ const PerformanceMetrics = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center justify-between p-3 bg-success/10 rounded-lg border border-success/30">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <CheckCircle className="h-5 w-5 text-success" />
                     <span className="font-medium">سرعة التحميل</span>
                   </div>
-                  <Badge variant="secondary" className="bg-green-100 text-green-800">
+                  <Badge variant="secondary" className="bg-success/10 text-success">
                     ممتاز (2.1ث)
                   </Badge>
                 </div>
                 
-                <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                <div className="flex items-center justify-between p-3 bg-warning/10 rounded-lg border border-warning/30">
                   <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                    <AlertTriangle className="h-5 w-5 text-warning" />
                     <span className="font-medium">تحسين الصور</span>
                   </div>
-                  <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                  <Badge variant="secondary" className="bg-warning/10 text-warning">
                     يحتاج تحسين
                   </Badge>
                 </div>
                 
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center justify-between p-3 bg-success/10 rounded-lg border border-success/30">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <CheckCircle className="h-5 w-5 text-success" />
                     <span className="font-medium">الاستجابة على الجوال</span>
                   </div>
-                  <Badge variant="secondary" className="bg-green-100 text-green-800">
+                  <Badge variant="secondary" className="bg-success/10 text-success">
                     ممتاز
                   </Badge>
                 </div>
@@ -506,23 +506,23 @@ const PerformanceMetrics = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <h4 className="font-medium text-blue-900 mb-1">تحسين معدل التحويل</h4>
-                  <p className="text-sm text-blue-700">
+                <div className="p-3 bg-info/10 rounded-lg border border-info/30">
+                  <h4 className="font-medium text-foreground mb-1">تحسين معدل التحويل</h4>
+                  <p className="text-sm text-info">
                     أضف المزيد من التقييمات لزيادة ثقة العملاء
                   </p>
                 </div>
                 
-                <div className="p-3 bg-purple-50 rounded-lg border border-purple-200">
-                  <h4 className="font-medium text-purple-900 mb-1">تحسين تجربة الجوال</h4>
-                  <p className="text-sm text-purple-700">
+                <div className="p-3 bg-premium/10 rounded-lg border border-premium/30">
+                  <h4 className="font-medium text-foreground mb-1">تحسين تجربة الجوال</h4>
+                  <p className="text-sm text-premium">
                     قم بتحسين أزرار الشراء للأجهزة المحمولة
                   </p>
                 </div>
                 
-                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                  <h4 className="font-medium text-green-900 mb-1">استغل وسائل التواصل</h4>
-                  <p className="text-sm text-green-700">
+                <div className="p-3 bg-success/10 rounded-lg border border-success/30">
+                  <h4 className="font-medium text-foreground mb-1">استغل وسائل التواصل</h4>
+                  <p className="text-sm text-success">
                     30% من زوارك يأتون من وسائل التواصل
                   </p>
                 </div>

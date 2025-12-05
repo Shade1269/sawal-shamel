@@ -201,7 +201,7 @@ const ProgressiveLoader: React.FC<ProgressiveLoaderProps> = ({
                   "flex items-center gap-3 p-3 rounded-lg transition-all duration-300",
                   isActive && "bg-accent/20 border border-accent/30",
                   isCompleted && "opacity-75",
-                  step.status === 'error' && "bg-red-500/10 border border-red-500/20"
+                  step.status === 'error' && "bg-destructive/10 border border-destructive/20"
                 )}
               >
                 <div className="flex-shrink-0">
@@ -290,10 +290,10 @@ const ProgressiveLoader: React.FC<ProgressiveLoaderProps> = ({
 
       {/* Completion Message */}
       {isCompleted && (
-        <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+        <div className="mt-4 p-3 bg-success/10 border border-success/20 rounded-lg">
           <div className="flex items-center gap-2">
-            <CheckCircle className="h-4 w-4 text-green-500" />
-            <span className="text-sm font-medium text-green-700">
+            <CheckCircle className="h-4 w-4 text-success" />
+            <span className="text-sm font-medium text-success">
               تم إكمال جميع الخطوات بنجاح
             </span>
           </div>
@@ -302,10 +302,10 @@ const ProgressiveLoader: React.FC<ProgressiveLoaderProps> = ({
 
       {/* Error Summary */}
       {hasErrors && (
-        <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+        <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
           <div className="flex items-center gap-2">
-            <XCircle className="h-4 w-4 text-red-500" />
-            <span className="text-sm font-medium text-red-700">
+            <XCircle className="h-4 w-4 text-destructive" />
+            <span className="text-sm font-medium text-destructive">
               {steps.filter(s => s.status === 'error').length} خطوة فشلت
             </span>
           </div>

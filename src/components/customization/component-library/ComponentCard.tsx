@@ -66,13 +66,13 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
           />
 
           {component.premium && (
-            <Badge className="absolute top-2 right-2 bg-yellow-500">
+            <Badge className="absolute top-2 right-2 bg-warning text-warning-foreground">
               Premium
             </Badge>
           )}
 
           {component.featured && (
-            <Badge className="absolute top-2 left-2 bg-red-500">
+            <Badge className="absolute top-2 left-2 bg-destructive text-destructive-foreground">
               مميز
             </Badge>
           )}

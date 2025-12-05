@@ -245,72 +245,72 @@ const EnhancedAffiliateDashboard = () => {
                   {formatCurrency(stats.totalSales)}
                 </p>
                 <div className="flex items-center gap-1 mt-1">
-                  <ArrowUpRight className="h-3 w-3 text-green-500" />
-                  <span className="text-xs text-green-500">+{stats.weeklyGrowth}%</span>
+                  <ArrowUpRight className="h-3 w-3 text-success" />
+                  <span className="text-xs text-success">+{stats.weeklyGrowth}%</span>
                 </div>
               </div>
-              <div className="p-3 bg-green-100 rounded-full">
-                <DollarSign className="h-6 w-6 text-green-600" />
+              <div className="p-3 bg-success/10 rounded-full">
+                <DollarSign className="h-6 w-6 text-success" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-blue-500">
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-info">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">إجمالي الطلبات</p>
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-2xl font-bold text-info">
                   {formatNumber(stats.totalOrders)}
                 </p>
                 <div className="flex items-center gap-1 mt-1">
-                  <ArrowUpRight className="h-3 w-3 text-blue-500" />
-                  <span className="text-xs text-blue-500">+8 هذا الأسبوع</span>
+                  <ArrowUpRight className="h-3 w-3 text-info" />
+                  <span className="text-xs text-info">+8 هذا الأسبوع</span>
                 </div>
               </div>
-              <div className="p-3 bg-blue-100 rounded-full">
-                <ShoppingCart className="h-6 w-6 text-blue-600" />
+              <div className="p-3 bg-info/10 rounded-full">
+                <ShoppingCart className="h-6 w-6 text-info" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-purple-500">
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-premium">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">الزوار</p>
-                <p className="text-2xl font-bold text-purple-600">
+                <p className="text-2xl font-bold text-premium">
                   {formatNumber(stats.totalVisitors)}
                 </p>
                 <div className="flex items-center gap-1 mt-1">
-                  <Eye className="h-3 w-3 text-purple-500" />
-                  <span className="text-xs text-purple-500">معدل التحويل {stats.conversionRate}%</span>
+                  <Eye className="h-3 w-3 text-premium" />
+                  <span className="text-xs text-premium">معدل التحويل {stats.conversionRate}%</span>
                 </div>
               </div>
-              <div className="p-3 bg-purple-100 rounded-full">
-                <Users className="h-6 w-6 text-purple-600" />
+              <div className="p-3 bg-premium/10 rounded-full">
+                <Users className="h-6 w-6 text-premium" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-orange-500">
+        <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-warning">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">عمولة الشهر</p>
-                <p className="text-2xl font-bold text-orange-600">
+                <p className="text-2xl font-bold text-warning">
                   {formatCurrency(stats.monthlyEarnings)}
                 </p>
                 <div className="flex items-center gap-1 mt-1">
-                  <Zap className="h-3 w-3 text-orange-500" />
-                  <span className="text-xs text-orange-500">متوسط الطلب {formatCurrency(stats.averageOrderValue)}</span>
+                  <Zap className="h-3 w-3 text-warning" />
+                  <span className="text-xs text-warning">متوسط الطلب {formatCurrency(stats.averageOrderValue)}</span>
                 </div>
               </div>
-              <div className="p-3 bg-orange-100 rounded-full">
-                <TrendingUp className="h-6 w-6 text-orange-600" />
+              <div className="p-3 bg-warning/10 rounded-full">
+                <TrendingUp className="h-6 w-6 text-warning" />
               </div>
             </div>
           </CardContent>
