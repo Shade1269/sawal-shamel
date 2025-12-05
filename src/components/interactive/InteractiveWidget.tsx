@@ -140,9 +140,9 @@ const InteractiveWidget: React.FC<InteractiveWidgetProps> = ({
 
   const getTrendColor = (trend?: 'up' | 'down' | 'stable') => {
     switch (trend) {
-      case 'up': return 'text-green-500';
-      case 'down': return 'text-red-500';
-      case 'stable': return 'text-yellow-500';
+      case 'up': return 'text-success';
+      case 'down': return 'text-destructive';
+      case 'stable': return 'text-warning';
       default: return 'text-muted-foreground';
     }
   };

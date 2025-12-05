@@ -155,7 +155,7 @@ export const MonitoringDashboard: React.FC = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${stats.criticalErrors > 0 ? 'bg-red-100 text-red-600 dark:bg-red-900/20' : 'bg-green-100 text-green-600 dark:bg-green-900/20'}`}>
+              <div className={`p-2 rounded-lg ${stats.criticalErrors > 0 ? 'bg-destructive/10 text-destructive' : 'bg-success/10 text-success'}`}>
                 {stats.criticalErrors > 0 ? <AlertTriangle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
               </div>
               <div>
@@ -169,7 +169,7 @@ export const MonitoringDashboard: React.FC = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/20">
+              <div className="p-2 rounded-lg bg-info/10 text-info">
                 <Users className="h-4 w-4" />
               </div>
               <div>
@@ -183,7 +183,7 @@ export const MonitoringDashboard: React.FC = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900/20">
+              <div className="p-2 rounded-lg bg-premium/10 text-premium">
                 <Eye className="h-4 w-4" />
               </div>
               <div>
@@ -197,7 +197,7 @@ export const MonitoringDashboard: React.FC = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${stats.avgLoadTime > 3000 ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/20' : 'bg-green-100 text-green-600 dark:bg-green-900/20'}`}>
+              <div className={`p-2 rounded-lg ${stats.avgLoadTime > 3000 ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'}`}>
                 <Zap className="h-4 w-4" />
               </div>
               <div>

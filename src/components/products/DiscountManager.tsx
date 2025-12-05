@@ -180,10 +180,10 @@ const DiscountManager: React.FC<DiscountManagerProps> = ({
                 value={basePrice}
                 onChange={(e) => onBasePriceChange(parseFloat(e.target.value) || 0)}
                 placeholder="0.00"
-                className={validationError ? 'border-red-500' : ''}
+                className={validationError ? 'border-destructive' : ''}
               />
               {validationError && (
-                <p className="text-sm text-red-500">{validationError}</p>
+                <p className="text-sm text-destructive">{validationError}</p>
               )}
             </div>
 

@@ -106,7 +106,7 @@ export default function UnifiedAffiliateOrders() {
             <Banknote className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.confirmedCommissions.toFixed(2)} ر.س</div>
+            <div className="text-2xl font-bold text-success">{stats.confirmedCommissions.toFixed(2)} ر.س</div>
             <p className="text-xs text-muted-foreground">
               عمولات مؤكدة
             </p>
@@ -119,7 +119,7 @@ export default function UnifiedAffiliateOrders() {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.pendingCommissions.toFixed(2)} ر.س</div>
+            <div className="text-2xl font-bold text-warning">{stats.pendingCommissions.toFixed(2)} ر.س</div>
             <p className="text-xs text-muted-foreground">
               في انتظار التأكيد
             </p>

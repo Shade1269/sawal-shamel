@@ -81,7 +81,7 @@ export function ProductShowcase3D({
             )}
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="bg-red-600/20 text-red-400 border-red-600/30">
+            <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
               <Eye className="h-3 w-3 ml-1" />
               {product.stock || 0} متاح
             </Badge>
@@ -225,17 +225,17 @@ export function ProductShowcase3D({
                 </Badge>
               )}
 
-              <div className="pt-2 space-y-2 text-slate-300 text-sm">
+              <div className="pt-2 space-y-2 text-muted-foreground text-sm">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
                   <span>متوفر في المخزون</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                  <div className="w-2 h-2 rounded-full bg-info" />
                   <span>شحن مجاني للطلبات فوق 200 ريال</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-purple-500" />
+                  <div className="w-2 h-2 rounded-full bg-premium" />
                   <span>إمكانية الإرجاع خلال 14 يوم</span>
                 </div>
               </div>
@@ -256,7 +256,7 @@ export function ProductShowcase3D({
                 <Button
                   variant="outline"
                   onClick={onToggleFavorite}
-                  className="border-2 border-red-600/80 text-red-600 bg-slate-900/60 hover:bg-red-950/20 hover:border-red-600 transition-all duration-300"
+                  className="border-2 border-destructive/80 text-destructive bg-card/60 hover:bg-destructive/10 hover:border-destructive transition-all duration-300"
                 >
                   <Heart className="h-4 w-4 ml-2" />
                   المفضلة
