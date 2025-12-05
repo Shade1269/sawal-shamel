@@ -122,7 +122,7 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
-              <Star className="h-4 w-4 text-yellow-400" />
+              <Star className="h-4 w-4 text-warning" />
               <span>{component.rating}</span>
             </div>
             <div className="flex items-center gap-1">

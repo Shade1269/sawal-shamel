@@ -127,9 +127,9 @@ const ProgressiveLoader: React.FC<ProgressiveLoaderProps> = ({
   const getStepColor = (step: LoadingStep) => {
     switch (step.status) {
       case 'loading': return 'text-primary';
-      case 'success': return 'text-green-500';
-      case 'error': return 'text-red-500';
-      case 'warning': return 'text-yellow-500';
+      case 'success': return 'text-success';
+      case 'error': return 'text-destructive';
+      case 'warning': return 'text-warning';
       default: return 'text-muted-foreground';
     }
   };

@@ -92,7 +92,7 @@ export function FloatingAIButton({ context = 'marketer', storeInfo, products }: 
           
           {/* AI Badge */}
           <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center">
-            <Sparkles className="h-3 w-3 text-yellow-400" />
+            <Sparkles className="h-3 w-3 text-warning" />
           </span>
         </motion.button>
       </div>

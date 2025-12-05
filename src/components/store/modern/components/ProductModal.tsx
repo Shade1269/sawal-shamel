@@ -162,7 +162,7 @@ export const ProductModal = ({
                         key={i}
                         className={`h-4 w-4 ${
                           i < Math.floor(product.rating!) 
-                            ? 'fill-yellow-400 text-yellow-400' 
+                            ? 'fill-warning text-warning' 
                             : 'text-muted-foreground/30'
                         }`}
                       />

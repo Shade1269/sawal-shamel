@@ -154,7 +154,7 @@ export function TemplatesLibrarySection() {
                         </Badge>
                       </div>
                       <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                        <Star className="h-3 w-3 fill-warning text-warning" />
                         4.8
                       </div>
                     </div>

@@ -54,8 +54,8 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ review, onVote, currentU
                     key={star}
                     className={`h-4 w-4 ${
                       star <= review.rating
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-gray-300'
+                        ? 'fill-warning text-warning'
+                        : 'text-muted-foreground/30'
                     }`}
                   />
                 ))}

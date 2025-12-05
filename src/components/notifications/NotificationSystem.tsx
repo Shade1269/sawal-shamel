@@ -60,7 +60,7 @@ const NotificationSystem = () => {
         message: 'مبروك! وصلت لـ 100 مبيعة هذا الشهر واكتسبت 50 نقطة إضافية',
         timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
         read: false,
-        icon: <Award className="h-4 w-4 text-yellow-500" />,
+        icon: <Award className="h-4 w-4 text-warning" />,
         priority: 'medium'
       },
       {
@@ -71,7 +71,7 @@ const NotificationSystem = () => {
         timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
         read: false,
         actionUrl: '/affiliate/products/1',
-        icon: <Package className="h-4 w-4 text-orange-500" />,
+        icon: <Package className="h-4 w-4 text-warning" />,
         priority: 'medium'
       },
       {
@@ -82,7 +82,7 @@ const NotificationSystem = () => {
         timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
         read: true,
         actionUrl: '/affiliate/store/themes',
-        icon: <Info className="h-4 w-4 text-blue-500" />,
+        icon: <Info className="h-4 w-4 text-info" />,
         priority: 'low'
       },
       {
@@ -130,11 +130,11 @@ const NotificationSystem = () => {
     if (notification.icon) return notification.icon;
     
     switch (notification.type) {
-      case 'order': return <ShoppingCart className="h-4 w-4 text-blue-500" />;
-      case 'achievement': return <Award className="h-4 w-4 text-yellow-500" />;
-      case 'product': return <Package className="h-4 w-4 text-orange-500" />;
-      case 'system': return <Info className="h-4 w-4 text-blue-500" />;
-      case 'promotion': return <Gift className="h-4 w-4 text-green-500" />;
+      case 'order': return <ShoppingCart className="h-4 w-4 text-info" />;
+      case 'achievement': return <Award className="h-4 w-4 text-warning" />;
+      case 'product': return <Package className="h-4 w-4 text-warning" />;
+      case 'system': return <Info className="h-4 w-4 text-info" />;
+      case 'promotion': return <Gift className="h-4 w-4 text-success" />;
       default: return <Bell className="h-4 w-4" />;
     }
   };

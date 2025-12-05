@@ -101,13 +101,13 @@ export const usePageSpeed = () => {
 
 const getScoreCategory = (value: number, thresholds: { good: number; needsImprovement: number }): PerformanceScore => {
   if (value <= thresholds.good) {
-    return { score: 90 + Math.random() * 10, category: 'excellent', color: 'text-green-600' };
+    return { score: 90 + Math.random() * 10, category: 'excellent', color: 'text-success' };
   } else if (value <= thresholds.needsImprovement) {
-    return { score: 70 + Math.random() * 20, category: 'good', color: 'text-yellow-600' };
+    return { score: 70 + Math.random() * 20, category: 'good', color: 'text-warning' };
   } else if (value <= thresholds.needsImprovement * 1.5) {
-    return { score: 50 + Math.random() * 20, category: 'needs-improvement', color: 'text-orange-600' };
+    return { score: 50 + Math.random() * 20, category: 'needs-improvement', color: 'text-warning' };
   } else {
-    return { score: 20 + Math.random() * 30, category: 'poor', color: 'text-red-600' };
+    return { score: 20 + Math.random() * 30, category: 'poor', color: 'text-destructive' };
   }
 };
 

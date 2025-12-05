@@ -202,7 +202,7 @@ const MediaManager: React.FC<MediaManagerProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Star className="h-5 w-5 text-yellow-500" />
+            <Star className="h-5 w-5 text-warning" />
             الصورة الرئيسية *
           </CardTitle>
           <CardDescription>
@@ -234,14 +234,14 @@ const MediaManager: React.FC<MediaManagerProps> = ({
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
-                <Badge className="absolute top-2 right-2 bg-yellow-500">
+                <Badge className="absolute top-2 right-2 bg-warning">
                   رئيسية
                 </Badge>
               </div>
             ) : (
               <div 
                 className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors ${
-                  validationError ? 'border-red-500' : 'border-gray-300'
+                  validationError ? 'border-destructive' : 'border-border'
                 }`}
                 onClick={() => fileInputRef.current?.click()}
               >

@@ -154,8 +154,8 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
                     key={star}
                     className={`h-6 w-6 ${
                       star <= Math.round(stats.average_rating || 0)
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-gray-300'
+                        ? 'fill-warning text-warning'
+                        : 'text-muted-foreground/30'
                     }`}
                   />
                 ))}
@@ -177,7 +177,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
                     <span className="text-sm w-8">{rating} نجوم</span>
                     <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-yellow-400"
+                        className="h-full bg-warning"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
