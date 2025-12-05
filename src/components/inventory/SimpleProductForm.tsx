@@ -258,8 +258,8 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
       <CardContent className="space-y-6">
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* شرح نظام التسعير */}
-          <div className="p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg space-y-2">
-            <h3 className="font-semibold text-blue-900 dark:text-blue-100 flex items-center gap-2">
+          <div className="p-4 bg-info/10 border border-info/30 rounded-lg space-y-2">
+            <h3 className="font-semibold text-foreground flex items-center gap-2">
               <span className="text-lg">ℹ️</span>
               كيف يعمل نظام التسعير؟
             </h3>

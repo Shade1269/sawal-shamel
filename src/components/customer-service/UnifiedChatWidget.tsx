@@ -124,7 +124,7 @@ export const UnifiedChatWidget: React.FC<UnifiedChatWidgetProps> = ({
           title="الدردشة"
         >
           <MessageCircle className="h-6 w-6" />
-          <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-green-400 border-2 border-background"></div>
+          <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-success border-2 border-background"></div>
         </Button>
       </motion.div>
     );

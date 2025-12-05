@@ -44,13 +44,13 @@ export function DeviceDebugger({
   const getDeviceColor = () => {
     switch (device.deviceType) {
       case 'mobile':
-        return 'bg-blue-500';
+        return 'bg-info';
       case 'tablet':
-        return 'bg-green-500';
+        return 'bg-success';
       case 'desktop':
-        return 'bg-purple-500';
+        return 'bg-premium';
       default:
-        return 'bg-gray-500';
+        return 'bg-muted-foreground';
     }
   };
 

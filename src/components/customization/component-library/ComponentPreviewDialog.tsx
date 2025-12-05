@@ -66,13 +66,13 @@ export const ComponentPreviewDialog: React.FC<ComponentPreviewDialogProps> = ({
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               {component.name}
-              {component.premium && <Badge className="bg-yellow-500">Premium</Badge>}
-              {component.featured && <Badge className="bg-red-500">مميز</Badge>}
+              {component.premium && <Badge className="bg-warning text-warning-foreground">Premium</Badge>}
+              {component.featured && <Badge className="bg-destructive text-destructive-foreground">مميز</Badge>}
             </DialogTitle>
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
-                <Star className="h-4 w-4 text-yellow-400" />
+                <Star className="h-4 w-4 text-warning" />
                 <span>{component.rating}</span>
               </div>
               <Separator orientation="vertical" className="h-4" />

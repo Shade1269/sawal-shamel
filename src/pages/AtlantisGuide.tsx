@@ -75,37 +75,37 @@ const AtlantisGuide = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="p-4 bg-green-50 rounded-lg">
-                  <h4 className="font-semibold text-green-800 mb-2">💡 زيادة النقاط</h4>
-                  <p className="text-sm text-green-700">
+                <div className="p-4 bg-success/10 rounded-lg">
+                  <h4 className="font-semibold text-success mb-2">💡 زيادة النقاط</h4>
+                  <p className="text-sm text-success/80">
                     ركز على بيع المنتجات عالية القيمة وجلب عملاء جدد للحصول على أكبر عدد نقاط
                   </p>
                 </div>
 
-                <div className="p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-semibold text-blue-800 mb-2">🤝 التحالفات</h4>
-                  <p className="text-sm text-blue-700">
+                <div className="p-4 bg-info/10 rounded-lg">
+                  <h4 className="font-semibold text-info mb-2">🤝 التحالفات</h4>
+                  <p className="text-sm text-info/80">
                     انضم لتحالف نشط أو أنشئ تحالفك الخاص عند الوصول للمستوى الفضي
                   </p>
                 </div>
 
-                <div className="p-4 bg-purple-50 rounded-lg">
-                  <h4 className="font-semibold text-purple-800 mb-2">🏆 التحديات</h4>
-                  <p className="text-sm text-purple-700">
+                <div className="p-4 bg-premium/10 rounded-lg">
+                  <h4 className="font-semibold text-premium mb-2">🏆 التحديات</h4>
+                  <p className="text-sm text-premium/80">
                     شارك في التحديات الأسبوعية للحصول على نقاط إضافية ومكافآت خاصة
                   </p>
                 </div>
 
-                <div className="p-4 bg-yellow-50 rounded-lg">
-                  <h4 className="font-semibold text-yellow-800 mb-2">📈 المستويات</h4>
-                  <p className="text-sm text-yellow-700">
+                <div className="p-4 bg-warning/10 rounded-lg">
+                  <h4 className="font-semibold text-warning mb-2">📈 المستويات</h4>
+                  <p className="text-sm text-warning/80">
                     كل مستوى جديد يفتح مميزات أكثر ونسب عمولة أعلى
                   </p>
                 </div>
 
-                <div className="p-4 bg-red-50 rounded-lg">
-                  <h4 className="font-semibold text-red-800 mb-2">🎯 الترتيب</h4>
-                  <p className="text-sm text-red-700">
+                <div className="p-4 bg-destructive/10 rounded-lg">
+                  <h4 className="font-semibold text-destructive mb-2">🎯 الترتيب</h4>
+                  <p className="text-sm text-destructive/80">
                     تابع ترتيبك في لوحة المتصدرين وحاول الوصول للمراكز الأولى
                   </p>
                 </div>

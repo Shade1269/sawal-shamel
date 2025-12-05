@@ -205,7 +205,7 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
               <div className="space-y-2">
                 <Label>حالة التشغيل</Label>
                 <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
+                  <div className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-success animate-pulse' : 'bg-muted-foreground'}`} />
                   <span className="text-sm">{isPlaying ? 'يعمل' : 'متوقف'}</span>
                 </div>
               </div>
@@ -353,22 +353,22 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                 <div className="space-y-3">
                   <div>
                     <Label className="text-sm">التوتر (Tension)</Label>
-                    <div className="bg-gradient-success h-2 rounded-full mt-1">
-                      <div className="bg-green-600 h-full w-3/4 rounded-full"></div>
+                    <div className="bg-success/20 h-2 rounded-full mt-1">
+                      <div className="bg-success h-full w-3/4 rounded-full"></div>
                     </div>
                   </div>
                   
                   <div>
                     <Label className="text-sm">الاحتكاك (Friction)</Label>
-                    <div className="bg-gradient-info h-2 rounded-full mt-1">
-                      <div className="bg-blue-600 h-full w-1/2 rounded-full"></div>
+                    <div className="bg-info/20 h-2 rounded-full mt-1">
+                      <div className="bg-info h-full w-1/2 rounded-full"></div>
                     </div>
                   </div>
                   
                   <div>
                     <Label className="text-sm">الكتلة (Mass)</Label>
-                    <div className="bg-gradient-accent h-2 rounded-full mt-1">
-                      <div className="bg-purple-600 h-full w-2/3 rounded-full"></div>
+                    <div className="bg-premium/20 h-2 rounded-full mt-1">
+                      <div className="bg-premium h-full w-2/3 rounded-full"></div>
                     </div>
                   </div>
                 </div>
@@ -418,8 +418,8 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
                   <div>Mouse Y: {mousePosition.y.toFixed(0)}</div>
                 </div>
 
-                <div className="p-3 bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 rounded-lg">
-                  <p className="text-sm text-orange-800 dark:text-orange-200">
+                <div className="p-3 bg-warning/10 border border-warning/30 rounded-lg">
+                  <p className="text-sm text-warning">
                     حرك الماوس فوق المنطقة لرؤية التأثير التفاعلي
                   </p>
                 </div>

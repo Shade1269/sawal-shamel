@@ -230,8 +230,8 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
                 </div>
 
                 {searchError && (
-                  <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
-                    <p className="text-sm text-red-800 dark:text-red-200">{searchError}</p>
+                  <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
+                    <p className="text-sm text-destructive">{searchError}</p>
                   </div>
                 )}
 
@@ -373,8 +373,8 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
                 </div>
 
                 {contentError && (
-                  <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
-                    <p className="text-sm text-red-800 dark:text-red-200">{contentError}</p>
+                  <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
+                    <p className="text-sm text-destructive">{contentError}</p>
                   </div>
                 )}
               </CardContent>

@@ -84,8 +84,8 @@ export function ContentManagementDashboard() {
             <Card className="border-l-4 border-l-blue-500">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <BarChart3 className="h-5 w-5 text-blue-500" />
-                  <Badge variant="secondary" className="bg-green-100 text-green-700">
+                  <BarChart3 className="h-5 w-5 text-info" />
+                  <Badge variant="secondary" className="bg-success/10 text-success">
                     85%
                   </Badge>
                 </div>

@@ -44,7 +44,7 @@ const DesignShowcase = () => {
                 onClick={() => setActiveTab('chat')}
                 className={cn(
                   "p-2.5 rounded-lg transition-colors",
-                  activeTab === 'chat' ? 'bg-blue-100' : 'hover:bg-secondary/50'
+                  activeTab === 'chat' ? 'bg-info/10' : 'hover:bg-secondary/50'
                 )}
               >
                 <MessageCircle className="w-6 h-6 text-foreground/70" />
@@ -53,7 +53,7 @@ const DesignShowcase = () => {
                 onClick={() => setActiveTab('orders')}
                 className={cn(
                   "p-2.5 rounded-lg transition-colors",
-                  activeTab === 'orders' ? 'bg-blue-100' : 'hover:bg-secondary/50'
+                  activeTab === 'orders' ? 'bg-info/10' : 'hover:bg-secondary/50'
                 )}
               >
                 <Package className="w-6 h-6 text-foreground/70" />
@@ -62,7 +62,7 @@ const DesignShowcase = () => {
                 onClick={() => setActiveTab('profile')}
                 className={cn(
                   "p-2.5 rounded-lg transition-colors",
-                  activeTab === 'profile' ? 'bg-blue-100' : 'hover:bg-secondary/50'
+                  activeTab === 'profile' ? 'bg-info/10' : 'hover:bg-secondary/50'
                 )}
               >
                 <User className="w-6 h-6 text-foreground/70" />
@@ -71,11 +71,11 @@ const DesignShowcase = () => {
                 onClick={() => setActiveTab('cart')}
                 className={cn(
                   "p-2.5 rounded-lg transition-colors relative",
-                  activeTab === 'cart' ? 'bg-blue-100' : 'hover:bg-secondary/50'
+                  activeTab === 'cart' ? 'bg-info/10' : 'hover:bg-secondary/50'
                 )}
               >
                 <ShoppingBag className="w-6 h-6 text-foreground/70" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
                   2
                 </span>
               </button>
