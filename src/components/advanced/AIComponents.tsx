@@ -144,15 +144,15 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
       </div>
 
       {/* AI Status */}
-      <EnhancedCard variant="gradient" className="border-purple-200 dark:border-purple-800">
+      <EnhancedCard variant="gradient" className="border-premium/30">
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-purple-600 animate-pulse" />
+            <div className="w-10 h-10 bg-premium/10 rounded-full flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-premium animate-pulse" />
             </div>
             <div>
-              <p className="font-semibold text-purple-800 dark:text-purple-200">نظام الذكاء الاصطناعي نشط</p>
-              <p className="text-sm text-purple-600 dark:text-purple-300">
+              <p className="font-semibold text-foreground">نظام الذكاء الاصطناعي نشط</p>
+              <p className="text-sm text-muted-foreground">
                 جاهز لمساعدتك في البحث وتوليد المحتوى
               </p>
             </div>

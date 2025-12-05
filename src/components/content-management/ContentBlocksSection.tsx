@@ -98,17 +98,17 @@ export function ContentBlocksSection() {
                 <Card key={i} className="animate-pulse">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 bg-gray-300 rounded-lg"></div>
+                      <div className="h-10 w-10 bg-muted rounded-lg"></div>
                       <div className="flex-1">
-                        <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                        <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+                        <div className="h-3 bg-muted/70 rounded w-1/2"></div>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
-                      <div className="h-3 bg-gray-200 rounded"></div>
-                      <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                      <div className="h-3 bg-muted/70 rounded"></div>
+                      <div className="h-3 bg-muted/70 rounded w-2/3"></div>
                     </div>
                   </CardContent>
                 </Card>
@@ -169,7 +169,7 @@ export function ContentBlocksSection() {
 
                       {/* Preview Image */}
                       {block.preview_image_url ? (
-                        <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                        <div className="aspect-video bg-muted rounded-lg overflow-hidden">
                           <img 
                             src={block.preview_image_url} 
                             alt={block.block_name}

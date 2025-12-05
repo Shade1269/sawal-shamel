@@ -259,19 +259,19 @@ export const BehavioralTriggersSection: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-green-600">{triggerStats.active}</p>
+            <p className="text-2xl font-bold text-success">{triggerStats.active}</p>
             <p className="text-sm text-muted-foreground">محفزات نشطة</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-blue-600">{triggerStats.totalTriggered}</p>
+            <p className="text-2xl font-bold text-info">{triggerStats.totalTriggered}</p>
             <p className="text-sm text-muted-foreground">إجمالي التفعيلات</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-purple-600">{triggerStats.averageTriggered}</p>
+            <p className="text-2xl font-bold text-premium">{triggerStats.averageTriggered}</p>
             <p className="text-sm text-muted-foreground">متوسط التفعيلات</p>
           </CardContent>
         </Card>

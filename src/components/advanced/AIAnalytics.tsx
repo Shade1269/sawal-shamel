@@ -166,9 +166,9 @@ export const AIAnalytics: React.FC = () => {
               </div>
               <div className="text-sm text-muted-foreground">Avg Confidence</div>
             </div>
-            <div className="text-center p-4 rounded-lg bg-purple-500/10">
-              <Zap className="h-8 w-8 text-purple-500 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-purple-500">
+            <div className="text-center p-4 rounded-lg bg-premium/10">
+              <Zap className="h-8 w-8 text-premium mx-auto mb-2" />
+              <div className="text-2xl font-bold text-premium">
                 {insights.filter(i => i.impact === 'high').length}
               </div>
               <div className="text-sm text-muted-foreground">High Impact</div>

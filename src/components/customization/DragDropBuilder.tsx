@@ -290,7 +290,7 @@ const DroppedComponentRenderer: React.FC<DroppedComponentRendererProps> = ({
             <h1 className="text-4xl font-bold mb-4">{component.props.title}</h1>
             <p className="text-xl mb-6">{component.props.subtitle}</p>
             <button 
-              className="px-6 py-3 rounded-lg font-semibold bg-white text-black hover:bg-gray-100 transition-colors"
+              className="px-6 py-3 rounded-lg font-semibold bg-background text-foreground hover:bg-muted transition-colors"
             >
               {component.props.buttonText}
             </button>
@@ -311,16 +311,16 @@ const DroppedComponentRenderer: React.FC<DroppedComponentRendererProps> = ({
               }}
             >
               {Array.from({ length: component.props.columns }).map((_, i) => (
-                <div key={i} className="border rounded-lg p-4 bg-white">
-                  <div className="aspect-square bg-gray-200 rounded mb-3"></div>
+                <div key={i} className="border rounded-lg p-4 bg-card">
+                  <div className="aspect-square bg-muted rounded mb-3"></div>
                   <h3 className="font-medium mb-2">منتج {i + 1}</h3>
                   {component.props.showPrices && (
-                    <p className="text-lg font-bold text-green-600 mb-1">299 ريال</p>
+                    <p className="text-lg font-bold text-success mb-1">299 ريال</p>
                   )}
                   {component.props.showRatings && (
                     <div className="flex items-center gap-1">
                       {Array.from({ length: 5 }).map((_, j) => (
-                        <Star key={j} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <Star key={j} className="h-4 w-4 fill-warning text-warning" />
                       ))}
                     </div>
                   )}
@@ -375,8 +375,8 @@ const DroppedComponentRenderer: React.FC<DroppedComponentRendererProps> = ({
 
       default:
         return (
-          <div className="p-4 border border-dashed border-gray-400 rounded-lg">
-            <p className="text-gray-500">مكون غير معروف: {component.type}</p>
+          <div className="p-4 border border-dashed border-border rounded-lg">
+            <p className="text-muted-foreground">مكون غير معروف: {component.type}</p>
           </div>
         );
     }
@@ -398,7 +398,7 @@ const DroppedComponentRenderer: React.FC<DroppedComponentRendererProps> = ({
       {renderComponent()}
       
       {isSelected && (
-        <div className="absolute -top-10 left-0 flex gap-1 bg-white border rounded-lg shadow-lg p-1">
+        <div className="absolute -top-10 left-0 flex gap-1 bg-card border rounded-lg shadow-lg p-1">
           <Button size="icon" variant="ghost" className="h-8 w-8" onClick={onDuplicate}>
             <Copy className="h-4 w-4" />
           </Button>

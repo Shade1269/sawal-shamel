@@ -69,12 +69,12 @@ const categoryIcons = {
 };
 
 const typeColors = {
-  success: 'text-green-500 bg-green-50 border-green-200',
-  warning: 'text-yellow-500 bg-yellow-50 border-yellow-200', 
-  error: 'text-red-500 bg-red-50 border-red-200',
-  info: 'text-blue-500 bg-blue-50 border-blue-200',
-  achievement: 'text-purple-500 bg-purple-50 border-purple-200',
-  update: 'text-gray-500 bg-gray-50 border-gray-200'
+  success: 'text-success bg-success/10 border-success/30',
+  warning: 'text-warning bg-warning/10 border-warning/30', 
+  error: 'text-destructive bg-destructive/10 border-destructive/30',
+  info: 'text-info bg-info/10 border-info/30',
+  achievement: 'text-premium bg-premium/10 border-premium/30',
+  update: 'text-muted-foreground bg-muted border-border'
 };
 
 export function SmartNotifications({

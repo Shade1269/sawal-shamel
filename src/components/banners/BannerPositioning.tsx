@@ -57,49 +57,49 @@ const POSITION_TYPES = [
     name: 'أعلى الصفحة',
     description: 'يظهر في أعلى الموقع أسفل القائمة مباشرة',
     icon: Layout,
-    preview: 'bg-blue-100 border-t-4 border-blue-500'
+    preview: 'bg-info/10 border-t-4 border-info'
   },
   {
     id: 'hero',
     name: 'القسم الرئيسي',
     description: 'يظهر في المنطقة الأولى للصفحة الرئيسية',
     icon: Monitor,
-    preview: 'bg-green-100 border-l-4 border-green-500'
+    preview: 'bg-success/10 border-l-4 border-success'
   },
   {
     id: 'sidebar',
     name: 'الشريط الجانبي',
     description: 'يظهر في الجانب الأيمن أو الأيسر',
     icon: Layout,
-    preview: 'bg-purple-100 border-r-4 border-purple-500'
+    preview: 'bg-premium/10 border-r-4 border-premium'
   },
   {
     id: 'footer',
     name: 'أسفل الصفحة',
     description: 'يظهر في نهاية الصفحة قبل الفوتر',
     icon: Layout,
-    preview: 'bg-orange-100 border-b-4 border-orange-500'
+    preview: 'bg-warning/10 border-b-4 border-warning'
   },
   {
     id: 'popup',
     name: 'نافذة منبثقة',
     description: 'يظهر كنافذة منبثقة في وسط الشاشة',
     icon: Target,
-    preview: 'bg-red-100 border-4 border-red-500 shadow-lg'
+    preview: 'bg-destructive/10 border-4 border-destructive shadow-lg'
   },
   {
     id: 'floating',
     name: 'عائم',
     description: 'يظهر عائماً في زاوية الشاشة',
     icon: MapPin,
-    preview: 'bg-yellow-100 border-4 border-yellow-500 rounded-full'
+    preview: 'bg-warning/10 border-4 border-warning rounded-full'
   },
   {
     id: 'sticky',
     name: 'ثابت عند التمرير',
     description: 'يبقى ظاهراً أثناء تمرير الصفحة',
     icon: Eye,
-    preview: 'bg-teal-100 border-2 border-teal-500 shadow-md'
+    preview: 'bg-info/10 border-2 border-info shadow-md'
   }
 ];
 
@@ -467,12 +467,12 @@ export const BannerPositioning: React.FC<BannerPositioningProps> = ({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-100 p-4 rounded-lg min-h-[400px] relative">
+              <div className="bg-muted p-4 rounded-lg min-h-[400px] relative">
                 {/* Mock Website Layout */}
                 <div className="bg-card rounded shadow-sm">
                   {/* Header */}
-                  <div className="h-12 bg-gray-200 rounded-t flex items-center px-4">
-                    <div className="text-sm text-gray-600">شريط التنقل</div>
+                  <div className="h-12 bg-muted/80 rounded-t flex items-center px-4">
+                    <div className="text-sm text-muted-foreground">شريط التنقل</div>
                   </div>
                   
                   {/* Banner Position Preview */}

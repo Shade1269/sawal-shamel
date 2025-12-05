@@ -259,10 +259,10 @@ export const WithdrawalManagement = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">قيد المراجعة</CardTitle>
-            <AlertCircle className="h-4 w-4 text-yellow-600" />
+            <AlertCircle className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">
+            <div className="text-2xl font-bold text-warning">
               {totalPending.toFixed(2)} ر.س
             </div>
             <p className="text-xs text-muted-foreground">{pendingRequests.length} طلب</p>
@@ -272,10 +272,10 @@ export const WithdrawalManagement = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">موافق عليها</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-600" />
+            <CheckCircle className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-success">
               {totalApproved.toFixed(2)} ر.س
             </div>
             <p className="text-xs text-muted-foreground">{approvedRequests.length} طلب</p>
@@ -285,10 +285,10 @@ export const WithdrawalManagement = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">مكتملة</CardTitle>
-            <DollarSign className="h-4 w-4 text-blue-600" />
+            <DollarSign className="h-4 w-4 text-info" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold text-info">
               {totalCompleted.toFixed(2)} ر.س
             </div>
             <p className="text-xs text-muted-foreground">{completedRequests.length} طلب</p>

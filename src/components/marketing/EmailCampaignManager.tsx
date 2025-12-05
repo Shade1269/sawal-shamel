@@ -112,10 +112,10 @@ const EmailCampaignManager = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'sent': return 'bg-green-500';
-      case 'scheduled': return 'bg-blue-500';
-      case 'draft': return 'bg-gray-500';
-      default: return 'bg-gray-500';
+      case 'sent': return 'bg-success';
+      case 'scheduled': return 'bg-info';
+      case 'draft': return 'bg-muted-foreground';
+      default: return 'bg-muted-foreground';
     }
   };
 
@@ -158,7 +158,7 @@ const EmailCampaignManager = () => {
                     <div className="space-y-2 flex-1">
                       <div className="flex items-center gap-3">
                         <h4 className="font-semibold">{campaign.name}</h4>
-                        <Badge className={`${getStatusColor(campaign.status)} text-white`}>
+                        <Badge className={`${getStatusColor(campaign.status)} text-primary-foreground`}>
                           {getStatusText(campaign.status)}
                         </Badge>
                       </div>
@@ -389,7 +389,7 @@ const EmailCampaignManager = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">0.8%</div>
-                <div className="text-sm text-green-500">-0.2% من الشهر الماضي</div>
+                <div className="text-sm text-success">-0.2% من الشهر الماضي</div>
               </CardContent>
             </Card>
 
