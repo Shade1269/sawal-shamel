@@ -291,7 +291,7 @@ export const PerformanceRecommendations: React.FC = () => {
     return (
       <Card>
         <CardContent className="pt-6">
-          <div className="text-center text-green-600">
+          <div className="text-center text-success">
             <Zap className="h-8 w-8 mx-auto mb-2" />
             <p className="font-medium">أداء ممتاز! 🎉</p>
             <p className="text-sm text-muted-foreground">جميع المؤشرات في النطاق المثالي</p>

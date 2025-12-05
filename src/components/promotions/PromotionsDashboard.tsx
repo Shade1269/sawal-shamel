@@ -34,15 +34,15 @@ export const PromotionsDashboard: React.FC = () => {
       title: 'الحملات النشطة',
       value: activeCampaigns.length,
       icon: TrendingUp,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
+      color: 'text-success',
+      bgColor: 'bg-success/10',
     },
     {
       title: 'الحملات المجدولة',
       value: draftCampaigns.length,
       icon: Calendar,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
+      color: 'text-info',
+      bgColor: 'bg-info/10',
     },
     {
       title: 'عروض المجموعات',
@@ -224,7 +224,7 @@ export const PromotionsDashboard: React.FC = () => {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">إجمالي التوفير</span>
-                    <span className="font-semibold text-green-600">15,430 ر.س</span>
+                    <span className="font-semibold text-success">15,430 ر.س</span>
                   </div>
                 </div>
               </CardContent>

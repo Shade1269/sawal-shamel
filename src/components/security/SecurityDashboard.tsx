@@ -99,7 +99,7 @@ export const SecurityDashboard = () => {
             <CardTitle className="text-sm font-medium">
               الأحداث عالية المخاطر
             </CardTitle>
-            <Eye className="h-4 w-4 text-red-600" />
+            <Eye className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground mb-1">
@@ -122,7 +122,7 @@ export const SecurityDashboard = () => {
             <CardTitle className="text-sm font-medium">
               النسخ الاحتياطية
             </CardTitle>
-            <Database className="h-4 w-4 text-blue-600" />
+            <Database className="h-4 w-4 text-info" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground mb-1">
@@ -146,10 +146,10 @@ export const SecurityDashboard = () => {
             <CardTitle className="text-sm font-medium">
               حالة التشفير
             </CardTitle>
-            <Lock className="h-4 w-4 text-green-600" />
+            <Lock className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600 mb-1">
+            <div className="text-2xl font-bold text-success mb-1">
               مفعل
             </div>
             <div className="text-xs text-muted-foreground mb-2">
@@ -238,8 +238,8 @@ export const SecurityDashboard = () => {
               </div>
             )}
 
-            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800">
+            <div className="p-3 bg-info/10 border border-info/20 rounded-lg">
+              <p className="text-sm text-info">
                 <strong>نصيحة:</strong> قم بمراجعة سجلات التدقيق بانتظام وتحديث كلمات المرور كل 90 يوماً.
               </p>
             </div>

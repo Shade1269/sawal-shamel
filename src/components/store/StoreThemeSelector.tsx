@@ -62,7 +62,7 @@ const ThemeIcon = ({ themeName }: { themeName: string }) => {
     case 'colorful vibrant':
       return <Sparkles className="w-5 h-5" />;
     case 'ferrari racing':
-      return <Zap className="w-5 h-5 text-red-600" />;
+      return <Zap className="w-5 h-5 text-destructive" />;
     default:
       return <Palette className="w-5 h-5" />;
   }

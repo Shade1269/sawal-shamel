@@ -280,7 +280,7 @@ export const ProductModal = ({
                   className="px-4 h-12"
                 >
                   <Heart 
-                    className={`h-5 w-5 ${isInWishlist ? 'fill-red-500 text-red-500' : ''}`} 
+                    className={`h-5 w-5 ${isInWishlist ? 'fill-destructive text-destructive' : ''}`} 
                   />
                 </Button>
               </div>

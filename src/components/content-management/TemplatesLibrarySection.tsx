@@ -71,11 +71,11 @@ export function TemplatesLibrarySection() {
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {[...Array(8)].map((_, i) => (
-                <Card key={i} className="animate-pulse overflow-hidden">
-                  <div className="aspect-video bg-gray-300"></div>
+              <Card key={i} className="animate-pulse overflow-hidden">
+                  <div className="aspect-video bg-muted"></div>
                   <CardHeader className="pb-4">
-                    <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-4 bg-muted rounded w-3/4"></div>
+                    <div className="h-3 bg-muted/70 rounded w-1/2"></div>
                   </CardHeader>
                 </Card>
               ))}

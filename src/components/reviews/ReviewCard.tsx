@@ -41,7 +41,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ review, onVote, currentU
             <div className="flex items-center gap-3 mb-2">
               <span className="font-semibold">{review.profiles.full_name}</span>
               {review.is_verified && (
-                <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+                <Badge className="bg-success/10 text-success border-success/20">
                   <CheckCircle className="h-3 w-3 ml-1" />
                   عميل موثّق
                 </Badge>
@@ -96,7 +96,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ review, onVote, currentU
             size="sm"
             onClick={() => onVote(review.id, true)}
             disabled={!currentUserId}
-            className={review.user_vote?.is_helpful ? 'text-green-600' : ''}
+            className={review.user_vote?.is_helpful ? 'text-success' : ''}
           >
             <ThumbsUp className="h-4 w-4 ml-1" />
             مفيد ({review.helpful_count})
@@ -106,7 +106,7 @@ export const ReviewCard: React.FC<ReviewCardProps> = ({ review, onVote, currentU
             size="sm"
             onClick={() => onVote(review.id, false)}
             disabled={!currentUserId}
-            className={review.user_vote && !review.user_vote.is_helpful ? 'text-red-600' : ''}
+            className={review.user_vote && !review.user_vote.is_helpful ? 'text-destructive' : ''}
           >
             <ThumbsDown className="h-4 w-4 ml-1" />
             غير مفيد

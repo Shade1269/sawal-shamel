@@ -174,10 +174,10 @@ export const BackupManagement = () => {
             <CardTitle className="text-sm font-medium">
               النسخ المكتملة
             </CardTitle>
-            <Shield className="h-4 w-4 text-green-600" />
+            <Shield className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-success">
               {backupLogs.filter(log => log.backup_status === 'COMPLETED').length}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -191,10 +191,10 @@ export const BackupManagement = () => {
             <CardTitle className="text-sm font-medium">
               الحجم الإجمالي
             </CardTitle>
-            <HardDrive className="h-4 w-4 text-blue-600" />
+            <HardDrive className="h-4 w-4 text-info" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold text-info">
               {formatFileSize(
                 backupLogs
                   .filter(log => log.backup_status === 'COMPLETED')
@@ -326,9 +326,9 @@ export const BackupManagement = () => {
                               </code>
                             </div>
                             
-                            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-                              <Shield className="h-4 w-4 text-green-600" />
-                              <span className="text-sm text-green-800">
+                            <div className="flex items-center gap-2 p-3 bg-success/10 border border-success/20 rounded-lg">
+                              <Shield className="h-4 w-4 text-success" />
+                              <span className="text-sm text-success">
                                 النسخة الاحتياطية مُشفرة بـ AES-256
                               </span>
                             </div>

@@ -194,8 +194,8 @@ export const SEODashboard: React.FC = () => {
                 </div>
 
                 {sitemapStatus === 'success' && (
-                  <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
+                  <div className="p-3 bg-success/10 dark:bg-success/20 rounded-lg">
+                    <div className="flex items-center gap-2 text-success">
                       <CheckCircle className="h-4 w-4" />
                       <span className="text-sm font-medium">تم إنشاء خريطة الموقع بنجاح</span>
                     </div>
@@ -203,8 +203,8 @@ export const SEODashboard: React.FC = () => {
                 )}
 
                 {sitemapStatus === 'error' && (
-                  <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                    <div className="flex items-center gap-2 text-red-700 dark:text-red-400">
+                  <div className="p-3 bg-destructive/10 dark:bg-destructive/20 rounded-lg">
+                    <div className="flex items-center gap-2 text-destructive">
                       <AlertCircle className="h-4 w-4" />
                       <span className="text-sm font-medium">فشل في إنشاء خريطة الموقع</span>
                     </div>
@@ -293,22 +293,22 @@ export const SEODashboard: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
-                  <div className="border-l-4 border-blue-500 pl-3">
+                  <div className="border-l-4 border-info pl-3">
                     <h4 className="font-medium">العنوان (Title)</h4>
                     <p className="text-muted-foreground">50-60 حرف، يتضمن الكلمة المفتاحية الرئيسية</p>
                   </div>
 
-                  <div className="border-l-4 border-green-500 pl-3">
+                  <div className="border-l-4 border-success pl-3">
                     <h4 className="font-medium">الوصف (Description)</h4>
                     <p className="text-muted-foreground">150-160 حرف، وصف جذاب يشجع على النقر</p>
                   </div>
 
-                  <div className="border-l-4 border-purple-500 pl-3">
+                  <div className="border-l-4 border-accent pl-3">
                     <h4 className="font-medium">الكلمات المفتاحية</h4>
                     <p className="text-muted-foreground">5-7 كلمات مفتاحية متعلقة بالمحتوى</p>
                   </div>
 
-                  <div className="border-l-4 border-orange-500 pl-3">
+                  <div className="border-l-4 border-warning pl-3">
                     <h4 className="font-medium">Open Graph</h4>
                     <p className="text-muted-foreground">صورة 1200x630 بكسل للمشاركة على وسائل التواصل</p>
                   </div>
