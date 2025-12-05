@@ -55,7 +55,7 @@ export function ProductListItem({
                     {product.category}
                   </Badge>
                   {isInMyStore && (
-                    <Badge className="bg-green-100 text-green-800 text-xs">في متجري</Badge>
+                    <Badge className="bg-success/10 text-success text-xs">في متجري</Badge>
                   )}
                 </div>
               </div>
@@ -81,10 +81,10 @@ export function ProductListItem({
                       size="sm"
                       onClick={() => onRemoveFromStore(product.id)}
                       disabled={isProcessing}
-                      className="border-red-200 text-red-600 hover:bg-red-50"
+                      className="border-destructive/20 text-destructive hover:bg-destructive/5"
                     >
                       {isProcessing ? (
-                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-red-600" />
+                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-destructive" />
                       ) : (
                         <>
                           <Check className="h-3 w-3 ml-1" />

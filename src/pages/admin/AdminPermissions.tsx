@@ -32,7 +32,7 @@ const AdminPermissions = () => {
     admin: {
       name: 'مدير النظام',
       icon: Crown,
-      color: 'text-red-600',
+      color: 'text-destructive',
       permissions: {
         users_manage: true,
         products_manage: true,
@@ -45,7 +45,7 @@ const AdminPermissions = () => {
     merchant: {
       name: 'تاجر',
       icon: Store,
-      color: 'text-blue-600',
+      color: 'text-info',
       permissions: {
         users_manage: false,
         products_manage: true,
@@ -58,7 +58,7 @@ const AdminPermissions = () => {
     affiliate: {
       name: 'مسوق بالعمولة',
       icon: Star,
-      color: 'text-green-600',
+      color: 'text-success',
       permissions: {
         users_manage: false,
         products_manage: false,

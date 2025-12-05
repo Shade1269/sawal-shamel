@@ -65,7 +65,7 @@ export function ProductDetailsDialog({
               </div>
               <div className="bg-muted p-4 rounded-lg">
                 <p className="text-sm text-muted-foreground mb-1">العمولة</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-success">
                   {product.merchants?.default_commission_rate || 10}%
                 </p>
               </div>
@@ -109,7 +109,7 @@ export function ProductDetailsDialog({
                       onRemoveFromStore(product.id);
                       onClose();
                     }}
-                    className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
+                    className="flex-1 border-destructive/20 text-destructive hover:bg-destructive/5"
                   >
                     حذف من متجري
                   </Button>

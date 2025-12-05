@@ -117,7 +117,7 @@ const MerchantOrders = () => {
             <UnifiedCardTitle className="text-sm font-medium">مكتملة</UnifiedCardTitle>
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.delivered}</div>
+            <div className="text-2xl font-bold text-success">{stats.delivered}</div>
           </UnifiedCardContent>
         </UnifiedCard>
       </div>

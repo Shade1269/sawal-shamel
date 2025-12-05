@@ -51,7 +51,7 @@ export default function SecurityCenter() {
             PCI DSS Level 1
           </Badge>
           <Badge variant="outline" className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-success rounded-full"></div>
             نظام آمن
           </Badge>
           <Button variant="outline" size="sm">
@@ -63,30 +63,30 @@ export default function SecurityCenter() {
 
       {/* Security Features Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border-l-4 border-l-green-500">
+        <Card className="border-l-4 border-l-success">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Shield className="h-4 w-4 text-green-600" />
+              <Shield className="h-4 w-4 text-success" />
               كشف الاحتيال
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold text-green-600 mb-1">مفعل</div>
+            <div className="text-2xl font-bold text-success mb-1">مفعل</div>
             <p className="text-xs text-muted-foreground">
               ذكي اصطناعي متطور لكشف المعاملات المشبوهة
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-blue-500">
+        <Card className="border-l-4 border-l-info">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Lock className="h-4 w-4 text-blue-600" />
+              <Lock className="h-4 w-4 text-info" />
               التشفير المالي
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold text-blue-600 mb-1">AES-256</div>
+            <div className="text-2xl font-bold text-info mb-1">AES-256</div>
             <p className="text-xs text-muted-foreground">
               تشفير عسكري لجميع المعاملات المالية
             </p>
@@ -172,9 +172,9 @@ export default function SecurityCenter() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <h4 className="font-medium text-green-800 mb-2">التشفير النشط</h4>
-                    <ul className="space-y-1 text-sm text-green-700">
+                  <div className="p-4 bg-success/10 border border-success/20 rounded-lg">
+                    <h4 className="font-medium text-success mb-2">التشفير النشط</h4>
+                    <ul className="space-y-1 text-sm text-success/80">
                       <li>• المعاملات المالية: AES-256</li>
                       <li>• بيانات المستخدمين: RSA-2048</li>
                       <li>• النسخ الاحتياطية: AES-256</li>
@@ -182,9 +182,9 @@ export default function SecurityCenter() {
                     </ul>
                   </div>
                   
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <h4 className="font-medium text-blue-800 mb-2">إدارة المفاتيح</h4>
-                    <ul className="space-y-1 text-sm text-blue-700">
+                  <div className="p-4 bg-info/10 border border-info/20 rounded-lg">
+                    <h4 className="font-medium text-info mb-2">إدارة المفاتيح</h4>
+                    <ul className="space-y-1 text-sm text-info/80">
                       <li>• دوران المفاتيح: كل 90 يوم</li>
                       <li>• تخزين المفاتيح: HSM آمن</li>
                       <li>• النسخ الاحتياطية للمفاتيح: مشفرة</li>
@@ -238,27 +238,27 @@ export default function SecurityCenter() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>أمان الشبكة</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>حماية بيانات حملة البطاقات</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>إدارة نقاط الضعف</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>تدابير التحكم في الوصول</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>المراقبة والاختبار</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>سياسات أمن المعلومات</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                   </div>
                 </div>
@@ -272,19 +272,19 @@ export default function SecurityCenter() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>إطار الأمن السيبراني</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>حماية البيانات</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>إدارة المخاطر</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>التقارير والامتثال</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                   </div>
                 </div>
@@ -298,19 +298,19 @@ export default function SecurityCenter() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>موافقة المستخدم</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>حق الوصول للبيانات</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>حق النسيان</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>حماية البيانات بالتصميم</span>
-                      <span className="text-green-600">✓ متوافق</span>
+                      <span className="text-success">✓ متوافق</span>
                     </div>
                   </div>
                 </div>

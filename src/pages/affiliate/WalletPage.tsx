@@ -208,7 +208,7 @@ export default function WalletPage() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className={`font-bold text-lg ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                          <p className={`font-bold text-lg ${isPositive ? 'text-success' : 'text-destructive'}`}>
                             {isPositive ? '+' : '-'}{Math.abs(Number(transaction.amount_sar)).toFixed(2)} ر.س
                           </p>
                           <p className="text-xs text-muted-foreground">

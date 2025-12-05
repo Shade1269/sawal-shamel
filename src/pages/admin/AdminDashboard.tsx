@@ -769,7 +769,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                             )}
                           </div>
                           
-                          <div className="text-xs text-muted-foreground bg-blue-50 p-3 rounded-md">
+                          <div className="text-xs text-muted-foreground bg-info/10 p-3 rounded-md">
                             💡 <strong>نصيحة:</strong> كل صف يمثل تركيبة من مقاس ولون مع عددها المتوفر (مثال: أحمر + لارج = 5 قطع)
                           </div>
                         </div>
@@ -1484,7 +1484,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                           </div>
                           <div className="flex items-center gap-2">
                             <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                            <div className={`h-2 w-2 rounded-full shrink-0 ${user.is_active ? 'bg-green-500' : 'bg-red-500'}`} />
+                            <div className={`h-2 w-2 rounded-full shrink-0 ${user.is_active ? 'bg-success' : 'bg-destructive'}`} />
                           </div>
                           {user.points !== undefined && (
                             <div className="text-xs text-primary font-medium">

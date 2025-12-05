@@ -129,7 +129,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
   };
 
   const getActivityColor = (type: ActivityItem['type'], priority: ActivityItem['priority']) => {
-    if (priority === 'urgent') return 'text-red-500 bg-red-500/10 border-red-500/20';
+    if (priority === 'urgent') return 'text-destructive bg-destructive/10 border-destructive/20';
     if (priority === 'high') return 'text-amber-500 bg-amber-500/10 border-amber-500/20';
     
     const colorMap = {
@@ -148,9 +148,9 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
   const getStatusIcon = (status: ActivityItem['status']) => {
     const statusMap = {
       pending: <Clock className="w-3 h-3 text-amber-500" />,
-      completed: <CheckCircle className="w-3 h-3 text-green-500" />,
-      failed: <AlertTriangle className="w-3 h-3 text-red-500" />,
-      in_progress: <RefreshCw className="w-3 h-3 text-blue-500 animate-spin" />
+      completed: <CheckCircle className="w-3 h-3 text-success" />,
+      failed: <AlertTriangle className="w-3 h-3 text-destructive" />,
+      in_progress: <RefreshCw className="w-3 h-3 text-info animate-spin" />
     };
     return statusMap[status];
   };

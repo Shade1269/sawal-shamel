@@ -320,10 +320,10 @@ export default function AffiliateWalletPage() {
         <UnifiedCard className="bg-card border-border">
           <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <UnifiedCardTitle className="text-sm font-medium text-foreground">الرصيد المتاح</UnifiedCardTitle>
-            <DollarSign className="h-4 w-4 text-green-600" />
+            <DollarSign className="h-4 w-4 text-success" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-green-600">{availableBalance.toFixed(2)} ر.س</div>
+            <div className="text-2xl font-bold text-success">{availableBalance.toFixed(2)} ر.س</div>
             <p className="text-xs mt-1 text-muted-foreground">
               جاهز للسحب
             </p>
@@ -346,10 +346,10 @@ export default function AffiliateWalletPage() {
         <UnifiedCard className="bg-card border-border">
           <UnifiedCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <UnifiedCardTitle className="text-sm font-medium text-foreground">إجمالي المدفوعات</UnifiedCardTitle>
-            <CheckCircle className="h-4 w-4 text-blue-600" />
+            <CheckCircle className="h-4 w-4 text-info" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-blue-600">{paidBalance.toFixed(2)} ر.س</div>
+            <div className="text-2xl font-bold text-info">{paidBalance.toFixed(2)} ر.س</div>
             <p className="text-xs mt-1 text-muted-foreground">
               تم الدفع
             </p>

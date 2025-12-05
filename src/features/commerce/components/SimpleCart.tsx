@@ -206,7 +206,7 @@ export const SimpleCart: React.FC<SimpleCartProps> = ({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-red-500 hover:text-red-700"
+                            className="h-8 w-8 text-destructive hover:text-destructive/80"
                             onClick={() => removeFromCart(item.id)}
                           >
                             <Trash2 className="h-3 w-3" />

@@ -94,23 +94,23 @@ export default function ZohoCallback() {
 
               {/* Refresh Token Display */}
               <div className="w-full mt-6">
-                <div className="bg-green-50 border-2 border-green-500 rounded-lg p-4">
-                  <p className="font-bold text-green-800 mb-2">🔑 ZOHO_REFRESH_TOKEN:</p>
-                  <div className="bg-white p-4 rounded border border-green-300 font-mono text-sm break-all">
+                <div className="bg-success/10 border-2 border-success rounded-lg p-4">
+                  <p className="font-bold text-success mb-2">🔑 ZOHO_REFRESH_TOKEN:</p>
+                  <div className="bg-white p-4 rounded border border-success/30 font-mono text-sm break-all">
                     {refreshToken}
                   </div>
                   <button
                     onClick={copyToken}
-                    className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                    className="mt-4 w-full bg-success hover:bg-success/90 text-success-foreground font-semibold py-3 px-6 rounded-lg transition-colors"
                   >
                     📋 نسخ Refresh Token
                   </button>
                 </div>
 
                 {/* Instructions */}
-                <div className="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                  <p className="font-bold text-blue-800 mb-2">الخطوة التالية:</p>
-                  <ol className="list-decimal list-inside text-blue-700 space-y-1">
+                <div className="mt-6 bg-info/10 border-l-4 border-info p-4 rounded">
+                  <p className="font-bold text-info mb-2">الخطوة التالية:</p>
+                  <ol className="list-decimal list-inside text-info/80 space-y-1">
                     <li>انسخ الـ Refresh Token أعلاه</li>
                     <li>ارجع للمحادثة مع Lovable</li>
                     <li>الصق الـ Token لإكمال إعداد تكامل Zoho</li>
