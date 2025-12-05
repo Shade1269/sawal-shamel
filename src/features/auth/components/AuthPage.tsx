@@ -122,7 +122,7 @@ const AuthPage = () => {
         </div>
 
         {/* Auth Card */}
-        <div className="bg-white rounded-2xl border border-anaqati-border shadow-anaqati p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-anaqati-border shadow-anaqati p-6 md:p-8 text-primary-dark">
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-8 bg-anaqati-cream p-1 rounded-xl">
               <TabsTrigger value="signin" className="gap-2 data-[state=active]:bg-anaqati-burgundy data-[state=active]:text-white rounded-lg py-2.5 text-sm font-semibold transition-all">
