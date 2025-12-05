@@ -85,4 +85,14 @@
   --popover-foreground: var(--fg);
   --destructive: var(--danger);
   --destructive-foreground: 0 0% 100%;
+  
+  /* ============ Sidebar Tokens ============ */
+  --sidebar: 0 0% 100%;                    /* White sidebar */
+  --sidebar-foreground: 0 3% 18%;          /* Dark text */
+  --sidebar-border: 23 26% 87%;            /* Soft tan border */
+  --sidebar-accent: 0 54% 86%;             /* Pink accent */
+  --sidebar-accent-foreground: 320 38% 29%; /* Burgundy text */
+  --sidebar-primary: 320 38% 29%;          /* Burgundy */
+  --sidebar-primary-foreground: 0 0% 100%; /* White */
+  --sidebar-ring: 320 38% 29%;             /* Burgundy ring */
 }
