@@ -98,8 +98,8 @@ const SupabaseSMSAuth = () => {
   };
   return <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
-        <CardTitle className="flex items-center justify-center gap-2 text-primary-dark">
-          <MessageSquare className="h-6 w-6 text-primary" />
+        <CardTitle className="flex items-center justify-center gap-2 text-primary-dark bg-red-100">
+          <MessageSquare className="h-6 w-6 text-primary bg-accent-glow px-px border-primary-dark" />
           تسجيل الدخول عبر SMS
         </CardTitle>
         <CardDescription className="bg-accent-glow">
