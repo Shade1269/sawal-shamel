@@ -28,13 +28,13 @@ const trendIcon = {
 export const KpiCard: React.FC<KpiCardProps> = React.memo(
   ({ title, value, icon: Icon, delta, accent = 'primary', footer, className, description }) => {
     const { isDarkMode } = useDarkMode();
-    const trendColor = delta?.trend === 'down' ? 'var(--danger)' : 'var(--success)';
+    const trendColor = delta?.trend === 'down' ? 'hsl(var(--danger))' : 'hsl(var(--success))';
     const accentColorMap: Record<NonNullable<KpiCardProps['accent']>, string> = {
-      primary: 'var(--primary)',
-      accent: 'var(--accent)',
-      success: 'var(--success)',
-      warning: 'var(--warning)',
-      danger: 'var(--danger)',
+      primary: 'hsl(var(--primary))',
+      accent: 'hsl(var(--accent))',
+      success: 'hsl(var(--success))',
+      warning: 'hsl(var(--warning))',
+      danger: 'hsl(var(--danger))',
     };
 
     const AccentIcon = delta ? trendIcon[delta.trend] : null;
@@ -46,11 +46,10 @@ export const KpiCard: React.FC<KpiCardProps> = React.memo(
           'relative flex flex-col gap-[var(--spacing-md)] rounded-[var(--radius-l)] p-[var(--spacing-lg)] backdrop-blur-xl overflow-hidden transition-all duration-500',
           'hover:-translate-y-0.5 focus-within:outline-none focus-within:ring-2',
           isDarkMode 
-            ? 'border border-border bg-card/90 shadow-md hover:shadow-lg focus-within:shadow-lg' 
-            : 'border border-slate-300/60 bg-card/95 shadow-xl hover:shadow-2xl focus-within:shadow-2xl',
+            ? 'border border-border bg-card/90 shadow-md hover:shadow-lg focus-within:shadow-lg text-foreground' 
+            : 'border border-slate-300/60 bg-card/95 shadow-xl hover:shadow-2xl focus-within:shadow-2xl text-foreground',
           className
         )}
-        style={{ color: isDarkMode ? 'var(--glass-fg)' : 'var(--foreground)' }}
         role="group"
         data-component="kpi-card"
         aria-live="polite"

@@ -46,6 +46,11 @@
 }
 
 /* === Background Gradients === */
+.gradient-subtle,
+.bg-gradient-subtle {
+  @apply bg-gradient-to-br from-background via-secondary/10 to-background;
+}
+
 .gradient-bg-primary {
   @apply bg-gradient-to-br from-primary/5 to-primary/10;
 }
