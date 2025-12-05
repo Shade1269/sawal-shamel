@@ -130,9 +130,9 @@ export const AtlantisStatusWidget = ({ compact = false }: AtlantisStatusWidgetPr
 
           {/* Alliance Info */}
           {userAlliance && userMembership && (
-            <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-lg">
-              <Users className="h-4 w-4 text-blue-600" />
-              <span className="text-sm font-medium text-blue-800">
+            <div className="flex items-center gap-2 p-2 bg-info/10 rounded-lg">
+              <Users className="h-4 w-4 text-info" />
+              <span className="text-sm font-medium text-info">
                 {userAlliance.name}
               </span>
               <Badge variant="outline" className="text-xs">

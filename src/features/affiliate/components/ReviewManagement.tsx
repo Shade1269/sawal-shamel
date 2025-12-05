@@ -121,7 +121,7 @@ export const ReviewManagement: React.FC<ReviewManagementProps> = ({ storeId }) =
                           <div className="flex items-center gap-3 mb-2">
                             <span className="font-semibold">{review.profiles.full_name}</span>
                             {review.is_verified && (
-                              <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+                              <Badge className="bg-success/10 text-success border-success/20">
                                 <CheckCircle className="h-3 w-3 ml-1" />
                                 موثّق
                               </Badge>

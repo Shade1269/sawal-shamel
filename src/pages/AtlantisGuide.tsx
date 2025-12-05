@@ -44,18 +44,18 @@ const AtlantisGuide = () => {
           {/* Welcome Message */}
           <Card className="gradient-info">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-800">
+              <CardTitle className="flex items-center gap-2 text-info">
                 <Lightbulb className="h-6 w-6" />
                 مرحباً بك في دليل أتلانتس!
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-blue-700 mb-4">
+              <p className="text-info/80 mb-4">
                 هذا الدليل التفاعلي سيساعدك على فهم جميع ميزات نظام أتلانتس وكيفية الاستفادة منها بأفضل شكل ممكن.
               </p>
               <div className="flex items-center gap-2">
-                <PlayCircle className="h-5 w-5 text-blue-600" />
-                <span className="text-sm text-blue-600 font-medium">
+                <PlayCircle className="h-5 w-5 text-info" />
+                <span className="text-sm text-info font-medium">
                   اتبع الخطوات أدناه للبدء
                 </span>
               </div>

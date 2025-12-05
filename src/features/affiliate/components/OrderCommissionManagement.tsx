@@ -201,7 +201,7 @@ export const OrderCommissionManagement = ({ storeId }: OrderCommissionManagement
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-green-500" />
+              <DollarSign className="h-5 w-5 text-success" />
               <div>
                 <p className="text-sm text-muted-foreground">إجمالي العمولات</p>
                 <p className="text-2xl font-bold">{totalCommissions.toFixed(2)} ر.س</p>
@@ -213,7 +213,7 @@ export const OrderCommissionManagement = ({ storeId }: OrderCommissionManagement
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-blue-500" />
+              <CheckCircle className="h-5 w-5 text-info" />
               <div>
                 <p className="text-sm text-muted-foreground">العمولات المدفوعة</p>
                 <p className="text-2xl font-bold">{paidCommissions.toFixed(2)} ر.س</p>
@@ -225,7 +225,7 @@ export const OrderCommissionManagement = ({ storeId }: OrderCommissionManagement
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-yellow-500" />
+              <Clock className="h-5 w-5 text-warning" />
               <div>
                 <p className="text-sm text-muted-foreground">عمولات معلقة</p>
                 <p className="text-2xl font-bold">{pendingCommissions.toFixed(2)} ر.س</p>

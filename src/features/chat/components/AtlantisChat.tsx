@@ -197,7 +197,7 @@ const AtlantisChat = () => {
   const getRoleIcon = (role: string) => {
     switch (role) {
       case 'owner':
-        return <Crown className="h-3 w-3 text-yellow-500" />;
+        return <Crown className="h-3 w-3 text-premium" />;
       case 'admin':
         return <Shield className="h-3 w-3 text-destructive" />;
       case 'moderator':

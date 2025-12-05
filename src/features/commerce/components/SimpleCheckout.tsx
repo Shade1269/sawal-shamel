@@ -158,11 +158,11 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
     return (
       <Card className="w-full max-w-lg mx-auto">
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-          <div className="bg-green-100 rounded-full p-4 mb-6">
-            <CheckCircle className="h-12 w-12 text-green-600" />
+          <div className="bg-success/10 rounded-full p-4 mb-6">
+            <CheckCircle className="h-12 w-12 text-success" />
           </div>
           
-          <h3 className="text-xl font-bold text-green-800 mb-2">
+          <h3 className="text-xl font-bold text-success mb-2">
             تم إنشاء طلبك بنجاح!
           </h3>
           
@@ -176,12 +176,12 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
             </p>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 w-full">
+          <div className="bg-info/10 border border-info/20 rounded-lg p-4 mb-4 w-full">
             <div className="flex items-center gap-2 mb-2">
-              <Banknote className="h-5 w-5 text-blue-600" />
-              <span className="font-medium text-blue-800">الدفع عند الاستلام</span>
+              <Banknote className="h-5 w-5 text-info" />
+              <span className="font-medium text-info">الدفع عند الاستلام</span>
             </div>
-            <p className="text-sm text-blue-700">
+            <p className="text-sm text-info/80">
               سيتم تحصيل المبلغ عند وصول الطلب: <strong>{total} ريال</strong>
             </p>
           </div>

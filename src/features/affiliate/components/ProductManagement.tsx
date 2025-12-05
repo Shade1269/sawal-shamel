@@ -136,7 +136,7 @@ export const ProductManagement = ({ storeId }: ProductManagementProps) => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Eye className="h-5 w-5 text-green-500" />
+              <Eye className="h-5 w-5 text-success" />
               <div>
                 <p className="text-sm text-muted-foreground">منتجات ظاهرة</p>
                 <p className="text-2xl font-bold">{visibleProducts}</p>
@@ -148,7 +148,7 @@ export const ProductManagement = ({ storeId }: ProductManagementProps) => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5 text-blue-500" />
+              <ShoppingCart className="h-5 w-5 text-info" />
               <div>
                 <p className="text-sm text-muted-foreground">إجمالي المبيعات</p>
                 <p className="text-2xl font-bold">{totalSales}</p>

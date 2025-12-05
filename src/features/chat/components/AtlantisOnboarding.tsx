@@ -115,7 +115,7 @@ export const AtlantisOnboarding = () => {
     {
       title: "مرحباً بك في أتلانتس!",
       description: "نظام التحفيز والمنافسة للمسوقين",
-      icon: <Trophy className="h-8 w-8 text-yellow-500" />,
+      icon: <Trophy className="h-8 w-8 text-premium" />,
       content: (
         <div className="space-y-4">
           <p className="text-muted-foreground">
@@ -123,19 +123,19 @@ export const AtlantisOnboarding = () => {
           </p>
           <ul className="space-y-2">
             <li className="flex items-center gap-2">
-              <Star className="h-4 w-4 text-yellow-500" />
+              <Star className="h-4 w-4 text-premium" />
               <span>كسب النقاط من كل عملية بيع</span>
             </li>
             <li className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-blue-500" />
+              <Users className="h-4 w-4 text-info" />
               <span>الانضمام للتحالفات والمنافسة</span>
             </li>
             <li className="flex items-center gap-2">
-              <Target className="h-4 w-4 text-green-500" />
+              <Target className="h-4 w-4 text-success" />
               <span>المشاركة في التحديات الأسبوعية</span>
             </li>
             <li className="flex items-center gap-2">
-              <Trophy className="h-4 w-4 text-purple-500" />
+              <Trophy className="h-4 w-4 text-accent" />
               <span>الوصول لمستويات أعلى ومكافآت أكبر</span>
             </li>
           </ul>
@@ -145,7 +145,7 @@ export const AtlantisOnboarding = () => {
     {
       title: "نظام النقاط التلقائي",
       description: "كيف تكسب النقاط تلقائياً",
-      icon: <Star className="h-8 w-8 text-blue-500" />,
+      icon: <Star className="h-8 w-8 text-info" />,
       content: (
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -219,7 +219,7 @@ export const AtlantisOnboarding = () => {
     {
       title: "التأثيرات الصوتية",
       description: "أصوات تفاعلية لتحسين التجربة",
-      icon: <Volume2 className="h-8 w-8 text-green-500" />,
+      icon: <Volume2 className="h-8 w-8 text-success" />,
       content: (
         <div className="space-y-4">
           <p className="text-muted-foreground">
@@ -271,10 +271,10 @@ export const AtlantisOnboarding = () => {
           <Card className="bg-gradient-success">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Volume2 className="h-5 w-5 text-green-600" />
-                <h4 className="font-semibold text-green-800">تنبيه</h4>
+                <Volume2 className="h-5 w-5 text-success" />
+                <h4 className="font-semibold text-success">تنبيه</h4>
               </div>
-              <p className="text-sm text-green-700">
+              <p className="text-sm text-success/80">
                 تأكد من تشغيل الصوت في متصفحك للحصول على أفضل تجربة تفاعلية
               </p>
             </CardContent>

@@ -419,12 +419,12 @@ const AtlantisChatRooms = () => {
           <Card className="bg-gradient-info border-info/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-500 rounded-lg">
-                  <MessageCircle className="h-5 w-5 text-white" />
+                <div className="p-2 bg-info rounded-lg">
+                  <MessageCircle className="h-5 w-5 text-info-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm text-blue-600">إجمالي الغرف</p>
-                  <p className="text-2xl font-bold text-blue-700">{rooms.length}</p>
+                  <p className="text-sm text-info">إجمالي الغرف</p>
+                  <p className="text-2xl font-bold text-info">{rooms.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -433,12 +433,12 @@ const AtlantisChatRooms = () => {
           <Card className="bg-gradient-success border-success/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-500 rounded-lg">
-                  <Users className="h-5 w-5 text-white" />
+                <div className="p-2 bg-success rounded-lg">
+                  <Users className="h-5 w-5 text-success-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm text-green-600">إجمالي الأعضاء</p>
-                  <p className="text-2xl font-bold text-green-700">
+                  <p className="text-sm text-success">إجمالي الأعضاء</p>
+                  <p className="text-2xl font-bold text-success">
                     {rooms.reduce((sum, room) => sum + (room.member_count || 0), 0)}
                   </p>
                 </div>

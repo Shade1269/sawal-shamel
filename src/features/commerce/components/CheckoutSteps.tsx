@@ -556,7 +556,7 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
                     <span>{subtotal.toFixed(2)} ر.س</span>
                   </div>
                   {appliedCoupon && discountAmount > 0 && (
-                    <div className="flex justify-between text-green-600 font-medium">
+                    <div className="flex justify-between text-success font-medium">
                       <span className="flex items-center gap-1">
                         <Tag className="h-4 w-4" />
                         الخصم ({appliedCoupon.coupon_code}):
@@ -608,7 +608,7 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
               ) : (
                 <Button 
                   onClick={handleComplete}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-success hover:bg-success/90 text-success-foreground"
                 >
                   تأكيد الطلب
                   <CheckCircle className="h-4 w-4 mr-2" />

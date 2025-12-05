@@ -179,7 +179,7 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
                     تم إرسال الكود إلى {phone}
                   </p>
                   {generatedOTP && (
-                    <p className="text-xs text-green-600 text-center bg-green-50 p-2 rounded">
+                    <p className="text-xs text-success text-center bg-success/10 p-2 rounded">
                       كود التحقق للاختبار: {generatedOTP}
                     </p>
                   )}

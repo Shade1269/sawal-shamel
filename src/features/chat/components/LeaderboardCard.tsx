@@ -38,9 +38,9 @@ export const LeaderboardCard = ({ entry, position }: LeaderboardCardProps) => {
 
   const getRankChangeIndicator = (change: number) => {
     if (change > 0) {
-      return <TrendingUp className="h-4 w-4 text-green-500" />;
+      return <TrendingUp className="h-4 w-4 text-success" />;
     } else if (change < 0) {
-      return <TrendingDown className="h-4 w-4 text-red-500" />;
+      return <TrendingDown className="h-4 w-4 text-destructive" />;
     }
     return null;
   };
@@ -110,7 +110,7 @@ export const LeaderboardCard = ({ entry, position }: LeaderboardCardProps) => {
                   <div className="flex items-center space-x-1">
                     {getRankChangeIndicator(entry.rank_change)}
                     <span className={`text-xs ${
-                      entry.rank_change > 0 ? 'text-green-600' : 'text-red-600'
+                      entry.rank_change > 0 ? 'text-success' : 'text-destructive'
                     }`}>
                       {Math.abs(entry.rank_change)}
                     </span>
@@ -145,7 +145,7 @@ export const LeaderboardCard = ({ entry, position }: LeaderboardCardProps) => {
             </div>
 
             {entry.bonus_earned > 0 && (
-              <div className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+              <div className="text-xs bg-success/10 text-success px-2 py-1 rounded-full">
                 مكافأة: +{formatNumber(entry.bonus_earned)} نقطة
               </div>
             )}
