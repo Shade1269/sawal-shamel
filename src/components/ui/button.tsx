@@ -10,13 +10,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         // Primary Button - عنابي ملكي
-        default: "bg-primary text-primary-foreground hover:bg-[hsl(310,38%,30%)] active:bg-[hsl(323,57%,16%)] shadow-anaqati hover:shadow-anaqati-hover",
+        default: "bg-anaqati-burgundy text-white hover:bg-anaqati-burgundy-hover active:bg-anaqati-burgundy-active shadow-anaqati hover:shadow-anaqati-hover",
         // Destructive/Danger Button - أحمر
-        destructive: "bg-danger text-white hover:bg-danger/90 active:bg-danger/80",
+        destructive: "bg-anaqati-danger text-white hover:opacity-90 active:opacity-80",
         // Outline/Secondary Button - شفاف مع إطار عنابي
-        outline: "border-2 border-primary bg-transparent text-primary hover:bg-secondary hover:border-secondary active:bg-secondary/80",
+        outline: "border-2 border-anaqati-burgundy bg-transparent text-anaqati-burgundy hover:bg-anaqati-pink hover:border-anaqati-pink active:bg-anaqati-pink-hover",
         // Secondary Button - زهري بودري
-        secondary: "bg-secondary text-secondary-foreground hover:bg-[hsl(0,50%,80%)] active:bg-[hsl(0,50%,75%)]",
+        secondary: "bg-anaqati-pink text-anaqati-burgundy hover:bg-anaqati-pink-hover active:opacity-80",
         // Ghost Button - شفاف
         ghost: "bg-transparent text-foreground hover:bg-[hsl(15,50%,96%)] active:bg-[hsl(15,50%,94%)]",
         // Link Button
