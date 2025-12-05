@@ -122,7 +122,7 @@ export default function AffiliateCommissionsPage() {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-yellow-600">{pendingCommissions.toFixed(2)} ر.س</div>
+            <div className="text-2xl font-bold text-warning">{pendingCommissions.toFixed(2)} ر.س</div>
             <p className="text-xs text-muted-foreground">
               {commissions?.filter(c => c.status === 'PENDING').length || 0} عمولة
             </p>

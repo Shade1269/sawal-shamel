@@ -17,10 +17,10 @@ const AffiliateSubscriptionPage = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      active: { label: 'نشط', variant: 'success' as const, icon: CheckCircle2, color: 'text-green-500' },
+      active: { label: 'نشط', variant: 'success' as const, icon: CheckCircle2, color: 'text-success' },
       inactive: { label: 'غير نشط', variant: 'secondary' as const, icon: XCircle, color: 'text-muted-foreground' },
-      expired: { label: 'منتهي', variant: 'error' as const, icon: XCircle, color: 'text-red-500' },
-      pending: { label: 'قيد المعالجة', variant: 'outline' as const, icon: Clock, color: 'text-yellow-500' }
+      expired: { label: 'منتهي', variant: 'error' as const, icon: XCircle, color: 'text-destructive' },
+      pending: { label: 'قيد المعالجة', variant: 'outline' as const, icon: Clock, color: 'text-warning' }
     };
 
     const config = statusConfig[status as keyof typeof statusConfig];

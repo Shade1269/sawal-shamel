@@ -528,12 +528,12 @@ const RefundManagement = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">طلبات جديدة</p>
-                <p className="text-2xl font-bold text-yellow-600">
+                <p className="text-2xl font-bold text-warning">
                   {refunds.filter(r => r.status === 'REQUESTED').length}
                 </p>
               </div>
-              <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center">
-                <Clock className="h-5 w-5 text-yellow-600" />
+              <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
+                <Clock className="h-5 w-5 text-warning" />
               </div>
             </div>
           </CardContent>

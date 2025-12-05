@@ -56,10 +56,10 @@ const MerchantOrders = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending: { label: 'قيد الانتظار', color: 'bg-yellow-500/10 text-yellow-600', icon: Clock },
-      confirmed: { label: 'مؤكد', color: 'bg-blue-500/10 text-blue-600', icon: Package },
-      delivered: { label: 'تم التسليم', color: 'bg-green-500/10 text-green-600', icon: CheckCircle },
-      cancelled: { label: 'ملغي', color: 'bg-red-500/10 text-red-600', icon: XCircle }
+      pending: { label: 'قيد الانتظار', color: 'bg-warning/10 text-warning', icon: Clock },
+      confirmed: { label: 'مؤكد', color: 'bg-info/10 text-info', icon: Package },
+      delivered: { label: 'تم التسليم', color: 'bg-success/10 text-success', icon: CheckCircle },
+      cancelled: { label: 'ملغي', color: 'bg-destructive/10 text-destructive', icon: XCircle }
     };
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
@@ -101,7 +101,7 @@ const MerchantOrders = () => {
             <UnifiedCardTitle className="text-sm font-medium">قيد الانتظار</UnifiedCardTitle>
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+            <div className="text-2xl font-bold text-warning">{stats.pending}</div>
           </UnifiedCardContent>
         </UnifiedCard>
         <UnifiedCard variant="glass">
@@ -109,7 +109,7 @@ const MerchantOrders = () => {
             <UnifiedCardTitle className="text-sm font-medium">مؤكدة</UnifiedCardTitle>
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.confirmed}</div>
+            <div className="text-2xl font-bold text-info">{stats.confirmed}</div>
           </UnifiedCardContent>
         </UnifiedCard>
         <UnifiedCard variant="glass">

@@ -71,7 +71,7 @@ const themes: ExtendedTheme[] = [
   },
   {
     ...legendaryTheme,
-    icon: <Crown className="h-5 w-5 text-yellow-400" />,
+    icon: <Crown className="h-5 w-5 text-warning" />,
     preview: "bg-gradient-premium",
     description: "ثيم أسطوري حصري للمسوقات المتميزات",
     isPremium: true,
@@ -161,13 +161,13 @@ export const ThemeSelector = ({ storeId, currentTheme, onThemeChange }: ThemeSel
                   </div>
                   <div className="flex items-center gap-2">
                     {theme.isPremium && (
-                      <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                      <Badge variant="secondary" className="bg-warning/20 text-warning">
                         <Crown className="h-3 w-3 mr-1" />
                         حصري
                       </Badge>
                     )}
                     {selectedTheme === theme.id && (
-                      <Badge className="bg-green-100 text-green-800">
+                      <Badge className="bg-success/20 text-success">
                         <Check className="h-3 w-3 mr-1" />
                         مُطبق
                       </Badge>

@@ -124,7 +124,7 @@ export const AtlantisSystem = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           <EnhancedCard variant="success" className="gradient-card-accent">
             <EnhancedCardHeader>
-              <EnhancedCardTitle className="flex items-center gap-2 text-purple-800">
+              <EnhancedCardTitle className="flex items-center gap-2 text-accent">
                 <Star className="h-5 w-5" />
                 نظام النقاط
               </EnhancedCardTitle>

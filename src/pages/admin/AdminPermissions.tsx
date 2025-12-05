@@ -71,7 +71,7 @@ const AdminPermissions = () => {
     customer: {
       name: 'عميل',
       icon: ShoppingCart,
-      color: 'text-gray-600',
+      color: 'text-muted-foreground',
       permissions: {
         users_manage: false,
         products_manage: false,
