@@ -248,7 +248,7 @@ const AuthPage = () => {
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full h-12 text-base font-bold rounded-xl bg-anaqati-burgundy hover:bg-anaqati-burgundy-hover text-white shadow-anaqati" disabled={isLoading}>
+                  <Button type="submit" className="w-full h-12 text-base font-bold rounded-xl bg-[#5A2647] hover:bg-[#743366] !text-white shadow-anaqati" disabled={isLoading}>
                     <UserPlus className="ml-2 h-5 w-5" />
                     متابعة
                   </Button>
