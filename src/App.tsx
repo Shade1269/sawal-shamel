@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from "react";
-import { BrowserRouter, Navigate, Route, Routes, Outlet } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
@@ -19,7 +19,7 @@ import AffiliateLayout from "@/layouts/ModernAffiliateLayout";
 import AdminLayout from "@/layouts/AdminLayout";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
-import { CustomerAuthProvider } from "@/contexts/CustomerAuthContext";
+// CustomerAuthProvider available for store routes if needed
 
 const HomePage = lazy(() => import("./pages/Index"));
 import AuthPage from "./features/auth/components/AuthPage"
@@ -27,7 +27,7 @@ const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPasswordPage"));
 const AuthCallbackPage = lazy(() => import("./pages/auth/AuthCallbackPage"));
 const StorefrontIntegration = lazy(() => import("./pages/public-storefront/StorefrontIntegration"));
 const StorefrontPage = lazy(() => import("./pages/public-storefront/StorefrontPage"));
-const StorefrontCheckout = lazy(() => import("./pages/storefront/StorefrontCheckout"));
+// StorefrontCheckout available via lazy import if needed
 const ProductsBrowser = lazy(() => import("./pages/ProductsBrowser"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const OrderConfirmationPage = lazy(() => import("./pages/OrderConfirmationSimple"));
@@ -37,13 +37,13 @@ const AffiliateStoreFront = lazy(() => import("./pages/AffiliateStoreFront"));
 const AffiliateStoreSettingsPage = lazy(() => import("./pages/affiliate/store/Settings"));
 const StoreSetup = lazy(() => import("./pages/affiliate/store/StoreSetup"));
 const StoreAuth = lazy(() => import("./pages/StoreAuth"));
-const CustomerOrders = lazy(() => import("./pages/customer/CustomerOrders"));
+// CustomerOrders available via lazy import if needed
 const AffiliateAnalyticsPage = lazy(() => import("./pages/affiliate/AffiliateCommissionsPage"));
 const AffiliateSubscriptionPage = lazy(() => import("./pages/affiliate/Subscription"));
 
 // Isolated Store Components
 const IsolatedStoreLayout = lazy(() => import("@/components/store/IsolatedStoreLayout").then(m => ({ default: m.IsolatedStoreLayout })));
-const IsolatedStorefront = lazy(() => import("./pages/storefront/IsolatedStorefront").then(m => ({ default: m.IsolatedStorefront })));
+// IsolatedStorefront available via lazy import if needed
 const IsolatedStoreCart = lazy(() => import("./pages/storefront/IsolatedStoreCart").then(m => ({ default: m.IsolatedStoreCart })));
 const IsolatedStoreCheckout = lazy(() => import("./pages/storefront/IsolatedStoreCheckout").then(m => ({ default: m.IsolatedStoreCheckout })));
 const WalletPage = lazy(() => import("./pages/affiliate/WalletPage"));

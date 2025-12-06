@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
@@ -12,8 +12,6 @@ import {
   Plus, 
   RotateCcw, 
   Package, 
-  Calendar,
-  ShoppingCart,
   AlertTriangle,
   CheckCircle,
   Clock
@@ -24,27 +22,28 @@ import { useToast } from '@/hooks/use-toast';
 
 interface ReturnItem {
   id: string;
-  affiliate_id: string;
+  affiliate_id: string | null;
   commission_deducted: number;
   created_at: string;
-  notes: string;
+  notes: string | null;
   order_id: string;
   order_number: string;
   processed_by: string;
   return_date: string;
   return_number: string;
-  return_reason: string;
-  return_type: string;
+  return_reason: string | null;
+  return_type: string | null;
   status: string;
   total_returned_amount: number;
+  order_hub_id?: string | null;
 }
 
 export const ReturnsManagement: React.FC = () => {
-  const { productVariants, loading } = useInventoryManagement();
+  const { loading } = useInventoryManagement();
   const { toast } = useToast();
 
   const [showDialog, setShowDialog] = useState(false);
-  const [returns, setReturns] = useState<ReturnItem[]>([]);
+  const [, setReturns] = useState<ReturnItem[]>([]);
 
   // Function to fetch returns from database
   const fetchReturns = async () => {
