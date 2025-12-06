@@ -9,10 +9,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Primary Button - عنابي ملكي
-        default: "bg-anaqati-burgundy text-white hover:bg-anaqati-burgundy-hover active:bg-anaqati-burgundy-active shadow-anaqati hover:shadow-anaqati-hover",
+        // Primary Button - عنابي ملكي - النص أبيض دائماً
+        default: "bg-[#5A2647] !text-white hover:bg-[#743366] active:bg-[#401132] shadow-anaqati hover:shadow-anaqati-hover",
         // Destructive/Danger Button - أحمر
-        destructive: "bg-anaqati-danger text-white hover:opacity-90 active:opacity-80",
+        destructive: "bg-anaqati-danger !text-white hover:opacity-90 active:opacity-80",
         // Outline/Secondary Button - شفاف مع إطار عنابي
         outline: "border-2 border-anaqati-burgundy bg-transparent text-anaqati-burgundy hover:bg-anaqati-pink hover:border-anaqati-pink active:bg-anaqati-pink-hover",
         // Secondary Button - زهري بودري
