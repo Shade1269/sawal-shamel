@@ -19,14 +19,8 @@ export const cleanExpiredSession = (sessionKey: string): boolean => {
     const parsedData: SessionData = JSON.parse(sessionData);
     const currentTime = Date.now();
     
-    // فحص انتهاء الصلاحية
+    // فحص انتهاء الصلاحية فقط (الجلسات القديمة تبقى دائمة)
     if (parsedData.expiresAt && currentTime > parsedData.expiresAt) {
-      localStorage.removeItem(sessionKey);
-      return true;
-    }
-
-    // فحص الجلسات القديمة جداً (أكثر من 30 يوم)
-    if (parsedData.createdAt && (currentTime - parsedData.createdAt) > (30 * 24 * 60 * 60 * 1000)) {
       localStorage.removeItem(sessionKey);
       return true;
     }
