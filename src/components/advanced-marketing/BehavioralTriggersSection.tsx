@@ -15,7 +15,6 @@ import {
   Target,
   Clock,
   Eye,
-  MousePointer,
   ShoppingCart,
   UserCheck
 } from 'lucide-react';

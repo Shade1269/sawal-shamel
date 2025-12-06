@@ -5,9 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UnifiedBadge } from '@/components/design-system';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { 
-  User, 
+  User,
   Edit3, 
   Save, 
   X, 
@@ -24,7 +24,6 @@ import {
 } from 'lucide-react';
 import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 import { useFastAuth } from '@/hooks/useFastAuth';
@@ -54,7 +53,6 @@ interface CustomerOrder {
 
 export const CustomerProfile: React.FC = () => {
   const { customer, updateCustomerProfile, signOut, isLoading } = useCustomerAuth();
-  const { toast } = useToast();
   const { goToUserHome } = useSmartNavigation();
   const { profile } = useFastAuth();
   
@@ -350,7 +348,7 @@ export const CustomerProfile: React.FC = () => {
                           </div>
                         </div>
                         <div className="text-left">
-                          <div className="font-bold">{order.total_sar.toFixed(2)} ر.س</div>
+                          <div className="font-bold">{(order.total_sar || 0).toFixed(2)} ر.س</div>
                           <UnifiedBadge variant="secondary">{order.status}</UnifiedBadge>
                         </div>
                       </div>

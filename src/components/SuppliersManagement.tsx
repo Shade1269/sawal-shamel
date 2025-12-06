@@ -27,12 +27,12 @@ import { useToast } from '@/hooks/use-toast';
 interface Supplier {
   id: string;
   supplier_name: string;
-  email: string;
-  phone: string;
-  address: string;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
   is_active: boolean;
-  notes: string;
-  payment_terms: string;
+  notes: string | null;
+  payment_terms: string | null;
   supplier_number: string;
   created_at: string;
   updated_at: string;
@@ -44,7 +44,7 @@ export const SuppliersManagement: React.FC = () => {
 
   const [showDialog, setShowDialog] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
-  const [suppliersList, setSuppliersList] = useState<Supplier[]>([]);
+  const [_suppliersList, setSuppliersList] = useState<Supplier[]>([]);
 
   // Function to fetch suppliers from database
   const fetchSuppliers = async () => {

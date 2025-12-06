@@ -14,12 +14,11 @@ import {
   Package,
   Instagram,
   Facebook,
-  Twitter,
   Phone,
   Mail
 } from 'lucide-react';
 import { SimpleCart } from '@/features/commerce';
-import { getLevelClasses, getGradientClasses } from '@/utils/themeHelpers';
+import { getGradientClasses } from '@/utils/themeHelpers';
 
 interface StoreHeaderProps {
   store: {

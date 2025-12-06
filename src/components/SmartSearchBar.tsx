@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent } from '@/components/design-system';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import {
   Search,
   Clock,
@@ -15,8 +14,7 @@ import {
   Package,
   MessageSquare,
   X,
-  ArrowRight,
-  Filter
+  ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
@@ -70,7 +68,7 @@ const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
   maxResults = 20
 }) => {
   const navigate = useNavigate();
-  const { profile, isAuthenticated } = useFastAuth();
+  const { isAuthenticated } = useFastAuth();
   
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -148,9 +146,9 @@ const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
             searchResults.push({
               id: profile.id,
               type: 'user',
-              title: profile.full_name,
-              description: profile.role,
-              image: profile.avatar_url,
+              title: profile.full_name || 'مستخدم',
+              description: profile.role || undefined,
+              image: profile.avatar_url || undefined,
               url: `/user/${profile.id}`
             });
           });
@@ -173,7 +171,7 @@ const SmartSearchBar: React.FC<SmartSearchBarProps> = ({
               type: 'alliance',
               title: alliance.name,
               description: `${alliance.member_count} عضو`,
-              image: alliance.logo_url,
+              image: alliance.logo_url || undefined,
               url: `/alliance/${alliance.id}`
             });
           });

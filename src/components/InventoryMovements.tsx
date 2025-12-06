@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { useState } from 'react';
+import { UnifiedCard, UnifiedCardContent } from '@/components/design-system';
 import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -57,7 +57,7 @@ export const InventoryMovements: React.FC = () => {
       const movementNumber = `MOV-${Date.now()}`;
       
       // Create inventory movement
-      const { data: movement, error } = await supabase
+      const { error } = await supabase
         .from('inventory_movements')
         .insert({
           movement_number: movementNumber,

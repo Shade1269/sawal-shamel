@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedCard, UnifiedCardContent } from '@/components/design-system';
 import { UnifiedButton } from '@/components/design-system';
@@ -9,9 +9,6 @@ import { Separator } from '@/components/ui/separator';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { 
@@ -21,14 +18,10 @@ import {
   CheckCheck,
   ShoppingBag,
   DollarSign,
-  Users,
   Award,
   MessageSquare,
   AlertTriangle,
-  Info,
-  Star,
-  Gift,
-  TrendingUp
+  Info
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';

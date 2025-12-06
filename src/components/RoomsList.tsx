@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedBadge as Badge } from '@/components/design-system';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Hash, Lock, Users, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -104,7 +103,7 @@ const RoomsList = () => {
     }
   };
 
-  const getChannelIcon = (type: string, isLocked?: boolean) => {
+  const getChannelIcon = (_type: string, isLocked?: boolean) => {
     if (isLocked) return <Lock className="h-4 w-4" />;
     return <Hash className="h-4 w-4" />;
   };
@@ -148,7 +147,7 @@ const RoomsList = () => {
             <Card key={channel.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  {getChannelIcon(channel.type, channel.is_locked)}
+                  {getChannelIcon(channel.type, channel.is_locked ?? undefined)}
                   <span className="truncate">{channel.name}</span>
                   {channel.is_locked && (
                     <Badge variant="secondary" className="text-xs">

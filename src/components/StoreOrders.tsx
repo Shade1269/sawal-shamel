@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { useState } from 'react';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent } from '@/components/design-system';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { useToast } from '@/hooks/use-toast';
-import { Package, Phone, MapPin, User, DollarSign, Clock, CheckCircle, XCircle, Loader2, Eye } from 'lucide-react';
+import { Package, Phone, User, DollarSign, Clock, CheckCircle, Eye } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUnifiedOrdersStats, useUnifiedOrders } from '@/hooks/useUnifiedOrders';
@@ -90,8 +90,10 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
   };
 
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         order.customer_phone.includes(searchQuery) ||
+    const customerName = order.customer_name || '';
+    const customerPhone = order.customer_phone || '';
+    const matchesSearch = customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         customerPhone.includes(searchQuery) ||
                          order.id.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = selectedStatus === 'all' || order.status === selectedStatus;
     return matchesSearch && matchesStatus;
@@ -344,7 +346,7 @@ export const StoreOrders: React.FC<StoreOrdersProps> = ({ shopId }) => {
                     </Button>
                   )}
                   <Select
-                    value={order.status}
+                    value={order.status || undefined}
                     onValueChange={(value) => updateStatus(order.id, value)}
                   >
                     <SelectTrigger className="w-32">

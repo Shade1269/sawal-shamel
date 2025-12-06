@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAtlantisSystem } from '@/hooks/useAtlantisSystem';
 import { Star, Trophy, TrendingUp, Target, Award } from 'lucide-react';
-import { getLevelClasses, getGradientClasses } from '@/utils/themeHelpers';
+import { getGradientClasses } from '@/utils/themeHelpers';
 
 export const UserProgressCard = () => {
   const { userLevel, userAlliance, userMembership } = useAtlantisSystem();

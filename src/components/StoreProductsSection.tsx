@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Package, Trash2, Star, Plus, Eye, EyeOff, DollarSign } from 'lucide-react';
+import { Package, Trash2, Star, Eye, EyeOff, DollarSign } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useUserDataContext } from '@/contexts/UserDataContext';
@@ -89,7 +88,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
     }
   };
 
-  const removeFromStore = async (productLibraryId: string) => {
+  const removeFromStore = async (_productLibraryId: string) => {
     try {
       // This would need to be implemented in Firestore
       toast({
@@ -108,7 +107,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
     }
   };
 
-  const toggleFeatured = async (productLibraryId: string, currentFeatured: boolean) => {
+  const toggleFeatured = async (_productLibraryId: string, currentFeatured: boolean) => {
     try {
       // This would need to be implemented in Firestore
       toast({
@@ -127,7 +126,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
     }
   };
 
-  const toggleVisibility = async (productLibraryId: string, currentVisible: boolean) => {
+  const toggleVisibility = async (_productLibraryId: string, currentVisible: boolean) => {
     try {
       // This would need to be implemented in Firestore
       toast({
@@ -146,7 +145,7 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
     }
   };
 
-  const updateCommission = async (productLibraryId: string, commissionAmount: number) => {
+  const updateCommission = async (productLibraryId: string, _commissionAmount: number) => {
     try {
       // This would need to be implemented in Firestore
       toast({

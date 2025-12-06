@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
-import { UnifiedButton as Button } from '@/components/design-system';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { 
@@ -14,10 +13,9 @@ import {
   Globe,
   Smartphone,
   Monitor,
-  Tablet,
-  Calendar
+  Tablet
 } from 'lucide-react';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export const AdvancedAnalyticsSection: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('7d');
