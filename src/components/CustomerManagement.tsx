@@ -128,7 +128,7 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
         const totalCustomers = customersData.length;
         const activeCustomers = customersData.filter(c => c.customer_status === 'active').length;
         const newCustomersThisMonth = customersData.filter(c => 
-          new Date(c.first_purchase_at) >= startOfMonth
+          c.first_purchase_at && new Date(c.first_purchase_at) >= startOfMonth
         ).length;
         const totalRevenue = customersData.reduce((sum, c) => sum + (c.total_spent_sar || 0), 0);
         const averageOrderValue = totalCustomers > 0 ? totalRevenue / totalCustomers : 0;

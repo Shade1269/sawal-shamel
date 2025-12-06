@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
+import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,13 +13,9 @@ import {
   AlertTriangle, 
   Lightbulb, 
   Sparkles, 
-  Wand2, 
-  ArrowRight,
+  Wand2,
   Save,
-  RefreshCw,
-  Copy,
-  Eye,
-  EyeOff
+  RefreshCw
 } from 'lucide-react';
 import { EnhancedCard } from '@/components/ui/enhanced-card';
 import { useSmartForm } from '@/hooks/useAIComponents';
@@ -43,11 +39,11 @@ export const SmartForms: React.FC<SmartFormsProps> = ({
   const {
     fieldSuggestions,
     validationResults,
-    autoCompletedFields,
+    autoCompletedFields: _autoCompletedFields,
     getFieldSuggestions,
     validateField,
     autoCompleteField,
-    isEnabled
+    isEnabled: _isEnabled
   } = useSmartForm({
     enabled: true,
     autoComplete: true,

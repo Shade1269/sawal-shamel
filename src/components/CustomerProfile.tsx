@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -189,7 +189,7 @@ export const CustomerProfile: React.FC = () => {
               
               <div className="text-center sm:text-right">
                 <UnifiedCardTitle className="text-xl sm:text-2xl">{customer.full_name}</UnifiedCardTitle>
-                <UnifiedCardDescription className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2 text-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2 text-sm text-muted-foreground">
                   <span className="flex items-center justify-center sm:justify-start gap-1">
                     <Phone className="w-3 h-3 sm:w-4 sm:h-4" />
                     {customer.phone}
@@ -200,7 +200,7 @@ export const CustomerProfile: React.FC = () => {
                       {customer.email}
                     </span>
                   )}
-                </UnifiedCardDescription>
+                </div>
               </div>
             </div>
 

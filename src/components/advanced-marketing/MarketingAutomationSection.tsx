@@ -12,21 +12,17 @@ import {
   Mail, 
   Plus, 
   Settings, 
-  Play, 
-  Pause, 
-  Calendar,
   Users,
   TrendingUp,
-  Clock,
   Target,
   Workflow
 } from 'lucide-react';
 import { useMarketingCampaigns, MarketingCampaign } from '@/hooks/useAdvancedMarketing';
 
 export const MarketingAutomationSection: React.FC = () => {
-  const { campaigns, createCampaign, updateCampaign, isCreating, isUpdating } = useMarketingCampaigns();
+  const { campaigns, createCampaign, updateCampaign, isCreating, isUpdating: _isUpdating } = useMarketingCampaigns();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedCampaign, setSelectedCampaign] = useState<MarketingCampaign | null>(null);
+  const [_selectedCampaign, setSelectedCampaign] = useState<MarketingCampaign | null>(null);
   const [newCampaignData, setNewCampaignData] = useState({
     name: '',
     description: '',
@@ -312,7 +308,7 @@ export const MarketingAutomationSection: React.FC = () => {
                     <Switch
                       checked={campaign.is_active}
                       onCheckedChange={(checked) => handleToggleCampaign(campaign.id, checked)}
-                      disabled={isUpdating}
+                      disabled={_isUpdating}
                     />
                     
                     <Button variant="outline" size="sm">

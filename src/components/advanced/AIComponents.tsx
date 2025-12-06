@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { useState } from 'react';
+import { UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { UnifiedBadge as Badge } from '@/components/design-system';

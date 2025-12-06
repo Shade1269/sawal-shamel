@@ -21,10 +21,16 @@ import {
 import { useBehavioralTriggers, BehavioralTrigger } from '@/hooks/useAdvancedMarketing';
 
 export const BehavioralTriggersSection: React.FC = () => {
-  const { triggers, createTrigger, updateTrigger, isCreating, isUpdating } = useBehavioralTriggers();
+  const { triggers, createTrigger, updateTrigger, isCreating, isUpdating: _isUpdating } = useBehavioralTriggers();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedTrigger, setSelectedTrigger] = useState<BehavioralTrigger | null>(null);
-  const [newTriggerData, setNewTriggerData] = useState({
+  const [_selectedTrigger, setSelectedTrigger] = useState<BehavioralTrigger | null>(null);
+  const [newTriggerData, setNewTriggerData] = useState<{
+    trigger_name: string;
+    trigger_description: string;
+    conditions: Record<string, unknown>;
+    actions: Array<{ type: string; [key: string]: unknown }>;
+    is_active: boolean;
+  }>({
     trigger_name: '',
     trigger_description: '',
     conditions: {},
@@ -357,7 +363,7 @@ export const BehavioralTriggersSection: React.FC = () => {
                     <Switch
                       checked={trigger.is_active}
                       onCheckedChange={(checked) => handleToggleTrigger(trigger.id, checked)}
-                      disabled={isUpdating}
+                      disabled={_isUpdating}
                     />
                     
                     <Button variant="outline" size="sm">

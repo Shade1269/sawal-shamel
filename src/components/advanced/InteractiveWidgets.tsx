@@ -148,7 +148,7 @@ const InteractiveWidget: React.FC<{
 };
 
 export const InteractiveWidgets: React.FC = () => {
-  const { patterns } = useDesignSystem();
+  const { patterns: _patterns } = useDesignSystem();
   const [widgets, setWidgets] = useState<WidgetProps[]>([
     {
       id: '1',

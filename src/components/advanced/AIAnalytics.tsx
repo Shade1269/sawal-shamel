@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Brain, TrendingUp, Zap, Target, Sparkles, BarChart3 } from 'lucide-react';
 import { EnhancedCard, EnhancedCardContent, EnhancedCardHeader, EnhancedCardTitle } from '@/components/ui/enhanced-card';
 import { Badge } from '@/components/ui/badge';
@@ -38,9 +38,9 @@ const mockData = [
 ];
 
 export const AIAnalytics: React.FC = () => {
-  const { patterns, colors } = useDesignSystem();
+  const { patterns, colors: _colors } = useDesignSystem();
   
-  const [insights, setInsights] = useState<AIInsight[]>([
+  const [insights, _setInsights] = useState<AIInsight[]>([
     {
       id: '1',
       type: 'prediction',
