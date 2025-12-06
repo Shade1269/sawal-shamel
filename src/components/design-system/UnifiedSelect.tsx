@@ -15,26 +15,26 @@ const unifiedSelectTriggerVariants = cva(
     variants: {
       variant: {
         default: [
-          'bg-white border border-[hsl(20_30%_87%)] text-foreground',
+          'bg-background border border-border text-foreground',
           'hover:border-primary/50',
           'focus:border-primary focus:ring-[3px] focus:ring-primary/10',
           'data-[state=open]:border-primary data-[state=open]:ring-[3px] data-[state=open]:ring-primary/10',
         ].join(' '),
         glass: [
-          'bg-white/80 backdrop-blur-md border border-[hsl(20_30%_87%)]/50 text-foreground',
-          'hover:bg-white/90 hover:border-primary/50',
+          'bg-background/80 backdrop-blur-md border border-border/50 text-foreground',
+          'hover:bg-background/90 hover:border-primary/50',
           'focus:border-primary focus:ring-[3px] focus:ring-primary/15',
         ].join(' '),
         elevated: [
-          'bg-white border border-[hsl(20_30%_87%)] text-foreground',
-          'shadow-[0_2px_8px_hsl(320_42%_25%/0.06)]',
-          'hover:shadow-[0_4px_16px_hsl(320_42%_25%/0.1)] hover:border-primary/50',
-          'focus:shadow-[0_4px_16px_hsl(320_42%_25%/0.1)] focus:border-primary',
+          'bg-background border border-border text-foreground',
+          'shadow-md',
+          'hover:shadow-lg hover:border-primary/50',
+          'focus:shadow-lg focus:border-primary',
         ].join(' '),
         luxury: [
-          'bg-gradient-to-br from-white to-[hsl(20_60%_98%)] border border-[hsl(20_30%_87%)]/50 text-foreground',
-          'shadow-[0_4px_20px_hsl(320_42%_25%/0.08)]',
-          'hover:shadow-[0_6px_24px_hsl(320_42%_25%/0.12)] hover:border-primary/50',
+          'bg-gradient-to-br from-background to-muted border border-border/50 text-foreground',
+          'shadow-lg',
+          'hover:shadow-xl hover:border-primary/50',
           'focus:border-primary',
         ].join(' '),
       },
@@ -70,7 +70,7 @@ const UnifiedSelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 text-[hsl(43_54%_51%)] transition-transform duration-200" />
+      <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -88,7 +88,7 @@ const UnifiedSelectScrollUpButton = React.forwardRef<
     )}
     {...props}
   >
-    <ChevronUp className="h-4 w-4" />
+    <ChevronUp className="h-4 w-4 text-muted-foreground" />
   </SelectPrimitive.ScrollUpButton>
 ));
 UnifiedSelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
@@ -105,7 +105,7 @@ const UnifiedSelectScrollDownButton = React.forwardRef<
     )}
     {...props}
   >
-    <ChevronDown className="h-4 w-4" />
+    <ChevronDown className="h-4 w-4 text-muted-foreground" />
   </SelectPrimitive.ScrollDownButton>
 ));
 UnifiedSelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
@@ -118,9 +118,9 @@ const UnifiedSelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden',
-        'rounded-lg border border-[hsl(20_30%_87%)] bg-white',
-        'shadow-[0_8px_30px_hsl(320_42%_25%/0.08)]',
+        'relative z-[100] max-h-96 min-w-[8rem] overflow-hidden',
+        'rounded-lg border border-border bg-popover text-popover-foreground',
+        'shadow-lg',
         'data-[state=open]:animate-in data-[state=closed]:animate-out',
         'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
@@ -153,7 +153,7 @@ const UnifiedSelectLabel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn('px-2 py-1.5 text-sm font-semibold text-foreground', className)}
+    className={cn('px-2 py-1.5 text-sm font-semibold text-popover-foreground', className)}
     {...props}
   />
 ));
@@ -168,15 +168,15 @@ const UnifiedSelectItem = React.forwardRef<
     className={cn(
       'relative flex w-full cursor-pointer select-none items-center',
       'rounded-md py-2.5 pl-8 pr-3 text-sm outline-none',
-      'text-foreground bg-white',
-      'hover:bg-[hsl(0_60%_97%)] hover:text-primary',
-      'focus:bg-[hsl(0_60%_97%)] focus:text-primary',
-      'data-[state=checked]:bg-[hsl(0_62%_86%)] data-[state=checked]:text-primary data-[state=checked]:font-medium',
+      'text-popover-foreground bg-popover',
+      'hover:bg-accent hover:text-accent-foreground',
+      'focus:bg-accent focus:text-accent-foreground',
+      'data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary data-[state=checked]:font-medium',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       'transition-colors duration-150',
-      // شريط جانبي ذهبي عند الـ hover
+      // شريط جانبي عند الـ hover
       'before:absolute before:right-0 before:top-0 before:bottom-0 before:w-[3px] before:rounded-l',
-      'before:bg-transparent hover:before:bg-[hsl(43_54%_51%)] focus:before:bg-[hsl(43_54%_51%)]',
+      'before:bg-transparent hover:before:bg-secondary focus:before:bg-secondary',
       'before:transition-colors before:duration-150',
       className
     )}
@@ -184,7 +184,7 @@ const UnifiedSelectItem = React.forwardRef<
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4 text-[hsl(43_54%_51%)]" />
+        <Check className="h-4 w-4 text-primary" />
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
@@ -198,7 +198,7 @@ const UnifiedSelectSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
-    className={cn('-mx-1 my-1.5 h-px bg-[hsl(20_30%_87%)]', className)}
+    className={cn('-mx-1 my-1.5 h-px bg-border', className)}
     {...props}
   />
 ));
