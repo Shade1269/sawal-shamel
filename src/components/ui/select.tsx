@@ -150,7 +150,8 @@ const SelectContent = React.forwardRef<
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
         className={cn(
-          "p-1",
+          // Spacing for touch-friendly layout (8px gap between items)
+          "p-1.5 space-y-1",
           position === "popper" &&
             "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
         )}
@@ -190,23 +191,28 @@ const SelectItem = React.forwardRef<
     // aria-selected is managed automatically
     className={cn(
       "relative flex w-full cursor-pointer select-none items-center",
-      "rounded-md py-2.5 pl-8 pr-3 text-sm outline-none",
+      // WCAG 2.5.5: Minimum touch target 44px (min-h-11 = 44px)
+      "rounded-md min-h-[44px] py-3 pl-8 pr-3 text-sm outline-none",
       "text-popover-foreground bg-popover",
-      // Hover state (pink background, maroon text as per UX spec)
+      // Hover state - Desktop (pink background, maroon text as per UX spec)
       "hover:bg-[hsl(0_60%_97%)] hover:text-primary",
+      // Active state - Mobile touch (same as hover for consistency)
+      "active:bg-[hsl(0_60%_97%)] active:text-primary active:scale-[0.98]",
       // Focus state (same as hover for consistency)
       "focus:bg-[hsl(0_60%_97%)] focus:text-primary",
       // Focus visible ring for keyboard navigation (WCAG 2.4.7)
       "focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-inset",
       // Selected/checked state
       "data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary data-[state=checked]:font-medium",
-      // Disabled state (WCAG: visually distinct)
+      // Disabled state (WCAG: disabled items should be visually distinct)
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed",
       "transition-all duration-150",
-      // Golden side bar on hover/focus (as per UX spec)
+      // Touch-friendly: prevent accidental zoom on double-tap
+      "touch-manipulation",
+      // Golden side bar on hover/focus/active (as per UX spec)
       "before:absolute before:right-0 before:top-0 before:bottom-0 before:w-[3px] before:rounded-l",
       "before:bg-transparent before:transition-colors before:duration-150",
-      "hover:before:bg-[hsl(43_54%_51%)] focus:before:bg-[hsl(43_54%_51%)]",
+      "hover:before:bg-[hsl(43_54%_51%)] focus:before:bg-[hsl(43_54%_51%)] active:before:bg-[hsl(43_54%_51%)]",
       // Selected item keeps the golden bar
       "data-[state=checked]:before:bg-[hsl(43_54%_51%)]",
       className

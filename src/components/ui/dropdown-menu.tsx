@@ -112,8 +112,10 @@ const DropdownMenuContent = React.forwardRef<
       // WAI-ARIA: role="menu" is automatically added by Radix
       // WCAG 2.4.3: Focus is automatically managed by Radix
       className={cn(
+        // Minimum width and overflow
         "z-[100] min-w-[180px] overflow-hidden",
-        "rounded-lg border border-[hsl(20_30%_87%)] bg-white p-1 text-foreground",
+        // Spacing for touch-friendly layout (8px gap between items)
+        "rounded-lg border border-[hsl(20_30%_87%)] bg-white p-1.5 text-foreground space-y-1",
         "shadow-[0_10px_40px_hsl(320_42%_25%/0.12)]",
         // Smooth animations (150-200ms as per UX spec)
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
@@ -146,33 +148,44 @@ const DropdownMenuItem = React.forwardRef<
     ref={ref}
     // WAI-ARIA: role="menuitem" is automatically added by Radix
     className={cn(
-      "relative flex cursor-pointer select-none items-center gap-2.5 rounded-md px-3 py-2.5 text-sm outline-none",
+      // WCAG 2.5.5: Minimum touch target 44px
+      "relative flex cursor-pointer select-none items-center gap-2.5 rounded-md px-3 min-h-[44px] py-3 text-sm outline-none",
       // WCAG 2.4.7: Visible focus indicator
       "transition-all duration-150",
-      // Golden side bar on hover/focus (as per UX spec)
+      // Touch-friendly: prevent accidental zoom on double-tap
+      "touch-manipulation",
+      // Golden side bar on hover/focus/active (as per UX spec)
       "before:absolute before:right-0 before:top-0 before:bottom-0 before:w-[3px] before:rounded-l",
       "before:bg-transparent before:transition-colors before:duration-150",
       // Default variant
       variant === "default" && [
         "text-foreground",
+        // Desktop hover
         "hover:bg-[hsl(0_60%_97%)] hover:text-primary",
+        // Mobile active/touch
+        "active:bg-[hsl(0_60%_97%)] active:text-primary active:scale-[0.98]",
+        // Keyboard focus
         "focus:bg-[hsl(0_60%_97%)] focus:text-primary",
         // Focus visible ring for keyboard navigation (WCAG 2.4.7)
         "focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-inset",
         "[&>svg]:text-muted-foreground [&>svg]:w-4 [&>svg]:h-4",
-        "hover:[&>svg]:text-primary focus:[&>svg]:text-primary",
-        // Golden bar on hover/focus
-        "hover:before:bg-[hsl(43_54%_51%)] focus:before:bg-[hsl(43_54%_51%)]",
+        "hover:[&>svg]:text-primary focus:[&>svg]:text-primary active:[&>svg]:text-primary",
+        // Golden bar on hover/focus/active
+        "hover:before:bg-[hsl(43_54%_51%)] focus:before:bg-[hsl(43_54%_51%)] active:before:bg-[hsl(43_54%_51%)]",
       ],
       // Danger variant (تسجيل الخروج) - Always red as per UX spec
       variant === "danger" && [
         "text-[hsl(0_62%_56%)]",
         "[&>svg]:text-[hsl(0_62%_56%)]",
+        // Desktop hover
         "hover:bg-[hsl(0_70%_96%)] hover:text-[hsl(0_70%_45%)]",
+        // Mobile active/touch
+        "active:bg-[hsl(0_70%_96%)] active:text-[hsl(0_70%_45%)] active:scale-[0.98]",
+        // Keyboard focus
         "focus:bg-[hsl(0_70%_96%)] focus:text-[hsl(0_70%_45%)]",
         "focus-visible:ring-2 focus-visible:ring-[hsl(0_62%_56%)]/50 focus-visible:ring-inset",
-        // Red bar on hover/focus for danger
-        "hover:before:bg-[hsl(0_62%_56%)] focus:before:bg-[hsl(0_62%_56%)]",
+        // Red bar on hover/focus/active for danger
+        "hover:before:bg-[hsl(0_62%_56%)] focus:before:bg-[hsl(0_62%_56%)] active:before:bg-[hsl(0_62%_56%)]",
       ],
       // Disabled state (WCAG: disabled items should be visually distinct)
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",

@@ -85,12 +85,17 @@ export function SidebarSection({
       >
         <div
           className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-lg mx-2 transition-all duration-200",
-            // Hover state (pink background as per UX spec)
+            // WCAG 2.5.5: Minimum touch target 44px
+            "flex items-center gap-2 px-4 min-h-[44px] py-3 rounded-lg mx-2 transition-all duration-200",
+            // Touch-friendly: prevent accidental zoom on double-tap
+            "touch-manipulation",
+            // Hover state - Desktop (pink background as per UX spec)
             "hover:bg-[hsl(var(--sidebar-hover))]",
+            // Active state - Mobile touch
+            "active:bg-[hsl(var(--sidebar-hover))] active:scale-[0.98]",
             // Focus visible indicator (WCAG 2.4.7)
             "group-focus-visible:ring-2 group-focus-visible:ring-primary group-focus-visible:ring-offset-2",
-            // Active/expanded state (pink background, maroon text)
+            // Expanded state (pink background, maroon text)
             expanded && "bg-[hsl(0_60%_97%)] text-primary"
           )}
         >

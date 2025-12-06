@@ -61,14 +61,19 @@ export function SidebarItem({
         // Accessible description if provided
         aria-describedby={item.description ? `${item.id}-desc` : undefined}
         className={cn(
-          "flex items-center gap-3 px-3 py-2.5 mx-2 rounded-lg transition-all duration-200",
+          // WCAG 2.5.5: Minimum touch target 44px
+          "flex items-center gap-3 px-3 min-h-[44px] py-3 mx-2 rounded-lg transition-all duration-200",
           "text-muted-foreground",
-          // Hover state (pink background, maroon text as per UX spec)
+          // Touch-friendly: prevent accidental zoom on double-tap
+          "touch-manipulation",
+          // Hover state - Desktop (pink background, maroon text as per UX spec)
           "hover:bg-[hsl(0_60%_97%)] hover:text-primary hover:shadow-sm",
-          "hover:scale-[1.02] active:scale-[0.98]",
+          "hover:scale-[1.02]",
+          // Active state - Mobile touch
+          "active:bg-[hsl(0_60%_97%)] active:text-primary active:scale-[0.98]",
           // Focus visible indicator (WCAG 2.4.7)
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-          // Active state
+          // Current/Active page state
           isActive && [
             "bg-gradient-to-l from-primary/20 via-primary/10 to-transparent",
             "text-primary font-semibold shadow-md border-l-2 border-primary",
