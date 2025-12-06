@@ -1,5 +1,6 @@
 import React from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Home } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { MyScoreCard } from '../../features/affiliate/components/MyScoreCard';
 import { MySalesGlance } from '../../features/affiliate/components/MySalesGlance';
 import { RecentOrders } from '../../features/affiliate/components/RecentOrders';
@@ -65,6 +66,20 @@ export const AffiliateHomeViewRuntime = ({
     React.createElement(
       'div',
       { className: 'mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8' },
+      // Home Button
+      React.createElement(
+        'div',
+        { className: 'flex justify-start' },
+        React.createElement(
+          'button',
+          {
+            onClick: () => window.location.href = '/',
+            className: 'flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg',
+          },
+          React.createElement(Home, { className: 'h-4 w-4' }),
+          'العودة للرئيسية'
+        )
+      ),
       error
         ? React.createElement(
             'div',
