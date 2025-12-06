@@ -17,8 +17,8 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-10 w-full items-center justify-between rounded-lg border bg-white px-3 py-2 text-sm text-foreground",
-      "border-[hsl(20_30%_87%)] placeholder:text-muted-foreground",
+      "flex h-10 w-full items-center justify-between rounded-lg border bg-background px-3 py-2 text-sm text-foreground",
+      "border-border placeholder:text-muted-foreground",
       "hover:border-primary/50",
       "focus:outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/10",
       "data-[state=open]:border-primary data-[state=open]:ring-[3px] data-[state=open]:ring-primary/10",
@@ -30,7 +30,7 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 text-[hsl(43_54%_51%)] transition-transform duration-200" />
+      <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform duration-200" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ))
@@ -80,8 +80,8 @@ const SelectContent = React.forwardRef<
       ref={ref}
       className={cn(
         "relative z-[100] max-h-96 min-w-[8rem] overflow-hidden",
-        "rounded-lg border border-[hsl(20_30%_87%)] bg-white text-foreground",
-        "shadow-[0_8px_30px_hsl(320_42%_25%/0.08)]",
+        "rounded-lg border border-border bg-popover text-popover-foreground",
+        "shadow-lg",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -131,15 +131,15 @@ const SelectItem = React.forwardRef<
     className={cn(
       "relative flex w-full cursor-pointer select-none items-center",
       "rounded-md py-2.5 pl-8 pr-3 text-sm outline-none",
-      "text-foreground bg-white",
-      "hover:bg-[hsl(0_60%_97%)] hover:text-primary",
-      "focus:bg-[hsl(0_60%_97%)] focus:text-primary",
-      "data-[state=checked]:bg-[hsl(0_62%_86%)] data-[state=checked]:text-primary data-[state=checked]:font-medium",
+      "text-popover-foreground bg-popover",
+      "hover:bg-accent hover:text-accent-foreground",
+      "focus:bg-accent focus:text-accent-foreground",
+      "data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary data-[state=checked]:font-medium",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "transition-colors duration-150",
       // شريط جانبي ذهبي عند الـ hover
       "before:absolute before:right-0 before:top-0 before:bottom-0 before:w-[3px] before:rounded-l",
-      "before:bg-transparent hover:before:bg-[hsl(43_54%_51%)] focus:before:bg-[hsl(43_54%_51%)]",
+      "before:bg-transparent hover:before:bg-secondary focus:before:bg-secondary",
       "before:transition-colors before:duration-150",
       className
     )}
@@ -147,7 +147,7 @@ const SelectItem = React.forwardRef<
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4 text-[hsl(43_54%_51%)]" />
+        <Check className="h-4 w-4 text-primary" />
       </SelectPrimitive.ItemIndicator>
     </span>
 
