@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UnifiedBadge } from '@/components/design-system';
-import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { 
   User, 
@@ -16,10 +15,8 @@ import {
   Plus, 
   Package, 
   CreditCard, 
-  Star,
   Phone,
   Mail,
-  Calendar,
   ShoppingBag,
   Award,
   LogOut,
@@ -28,7 +25,7 @@ import {
 import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 import { useFastAuth } from '@/hooks/useFastAuth';
 
@@ -48,11 +45,11 @@ interface CustomerAddress {
 
 interface CustomerOrder {
   id: string;
-  order_number: string;
-  status: string;
-  total_sar: number;
+  order_number: string | null;
+  status: string | null;
+  total_sar: number | null;
   created_at: string;
-  store_name?: string;
+  store_name?: string | null;
 }
 
 export const CustomerProfile: React.FC = () => {

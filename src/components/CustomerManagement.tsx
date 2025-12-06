@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   UnifiedCard as Card, 
   UnifiedCardContent as CardContent, 
   UnifiedCardHeader as CardHeader, 
-  UnifiedCardTitle as CardTitle,
   UnifiedButton as Button,
   UnifiedBadge as Badge,
   UnifiedInput as Input
@@ -18,7 +17,6 @@ import {
 import { 
   Users, 
   Search, 
-  Filter, 
   Download, 
   Eye,
   Phone,
@@ -37,20 +35,20 @@ import { useFastAuth } from '@/hooks/useFastAuth';
 interface StoreCustomer {
   id: string;
   customer_id: string;
-  first_purchase_at: string;
-  last_purchase_at?: string;
-  total_orders: number;
-  total_spent_sar: number;
-  customer_status: string;
+  first_purchase_at: string | null;
+  last_purchase_at?: string | null;
+  total_orders: number | null;
+  total_spent_sar: number | null;
+  customer_status: string | null;
   customers: {
     profile_id: string;
-    total_orders: number;
-    total_spent_sar: number;
-    loyalty_points: number;
+    total_orders: number | null;
+    total_spent_sar: number | null;
+    loyalty_points: number | null;
     profiles: {
-      full_name: string;
-      phone: string;
-      email?: string;
+      full_name: string | null;
+      phone: string | null;
+      email?: string | null;
       created_at: string;
     };
   };

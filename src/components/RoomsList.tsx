@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedBadge as Badge } from '@/components/design-system';
@@ -12,9 +12,9 @@ import { toast } from 'sonner';
 interface Channel {
   id: string;
   name: string;
-  description?: string;
+  description?: string | null;
   type: string;
-  is_locked?: boolean;
+  is_locked?: boolean | null;
   member_count?: number;
 }
 
