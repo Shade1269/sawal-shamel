@@ -16,7 +16,7 @@ interface TTSSettings {
   useCase: 'product' | 'ad' | 'notification' | 'assistant';
 }
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_URL = 'https://uewuiiopkctdtaexmtxu.supabase.co';
 
 export function AITextToSpeech() {
   const [settings, setSettings] = useState<TTSSettings>({

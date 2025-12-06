@@ -26,7 +26,7 @@ const analysisTypes = [
   { id: 'forecast', label: 'التوقعات', icon: LineChart },
 ];
 
-const ANALYTICS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-analytics`;
+const ANALYTICS_URL = 'https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/ai-analytics';
 
 export function AIAnalyticsDashboard({ storeId }: AIAnalyticsDashboardProps) {
   const [selectedType, setSelectedType] = useState('sales_analysis');
