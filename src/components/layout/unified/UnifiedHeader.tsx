@@ -22,6 +22,7 @@ import {
   Sun,
   Moon,
   Menu,
+  Home,
 } from 'lucide-react';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
@@ -144,6 +145,17 @@ export const UnifiedHeader: React.FC<UnifiedHeaderProps> = ({
 
         {/* Spacer */}
         <div className="flex-1" />
+
+        {/* Home Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate('/')}
+          className="rounded-xl hover:bg-accent transition-all duration-200 hover:scale-105"
+          title="العودة للصفحة الرئيسية"
+        >
+          <Home className="h-5 w-5" />
+        </Button>
 
         {/* Actions */}
         {actions && <div className="flex items-center gap-2">{actions}</div>}
