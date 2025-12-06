@@ -1,14 +1,11 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { 
-  Play, 
-  Pause, 
-  RotateCcw, 
   Zap, 
   Sparkles, 
   MousePointer, 
@@ -36,7 +33,7 @@ interface AdvancedAnimationsProps {
 
 export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
   className,
-  interactive = true,
+  interactive: _interactive = true,
   showControls = true
 }) => {
   const [selectedDemo, setSelectedDemo] = useState<string>('custom');
@@ -63,14 +60,14 @@ export const AdvancedAnimations: React.FC<AdvancedAnimationsProps> = ({
   } = useSpringAnimation();
 
   // Parallax Demo
-  const { elementRef: parallaxRef } = useParallax({
+  const { elementRef: _parallaxRef } = useParallax({
     speed: 0.5,
     direction: 'vertical'
   });
 
   // Scroll Animation Demo
   const {
-    elementRef: scrollRef,
+    elementRef: _scrollRef,
     isVisible,
     animateOnScroll
   } = useScrollAnimation();

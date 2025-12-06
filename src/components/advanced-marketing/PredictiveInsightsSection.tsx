@@ -5,7 +5,6 @@ import { Progress } from '@/components/ui/progress';
 import { 
   Brain, 
   TrendingUp, 
-  TrendingDown, 
   Users, 
   ShoppingCart, 
   Calendar,

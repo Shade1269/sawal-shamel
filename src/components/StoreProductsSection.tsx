@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -213,9 +213,9 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
             <Package className="h-6 w-6" />
             إدارة المنتجات
           </CardTitle>
-          <CardDescription>
+          <p className="text-sm text-muted-foreground">
             قم بإنشاء متجرك أولاً لإدارة المنتجات
-          </CardDescription>
+          </p>
         </CardHeader>
         <CardContent>
           <div className="text-center py-12">
@@ -252,9 +252,9 @@ const StoreProductsSection: React.FC<StoreProductsSectionProps> = ({ userShop })
               <Package className="h-6 w-6" />
               إدارة المنتجات
             </CardTitle>
-            <CardDescription>
+            <p className="text-sm text-muted-foreground">
               منتجات متجر {userShop.display_name} ({storeProducts.length} منتج)
-            </CardDescription>
+            </p>
           </div>
         </div>
         

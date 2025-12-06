@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useMemo } from 'react';
+import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -32,37 +32,42 @@ import {
   ShoppingCart,
   DollarSign,
   Download,
-  RefreshCw,
-  Eye,
-  Maximize2
+  RefreshCw
 } from 'lucide-react';
 import { EnhancedCard } from '@/components/ui/enhanced-card';
 import { AnimatedCounter } from '@/components/interactive/AnimatedCounter';
 
 interface DataVisualizationProps {
-  data?: any;
+  data?: unknown;
   className?: string;
   showControls?: boolean;
   interactive?: boolean;
 }
 
-interface ChartData {
+interface CategoryDataItem {
   name: string;
   value: number;
-  trend?: number;
+  color: string;
+}
+
+interface KpiDataItem {
+  name: string;
+  value: number;
+  trend: number;
   color?: string;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 const COLORS = ['var(--primary)', 'var(--accent)', 'var(--muted)', 'var(--secondary)'];
 
 export const DataVisualization: React.FC<DataVisualizationProps> = ({
-  data,
+  data: _data,
   className,
   showControls = true,
-  interactive = true
+  interactive: _interactive = true
 }) => {
   const [selectedChart, setSelectedChart] = useState('overview');
-  const [timeRange, setTimeRange] = useState('7d');
+  const [_timeRange, setTimeRange] = useState('7d');
 
   // Sample data للعرض التوضيحي
   const sampleData = useMemo(() => ({
@@ -95,7 +100,7 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
   }), []);
 
   const exportData = (format: 'csv' | 'json' = 'csv') => {
-    const exportData = data || sampleData;
+    const exportData = _data || sampleData;
     
     if (format === 'csv') {
       const csvContent = Object.entries(exportData.salesTrend || [])
@@ -120,7 +125,7 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
     }
   };
 
-  const currentData = data || sampleData;
+  const currentData = _data || sampleData;
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -150,7 +155,7 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {currentData.kpiData.map((kpi, index) => {
+        {currentData.kpiData.map((kpi: KpiDataItem, index: number) => {
           const IconComponent = kpi.icon;
           return (
             <EnhancedCard key={index} variant="gradient" hover="glow">
@@ -259,7 +264,7 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
                       dataKey="value"
                       label={(entry) => `${entry.name}: ${entry.value}`}
                     >
-                      {currentData.categoryData.map((entry, index) => (
+                      {currentData.categoryData.map((entry: CategoryDataItem, index: number) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
@@ -328,7 +333,7 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
                 <CardTitle>إحصائيات الفئات</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {currentData.categoryData.map((category, index) => (
+                {currentData.categoryData.map((category: CategoryDataItem, index: number) => (
                   <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex items-center gap-3">
                       <div 

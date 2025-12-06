@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Bell, AlertCircle, CheckCircle, Info, X, Settings, Filter } from 'lucide-react';
 import { EnhancedCard, EnhancedCardContent, EnhancedCardHeader, EnhancedCardTitle } from '@/components/ui/enhanced-card';
 import { EnhancedButton } from '@/components/ui/enhanced-button';
@@ -42,7 +42,7 @@ interface NotificationSettings {
 }
 
 export const NotificationCenter: React.FC = () => {
-  const { patterns, colors } = useDesignSystem();
+  const { patterns, colors: _colors } = useDesignSystem();
   
   const [notifications, setNotifications] = useState<Notification[]>([
     {

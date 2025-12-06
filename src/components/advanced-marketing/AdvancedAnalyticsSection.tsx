@@ -19,7 +19,7 @@ import { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, Ca
 
 export const AdvancedAnalyticsSection: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('7d');
-  const [selectedMetric, setSelectedMetric] = useState('page_views');
+  const [_selectedMetric, setSelectedMetric] = useState('page_views');
 
   // بيانات تجريبية للتحليلات
   const analyticsData = {
@@ -238,7 +238,7 @@ export const AdvancedAnalyticsSection: React.FC = () => {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {analyticsData.traffic_sources.map((entry, index) => (
+                {analyticsData.traffic_sources.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -282,7 +282,7 @@ export const AdvancedAnalyticsSection: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {analyticsData.device_breakdown.map((device, index) => {
+              {analyticsData.device_breakdown.map((device, _index) => {
                 const IconComponent = getDeviceIcon(device.name);
                 return (
                   <div key={device.name} className="flex items-center justify-between">
@@ -320,7 +320,7 @@ export const AdvancedAnalyticsSection: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {analyticsData.top_pages.map((page, index) => (
+              {analyticsData.top_pages.map((page, _index) => (
                 <div key={page.page} className="border rounded-lg p-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium">{page.page}</span>

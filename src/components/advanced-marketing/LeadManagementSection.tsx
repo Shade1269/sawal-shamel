@@ -10,22 +10,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { 
   Users, 
   Plus, 
-  Edit, 
   Phone, 
   Mail, 
   Building, 
-  Tag,
-  TrendingUp,
   Activity,
   Star
 } from 'lucide-react';
 import { useLeadManagement, Lead } from '@/hooks/useAdvancedMarketing';
 
 export const LeadManagementSection: React.FC = () => {
-  const { leads, createLead, updateLead, addLeadActivity, isCreating, isUpdating } = useLeadManagement();
+  const { leads, createLead, updateLead, addLeadActivity, isCreating, isUpdating: _isUpdating } = useLeadManagement();
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [_isEditMode, setIsEditMode] = useState(false);
   const [newLeadData, setNewLeadData] = useState({
     email: '',
     phone: '',

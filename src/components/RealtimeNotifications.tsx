@@ -5,7 +5,6 @@ import { UnifiedButton } from '@/components/design-system';
 import { UnifiedBadge } from '@/components/design-system';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -388,14 +387,11 @@ const RealtimeNotifications: React.FC = () => {
         </ScrollArea>
 
         {notifications.length > 0 && (
-          <>
-            <Separator />
-            <div className="p-3">
-              <UnifiedButton variant="outline" className="w-full text-sm">
-                عرض جميع الإشعارات
-              </UnifiedButton>
-            </div>
-          </>
+          <div className="border-t p-3">
+            <UnifiedButton variant="outline" className="w-full text-sm">
+              عرض جميع الإشعارات
+            </UnifiedButton>
+          </div>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
