@@ -6,6 +6,7 @@ import {
   Wallet,
   Settings,
   CreditCard,
+  Globe,
 } from 'lucide-react';
 import type { SidebarSection } from '@/components/layout/unified/UnifiedSidebar';
 import type { MobileNavItem } from '@/components/layout/unified/UnifiedMobileNav';
@@ -15,6 +16,19 @@ import type { MobileNavItem } from '@/components/layout/unified/UnifiedMobileNav
  */
 
 export const affiliateSidebarSections: SidebarSection[] = [
+  {
+    id: 'platform',
+    label: 'المنصة',
+    items: [
+      {
+        id: 'platform-home',
+        label: 'الصفحة الرئيسية',
+        icon: Globe,
+        href: '/',
+      },
+    ],
+    color: 'accent',
+  },
   {
     id: 'main',
     label: 'الرئيسية',
