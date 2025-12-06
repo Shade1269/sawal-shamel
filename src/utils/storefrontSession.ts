@@ -120,7 +120,7 @@ export class StorefrontSession implements StorefrontSessionManager {
       name,
       email,
       isVerified: true,
-      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days for verified sessions
+      expiresAt: Date.now() + (100 * 365 * 24 * 60 * 60 * 1000) // دائم (100 سنة)
     };
     
     this.setSession(verifiedSession);
