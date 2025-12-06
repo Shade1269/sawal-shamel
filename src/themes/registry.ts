@@ -232,32 +232,74 @@ export const THEMES = {
   [damascusConfig.id]: damascusConfig,
   [ferrariConfig.id]: ferrariConfig,
   [oliveGoldConfig.id]: oliveGoldConfig,
-  anaqti: {
-    id: "anaqti",
-    name: "Anaqti",
+  // Unified Anaqati theme - أناقتي (feminine luxury)
+  anaqati: {
+    id: "anaqati",
+    name: "أناقتي",
     colors: {
-      bg: "#faf8f5",
-      fg: "#49413a",
-      primary: "#9a8374",
-      secondary: "#dccfbf",
-      background: "#faf8f5",
-      foreground: "#49413a"
+      bg: "#FDF8F6",
+      fg: "#2F2B2C",
+      primary: "#5A2647",       // Burgundy
+      secondary: "#F4C2C2",     // Soft Pink
+      accent: "#C89B3C",        // Soft Gold
+      background: "#FDF8F6",
+      foreground: "#2F2B2C",
+      muted: "#7B6E70",
+      border: "#E6D8D3"
     },
-    radii: { 
+    radii: {
       sm: "0.5rem",
-      md: "0.75rem", 
+      md: "0.75rem",
       lg: "1rem",
       xl: "1.5rem"
     },
-    spacing: { 
+    spacing: {
       xs: "0.5rem",
       sm: "1rem",
-      md: "1.5rem", 
+      md: "1.5rem",
       lg: "2rem",
       xl: "3rem"
     },
-    typography: { 
-      fontFamily: "Noto Sans Arabic",
+    typography: {
+      fontFamily: "Noto Sans Arabic, Inter, sans-serif",
+      baseSize: 16,
+      lineHeight: 1.5
+    },
+    effects: {
+      shadows: "soft",
+      gradients: true,
+      animations: "elegant"
+    }
+  },
+  // Alias for backward compatibility
+  anaqti: {
+    id: "anaqti",
+    name: "Anaqti",
+    // Points to the same config as anaqati
+    colors: {
+      bg: "#FDF8F6",
+      fg: "#2F2B2C",
+      primary: "#5A2647",
+      secondary: "#F4C2C2",
+      accent: "#C89B3C",
+      background: "#FDF8F6",
+      foreground: "#2F2B2C"
+    },
+    radii: {
+      sm: "0.5rem",
+      md: "0.75rem",
+      lg: "1rem",
+      xl: "1.5rem"
+    },
+    spacing: {
+      xs: "0.5rem",
+      sm: "1rem",
+      md: "1.5rem",
+      lg: "2rem",
+      xl: "3rem"
+    },
+    typography: {
+      fontFamily: "Noto Sans Arabic, Inter, sans-serif",
       baseSize: 16,
       lineHeight: 1.5
     }
