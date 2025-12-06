@@ -186,25 +186,6 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
             </SidebarSection>
           )}
 
-          {/* Recent Pages Section */}
-          {!state.isCollapsed && !state.searchQuery && recentItems.length > 0 && (
-            <SidebarSection
-              id="recent"
-              title="الأخيرة"
-              icon={<Clock className="h-4 w-4" />}
-              isCollapsed={state.isCollapsed}
-            >
-              {recentItems.map(item => (
-                <SidebarItem
-                  key={item.id}
-                  item={item}
-                  isCollapsed={state.isCollapsed}
-                  isFavorite={state.favorites.includes(item.id)}
-                  onToggleFavorite={toggleFavorite}
-                />
-              ))}
-            </SidebarSection>
-          )}
 
           {/* Main Navigation Sections */}
           {filteredSections.map(section => (
