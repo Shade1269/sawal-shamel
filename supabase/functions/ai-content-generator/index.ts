@@ -9,7 +9,11 @@ serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
 
   try {
-    const { type, context, language = "ar" } = await req.json();
+    const requestBody = await req.json();
+    const { type, context, language = "ar" } = requestBody;
+    
+    console.log("Received request:", JSON.stringify({ type, contextKeys: Object.keys(context || {}) }));
+    
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -18,6 +22,7 @@ serve(async (req) => {
 
     let systemPrompt = "";
     let userPrompt = "";
+    const topic = context?.prompt || context?.topic || context?.productName || "منتج";
 
     switch (type) {
       case "product_description":
@@ -38,7 +43,7 @@ serve(async (req) => {
 - هاشتاقات مناسبة
 - دعوة للتفاعل
 اجعل المحتوى مناسباً للمنصة المحددة.`;
-        userPrompt = `اكتب منشور ${context.platform || "عام"} عن:\n${context.topic}\n\nالمنتج: ${context.productName || ""}`;
+        userPrompt = `اكتب منشور ${context?.platform || "عام"} عن:\n${topic}`;
         break;
 
       case "marketing_email":
@@ -48,27 +53,27 @@ serve(async (req) => {
 - مقدمة مشوقة
 - محتوى مقنع
 - دعوة للإجراء (CTA)`;
-        userPrompt = `اكتب رسالة تسويقية عن:\n${context.topic}\n\nالهدف: ${context.goal || "زيادة المبيعات"}`;
+        userPrompt = `اكتب رسالة تسويقية عن:\n${topic}\n\nالهدف: ${context?.goal || "زيادة المبيعات"}`;
         break;
 
       case "seo_keywords":
-        systemPrompt = `أنت خبير SEO متخصص في تحسين محركات البحث.
-قم بتحليل المنتج واقترح:
-- كلمات مفتاحية رئيسية
-- كلمات مفتاحية طويلة
-- وصف ميتا مناسب
-- عنوان SEO محسن`;
-        userPrompt = `حلل المنتج التالي واقترح كلمات مفتاحية:\n${JSON.stringify(context)}`;
+        systemPrompt = `أنت خبير SEO متخصص في تحسين محركات البحث للمتاجر الإلكترونية.
+قدم قائمة مرتبة تتضمن:
+1. كلمات مفتاحية رئيسية (5-7 كلمات)
+2. كلمات مفتاحية طويلة الذيل (5-7 عبارات)
+3. وصف ميتا مقترح (160 حرف)
+4. عنوان SEO مقترح`;
+        userPrompt = `حلل الموضوع التالي واقترح كلمات مفتاحية SEO:\n${topic}`;
         break;
 
       case "ad_copy":
-        systemPrompt = `أنت كاتب إعلانات محترف.
+        systemPrompt = `أنت كاتب إعلانات محترف متخصص في الإعلانات الرقمية.
 اكتب نص إعلاني مؤثر يتضمن:
-- عنوان لافت
+- عنوان لافت للانتباه
 - نص مقنع ومختصر
 - ميزات فريدة
-- دعوة قوية للشراء`;
-        userPrompt = `اكتب نص إعلان لـ:\n${context.productName || context.topic}\n\nالمنصة: ${context.platform || "عامة"}`;
+- دعوة قوية للشراء (CTA)`;
+        userPrompt = `اكتب نص إعلان لـ:\n${topic}\n\nالمنصة: ${context?.platform || "عامة"}`;
         break;
 
       default:

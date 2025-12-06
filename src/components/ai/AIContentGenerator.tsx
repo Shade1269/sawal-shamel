@@ -88,10 +88,14 @@ export function AIContentGenerator({ productContext, onContentGenerated }: AICon
       </CardHeader>
       <CardContent className="space-y-4">
         <Tabs value={selectedType} onValueChange={setSelectedType}>
-          <TabsList className="grid grid-cols-5 gap-1">
+          <TabsList className="flex flex-wrap gap-2 h-auto p-2 bg-muted/50">
             {contentTypes.map((type) => (
-              <TabsTrigger key={type.id} value={type.id} className="text-xs px-2">
-                <type.icon className="h-3 w-3 ml-1" />
+              <TabsTrigger 
+                key={type.id} 
+                value={type.id} 
+                className="text-xs px-3 py-2 whitespace-nowrap"
+              >
+                <type.icon className="h-3 w-3 ml-1.5" />
                 {type.label}
               </TabsTrigger>
             ))}
