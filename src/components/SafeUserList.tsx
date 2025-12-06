@@ -7,9 +7,9 @@ interface SafeProfile {
   id: string;
   full_name: string | null;
   avatar_url: string | null;
-  role: string;
-  is_active: boolean;
-  created_at: string;
+  role: string | null;
+  is_active: boolean | null;
+  created_at: string | null;
 }
 
 interface SafeUserListProps {
@@ -43,7 +43,7 @@ export const SafeUserList: React.FC<SafeUserListProps> = ({
         .limit(limit);
 
       if (error) throw error;
-      setUsers(data || []);
+      setUsers((data || []).filter(u => u.id !== null) as SafeProfile[]);
     } catch (error) {
       console.error('Error loading users:', error);
     } finally {

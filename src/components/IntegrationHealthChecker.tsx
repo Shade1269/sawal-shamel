@@ -34,7 +34,7 @@ export const IntegrationHealthChecker: React.FC = () => {
 
   const checkSupabaseConnection = async (): Promise<IntegrationStatus> => {
     try {
-      const { data, error } = await supabase.from('profiles').select('count').limit(1).maybeSingle();
+      const { error } = await supabase.from('profiles').select('count').limit(1).maybeSingle();
       
       if (error) {
         return {
@@ -140,7 +140,7 @@ export const IntegrationHealthChecker: React.FC = () => {
   const checkSMSService = async (): Promise<IntegrationStatus> => {
     try {
       // فحص وجود جدول customer_otp_sessions
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('customer_otp_sessions')
         .select('count')
         .limit(1)
@@ -179,7 +179,7 @@ export const IntegrationHealthChecker: React.FC = () => {
   const checkPaymentSystems = async (): Promise<IntegrationStatus> => {
     try {
       // فحص وجود جداول الدفع
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('ecommerce_payment_transactions')
         .select('count')
         .limit(1)

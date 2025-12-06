@@ -14,7 +14,7 @@ interface ShipmentTrackingCardProps {
 
 const ShipmentTrackingCard: React.FC<ShipmentTrackingCardProps> = ({
   shipment,
-  showEvents = false,
+  showEvents: _showEvents = false,
   onViewDetails
 }) => {
   const { getStatusLabel, getStatusColor } = useShipmentTracking();

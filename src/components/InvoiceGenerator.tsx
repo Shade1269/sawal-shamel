@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from "@/components/design-system";
 import { UnifiedButton } from "@/components/design-system";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { UnifiedBadge } from "@/components/design-system";
 import { useInvoiceManagement } from "@/hooks/useInvoiceManagement";
 import { useToast } from "@/hooks/use-toast";
 import { 
   FileText, 
-  Send, 
-  Download, 
   Plus,
   Trash2,
   Calculator

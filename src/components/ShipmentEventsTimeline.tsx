@@ -59,7 +59,7 @@ const ShipmentEventsTimeline: React.FC<ShipmentEventsTimelineProps> = ({ events 
         <div className="absolute right-5 top-0 bottom-0 w-0.5 bg-border"></div>
         
         <div className="space-y-6">
-          {events.map((event, index) => (
+          {events.map((event, _index) => (
             <div key={event.id} className="relative flex items-start gap-4">
               {/* أيقونة الحدث */}
               <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 ${getEventColor(event.event_type)}`}>

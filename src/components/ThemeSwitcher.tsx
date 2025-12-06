@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTheme } from '../hooks/useTheme';
 import { THEMES } from '@/themes/registry';
 import { cn } from '@/lib/utils';

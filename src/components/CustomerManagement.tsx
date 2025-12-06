@@ -160,10 +160,14 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
 
   // تصفية العملاء
   const filteredCustomers = customers.filter(customer => {
+    const fullName = customer.customers.profiles.full_name || '';
+    const phone = customer.customers.profiles.phone || '';
+    const email = customer.customers.profiles.email || '';
+    
     const matchesSearch = !searchTerm || 
-      customer.customers.profiles.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.customers.profiles.phone.includes(searchTerm) ||
-      (customer.customers.profiles.email && customer.customers.profiles.email.toLowerCase().includes(searchTerm.toLowerCase()));
+      fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      phone.includes(searchTerm) ||
+      email.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = selectedStatus === 'all' || customer.customer_status === selectedStatus;
     
@@ -175,12 +179,12 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
     const csvContent = [
       ['الاسم', 'الهاتف', 'البريد الإلكتروني', 'عدد الطلبات', 'إجمالي الإنفاق', 'تاريخ أول شراء', 'الحالة'],
       ...filteredCustomers.map(customer => [
-        customer.customers.profiles.full_name,
-        customer.customers.profiles.phone,
+        customer.customers.profiles.full_name || '',
+        customer.customers.profiles.phone || '',
         customer.customers.profiles.email || '',
-        customer.total_orders.toString(),
-        customer.total_spent_sar.toFixed(2),
-        new Date(customer.first_purchase_at).toLocaleDateString('ar-SA'),
+        (customer.total_orders || 0).toString(),
+        (customer.total_spent_sar || 0).toFixed(2),
+        customer.first_purchase_at ? new Date(customer.first_purchase_at).toLocaleDateString('ar-SA') : '',
         customer.customer_status === 'active' ? 'نشط' : 'غير نشط'
       ])
     ].map(row => row.join(',')).join('\n');
@@ -331,16 +335,16 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
                     <div className="flex items-center gap-4">
                       <Avatar className="w-12 h-12">
                         <AvatarFallback className="bg-primary/10 text-primary">
-                          {customer.customers.profiles.full_name.charAt(0)}
+                          {(customer.customers.profiles.full_name || 'ع').charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                       
                       <div>
-                        <h3 className="font-medium">{customer.customers.profiles.full_name}</h3>
+                        <h3 className="font-medium">{customer.customers.profiles.full_name || 'غير معروف'}</h3>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Phone className="w-3 h-3" />
-                            {customer.customers.profiles.phone}
+                            {customer.customers.profiles.phone || '-'}
                           </span>
                           {customer.customers.profiles.email && (
                             <span className="flex items-center gap-1">
@@ -354,8 +358,8 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
 
                     <div className="flex items-center gap-4">
                       <div className="text-right text-sm">
-                        <div className="font-medium">{customer.total_orders} طلب</div>
-                        <div className="text-muted-foreground">{customer.total_spent_sar.toFixed(2)} ر.س</div>
+                        <div className="font-medium">{customer.total_orders || 0} طلب</div>
+                        <div className="text-muted-foreground">{(customer.total_spent_sar || 0).toFixed(2)} ر.س</div>
                       </div>
                       
                       <Badge 
@@ -383,7 +387,7 @@ export const CustomerManagement: React.FC<CustomerManagementProps> = ({ storeId 
 
                   <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
                     <div className="flex items-center justify-between">
-                      <span>أول شراء: {new Date(customer.first_purchase_at).toLocaleDateString('ar-SA')}</span>
+                      <span>أول شراء: {customer.first_purchase_at ? new Date(customer.first_purchase_at).toLocaleDateString('ar-SA') : '-'}</span>
                       {customer.last_purchase_at && (
                         <span>آخر شراء: {new Date(customer.last_purchase_at).toLocaleDateString('ar-SA')}</span>
                       )}

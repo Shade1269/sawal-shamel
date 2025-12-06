@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { useInventoryManagement } from '@/hooks/useInventoryManagement';
 import { BarChart, FileText } from 'lucide-react';

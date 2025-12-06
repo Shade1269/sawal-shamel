@@ -20,7 +20,7 @@ import { toast } from 'sonner';
 const ShippingManagement: React.FC = () => {
   const {
     providers,
-    zones: shippingZones,
+    zones: _shippingZones,
     rates,
     loading,
     createProvider,
@@ -31,11 +31,11 @@ const ShippingManagement: React.FC = () => {
 
   const {
     zones,
-    loading: zonesLoading,
+    loading: _zonesLoading,
     createZone,
     updateZone,
     deleteZone,
-    refetch: refetchZones
+    refetch: _refetchZones
   } = useShippingZones();
 
   const [showProviderDialog, setShowProviderDialog] = useState(false);

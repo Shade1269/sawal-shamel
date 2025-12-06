@@ -8,9 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { 
   Settings, 
   UserCheck, 
-  UserX, 
   Shield, 
-  ShieldX, 
   VolumeX, 
   Ban, 
   Clock, 
@@ -81,14 +79,6 @@ const UserSettingsMenu = ({ user, currentUserRole, onModerationAction, onRoleCha
       case 'admin': return <Crown className="h-4 w-4" />;
       case 'moderator': return <Shield className="h-4 w-4" />;
       default: return <Users className="h-4 w-4" />;
-    }
-  };
-
-  const getRoleLabel = (role: string) => {
-    switch (role) {
-      case 'admin': return 'مدير';
-      case 'moderator': return 'مشرف';
-      default: return 'مسوق';
     }
   };
 
