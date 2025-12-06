@@ -21,7 +21,7 @@ interface VideoSettings {
   includeMusic: boolean;
 }
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_URL = 'https://uewuiiopkctdtaexmtxu.supabase.co';
 
 export function AIVideoGenerator() {
   const [settings, setSettings] = useState<VideoSettings>({

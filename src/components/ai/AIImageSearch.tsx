@@ -35,7 +35,7 @@ interface ImageAnalysis {
   keywords?: string[];
 }
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_URL = 'https://uewuiiopkctdtaexmtxu.supabase.co';
 
 export function AIImageSearch() {
   const [imageUrl, setImageUrl] = useState('');

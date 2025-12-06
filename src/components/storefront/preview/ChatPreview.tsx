@@ -36,7 +36,7 @@ export const ChatPreview = () => {
     setIsLoading(true);
 
     try {
-      const CHAT_URL = `https://uewuiiopkctdtaexmtxu.functions.supabase.co/functions/v1/chat-assistant`;
+      const CHAT_URL = `https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/chat-assistant`;
       
       const response = await fetch(CHAT_URL, {
         method: 'POST',

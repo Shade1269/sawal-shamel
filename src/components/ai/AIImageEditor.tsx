@@ -31,7 +31,7 @@ interface EditOptions {
   enhanceLevel?: 'light' | 'medium' | 'heavy';
 }
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_URL = 'https://uewuiiopkctdtaexmtxu.supabase.co';
 
 export function AIImageEditor() {
   const [imageUrl, setImageUrl] = useState('');

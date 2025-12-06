@@ -25,7 +25,7 @@ const contentTypes = [
   { id: 'ad_copy', label: 'نص إعلاني', icon: Megaphone },
 ];
 
-const CONTENT_GEN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-content-generator`;
+const CONTENT_GEN_URL = 'https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/ai-content-generator';
 
 export function AIContentGenerator({ productContext, onContentGenerated }: AIContentGeneratorProps) {
   const [selectedType, setSelectedType] = useState('product_description');
