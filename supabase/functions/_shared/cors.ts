@@ -1,24 +1,28 @@
 /**
- * ✅ CORS Configuration - آمن للإنتاج
- *
- * يسمح فقط للنطاقات المصرح بها بالوصول إلى Edge Functions
+ * ✅ CORS Configuration - للتطوير والإنتاج
  */
 
 // قائمة النطاقات المسموح بها
 const ALLOWED_ORIGINS = [
   'https://sawal-shamel.lovable.app',
   'http://localhost:8080',
-  'http://localhost:5173', // Vite dev server
+  'http://localhost:5173',
+  'http://localhost:3000',
 ];
 
 /**
  * التحقق إذا كان origin مسموح
  */
 function isAllowedOrigin(origin: string): boolean {
-  if (!origin) return false;
+  if (!origin) return true; // السماح للطلبات بدون origin
   
-  // السماح لكل نطاقات lovable.app (بما في ذلك preview)
-  if (origin.endsWith('.lovable.app') || origin.includes('lovable.app')) {
+  // السماح لكل نطاقات lovable
+  if (origin.includes('lovable')) {
+    return true;
+  }
+  
+  // السماح لـ localhost
+  if (origin.includes('localhost')) {
     return true;
   }
   
@@ -27,18 +31,13 @@ function isAllowedOrigin(origin: string): boolean {
 }
 
 /**
- * الحصول على CORS headers الآمنة بناءً على origin
+ * الحصول على CORS headers
  */
 export function getCorsHeaders(request: Request): Record<string, string> {
-  const origin = request.headers.get('origin') || '';
-
-  // التحقق إذا كان origin مسموح
-  const allowedOrigin = isAllowedOrigin(origin)
-    ? origin
-    : ALLOWED_ORIGINS[0]; // fallback إلى أول نطاق
+  const origin = request.headers.get('origin') || '*';
 
   return {
-    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Origin': isAllowedOrigin(origin) ? origin : '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
     'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
     'Access-Control-Allow-Credentials': 'true',
