@@ -6,7 +6,7 @@ type ThemeProviderProps = {
   defaultThemeId?: string;
 };
 
-export function ThemeProvider({ children, defaultThemeId = "ferrari" }: ThemeProviderProps) {
+export function ThemeProvider({ children, defaultThemeId = "anaqati" }: ThemeProviderProps) {
   const themeState = useThemeState(defaultThemeId);
 
   useEffect(() => {
