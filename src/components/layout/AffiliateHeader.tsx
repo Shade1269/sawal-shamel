@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Bell, Search, User, Sun, Moon, PanelLeft, Settings } from "lucide-react";
+import { Bell, Search, User, Sun, Moon, PanelLeft, Settings, Home } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -68,6 +68,17 @@ export function AffiliateHeader() {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
+          {/* Home Button */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => navigate('/')}
+            className="rounded-xl text-primary hover:bg-secondary/50"
+            title="الصفحة الرئيسية"
+          >
+            <Home className="h-5 w-5" />
+          </Button>
+
           {/* Theme Toggle */}
           <Button 
             variant="ghost" 
