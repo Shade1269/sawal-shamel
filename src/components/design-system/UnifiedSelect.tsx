@@ -10,14 +10,33 @@ import { Check, ChevronDown, ChevronUp } from 'lucide-react';
  */
 
 const unifiedSelectTriggerVariants = cva(
-  'flex items-center justify-between w-full transition-all duration-300 outline-none disabled:opacity-50 disabled:cursor-not-allowed',
+  'flex items-center justify-between w-full transition-all duration-200 outline-none disabled:opacity-50 disabled:cursor-not-allowed',
   {
     variants: {
       variant: {
-        default: 'bg-background border border-border text-foreground hover:bg-accent/50 focus:border-primary focus:ring-2 focus:ring-primary/20',
-        glass: 'bg-background/50 backdrop-blur-md border border-border/50 text-foreground hover:bg-background/80 focus:border-primary focus:ring-2 focus:ring-primary/30',
-        elevated: 'bg-card border border-border text-foreground shadow-soft hover:shadow-glow focus:shadow-glow focus:border-primary',
-        luxury: 'bg-gradient-to-br from-background to-card border border-border/50 text-foreground shadow-luxury hover:shadow-persian focus:border-primary',
+        default: [
+          'bg-white border border-[hsl(20_30%_87%)] text-foreground',
+          'hover:border-primary/50',
+          'focus:border-primary focus:ring-[3px] focus:ring-primary/10',
+          'data-[state=open]:border-primary data-[state=open]:ring-[3px] data-[state=open]:ring-primary/10',
+        ].join(' '),
+        glass: [
+          'bg-white/80 backdrop-blur-md border border-[hsl(20_30%_87%)]/50 text-foreground',
+          'hover:bg-white/90 hover:border-primary/50',
+          'focus:border-primary focus:ring-[3px] focus:ring-primary/15',
+        ].join(' '),
+        elevated: [
+          'bg-white border border-[hsl(20_30%_87%)] text-foreground',
+          'shadow-[0_2px_8px_hsl(320_42%_25%/0.06)]',
+          'hover:shadow-[0_4px_16px_hsl(320_42%_25%/0.1)] hover:border-primary/50',
+          'focus:shadow-[0_4px_16px_hsl(320_42%_25%/0.1)] focus:border-primary',
+        ].join(' '),
+        luxury: [
+          'bg-gradient-to-br from-white to-[hsl(20_60%_98%)] border border-[hsl(20_30%_87%)]/50 text-foreground',
+          'shadow-[0_4px_20px_hsl(320_42%_25%/0.08)]',
+          'hover:shadow-[0_6px_24px_hsl(320_42%_25%/0.12)] hover:border-primary/50',
+          'focus:border-primary',
+        ].join(' '),
       },
       size: {
         sm: 'h-8 px-3 py-1 text-sm rounded-md',
@@ -51,7 +70,7 @@ const UnifiedSelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50 transition-transform duration-200" />
+      <ChevronDown className="h-4 w-4 text-[hsl(43_54%_51%)] transition-transform duration-200" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -99,8 +118,12 @@ const UnifiedSelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-lg border border-border bg-background/30 backdrop-blur-md shadow-2xl',
-        'data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out',
+        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden',
+        'rounded-lg border border-[hsl(20_30%_87%)] bg-white',
+        'shadow-[0_8px_30px_hsl(320_42%_25%/0.08)]',
+        'data-[state=open]:animate-in data-[state=closed]:animate-out',
+        'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+        'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
         position === 'popper' &&
           'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
         className
@@ -143,18 +166,25 @@ const UnifiedSelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-pointer select-none items-center rounded-md py-2 px-8 text-sm outline-none',
-      'text-foreground hover:bg-accent hover:text-accent-foreground',
-      'focus:bg-accent focus:text-accent-foreground',
+      'relative flex w-full cursor-pointer select-none items-center',
+      'rounded-md py-2.5 pl-8 pr-3 text-sm outline-none',
+      'text-foreground bg-white',
+      'hover:bg-[hsl(0_60%_97%)] hover:text-primary',
+      'focus:bg-[hsl(0_60%_97%)] focus:text-primary',
+      'data-[state=checked]:bg-[hsl(0_62%_86%)] data-[state=checked]:text-primary data-[state=checked]:font-medium',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      'transition-colors duration-200',
+      'transition-colors duration-150',
+      // شريط جانبي ذهبي عند الـ hover
+      'before:absolute before:right-0 before:top-0 before:bottom-0 before:w-[3px] before:rounded-l',
+      'before:bg-transparent hover:before:bg-[hsl(43_54%_51%)] focus:before:bg-[hsl(43_54%_51%)]',
+      'before:transition-colors before:duration-150',
       className
     )}
     {...props}
   >
-    <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4 text-primary" />
+        <Check className="h-4 w-4 text-[hsl(43_54%_51%)]" />
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
@@ -168,7 +198,7 @@ const UnifiedSelectSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
-    className={cn('-mx-1 my-1 h-px bg-border', className)}
+    className={cn('-mx-1 my-1.5 h-px bg-[hsl(20_30%_87%)]', className)}
     {...props}
   />
 ));
