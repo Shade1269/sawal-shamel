@@ -7,12 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { createStoreUrl } from '@/utils/domains';
 import { 
   Store, 
   Settings, 
-  Palette, 
   Link as LinkIcon, 
   Copy, 
   ExternalLink, 
@@ -31,13 +30,7 @@ import {
   Star,
   Heart,
   Plus,
-  Trash2,
-  Package,
-  ShoppingBag,
-  TrendingUp,
-  BarChart3,
-  ShoppingCart,
-  MessageSquare
+  Trash2
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
@@ -95,8 +88,7 @@ type StoreProductOption = {
 
 export const AffiliateStoreManager = ({
   store,
-  onUpdateStore,
-  onGenerateQR
+  onUpdateStore
 }: AffiliateStoreManagerProps) => {
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -149,7 +141,7 @@ export const AffiliateStoreManager = ({
   // حالة لتحديد القسم الحالي
   const [currentSection, setCurrentSection] = useState<'main' | 'products' | 'orders'>('main');
 
-  const themes = [
+  const _themes = [
     { value: 'classic', label: 'كلاسيكي', colors: 'من الأزرق إلى الرمادي' },
     { value: 'modern', label: 'عصري', colors: 'من الأسود إلى الفضي' },
     { value: 'elegant', label: 'أنيق', colors: 'من الذهبي إلى الكريمي' },
@@ -159,6 +151,7 @@ export const AffiliateStoreManager = ({
     { value: 'professional', label: 'مهني', colors: 'من الأزرق الداكن إلى الرمادي' },
     { value: 'luxury', label: 'فخم', colors: 'من الذهبي إلى الأسود' }
   ];
+  void _themes; // Reserved for StoreThemeSelector
 
   const handleSaveChanges = () => {
     if (onUpdateStore) {

@@ -1,13 +1,11 @@
 import React from 'react';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedBadge as Badge } from '@/components/design-system';
-import { Separator } from '@/components/ui/separator';
 import { 
   TrendingUp, 
   Clock, 
   CheckCircle, 
   Package,
-  Calendar,
   Coins
 } from 'lucide-react';
 import { useAffiliateCommissions } from '@/hooks/useAffiliateCommissions';

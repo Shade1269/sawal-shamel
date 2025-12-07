@@ -9,9 +9,7 @@ import {
   Package,
   Percent,
   Save,
-  Edit3,
-  Trash2,
-  Plus
+  Edit3
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -35,7 +33,7 @@ interface AffiliateProductsManagerProps {
 }
 
 export const AffiliateProductsManager: React.FC<AffiliateProductsManagerProps> = ({ storeId }) => {
-  const { user } = useSupabaseAuth();
+  useSupabaseAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -85,7 +83,7 @@ export const AffiliateProductsManager: React.FC<AffiliateProductsManagerProps> =
       });
       setEditingProduct(null);
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "خطأ",
         description: "فشل في تحديث بيانات المنتج",

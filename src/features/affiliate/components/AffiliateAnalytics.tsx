@@ -49,7 +49,7 @@ export const AffiliateAnalytics = ({
   onTimeRangeChange 
 }: AffiliateAnalyticsProps) => {
   const [activeTab, setActiveTab] = useState('overview');
-  const { isDarkMode } = useDarkMode();
+  useDarkMode(); // Theme context
 
   // Sample data when no analytics provided
   const sampleVisitorsData = [

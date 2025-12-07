@@ -15,7 +15,6 @@ import {
   Palette, 
   Type, 
   Layout,
-  Image as ImageIcon,
   Settings,
   Eye,
   Save,
@@ -25,9 +24,7 @@ import {
   Tablet,
   Brush,
   Grid,
-  AlignLeft,
-  Star,
-  Heart
+  AlignLeft
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 

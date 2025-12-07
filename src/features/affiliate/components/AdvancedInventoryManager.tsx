@@ -4,6 +4,7 @@ import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Package, AlertTriangle, TrendingUp, TrendingDown, Plus, BarChart3 } from 'lucide-react';
@@ -39,7 +40,7 @@ interface AdvancedInventoryManagerProps {
 
 export const AdvancedInventoryManager = ({ storeId }: AdvancedInventoryManagerProps) => {
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
-  const [stockMovements, setStockMovements] = useState<StockMovement[]>([]);
+  const [, setStockMovements] = useState<StockMovement[]>([]);
   const [loading, setLoading] = useState(true);
   const [adjustmentDialogOpen, setAdjustmentDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
@@ -105,11 +106,12 @@ export const AdvancedInventoryManager = ({ storeId }: AdvancedInventoryManagerPr
     }
   };
 
-  const openAdjustmentDialog = (item: InventoryItem) => {
+  const _openAdjustmentDialog = (item: InventoryItem) => {
     setSelectedItem(item);
     setAdjustment({ quantity: 0, reason: '' });
     setAdjustmentDialogOpen(true);
   };
+  void _openAdjustmentDialog; // Reserved for future use
 
   if (loading) {
     return (
