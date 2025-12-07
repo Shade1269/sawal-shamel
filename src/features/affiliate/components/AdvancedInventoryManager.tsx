@@ -3,12 +3,10 @@ import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDesc
 import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UnifiedBadge as Badge } from '@/components/design-system';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Package, AlertTriangle, TrendingUp, TrendingDown, Plus, Minus, BarChart3 } from 'lucide-react';
+import { Package, AlertTriangle, TrendingUp, TrendingDown, Plus, BarChart3 } from 'lucide-react';
 
 interface InventoryItem {
   id: string;

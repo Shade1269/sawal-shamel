@@ -1,28 +1,21 @@
 import { useState } from 'react';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedBadge as Badge } from '@/components/design-system';
-import { UnifiedButton as Button } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
 import { 
-  BarChart3, 
   TrendingUp, 
   Eye, 
   Users, 
   Target,
-  Calendar,
   Globe,
   Smartphone,
-  Monitor,
   Clock,
   MousePointer,
-  ArrowRight,
-  Filter
+  ArrowRight
 } from 'lucide-react';
 import { 
-  LineChart, 
-  Line, 
   AreaChart, 
   Area, 
   BarChart, 

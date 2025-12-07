@@ -15,7 +15,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   variant = "default",
   className
 }) => {
-  const { patterns } = useDesignSystem()
+  const { patterns: _patterns } = useDesignSystem()
   
   const sizeClasses = {
     sm: "h-4 w-4",
@@ -184,9 +184,9 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   onRetry,
   children,
   loadingComponent,
-  emptyComponent
+  emptyComponent: _emptyComponent
 }) => {
-  const { patterns, helpers } = useDesignSystem()
+  const { patterns, helpers: _helpers } = useDesignSystem()
 
   if (error) {
     return (

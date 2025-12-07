@@ -42,7 +42,7 @@ interface SmartColorPaletteProps {
 export const SmartColorPalette: React.FC<SmartColorPaletteProps> = ({
   initialPalette,
   onPaletteChange,
-  showAISuggestions = true
+  showAISuggestions: _showAISuggestions = true
 }) => {
   const [currentPalette, setCurrentPalette] = useState<ColorPalette>(
     initialPalette || {
@@ -58,7 +58,7 @@ export const SmartColorPalette: React.FC<SmartColorPaletteProps> = ({
   );
 
   const [suggestedPalettes, setSuggestedPalettes] = useState<ColorPalette[]>([]);
-  const [harmonies, setHarmonies] = useState<string[]>([]);
+  const [_harmonies, _setHarmonies] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedHarmony, setSelectedHarmony] = useState<string>('complementary');
 

@@ -42,8 +42,8 @@ export const AdvancedThemeBuilder: React.FC<AdvancedThemeBuilderProps> = ({
 }) => {
   const {
     templates,
-    customThemes,
-    currentTheme,
+    customThemes: _customThemes,
+    currentTheme: _currentTheme,
     isLoading,
     previewMode,
     fetchTemplates,

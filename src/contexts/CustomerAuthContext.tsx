@@ -243,7 +243,7 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
   };
 
   // التحقق من كود OTP وتسجيل الدخول عبر Supabase
-  const verifyOTP = async (phone: string, otpCode: string, storeId?: string, role?: 'affiliate' | 'merchant' | 'customer') => {
+  const verifyOTP = async (phone: string, otpCode: string, storeId?: string, _role?: 'affiliate' | 'merchant' | 'customer') => {
     try {
       setSession(prev => ({ ...prev, isLoading: true }));
 
@@ -429,19 +429,19 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
   };
 
   // تسجيل الدخول بكلمة المرور (سيتم تطويره لاحقاً)
-  const signInWithPassword = async (phone: string, password: string) => {
+  const signInWithPassword = async (_phone: string, _password: string) => {
     // TODO: تطوير نظام كلمة المرور لاحقاً
     return { success: false, error: 'نظام كلمة المرور قيد التطوير' };
   };
 
   // تعيين كلمة مرور جديدة (سيتم تطويره لاحقاً) 
-  const setPassword = async (phone: string, otpCode: string, password: string) => {
+  const setPassword = async (_phone: string, _otpCode: string, _password: string) => {
     // TODO: تطوير نظام كلمة المرور لاحقاً
     return { success: false, error: 'نظام كلمة المرور قيد التطوير' };
   };
 
-  // Utilities: normalize phone formats to E.164 and national (05...)
-  const getPhoneVariants = (input: string) => {
+  // Utilities: normalize phone formats to E.164 and national (05...) - reserved for future
+  const getPhoneVariants = (input: string): { e164: string; national: string } => {
     const digits = input.replace(/\D/g, '');
     if (digits.startsWith('966')) {
       const national = '0' + digits.slice(3);

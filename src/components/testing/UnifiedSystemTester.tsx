@@ -109,7 +109,7 @@ export const UnifiedSystemTester: React.FC = () => {
       const start = Date.now();
       const orders = await UnifiedOrdersService.fetchOrders();
       if (orders.length > 0) {
-        const order = await UnifiedOrdersService.getOrderById(orders[0].id);
+        await UnifiedOrdersService.getOrderById(orders[0].id);
         const duration = Date.now() - start;
         updateTestStatus(6, 'success', `تم جلب تفاصيل الطلب في ${duration}ms`, duration);
       } else {

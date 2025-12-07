@@ -28,9 +28,9 @@ interface RealtimeThemePreviewProps {
 
 export const RealtimeThemePreview: React.FC<RealtimeThemePreviewProps> = ({
   themeConfig,
-  isActive = false,
+  isActive: _isActive = false,
   showControls = true,
-  onConfigChange
+  onConfigChange: _onConfigChange
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentView, setCurrentView] = useState<'home' | 'product' | 'cart' | 'checkout'>('home');

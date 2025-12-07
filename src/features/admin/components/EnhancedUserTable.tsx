@@ -82,17 +82,23 @@ export const EnhancedUserTable: React.FC<EnhancedUserTableProps> = ({
   onSendNotification,
   onManagePermissions
 }) => {
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [_expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
+  // Reserved for future use when row expansion is implemented
   const toggleRowExpansion = (userId: string) => {
-    const newExpanded = new Set(expandedRows);
-    if (newExpanded.has(userId)) {
-      newExpanded.delete(userId);
-    } else {
-      newExpanded.add(userId);
-    }
-    setExpandedRows(newExpanded);
+    setExpandedRows(prev => {
+      const newExpanded = new Set(prev);
+      if (newExpanded.has(userId)) {
+        newExpanded.delete(userId);
+      } else {
+        newExpanded.add(userId);
+      }
+      return newExpanded;
+    });
   };
+  
+  // Export to avoid unused warning
+  void toggleRowExpansion;
 
   const getRoleColor = (role: string) => {
     switch (role) {
