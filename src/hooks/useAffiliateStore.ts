@@ -58,8 +58,8 @@ export const useAffiliateStore = () => {
     mutationFn: async (data: CreateStoreData) => {
       const { data: result, error } = await supabase.rpc('create_affiliate_store', {
         p_store_name: data.store_name,
-        p_bio: data.bio || null,
-        p_store_slug: data.store_slug || null
+        p_bio: data.bio ?? undefined,
+        p_store_slug: data.store_slug ?? undefined
       });
 
       if (error) throw error;

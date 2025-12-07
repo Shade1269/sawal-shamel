@@ -58,7 +58,7 @@ export const useAdminWithdrawals = () => {
       const { data, error } = await supabase.rpc('process_withdrawal_request', {
         p_withdrawal_id: withdrawalId,
         p_status: status,
-        p_admin_notes: adminNotes || null
+        p_admin_notes: adminNotes ?? undefined
       });
 
       if (error) throw error;

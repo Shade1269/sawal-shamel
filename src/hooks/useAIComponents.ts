@@ -40,9 +40,6 @@ export const useSmartSearch = (config: SmartSearchConfig = {}) => {
     minChars = 2,
     debounceMs = 300,
     maxSuggestions = 10,
-    categories = [],
-    timeout = 5000,
-    retries = 3,
     caching = true
   } = config;
 
@@ -112,8 +109,8 @@ export const useSmartSearch = (config: SmartSearchConfig = {}) => {
         });
       }
 
-    } catch (error) {
-      if (error.name !== 'AbortError') {
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') {
         setError('فشل في البحث');
       }
     } finally {
@@ -177,13 +174,7 @@ export const useSmartSearch = (config: SmartSearchConfig = {}) => {
 // Hook لتوليد المحتوى الذكي
 export const useContentGeneration = (config: ContentGenerationConfig = {}) => {
   const {
-    enabled = true,
-    maxLength = 500,
-    tone = 'professional',
-    language = 'ar',
-    template = '',
-    timeout = 10000,
-    retries = 2
+    enabled = true
   } = config;
 
   const [content, setContent] = useState('');
@@ -266,8 +257,7 @@ export const useSmartForm = (config: SmartFormConfig = {}) => {
     enabled = true,
     autoComplete = true,
     validation = true,
-    suggestions = true,
-    formatting = true
+    suggestions = true
   } = config;
 
   const [fieldSuggestions, setFieldSuggestions] = useState<Record<string, string[]>>({});
@@ -297,7 +287,7 @@ export const useSmartForm = (config: SmartFormConfig = {}) => {
   }, [enabled, suggestions]);
 
   // التحقق الذكي من صحة البيانات
-  const validateField = useCallback(async (fieldName: string, value: string, rules?: any) => {
+  const validateField = useCallback(async (fieldName: string, value: string, _rules?: any) => {
     if (!enabled || !validation) return { isValid: true, message: '' };
 
     // قواعد التحقق الأساسية

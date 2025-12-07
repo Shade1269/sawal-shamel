@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -290,13 +290,13 @@ export function useInventoryManagement() {
   const loading = warehousesLoading || itemsLoading || movementsLoading || alertsLoading || reservationsLoading;
 
   const getInventoryAnalytics = () => {
-    const totalItems = inventoryItems.reduce((sum, item) => sum + item.quantity_available, 0);
+    const totalItems = inventoryItems.reduce((sum, item) => sum + (item.quantity_available ?? 0), 0);
     const lowStockItems = inventoryItems.filter(item => 
-      item.quantity_available <= item.reorder_level && item.reorder_level > 0
+      (item.quantity_available ?? 0) <= (item.reorder_level ?? 0) && (item.reorder_level ?? 0) > 0
     ).length;
-    const outOfStockItems = inventoryItems.filter(item => item.quantity_available === 0).length;
+    const outOfStockItems = inventoryItems.filter(item => (item.quantity_available ?? 0) === 0).length;
     const totalValue = inventoryItems.reduce((sum, item) => 
-      sum + (item.quantity_available * (item.unit_cost || 0)), 0
+      sum + ((item.quantity_available ?? 0) * (item.unit_cost || 0)), 0
     );
     const criticalAlerts = alerts.filter(alert => alert.priority === 'CRITICAL').length;
     const activeReservations = reservations.filter(res => res.status === 'ACTIVE').length;
@@ -521,7 +521,7 @@ export function useInventoryManagement() {
 
   const cancelReservation = async (reservationId: string) => {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('inventory_reservations')
         .update({ status: 'CANCELLED' })
         .eq('id', reservationId)

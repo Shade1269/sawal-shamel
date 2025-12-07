@@ -128,7 +128,7 @@ export const useActivityFeed = (): UseActivityFeedReturn => {
         }
       };
 
-      wsRef.current.onclose = (event) => {
+      wsRef.current.onclose = (_event) => {
         setIsConnected(false);
 
         // Attempt to reconnect
