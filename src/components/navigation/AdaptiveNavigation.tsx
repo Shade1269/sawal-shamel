@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 import { useSmartNavigation } from './SmartNavigationProvider';
 import { MobileBottomNavigation } from './MobileBottomNavigation';
@@ -20,7 +20,7 @@ export function AdaptiveNavigation({
   showShortcuts = true 
 }: AdaptiveNavigationProps) {
   const device = useDeviceDetection();
-  const { state } = useSmartNavigation();
+  const { } = useSmartNavigation();
 
   return (
     <div className={className}>

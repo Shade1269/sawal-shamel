@@ -31,7 +31,7 @@ interface NavItem {
 export function BottomNav({ storeSlug, cartCount = 0, wishlistCount = 0 }: BottomNavProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { direction, language } = useLanguage();
+  const { language } = useLanguage();
 
   // تحديد عناصر التنقل
   const navItems: NavItem[] = [

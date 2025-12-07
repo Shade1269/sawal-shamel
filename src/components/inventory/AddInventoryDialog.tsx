@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Plus, Loader2, Upload, X, Save, Package } from 'lucide-react';
@@ -155,7 +155,7 @@ export function AddInventoryDialog({ warehouses, onSuccess }: AddInventoryDialog
       const profileId = profile.id;
 
       // البحث عن merchant أو إنشاء واحد إذا لم يكن موجوداً
-      let { data: merchant, error: merchantError } = await supabase
+      let { data: merchant, error: _merchantError } = await supabase
         .from('merchants')
         .select('id')
         .eq('profile_id', profileId)

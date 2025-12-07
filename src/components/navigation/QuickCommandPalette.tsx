@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Command, CommandInput, CommandItem, CommandList, CommandEmpty, CommandGroup } from '@/components/ui/command';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useFastAuth } from '@/hooks/useFastAuth';
-import { cn } from '@/lib/utils';
+
 
 interface QuickCommand {
   id: string;
@@ -41,7 +41,7 @@ const QuickCommandPalette: React.FC<QuickCommandPaletteProps> = ({
   onOpenChange 
 }) => {
   const navigate = useNavigate();
-  const { profile, isAuthenticated } = useFastAuth();
+  const { profile } = useFastAuth();
   const userRole = profile?.role;
   const [search, setSearch] = useState('');
 

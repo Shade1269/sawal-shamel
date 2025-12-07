@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSmartNavigation } from './SmartNavigationProvider';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
-import { Menu, ChevronRight, ChevronDown, X, Star, Clock } from 'lucide-react';
+import { Menu, ChevronRight, ChevronDown, Star, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getTouchFriendlySize } from '@/utils/deviceUtils';
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
@@ -236,7 +236,7 @@ export function TabletDrawerNavigation() {
         
         {/* Quick Action Indicators */}
         <div className="flex flex-col space-y-2">
-          {state.favoritePages.slice(0, 3).map((item, index) => {
+          {state.favoritePages.slice(0, 3).map((item) => {
             const Icon = item.icon;
             const isActive = state.currentPath === item.href;
             

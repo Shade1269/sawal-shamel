@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { Skeleton } from '@/ui/Skeleton';
 
 const MiniChart = lazy(() => import('@/components/home/MiniChart'));

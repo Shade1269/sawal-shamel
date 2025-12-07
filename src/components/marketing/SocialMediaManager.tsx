@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,7 +29,7 @@ const SocialMediaManager = () => {
     mediaType: 'text'
   });
 
-  const [connectedAccounts, setConnectedAccounts] = useState([
+  const [connectedAccounts] = useState([
     { platform: 'Twitter', handle: '@mystore', connected: true, followers: '2.5K' },
     { platform: 'Instagram', handle: '@mystore', connected: true, followers: '5.2K' },
     { platform: 'Facebook', handle: 'My Store', connected: false, followers: '0' },

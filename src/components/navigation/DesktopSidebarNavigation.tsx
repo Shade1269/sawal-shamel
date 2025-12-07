@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSmartNavigation } from './SmartNavigationProvider';
 import { Button } from '@/components/ui/button';
@@ -11,8 +11,7 @@ import {
   Star, 
   Clock, 
   Pin,
-  Search,
-  MoreHorizontal
+  Search
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';

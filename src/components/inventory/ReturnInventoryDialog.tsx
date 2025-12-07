@@ -101,7 +101,7 @@ export function ReturnInventoryDialog({ inventoryItems, warehouses, onSuccess }:
     }
   };
 
-  const getReturnReasonText = (reason: string) => {
+  const _getReturnReasonText = (reason: string) => {
     const reasons = {
       defective: 'معيب',
       expired: 'منتهي الصلاحية',

@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSmartNavigation } from './SmartNavigationProvider';
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Search, 
   Home, 
   ArrowLeft, 
   ArrowRight, 
@@ -36,7 +35,7 @@ export function NavigationShortcuts() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Define keyboard shortcuts
-  const shortcuts: Shortcut[] = [
+  const _shortcuts: Shortcut[] = [
     {
       keys: ['Ctrl', 'K'],
       description: 'فتح البحث السريع',

@@ -8,13 +8,10 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/co
 import { Drawer, DrawerContent, DrawerTrigger, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { 
   Menu, 
-  X, 
   ChevronRight, 
   Home, 
   ArrowLeft,
-  Search,
-  User,
-  Settings
+  Search
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -76,7 +73,6 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
   headerContent,
   footerContent,
   variant,
-  position,
   useDrawer,
   searchEnabled = false,
   onSearchClick
@@ -115,7 +111,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
   const handleBackClick = () => {
     if (breadcrumb.length > 0) {
       const newBreadcrumb = [...breadcrumb];
-      const parent = newBreadcrumb.pop();
+      newBreadcrumb.pop();
       setBreadcrumb(newBreadcrumb);
       
       if (newBreadcrumb.length === 0) {
@@ -153,14 +149,14 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
             onClick={() => handleItemClick(item)}
             className={navItemClass}
           >
-            <NavItemContent item={item} isActive={isActive} />
+            <NavItemContent item={item} isActive={!!isActive} />
           </Link>
         ) : (
           <div
             onClick={() => handleItemClick(item)}
             className={navItemClass}
           >
-            <NavItemContent item={item} isActive={isActive} />
+            <NavItemContent item={item} isActive={!!isActive} />
           </div>
         )}
       </React.Fragment>

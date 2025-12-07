@@ -1,4 +1,3 @@
-import React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -9,9 +8,7 @@ import {
   ChevronRight, 
   ChevronsLeft, 
   ChevronsRight,
-  MoreHorizontal,
-  List,
-  Grid
+  MoreHorizontal
 } from 'lucide-react';
 
 const paginationVariants = cva(
@@ -96,7 +93,7 @@ const EnhancedPagination: React.FC<EnhancedPaginationProps> = ({
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-  const paginationInfo: PaginationInfo = {
+  const _paginationInfo: PaginationInfo = {
     currentPage,
     totalPages,
     totalItems,

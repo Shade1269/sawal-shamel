@@ -1,16 +1,15 @@
-import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSmartNavigation } from './SmartNavigationProvider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Plus, Search } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getTouchFriendlySize } from '@/utils/deviceUtils';
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 
 export function MobileBottomNavigation() {
-  const { state, getNavigationForDevice, toggleMobileMenu } = useSmartNavigation();
+  const { state, getNavigationForDevice } = useSmartNavigation();
   const device = useDeviceDetection();
   const touchSize = getTouchFriendlySize(device);
   

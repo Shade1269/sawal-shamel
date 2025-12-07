@@ -1,6 +1,5 @@
 import { KpiCard } from '@/components/home/KpiCard';
 import type { KpiCardProps } from '@/components/home/KpiCard';
-import { ShoppingCart, LineChart, Trophy } from 'lucide-react';
 import { useDarkMode } from '@/shared/components/DarkModeProvider';
 
 interface PerformanceMetricsProps {

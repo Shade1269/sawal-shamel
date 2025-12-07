@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import { FileDown, Calendar, TrendingUp, TrendingDown, BarChart3, ArrowUpDown } from 'lucide-react';
+import { FileDown, TrendingUp, TrendingDown, BarChart3, ArrowUpDown } from 'lucide-react';
 
 interface MovementReport {
   id: string;

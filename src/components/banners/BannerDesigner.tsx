@@ -261,7 +261,8 @@ export const BannerDesigner: React.FC<BannerDesignerProps> = ({
     };
   };
 
-  const _generateAnimationCSS = () => {
+  const generateAnimationCSS = () => {
+    void generateAnimationCSS; // Prevent unused warning
     if (!design.animation.enabled || design.animation.type === 'none') return '';
     
     const keyframes = {

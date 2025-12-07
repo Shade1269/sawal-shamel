@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,13 +12,11 @@ import {
   BarChart3, 
   Calendar,
   Target,
-  Palette,
-  Settings
+  Palette
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { usePromotionalBanners } from '@/hooks/usePromotionalBanners';
 import { BannerEditor } from './BannerEditor';
-import { BannerPreview } from './BannerPreview';
 import { BannerAnalytics } from './BannerAnalytics';
 
 interface BannerManagerProps {

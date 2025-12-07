@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Command, CommandInput, CommandItem, CommandList, CommandEmpty, CommandGroup } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { 
+import {
   Search, 
   Clock, 
   TrendingUp, 
@@ -52,7 +51,6 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
   onResultSelect,
   className,
   showRecentSearches = true,
-  showSuggestions = true,
   showFilters = true,
   maxResults = 50
 }) => {
