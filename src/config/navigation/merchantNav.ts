@@ -95,12 +95,36 @@ export const merchantMobileNavItems: MobileNavItem[] = [
   },
 ];
 
+interface LegacyNavChild {
+  id: string;
+  title: string;
+  icon: typeof Home;
+  href: string;
+  badge?: string;
+}
+
+interface LegacyNavItem {
+  id: string;
+  title: string;
+  icon: typeof Home;
+  href: string;
+  badge?: string;
+  children?: LegacyNavChild[];
+}
+
+interface LegacyNavSection {
+  id: string;
+  title: string;
+  color: string;
+  items: LegacyNavItem[];
+}
+
 // Backward compatibility converter function
-function convertToLegacyFormat(sections: SidebarSection[]): any[] {
+function convertToLegacyFormat(sections: SidebarSection[]): LegacyNavSection[] {
   return sections.map(section => ({
     id: section.id,
     title: section.label,
-    color: section.color,
+    color: section.color || 'primary',
     items: section.items.map(item => ({
       id: item.id,
       title: item.label,

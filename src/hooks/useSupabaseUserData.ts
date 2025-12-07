@@ -3,6 +3,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/hooks/use-toast';
 
+export interface ShopSettings {
+  theme?: string;
+  currency?: string;
+  language?: string;
+  notifications?: boolean;
+  [key: string]: unknown;
+}
+
 export interface UserShop {
   id: string;
   shop_id: string;
@@ -11,16 +19,65 @@ export interface UserShop {
   created_at: string;
   total_products: number;
   total_orders: number;
-  settings?: any;
+  settings?: ShopSettings;
+}
+
+export interface ActivityMetadata {
+  productId?: string;
+  orderId?: string;
+  amount?: number;
+  [key: string]: unknown;
 }
 
 export interface UserActivity {
   id: string;
   activity_type: string;
   description: string;
-  metadata: any;
+  metadata: ActivityMetadata;
   created_at: string;
   shop_id?: string;
+}
+
+export interface UserStatistics {
+  totalProducts: number;
+  totalOrders: number;
+  totalRevenue: number;
+}
+
+export interface ProductData {
+  title: string;
+  description?: string;
+  price_sar: number;
+  stock?: number;
+  images?: string[];
+  category?: string;
+  is_active?: boolean;
+  [key: string]: unknown;
+}
+
+export interface ProductLibraryItem {
+  id: string;
+  is_featured: boolean;
+  is_visible: boolean;
+  sort_index: number;
+  commission_amount: number;
+  products: Product | null;
+}
+
+export interface Product {
+  id: string;
+  title: string;
+  description?: string;
+  price_sar: number;
+  stock?: number;
+  images?: string[];
+  is_active: boolean;
+  [key: string]: unknown;
+}
+
+export interface CreateShopResult {
+  success: boolean;
+  shopId: string;
 }
 
 export const useSupabaseUserData = () => {
@@ -28,12 +85,12 @@ export const useSupabaseUserData = () => {
   const { toast } = useToast();
   const [userShop, setUserShop] = useState<UserShop | null>(null);
   const [userActivities, setUserActivities] = useState<UserActivity[]>([]);
-  const [userStatistics, setUserStatistics] = useState<any>(null);
+  const [userStatistics, setUserStatistics] = useState<UserStatistics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // حفظ نشاط المستخدم
-  const logActivity = async (activityType: string, description?: string, shopId?: string, metadata?: any): Promise<void> => {
+  const logActivity = async (activityType: string, description?: string, shopId?: string, metadata?: ActivityMetadata): Promise<void> => {
     if (!user) return;
 
     try {
@@ -106,7 +163,7 @@ export const useSupabaseUserData = () => {
   };
 
   // إنشاء متجر جديد
-  const createShop = async (shopName: string, shopSlug?: string): Promise<any> => {
+  const createShop = async (shopName: string, shopSlug?: string): Promise<CreateShopResult> => {
     if (!user) {
       throw new Error('المستخدم غير مسجل الدخول');
     }
@@ -138,7 +195,7 @@ export const useSupabaseUserData = () => {
       logActivity('shop_created', `تم إنشاء متجر: ${shopName}`);
 
       return { success: true, shopId: data };
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error creating shop:', error);
       throw error;
     }
@@ -236,7 +293,7 @@ export const useSupabaseUserData = () => {
   };
 
   // إضافة منتج
-  const addProduct = async (productData: any): Promise<string | undefined> => {
+  const addProduct = async (productData: ProductData): Promise<string | undefined> => {
     if (!user || !userShop) {
       throw new Error('المستخدم أو المتجر غير متوفر');
     }
@@ -299,7 +356,7 @@ export const useSupabaseUserData = () => {
   };
 
   // جلب منتجات المتجر
-  const getShopProducts = async (): Promise<any[]> => {
+  const getShopProducts = async (): Promise<Product[]> => {
     try {
       // جلب جميع المنتجات المتاحة (للمخزون العام)
       const { data, error } = await supabase
@@ -316,7 +373,7 @@ export const useSupabaseUserData = () => {
   };
 
   // حفظ إعدادات المتجر
-  const saveShopSettings = async (settings: any): Promise<void> => {
+  const saveShopSettings = async (settings: ShopSettings): Promise<void> => {
     if (!user || !userShop) {
       throw new Error('المستخدم أو المتجر غير متوفر');
     }
@@ -399,7 +456,7 @@ export const useSupabaseUserData = () => {
   };
 
   // جلب عناصر مكتبة المتجر مع تفاصيل المنتجات
-  const getProductLibraryItems = async (): Promise<any[]> => {
+  const getProductLibraryItems = async (): Promise<ProductLibraryItem[]> => {
     if (!user || !userShop) return [];
 
     try {
@@ -411,7 +468,7 @@ export const useSupabaseUserData = () => {
       if (libError) throw libError;
       if (!libraryRows || libraryRows.length === 0) return [];
 
-      const productIds = libraryRows.map((r: any) => r.product_id).filter(Boolean);
+      const productIds = libraryRows.map((r) => r.product_id).filter(Boolean);
       if (productIds.length === 0) return [];
 
       const { data: products, error: prodError } = await supabase
@@ -421,9 +478,9 @@ export const useSupabaseUserData = () => {
 
       if (prodError) throw prodError;
 
-      const productMap = new Map((products || []).map((p: any) => [p.id, p]));
+      const productMap = new Map((products || []).map((p) => [p.id, p]));
 
-      return libraryRows.map((row: any) => ({
+      return libraryRows.map((row) => ({
         id: row.id,
         is_featured: row.is_featured,
         is_visible: row.is_visible,
@@ -438,7 +495,7 @@ export const useSupabaseUserData = () => {
   };
 
   // جلب منتجات متجري المحددة (المضافة لمكتبة المتجر)
-  const getMyStoreProducts = async (): Promise<any[]> => {
+  const getMyStoreProducts = async (): Promise<Product[]> => {
     if (!user || !userShop) return [];
 
     try {

@@ -47,23 +47,27 @@ export default tseslint.config(
       // React Refresh
       "react-refresh/only-export-components": "off",
 
-      // TypeScript - Relaxed for faster development
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unused-vars": "off",
+      // TypeScript - Stricter rules for better code quality
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }],
       "@typescript-eslint/consistent-indexed-object-style": "off",
       "@typescript-eslint/array-type": "off",
       "@typescript-eslint/no-inferrable-types": "off",
       "@typescript-eslint/no-require-imports": "off",
       "@typescript-eslint/consistent-type-definitions": "off",
       "@typescript-eslint/no-empty-function": "off",
-      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/ban-ts-comment": "warn",
       "@typescript-eslint/no-empty-object-type": "off",
 
-      // General JavaScript - Relaxed
-      "no-case-declarations": "off",
-      "prefer-const": "off",
-      "no-useless-escape": "off",
-      "no-unused-vars": "off",
+      // General JavaScript - Stricter
+      "no-case-declarations": "warn",
+      "prefer-const": "warn",
+      "no-useless-escape": "warn",
+      "no-unused-vars": "off", // Use TypeScript rule instead
     },
   },
   {

@@ -28,13 +28,21 @@ import {
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
+interface BankDetails {
+  bank_name?: string;
+  account_number?: string;
+  iban?: string;
+  account_holder?: string;
+  [key: string]: string | undefined;
+}
+
 interface WithdrawalRequest {
   id: string;
   affiliate_profile_id: string;
   amount_sar: number;
   status: string;
   payment_method: string;
-  bank_details: any;
+  bank_details: BankDetails;
   notes: string | null;
   admin_notes: string | null;
   processed_by: string | null;
@@ -43,7 +51,7 @@ interface WithdrawalRequest {
   updated_at: string;
 }
 
-const statusIcons: Record<string, any> = {
+const statusIcons: Record<string, typeof Clock> = {
   PENDING: Clock,
   APPROVED: CheckCircle,
   REJECTED: XCircle,

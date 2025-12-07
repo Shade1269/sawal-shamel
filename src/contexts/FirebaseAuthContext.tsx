@@ -3,9 +3,20 @@ import { User } from 'firebase/auth';
 import { getFirebaseAuth } from '@/lib/firebase';
 import { getUserFromFirestore } from '@/lib/firestore';
 
+export interface FirebaseUserProfile {
+  id?: string;
+  uid?: string;
+  email?: string;
+  phone?: string;
+  displayName?: string;
+  role?: string;
+  createdAt?: string;
+  [key: string]: unknown;
+}
+
 interface FirebaseAuthContextType {
   user: User | null;
-  userProfile: any | null;
+  userProfile: FirebaseUserProfile | null;
   loading: boolean;
   signOut: () => Promise<void>;
 }
@@ -27,7 +38,7 @@ export const useFirebaseAuth = () => {
 
 export const FirebaseAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [userProfile, setUserProfile] = useState<any | null>(null);
+  const [userProfile, setUserProfile] = useState<FirebaseUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchUserProfile = async (firebaseUser: User) => {

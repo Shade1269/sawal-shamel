@@ -222,7 +222,7 @@ export class UnifiedOrdersService {
     if (error) throw error;
 
     // Group by month
-    const monthlyData = data.reduce((acc: any, order) => {
+    const monthlyData = data.reduce((acc: Record<string, number>, order) => {
       const month = new Date(order.created_at).toISOString().slice(0, 7);
       if (!acc[month]) acc[month] = 0;
       acc[month] += Number(order.total_amount_sar);
