@@ -215,7 +215,7 @@ const MediaManager: React.FC<MediaManagerProps> = ({
               <div className="relative group">
                 <img
                   src={coverImage.media_url}
-                  alt={coverImage.alt_text}
+                  alt={coverImage.alt_text ?? ''}
                   className="w-full h-64 object-cover rounded-lg border"
                 />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
@@ -319,7 +319,7 @@ const MediaManager: React.FC<MediaManagerProps> = ({
                   >
                     <img
                       src={image.media_url}
-                      alt={image.alt_text}
+                      alt={image.alt_text ?? ''}
                       className="w-full h-32 object-cover rounded-lg border"
                     />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-1">

@@ -12,8 +12,8 @@ interface StoreData {
   id: string;
   store_name: string;
   store_slug: string;
-  bio?: string;
-  logo_url?: string;
+  bio?: string | null;
+  logo_url?: string | null;
   theme: string;
 }
 

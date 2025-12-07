@@ -42,6 +42,8 @@ export interface ProductMedia {
   sort_order: number;
   file_size?: number | null;
   dimensions?: { width: number; height: number } | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 export interface ProductDiscount {
@@ -49,47 +51,55 @@ export interface ProductDiscount {
   product_id: string;
   discount_type: 'percent' | 'amount';
   discount_value: number;
-  start_date?: string;
-  end_date?: string;
-  is_active: boolean;
+  start_date?: string | null;
+  end_date?: string | null;
+  is_active?: boolean | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 export interface ProductVariantAdvanced {
   id?: string;
   product_id: string;
   sku: string;
-  size?: string;
-  color?: string;
-  color_code?: string;
-  color_swatch_url?: string;
-  barcode?: string;
-  price_override?: number;
+  size?: string | null;
+  color?: string | null;
+  color_code?: string | null;
+  color_swatch_url?: string | null;
+  barcode?: string | null;
+  price_override?: number | null;
   quantity: number;
-  min_stock_alert: number;
-  variant_image_url?: string;
-  is_active: boolean;
+  min_stock_alert?: number | null;
+  variant_image_url?: string | null;
+  is_active?: boolean | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 export interface ProductSEO {
   id?: string;
   product_id: string;
-  seo_title?: string;
-  seo_description?: string;
-  meta_keywords: string[];
-  slug?: string;
+  seo_title?: string | null;
+  seo_description?: string | null;
+  meta_keywords?: string[] | null;
+  slug?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 export interface ProductShipping {
   id?: string;
   product_id: string;
-  weight_grams?: number;
-  length_cm?: number;
-  width_cm?: number;
-  height_cm?: number;
-  warehouse_id?: string;
-  handling_time_days: number;
-  origin_country?: string;
-  return_policy?: string;
+  weight_grams?: number | null;
+  length_cm?: number | null;
+  width_cm?: number | null;
+  height_cm?: number | null;
+  warehouse_id?: string | null;
+  handling_time_days?: number | null;
+  origin_country?: string | null;
+  return_policy?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 export interface CompleteProductData {

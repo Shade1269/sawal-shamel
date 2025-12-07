@@ -9,21 +9,15 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
-  Upload, 
   X, 
-  Plus, 
   Save, 
   ArrowLeft, 
   Image as ImageIcon,
   Star,
   Package,
-  Tag,
   Layers,
   Info,
-  Trash2,
   Eye,
-  Calendar,
-  Percent,
   DollarSign
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -34,12 +28,7 @@ import {
   useCreateAdvancedProduct, 
   useUpdateAdvancedProduct,
   useCalculateFinalPrice,
-  CompleteProductData,
-  ProductMedia,
-  ProductDiscount,
-  ProductVariantAdvanced,
-  ProductSEO,
-  ProductShipping
+  CompleteProductData
 } from '@/hooks/useAdvancedProductManagement';
 import MediaManager from './MediaManager';
 import VariantManager from './VariantManager';
@@ -116,7 +105,7 @@ const AdvancedProductForm: React.FC<AdvancedProductFormProps> = ({ mode }) => {
       errors.title = 'اسم المنتج يجب أن يكون بين 3-120 حرف';
     }
 
-    if (!formData.product.sku_root.trim()) {
+    if (!(formData.product.sku_root || '').trim()) {
       errors.sku_root = 'كود المنتج الأساسي مطلوب';
     }
 
@@ -490,12 +479,13 @@ const AdvancedProductForm: React.FC<AdvancedProductFormProps> = ({ mode }) => {
                           if (e.key === 'Enter') {
                             e.preventDefault();
                             const value = e.currentTarget.value.trim();
-                            if (value && !formData.product.tags.includes(value)) {
+                            const tags = formData.product.tags || [];
+                            if (value && !tags.includes(value)) {
                               setFormData(prev => ({
                                 ...prev,
                                 product: {
                                   ...prev.product,
-                                  tags: [...prev.product.tags, value]
+                                  tags: [...(prev.product.tags || []), value]
                                 }
                               }));
                               e.currentTarget.value = '';
@@ -505,7 +495,7 @@ const AdvancedProductForm: React.FC<AdvancedProductFormProps> = ({ mode }) => {
                       />
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {formData.product.tags.map((tag, index) => (
+                      {(formData.product.tags || []).map((tag, index) => (
                         <Badge key={index} variant="secondary" className="gap-1">
                           {tag}
                           <Button
@@ -517,7 +507,7 @@ const AdvancedProductForm: React.FC<AdvancedProductFormProps> = ({ mode }) => {
                               ...prev,
                               product: {
                                 ...prev.product,
-                                tags: prev.product.tags.filter((_, i) => i !== index)
+                                tags: (prev.product.tags || []).filter((_, i) => i !== index)
                               }
                             }))}
                           >
@@ -557,8 +547,8 @@ const AdvancedProductForm: React.FC<AdvancedProductFormProps> = ({ mode }) => {
             {/* إدارة المتغيرات */}
             <TabsContent value="variants">
               <VariantManager
-                hasVariants={formData.product.has_variants}
-                skuRoot={formData.product.sku_root}
+                hasVariants={formData.product.has_variants ?? false}
+                skuRoot={formData.product.sku_root ?? ''}
                 variants={formData.variants}
                 onVariantsChange={(variants) => setFormData(prev => ({ ...prev, variants }))}
                 validationError={validationErrors.variants}

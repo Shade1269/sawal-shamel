@@ -6,13 +6,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Package, 
   Truck,
   Clock,
   MapPin,
   Scale,
   Ruler,
-  Shield,
   Globe
 } from 'lucide-react';
 import { ProductShipping } from '@/hooks/useAdvancedProductManagement';
@@ -35,11 +33,14 @@ const ShippingManager: React.FC<ShippingManagerProps> = ({
 
   // حساب تكلفة الشحن التقديرية
   const calculateShippingCost = () => {
-    const { weight_grams = 0, length_cm = 0, width_cm = 0, height_cm = 0 } = shipping;
+    const weightG = shipping.weight_grams ?? 0;
+    const lengthC = shipping.length_cm ?? 0;
+    const widthC = shipping.width_cm ?? 0;
+    const heightC = shipping.height_cm ?? 0;
     
     // حساب الوزن الحجمي
-    const volumetricWeight = (length_cm * width_cm * height_cm) / 5000; // cm³ to kg
-    const chargeableWeight = Math.max(weight_grams / 1000, volumetricWeight);
+    const volumetricWeight = (lengthC * widthC * heightC) / 5000; // cm³ to kg
+    const chargeableWeight = Math.max(weightG / 1000, volumetricWeight);
     
     // تكلفة تقديرية (10 ريال + 2 ريال لكل كيلو إضافي)
     const baseCost = 10;

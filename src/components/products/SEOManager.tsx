@@ -49,18 +49,19 @@ const SEOManager: React.FC<SEOManagerProps> = ({
     if (!newKeyword.trim()) return;
     
     const keyword = newKeyword.trim().toLowerCase();
-    if (seo.meta_keywords.includes(keyword)) {
+    const keywords = seo.meta_keywords || [];
+    if (keywords.includes(keyword)) {
       setNewKeyword('');
       return;
     }
 
-    updateSEO('meta_keywords', [...seo.meta_keywords, keyword]);
+    updateSEO('meta_keywords', [...keywords, keyword]);
     setNewKeyword('');
   };
 
   // حذف كلمة مفتاحية
   const removeKeyword = (keywordToRemove: string) => {
-    updateSEO('meta_keywords', seo.meta_keywords.filter(k => k !== keywordToRemove));
+    updateSEO('meta_keywords', (seo.meta_keywords || []).filter(k => k !== keywordToRemove));
   };
 
   // توليد عنوان SEO تلقائي
@@ -125,9 +126,10 @@ const SEOManager: React.FC<SEOManagerProps> = ({
     }
 
     // فحص الكلمات المفتاحية
-    if (seo.meta_keywords.length > 0) {
+    const keywords = seo.meta_keywords || [];
+    if (keywords.length > 0) {
       score += 20;
-      if (seo.meta_keywords.length >= 3 && seo.meta_keywords.length <= 10) {
+      if (keywords.length >= 3 && keywords.length <= 10) {
         score += 10;
       }
       checks.push({ name: 'كلمات مفتاحية', status: 'good' });
@@ -163,7 +165,7 @@ const SEOManager: React.FC<SEOManagerProps> = ({
       newSuggestions.push('وصف SEO طويل جداً، قد يظهر مقطوعاً في نتائج البحث');
     }
 
-    if (seo.meta_keywords.length < 3) {
+    if ((seo.meta_keywords || []).length < 3) {
       newSuggestions.push('أضف المزيد من الكلمات المفتاحية ذات الصلة (3-10 كلمات)');
     }
 
@@ -373,20 +375,20 @@ const SEOManager: React.FC<SEOManagerProps> = ({
             />
             <Button 
               onClick={addKeyword}
-              disabled={!newKeyword.trim() || seo.meta_keywords.length >= 15}
+              disabled={!newKeyword.trim() || (seo.meta_keywords || []).length >= 15}
             >
               <Plus className="h-4 w-4" />
             </Button>
           </div>
 
-          {seo.meta_keywords.length > 0 && (
+          {(seo.meta_keywords || []).length > 0 && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label>الكلمات المضافة ({seo.meta_keywords.length})</Label>
+                <Label>الكلمات المضافة ({(seo.meta_keywords || []).length})</Label>
                 <span className="text-sm text-muted-foreground">15 كحد أقصى</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {seo.meta_keywords.map((keyword, index) => (
+                {(seo.meta_keywords || []).map((keyword, index) => (
                   <Badge key={index} variant="secondary" className="gap-1">
                     {keyword}
                     <Button
@@ -405,7 +407,7 @@ const SEOManager: React.FC<SEOManagerProps> = ({
           )}
 
           {/* اقتراحات كلمات مفتاحية */}
-          {productTitle && seo.meta_keywords.length < 5 && (
+          {productTitle && (seo.meta_keywords || []).length < 5 && (
             <div className="space-y-2">
               <Label>اقتراحات:</Label>
               <div className="flex flex-wrap gap-2">
@@ -416,7 +418,7 @@ const SEOManager: React.FC<SEOManagerProps> = ({
                   'توصيل مجاني',
                   'ضمان'
                 ].filter(suggestion => 
-                  !seo.meta_keywords.includes(suggestion.toLowerCase())
+                  !(seo.meta_keywords || []).includes(suggestion.toLowerCase())
                 ).map((suggestion, index) => (
                   <Button
                     key={index}
@@ -425,8 +427,8 @@ const SEOManager: React.FC<SEOManagerProps> = ({
                     size="sm"
                     onClick={() => {
                       const keyword = suggestion.toLowerCase();
-                      if (!seo.meta_keywords.includes(keyword)) {
-                        updateSEO('meta_keywords', [...seo.meta_keywords, keyword]);
+                      if (!(seo.meta_keywords || []).includes(keyword)) {
+                        updateSEO('meta_keywords', [...(seo.meta_keywords || []), keyword]);
                       }
                     }}
                   >
