@@ -99,14 +99,6 @@ export const MonitoringDashboard: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  const _getErrorSeverityColor = (level: string) => {
-    switch (level) {
-      case 'critical': return 'destructive';
-      case 'error': return 'destructive';
-      case 'warning': return 'secondary';
-      default: return 'outline';
-    }
-  };
 
   return (
     <div className="space-y-6">

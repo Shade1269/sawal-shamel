@@ -148,13 +148,6 @@ const DiscountManager: React.FC<DiscountManagerProps> = ({
     onDiscountsChange(updatedDiscounts);
   };
 
-  // تحديث خصم
-  const _updateDiscount = (index: number, field: keyof ProductDiscount, value: any) => {
-    const updatedDiscounts = [...discounts];
-    updatedDiscounts[index] = { ...updatedDiscounts[index], [field]: value };
-    onDiscountsChange(updatedDiscounts);
-  };
-
   return (
     <div className="space-y-6">
       {/* السعر الأساسي */}

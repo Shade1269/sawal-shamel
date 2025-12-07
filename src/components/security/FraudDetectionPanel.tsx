@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSecurityManagement } from "@/hooks/useSecurityManagement";
-import { AlertTriangle, Shield, Eye, CheckCircle, X, Search } from "lucide-react";
+import { AlertTriangle, Shield, Eye, CheckCircle, Search } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export const FraudDetectionPanel = () => {

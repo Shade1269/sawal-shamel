@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { 
   Clock, 
   Package, 
   Calendar, 
-  Users, 
   TrendingUp, 
   Percent,
   Gift,
@@ -22,7 +20,7 @@ import { CountdownTimer } from './CountdownTimer';
 import { usePromotionCampaigns, useBundleOffers } from '@/hooks/usePromotionCampaigns';
 
 export const PromotionsDashboard: React.FC = () => {
-  const { campaigns, isLoading } = usePromotionCampaigns();
+  const { campaigns } = usePromotionCampaigns();
   const { bundles } = useBundleOffers();
   const [activeTab, setActiveTab] = useState('overview');
 

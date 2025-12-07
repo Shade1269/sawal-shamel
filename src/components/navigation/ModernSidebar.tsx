@@ -80,17 +80,6 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
       })).filter(section => section.items.length > 0)
     : navigationSections;
 
-  // Get recent pages items
-  const _recentItems = state.recentPages
-    .slice(0, 5)
-    .map(path => {
-      for (const section of navigationSections) {
-        const item = section.items.find(i => i.href === path);
-        if (item) return item;
-      }
-      return null;
-    })
-    .filter(Boolean) as SidebarItemData[];
 
   // Get favorite items
   const favoriteItems = state.favorites

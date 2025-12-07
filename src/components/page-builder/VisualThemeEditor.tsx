@@ -136,7 +136,7 @@ export const VisualThemeEditor: React.FC = () => {
               <CardTitle className="text-sm">الألوان المحفوظة</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {colorPresets.map((preset, index) => (
+              {colorPresets.map((preset) => (
                 <motion.div
                   key={preset.name}
                   whileHover={{ scale: 1.02 }}

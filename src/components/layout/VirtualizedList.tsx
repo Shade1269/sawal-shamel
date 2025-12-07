@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -49,7 +49,7 @@ const VirtualizedList = <T extends VirtualItem>({
   emptyMessage = 'لا توجد عناصر للعرض',
   loadingMessage = 'جاري التحميل...',
   showScrollToTop = true,
-  estimatedItemHeight = 60
+  estimatedItemHeight: _estimatedItemHeight = 60
 }: VirtualizedListProps<T>) => {
   const [scrollTop, setScrollTop] = useState(0);
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
@@ -169,15 +169,6 @@ const VirtualizedList = <T extends VirtualItem>({
     return visibleItems;
   };
 
-  // Loading skeleton
-  const renderLoadingSkeleton = () => {
-    const skeletonCount = Math.ceil(containerHeight / estimatedItemHeight);
-    return Array.from({ length: skeletonCount }, (_, index) => (
-      <div key={`skeleton-${index}`} className="p-4">
-        <Skeleton className="h-16 w-full" />
-      </div>
-    ));
-  };
 
   if (loading && items.length === 0) {
     return (

@@ -73,7 +73,7 @@ export class ErrorBoundary extends Component<Props, State> {
     }
   }
 
-  private logErrorToService = (error: Error, errorInfo: ErrorInfo): string => {
+  private logErrorToService = (_error: Error, _errorInfo: ErrorInfo): string => {
     // Mock implementation - replace with actual error reporting service
     const eventId = `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     

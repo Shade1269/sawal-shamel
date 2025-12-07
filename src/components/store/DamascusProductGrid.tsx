@@ -40,10 +40,6 @@ export const DamascusProductGrid: React.FC<DamascusProductGridProps> = ({
     tablet: 3,
     desktop: 4,
   },
-  gap = {
-    mobile: 24,
-    desktop: 32,
-  },
 }) => {
   // GA4 Analytics - view_item_list event
   useEffect(() => {
