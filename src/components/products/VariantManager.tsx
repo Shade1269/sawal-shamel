@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { 
   Plus, 
   X, 
@@ -485,7 +484,7 @@ const VariantManager: React.FC<VariantManagerProps> = ({
                     <div className="flex items-center gap-2">
                       <div 
                         className="w-6 h-6 rounded-full border"
-                        style={{ backgroundColor: variant.color_code }}
+                        style={{ backgroundColor: variant.color_code || undefined }}
                       />
                       <Badge variant="outline">
                         {variant.color} - {variant.size}
@@ -521,7 +520,7 @@ const VariantManager: React.FC<VariantManagerProps> = ({
                       <Input
                         type="number"
                         min="0"
-                        value={variant.min_stock_alert}
+                        value={variant.min_stock_alert ?? 0}
                         onChange={(e) => updateVariant(index, 'min_stock_alert', parseInt(e.target.value) || 0)}
                       />
                     </div>

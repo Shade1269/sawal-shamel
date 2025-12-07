@@ -1,17 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bell, 
   X, 
-  Check, 
   ShoppingCart, 
   Package, 
-  TrendingUp, 
   Award,
-  Heart,
-  Star,
-  AlertCircle,
-  CheckCircle,
   Info,
   Gift
 } from 'lucide-react';
