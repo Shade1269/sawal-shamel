@@ -152,7 +152,7 @@ export const PaymentIntegration: React.FC<PaymentIntegrationProps> = ({ shopId }
 
               <div className="pt-2 border-t">
                 <div className="text-xs text-muted-foreground">
-                  العملات المدعومة: {gateway.allowed_currencies.join(', ')}
+                  العملات المدعومة: {(gateway.allowed_currencies ?? []).join(', ')}
                 </div>
               </div>
             </UnifiedCardContent>

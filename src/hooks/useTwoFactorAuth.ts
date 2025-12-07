@@ -25,8 +25,8 @@ export interface TwoFactorStatus {
 }
 
 export function useTwoFactorAuth() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [setupData, setSetupData] = useState<TwoFactorSetupData | null>(null);
+  const [isLoading, _setIsLoading] = useState(false);
+  const [setupData, _setSetupData] = useState<TwoFactorSetupData | null>(null);
 
   /**
    * Check if user has 2FA enabled
@@ -53,8 +53,8 @@ export function useTwoFactorAuth() {
    * Currently disabled - requires two_factor_auth table
    */
   const verify2FA = async (
-    code: string,
-    enableAfterVerify = false
+    _code: string,
+    _enableAfterVerify = false
   ): Promise<boolean> => {
     toast.error('المصادقة الثنائية غير مفعلة حالياً');
     return false;

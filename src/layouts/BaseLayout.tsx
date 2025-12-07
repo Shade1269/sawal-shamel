@@ -28,7 +28,7 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
   className = '',
   contentClassName = ''
 }) => {
-  const { isDarkMode } = useDarkMode();
+  const { isDarkMode: _isDarkMode } = useDarkMode();
 
   return (
     <div className={`min-h-screen bg-background ${className}`}>

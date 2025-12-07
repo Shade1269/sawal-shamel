@@ -58,8 +58,10 @@ export const useStoreAnalytics = (storeId: string) => {
       const uniqueVisitors = new Set(analyticsData?.map(event => event.session_id)).size || 0;
       const productClicks = analyticsData?.filter(event => event.event_type === 'product_click').length || 0;
 
-      const conversionRate = totalViews > 0 ? (storeData.total_orders / totalViews * 100) : 0;
-      const averageOrderValue = storeData.total_orders > 0 ? (storeData.total_sales / storeData.total_orders) : 0;
+      const totalOrders = storeData.total_orders ?? 0;
+      const totalSales = storeData.total_sales ?? 0;
+      const conversionRate = totalViews > 0 ? (totalOrders / totalViews * 100) : 0;
+      const averageOrderValue = totalOrders > 0 ? (totalSales / totalOrders) : 0;
 
       // تجميع البيانات
       const analyticsResult: StoreAnalytics = {

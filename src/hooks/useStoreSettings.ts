@@ -181,8 +181,8 @@ const normalizeFeaturedCategory = (category: any): StoreCategory | null => {
       : undefined;
 
   const bannerProducts = rawBannerProducts
-    ?.map(normalizeBannerProduct)
-    .filter((product): product is StoreCategoryBannerProduct => Boolean(product));
+    ?.map((productItem: Record<string, unknown>) => normalizeBannerProduct(productItem))
+    .filter((productResult: StoreCategoryBannerProduct | null): productResult is StoreCategoryBannerProduct => Boolean(productResult));
 
   return {
     id,

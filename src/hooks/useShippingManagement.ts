@@ -121,7 +121,7 @@ export const useShippingManagement = () => {
     try {
       // Find the zone that contains this city
       const zone = zones.find(z => 
-        z.postal_codes.some(city => 
+        (z.postal_codes ?? []).some(city => 
           city.toLowerCase().includes(cityName.toLowerCase()) ||
           cityName.toLowerCase().includes(city.toLowerCase())
         )
@@ -138,8 +138,8 @@ export const useShippingManagement = () => {
       const applicableRates = rates.filter(rate => 
         rate.zone_id === zone.id &&
         rate.service_type === serviceType &&
-        weight >= rate.weight_from &&
-        weight <= rate.weight_to
+        weight >= (rate.weight_from ?? 0) &&
+        weight <= (rate.weight_to ?? Infinity)
       );
 
       if (applicableRates.length === 0) {
@@ -151,7 +151,7 @@ export const useShippingManagement = () => {
 
       // Calculate costs for each provider
       const costs = applicableRates.map(rate => {
-        const baseCost = rate.base_price + (weight * rate.price_per_kg);
+        const baseCost = (rate.base_price ?? 0) + (weight * (rate.price_per_kg ?? 0));
         const codFee = isCOD ? 5 : 0; // Fixed COD fee for now
         const totalCost = Math.max(baseCost + codFee, rate.min_price || 0);
 

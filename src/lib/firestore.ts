@@ -1,4 +1,4 @@
-import { getFirestore as initFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
+import { getFirestore as initFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, getDocs, orderBy, limit } from 'firebase/firestore';
 import { getFirebaseAuth } from './firebase';
 
 let db: any = null;

@@ -161,9 +161,15 @@ export const useShipmentTracking = () => {
 
   const updateShipment = async (id: string, updates: Partial<ShipmentTracking>) => {
     try {
+      // Convert null values to undefined for database compatibility
+      const cleanedUpdates: Record<string, any> = {};
+      Object.entries(updates).forEach(([key, value]) => {
+        cleanedUpdates[key] = value === null ? undefined : value;
+      });
+      
       const { data, error } = await supabase
         .from('shipments_tracking')
-        .update(updates)
+        .update(cleanedUpdates)
         .eq('id', id)
         .select()
         .maybeSingle();

@@ -89,7 +89,7 @@ const ShipmentTrackingCard: React.FC<ShipmentTrackingCardProps> = ({
             <span className="font-medium mr-2">{shipment.shipping_cost_sar} ر.س</span>
           </div>
           
-          {shipment.cod_amount_sar > 0 && (
+          {(shipment.cod_amount_sar ?? 0) > 0 && (
             <div>
               <span className="text-muted-foreground">الدفع عند التسليم:</span>
               <span className="font-medium mr-2">{shipment.cod_amount_sar} ر.س</span>

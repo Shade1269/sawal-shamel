@@ -14,12 +14,13 @@ interface VirtualizationOptions {
   estimateItemHeight?: number;
 }
 
-interface VirtualizedState {
-  scrollTop: number;
-  visibleRange: { start: number; end: number };
-  totalHeight: number;
-  itemPositions: Array<{ offset: number; height: number }>;
-}
+// VirtualizedState reserved for future use
+// interface VirtualizedState {
+//   scrollTop: number;
+//   visibleRange: { start: number; end: number };
+//   totalHeight: number;
+//   itemPositions: Array<{ offset: number; height: number }>;
+// }
 
 export const useVirtualization = <T extends VirtualItem>(
   items: T[],

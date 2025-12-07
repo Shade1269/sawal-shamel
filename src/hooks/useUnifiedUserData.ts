@@ -3,7 +3,7 @@ import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useFirebaseAuth } from '@/contexts/FirebaseAuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { getUserFromFirestore, saveUserToFirestore } from '@/lib/firestore';
+import { saveUserToFirestore } from '@/lib/firestore';
 
 export interface UserShop {
   id: string;
@@ -19,10 +19,11 @@ export interface UserShop {
 export interface UserActivity {
   id: string;
   activity_type: string;
-  description: string;
+  description: string | null;
   metadata: any;
-  created_at: string;
-  shop_id?: string;
+  created_at: string | null;
+  shop_id?: string | null;
+  user_id?: string;
 }
 
 export const useUnifiedUserData = () => {
@@ -47,7 +48,7 @@ export const useUnifiedUserData = () => {
     try {
       // إذا كان المستخدم مسجل دخول عبر Supabase
       if (supabaseUser) {
-        const { data: supabaseProfile, error: fetchError } = await supabase
+        const { data: supabaseProfile, error: _fetchError } = await supabase
           .from('profiles')
           .select('*')
           .eq('auth_user_id', supabaseUser.id)
@@ -213,9 +214,9 @@ export const useUnifiedUserData = () => {
         setUserShop({
           id: data.id,
           shop_id: data.id,
-          display_name: data.display_name,
+          display_name: data.display_name ?? '',
           slug: data.slug,
-          created_at: data.created_at,
+          created_at: data.created_at ?? new Date().toISOString(),
           total_products: data.total_products || 0,
           total_orders: data.total_orders || 0,
           settings: data.settings
@@ -304,7 +305,7 @@ export const useUnifiedUserData = () => {
         .from('products')
         .insert({
           ...productData,
-          merchant_id: merchant.id,
+          merchant_id: merchant?.id,
           shop_id: userShop.id
         })
         .select('id')
@@ -324,7 +325,7 @@ export const useUnifiedUserData = () => {
       fetchUserStatistics();
       logActivity('product_added', `تم إضافة منتج: ${productData.title}`);
 
-      return data.id;
+      return data?.id;
     } catch (error) {
       console.error('Error adding product:', error);
       throw error;
