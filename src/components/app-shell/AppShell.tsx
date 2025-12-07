@@ -4,6 +4,7 @@ import {
   CheckCircle,
   CreditCard,
   Bell,
+  Crown,
   GaugeCircle,
   Home,
   LayoutDashboard,
@@ -326,6 +327,19 @@ export const AppShell: React.FC<AppShellProps> = ({
             icon: LineChart,
             isActive: (pathname) => pathname.startsWith('/affiliate/analytics'),
             onPrefetch: getPrefetch('/affiliate/analytics'),
+          },
+        ],
+      },
+      {
+        id: 'atlantis',
+        title: 'نظام أتلانتس',
+        items: [
+          {
+            to: '/atlantis',
+            label: 'نظام أتلانتس',
+            description: 'التحالفات والمنافسة والمكافآت',
+            icon: Crown,
+            onPrefetch: getPrefetch('/atlantis'),
           },
         ],
       },
