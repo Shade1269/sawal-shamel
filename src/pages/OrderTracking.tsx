@@ -22,8 +22,8 @@ interface Order {
   status: string;
   payment_status: string;
   total_sar: number;
-  customer_name: string;
-  customer_phone: string;
+  customer_name: string | null;
+  customer_phone: string | null;
   created_at: string;
   shipped_at: string | null;
   delivered_at: string | null;

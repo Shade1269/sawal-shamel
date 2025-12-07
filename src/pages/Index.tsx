@@ -15,7 +15,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { user, profile, signOut } = useFastAuth();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
-  const { language, toggleLanguage } = useLanguage();
+  const { toggleLanguage } = useLanguage();
   const { store: affiliateStore, isLoading: affiliateStoreLoading } = useAffiliateStore();
 
   const currentUser = user;
@@ -64,7 +64,6 @@ const Index = () => {
       {currentUser && (
         <HomeUserHeader
           userName={getUserDisplayName()}
-          language={language}
           isDarkMode={isDarkMode}
           onLanguageToggle={toggleLanguage}
           onDarkModeToggle={toggleDarkMode}
@@ -73,7 +72,7 @@ const Index = () => {
       )}
       
       <div className="container mx-auto px-4 py-16 relative z-10">
-        <HomeHero isDarkMode={isDarkMode} />
+        <HomeHero />
 
         <div className="max-w-7xl mx-auto">
           {/* Feature Grid */}

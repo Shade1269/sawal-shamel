@@ -1,4 +1,3 @@
-import React from 'react';
 import { 
   UnifiedCard as Card, 
   UnifiedCardContent as CardContent, 
@@ -8,13 +7,6 @@ import {
   UnifiedButton as Button,
   UnifiedInput as Input
 } from '@/components/design-system';
-import { 
-  UnifiedSelect as Select,
-  UnifiedSelectContent as SelectContent,
-  UnifiedSelectItem as SelectItem,
-  UnifiedSelectTrigger as SelectTrigger,
-  UnifiedSelectValue as SelectValue
-} from '@/components/design-system';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
@@ -23,13 +15,11 @@ import IntegrationHealthChecker from '@/components/IntegrationHealthChecker';
 import PushNotificationManager from '@/components/PushNotificationManager';
 import { 
   Settings, 
-  Globe, 
   Bell, 
   Shield, 
   Database,
   Save,
   RefreshCw,
-  Activity,
   Zap,
   DollarSign
 } from 'lucide-react';

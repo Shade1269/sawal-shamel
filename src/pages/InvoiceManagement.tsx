@@ -1,15 +1,5 @@
 import { useState, useEffect } from 'react';
 import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  VirtualizedList,
-  InteractiveWidget,
-  EnhancedButton,
   Card,
   CardContent,
   CardDescription,
@@ -30,17 +20,8 @@ import {
   Download, 
   Printer, 
   Eye, 
-  Edit,
   Send,
-  CheckCircle,
-  Clock,
-  FileText,
-  Calculator,
-  Building,
-  User,
-  Calendar,
-  DollarSign,
-  Percent
+  FileText
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,10 +29,10 @@ import { useNavigate } from 'react-router-dom';
 
 interface Invoice {
   id: string;
-  invoice_number: string;
+  invoice_number: string | null;
   customer_name: string;
   customer_phone: string;
-  customer_email: string;
+  customer_email: string | null;
   subtotal_sar: number;
   vat_sar: number;
   total_sar: number;
@@ -59,19 +40,10 @@ interface Invoice {
   status: string;
   payment_status: string;
   issue_date: string;
-  due_date: string;
-  notes: string;
-  shop_id: string;
-  order_id: string;
-}
-
-interface InvoiceItem {
-  id: string;
-  item_name: string;
-  quantity: number;
-  unit_price_sar: number;
-  total_sar: number;
-  vat_sar: number;
+  due_date: string | null;
+  notes: string | null;
+  shop_id: string | null;
+  order_id: string | null;
 }
 
 const InvoiceManagement = () => {
@@ -84,7 +56,7 @@ const InvoiceManagement = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [paymentStatusFilter, setPaymentStatusFilter] = useState('all');
   const [showCreateInvoice, setShowCreateInvoice] = useState(false);
-  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [_selectedInvoice, _setSelectedInvoice] = useState<Invoice | null>(null);
   
   // بيانات إنشاء فاتورة جديدة
   const [newInvoice, setNewInvoice] = useState({
@@ -176,7 +148,8 @@ const InvoiceManagement = () => {
         .maybeSingle();
 
       if (invoiceError) throw invoiceError;
-
+      if (!invoice) throw new Error('Failed to create invoice');
+      
       // إضافة عناصر الفاتورة
       const invoiceItems = calculatedItems.map(item => ({
         invoice_id: invoice.id,
@@ -195,9 +168,10 @@ const InvoiceManagement = () => {
 
       if (itemsError) throw itemsError;
 
+
       toast({
         title: "تم إنشاء الفاتورة",
-        description: `فاتورة رقم ${invoice.invoice_number} تم إنشاؤها بنجاح`,
+        description: `فاتورة رقم ${invoice.invoice_number ?? invoice.id} تم إنشاؤها بنجاح`,
       });
 
       setShowCreateInvoice(false);
@@ -282,8 +256,9 @@ const InvoiceManagement = () => {
     }, 0);
   };
 
+
   const filteredInvoices = invoices.filter(invoice => {
-    const matchesSearch = invoice.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = (invoice.invoice_number ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                          invoice.customer_name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || invoice.status === statusFilter;
     const matchesPaymentStatus = paymentStatusFilter === 'all' || invoice.payment_status === paymentStatusFilter;

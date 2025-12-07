@@ -1,4 +1,3 @@
-import React from 'react';
 import { 
   UnifiedButton,
   UnifiedCard,
@@ -8,15 +7,12 @@ import {
   UnifiedCardTitle
 } from '@/components/design-system';
 import { UnifiedBadge } from '@/components/design-system';
-import { Separator } from '@/components/ui/separator';
 import { 
   Shield, 
   Users, 
   Globe, 
   Award, 
-  TrendingUp,
   Heart,
-  Star,
   CheckCircle,
   ArrowRight,
   Home,

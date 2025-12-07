@@ -16,8 +16,7 @@ import {
   DollarSign, 
   RefreshCw, 
   Download,
-  Calendar,
-  Filter
+  Calendar
 } from "lucide-react";
 import { BackButton } from '@/components/ui/back-button';
 

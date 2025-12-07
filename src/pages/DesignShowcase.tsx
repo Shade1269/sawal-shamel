@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { HeroPreview } from '@/components/storefront/preview/HeroPreview';
+import { useEffect, useState } from 'react';
 import { ProductGridPreview } from '@/components/storefront/preview/ProductGridPreview';
 import { ProfilePreview } from '@/components/storefront/preview/ProfilePreview';
 import { OrdersPreview } from '@/components/storefront/preview/OrdersPreview';
@@ -7,8 +6,7 @@ import { ChatPreview } from '@/components/storefront/preview/ChatPreview';
 import { CartPreview } from '@/components/storefront/preview/CartPreview';
 import { ProductDetailPreview } from '@/components/storefront/preview/ProductDetailPreview';
 import { BannerSliderPreview } from '@/components/storefront/preview/BannerSliderPreview';
-import { Button } from '@/components/ui/button';
-import { Search, Heart, ShoppingBag, User, Package, MessageCircle } from 'lucide-react';
+import { Search, ShoppingBag, User, Package, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';

@@ -26,7 +26,7 @@ interface OrderItem {
   product_image_url?: string | null;
   quantity: number;
   unit_price_sar: number;
-  total_price_sar: number;
+  total_price_sar: number | null;
 }
 
 interface OrderDetails {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { UnifiedButton, UnifiedCard, UnifiedCardContent } from '@/components/design-system';
 import { 
   Home, 

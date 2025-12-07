@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,6 @@ import {
   Volume2,
   Palette,
   Search,
-  Wand2,
   Target
 } from 'lucide-react';
 import { motion } from 'framer-motion';

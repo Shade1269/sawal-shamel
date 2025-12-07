@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   UnifiedBadge as Badge, 
   UnifiedButton as Button, 
   UnifiedCard as Card, 
   UnifiedCardContent as CardContent, 
-  UnifiedCardDescription as CardDescription, 
   UnifiedCardHeader as CardHeader, 
   UnifiedCardTitle as CardTitle,
   UnifiedInput as Input
@@ -41,28 +40,26 @@ import {
   Key, 
   AlertCircle,
   Send,
-  Plus,
-  Download,
-  Upload
+  Plus
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface User {
   id: string;
-  email: string;
-  full_name?: string;
-  role: string;
-  current_level: string;
-  points: number;
-  phone?: string;
+  email: string | null;
+  full_name?: string | null;
+  role: string | null;
+  current_level: string | null;
+  points: number | null;
+  phone?: string | null;
   is_banned?: boolean;
-  ban_reason?: string;
+  ban_reason?: string | null;
   created_at: string;
-  last_login?: string;
-  total_earnings?: number;
-  is_active?: boolean;
-  updated_at?: string;
+  last_login?: string | null;
+  total_earnings?: number | null;
+  is_active?: boolean | null;
+  updated_at?: string | null;
 }
 
 const AdminUsers = () => {
@@ -71,9 +68,9 @@ const AdminUsers = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
+  const [_selectedUser, _setSelectedUser] = useState<User | null>(null);
+  const [_isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [_isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -111,7 +108,7 @@ const AdminUsers = () => {
     if (searchTerm) {
       filtered = filtered.filter(user => 
         user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (user.email ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.phone?.includes(searchTerm)
       );
     }
@@ -123,7 +120,7 @@ const AdminUsers = () => {
     setFilteredUsers(filtered);
   };
 
-  const handleUpdateUser = async (userId: string, updates: any) => {
+  const _handleUpdateUser = async (userId: string, updates: any) => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -204,7 +201,7 @@ const AdminUsers = () => {
     }
   };
 
-  const sendNotificationToUser = async (userId: string, title: string, message: string) => {
+  const _sendNotificationToUser = async (_userId: string, _title: string, _message: string) => {
     try {
       // Here you would implement the notification sending logic
       toast({
@@ -380,11 +377,11 @@ const AdminUsers = () => {
                             <div className="space-y-4">
                               <div>
                                 <Label>الاسم الكامل</Label>
-                                <Input defaultValue={user.full_name} />
+                              <Input defaultValue={user.full_name ?? ''} />
                               </div>
                               <div>
                                 <Label>الدور</Label>
-                                <Select defaultValue={user.role}>
+                                <Select defaultValue={user.role ?? 'customer'}>
                                   <SelectTrigger>
                                     <SelectValue />
                                   </SelectTrigger>
