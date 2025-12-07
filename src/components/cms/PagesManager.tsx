@@ -50,7 +50,7 @@ export const PagesManager: React.FC<PagesManagerProps> = ({ storeId, onEditPage 
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [selectedPage, setSelectedPage] = useState<string | null>(null);
+  const [_selectedPage, _setSelectedPage] = useState<string | null>(null);
   const [newPageData, setNewPageData] = useState({
     title: '',
     slug: '',

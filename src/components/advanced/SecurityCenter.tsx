@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Shield, AlertTriangle, CheckCircle, Lock, Eye, Activity } from 'lucide-react';
 import { EnhancedCard, EnhancedCardContent, EnhancedCardHeader, EnhancedCardTitle } from '@/components/ui/enhanced-card';
 import { EnhancedButton } from '@/components/ui/enhanced-button';
@@ -28,7 +28,7 @@ interface SecurityThreat {
 }
 
 export const SecurityCenter: React.FC = () => {
-  const { patterns, colors } = useDesignSystem();
+  const { patterns } = useDesignSystem();
   
   const [securityMetrics] = useState<SecurityMetric[]>([
     {

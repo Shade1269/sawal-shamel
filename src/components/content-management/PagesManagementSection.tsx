@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +23,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useCustomPages } from '@/hooks/useContentManagement';
 
 export function PagesManagementSection() {
-  const { pages, isLoading, createPage, updatePage, publishPage } = useCustomPages();
+  const { pages, isLoading, createPage, updatePage: _updatePage, publishPage } = useCustomPages();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [newPage, setNewPage] = useState({

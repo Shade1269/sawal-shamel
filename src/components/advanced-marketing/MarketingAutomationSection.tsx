@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +22,7 @@ import { useMarketingCampaigns, MarketingCampaign } from '@/hooks/useAdvancedMar
 export const MarketingAutomationSection: React.FC = () => {
   const { campaigns, createCampaign, updateCampaign, isCreating, isUpdating: _isUpdating } = useMarketingCampaigns();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [_selectedCampaign, setSelectedCampaign] = useState<MarketingCampaign | null>(null);
+  const [_selectedCampaign, _setSelectedCampaign] = useState<MarketingCampaign | null>(null);
   const [newCampaignData, setNewCampaignData] = useState({
     name: '',
     description: '',

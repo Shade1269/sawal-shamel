@@ -39,7 +39,7 @@ const CHAT_URL = 'https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/chat-ass
 export function UnifiedAIAssistant({ 
   context = 'customer', 
   storeInfo, 
-  products,
+  products: _products,
   onClose,
   floating = false 
 }: UnifiedAIAssistantProps) {

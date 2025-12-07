@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,7 +23,7 @@ import { useBehavioralTriggers, BehavioralTrigger } from '@/hooks/useAdvancedMar
 export const BehavioralTriggersSection: React.FC = () => {
   const { triggers, createTrigger, updateTrigger, isCreating, isUpdating: _isUpdating } = useBehavioralTriggers();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [_selectedTrigger, setSelectedTrigger] = useState<BehavioralTrigger | null>(null);
+  const [_selectedTrigger, _setSelectedTrigger] = useState<BehavioralTrigger | null>(null);
   const [newTriggerData, setNewTriggerData] = useState<{
     trigger_name: string;
     trigger_description: string;

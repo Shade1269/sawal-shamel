@@ -19,7 +19,7 @@ import { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, Ca
 
 export const AdvancedAnalyticsSection: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('7d');
-  const [_selectedMetric, setSelectedMetric] = useState('page_views');
+  const [_selectedMetric, _setSelectedMetric] = useState('page_views');
 
   // بيانات تجريبية للتحليلات
   const analyticsData = {

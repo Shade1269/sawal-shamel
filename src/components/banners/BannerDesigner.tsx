@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
@@ -11,19 +11,14 @@ import { ColorPicker } from '@/components/ui/color-picker';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { toast } from 'sonner';
 import { 
-  Palette, 
-  Type, 
-  Image as ImageIcon, 
   Settings, 
   Play,
   Save,
   Eye,
   Copy,
-  Trash2,
   Download,
   Upload,
-  Sparkles,
-  Layout
+  Sparkles
 } from 'lucide-react';
 
 interface BannerDesign {
@@ -138,7 +133,7 @@ interface BannerDesignerProps {
 export const BannerDesigner: React.FC<BannerDesignerProps> = ({
   onSave,
   initialDesign,
-  storeId
+  storeId: _storeId
 }) => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [design, setDesign] = useState<BannerDesign>({
@@ -266,7 +261,7 @@ export const BannerDesigner: React.FC<BannerDesignerProps> = ({
     };
   };
 
-  const generateAnimationCSS = () => {
+  const _generateAnimationCSS = () => {
     if (!design.animation.enabled || design.animation.type === 'none') return '';
     
     const keyframes = {

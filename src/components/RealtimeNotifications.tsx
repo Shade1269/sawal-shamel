@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UnifiedCard, UnifiedCardContent } from '@/components/design-system';
+// UnifiedCard removed - using direct components
 import { UnifiedButton } from '@/components/design-system';
 import { UnifiedBadge } from '@/components/design-system';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+// Avatar removed - not used
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   DropdownMenu,
