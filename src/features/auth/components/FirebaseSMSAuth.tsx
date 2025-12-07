@@ -9,12 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import { 
   signInWithPhoneNumber, 
   RecaptchaVerifier, 
-  ConfirmationResult,
-  PhoneAuthProvider,
-  signInWithCredential
+  ConfirmationResult
 } from 'firebase/auth';
 import { getFirebaseAuth } from '@/lib/firebase';
-import { saveUserToFirestore, getUserFromFirestore, updateUserInFirestore } from '@/lib/firestore';
+import { saveUserToFirestore, updateUserInFirestore } from '@/lib/firestore';
 import UsernameRegistration from './UsernameRegistration';
 import { createRecaptchaManager } from '../utils/recaptchaManager';
 import type { RecaptchaManager } from '../utils/recaptchaManager';
@@ -25,7 +23,7 @@ const FirebaseSMSAuth = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+966');
   const [otp, setOtp] = useState('');
-  const [username, setUsername] = useState('');
+  const [_username, setUsername] = useState('');
   const [firebaseUser, setFirebaseUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
@@ -267,17 +265,17 @@ const FirebaseSMSAuth = () => {
     }
   };
 
-  const ensureSupabaseProfile = async (firebaseUser: any, phone: string, username?: string) => {
+  const ensureSupabaseProfile = async (firebaseUser: any, phone: string, _username?: string) => {
     try {
       const { supabase } = await import('@/integrations/supabase/client');
       
       // إنشاء session في Supabase باستخدام Firebase JWT
-      const firebaseToken = await firebaseUser.getIdToken();
+      await firebaseUser.getIdToken();
       
       // محاولة تسجيل الدخول في Supabase باستخدام Firebase token
       try {
         // إنشاء مستخدم جديد في Supabase Auth
-        const { data: authData, error: authError } = await supabase.auth.signUp({
+        const { error: authError } = await supabase.auth.signUp({
           email: `${phone.replace('+', '')}@temp.com`, // ايميل مؤقت
           password: firebaseUser.uid.substring(0,20) + 'Pass123!', // كلمة مرور قوية مؤقتة
           options: {

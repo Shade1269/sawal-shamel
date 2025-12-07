@@ -14,9 +14,9 @@ const SupabaseSMSAuth = () => {
   const [selectedRole, setSelectedRole] = useState<'affiliate' | 'merchant'>('affiliate');
   const [otp, setOtp] = useState('');
   const [cooldown, setCooldown] = useState(0);
-  const [inlineError, setInlineError] = useState<string | null>(null);
+  const [_inlineError, setInlineError] = useState<string | null>(null);
   const [isExistingUser, setIsExistingUser] = useState(false); // تتبع ما إذا كان المستخدم موجوداً
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const {
     sendOTP,
     verifyOTP,

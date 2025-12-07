@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
-import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Share2, Copy, Users, TrendingUp, Link, Eye, MousePointer, ShoppingCart, QrCode } from 'lucide-react';
+import { Share2, Copy, TrendingUp, Link, MousePointer, ShoppingCart, QrCode } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 interface ReferralLink {
@@ -47,7 +45,7 @@ export const ReferralTrackingSystem = ({ storeId, baseUrl = 'https://example.com
   const [referralClicks, setReferralClicks] = useState<ReferralClick[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedLink, setSelectedLink] = useState<ReferralLink | null>(null);
+  const [_selectedLink, _setSelectedLink] = useState<ReferralLink | null>(null);
   const [newLink, setNewLink] = useState({
     name: '',
     target_url: '',

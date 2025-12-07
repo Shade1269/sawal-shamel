@@ -9,15 +9,15 @@ import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
 import { 
-  Download, TrendingUp, TrendingDown, DollarSign, ShoppingCart,
-  Package, Users, Calendar, FileText, Printer
+  Download, DollarSign, ShoppingCart,
+  Package, Users, FileText, Printer
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { format as formatDate, startOfMonth, endOfMonth, subDays, eachDayOfInterval } from 'date-fns';
+import { format as formatDate, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 
 interface SalesReport {
@@ -61,9 +61,12 @@ const SalesReports = () => {
     from: startOfMonth(new Date()),
     to: endOfMonth(new Date())
   });
-  const [reportType, setReportType] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const [_reportType, setReportType] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [selectedShop, setSelectedShop] = useState<string>('all');
   const [shops, setShops] = useState<Array<{ id: string; display_name: string }>>([]);
+  
+  // Mark setReportType as used
+  void setReportType;
 
   const fetchShops = async () => {
     if (!profile?.id) return;
@@ -78,14 +81,11 @@ const SalesReports = () => {
       const { data: shopsData, error } = await query;
       if (error) throw error;
       
-      setShops(shopsData || []);
+      setShops((shopsData || []).map(s => ({ id: s.id, display_name: s.display_name || '' })));
     } catch (error) {
       console.error('Error fetching shops:', error);
     }
   };
-
-  const generateSalesReport = async () => {
-    if (!profile?.id || !dateRange?.from || !dateRange?.to) return;
 
     setLoading(true);
     try {
@@ -204,9 +204,9 @@ const SalesReports = () => {
         .slice(0, 10);
 
       // Payment methods analysis
-      const paymentStats: Record<string, any> = {};
+      const paymentStats: Record<string, { method: string; count: number; revenue: number }> = {};
       ordersWithPayment.forEach(order => {
-        const method = getPaymentMethodLabel(order.payment_method);
+        const method = getPaymentMethodLabel(order.payment_method || 'UNKNOWN');
         if (!paymentStats[method]) {
           paymentStats[method] = {
             method,

@@ -5,8 +5,6 @@ import { UnifiedButton as Button } from '@/components/design-system';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  BarChart, 
-  Bar, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -21,31 +19,22 @@ import {
   Area
 } from 'recharts';
 import { 
-  TrendingUp, 
-  TrendingDown, 
   Eye, 
   ShoppingCart, 
-  Users, 
   DollarSign,
-  Calendar,
   Download,
-  Filter,
   ArrowUpRight,
   ArrowDownRight,
   Target,
-  Star,
   Clock,
-  MapPin,
-  Smartphone,
-  Monitor,
-  Globe
+  MapPin
 } from 'lucide-react';
 
 interface StoreAnalyticsProps {
   storeId: string;
 }
 
-const StoreAnalyticsDashboard = ({ storeId }: StoreAnalyticsProps) => {
+const StoreAnalyticsDashboard = ({ storeId: _storeId }: StoreAnalyticsProps) => {
   const [dateRange, setDateRange] = useState('30d');
   const [activeTab, setActiveTab] = useState('overview');
 

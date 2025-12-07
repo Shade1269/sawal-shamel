@@ -8,16 +8,16 @@ import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { 
-  LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   Funnel, FunnelChart, LabelList
 } from 'recharts';
 import { 
-  Users, Eye, ShoppingCart, CreditCard, TrendingUp, TrendingDown,
-  Clock, MousePointer, Smartphone, Monitor, Tablet, Globe, MapPin, RefreshCw
+  Users, TrendingUp, TrendingDown,
+  Clock, Smartphone, Monitor, Tablet, MapPin, RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
+import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 
 interface UserBehaviorData {
@@ -100,7 +100,7 @@ const UserBehaviorAnalytics = () => {
       const { data: shopsData, error } = await query;
       if (error) throw error;
       
-      setShops(shopsData || []);
+      setShops((shopsData || []).map(s => ({ id: s.id, display_name: s.display_name || '' })));
     } catch (error) {
       console.error('Error fetching shops:', error);
     }
