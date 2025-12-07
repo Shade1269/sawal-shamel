@@ -14,7 +14,7 @@ interface ModernInvoiceProps {
   onClose: () => void;
 }
 
-export const ModernInvoice = ({ orderId, onClose }: ModernInvoiceProps) => {
+export const ModernInvoice = ({ orderId, onClose: _onClose }: ModernInvoiceProps) => {
   const invoiceRef = useRef<HTMLDivElement>(null);
 
   const { data: orderData, isLoading } = useQuery({

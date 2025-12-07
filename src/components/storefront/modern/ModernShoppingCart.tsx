@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { UnifiedButton } from '@/components/design-system';
 import { UnifiedBadge } from '@/components/design-system';
 import { UnifiedCard, UnifiedCardContent } from '@/components/design-system';
-import { Plus, Minus, X, ShoppingBag, ArrowLeft, Trash2 } from 'lucide-react';
+import { Plus, Minus, ShoppingBag, ArrowLeft, Trash2 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface CartItem {

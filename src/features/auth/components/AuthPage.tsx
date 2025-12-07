@@ -157,7 +157,7 @@ const AuthPage = () => {
                   <Input id="signin-email" type="email" value={signInForm.email} onChange={e => setSignInForm(prev => ({
                   ...prev,
                   email: e.target.value
-                }))} placeholder="أدخل بريدك الإلكتروني" required className="h-12 bg-anaqati-cream border-anaqati-border focus:border-anaqati-burgundy focus:ring-anaqati-burgundy/20 rounded-xl text-right" />
+                }))} placeholder="أدخل بريدك الإلكتروني" required className="h-12 bg-anaqati-cream border-anaqati-border focus:border-anaqati-burgundy focus:ring-anaqati-burgundy/20 rounded-xl text-right text-foreground placeholder:text-muted-foreground" />
                 </div>
                 
                 <div className="space-y-2 text-right text-primary-dark">
@@ -167,7 +167,7 @@ const AuthPage = () => {
                   <Input id="signin-password" type="password" value={signInForm.password} onChange={e => setSignInForm(prev => ({
                   ...prev,
                   password: e.target.value
-                }))} placeholder="أدخل كلمة المرور" required className="h-12 bg-anaqati-cream border-anaqati-border focus:border-anaqati-burgundy focus:ring-anaqati-burgundy/20 rounded-xl text-right" />
+                }))} placeholder="أدخل كلمة المرور" required className="h-12 bg-anaqati-cream border-anaqati-border focus:border-anaqati-burgundy focus:ring-anaqati-burgundy/20 rounded-xl text-right text-foreground placeholder:text-muted-foreground" />
                 </div>
                 
                 <div className="flex items-center gap-3 justify-end bg-anaqati-pink-light/50 p-4 rounded-xl">
@@ -207,7 +207,7 @@ const AuthPage = () => {
                     <Input type="text" value={signUpForm.fullName} onChange={e => setSignUpForm(prev => ({
                   ...prev,
                   fullName: e.target.value
-                }))} placeholder="أدخل اسمك الكامل" required className="h-12 bg-anaqati-cream border-anaqati-border focus:border-anaqati-burgundy rounded-xl text-right" />
+                }))} placeholder="أدخل اسمك الكامل" required className="h-12 bg-anaqati-cream border-anaqati-border focus:border-anaqati-burgundy rounded-xl text-right text-foreground placeholder:text-muted-foreground" />
                   </div>
 
                   <div className="space-y-2 text-right">
@@ -215,7 +215,7 @@ const AuthPage = () => {
                     <Input type="email" value={signUpForm.email} onChange={e => setSignUpForm(prev => ({
                   ...prev,
                   email: e.target.value
-                }))} placeholder="أدخل بريدك الإلكتروني" required className="h-12 bg-anaqati-cream border-anaqati-border focus:border-anaqati-burgundy rounded-xl text-right" />
+                }))} placeholder="أدخل بريدك الإلكتروني" required className="h-12 bg-anaqati-cream border-anaqati-border focus:border-anaqati-burgundy rounded-xl text-right text-foreground placeholder:text-muted-foreground" />
                   </div>
 
                   <div className="space-y-2 text-right">
@@ -223,7 +223,7 @@ const AuthPage = () => {
                     <Input type="password" value={signUpForm.password} onChange={e => setSignUpForm(prev => ({
                   ...prev,
                   password: e.target.value
-                }))} placeholder="كلمة مرور قوية" required className="h-12 bg-anaqati-cream border-anaqati-border focus:border-anaqati-burgundy rounded-xl text-right" />
+                }))} placeholder="كلمة مرور قوية" required className="h-12 bg-anaqati-cream border-anaqati-border focus:border-anaqati-burgundy rounded-xl text-right text-foreground placeholder:text-muted-foreground" />
                   </div>
 
                   <div className="space-y-3 text-right">

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Package, Calendar, CreditCard, MapPin } from 'lucide-react';
+import { Package, Calendar, CreditCard } from 'lucide-react';
 
 export const OrdersPreview = () => {
   const mockOrders = [
