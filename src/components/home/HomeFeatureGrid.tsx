@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MessageCircle, Package, Users, Store, ExternalLink, AlertCircle } from 'lucide-react';
+import { MessageCircle, Package, Users, Store, ExternalLink, AlertCircle, Crown } from 'lucide-react';
 import { HomeFeatureCard } from '@/components/home';
 import { UnifiedButton } from '@/components/design-system';
 
@@ -20,7 +20,22 @@ export const HomeFeatureGrid: React.FC<HomeFeatureGridProps> = ({
   const isAffiliate = userRole === 'affiliate' || userRole === 'marketer';
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+      {/* Atlantis System */}
+      <HomeFeatureCard
+        title="نظام أتلانتس"
+        description="انضم للتحالفات، تنافس واكسب المكافآت"
+        icon={Crown}
+        buttonText="دخول أتلانتس"
+        buttonVariant="primary"
+        onClick={() => onNavigate('/atlantis')}
+        badge={{ color: 'premium', pulse: true }}
+      >
+        <div className="text-xs text-premium font-medium">
+          🏆 تحالفات • نقاط • مكافآت
+        </div>
+      </HomeFeatureCard>
+
       {/* Chat Feature */}
       <HomeFeatureCard
         title="دردشة العملاء"
@@ -54,7 +69,7 @@ export const HomeFeatureGrid: React.FC<HomeFeatureGridProps> = ({
           onNavigate={onNavigate}
         />
       ) : (
-        <CommunityCard />
+        <CommunityCard onNavigate={onNavigate} />
       )}
     </div>
   );
@@ -125,12 +140,13 @@ const AffiliateStoreCard: React.FC<{
   );
 };
 
-const CommunityCard: React.FC = () => {
+const CommunityCard: React.FC<{ onNavigate: (path: string) => void }> = ({ onNavigate }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl border border-anaqati-border p-6 hover:border-primary/40 shadow-anaqati hover:shadow-anaqati-hover transition-all duration-300"
+      className="bg-white rounded-xl border border-anaqati-border p-6 hover:border-primary/40 shadow-anaqati hover:shadow-anaqati-hover transition-all duration-300 cursor-pointer"
+      onClick={() => onNavigate('/atlantis')}
     >
       {/* Icon */}
       <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
