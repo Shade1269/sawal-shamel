@@ -10,7 +10,7 @@ import type { ThemeConfig } from '@/themes/types';
 export interface ThemeContextValue {
   themeId: string;
   setThemeId: (id: string) => void;
-  theme: any;
+  theme: ThemeConfig | null;
   availableThemes: Array<{ id: string; name: string }>;
 }
 
@@ -27,7 +27,7 @@ const AVAILABLE_THEMES = [
   { id: 'ferrari', name: 'فيراري الرياضي' },
 ];
 
-function applyTheme(theme: any) {
+function applyTheme(theme: ThemeConfig | null) {
   if (typeof document === 'undefined' || !theme) return;
   
   const root = document.documentElement;

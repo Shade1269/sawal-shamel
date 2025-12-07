@@ -5,7 +5,7 @@ import { getContrastRatio } from "@/utils/color";
 
 export type ThemeContextValue = {
   themeId: string;
-  themeConfig: any;
+  themeConfig: ThemeConfig | null;
   setThemeId: (nextThemeId: string) => void;
 };
 
@@ -13,7 +13,7 @@ export const THEME_STORAGE_KEY = "theme:id";
 
 export const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-export function applyThemeToDocument(themeConfig: any) {
+export function applyThemeToDocument(themeConfig: ThemeConfig | null) {
   if (typeof document === "undefined" || !themeConfig) return;
 
   const root = document.documentElement;
@@ -42,7 +42,7 @@ function useThemeController(defaultThemeId: string = "ferrari"): ThemeContextVal
     }
   });
 
-  const themeConfig = useMemo(() => getTheme(themeId) as any, [themeId]);
+  const themeConfig = useMemo(() => getTheme(themeId) as ThemeConfig | null, [themeId]);
 
   const setThemeId = useCallback((nextThemeId: string) => {
     setThemeIdState(nextThemeId);

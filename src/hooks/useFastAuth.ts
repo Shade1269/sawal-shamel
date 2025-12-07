@@ -30,6 +30,11 @@ export interface FastAuthSignUpArgs {
   role: FastAuthRole;
 }
 
+export interface SignUpResult {
+  data?: { user: User | null; session: Session | null };
+  error: Error | null;
+}
+
 export interface SignUpServices {
   supabase: typeof supabase;
   toast: (config: { title: string; description?: string; variant?: string }) => void;
@@ -40,7 +45,7 @@ export interface SignUpServices {
 export const performSignUp: (
   deps: SignUpServices,
   args: FastAuthSignUpArgs
-) => Promise<{ data?: any; error: any | null }> = (deps, args) => {
+) => Promise<SignUpResult> = (deps, args) => {
   const enhancedDeps = {
     ...deps,
     getBaseUrlFn: deps.getBaseUrlFn ?? getBaseUrl,
@@ -286,7 +291,7 @@ export const useFastAuth = () => {
 
   // Enhanced Auth functions with better error handling and user feedback
   const signUp = useCallback((args: FastAuthSignUpArgs) => {
-    return performSignUp({ supabase, toast: (config: any) => toast(config), fetchUserProfile }, args);
+    return performSignUp({ supabase, toast: (config) => toast(config), fetchUserProfile }, args);
   }, [toast, fetchUserProfile]);
 
   const signIn = async (email: string, password: string) => {
@@ -393,20 +398,20 @@ export const useFastAuth = () => {
       }
       // Don't force reload; let caller navigate
       return { data, error: null, redirect };
-    } catch (error: any) {
+    } catch (error) {
       console.error('SignIn error:', error);
-      
+
       let errorMessage = 'حدث خطأ أثناء تسجيل الدخول';
-      if (error.message.includes('network')) {
+      if (error instanceof Error && error.message.includes('network')) {
         errorMessage = 'تحقق من اتصال الإنترنت وحاول مرة أخرى';
       }
-      
+
       toast({
         title: "خطأ في تسجيل الدخول",
         description: errorMessage,
         variant: "destructive"
       });
-      
+
       return { error };
     }
   };
@@ -434,12 +439,12 @@ export const useFastAuth = () => {
       // Don't force reload; let caller handle navigation/guards
       
       return { error: null };
-    } catch (error: any) {
+    } catch (error) {
       console.error('SignOut error:', error);
-      
+
       toast({
         title: "خطأ في تسجيل الخروج",
-        description: error.message,
+        description: error instanceof Error ? error.message : 'حدث خطأ',
         variant: "destructive"
       });
       
@@ -455,7 +460,7 @@ export const useFastAuth = () => {
     }
   };
 
-  const updateProfile = async (updates: any) => {
+  const updateProfile = async (updates: Partial<FastUserProfile>) => {
     if (!user) return { error: 'No user found' };
 
     try {
@@ -522,11 +527,10 @@ export const useFastAuth = () => {
 
         if (commissionsRes.status === 'fulfilled' && !commissionsRes.value.error) {
           result.commissions = commissionsRes.value.data || [];
-          result.stats.totalCommissions = result.commissions.reduce((sum: number, c: any) => sum + (c.amount_sar || 0), 0);
+          result.stats.totalCommissions = result.commissions.reduce((sum: number, c: { amount_sar?: number }) => sum + (c.amount_sar || 0), 0);
         }
       }
 
-      cacheProfile(result as any);
       return result;
     } catch (error) {
       console.error('Error fetching affiliate data:', error);

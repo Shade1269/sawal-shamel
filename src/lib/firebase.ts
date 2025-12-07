@@ -1,13 +1,22 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { initializeApp, FirebaseApp } from 'firebase/app';
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, Auth, ConfirmationResult } from 'firebase/auth';
+import { getFirestore, Firestore } from 'firebase/firestore';
 import { supabase } from '@/integrations/supabase/client';
 
+interface FirebaseConfig {
+  apiKey: string;
+  authDomain: string;
+  projectId: string;
+  storageBucket: string;
+  messagingSenderId: string;
+  appId: string;
+}
+
 // Firebase configuration will be loaded from Supabase secrets
-let firebaseConfig: any = null;
-let app: any = null;
-let auth: any = null;
-let db: any = null;
+let firebaseConfig: FirebaseConfig | null = null;
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
+let db: Firestore | null = null;
 
 // Initialize Firebase with config from Supabase
 const initializeFirebase = async () => {
@@ -135,13 +144,14 @@ export const sendSMSOTP = async (phoneNumber: string, recaptchaVerifier: Recaptc
 
     const confirmationResult = await signInWithPhoneNumber(authInstance, phoneNumber, recaptchaVerifier);
     return { success: true, confirmationResult };
-  } catch (error: any) {
-    let errorMessage = error.message;
-    if (error.code === 'auth/invalid-phone-number') {
+  } catch (error) {
+    const firebaseError = error as { code?: string; message?: string };
+    let errorMessage = firebaseError.message || 'حدث خطأ';
+    if (firebaseError.code === 'auth/invalid-phone-number') {
       errorMessage = 'رقم الهاتف غير صحيح. تأكد من صيغة الرقم.';
-    } else if (error.code === 'auth/too-many-requests') {
+    } else if (firebaseError.code === 'auth/too-many-requests') {
       errorMessage = 'تم تجاوز الحد المسموح من المحاولات. حاول مرة أخرى لاحقاً.';
-    } else if (error.code === 'auth/quota-exceeded') {
+    } else if (firebaseError.code === 'auth/quota-exceeded') {
       errorMessage = 'تم تجاوز حصة SMS اليومية في Firebase.';
     }
 
@@ -150,14 +160,22 @@ export const sendSMSOTP = async (phoneNumber: string, recaptchaVerifier: Recaptc
 };
 
 // Verify SMS OTP
-export const verifySMSOTP = async (confirmationResult: any, otp: string) => {
+export const verifySMSOTP = async (confirmationResult: ConfirmationResult, otp: string) => {
   try {
     const result = await confirmationResult.confirm(otp);
     return { success: true, user: result.user };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error) {
+    const firebaseError = error as { message?: string };
+    return { success: false, error: firebaseError.message || 'حدث خطأ' };
   }
 };
+
+interface RecaptchaParams {
+  sitekey?: string;
+  size?: 'invisible' | 'normal' | 'compact';
+  callback?: (token: string) => void;
+  'expired-callback'?: () => void;
+}
 
 // Declare global types
 declare global {
@@ -165,7 +183,7 @@ declare global {
     recaptchaVerifier: RecaptchaVerifier;
     grecaptcha: {
       reset: () => void;
-      render: (container: string | HTMLElement, params: any) => void;
+      render: (container: string | HTMLElement, params: RecaptchaParams) => void;
     };
   }
 }

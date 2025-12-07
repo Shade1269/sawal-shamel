@@ -2,10 +2,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { API_ENDPOINTS, POINT_VALUES } from '@/utils/constants';
 import { logger } from '@/utils/logger';
 
+interface PointsMetadata {
+  challenge_name?: string;
+  bonus_points?: number;
+  reason?: string;
+  order_id?: string;
+  customer_id?: string;
+  [key: string]: unknown;
+}
+
 interface AtlantisPointsUpdateData {
   action: 'sale_completed' | 'new_customer' | 'challenge_completed' | 'manual_add';
   amount?: number;
-  metadata?: any;
+  metadata?: PointsMetadata;
 }
 
 export class AtlantisPointsService {
@@ -45,7 +54,7 @@ export class AtlantisPointsService {
   /**
    * Add points for completed sale
    */
-  static async addSalePoints(saleAmount: number, metadata: any = {}) {
+  static async addSalePoints(saleAmount: number, metadata: PointsMetadata = {}) {
     return this.addPoints({
       action: 'sale_completed',
       amount: saleAmount,
@@ -56,7 +65,7 @@ export class AtlantisPointsService {
   /**
    * Add points for new customer acquisition
    */
-  static async addNewCustomerPoints(metadata: any = {}) {
+  static async addNewCustomerPoints(metadata: PointsMetadata = {}) {
     return this.addPoints({
       action: 'new_customer',
       metadata
@@ -66,7 +75,7 @@ export class AtlantisPointsService {
   /**
    * Add points for challenge completion
    */
-  static async addChallengePoints(challengeName: string, bonusPoints: number, metadata: any = {}) {
+  static async addChallengePoints(challengeName: string, bonusPoints: number, metadata: PointsMetadata = {}) {
     return this.addPoints({
       action: 'challenge_completed',
       metadata: {
@@ -80,7 +89,7 @@ export class AtlantisPointsService {
   /**
    * Manual points addition (admin only)
    */
-  static async addManualPoints(amount: number, reason: string, metadata: any = {}) {
+  static async addManualPoints(amount: number, reason: string, metadata: PointsMetadata = {}) {
     return this.addPoints({
       action: 'manual_add',
       amount,
