@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export type Breakpoint = 'mobile' | 'tablet' | 'desktop' | 'wide';
@@ -25,7 +25,7 @@ const defaultBreakpoints: LayoutBreakpoints = {
 };
 
 export const useResponsiveLayout = (customBreakpoints?: Partial<LayoutBreakpoints>) => {
-  const breakpoints = { ...defaultBreakpoints, ...customBreakpoints };
+  void { ...defaultBreakpoints, ...customBreakpoints }; // Reserved for future use
   
   const isMobile = useIsMobile();
   const isTablet = !isMobile; // Simplified

@@ -195,7 +195,7 @@ export const CustomerChatWidget: React.FC<CustomerChatWidgetProps> = ({
                         >
                           {message.sender_id !== customerProfileId && (
                             <Avatar className="h-8 w-8 flex-shrink-0">
-                              <AvatarImage src={message.sender?.avatar_url} />
+                              <AvatarImage src={message.sender?.avatar_url ?? undefined} />
                               <AvatarFallback className="text-xs bg-secondary text-secondary-foreground">
                                 {message.sender?.full_name?.charAt(0) || 'م'}
                               </AvatarFallback>

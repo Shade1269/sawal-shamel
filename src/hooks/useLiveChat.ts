@@ -165,7 +165,7 @@ export const useLiveChat = (): UseLiveChatReturn => {
         }
       };
 
-      wsRef.current.onclose = (event) => {
+      wsRef.current.onclose = (_event) => {
         setIsConnected(false);
         setCurrentRoom(null);
 

@@ -101,7 +101,7 @@ export function useOrdersByMerchant(merchantId?: string) {
       // Step 5: Group order items by order_id
       const simpleItemsByOrder = new Map<string, typeof simpleItems>();
       simpleItems.forEach(item => {
-        const orderId = item.order_id;
+        const orderId = item.order_id || '';
         if (!simpleItemsByOrder.has(orderId)) {
           simpleItemsByOrder.set(orderId, []);
         }
@@ -110,7 +110,7 @@ export function useOrdersByMerchant(merchantId?: string) {
 
       const ecommerceItemsByOrder = new Map<string, typeof ecommerceItems>();
       ecommerceItems.forEach(item => {
-        const orderId = item.order_id;
+        const orderId = item.order_id || '';
         if (!ecommerceItemsByOrder.has(orderId)) {
           ecommerceItemsByOrder.set(orderId, []);
         }

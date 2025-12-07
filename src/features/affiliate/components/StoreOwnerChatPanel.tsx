@@ -153,7 +153,7 @@ export const StoreOwnerChatPanel: React.FC<StoreOwnerChatPanelProps> = ({ storeI
                       >
                         {!isOwnMessage && (
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={message.sender?.avatar_url} />
+                            <AvatarImage src={message.sender?.avatar_url ?? undefined} />
                             <AvatarFallback className="text-xs">
                               {message.sender?.full_name?.charAt(0) || 'ع'}
                             </AvatarFallback>

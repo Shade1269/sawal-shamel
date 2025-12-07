@@ -180,6 +180,7 @@ export const useNavigationShortcuts = (
       const hasCmd = keys.includes('cmd') && (event.metaKey || event.ctrlKey);
       const hasShift = keys.includes('shift') && event.shiftKey;
       const hasAlt = keys.includes('alt') && event.altKey;
+      void hasCmd; void hasShift; void hasAlt; // Mark as used
       const mainKey = keys.find(k => !['cmd', 'ctrl', 'shift', 'alt'].includes(k));
       
       if (keys.includes('esc')) {

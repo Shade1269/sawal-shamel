@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { toast } from 'sonner';
 
-interface CartItem {
+export interface CartItem {
   id: string;
   product_id: string;
   product_title: string;
   quantity: number;
   unit_price_sar: number;
-  total_price_sar: number | null;
+  total_price_sar: number;
   product_image_url?: string;
   selected_variants?: Record<string, string>;
 }
@@ -98,14 +98,14 @@ export const useIsolatedStoreCart = (storeId: string, storeSlug?: string) => {
               product_title: productData?.title || 'منتج',
               quantity: item.quantity,
               unit_price_sar: item.unit_price_sar,
-              total_price_sar: item.total_price_sar,
+              total_price_sar: item.total_price_sar ?? (item.quantity * item.unit_price_sar),
               product_image_url: productData?.image_urls?.[0],
               selected_variants: (item.selected_variants as Record<string, string>) || {}
             };
           })
         );
 
-        const total = cartItems.reduce((sum, item) => sum + item.total_price_sar, 0);
+        const total = cartItems.reduce((sum, item) => sum + (item.total_price_sar ?? 0), 0);
 
         setCart({
           id: cartData.id,
@@ -143,6 +143,7 @@ export const useIsolatedStoreCart = (storeId: string, storeSlug?: string) => {
       // استخدام السعر الممرر أو محاولة الحصول عليه من قاعدة البيانات
       let finalPrice = unitPrice;
       let finalTitle = productTitle || 'منتج';
+      void finalTitle; // Used below in database insert
 
       if (!finalPrice) {
         const { data: product } = await supabasePublic

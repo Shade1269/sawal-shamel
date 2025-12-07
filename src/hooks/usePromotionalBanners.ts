@@ -275,18 +275,19 @@ export const usePromotionalBanners = (storeId?: string, affiliateStoreId?: strin
         });
 
       // تحديث الإحصائيات في البانر
+      const banner = banners.find(b => b.id === bannerId);
       if (eventType === 'impression') {
         await supabase
           .from('promotional_banners')
           .update({ 
-            current_impressions: banners.find(b => b.id === bannerId)?.current_impressions + 1 || 1 
+            current_impressions: (banner?.current_impressions ?? 0) + 1 
           })
           .eq('id', bannerId);
       } else if (eventType === 'click') {
         await supabase
           .from('promotional_banners')
           .update({ 
-            current_clicks: banners.find(b => b.id === bannerId)?.current_clicks + 1 || 1 
+            current_clicks: (banner?.current_clicks ?? 0) + 1 
           })
           .eq('id', bannerId);
       }

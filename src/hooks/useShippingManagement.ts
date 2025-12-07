@@ -7,11 +7,14 @@ export interface ShippingProvider {
   name: string;
   name_en: string;
   code: string;
-  api_endpoint?: string;
+  api_endpoint?: string | null;
+  logo_url?: string | null;
   base_price_sar?: number;
-  is_active: boolean;
+  is_active: boolean | null;
   configuration: any;
-  created_at: string;
+  supported_services?: any;
+  created_at: string | null;
+  updated_at?: string | null;
 }
 
 export interface ShippingZone {
@@ -20,9 +23,12 @@ export interface ShippingZone {
   name_en: string;
   zone_code: string;
   zone_type: string;
-  postal_codes: string[];
-  is_active: boolean;
-  created_at: string;
+  postal_codes: string[] | null;
+  is_active: boolean | null;
+  created_at: string | null;
+  parent_zone_id?: string | null;
+  delivery_days_min?: number | null;
+  delivery_days_max?: number | null;
 }
 
 export interface ShippingRate {
@@ -30,13 +36,15 @@ export interface ShippingRate {
   provider_id: string;
   zone_id: string;
   service_type: string;
-  weight_from: number;
-  weight_to: number;
-  base_price: number;
-  price_per_kg: number;
-  min_price?: number;
-  max_price?: number;
-  created_at: string;
+  weight_from: number | null;
+  weight_to: number | null;
+  base_price: number | null;
+  price_per_kg: number | null;
+  min_price?: number | null;
+  max_price?: number | null;
+  is_active?: boolean | null;
+  created_at: string | null;
+  zone?: any;
 }
 
 export const useShippingManagement = () => {
