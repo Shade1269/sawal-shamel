@@ -4,22 +4,14 @@ import {
   EnhancedCard,
   EnhancedCardContent,
   EnhancedCardHeader,
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  EnhancedButton,
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
+  EnhancedCardTitle
 } from "@/components/ui/index";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, CreditCard, Banknote, ShoppingBag } from "lucide-react";
+import { ArrowLeft, CreditCard, Banknote } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Database } from "@/integrations/supabase/types";
 import { useStoreSettings, getEnabledPaymentMethods, getEnabledShippingMethods } from "@/hooks/useStoreSettings";
 import { safeJsonParse } from "@/lib/utils";
 import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
@@ -42,11 +34,10 @@ interface CustomerInfo {
   notes?: string;
 }
 
-interface PaymentMethod {
+interface ShippingMethod {
   id: string;
   name: string;
-  description: string;
-  icon: React.ReactNode;
+  price: number;
 }
 
 const Payment = () => {
@@ -95,10 +86,10 @@ const Payment = () => {
     
     // Filter based on enabled payment methods from store settings
     if (method.id === 'cod') {
-      return enabledPaymentMethods.some(m => m.id === 'cash_on_delivery');
+      return enabledPaymentMethods.some((m: { id: string }) => m.id === 'cash_on_delivery');
     }
     if (method.id === 'geidea') {
-      return enabledPaymentMethods.some(m => m.id === 'geidea');
+      return enabledPaymentMethods.some((m: { id: string }) => m.id === 'geidea');
     }
     return true;
   });
@@ -107,14 +98,14 @@ const Payment = () => {
 
   useEffect(() => {
     const fetchShopAndLoadData = async () => {
+      if (!slug) return;
+      
       // Fetch affiliate store (not merchant shop) by slug
       const { data: shopData } = await supabase
         .from("affiliate_stores")
         .select("id, store_slug, store_name")
         .eq("store_slug", slug)
         .maybeSingle();
-      
-      setShop(shopData);
 
       // Load cart from localStorage (safe)
       const savedCart = localStorage.getItem(`cart_${slug}`);
@@ -153,8 +144,9 @@ const Payment = () => {
     return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
+
   const getShippingCost = () => {
-    const method = shippingMethods.find(m => m.id === selectedShipping);
+    const method = shippingMethods.find((m: ShippingMethod) => m.id === selectedShipping);
     return method ? method.price : 0;
   };
 

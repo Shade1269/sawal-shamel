@@ -197,7 +197,7 @@ export const UserDashboard: React.FC = () => {
                       </Badge>
                       <span className="text-xs text-muted-foreground">
                         <Calendar className="h-3 w-3 inline mr-1" />
-                        {formatDate(activity.created_at)}
+                        {formatDate(activity.created_at ?? new Date().toISOString())}
                       </span>
                     </div>
                   </div>

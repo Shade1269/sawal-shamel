@@ -3,11 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { 
   EnhancedCard,
   EnhancedCardContent,
-  EnhancedCardHeader,
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  EnhancedButton,
   Card, 
   CardContent, 
   CardHeader, 
@@ -51,10 +46,13 @@ const OrderConfirmation = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchOrderDetails();
+    if (orderId) {
+      fetchOrderDetails();
+    }
   }, [orderId]);
 
   const fetchOrderDetails = async () => {
+    if (!orderId) return;
     try {
       // جلب الطلب من order_hub أولاً
       const { data: hubOrder, error: hubError } = await supabase

@@ -1,30 +1,15 @@
-import React, { useState } from 'react';
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  EnhancedButton
-} from '@/components/ui/index';
+import { useState } from 'react';
 import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { UnifiedBadge } from '@/components/design-system';
 import { 
   Crown, 
   Shield, 
-  AlertTriangle, 
   CheckCircle,
-  User,
-  Mail,
-  Lock,
   Home,
   ArrowRight
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -32,7 +17,6 @@ import { useToast } from '@/hooks/use-toast';
 import { getBaseUrl } from '@/utils/domains';
 
 const CreateAdmin = () => {
-  const navigate = useNavigate();
   const { goToUserHome } = useSmartNavigation();
   const { profile } = useFastAuth();
   const { toast } = useToast();

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { UnifiedButton, UnifiedCard, UnifiedCardHeader, UnifiedCardTitle, UnifiedCardDescription, UnifiedCardContent, UnifiedSelect, UnifiedSelectTrigger, UnifiedSelectValue, UnifiedSelectContent, UnifiedSelectItem } from '@/components/design-system';
-import { ThemeSwitcher } from '@/components/theme';
 import { Heart, Star, Sparkles, Zap, Shield, Award, Moon, Sun } from 'lucide-react';
 
 /**
@@ -8,7 +7,7 @@ import { Heart, Star, Sparkles, Zap, Shield, Award, Moon, Sun } from 'lucide-rea
  * Interactive demonstration of all unified components with all variants
  */
 
-const DesignSystemShowcase: React.FC = () => {
+const DesignSystemShowcase = () => {
   const [clickedButton, setClickedButton] = useState<string>('');
   const [selectedValue, setSelectedValue] = useState<string>('');
   const [isDark, setIsDark] = useState(() => {

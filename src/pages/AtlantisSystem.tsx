@@ -3,18 +3,10 @@ import {
   EnhancedCard,
   EnhancedCardContent,
   EnhancedCardHeader,
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  InteractiveWidget,
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
+  EnhancedCardTitle
 } from '@/components/ui/index';
 import { Badge } from '@/components/ui/badge';
 import { AtlantisLeaderboard } from '@/features/chat/components/AtlantisLeaderboard';
-import { AtlantisStatusWidget } from '@/features/chat/components/AtlantisStatusWidget';
 import { UserProgressCard } from '@/components/UserProgressCard';
 import { AtlantisNotifications } from '@/features/chat/components/AtlantisNotifications';
 import { LiveLeaderboardUpdates } from '@/features/chat/components/LiveLeaderboardUpdates';
@@ -28,7 +20,6 @@ import {
   Users, 
   Star, 
   Target,
-  Gamepad2,
   Sparkles,
   MessageCircle
 } from 'lucide-react';
@@ -37,16 +28,16 @@ import { useNavigate } from 'react-router-dom';
 export const AtlantisSystem = () => {
   const navigate = useNavigate();
   const { 
-    loading, 
-    userLevel, 
-    userAlliance, 
-    weeklyLeaderboard,
-    allianceLeaderboard,
-    currentChallenge,
-    castleController
+    loading: _loading, 
+    userLevel: _userLevel, 
+    userAlliance: _userAlliance, 
+    weeklyLeaderboard: _weeklyLeaderboard,
+    allianceLeaderboard: _allianceLeaderboard,
+    currentChallenge: _currentChallenge,
+    castleController: _castleController
   } = useAtlantisSystem();
   
-  const { currentAnimation, showAnimation, hideAnimation } = useAtlantisAnimations();
+  const { currentAnimation, showAnimation: _showAnimation, hideAnimation } = useAtlantisAnimations();
 
   return (
     <div className="min-h-screen bg-gradient-persian-bg">

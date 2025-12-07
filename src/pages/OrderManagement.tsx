@@ -2,17 +2,6 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { maskPhone, maskEmail, shouldShowFullCustomerData } from '@/lib/privacy';
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  VirtualizedList,
-  EnhancedButton
-} from '@/components/ui/index';
 import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle, UnifiedBadge } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, Edit, Package, Truck, CheckCircle, XCircle, Clock, Filter } from 'lucide-react';
+import { Eye, Edit, Package, Truck, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Order {
@@ -48,7 +37,7 @@ interface OrderItem {
   product_title: string;
   quantity: number;
   unit_price_sar: number;
-  total_price_sar: number;
+  total_price_sar: number | null;
   product_sku: string | null;
 }
 
