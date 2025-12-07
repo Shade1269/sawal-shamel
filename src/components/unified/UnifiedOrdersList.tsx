@@ -3,7 +3,6 @@ import { useUnifiedOrders } from '@/hooks/useUnifiedOrders';
 import type { UnifiedOrderFilters } from '@/services/UnifiedOrdersService';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { isFeatureEnabled } from '@/config/featureFlags';
 import { Package, ShoppingCart, Edit } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -8,14 +7,13 @@ import {
   ShoppingCart, 
   Heart, 
   Star, 
-  Eye, 
+  Eye,
   User,
   Search,
   Menu,
   Bell,
   Package,
   CreditCard,
-  Truck,
   CheckCircle,
   Play,
   Pause

@@ -1,19 +1,12 @@
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedBadge as Badge } from '@/components/design-system';
-import { Progress } from '@/components/ui/progress';
 import { 
   Users, 
   Store, 
   ShoppingCart, 
   TrendingUp,
-  Crown,
-  Activity,
-  Eye,
   DollarSign,
   Package,
-  UserCheck,
-  Zap,
-  Globe,
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';

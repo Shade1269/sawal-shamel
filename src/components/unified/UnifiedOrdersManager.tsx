@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
-import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from "@/components/design-system";
+import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from "@/components/design-system";
 import { UnifiedButton } from "@/components/design-system";
 import { UnifiedInput } from "@/components/design-system";
 import { UnifiedBadge } from "@/components/design-system";
@@ -18,16 +18,13 @@ import {
   Search,
   Download,
   Eye,
-  Edit,
   Truck,
   CheckCircle,
   XCircle,
   Clock,
   DollarSign,
   Package,
-  User,
-  Calendar,
-  Filter
+  User
 } from "lucide-react";
 import { useFastAuth } from "@/hooks/useFastAuth";
 
