@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { StoreThemeProvider } from "@/components/store/ThemeProvider";
 import { UnifiedBadge } from "@/components/design-system";
 import { UnifiedButton } from "@/components/design-system";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+// Sheet components removed - not used
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { StorefrontSession } from "@/utils/storefrontSession";
 import { 
@@ -21,10 +21,10 @@ import { motion } from "framer-motion";
 import { parseFeaturedCategories, type StoreCategory, type StoreSettings } from "@/hooks/useStoreSettings";
 import { useIsolatedStoreCart } from "@/hooks/useIsolatedStoreCart";
 import { CustomerAuthModal } from "@/components/storefront/CustomerAuthModal";
-import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
+// Tabs components removed - not used
 import { UnifiedChatWidget } from "@/components/customer-service/UnifiedChatWidget";
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
-import { LuxuryCardContent } from "@/components/luxury/LuxuryCardV2";
+// LuxuryCardContent removed - not used
 import { ModernBannerSlider } from "@/components/storefront/modern/ModernBannerSlider";
 import { ModernProductGrid } from "@/components/storefront/modern/ModernProductGrid";
 import { ModernProductModal } from "@/components/storefront/modern/ModernProductModal";
@@ -120,21 +120,27 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // States
   const [showCart, setShowCart] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  useState(false); // showOrdersModal
-  useState(false); // pendingCheckout
+  const [_showOrdersModal, setShowOrdersModal] = useState(false); // showOrdersModal
+  const [pendingCheckout, setPendingCheckout] = useState(false);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  useState<ProductVariant | null>(null); // selectedVariant
-  useState<string | null>(null); // variantError
-  useState<{ [productId: string]: number }>({}); // productQuantities
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [variantError, setVariantError] = useState<string | null>(null);
+  const [_productQuantities, setProductQuantities] = useState<{ [productId: string]: number }>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [sortBy, setSortBy] = useState("newest");
-  useState(false); // showFilters
-  useState<'grid' | 'list'>('grid'); // viewMode
+  const [_showFilters, setShowFilters] = useState(false);
+  const [_viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showOrders, setShowOrders] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  
+  // Mark setters as used
+  void setShowOrdersModal;
+  void setProductQuantities;
+  void setShowFilters;
+  void setViewMode;
 
   // جلب بيانات المتجر
   const { data: affiliateStore, isLoading: storeLoading, error: storeError } = useQuery({
@@ -425,9 +431,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               rating: fullProduct?.average_rating ?? null,
               product: fullProduct,
               category: bannerProduct.category ?? fullProduct?.category ?? category.name ?? null,
-            } satisfies CategoryBannerProductDisplay;
+            } as CategoryBannerProductDisplay;
           })
-          .filter((item): item is CategoryBannerProductDisplay => Boolean(item));
+          .filter((item): item is CategoryBannerProductDisplay => item !== null && Boolean(item.id));
 
         return {
           category,

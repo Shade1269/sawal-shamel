@@ -8,12 +8,12 @@ import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { 
-  LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
 import { 
   TrendingUp, TrendingDown, Users, ShoppingCart, DollarSign, 
-  Package, Eye, Download, Calendar, Filter, RefreshCw
+  Package, Download, RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, subDays, startOfMonth, endOfMonth } from 'date-fns';
@@ -87,7 +87,7 @@ const AnalyticsDashboard = () => {
       const { data: shopsData, error } = await query;
 
       if (error) throw error;
-      setShops(shopsData || []);
+      setShops((shopsData || []).map(s => ({ id: s.id, display_name: s.display_name || '' })));
     } catch (error) {
       console.error('Error fetching shops:', error);
     }
@@ -100,17 +100,6 @@ const AnalyticsDashboard = () => {
     try {
       const fromDate = format(dateRange.from, 'yyyy-MM-dd');
       const toDate = format(dateRange.to, 'yyyy-MM-dd');
-
-      // Build base query conditions
-      let shopFilter = '';
-      if (selectedShop !== 'all') {
-        shopFilter = `AND shop_id = '${selectedShop}'`;
-      } else if (profile.role === 'merchant') {
-        const shopIds = shops.map(s => `'${s.id}'`).join(',');
-        if (shopIds) {
-          shopFilter = `AND shop_id IN (${shopIds})`;
-        }
-      }
 
       // Fetch overview data from order_hub
       const { data: ordersData, error: ordersError } = await supabase
@@ -127,7 +116,7 @@ const AnalyticsDashboard = () => {
         filteredOrders = filteredOrders.filter(o => o.shop_id === selectedShop);
       } else if (profile.role === 'merchant' && shops.length > 0) {
         const shopIds = shops.map(s => s.id);
-        filteredOrders = filteredOrders.filter(o => shopIds.includes(o.shop_id));
+        filteredOrders = filteredOrders.filter(o => o.shop_id && shopIds.includes(o.shop_id));
       }
 
       // Calculate overview metrics
@@ -156,7 +145,7 @@ const AnalyticsDashboard = () => {
         prevFiltered = prevFiltered.filter(o => o.shop_id === selectedShop);
       } else if (profile.role === 'merchant' && shops.length > 0) {
         const shopIds = shops.map(s => s.id);
-        prevFiltered = prevFiltered.filter(o => shopIds.includes(o.shop_id));
+        prevFiltered = prevFiltered.filter(o => o.shop_id && shopIds.includes(o.shop_id));
       }
 
       const prevTotalSales = prevFiltered.reduce((sum, order) => sum + (order.total_amount_sar || 0), 0);
@@ -221,7 +210,8 @@ const AnalyticsDashboard = () => {
       // Order status distribution
       const statusCounts: Record<string, number> = {};
       ordersData?.forEach(order => {
-        statusCounts[order.status] = (statusCounts[order.status] || 0) + 1;
+        const status = order.status || 'UNKNOWN';
+        statusCounts[status] = (statusCounts[status] || 0) + 1;
       });
 
       const orderStatus = Object.entries(statusCounts).map(([status, count]) => ({
@@ -238,17 +228,18 @@ const AnalyticsDashboard = () => {
       ];
 
       // Top customers (simplified)
-      const customerStats: Record<string, any> = {};
+      const customerStats: Record<string, { name: string; totalOrders: number; totalSpent: number }> = {};
       filteredOrders.forEach(order => {
-        if (!customerStats[order.customer_name]) {
-          customerStats[order.customer_name] = {
-            name: order.customer_name,
+        const customerName = order.customer_name || 'غير معروف';
+        if (!customerStats[customerName]) {
+          customerStats[customerName] = {
+            name: customerName,
             totalOrders: 0,
             totalSpent: 0
           };
         }
-        customerStats[order.customer_name].totalOrders += 1;
-        customerStats[order.customer_name].totalSpent += order.total_amount_sar || 0;
+        customerStats[customerName].totalOrders += 1;
+        customerStats[customerName].totalSpent += order.total_amount_sar || 0;
       });
 
       const topCustomers = Object.values(customerStats)

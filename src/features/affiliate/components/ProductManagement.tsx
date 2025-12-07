@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { useState } from 'react';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { UnifiedBadge as Badge } from '@/components/design-system';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { 
   Package, 
@@ -14,10 +13,7 @@ import {
   Edit,
   Trash2,
   Eye,
-  Star,
   TrendingUp,
-  BarChart3,
-  Users,
   ShoppingCart
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -39,7 +35,7 @@ interface ProductManagementProps {
   storeId: string;
 }
 
-export const ProductManagement = ({ storeId }: ProductManagementProps) => {
+export const ProductManagement = ({ storeId: _storeId }: ProductManagementProps) => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('الكل');
@@ -95,21 +91,21 @@ export const ProductManagement = ({ storeId }: ProductManagementProps) => {
   const totalSales = products.reduce((sum, p) => sum + p.sales_count, 0);
   const avgConversion = products.reduce((sum, p) => sum + p.conversion_rate, 0) / products.length;
 
-  const handleToggleVisibility = (productId: string) => {
+  const handleToggleVisibility = (_productId: string) => {
     toast({
       title: "تم التحديث",
       description: "تم تحديث حالة ظهور المنتج بنجاح"
     });
   };
 
-  const handleEditProduct = (productId: string) => {
+  const handleEditProduct = (_productId: string) => {
     toast({
       title: "قيد التطوير",
       description: "ستتم إضافة وظيفة تعديل المنتج قريباً"
     });
   };
 
-  const handleDeleteProduct = (productId: string) => {
+  const handleDeleteProduct = (_productId: string) => {
     toast({
       title: "تم الحذف",
       description: "تم حذف المنتج بنجاح",

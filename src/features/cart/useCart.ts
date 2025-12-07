@@ -49,7 +49,10 @@ export function useCart() {
       setLoading(false);
       throw itemsError;
     }
-    setItems(cartItems);
+    setItems((cartItems || []).map(item => ({
+      ...item,
+      total_price_sar: item.total_price_sar ?? item.unit_price_sar * item.quantity
+    })));
     setLoading(false);
   }, []);
 

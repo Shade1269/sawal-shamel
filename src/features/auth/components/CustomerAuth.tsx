@@ -29,7 +29,7 @@ export const CustomerAuth: React.FC<CustomerAuthProps> = ({
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState<'merchant' | 'affiliate'>('affiliate');
   const [otpCode, setOtpCode] = useState('');
-  const [customerDetails, setCustomerDetails] = useState({
+  const [_customerDetails, _setCustomerDetails] = useState({
     fullName: '',
     email: ''
   });

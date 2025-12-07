@@ -6,7 +6,7 @@ import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHea
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useFastAuth } from '@/hooks/useFastAuth';
-import { Loader2, User, Users, ShoppingCart, Star } from 'lucide-react';
+import { Loader2, User, ShoppingCart, Star } from 'lucide-react';
 import { useSmartNavigation } from '@/hooks/useSmartNavigation';
 
 const AuthForm = () => {

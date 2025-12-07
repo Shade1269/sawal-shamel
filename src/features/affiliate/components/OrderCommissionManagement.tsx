@@ -167,7 +167,7 @@ export const OrderCommissionManagement = (_props: OrderCommissionManagementProps
     return statusMap[status as keyof typeof statusMap] || status;
   };
 
-  const handleViewOrder = (orderId: string) => {
+  const handleViewOrder = (_orderId: string) => {
     toast({
       title: "عرض الطلب",
       description: "سيتم فتح تفاصيل الطلب قريباً"
