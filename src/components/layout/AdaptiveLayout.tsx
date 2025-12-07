@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
-import { getTouchFriendlySize, getContainerSpacing, getNavigationType } from '@/utils/deviceUtils';
+import { getContainerSpacing } from '@/utils/deviceUtils';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 import { AppBreadcrumb } from './AppBreadcrumb';
@@ -30,9 +30,7 @@ export function AdaptiveLayout({
 }: AdaptiveLayoutProps) {
   const device = useDeviceDetection();
   const { isAuthenticated } = useFastAuth();
-  const touchSize = getTouchFriendlySize(device);
   const containerSpacing = getContainerSpacing(device);
-  const navType = getNavigationType(device);
 
   // Check if it's an auth page
   const authPath = window.location.pathname;

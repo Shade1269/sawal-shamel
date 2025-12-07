@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { 
   Search, 
@@ -9,7 +8,6 @@ import {
   Bell, 
   Settings, 
   BarChart3, 
-  Zap,
   ChevronDown,
   User,
   LogOut,
@@ -33,11 +31,11 @@ import { cn } from '@/lib/utils';
 
 export function QuickActions() {
   const [searchOpen, setSearchOpen] = useState(false);
-  const [notifications, setNotifications] = useState(3);
+  const [notifications, _setNotifications] = useState(3);
   const { profile, signOut } = useFastAuth();
   const navigate = useNavigate();
 
-  const { shortcuts } = useKeyboardShortcuts({
+  const { shortcuts: _shortcuts } = useKeyboardShortcuts({
     onSearchOpen: () => setSearchOpen(true),
     onNotificationsOpen: () => { /* Open notifications panel */ },
     onSettingsOpen: () => navigate('/settings')

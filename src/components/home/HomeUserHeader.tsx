@@ -3,7 +3,6 @@ import { User, Languages, Sun, Moon, LogOut } from 'lucide-react';
 
 interface HomeUserHeaderProps {
   userName: string;
-  language: string;
   isDarkMode: boolean;
   onLanguageToggle: () => void;
   onDarkModeToggle: () => void;
@@ -12,7 +11,6 @@ interface HomeUserHeaderProps {
 
 export const HomeUserHeader = ({
   userName,
-  language,
   isDarkMode,
   onLanguageToggle,
   onDarkModeToggle,

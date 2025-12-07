@@ -1,6 +1,5 @@
-import { useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -240,7 +239,7 @@ export function DashboardCharts({
                 fill="#8884d8"
                 dataKey="value"
               >
-                {config.data.map((entry, index) => (
+                {config.data.map((_entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
                     fill={colors[index % colors.length]} 

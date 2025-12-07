@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
-import { getContainerSpacing, getTouchFriendlySize } from '@/utils/deviceUtils';
+import { getContainerSpacing } from '@/utils/deviceUtils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 

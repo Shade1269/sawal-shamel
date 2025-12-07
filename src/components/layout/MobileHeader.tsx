@@ -1,10 +1,7 @@
-import React from 'react';
 import { UnifiedButton } from '@/components/design-system';
-import { Menu, Search, Bell, ShoppingCart, User } from 'lucide-react';
+import { Menu, User } from 'lucide-react';
 import { GlobalSearch, GlobalNotifications } from '@/shared/components';
 import { ShoppingCartDrawer } from '@/features/commerce';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
-import { getTouchFriendlySize } from '@/utils/deviceUtils';
 
 interface MobileHeaderProps {
   showAuth?: boolean;
@@ -12,8 +9,6 @@ interface MobileHeaderProps {
 }
 
 export function MobileHeader({ showAuth = false, onMenuClick }: MobileHeaderProps) {
-  const device = useDeviceDetection();
-  const touchSize = getTouchFriendlySize(device);
 
   return (
     <header className="h-16 bg-card/30 backdrop-blur-md border-b border-border/50 sticky top-0 z-50">

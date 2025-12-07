@@ -1,10 +1,6 @@
 import { motion } from 'framer-motion';
 
-interface HomeHeroProps {
-  isDarkMode: boolean;
-}
-
-export const HomeHero = ({ isDarkMode }: HomeHeroProps) => {
+export const HomeHero = () => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}

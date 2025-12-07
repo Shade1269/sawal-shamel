@@ -1,21 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { 
   Heart, 
-  Star, 
-  ThumbsUp, 
-  Bookmark, 
-  Share2, 
-  Eye,
-  Download,
-  Plus,
-  Minus,
-  Check,
-  X,
-  Zap,
-  Sparkles
+  Star
 } from 'lucide-react';
 
 const microInteractionVariants = cva(
@@ -61,7 +50,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({
   liked = false,
   count = 0,
   onToggle,
-  variant = 'default',
   size = 'md',
   showCount = true,
   className

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 import { getTouchFriendlySize } from '@/utils/deviceUtils';
 import { Button, ButtonProps } from '@/components/ui/button';

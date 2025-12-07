@@ -5,10 +5,7 @@ import {
   Package, 
   Users, 
   BarChart3, 
-  Settings,
-  ShoppingBag,
-  MessageSquare,
-  Bell
+  Settings
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
