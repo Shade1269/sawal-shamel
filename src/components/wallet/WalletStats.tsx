@@ -5,7 +5,7 @@ import { useWithdrawals } from '@/hooks/useWithdrawals';
 
 export const WalletStats = () => {
   const { balance, transactions } = useWallet();
-  const { totalPending, totalCompleted } = useWithdrawals();
+  useWithdrawals();
 
   // حساب إحصائيات الشهر الحالي
   const currentMonth = new Date().getMonth();

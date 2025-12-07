@@ -1,17 +1,16 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import {
   Search,
   Clock,
   Zap,
+  Command,
   ArrowRight,
-  Hash,
   FileText,
   Users,
   Package,
@@ -19,9 +18,6 @@ import {
   BarChart3,
   Settings,
   Star,
-  Filter,
-  Command,
-  ArrowUpDown,
   Crown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

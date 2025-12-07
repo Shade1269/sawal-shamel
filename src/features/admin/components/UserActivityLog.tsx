@@ -5,13 +5,11 @@ import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
-  Calendar,
   Clock,
   User,
   Activity,
   Search,
   RefreshCw,
-  Filter,
   Download
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,12 +19,12 @@ interface ActivityLog {
   id: string;
   user_id: string;
   activity_type: string;
-  description: string;
+  description: string | null;
   metadata?: any;
-  created_at: string;
+  created_at: string | null;
   user?: {
-    full_name: string;
-    email: string;
+    full_name: string | null;
+    email: string | null;
     role: string;
   };
 }
@@ -114,7 +112,7 @@ export const UserActivityLog = ({ userId }: { userId?: string }) => {
     const csvContent = [
       ['التاريخ', 'المستخدم', 'نوع النشاط', 'الوصف'],
       ...filteredActivities.map(activity => [
-        new Date(activity.created_at).toLocaleString('ar-SA'),
+        activity.created_at ? new Date(activity.created_at).toLocaleString('ar-SA') : '',
         activity.user?.full_name || '',
         getActivityTypeLabel(activity.activity_type),
         activity.description || ''
@@ -216,7 +214,7 @@ export const UserActivityLog = ({ userId }: { userId?: string }) => {
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        {new Date(activity.created_at).toLocaleString('ar-SA')}
+                        {activity.created_at ? new Date(activity.created_at).toLocaleString('ar-SA') : ''}
                       </div>
                       
                       {activity.user?.email && (

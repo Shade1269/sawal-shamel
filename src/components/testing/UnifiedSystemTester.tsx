@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UnifiedOrdersService } from '@/services/UnifiedOrdersService';
 import { useToast } from '@/hooks/use-toast';
 import { Play, CheckCircle2, XCircle, Loader2 } from 'lucide-react';

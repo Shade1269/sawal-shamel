@@ -36,7 +36,6 @@ import {
   Mail,
   Phone,
   Calendar,
-  Activity,
   Ban,
   Shield,
   Crown,

@@ -14,7 +14,6 @@ import {
   TrendingUp,
   Crown,
   Star,
-  Award,
   Eye,
   Plus,
   Filter,

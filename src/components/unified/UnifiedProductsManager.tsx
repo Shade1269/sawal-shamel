@@ -1,27 +1,20 @@
 import { useState, useEffect, useMemo } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
-import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from "@/components/design-system";
+import { UnifiedCard, UnifiedCardContent } from "@/components/design-system";
 import { UnifiedButton } from "@/components/design-system";
 import { UnifiedInput } from "@/components/design-system";
 import { UnifiedBadge } from "@/components/design-system";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Package,
   Plus,
   Search,
-  Filter,
   Grid,
   List,
   Edit,
-  Trash2,
   Eye,
-  Star,
-  ShoppingCart,
-  BarChart3,
   Download,
   Upload,
-  Tag,
   Image as ImageIcon
 } from "lucide-react";
 import { useFastAuth } from "@/hooks/useFastAuth";
