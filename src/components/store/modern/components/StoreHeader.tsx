@@ -1,5 +1,4 @@
-import React from 'react';
-import { ShoppingCart, Heart, User, Package, TrendingUp, Search } from 'lucide-react';
+import { ShoppingCart, Heart, User, Package, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';

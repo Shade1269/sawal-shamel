@@ -149,7 +149,7 @@ const DiscountManager: React.FC<DiscountManagerProps> = ({
   };
 
   // تحديث خصم
-  const updateDiscount = (index: number, field: keyof ProductDiscount, value: any) => {
+  const _updateDiscount = (index: number, field: keyof ProductDiscount, value: any) => {
     const updatedDiscounts = [...discounts];
     updatedDiscounts[index] = { ...updatedDiscounts[index], [field]: value };
     onDiscountsChange(updatedDiscounts);

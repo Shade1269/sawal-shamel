@@ -1,12 +1,11 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, X, SlidersHorizontal, Grid3X3, List } from 'lucide-react';
+import { Search, X, SlidersHorizontal, Grid3X3, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
 
 interface SearchAndFiltersProps {

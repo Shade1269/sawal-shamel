@@ -288,7 +288,7 @@ export const BannerAnalytics: React.FC<BannerAnalyticsProps> = ({
                       dataKey="value"
                       label
                     >
-                      {mockDailyData.map((entry, index) => (
+                      {mockDailyData.map((_entry, index) => (
                         <Cell key={`cell-${index}`} fill={deviceColors[index % deviceColors.length]} />
                       ))}
                     </Pie>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,9 +8,6 @@ import { useStoreThemes } from '@/hooks/useStoreThemes';
 import { useToast } from '@/hooks/use-toast';
 
 // Import theme configurations
-import defaultTheme from '@/themes/default/theme.json';
-import luxuryTheme from '@/themes/luxury/theme.json';
-import damascusTheme from '@/themes/damascus/theme.json';
 import feminineTheme from '@/themes/feminine/theme.json';
 import nightTheme from '@/themes/night/theme.json';
 import legendaryTheme from '@/themes/legendary/theme.json';
