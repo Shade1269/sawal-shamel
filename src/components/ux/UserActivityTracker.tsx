@@ -663,7 +663,7 @@ export function UserActivityTracker() {
                   <div>
                     <h4 className="font-medium mb-3">الصفحات الأكثر مشاهدة</h4>
                     <div className="space-y-2">
-                      {realTimeMetrics.topPages.map((page, index) => (
+                      {realTimeMetrics.topPages.map((page) => (
                         <div key={page.page} className="flex items-center justify-between">
                           <span className="text-sm">{page.page}</span>
                           <Badge variant="secondary">{page.views}</Badge>

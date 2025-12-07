@@ -206,7 +206,7 @@ export const AffiliateStoreManager = ({
   const handleHeroImageUpload = async (file: File) => {
     const result = await uploadImage(file, 'hero');
     if (result.success) {
-      setHeroSettings(prev => ({ ...prev, hero_image_url: result.url }));
+      setHeroSettings(prev => ({ ...prev, hero_image_url: result.url || '' }));
     }
   };
 

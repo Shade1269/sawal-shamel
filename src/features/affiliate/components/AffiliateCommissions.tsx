@@ -4,12 +4,10 @@ import { UnifiedBadge as Badge } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   DollarSign, 
   TrendingUp, 
   Download, 
-  Filter, 
   Calendar,
   CheckCircle,
   Clock,

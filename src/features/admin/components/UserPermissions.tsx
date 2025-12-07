@@ -3,7 +3,6 @@ import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDesc
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
@@ -11,13 +10,11 @@ import {
   Lock,
   Unlock,
   Key,
-  Settings,
   CheckCircle,
   XCircle,
   AlertTriangle,
   Save
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface User {

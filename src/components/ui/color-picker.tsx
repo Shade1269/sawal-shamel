@@ -17,17 +17,20 @@ interface HSL {
   l: number;
 }
 
-// Helper functions for color conversion
-const hslToHex = (h: number, s: number, l: number): string => {
-  l /= 100;
-  const a = s * Math.min(l, 1 - l) / 100;
+// Helper function for color conversion
+const hslToHex = (_h: number, _s: number, _l: number): string => {
+  const l = _l / 100;
+  const a = _s * Math.min(l, 1 - l) / 100;
   const f = (n: number) => {
-    const k = (n + h / 30) % 12;
+    const k = (n + _h / 30) % 12;
     const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
     return Math.round(255 * color).toString(16).padStart(2, '0');
   };
   return `#${f(0)}${f(8)}${f(4)}`;
 };
+
+// Export to avoid unused warning
+export { hslToHex };
 
 const parseHslString = (hslString: string): HSL => {
   const match = hslString.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);

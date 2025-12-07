@@ -1,20 +1,13 @@
 import { useState, useEffect } from 'react';
-import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Copy, Edit, Trash2, Calendar as CalendarIcon, Gift, Users, TrendingUp, Target } from 'lucide-react';
-import { format } from 'date-fns';
-import { ar } from 'date-fns/locale';
+import { Plus, Gift, Users, TrendingUp, Target } from 'lucide-react';
 
 interface Coupon {
   id: string;
