@@ -315,7 +315,7 @@ const FirebaseSMSAuth = () => {
         },
         body: JSON.stringify({
           phone,
-          full_name: username || phone,
+          full_name: _username || phone,
           firebase_uid: firebaseUser.uid
         })
       });

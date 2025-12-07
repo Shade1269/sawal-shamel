@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
@@ -17,8 +17,6 @@ import {
   Users,
   Target,
   Loader2,
-  RefreshCw,
-  Settings
 } from 'lucide-react';
 
 export const AtlantisOnboarding = () => {

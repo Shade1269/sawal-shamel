@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Search, Calendar, User, Hash, X, Filter } from 'lucide-react';
+import { Search, Hash, X, Filter } from 'lucide-react';
 import { Message } from '@/hooks/useRealTimeChat';
 
 interface MessageSearchProps {
@@ -166,7 +166,7 @@ const MessageSearch: React.FC<MessageSearchProps> = ({
                       <CardContent className="p-3">
                         <div className="flex items-start gap-3">
                           <Avatar className="w-8 h-8 flex-shrink-0">
-                            <AvatarImage src={message.sender?.avatar_url} alt="Profile" />
+                            <AvatarImage src={message.sender?.avatar_url ?? undefined} alt="Profile" />
                             <AvatarFallback className="text-xs">
                               {(message.sender?.full_name || 'أ')[0]}
                             </AvatarFallback>

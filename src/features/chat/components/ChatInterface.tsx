@@ -7,24 +7,17 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Send, 
   Paperclip, 
-  Image, 
-  Video, 
-  Smile,
   Users,
   Hash,
   Lock,
-  Crown,
   Shield,
   MoreVertical,
   LogOut,
   Trash2,
   Play,
   Pause,
-  ArrowRight,
   ArrowDown,
-  Settings,
   Pin,
-  Search,
   Bell,
   BellOff,
   Sun,
@@ -57,8 +50,6 @@ import NotificationSound from './NotificationSound';
 import MessageSearch from './MessageSearch';
 import PinnedMessages from './PinnedMessages';
 import NotificationManager from './NotificationManager';
-import RealtimeNotifications from '@/components/RealtimeNotifications';
-import UserSettingsMenu from '@/components/UserSettingsMenu';
 import NotificationPrompt from './NotificationPrompt';
 import SimpleUserProfile from './SimpleUserProfile';
 import UserProfileMenu from '@/shared/components/UserProfileMenu';
@@ -358,7 +349,7 @@ const ChatInterface = () => {
     }
   };
 
-  const handleEmojiSend = async (emoji: string) => {
+  const _handleEmojiSend = async (emoji: string) => {
     if (activeRoom) {
       await sendMsg(emoji);
     }
@@ -431,7 +422,7 @@ const ChatInterface = () => {
     if (!confirmed) return;
 
     try {
-      const { data, error } = await supabase.functions.invoke('admin-actions', {
+      const { error } = await supabase.functions.invoke('admin-actions', {
         body: { 
           action: 'clear_channel_messages',
           channel_id: activeRoom
@@ -468,7 +459,7 @@ const ChatInterface = () => {
     }
   };
 
-  const canDeleteMessage = (messageId: string, senderId: string) => {
+  const canDeleteMessage = (_messageId: string, senderId: string) => {
     // User can delete their own messages, or if they're an admin/moderator
     return currentProfile && (
       currentProfile.id === senderId || 
@@ -516,7 +507,7 @@ const ChatInterface = () => {
     setCurrentProfile(updatedProfile);
   };
 
-  const playAudio = (url: string, messageId: string) => {
+  const playAudio = (_url: string, messageId: string) => {
     if (playingAudio === messageId) {
       // Stop current audio
       const audio = document.getElementById(`audio-${messageId}`) as HTMLAudioElement;
@@ -942,7 +933,7 @@ const ChatInterface = () => {
                       className={`w-8 h-8 flex-shrink-0 ${!isOwn ? 'cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all' : ''}`}
                       onClick={handleAvatarClick}
                     >
-                      <AvatarImage src={msg.sender?.avatar_url} alt="Profile" />
+                      <AvatarImage src={msg.sender?.avatar_url ?? undefined} alt="Profile" />
                       <AvatarFallback className="text-sm">
                         {senderName[0]?.toUpperCase()}
                       </AvatarFallback>

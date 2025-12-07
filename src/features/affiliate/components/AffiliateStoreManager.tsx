@@ -329,7 +329,7 @@ export const AffiliateStoreManager = ({
               isVisible: item?.is_visible ?? true
             };
           })
-          .filter((product): product is StoreProductOption => Boolean(product.id));
+          .filter((product): product is StoreProductOption => Boolean(product?.id));
 
         setStoreProducts(formattedProducts);
       } catch (error) {
