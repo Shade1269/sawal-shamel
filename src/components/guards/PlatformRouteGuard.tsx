@@ -21,12 +21,6 @@ export const PlatformRouteGuard = ({ children }: PlatformRouteGuardProps) => {
   // الصفحات المحمية من عملاء المتجر (الصفحات الداخلية فقط)
   const isRestrictedPath = currentPath.startsWith('/admin') ||
                           currentPath.startsWith('/affiliate');
-  
-  // الصفحات العامة المسموحة للجميع
-  const isPublicPath = currentPath === '/' ||
-                      currentPath === '/auth' ||
-                      currentPath === '/auth/reset' ||
-                      currentPath === '/auth/callback';
 
   useEffect(() => {
     // التحقق من وجود جلسة عميل متجر صالحة

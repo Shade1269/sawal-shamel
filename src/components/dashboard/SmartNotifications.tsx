@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,14 +12,12 @@ import {
   TrendingUp,
   TrendingDown,
   Users,
-  ShoppingCart,
   DollarSign,
   Package,
   Clock,
   X,
   Check,
   Archive,
-  Filter,
   Settings
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -46,7 +44,6 @@ interface SmartNotificationsProps {
   onNotificationAction?: (notification: SmartNotification) => void;
   onMarkAllRead?: () => void;
   onClearAll?: () => void;
-  maxHeight?: number;
   showFilters?: boolean;
 }
 
@@ -84,7 +81,6 @@ export function SmartNotifications({
   onNotificationAction,
   onMarkAllRead,
   onClearAll,
-  maxHeight = 400,
   showFilters = true
 }: SmartNotificationsProps) {
   const [filter, setFilter] = useState<string>('all');

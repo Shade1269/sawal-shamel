@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FinancialMetrics } from "@/hooks/useExecutiveAnalytics";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
 interface FinancialChartsProps {
   financial: FinancialMetrics | null;
@@ -77,7 +77,7 @@ export const FinancialCharts = ({ financial, loading }: FinancialChartsProps) =>
                   dataKey="amount"
                   label={(entry) => `${entry.percentage.toFixed(1)}%`}
                 >
-                  {financial.revenueByPaymentMethod.map((entry, index) => (
+                  {financial.revenueByPaymentMethod.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

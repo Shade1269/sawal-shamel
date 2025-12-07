@@ -1,6 +1,5 @@
-import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, Bell, Search } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { GlobalSearch, GlobalNotifications } from '@/shared/components';
 import { ShoppingCartDrawer } from '@/features/commerce';

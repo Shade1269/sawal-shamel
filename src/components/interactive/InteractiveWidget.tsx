@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,20 +10,7 @@ import {
   TrendingDown, 
   Minus,
   ArrowUpRight,
-  ArrowDownRight,
-  Activity,
-  Zap,
-  Star,
-  Heart,
-  Eye,
-  Users,
-  ShoppingCart,
-  DollarSign,
-  BarChart3,
-  Clock,
-  Calendar,
-  Target,
-  Award
+  Activity
 } from 'lucide-react';
 
 const widgetVariants = cva(

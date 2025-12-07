@@ -10,7 +10,6 @@ import {
   XCircle, 
   AlertCircle,
   RefreshCw,
-  Download,
   Upload,
   Wifi,
   WifiOff,

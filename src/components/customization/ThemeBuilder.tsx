@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Palette, Eye, Save, RotateCcw, Download, Upload, Wand2, Sparkles } from 'lucide-react';
+import { Palette, Save, Download, Upload, Wand2, Sparkles, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,9 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ColorPicker } from '@/components/ui/color-picker';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 

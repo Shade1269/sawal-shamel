@@ -4,14 +4,14 @@ import { AppSidebar } from "./AppSidebar";
 import { AppBreadcrumb } from "./AppBreadcrumb";
 import Header from "@/components/common/Header";
 import { Button } from "@/components/ui/button";
-import { Menu, Bell, Search, Sun, Moon } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useFastAuth } from "@/hooks/useFastAuth";
 import { GlobalSearch, GlobalNotifications } from "@/shared/components";
 import { ShoppingCartDrawer } from "@/features/commerce";
 import { QuickActions } from "./QuickActions";
 import { useDeviceDetection } from "@/hooks/useDeviceDetection";
 import { DeviceIndicator } from "@/components/dev/DeviceDebugger";
-import { getTouchFriendlySize, getContainerSpacing } from "@/utils/deviceUtils";
+import { getContainerSpacing } from "@/utils/deviceUtils";
 import { AdaptiveNavigation } from "@/components/navigation";
 
 interface UnifiedLayoutProps {
@@ -31,7 +31,6 @@ export function UnifiedLayout({
   const device = useDeviceDetection();
   
   // Get device-specific sizing
-  const touchSize = getTouchFriendlySize(device);
   const containerSpacing = getContainerSpacing(device);
   
   // For mobile devices, adjust sidebar behavior

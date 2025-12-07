@@ -9,13 +9,11 @@ import {
   LineChart, 
   PieChart, 
   TrendingUp, 
-  TrendingDown,
-  Eye,
   Download,
-  Settings,
   Maximize2,
   RefreshCw,
-  Filter
+  Filter,
+  Eye
 } from 'lucide-react';
 import { ResponsiveContainer, LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart as RechartsBarChart, Bar, PieChart as RechartsPieChart, Cell, Pie, Area, AreaChart } from 'recharts';
 
@@ -111,7 +109,7 @@ const EnhancedChart: React.FC<EnhancedChartProps> = ({
   className
 }) => {
   const [isAnimated, setIsAnimated] = useState(false);
-  const [hoveredData, setHoveredData] = useState<ChartDataPoint | null>(null);
+  const [hoveredData, _setHoveredData] = useState<ChartDataPoint | null>(null);
   const chartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
