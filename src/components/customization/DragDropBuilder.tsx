@@ -237,7 +237,7 @@ const DroppableCanvas: React.FC<DroppableCanvasProps> = ({ children, onDrop, cla
   return (
     <div
       ref={(node) => {
-        canvasRef.current = node;
+        (canvasRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
         drop(node);
       }}
       className={`relative min-h-[600px] border-2 border-dashed transition-colors ${

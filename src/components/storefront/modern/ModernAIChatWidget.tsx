@@ -17,7 +17,7 @@ interface ModernAIChatWidgetProps {
   storeInfo: {
     id: string;
     store_name: string;
-    bio?: string;
+    bio?: string | null | undefined;
   };
   products?: Array<{
     id: string;

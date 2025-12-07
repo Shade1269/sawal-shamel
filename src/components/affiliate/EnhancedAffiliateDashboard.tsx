@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { 
   TrendingUp, 
   Package, 
@@ -17,8 +17,7 @@ import {
   Crown,
   Gift,
   Sparkles,
-  ArrowUpRight,
-  ArrowDownRight
+  ArrowUpRight
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,7 +25,6 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { useAffiliateStore } from '@/hooks/useAffiliateStore';
 import { useAffiliateOrders } from '@/hooks/useAffiliateOrders';
@@ -66,7 +64,7 @@ interface LevelInfo {
 
 const EnhancedAffiliateDashboard = () => {
   const navigate = useNavigate();
-  const [selectedPeriod, setSelectedPeriod] = useState('thisMonth');
+  const [_selectedPeriod, _setSelectedPeriod] = useState('thisMonth');
   const { store, isLoading: storeLoading } = useAffiliateStore();
   const { stats: orderStats, orders, loading: ordersLoading } = useAffiliateOrders(store?.id);
 

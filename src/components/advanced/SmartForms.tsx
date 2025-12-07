@@ -68,7 +68,7 @@ export const SmartForms: React.FC<SmartFormsProps> = ({
 
   // تحديث قيمة الحقل
   const updateField = async (fieldName: string, value: string) => {
-    setFormData(prev => ({ ...prev, [fieldName]: value }));
+    setFormData((prev: Record<string, string>) => ({ ...prev, [fieldName]: value }));
     
     if (aiAssistance && value.length >= 2) {
       // الحصول على اقتراحات ذكية
@@ -85,7 +85,7 @@ export const SmartForms: React.FC<SmartFormsProps> = ({
     if (currentValue.length >= 3) {
       const completed = await autoCompleteField(fieldName, currentValue);
       if (completed && completed !== currentValue) {
-        setFormData(prev => ({ ...prev, [fieldName]: completed }));
+        setFormData((prev: Record<string, string>) => ({ ...prev, [fieldName]: completed }));
         toast({
           title: "تم الإكمال التلقائي",
           description: "تم إكمال الحقل بناءً على الذكاء الاصطناعي",
@@ -96,7 +96,7 @@ export const SmartForms: React.FC<SmartFormsProps> = ({
 
   // تطبيق اقتراح
   const applySuggestion = (fieldName: string, suggestion: string) => {
-    setFormData(prev => ({ ...prev, [fieldName]: suggestion }));
+    setFormData((prev: Record<string, string>) => ({ ...prev, [fieldName]: suggestion }));
     toast({
       title: "تم تطبيق الاقتراح",
       description: `تم تحديث ${fieldName} بالاقتراح المحدد`,

@@ -37,8 +37,28 @@ import {
 import { EnhancedCard } from '@/components/ui/enhanced-card';
 import { AnimatedCounter } from '@/components/interactive/AnimatedCounter';
 
+interface SalesTrendItem {
+  name: string;
+  sales: number;
+  orders: number;
+  users: number;
+}
+
+interface PerformanceItem {
+  name: string;
+  value: number;
+  fullMark: number;
+}
+
+interface DataVisualizationData {
+  salesTrend: SalesTrendItem[];
+  categoryData: CategoryDataItem[];
+  kpiData: KpiDataItem[];
+  performanceData: PerformanceItem[];
+}
+
 interface DataVisualizationProps {
-  data?: unknown;
+  data?: DataVisualizationData;
   className?: string;
   showControls?: boolean;
   interactive?: boolean;
@@ -67,7 +87,7 @@ export const DataVisualization: React.FC<DataVisualizationProps> = ({
   interactive: _interactive = true
 }) => {
   const [selectedChart, setSelectedChart] = useState('overview');
-  const [_timeRange, setTimeRange] = useState('7d');
+  const [_timeRange, _setTimeRange] = useState('7d');
 
   // Sample data للعرض التوضيحي
   const sampleData = useMemo(() => ({
