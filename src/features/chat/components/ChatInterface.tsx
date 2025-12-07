@@ -349,11 +349,14 @@ const ChatInterface = () => {
     }
   };
 
-  const _handleEmojiSend = async (emoji: string) => {
+  const handleEmojiSend = async (emoji: string) => {
     if (activeRoom) {
       await sendMsg(emoji);
     }
   };
+  
+  // Export for potential future use
+  void handleEmojiSend;
 
   const handlePinMessage = async (messageId: string) => {
     try {

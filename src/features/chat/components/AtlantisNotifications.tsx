@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { UnifiedCard as Card, UnifiedCardContent as CardContent } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { useAtlantisSystem } from '@/hooks/useAtlantisSystem';

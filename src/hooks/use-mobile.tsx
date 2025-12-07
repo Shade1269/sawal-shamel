@@ -1,4 +1,3 @@
-import * as React from "react"
 import { useDeviceDetection } from './useDeviceDetection'
 
 // Legacy hook - now powered by enhanced device detection

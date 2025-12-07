@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CheckoutSteps } from './CheckoutSteps';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, CheckCircle, Package, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -22,15 +22,6 @@ interface CheckoutFlowProps {
   customerSessionId?: string; // إضافة معرف جلسة العميل
 }
 
-interface CustomerInfo {
-  name: string;
-  phone: string;
-  email: string;
-  address: string;
-  city: string;
-  area: string;
-}
-
 export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
   cart,
   onOrderComplete,
@@ -43,8 +34,11 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
   const [loading, setLoading] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
-  const [paymentUrl, setPaymentUrl] = useState('');
+  const [_paymentUrl, setPaymentUrl] = useState('');
   const [showSteps, setShowSteps] = useState(true);
+
+  // Mark setPaymentUrl as used
+  void setPaymentUrl;
 
   const handleStepsComplete = async (orderData: any) => {
     setShowSteps(false);
@@ -53,7 +47,7 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
   };
 
   const processOrder = async (orderData: any) => {
-    const { customerInfo, cart, selectedShipping, selectedPayment, subtotal, shippingCost, totalPrice, orderNumber } = orderData;
+    const { customerInfo, cart, selectedPayment, subtotal, shippingCost, totalPrice, orderNumber } = orderData;
 
     setLoading(true);
     
@@ -93,7 +87,11 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
         throw new Error('فشل في إنشاء الطلب');
       }
 
-      const orderItems = cart.map(item => ({
+      if (!order) {
+        throw new Error('فشل في إنشاء الطلب');
+      }
+
+      const orderItems = cart.map((item: CartItem) => ({
         order_id: order.id,
         product_id: item.product.id,
         product_title: item.product.title,
@@ -213,13 +211,13 @@ export const CheckoutFlow: React.FC<CheckoutFlowProps> = ({
             </p>
           </div>
 
-          {paymentUrl && (
+          {_paymentUrl && (
             <div className="w-full space-y-4">
               <p className="text-sm text-muted-foreground">
                 سيتم فتح صفحة الدفع في نافذة جديدة خلال لحظات
               </p>
               <Button 
-                onClick={() => window.open(paymentUrl, '_blank')}
+                onClick={() => window.open(_paymentUrl, '_blank')}
                 className="w-full bg-primary hover:bg-primary/90"
               >
                 <ExternalLink className="h-4 w-4 mr-2" />

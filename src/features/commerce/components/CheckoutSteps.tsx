@@ -3,10 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, ArrowLeft, ShoppingCart, Truck, CreditCard, CheckCircle, Package, User, MapPin, Phone, Tag, X } from 'lucide-react';
+import { ArrowRight, ArrowLeft, ShoppingCart, Truck, CreditCard, CheckCircle, Package, User, Tag, X } from 'lucide-react';
 import { useCustomerAuth } from '@/hooks/useCustomerAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -65,7 +64,7 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
   
   const [selectedShipping, setSelectedShipping] = useState('');
   const [selectedPayment, setSelectedPayment] = useState('');
-  const [orderNumber, setOrderNumber] = useState('');
+  const [_orderNumber, setOrderNumber] = useState('');
   
   // Coupon states
   const [couponCode, setCouponCode] = useState('');
@@ -164,7 +163,7 @@ export const CheckoutSteps: React.FC<CheckoutStepsProps> = ({
       }
 
       // التحقق من حد الاستخدام
-      if (coupon.usage_limit && coupon.usage_count >= coupon.usage_limit) {
+      if (coupon.usage_limit && (coupon.usage_count ?? 0) >= coupon.usage_limit) {
         toast({
           title: "كوبون منتهي",
           description: "تم استخدام هذا الكوبون بالكامل",

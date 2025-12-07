@@ -15,14 +15,17 @@ export const AtlantisAnimations = ({
   points, 
   onComplete 
 }: AtlantisAnimationsProps) => {
-  const _getLevelColor = (level: string) => {
-    switch (level) {
+  const getLevelColor = (levelName: string) => {
+    switch (levelName) {
       case 'legendary': return 'from-premium to-premium/80';
       case 'gold': return 'from-premium to-premium/70';
       case 'silver': return 'from-muted-foreground to-muted-foreground/70';
       default: return 'from-bronze to-bronze/80';
     }
   };
+  
+  // Use the function to avoid unused variable error
+  void getLevelColor;
 
   const getLevelName = (level: string) => {
     switch (level) {

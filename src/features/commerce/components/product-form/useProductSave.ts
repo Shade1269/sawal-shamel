@@ -33,16 +33,16 @@ interface ProductImage {
   id?: string;
   image_url: string;
   alt_text: string;
-  is_primary: boolean;
-  sort_order: number;
+  is_primary: boolean | null;
+  sort_order: number | null;
 }
 
 interface ProductAttribute {
   id?: string;
   attribute_name: string;
   attribute_value: string;
-  attribute_type: string;
-  is_variant: boolean;
+  attribute_type: string | null;
+  is_variant: boolean | null;
 }
 
 interface UseProductSaveParams {
@@ -189,8 +189,8 @@ export function useProductSave({ mode, productId, merchantProfileId }: UseProduc
       product_id: productId,
       image_url: img.image_url,
       alt_text: img.alt_text || productTitle,
-      sort_order: img.sort_order || index,
-      is_primary: img.is_primary || index === 0,
+      sort_order: img.sort_order ?? index,
+      is_primary: img.is_primary ?? index === 0,
     }));
 
     const { error: imagesError } = await supabase
@@ -217,8 +217,8 @@ export function useProductSave({ mode, productId, merchantProfileId }: UseProduc
       product_id: productId,
       attribute_name: attr.attribute_name,
       attribute_value: attr.attribute_value,
-      attribute_type: attr.attribute_type,
-      is_variant: attr.is_variant,
+      attribute_type: attr.attribute_type ?? 'text',
+      is_variant: attr.is_variant ?? false,
     }));
 
     const { error: attributesError } = await supabase

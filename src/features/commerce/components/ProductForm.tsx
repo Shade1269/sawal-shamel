@@ -16,7 +16,6 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  Upload,
   X,
   Plus,
   Save,
@@ -25,7 +24,6 @@ import {
   Star,
   Package,
   Tag,
-  Layers,
   Info,
   Trash2
 } from 'lucide-react';
@@ -64,16 +62,16 @@ interface ProductImage {
   id?: string;
   image_url: string;
   alt_text: string;
-  is_primary: boolean;
-  sort_order: number;
+  is_primary: boolean | null;
+  sort_order: number | null;
 }
 
 interface ProductAttribute {
   id?: string;
   attribute_name: string;
   attribute_value: string;
-  attribute_type: string;
-  is_variant: boolean;
+  attribute_type: string | null;
+  is_variant: boolean | null;
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
@@ -90,8 +88,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [brands, setBrands] = useState<any[]>([]);
   
   const [formData, setFormData] = useState<ProductFormData>({
     title: '',
@@ -192,8 +190,25 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
           max_order_quantity: product.max_order_quantity || 0,
         });
 
-        setImages(product.images || []);
-        setAttributes(product.attributes || []);
+        // Map database fields to match interface (handle nulls)
+        const mappedImages: ProductImage[] = (product.images || []).map((img: any) => ({
+          id: img.id,
+          image_url: img.image_url,
+          alt_text: img.alt_text || '',
+          is_primary: img.is_primary,
+          sort_order: img.sort_order,
+        }));
+        
+        const mappedAttributes: ProductAttribute[] = (product.attributes || []).map((attr: any) => ({
+          id: attr.id,
+          attribute_name: attr.attribute_name,
+          attribute_value: attr.attribute_value,
+          attribute_type: attr.attribute_type,
+          is_variant: attr.is_variant,
+        }));
+
+        setImages(mappedImages);
+        setAttributes(mappedAttributes);
       }
     } catch (error) {
       console.error('Error fetching product:', error);
@@ -592,7 +607,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
                         <div className="flex items-center justify-between mt-4">
                           <div className="flex items-center space-x-2">
                             <Switch
-                              checked={image.is_primary}
+                              checked={image.is_primary ?? false}
                               onCheckedChange={(checked) => updateImage(index, 'is_primary', checked)}
                             />
                             <Label>صورة أساسية</Label>
@@ -647,7 +662,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode }) => {
                       placeholder="قيمة الخاصية"
                     />
                     <select
-                      value={newAttribute.attribute_type}
+                      value={newAttribute.attribute_type || 'text'}
                       onChange={(e) => setNewAttribute(prev => ({ ...prev, attribute_type: e.target.value }))}
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                     >
