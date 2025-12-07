@@ -1,8 +1,7 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
-import { UnifiedBadge as Badge } from '@/components/design-system';
 import { 
   Dialog,
   DialogContent,
@@ -24,7 +23,6 @@ import {
   Edit,
   Grid,
   List,
-  Filter,
   X
 } from 'lucide-react';
 import { useMediaLibrary } from '@/hooks/useStoreCMS';
@@ -57,9 +55,15 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [filterType, setFilterType] = useState<string>('all');
-  const [showUploadDialog, setShowUploadDialog] = useState(false);
+  const [_showUploadDialog, setShowUploadDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [editingFile, setEditingFile] = useState<any>(null);
+  const [editingFile, setEditingFile] = useState<{
+    file_name: string;
+    alt_text?: string;
+    tags?: string[];
+    file_type: string;
+    file_url: string;
+  } | null>(null);
 
   const fileTypes = {
     all: { label: 'جميع الملفات', icon: FileText },
@@ -389,8 +393,8 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                 <Label htmlFor="file-name">اسم الملف</Label>
                 <Input
                   id="file-name"
-                  value={editingFile.file_name}
-                  onChange={(e) => setEditingFile(prev => ({ ...prev, file_name: e.target.value }))}
+                  value={editingFile.file_name ?? ''}
+                  onChange={(e) => setEditingFile(prev => prev ? { ...prev, file_name: e.target.value } : null)}
                 />
               </div>
 
@@ -398,8 +402,8 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                 <Label htmlFor="alt-text">النص البديل</Label>
                 <Input
                   id="alt-text"
-                  value={editingFile.alt_text || ''}
-                  onChange={(e) => setEditingFile(prev => ({ ...prev, alt_text: e.target.value }))}
+                  value={editingFile.alt_text ?? ''}
+                  onChange={(e) => setEditingFile(prev => prev ? { ...prev, alt_text: e.target.value } : null)}
                   placeholder="وصف الملف للوصولية"
                 />
               </div>
@@ -408,11 +412,11 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({
                 <Label htmlFor="tags">العلامات</Label>
                 <Textarea
                   id="tags"
-                  value={editingFile.tags?.join(', ') || ''}
-                  onChange={(e) => setEditingFile(prev => ({ 
+                  value={editingFile.tags?.join(', ') ?? ''}
+                  onChange={(e) => setEditingFile(prev => prev ? { 
                     ...prev, 
-                    tags: e.target.value.split(',').map(tag => tag.trim()).filter(Boolean)
-                  }))}
+                    tags: e.target.value.split(',').map((tag: string) => tag.trim()).filter(Boolean)
+                  } : null)}
                   placeholder="علامة1, علامة2, علامة3"
                   rows={2}
                 />

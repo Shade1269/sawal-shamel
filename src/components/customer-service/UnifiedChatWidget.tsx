@@ -10,7 +10,7 @@ interface UnifiedChatWidgetProps {
   storeInfo: {
     id: string;
     store_name: string;
-    bio?: string | null;
+    bio?: string | null | undefined;
   };
   products: Array<{
     id: string;

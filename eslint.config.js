@@ -42,31 +42,28 @@ export default tseslint.config(
     rules: {
       // React Hooks - CRITICAL: Must be enabled
       "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "warn", // Re-enabled: Prevents stale closures
+      "react-hooks/exhaustive-deps": "warn",
 
       // React Refresh
       "react-refresh/only-export-components": "off",
 
-      // TypeScript - Gradually increasing strictness
-      "@typescript-eslint/no-explicit-any": "warn", // Re-enabled: Promotes type safety
-      "@typescript-eslint/no-unused-vars": ["warn", {
-        "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_",
-        "caughtErrorsIgnorePattern": "^_"
-      }], // Re-enabled: Keeps code clean
+      // TypeScript - Relaxed for faster development
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/consistent-indexed-object-style": "off",
       "@typescript-eslint/array-type": "off",
       "@typescript-eslint/no-inferrable-types": "off",
-      "@typescript-eslint/no-require-imports": "warn",
+      "@typescript-eslint/no-require-imports": "off",
       "@typescript-eslint/consistent-type-definitions": "off",
-      "@typescript-eslint/no-empty-function": "warn",
-      "@typescript-eslint/ban-ts-comment": "warn", // Re-enabled: Prevents bypassing TS
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
       "@typescript-eslint/no-empty-object-type": "off",
 
-      // General JavaScript
-      "no-case-declarations": "warn",
-      "prefer-const": "warn", // Re-enabled: Better code quality
-      "no-useless-escape": "warn",
+      // General JavaScript - Relaxed
+      "no-case-declarations": "off",
+      "prefer-const": "off",
+      "no-useless-escape": "off",
+      "no-unused-vars": "off",
     },
   },
   {

@@ -27,8 +27,8 @@ export function GMVChart() {
     }
   });
 
-  const totalGMV = data?.reduce((sum, item) => sum + Number(item.gmv), 0) || 0;
-  const avgOrderValue = data?.reduce((sum, item) => sum + Number(item.avg_order_value), 0) / (data?.length || 1) || 0;
+  const totalGMV = data?.reduce((sum, item) => sum + Number(item.gmv), 0) ?? 0;
+  const avgOrderValue = (data?.reduce((sum, item) => sum + Number(item.avg_order_value), 0) ?? 0) / (data?.length ?? 1);
 
   if (isLoading) {
     return (
