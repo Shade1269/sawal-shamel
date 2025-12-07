@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,6 @@ import {
   ShoppingBag, 
   DollarSign, 
   TrendingUp,
-  Calendar,
   Search,
   Filter,
   Download,
@@ -50,7 +49,7 @@ interface OrderCommissionManagementProps {
   storeId: string;
 }
 
-export const OrderCommissionManagement = ({ storeId }: OrderCommissionManagementProps) => {
+export const OrderCommissionManagement = (_props: OrderCommissionManagementProps) => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('الكل');

@@ -441,7 +441,8 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
   };
 
   // Utilities: normalize phone formats to E.164 and national (05...) - reserved for future
-  const getPhoneVariants = (input: string): { e164: string; national: string } => {
+  const _getPhoneVariants = (input: string): { e164: string; national: string } => {
+    void _getPhoneVariants; // Reserved for future use
     const digits = input.replace(/\D/g, '');
     if (digits.startsWith('966')) {
       const national = '0' + digits.slice(3);

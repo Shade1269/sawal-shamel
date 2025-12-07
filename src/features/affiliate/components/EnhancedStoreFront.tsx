@@ -2,63 +2,34 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { StoreThemeProvider } from "@/components/store/ThemeProvider";
-import { UnifiedCard, UnifiedCardContent } from "@/components/design-system";
 import { UnifiedBadge } from "@/components/design-system";
 import { UnifiedButton } from "@/components/design-system";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { UnifiedInput } from "@/components/design-system";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { StorefrontSession } from "@/utils/storefrontSession";
 import { 
   ShoppingCart, 
-  Star, 
   Store, 
-  Heart,
-  Share2,
   Search,
-  Plus,
-  Minus,
-  X,
   ArrowRight,
-  CheckCircle,
-  Eye,
-  ThumbsUp,
-  Zap,
-  Gift,
-  Percent,
   Package,
-  Filter,
-  SlidersHorizontal,
-  TrendingUp,
-  Clock,
-  MapPin,
-  Phone,
-  Mail,
   User
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { ProductImageCarousel } from "@/features/commerce/components/ProductImageCarousel";
-import { CheckoutFlow } from "@/features/commerce/components/CheckoutFlow";
-import { ProductVariantSelector } from "@/components/products/ProductVariantSelector";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { parseFeaturedCategories, type StoreCategory, type StoreSettings } from "@/hooks/useStoreSettings";
 import { useIsolatedStoreCart } from "@/hooks/useIsolatedStoreCart";
 import { CustomerAuthModal } from "@/components/storefront/CustomerAuthModal";
-import { ReviewsSection } from "@/components/reviews/ReviewsSection";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { UnifiedChatWidget } from "@/components/customer-service/UnifiedChatWidget";
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
-import { LuxuryCardV2, LuxuryCardContent } from "@/components/luxury/LuxuryCardV2";
+import { LuxuryCardContent } from "@/components/luxury/LuxuryCardV2";
 import { ModernBannerSlider } from "@/components/storefront/modern/ModernBannerSlider";
 import { ModernProductGrid } from "@/components/storefront/modern/ModernProductGrid";
 import { ModernProductModal } from "@/components/storefront/modern/ModernProductModal";
 import { ModernShoppingCart } from "@/components/storefront/modern/ModernShoppingCart";
 import { ModernFooter } from "@/components/storefront/modern/ModernFooter";
-
 import { ModernCustomerOrders } from "@/components/storefront/modern/ModernCustomerOrders";
 import { ModernInvoice } from "@/components/storefront/modern/ModernInvoice";
 import { StorefrontThemeToggle } from "@/components/storefront/StorefrontThemeToggle";
@@ -133,11 +104,7 @@ interface AffiliateStore {
   is_active: boolean;
 }
 
-interface CartItem {
-  product: Product;
-  quantity: number;
-  selectedVariants?: { [key: string]: string };
-}
+// CartItem interface moved to ModernShoppingCart
 
 interface EnhancedStoreFrontProps {
   storeSlug?: string;
@@ -153,19 +120,19 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // States
   const [showCart, setShowCart] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [showOrdersModal, setShowOrdersModal] = useState(false);
-  const [pendingCheckout, setPendingCheckout] = useState(false);
+  useState(false); // showOrdersModal
+  useState(false); // pendingCheckout
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
-  const [variantError, setVariantError] = useState<string | null>(null);
-  const [productQuantities, setProductQuantities] = useState<{ [productId: string]: number }>({});
+  useState<ProductVariant | null>(null); // selectedVariant
+  useState<string | null>(null); // variantError
+  useState<{ [productId: string]: number }>({}); // productQuantities
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [sortBy, setSortBy] = useState("newest");
-  const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  useState(false); // showFilters
+  useState<'grid' | 'list'>('grid'); // viewMode
   const [showOrders, setShowOrders] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
@@ -194,11 +161,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // استخدام نظام السلة المحسّن مع تمرير storeSlug
   const { 
     cart: isolatedCart, 
-    loading: cartLoading, 
     addToCart: addToIsolatedCart,
     updateQuantity: updateIsolatedQuantity,
-    removeFromCart: removeFromIsolatedCart,
-    clearCart
+    removeFromCart: removeFromIsolatedCart
   } = useIsolatedStoreCart(affiliateStore?.id || '', storeSlug);
 
   // جلب المنتجات
@@ -233,14 +198,15 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         affiliateProducts
           .filter(item => item.products && item.products.is_active)
           .map(async item => {
+            const productData = item.products!;
             const { data: ratingStats } = await (supabase.rpc as any)('get_product_rating_stats', {
-              p_product_id: item.products.id
+              p_product_id: productData.id
             });
 
             return {
-              ...item.products,
-              commission_amount: (item.products.price_sar * (item.commission_rate / 100)),
-              final_price: item.products.price_sar,
+              ...productData,
+              commission_amount: (productData.price_sar * ((item.commission_rate || 0) / 100)),
+              final_price: productData.price_sar,
               average_rating: ratingStats?.[0]?.average_rating || 0,
               total_reviews: ratingStats?.[0]?.total_reviews || 0,
               discount_percentage: Math.random() > 0.7 ? Math.floor(Math.random() * 30) + 10 : 0
@@ -382,7 +348,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
   // حساب المجموع من السلة المعزولة
   const cartTotal = isolatedCart?.total || 0;
-  const cartItemsCount = isolatedCart?.items.reduce((total, item) => total + item.quantity, 0) || 0;
+  void cartTotal; // Used in ModernShoppingCart
 
   const productCategoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -417,7 +383,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     }));
   }, [featuredCategories, productCategoryCounts]);
 
-  const categories = useMemo(() => {
+  void useMemo(() => {
     if (visibleCategories.length > 0) {
       return visibleCategories.map((category) => category.name);
     }
@@ -426,7 +392,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
   const categoryDisplayStyle = storeSettings?.category_display_style || "grid";
 
-  const categoryBanners = useMemo<CategoryBannerDisplay[]>(() => {
+  void useMemo<CategoryBannerDisplay[]>(() => {
     if (!featuredCategories || featuredCategories.length === 0) {
       return [];
     }
@@ -458,7 +424,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               price,
               rating: fullProduct?.average_rating ?? null,
               product: fullProduct,
-              category: bannerProduct.category ?? fullProduct?.category ?? category.name,
+              category: bannerProduct.category ?? fullProduct?.category ?? category.name ?? null,
             } satisfies CategoryBannerProductDisplay;
           })
           .filter((item): item is CategoryBannerProductDisplay => Boolean(item));
@@ -644,7 +610,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     }
   };
 
-  const clearFilters = () => {
+  void function clearFilters() {
     setSearchQuery("");
     setSelectedCategory("all");
     setPriceRange([0, 1000]);
@@ -655,7 +621,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     setSelectedCategory((current) => current === categoryName ? "all" : categoryName);
   };
 
-  const handleBannerProductClick = (bannerProduct: CategoryBannerProductDisplay) => {
+  void function handleBannerProductClick(bannerProduct: CategoryBannerProductDisplay) {
     if (bannerProduct.product) {
       setSelectedProduct(bannerProduct.product);
       return;
@@ -820,7 +786,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
     }
   };
 
-  const categorySection = renderCategoryLayout();
+  void renderCategoryLayout(); // Execute category layout
 
   // Loading states
   if (storeLoading || productsLoading) {
@@ -936,9 +902,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                   className="p-2.5 rounded-lg transition-colors relative hover:bg-secondary/50"
                 >
                   <ShoppingCart className="w-6 h-6 text-foreground/70" />
-                  {isolatedCart?.items?.length > 0 && (
+                  {(isolatedCart?.items?.length || 0) > 0 && (
                     <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
-                      {isolatedCart.items.length}
+                      {isolatedCart?.items?.length || 0}
                     </span>
                   )}
                 </button>

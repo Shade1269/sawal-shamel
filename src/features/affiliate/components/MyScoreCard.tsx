@@ -11,7 +11,7 @@ interface MonthlyPointsSummary {
   rank?: number;
 }
 
-const getMyMonthlyPoints = async (scope: LeaderboardScope): Promise<MonthlyPointsSummary> => {
+const getMyMonthlyPoints = async (_scope: LeaderboardScope): Promise<MonthlyPointsSummary> => {
   // Mock data since server API is removed
   return { totalPoints: 0, rank: undefined };
 };

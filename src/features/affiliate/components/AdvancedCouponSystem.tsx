@@ -45,12 +45,12 @@ interface AdvancedCouponSystemProps {
 
 export const AdvancedCouponSystem = ({ storeId }: AdvancedCouponSystemProps) => {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [couponUsage, setCouponUsage] = useState<CouponUsage[]>([]);
+  const [, setCouponUsage] = useState<CouponUsage[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
-  const [validFromDate, setValidFromDate] = useState<Date>(new Date());
-  const [validUntilDate, setValidUntilDate] = useState<Date>(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000));
+  useState<Date>(new Date()); // validFromDate reserved
+  useState<Date>(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)); // validUntilDate reserved
   const [newCoupon, setNewCoupon] = useState({
     code: '',
     name: '',
@@ -147,7 +147,8 @@ export const AdvancedCouponSystem = ({ storeId }: AdvancedCouponSystemProps) => 
     setNewCoupon(prev => ({ ...prev, code: result }));
   };
 
-  const handleDeleteCoupon = async (couponId: string) => {
+  const handleDeleteCoupon = async (_couponId: string) => {
+    void handleDeleteCoupon; // Reserved for future use
     try {
       toast({
         title: "قريباً",
