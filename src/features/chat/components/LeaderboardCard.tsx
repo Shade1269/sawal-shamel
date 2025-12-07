@@ -84,7 +84,7 @@ export const LeaderboardCard = ({ entry, position }: LeaderboardCardProps) => {
             
             <Avatar className="h-12 w-12">
               <AvatarImage 
-                src={entry.user_profile?.avatar_url} 
+                src={entry.user_profile?.avatar_url ?? undefined} 
                 alt={entry.user_profile?.full_name || 'User'} 
               />
               <AvatarFallback>
@@ -106,13 +106,13 @@ export const LeaderboardCard = ({ entry, position }: LeaderboardCardProps) => {
                      entry.theme_earned === 'silver' ? 'فضي' : 'برونزي'}
                   </Badge>
                 )}
-                {entry.rank_change !== 0 && (
+                {(entry.rank_change ?? 0) !== 0 && (
                   <div className="flex items-center space-x-1">
-                    {getRankChangeIndicator(entry.rank_change)}
+                    {getRankChangeIndicator(entry.rank_change ?? 0)}
                     <span className={`text-xs ${
-                      entry.rank_change > 0 ? 'text-success' : 'text-destructive'
+                      (entry.rank_change ?? 0) > 0 ? 'text-success' : 'text-destructive'
                     }`}>
-                      {Math.abs(entry.rank_change)}
+                      {Math.abs(entry.rank_change ?? 0)}
                     </span>
                   </div>
                 )}
@@ -144,9 +144,9 @@ export const LeaderboardCard = ({ entry, position }: LeaderboardCardProps) => {
               </div>
             </div>
 
-            {entry.bonus_earned > 0 && (
+            {(entry.bonus_earned ?? 0) > 0 && (
               <div className="text-xs bg-success/10 text-success px-2 py-1 rounded-full">
-                مكافأة: +{formatNumber(entry.bonus_earned)} نقطة
+                مكافأة: +{formatNumber(entry.bonus_earned ?? 0)} نقطة
               </div>
             )}
           </div>

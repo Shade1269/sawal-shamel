@@ -11,8 +11,8 @@ interface ChatMessage {
   created_at: string;
   sender?: {
     id: string;
-    full_name: string;
-    avatar_url?: string;
+    full_name: string | null;
+    avatar_url?: string | null;
   };
 }
 
@@ -20,11 +20,12 @@ interface ChatRoom {
   id: string;
   name: string;
   type: string;
-  description?: string;
-  owner_id?: string;
+  description?: string | null;
+  owner_id?: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  max_members?: number | null;
 }
 
 interface UseCustomerServiceChatProps {

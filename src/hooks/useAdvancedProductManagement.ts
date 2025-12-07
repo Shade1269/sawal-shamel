@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
 
 // استخدام الأنواع من قاعدة البيانات
-type DatabaseProduct = Database['public']['Tables']['products']['Row'];
 type DatabaseProductInsert = Database['public']['Tables']['products']['Insert'];
 
 // أنواع البيانات المتقدمة - متوافقة مع قاعدة البيانات

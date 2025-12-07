@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { AtlantisPointsService, AtlantisTTSService } from '@/lib/atlantisServices';
+import { AtlantisTTSService } from '@/lib/atlantisServices';
 
 interface AtlantisNotificationData {
   type: 'level_up' | 'points_earned' | 'achievement' | 'challenge' | 'alliance' | 'rank_up';

@@ -8,7 +8,7 @@ interface CartItem {
   product_title: string;
   quantity: number;
   unit_price_sar: number;
-  total_price_sar: number;
+  total_price_sar: number | null;
   product_image_url?: string;
   selected_variants?: Record<string, string>;
 }

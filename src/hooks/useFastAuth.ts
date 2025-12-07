@@ -7,17 +7,17 @@ import { performSignUpRuntime } from './performSignUpRuntime';
 
 export interface FastUserProfile {
   id: string;
-  auth_user_id: string;
-  email: string;
-  full_name: string;
+  auth_user_id: string | null;
+  email: string | null;
+  full_name: string | null;
   role: 'admin' | 'affiliate' | 'marketer' | 'merchant' | 'customer' | 'moderator';
   level: 'bronze' | 'silver' | 'gold' | 'legendary';
   is_active: boolean;
   points?: number;
   total_earnings?: number;
-  avatar_url?: string;
-  phone?: string;
-  created_at?: string;
+  avatar_url?: string | null;
+  phone?: string | null;
+  created_at?: string | null;
 }
 
 export type FastAuthRole = 'admin' | 'affiliate' | 'marketer' | 'merchant';
@@ -38,15 +38,15 @@ export interface SignUpServices {
 }
 
 export const performSignUp: (
-  deps: SignUpServices,
-  args: FastAuthSignUpArgs
-) => Promise<{ data?: any; error: any | null }> = (deps, args) => {
+  args: FastAuthSignUpArgs,
+  deps: SignUpServices
+) => Promise<{ data?: any; error: any }> = (args, deps) => {
   const enhancedDeps = {
     ...deps,
     getBaseUrlFn: deps.getBaseUrlFn ?? getBaseUrl,
   };
 
-  return performSignUpRuntime(enhancedDeps, args);
+  return performSignUpRuntime(args, enhancedDeps) as Promise<{ data?: any; error: any }>;
 };
 
 // Memory cache for user data
@@ -121,7 +121,9 @@ export const useFastAuth = () => {
     try {
       localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(profileData));
       localStorage.setItem(STORAGE_KEYS.LAST_UPDATE, now.toString());
-      localStorage.setItem(STORAGE_KEYS.USER_PROFILE + '_uid', profileData.auth_user_id);
+      if (profileData.auth_user_id) {
+        localStorage.setItem(STORAGE_KEYS.USER_PROFILE + '_uid', profileData.auth_user_id);
+      }
     } catch (error) {
       console.error('Error caching profile:', error);
     }
@@ -218,7 +220,7 @@ export const useFastAuth = () => {
     };
 
     // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!isMounted) return;
 
       setSession(session);
@@ -332,7 +334,7 @@ export const useFastAuth = () => {
 
         if (!profile) {
           // Create profile if doesn't exist
-          const { data: insertData, error: insertError } = await supabase
+          const { error: insertError } = await supabase
             .from('user_profiles')
             .insert({
               auth_user_id: data.user.id,
@@ -471,8 +473,10 @@ export const useFastAuth = () => {
       }
 
       // Update cached profile
-      cacheProfile(data);
-      setProfile(data);
+      if (data) {
+        cacheProfile(data as FastUserProfile);
+        setProfile(data as FastUserProfile);
+      }
 
       return { data, error: null };
     } catch (error) {
@@ -516,12 +520,12 @@ export const useFastAuth = () => {
         ]);
 
         if (productsRes.status === 'fulfilled' && !productsRes.value.error) {
-          result.products = productsRes.value.data || [];
+          result.products = (productsRes.value.data || []) as any[];
           result.stats.activeProducts = result.products.length;
         }
 
         if (commissionsRes.status === 'fulfilled' && !commissionsRes.value.error) {
-          result.commissions = commissionsRes.value.data || [];
+          result.commissions = (commissionsRes.value.data || []) as any[];
           result.stats.totalCommissions = result.commissions.reduce((sum: number, c: any) => sum + (c.amount_sar || 0), 0);
         }
       }

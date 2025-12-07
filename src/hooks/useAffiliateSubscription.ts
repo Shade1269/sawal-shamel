@@ -50,10 +50,12 @@ export const useAffiliateSubscription = () => {
 
   const createSubscriptionMutation = useMutation({
     mutationFn: async ({ transactionId, paymentMethod }: { transactionId: string; paymentMethod: string }) => {
+      if (!user?.id) throw new Error('User not authenticated');
+      
       const { data: profile } = await supabase
         .from('profiles')
         .select('id')
-        .eq('auth_user_id', user?.id)
+        .eq('auth_user_id', user.id)
         .single();
 
       if (!profile) throw new Error('Profile not found');

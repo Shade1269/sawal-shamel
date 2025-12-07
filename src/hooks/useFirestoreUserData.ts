@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { 
-  getUserFromFirestore,
   getUserProducts,
   getUserShopSettings,
   getUserActivities,
@@ -220,7 +219,7 @@ export const useFirestoreUserData = () => {
   };
 
   // حفظ إعدادات المتجر
-  const saveShopSettings = async (settings: any) => {
+  const saveShopSettings = async (_settings: any) => {
     try {
       if (!user) {
         throw new Error('No user found');

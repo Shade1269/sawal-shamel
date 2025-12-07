@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -13,7 +13,7 @@ export interface UserLevel {
   total_points: number;
   level_points: number;
   next_level_threshold: number;
-  level_achieved_at: string;
+  level_achieved_at: string | null;
 }
 
 export interface Alliance {
@@ -44,7 +44,7 @@ export interface AllianceMember {
   role: string;
   joined_at: string;
   contribution_points: number;
-  last_activity_at: string;
+  last_activity_at: string | null;
   is_active: boolean;
 }
 
@@ -59,7 +59,7 @@ export interface WeeklyChallenge {
   start_date: string;
   end_date: string;
   status: 'upcoming' | 'active' | 'completed' | 'cancelled';
-  winner_alliance_id?: string;
+  winner_alliance_id?: string | null;
   metadata: any;
 }
 
@@ -72,13 +72,13 @@ export interface LeaderboardEntry {
   sales_amount: number;
   orders_count: number;
   customers_count: number;
-  rank?: number;
-  rank_change: number;
-  theme_earned?: string;
-  bonus_earned: number;
+  rank?: number | null;
+  rank_change: number | null;
+  theme_earned?: string | null;
+  bonus_earned: number | null;
   user_profile?: {
-    full_name: string;
-    avatar_url?: string;
+    full_name: string | null;
+    avatar_url?: string | null;
   };
 }
 
@@ -91,9 +91,9 @@ export interface AllianceLeaderboardEntry {
   total_sales: number;
   total_orders: number;
   active_members: number;
-  rank?: number;
-  rank_change: number;
-  castle_controlled: boolean;
+  rank?: number | null;
+  rank_change: number | null;
+  castle_controlled: boolean | null;
   rewards_earned: any;
   alliance?: Alliance;
 }

@@ -91,7 +91,7 @@ export interface PageRevision {
 
 // Hook for Page Templates
 export function usePageTemplates() {
-  const queryClient = useQueryClient();
+  void useQueryClient(); // reserved for future mutations
 
   const { data: templates, isLoading } = useQuery({
     queryKey: ['page-templates'],

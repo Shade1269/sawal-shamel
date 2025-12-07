@@ -86,9 +86,12 @@ export const useExecutiveAnalytics = () => {
       const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
       
       // Calculate customer metrics
-      const uniqueCustomers = new Set(orders.map(order => order.customer_phone)).size;
+      const uniqueCustomers = new Set(orders.map(order => order.customer_phone).filter(Boolean)).size;
       const repeatCustomers = orders.reduce((acc, order) => {
-        acc[order.customer_phone] = (acc[order.customer_phone] || 0) + 1;
+        const phone = order.customer_phone;
+        if (phone) {
+          acc[phone] = (acc[phone] || 0) + 1;
+        }
         return acc;
       }, {} as Record<string, number>);
       
@@ -213,8 +216,9 @@ export const useExecutiveAnalytics = () => {
       // Customer segments
       const customerOrders = orders.reduce((acc, order) => {
         const phone = order.customer_phone;
+        if (!phone) return acc;
         if (!acc[phone]) {
-          acc[phone] = { orders: 0, total: 0, name: order.customer_name };
+          acc[phone] = { orders: 0, total: 0, name: order.customer_name || 'Unknown' };
         }
         acc[phone].orders += 1;
         acc[phone].total += Number(order.total_amount_sar) || 0;
@@ -305,6 +309,7 @@ export const useExecutiveAnalytics = () => {
       // Performing stores
       const storeRevenue = orders.reduce((acc, order) => {
         const shopId = order.shop_id;
+        if (!shopId) return acc;
         if (!acc[shopId]) {
           acc[shopId] = { revenue: 0, orders: 0 };
         }

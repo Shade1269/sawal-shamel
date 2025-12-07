@@ -62,7 +62,7 @@ export const useAdminMerchantWithdrawals = () => {
       const { data, error } = await supabase.rpc('process_merchant_withdrawal', {
         p_withdrawal_id: withdrawalId,
         p_status: status,
-        p_admin_notes: adminNotes || null
+        p_admin_notes: adminNotes ?? undefined
       });
 
       if (error) throw error;

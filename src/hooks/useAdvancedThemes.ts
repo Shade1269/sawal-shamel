@@ -6,22 +6,22 @@ export interface ThemeTemplate {
   id: string;
   name: string;
   name_ar: string;
-  description_ar?: string;
+  description_ar?: string | null;
   category: string;
   difficulty_level: string;
   theme_config: any;
-  preview_image_url?: string;
-  thumbnail_url?: string;
+  preview_image_url?: string | null;
+  thumbnail_url?: string | null;
   color_palette: any;
   is_premium: boolean;
-  is_active: boolean;
+  is_active: boolean | null;
   popularity_score: number;
 }
 
 export interface CustomTheme {
   id: string;
   user_id: string;
-  store_id?: string;
+  store_id?: string | null;
   theme_name: string;
   theme_config: any;
   color_palette: any;

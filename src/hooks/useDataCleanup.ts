@@ -10,13 +10,14 @@ interface DataQualityCheck {
   details: any;
 }
 
-interface CleanupResult {
-  timestamp: string;
-  quality_checks: any[];
-  fixes_applied: any[];
-  cleanup_done: any[];
-  backfill_done: any[];
-}
+// Reserved for future use
+// interface CleanupResult {
+//   timestamp: string;
+//   quality_checks: any[];
+//   fixes_applied: any[];
+//   cleanup_done: any[];
+//   backfill_done: any[];
+// }
 
 export function useDataCleanup() {
   const queryClient = useQueryClient();
