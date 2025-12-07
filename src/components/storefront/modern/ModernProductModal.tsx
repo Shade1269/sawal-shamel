@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { UnifiedButton } from '@/components/design-system';
 import { UnifiedBadge } from '@/components/design-system';
@@ -44,10 +44,10 @@ export const ModernProductModal = ({
   onAddToCart,
   onToggleWishlist,
   isInWishlist,
-  selectedVariant,
+  selectedVariant: _selectedVariant,
   onVariantChange,
   variantError,
-  storeId,
+  storeId: _storeId,
   customerId
 }: ModernProductModalProps) => {
   if (!product) return null;
@@ -96,7 +96,7 @@ export const ModernProductModal = ({
               )}
             </div>
 
-            <ProductImageCarousel images={product.image_urls} productTitle={product.title} variants={product.variants} />
+            <ProductImageCarousel images={product.image_urls ?? null} productTitle={product.title} variants={product.variants} />
           </div>
 
           {/* Content Section */}

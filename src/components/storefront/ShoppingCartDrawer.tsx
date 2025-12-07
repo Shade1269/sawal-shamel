@@ -19,7 +19,7 @@ interface CartItem {
   product_id: string;
   quantity: number;
   unit_price_sar: number;
-  total_price_sar: number;
+  total_price_sar: number | null;
   products?: {
     title: string;
     image_urls?: string[];
@@ -174,7 +174,7 @@ const ShoppingCartDrawer = ({ storeSlug, onItemsChange }: ShoppingCartDrawerProp
   };
 
   const getTotalPrice = () => {
-    return cartItems.reduce((sum, item) => sum + item.total_price_sar, 0);
+    return cartItems.reduce((sum, item) => sum + (item.total_price_sar ?? 0), 0);
   };
 
   const getTotalItems = () => {
@@ -251,7 +251,7 @@ const ShoppingCartDrawer = ({ storeSlug, onItemsChange }: ShoppingCartDrawerProp
 
                     <div className="flex items-center justify-between">
                       <div className="text-sm font-semibold text-primary">
-                        {item.total_price_sar.toFixed(2)} ر.س
+                        {(item.total_price_sar ?? 0).toFixed(2)} ر.س
                       </div>
 
                       <div className="flex items-center gap-2">

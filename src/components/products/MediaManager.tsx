@@ -51,7 +51,7 @@ const MediaManager: React.FC<MediaManagerProps> = ({
     }
   };
 
-  const currentVideoUrl = media.find(m => m.media_type === 'video')?.media_url || '';
+  const _currentVideoUrl = media.find(m => m.media_type === 'video')?.media_url || '';
 
   // رفع الصور
   const handleFileUpload = async (files: FileList, type: 'cover_image' | 'gallery') => {

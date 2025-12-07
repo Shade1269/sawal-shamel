@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Star, Eye, Zap, Percent } from 'lucide-react';
 import { UnifiedButton } from '@/components/design-system';

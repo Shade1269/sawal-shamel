@@ -27,7 +27,7 @@ const StoreHeader = () => {
   const { storeSlug } = useParams<{ storeSlug: string }>();
   const navigate = useNavigate();
   const { customer, isAuthenticated, signOut } = useCustomerAuth();
-  const [cartItemsCount, setCartItemsCount] = useState(0);
+  const [cartItemsCount, _setCartItemsCount] = useState(0);
 
   // جلب بيانات المتجر
   const { data: store } = useQuery({
@@ -75,7 +75,7 @@ const StoreHeader = () => {
           onClick={() => navigate(`/${storeSlug}`)}
         >
           <Avatar className="h-10 w-10 border-2 border-secondary">
-            <AvatarImage src={store.logo_url} alt={store.store_name} />
+            <AvatarImage src={store.logo_url ?? undefined} alt={store.store_name} />
             <AvatarFallback className="bg-primary text-primary-foreground font-bold">
               {store.store_name.charAt(0)}
             </AvatarFallback>

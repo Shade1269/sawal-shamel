@@ -73,7 +73,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
           .single();
 
         if (profileData) {
-          return data.map(review => ({
+          return data.map((review: any) => ({
             ...review,
             user_vote: review.review_votes?.find((v: any) => v.voter_profile_id === profileData.id)
           }));

@@ -1,6 +1,5 @@
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, Minus, Trash2, ShoppingBag, Truck, Gift } from 'lucide-react';
+import { Plus, Minus, Trash2, ShoppingBag, Truck } from 'lucide-react';
 import { UnifiedButton } from '@/components/design-system';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
