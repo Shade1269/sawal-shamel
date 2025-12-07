@@ -41,7 +41,7 @@ const PinnedMessages: React.FC<PinnedMessagesProps> = ({ messages, onUnpin, clas
             <div key={msg.id} className="group bg-accent/30 rounded-lg p-3 hover:bg-accent/50 transition-colors">
               <div className="flex items-start gap-3">
                 <Avatar className="w-6 h-6 flex-shrink-0">
-                  <AvatarImage src={msg.sender?.avatar_url} alt="Profile" />
+                  <AvatarImage src={msg.sender?.avatar_url ?? undefined} alt="Profile" />
                   <AvatarFallback className="text-xs">
                     {(msg.sender?.full_name || 'أ')[0]}
                   </AvatarFallback>

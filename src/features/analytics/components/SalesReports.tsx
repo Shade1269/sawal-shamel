@@ -81,27 +81,19 @@ const SalesReports = () => {
       const { data: shopsData, error } = await query;
       if (error) throw error;
       
-      setShops((shopsData || []).map(s => ({ id: s.id, display_name: s.display_name || '' })));
+    setShops((shopsData || []).map(s => ({ id: s.id, display_name: s.display_name || '' })));
     } catch (error) {
       console.error('Error fetching shops:', error);
     }
   };
 
+  const generateReport = async () => {
+    if (!dateRange?.from || !dateRange?.to || !profile?.id) return;
+
     setLoading(true);
     try {
       const fromDate = formatDate(dateRange.from, 'yyyy-MM-dd');
       const toDate = formatDate(dateRange.to, 'yyyy-MM-dd');
-
-      // Build shop filter
-      let shopFilter = '';
-      if (selectedShop !== 'all') {
-        shopFilter = `shop_id.eq.${selectedShop}`;
-      } else if (profile.role === 'merchant') {
-        const shopIds = shops.map(s => s.id);
-        if (shopIds.length > 0) {
-          shopFilter = `shop_id.in.(${shopIds.join(',')})`;
-        }
-      }
 
       // Fetch orders data from order_hub
       let ordersQuery = supabase
@@ -119,7 +111,7 @@ const SalesReports = () => {
         ordersData = ordersData.filter(o => o.shop_id === selectedShop);
       } else if (profile.role === 'merchant' && shops.length > 0) {
         const shopIds = shops.map(s => s.id);
-        ordersData = ordersData.filter(o => shopIds.includes(o.shop_id));
+        ordersData = ordersData.filter(o => o.shop_id && shopIds.includes(o.shop_id));
       }
 
       // Fetch items from source tables
@@ -325,7 +317,7 @@ const SalesReports = () => {
 
   useEffect(() => {
     if (dateRange?.from && dateRange?.to) {
-      generateSalesReport();
+      generateReport();
     }
   }, [dateRange, selectedShop, profile, shops]);
 
@@ -463,7 +455,7 @@ const SalesReports = () => {
                       dataKey="revenue"
                       label={({ method, percentage }) => `${method}: ${percentage.toFixed(1)}%`}
                     >
-                      {report.paymentMethods.map((entry, index) => (
+                      {report.paymentMethods.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
@@ -564,7 +556,7 @@ const SalesReports = () => {
                         dataKey="count"
                         label={({ segment, percentage }) => `${segment}: ${percentage}%`}
                       >
-                        {report.customerSegments.map((entry, index) => (
+                        {report.customerSegments.map((_, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>

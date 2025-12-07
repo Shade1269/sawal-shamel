@@ -5,8 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { MessageSquare, ArrowRight, ArrowLeft, Store, TrendingUp } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { usePlatformPhoneAuth } from '@/hooks/usePlatformPhoneAuth';
+
 const SupabaseSMSAuth = () => {
   const [step, setStep] = useState<'phone' | 'role' | 'verify'>('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -14,9 +14,8 @@ const SupabaseSMSAuth = () => {
   const [selectedRole, setSelectedRole] = useState<'affiliate' | 'merchant'>('affiliate');
   const [otp, setOtp] = useState('');
   const [cooldown, setCooldown] = useState(0);
-  const [_inlineError, setInlineError] = useState<string | null>(null);
+  const [, setInlineError] = useState<string | null>(null);
   const [isExistingUser, setIsExistingUser] = useState(false); // تتبع ما إذا كان المستخدم موجوداً
-  const _navigate = useNavigate();
   const {
     sendOTP,
     verifyOTP,

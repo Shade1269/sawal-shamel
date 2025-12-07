@@ -71,7 +71,7 @@ const NotificationSound: React.FC<NotificationSoundProps> = ({
   }, [enabled, onNewMessage, onMention]);
 
   // يمكن أيضاً استخدام ملف صوتي خارجي
-  const playNotificationFromFile = () => {
+  const _playNotificationFromFile = () => {
     if (audioRef.current) {
       audioRef.current.volume = 0.3;
       audioRef.current.play().catch(console.error);

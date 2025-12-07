@@ -8,9 +8,14 @@ type CartItem = {
   product_id: string;
   quantity: number;
   unit_price_sar: number;
-  total_price_sar: number;
+  total_price_sar: number | null;
   selected_variants?: any;
 };
+
+const mapCartItem = (item: any): CartItem => ({
+  ...item,
+  total_price_sar: item.total_price_sar ?? item.unit_price_sar * item.quantity
+});
 
 export function useCart() {
   const [cart, setCart] = useState<Cart | null>(null);
@@ -73,7 +78,7 @@ export function useCart() {
           .single();
         if (error) throw error;
         setItems((prev) =>
-          prev.map((item) => (item.id === existing.id ? data : item))
+          prev.map((item) => (item.id === existing.id ? mapCartItem(data) : item))
         );
       } else {
         const { data, error } = await supabase
@@ -82,7 +87,7 @@ export function useCart() {
           .select()
           .single();
         if (error) throw error;
-        setItems((prev) => [...prev, data]);
+        setItems((prev) => [...prev, mapCartItem(data)]);
       }
     },
     [cart, items]
@@ -97,7 +102,7 @@ export function useCart() {
       .single();
     if (error) throw error;
     setItems((prev) =>
-      prev.map((item) => (item.id === item_id ? data : item))
+      prev.map((item) => (item.id === item_id ? mapCartItem(data) : item))
     );
   }, []);
 

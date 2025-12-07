@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Crown, Star, Trophy, Zap, Sparkles } from 'lucide-react';
+import { Crown, Star, Trophy, Sparkles } from 'lucide-react';
 
 interface AtlantisAnimationsProps {
   type: 'levelUp' | 'pointsEarned' | 'challengeComplete' | 'castleCapture';
@@ -15,7 +15,7 @@ export const AtlantisAnimations = ({
   points, 
   onComplete 
 }: AtlantisAnimationsProps) => {
-  const getLevelColor = (level: string) => {
+  const _getLevelColor = (level: string) => {
     switch (level) {
       case 'legendary': return 'from-premium to-premium/80';
       case 'gold': return 'from-premium to-premium/70';

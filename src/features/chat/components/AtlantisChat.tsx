@@ -4,7 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { 
   Send, 
   Hash, 
@@ -14,14 +14,11 @@ import {
   MoreVertical,
   Trash2,
   Reply,
-  Heart,
   Smile,
   Pin,
   Copy,
-  Edit3,
   ArrowLeft,
   Mic,
-  Image,
   Paperclip
 } from 'lucide-react';
 import { useAtlantisChat } from '@/hooks/useAtlantisChat';
@@ -48,7 +45,6 @@ const AtlantisChat = () => {
   
   const {
     messages,
-    rooms,
     currentRoom,
     members,
     currentMember,
@@ -62,7 +58,6 @@ const AtlantisChat = () => {
     startTyping,
     stopTyping,
     canDeleteMessage,
-    canModerateRoom
   } = useAtlantisChat(roomId || '');
 
   const [message, setMessage] = useState('');
@@ -529,7 +524,7 @@ const AtlantisChat = () => {
                 onKeyDown={handleKeyDown}
                 placeholder="اكتب رسالتك هنا..."
                 className="flex-1 min-h-[40px] max-h-32 resize-none"
-                disabled={currentMember?.is_muted && currentMember.muted_until && new Date(currentMember.muted_until) > new Date()}
+                disabled={Boolean(currentMember?.is_muted && currentMember.muted_until && new Date(currentMember.muted_until) > new Date())}
               />
 
               <Button

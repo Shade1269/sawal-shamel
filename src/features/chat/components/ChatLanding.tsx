@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Users, Shield, Zap, Globe, Heart, User, LogOut } from "lucide-react";
+import { MessageCircle, Users, Shield, Zap, Globe, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSupabaseAuth } from "@/contexts/SupabaseAuthContext";
 import { useDarkMode } from "@/shared/components/DarkModeProvider";
 
 const ChatLanding = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useSupabaseAuth();
+  const { user } = useSupabaseAuth();
   const { isDarkMode } = useDarkMode();
   
   return (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { UnifiedCard as Card, UnifiedCardContent as CardContent } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { useAtlantisSystem } from '@/hooks/useAtlantisSystem';
@@ -7,14 +7,12 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Bell, 
-  Trophy, 
   Star, 
   Crown, 
   Target, 
   Users, 
   X,
   TrendingUp,
-  Award
 } from 'lucide-react';
 
 interface AtlantisNotification {
@@ -30,7 +28,7 @@ interface AtlantisNotification {
 export const AtlantisNotifications = () => {
   const [notifications, setNotifications] = useState<AtlantisNotification[]>([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const { userLevel, userAlliance, currentChallenge } = useAtlantisSystem();
+  const { userLevel } = useAtlantisSystem();
   const { toast } = useToast();
 
   // Mock notifications for demonstration

@@ -555,7 +555,7 @@ const AnalyticsDashboard = () => {
                       paddingAngle={5}
                       dataKey="count"
                     >
-                      {data.customerSegments.map((entry, index) => (
+                      {data.customerSegments.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
@@ -614,7 +614,7 @@ const AnalyticsDashboard = () => {
                     dataKey="count"
                     label={({ status, percentage }) => `${status}: ${percentage.toFixed(1)}%`}
                   >
-                    {data.orderStatus.map((entry, index) => (
+                    {data.orderStatus.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>

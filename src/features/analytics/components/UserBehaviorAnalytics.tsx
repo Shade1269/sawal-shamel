@@ -8,7 +8,7 @@ import { DatePickerWithRange } from '@/components/ui/date-picker-with-range';
 import { UnifiedBadge as Badge } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { 
-  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   Funnel, FunnelChart, LabelList
 } from 'recharts';
@@ -405,7 +405,7 @@ const UserBehaviorAnalytics = () => {
                       dataKey="users"
                       label={({ source, percentage }) => `${source}: ${percentage}%`}
                     >
-                      {data.trafficSources.map((entry, index) => (
+                      {data.trafficSources.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
@@ -523,7 +523,7 @@ const UserBehaviorAnalytics = () => {
                       dataKey="users"
                       label={({ device, percentage }) => `${device}: ${percentage}%`}
                     >
-                      {data.deviceTypes.map((entry, index) => (
+                      {data.deviceTypes.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
