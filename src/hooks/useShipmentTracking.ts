@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -6,23 +6,23 @@ export interface ShipmentTracking {
   id: string;
   shipment_number: string;
   order_id: string;
-  shipping_provider_id?: string;
-  tracking_number?: string;
-  estimated_delivery_date?: string;
-  actual_delivery_date?: string;
+  shipping_provider_id?: string | null;
+  tracking_number?: string | null;
+  estimated_delivery_date?: string | null;
+  actual_delivery_date?: string | null;
   current_status: string;
-  current_location?: string;
+  current_location?: string | null;
   pickup_address: any;
   delivery_address: any;
-  weight_kg?: number;
+  weight_kg?: number | null;
   dimensions?: any;
-  insurance_amount_sar: number;
-  cod_amount_sar: number;
-  shipping_cost_sar: number;
-  special_instructions?: string;
+  insurance_amount_sar: number | null;
+  cod_amount_sar: number | null;
+  shipping_cost_sar: number | null;
+  special_instructions?: string | null;
   customer_name: string;
   customer_phone: string;
-  notes?: string;
+  notes?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -30,13 +30,15 @@ export interface ShipmentTracking {
 export interface ShipmentEvent {
   id: string;
   shipment_id: string;
+  shipment_tracking_id?: string | null;
   event_type: string;
   event_description: string;
-  location?: string;
+  location?: string | null;
   coordinates?: any;
   event_timestamp: string;
   source: string;
   metadata: any;
+  created_by?: string | null;
   created_at: string;
 }
 
@@ -133,6 +135,7 @@ export const useShipmentTracking = () => {
         .maybeSingle();
 
       if (error) throw error;
+      if (!data) throw new Error('No data returned');
 
       // إضافة حدث بداية الشحنة
       await addShipmentEvent(data.id, {

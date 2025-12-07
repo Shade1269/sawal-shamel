@@ -38,9 +38,9 @@ export interface SignUpServices {
 }
 
 export const performSignUp: (
-  args: FastAuthSignUpArgs,
-  deps: SignUpServices
-) => Promise<{ data?: any; error: any }> = (args, deps) => {
+  deps: SignUpServices,
+  args: FastAuthSignUpArgs
+) => Promise<{ data?: any; error: any }> = (deps, args) => {
   const enhancedDeps = {
     ...deps,
     getBaseUrlFn: deps.getBaseUrlFn ?? getBaseUrl,
@@ -504,8 +504,8 @@ export const useFastAuth = () => {
       const storeData = Array.isArray(stores) ? stores[0] : null;
       const result = {
         store: storeData,
-        products: [],
-        commissions: [],
+        products: [] as any[],
+        commissions: [] as any[],
         stats: {
           totalCommissions: 0,
           totalSales: storeData?.total_sales || 0,

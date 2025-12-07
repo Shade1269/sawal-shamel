@@ -34,11 +34,11 @@ export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => 
   // Use isolated cart for public storefront
   const {
     cart: cartData,
-    loading: cartLoading,
+    loading: _cartLoading,
     addToCart: addToCartDB,
     updateQuantity: updateQuantityDB,
     clearCart: clearCartDB,
-    refetch: refetchCart
+    refetch: _refetchCart
   } = useIsolatedStoreCart(store?.id || '');
 
   // Fetch store products
@@ -90,7 +90,7 @@ export const usePublicStorefront = ({ storeSlug }: UsePublicStorefrontProps) => 
     let price: number | undefined;
     let title: string | undefined;
     
-    if (productData && 'products' in productData) {
+    if (productData && 'products' in productData && productData.products) {
       price = productData.products.price_sar;
       title = productData.products.title;
     }

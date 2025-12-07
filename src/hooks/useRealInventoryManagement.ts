@@ -1,4 +1,4 @@
-import { useState } from 'react';
+// useState reserved for future use
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';

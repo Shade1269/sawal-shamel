@@ -1,4 +1,4 @@
-import { useState } from 'react';
+// useState reserved for future use
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -87,7 +87,7 @@ export const usePromotionCampaigns = () => {
         description: "تم إنشاء حملة الترويج بنجاح",
       });
     },
-    onError: (error) => {
+    onError: (_error) => {
       toast({
         title: "خطأ",
         description: "فشل في إنشاء الحملة الترويجية",

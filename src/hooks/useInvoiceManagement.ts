@@ -4,15 +4,15 @@ import { useToast } from '@/hooks/use-toast';
 
 export interface Invoice {
   id: string;
-  invoice_number?: string;
-  shop_id?: string;
-  order_id?: string;
+  invoice_number?: string | null;
+  shop_id?: string | null;
+  order_id?: string | null;
   customer_name: string;
-  customer_email?: string;
+  customer_email?: string | null;
   customer_phone: string;
   customer_address: any;
-  customer_profile_id?: string;
-  tax_registration_number?: string;
+  customer_profile_id?: string | null;
+  tax_registration_number?: string | null;
   status: string;
   payment_status: string;
   subtotal_sar: number;
@@ -23,9 +23,9 @@ export interface Invoice {
   total_sar: number;
   vat_breakdown: any;
   issue_date: string;
-  due_date?: string;
-  paid_at?: string;
-  notes?: string;
+  due_date?: string | null;
+  paid_at?: string | null;
+  notes?: string | null;
   metadata: any;
   created_at: string;
   updated_at: string;
@@ -114,7 +114,7 @@ export const useInvoiceManagement = (shopId?: string) => {
     try {
       const { data, error } = await supabase
         .from('invoices')
-        .update(updates)
+        .update(updates as any)
         .eq('id', id)
         .select()
         .maybeSingle();
@@ -189,7 +189,7 @@ export const useInvoiceManagement = (shopId?: string) => {
     }
   };
 
-  const generatePDF = async (id: string) => {
+  const generatePDF = async (_id: string) => {
     try {
       // هنا يمكن إضافة منطق توليد PDF
       toast({
@@ -209,7 +209,7 @@ export const useInvoiceManagement = (shopId?: string) => {
     }
   };
 
-  const markAsPaid = async (id: string, paymentMethod?: string) => {
+  const markAsPaid = async (id: string, _paymentMethod?: string) => {
     try {
       await updateInvoice(id, { 
         payment_status: 'PAID',

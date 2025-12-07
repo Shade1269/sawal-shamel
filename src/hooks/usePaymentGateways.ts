@@ -4,22 +4,22 @@ import { useToast } from '@/hooks/use-toast';
 
 export interface PaymentGateway {
   id: string;
-  shop_id?: string;
+  shop_id?: string | null;
   gateway_name: string;
   display_name: string;
   provider: string;
   is_enabled: boolean;
   is_test_mode: boolean;
-  api_key?: string;
-  secret_key?: string;
-  merchant_id?: string;
-  api_url?: string;
-  webhook_url?: string;
-  percentage_fee: number;
-  fixed_fee_sar: number;
-  min_amount_sar: number;
-  max_amount_sar?: number;
-  allowed_currencies: string[];
+  api_key?: string | null;
+  secret_key?: string | null;
+  merchant_id?: string | null;
+  api_url?: string | null;
+  webhook_url?: string | null;
+  percentage_fee: number | null;
+  fixed_fee_sar: number | null;
+  min_amount_sar: number | null;
+  max_amount_sar?: number | null;
+  allowed_currencies: string[] | null;
   configuration: any;
   created_at: string;
   updated_at: string;
@@ -147,7 +147,7 @@ export const usePaymentGateways = (shopId?: string) => {
     }
   };
 
-  const testGateway = async (id: string) => {
+  const testGateway = async (_id: string) => {
     try {
       // هنا يمكن إضافة اختبار الاتصال مع بوابة الدفع
       // حالياً سنعتبر الاختبار ناجح

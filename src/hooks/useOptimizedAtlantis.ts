@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useAtlantisSystem, UserLevel, Alliance, LeaderboardEntry } from './useAtlantisSystem';
+import { useAtlantisSystem, UserLevel, LeaderboardEntry } from './useAtlantisSystem';
 import { memoize } from '@/utils/performance';
 
 /**

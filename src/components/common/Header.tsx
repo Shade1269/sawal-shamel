@@ -121,7 +121,7 @@ const Header = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={profile?.avatar_url} alt={profile?.full_name} />
+                  <AvatarImage src={profile?.avatar_url ?? undefined} alt={profile?.full_name ?? undefined} />
                   <AvatarFallback>
                     {profile?.full_name?.charAt(0).toUpperCase() || 'م'}
                   </AvatarFallback>
