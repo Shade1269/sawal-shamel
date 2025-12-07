@@ -14,10 +14,8 @@ import {
   Bell, 
   Shield, 
   CreditCard,
-  Users,
   BarChart3,
-  Save,
-  Upload
+  Save
 } from 'lucide-react';
 import { ThemeManager } from './ThemeManager';
 import { useToast } from '@/hooks/use-toast';
@@ -99,7 +97,7 @@ export const StoreSettings = ({ storeId, storeData, onUpdate }: StoreSettingsPro
       const fileExt = file.name.split('.').pop();
       const fileName = `${storeId}/logo.${fileExt}`;
       
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('store-assets')
         .upload(fileName, file, { upsert: true });
 

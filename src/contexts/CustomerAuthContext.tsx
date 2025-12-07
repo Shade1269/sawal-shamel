@@ -151,9 +151,9 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       const updatedCustomer: CustomerProfile = {
         id: customerData.id,
         profile_id: customerData.profile_id,
-        phone: customerData.profiles.phone,
-        email: customerData.profiles.email,
-        full_name: customerData.profiles.full_name,
+        phone: customerData.profiles.phone ?? '',
+        email: customerData.profiles.email ?? undefined,
+        full_name: customerData.profiles.full_name ?? '',
         loyalty_points: customerData.loyalty_points || 0,
         total_orders: customerData.total_orders || 0,
         total_spent_sar: customerData.total_spent_sar || 0,
@@ -473,9 +473,9 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
       // استخدم الدالة الآمنة في قاعدة البيانات لإنشاء/جلب العميل
       const { data: result, error } = await supabase.rpc('create_customer_account', {
         p_phone: e164,
-        p_store_id: storeId ?? null,
-        p_full_name: null,
-        p_email: null
+        p_store_id: storeId ?? undefined,
+        p_full_name: undefined,
+        p_email: undefined
       });
 
       if (error) {

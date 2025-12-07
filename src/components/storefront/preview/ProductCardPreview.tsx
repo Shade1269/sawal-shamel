@@ -26,11 +26,11 @@ const productImages = [
 export const ProductCardPreview = ({
   title,
   price,
-  originalPrice,
-  rating,
-  reviews,
-  badge,
-  inStock = true,
+  originalPrice: _originalPrice,
+  rating: _rating,
+  reviews: _reviews,
+  badge: _badge,
+  inStock: _inStock = true,
   id,
   onProductClick,
   onAddToCart

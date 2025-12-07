@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { User, Phone, MapPin, Mail, Edit2 } from 'lucide-react';
+import { Phone, MapPin, Mail, Edit2 } from 'lucide-react';
 import { UnifiedButton } from '@/components/design-system';
 
 export const ProfilePreview = () => {

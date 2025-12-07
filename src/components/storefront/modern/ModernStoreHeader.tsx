@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { UnifiedButton } from '@/components/design-system';
 import { UnifiedBadge } from '@/components/design-system';
-import { ShoppingCart, Heart, User, Store, TrendingUp, Package } from 'lucide-react';
+import { ShoppingCart, User, Store, TrendingUp, Package } from 'lucide-react';
 
 interface AffiliateStore {
   id: string;

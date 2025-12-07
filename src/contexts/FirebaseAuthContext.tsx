@@ -71,7 +71,7 @@ export const FirebaseAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
           return;
         }
         
-        unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+        unsubscribe = auth.onAuthStateChanged(async (firebaseUser: User | null) => {
           setUser(firebaseUser);
           
           if (firebaseUser) {

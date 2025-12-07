@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useStoreThemes, type StoreThemeConfig } from '@/hooks/useStoreThemes';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { type StoreThemeConfig } from '@/hooks/useStoreThemes';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 
 interface ThemeContextType {

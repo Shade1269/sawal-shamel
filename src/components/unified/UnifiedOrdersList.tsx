@@ -112,7 +112,7 @@ export const UnifiedOrdersList: React.FC<UnifiedOrdersListProps> = ({ filters, o
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            <Badge variant={getStatusColor(order.status)}>{order.status}</Badge>
+            <Badge variant={getStatusColor(order.status || '')}>{order.status}</Badge>
             {order.payment_status && (
               <Badge
                 variant={
