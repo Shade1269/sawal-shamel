@@ -16,7 +16,7 @@ import { ShoppingCartDrawer } from '@/features/commerce';
 import { GlobalSearch, GlobalNotifications } from '@/shared/components';
 
 const Header = () => {
-  const { profile, user, isAuthenticated } = useFastAuth();
+  const { profile, isAuthenticated } = useFastAuth();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {

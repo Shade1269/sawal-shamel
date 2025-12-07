@@ -180,7 +180,7 @@ export const BannerPositioning: React.FC<BannerPositioningProps> = ({
     }
   );
 
-  const [activeTab, setActiveTab] = useState('position');
+  const [_activeTab, _setActiveTab] = useState('position');
 
   const updatePosition = (path: string, value: any) => {
     setPosition(prev => {

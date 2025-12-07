@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle } from '@/components/design-system';
 import { UnifiedButton as Button } from '@/components/design-system';
 import { UnifiedBadge as Badge } from '@/components/design-system';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+// Dialog removed - not used
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Package, Trash2, Star, Eye, EyeOff, DollarSign } from 'lucide-react';

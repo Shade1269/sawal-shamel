@@ -30,7 +30,7 @@ interface PageEditorProps {
   onSave?: (page: any) => void;
 }
 
-export const PageEditor: React.FC<PageEditorProps> = ({ pageId, storeId, onSave }) => {
+export const PageEditor: React.FC<PageEditorProps> = ({ pageId, storeId: _storeId, onSave }) => {
   const { data: page, isLoading } = useStorePage(pageId);
   const { data: templates } = usePageTemplates();
   const updatePage = useUpdateStorePage();

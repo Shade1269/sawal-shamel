@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +22,7 @@ export const LeadManagementSection: React.FC = () => {
   const { leads, createLead, updateLead, addLeadActivity, isCreating, isUpdating: _isUpdating } = useLeadManagement();
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [_isEditMode, setIsEditMode] = useState(false);
+  const [_isEditMode, _setIsEditMode] = useState(false);
   const [newLeadData, setNewLeadData] = useState({
     email: '',
     phone: '',

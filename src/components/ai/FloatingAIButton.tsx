@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, X, Sparkles, FileText, ImageIcon, Brain } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { UnifiedAIAssistant } from './UnifiedAIAssistant';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,10 +10,9 @@ interface FloatingAIButtonProps {
     store_name?: string;
     bio?: string;
   };
-  products?: any[];
 }
 
-export function FloatingAIButton({ context = 'marketer', storeInfo, products }: FloatingAIButtonProps) {
+export function FloatingAIButton({ context = 'marketer', storeInfo }: FloatingAIButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
@@ -103,7 +101,6 @@ export function FloatingAIButton({ context = 'marketer', storeInfo, products }: 
           <UnifiedAIAssistant
             context={context}
             storeInfo={storeInfo}
-            products={products}
             floating
             onClose={() => setIsOpen(false)}
           />

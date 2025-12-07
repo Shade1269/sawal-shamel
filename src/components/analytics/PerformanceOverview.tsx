@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
-import { Activity, DollarSign, ShoppingCart, TrendingUp } from 'lucide-react';
+import { DollarSign, ShoppingCart, TrendingUp } from 'lucide-react';
 
 interface PerformanceData {
   total_orders: number;
