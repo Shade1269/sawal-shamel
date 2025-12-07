@@ -26,7 +26,6 @@ interface PerformanceMonitorProps {
 
 export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
   showDetailed = true,
-  autoRefresh = true,
   className = ''
 }) => {
   const metrics = usePerformanceMetrics();

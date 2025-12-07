@@ -101,16 +101,6 @@ export function ReturnInventoryDialog({ inventoryItems, warehouses, onSuccess }:
     }
   };
 
-  const getReturnReasonText = (reason: string) => {
-    const reasons = {
-      defective: 'معيب',
-      expired: 'منتهي الصلاحية',
-      damage: 'تالف',
-      wrong_item: 'منتج خاطئ',
-      other: 'أخرى'
-    };
-    return reasons[reason as keyof typeof reasons] || reason;
-  };
 
   const getWarehouseName = (warehouseId: string) => {
     const warehouse = warehouses.find(w => w.id === warehouseId);

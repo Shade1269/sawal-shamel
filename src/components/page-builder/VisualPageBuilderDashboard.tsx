@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,9 +10,7 @@ import {
   Settings, 
   Eye,
   Save,
-  Download,
   Share2,
-  Plus,
   Grid
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -24,7 +22,6 @@ import { VisualThemeEditor } from './VisualThemeEditor';
 
 export const VisualPageBuilderDashboard: React.FC = () => {
   const [selectedElement, setSelectedElement] = useState<any>(null);
-  const [currentPage, setCurrentPage] = useState<any>(null);
   const [previewMode, setPreviewMode] = useState(false);
 
   return (

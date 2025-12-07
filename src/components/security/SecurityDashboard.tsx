@@ -25,12 +25,6 @@ export const SecurityDashboard = () => {
 
   const insights = getSecurityInsights();
 
-  const getSecurityScoreColor = (score: number) => {
-    if (score >= 90) return "text-success";
-    if (score >= 70) return "text-warning";
-    if (score >= 50) return "text-warning";
-    return "text-destructive";
-  };
 
   const getSecurityScoreLabel = (score: number) => {
     if (score >= 90) return "ممتاز";

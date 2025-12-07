@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
+
 import { 
   Activity, 
   AlertTriangle, 
@@ -63,7 +63,7 @@ const ROLLOUT_STAGES: RolloutStage[] = [
 ];
 
 export const RolloutManager: React.FC = () => {
-  const [currentStage, setCurrentStage] = useState(3);
+  const [currentStage] = useState(3);
   const [rolloutPercentage, setRolloutPercentage] = useState(20);
   const [flags, setFlags] = useState<Record<FeatureFlag, boolean>>(FEATURE_FLAGS);
 

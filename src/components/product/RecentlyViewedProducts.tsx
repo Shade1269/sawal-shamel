@@ -16,7 +16,7 @@ import { useState, useRef } from 'react';
 
 export function RecentlyViewedProducts() {
   const { viewedProducts, removeProduct, clearAll, count } = useRecentlyViewed();
-  const { t, direction } = useLanguage();
+  const { direction } = useLanguage();
   const navigate = useNavigate();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);

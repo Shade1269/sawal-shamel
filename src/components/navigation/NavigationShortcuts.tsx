@@ -13,12 +13,7 @@ import {
   Keyboard
 } from 'lucide-react';
 
-interface Shortcut {
-  keys: string[];
-  description: string;
-  action: () => void;
-  category: string;
-}
+// Shortcut type defined for keyboard navigation
 
 export function NavigationShortcuts() {
   const navigate = useNavigate();
@@ -34,57 +29,7 @@ export function NavigationShortcuts() {
   const [commandOpen, setCommandOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Define keyboard shortcuts
-  const _shortcuts: Shortcut[] = [
-    {
-      keys: ['Ctrl', 'K'],
-      description: 'فتح البحث السريع',
-      action: () => setCommandOpen(true),
-      category: 'navigation'
-    },
-    {
-      keys: ['Alt', 'ArrowLeft'],
-      description: 'العودة للصفحة السابقة',
-      action: goBack,
-      category: 'navigation'
-    },
-    {
-      keys: ['Alt', 'ArrowRight'],
-      description: 'الانتقال للصفحة التالية',
-      action: goForward,
-      category: 'navigation'
-    },
-    {
-      keys: ['Ctrl', 'H'],
-      description: 'الانتقال للصفحة الرئيسية',
-      action: () => navigate('/'),
-      category: 'navigation'
-    },
-    {
-      keys: ['Ctrl', 'D'],
-      description: 'الانتقال لمركز المسوق',
-      action: () => navigate('/affiliate'),
-      category: 'navigation'
-    },
-    {
-      keys: ['Ctrl', 'P'],
-      description: 'واجهة المتجر',
-      action: () => navigate('/affiliate/storefront'),
-      category: 'navigation'
-    },
-    {
-      keys: ['Ctrl', 'O'],
-      description: 'طلبات المسوق',
-      action: () => navigate('/affiliate/orders'),
-      category: 'navigation'
-    },
-    {
-      keys: ['Escape'],
-      description: 'إغلاق النوافذ المنبثقة',
-      action: () => setCommandOpen(false),
-      category: 'general'
-    }
-  ];
+  // Shortcuts are registered via useEffect below
 
   // Register keyboard event listeners
   useEffect(() => {

@@ -16,7 +16,6 @@ import {
   Sparkles,
   BarChart3,
   Users,
-  ShoppingCart,
   DollarSign
 } from 'lucide-react';
 import { cn } from '@/lib/utils';

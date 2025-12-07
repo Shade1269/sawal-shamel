@@ -93,14 +93,6 @@ const EnhancedPagination: React.FC<EnhancedPaginationProps> = ({
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-  const _paginationInfo: PaginationInfo = {
-    currentPage,
-    totalPages,
-    totalItems,
-    itemsPerPage,
-    startItem,
-    endItem
-  };
 
   // Generate visible page numbers
   const getVisiblePages = () => {

@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, CalendarIcon, Clock, Percent, DollarSign } from 'lucide-react';
+import { Clock, Percent, DollarSign } from 'lucide-react';
 import { usePromotionCampaigns } from '@/hooks/usePromotionCampaigns';
 
 export const FlashSaleCreator: React.FC = () => {
