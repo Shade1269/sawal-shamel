@@ -8,9 +8,12 @@ export interface ShippingZone {
   name_en: string;
   zone_code: string;
   zone_type: string;
-  postal_codes: string[];
-  is_active: boolean;
-  created_at: string;
+  postal_codes: string[] | null;
+  is_active: boolean | null;
+  created_at: string | null;
+  parent_zone_id?: string | null;
+  delivery_days_min?: number | null;
+  delivery_days_max?: number | null;
 }
 
 export const useShippingZones = () => {

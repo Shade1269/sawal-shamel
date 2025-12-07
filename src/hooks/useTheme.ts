@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { getTheme } from "@/themes/registry";
-import type { ThemeConfig } from "@/themes/types";
+// ThemeConfig reserved for future use
 import { getContrastRatio } from "@/utils/color";
 
 export type ThemeContextValue = {
@@ -69,7 +69,7 @@ function useThemeController(defaultThemeId: string = "ferrari"): ThemeContextVal
   );
 }
 
-export function useTheme(defaultThemeId?: string): ThemeContextValue {
+export function useTheme(_defaultThemeId?: string): ThemeContextValue {
   const context = useContext(ThemeContext);
   if (!context) {
     throw new Error(

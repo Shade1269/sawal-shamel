@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -78,7 +78,7 @@ export const setupRecaptcha = async (containerId: string) => {
   if (window.recaptchaVerifier) {
     try {
       await window.recaptchaVerifier.clear();
-      delete window.recaptchaVerifier;
+      (window as any).recaptchaVerifier = undefined;
     } catch {
       // Ignore clear errors
     }

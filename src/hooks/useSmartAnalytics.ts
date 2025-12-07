@@ -302,7 +302,7 @@ export const useSmartAnalytics = (
     }
   }, [generateMockInsights]);
 
-  const runPredictions = useCallback(async (timeframe: 'week' | 'month' | 'quarter') => {
+  const runPredictions = useCallback(async (_timeframe: 'week' | 'month' | 'quarter') => {
     setIsRefreshing(true);
     try {
       // Simulate prediction calculation

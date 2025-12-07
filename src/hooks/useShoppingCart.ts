@@ -6,12 +6,16 @@ import { toast } from 'sonner';
 export interface CartItem {
   id: string;
   product_id: string;
-  product_title: string;
+  product_title?: string;
   product_image_url?: string;
   unit_price_sar: number;
   quantity: number;
-  total_price_sar: number;
-  shop_id: string;
+  total_price_sar: number | null;
+  shop_id?: string;
+  cart_id?: string;
+  added_at?: string;
+  updated_at?: string;
+  selected_variants?: any;
 }
 
 export interface ShoppingCartData {
@@ -193,14 +197,33 @@ export const useShoppingCart = (storeId?: string) => {
       }
 
       if (existingCart) {
-        const items = existingCart.cart_items || existingCart.items || [];
+        const rawItems = existingCart.cart_items || [];
+        const items: CartItem[] = rawItems.map((item: any) => ({
+          id: item.id,
+          product_id: item.product_id,
+          product_title: item.product_title || 'منتج',
+          product_image_url: item.product_image_url,
+          unit_price_sar: item.unit_price_sar,
+          quantity: item.quantity,
+          total_price_sar: item.total_price_sar ?? 0,
+          shop_id: item.shop_id || '',
+          cart_id: item.cart_id,
+          added_at: item.added_at,
+          updated_at: item.updated_at,
+          selected_variants: item.selected_variants
+        }));
 
         setCart({
-          ...existingCart,
+          id: existingCart.id ?? '',
+          user_id: existingCart.user_id ?? undefined,
+          session_id: existingCart.session_id ?? undefined,
+          affiliate_store_id: existingCart.affiliate_store_id ?? undefined,
+          created_at: existingCart.created_at ?? new Date().toISOString(),
+          updated_at: existingCart.updated_at ?? new Date().toISOString(),
           items
         });
-        setCartId(existingCart.id);
-        cartIdRef.current = existingCart.id;
+        setCartId(existingCart.id ?? null);
+        cartIdRef.current = existingCart.id ?? null;
         setActiveStoreId(existingCart.affiliate_store_id ?? resolvedStoreId ?? storeId ?? null);
 
         if (typeof window !== 'undefined') {
@@ -214,7 +237,7 @@ export const useShoppingCart = (storeId?: string) => {
             if (existingCart.affiliate_store_id) {
               localStorage.setItem('storefront:last-store-id', existingCart.affiliate_store_id);
             }
-            localStorage.setItem('storefront:last-cart-id', existingCart.id);
+            localStorage.setItem('storefront:last-cart-id', existingCart.id ?? '');
           } catch (error) {
             console.warn('Unable to persist shopping cart context', error);
           }
@@ -291,15 +314,26 @@ export const useShoppingCart = (storeId?: string) => {
         if (error) throw error;
 
         // Update local state
-        setCart(prev => prev ? {
-          ...prev,
-          items: [...prev.items, {
-            ...createdItem,
+        if (createdItem) {
+          const newItem: CartItem = {
+            id: createdItem.id,
+            product_id: createdItem.product_id,
             product_title: product.name || product.title || 'منتج',
             product_image_url: product.image_url,
-            shop_id: product.shop_id || activeStoreId || ''
-          }]
-        } : null);
+            unit_price_sar: createdItem.unit_price_sar,
+            quantity: createdItem.quantity,
+            total_price_sar: createdItem.total_price_sar ?? 0,
+            shop_id: product.shop_id || activeStoreId || '',
+            cart_id: createdItem.cart_id,
+            added_at: createdItem.added_at,
+            updated_at: createdItem.updated_at,
+            selected_variants: createdItem.selected_variants
+          };
+          setCart(prev => prev ? {
+            ...prev,
+            items: [...prev.items, newItem]
+          } : null);
+        }
       }
 
       toast.success('تم إضافة المنتج إلى العربة');
@@ -410,7 +444,7 @@ export const useShoppingCart = (storeId?: string) => {
       };
     }
 
-    const subtotal = cart.items.reduce((sum, item) => sum + item.total_price_sar, 0);
+    const subtotal = cart.items.reduce((sum, item) => sum + (item.total_price_sar ?? 0), 0);
     const itemCount = cart.items.length;
     const totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0);
 

@@ -6,12 +6,14 @@ export interface StoreTheme {
   id: string;
   name: string;
   name_ar: string;
-  description?: string;
-  description_ar?: string;
+  description?: string | null;
+  description_ar?: string | null;
   theme_config: any;
-  preview_image_url?: string;
-  is_active: boolean;
-  is_premium: boolean;
+  preview_image_url?: string | null;
+  is_active: boolean | null;
+  is_premium: boolean | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 export interface StoreThemeConfig {

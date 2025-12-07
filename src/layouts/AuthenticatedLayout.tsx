@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, BarChart3, Wallet, Bell, User, Package } from 'lucide-react';
+import { Home, BarChart3, Wallet, User, Package } from 'lucide-react';
 import { BottomNavMobile } from '@/components/app-shell/BottomNavMobile';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { FloatingAIButton } from '@/components/ai';

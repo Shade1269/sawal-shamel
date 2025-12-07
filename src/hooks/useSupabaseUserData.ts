@@ -17,10 +17,11 @@ export interface UserShop {
 export interface UserActivity {
   id: string;
   activity_type: string;
-  description: string;
+  description: string | null;
   metadata: any;
-  created_at: string;
-  shop_id?: string;
+  created_at: string | null;
+  shop_id?: string | null;
+  user_id?: string;
 }
 
 export const useSupabaseUserData = () => {
@@ -168,9 +169,9 @@ export const useSupabaseUserData = () => {
         setUserShop({
           id: data.id,
           shop_id: data.id,
-          display_name: data.display_name,
+          display_name: data.display_name ?? '',
           slug: data.slug,
-          created_at: data.created_at,
+          created_at: data.created_at ?? new Date().toISOString(),
           total_products: data.total_products || 0,
           total_orders: data.total_orders || 0,
           settings: data.settings
@@ -270,7 +271,7 @@ export const useSupabaseUserData = () => {
         .from('products')
         .insert({
           ...productData,
-          merchant_id: merchant.id,
+          merchant_id: merchant?.id,
           shop_id: userShop.id
         })
         .select('id')
@@ -291,7 +292,7 @@ export const useSupabaseUserData = () => {
       fetchUserStatistics();
       logActivity('product_added', `تم إضافة منتج: ${productData.title}`);
 
-      return data.id;
+      return data?.id;
     } catch (error) {
       console.error('Error adding product:', error);
       throw error;

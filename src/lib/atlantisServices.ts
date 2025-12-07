@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
-import { API_ENDPOINTS, POINT_VALUES } from '@/utils/constants';
-import { logger } from '@/utils/logger';
+
+// API endpoint for Atlantis points
+const ATLANTIS_POINTS_ENDPOINT = 'atlantis-points';
 
 interface AtlantisPointsUpdateData {
   action: 'sale_completed' | 'new_customer' | 'challenge_completed' | 'manual_add';
@@ -22,7 +23,7 @@ export class AtlantisPointsService {
         return { success: false, message: 'User not authenticated' };
       }
 
-      const { data: result, error } = await supabase.functions.invoke(API_ENDPOINTS.ATLANTIS_POINTS, {
+      const { data: result, error } = await supabase.functions.invoke(ATLANTIS_POINTS_ENDPOINT, {
         body: {
           userId: user.id,
           ...data

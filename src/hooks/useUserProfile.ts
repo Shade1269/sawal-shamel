@@ -141,8 +141,8 @@ function normalizeProfile(profile: ReturnType<typeof useFastAuth>['profile'], fa
     name: fullName,
     email,
     role,
-    avatarUrl: profile?.avatar_url,
-    joinedAt: profile?.created_at,
+    avatarUrl: profile?.avatar_url ?? undefined,
+    joinedAt: profile?.created_at ?? undefined,
     initials,
   };
 }

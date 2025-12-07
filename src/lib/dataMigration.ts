@@ -2,12 +2,9 @@ import { createClient } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   getFirestoreDB, 
-  saveUserToFirestore, 
-  addProductToUserStore,
-  createUserShop,
-  logUserActivity 
+  addProductToUserStore
 } from './firestore';
-import { doc, setDoc, collection, getDocs, query, orderBy, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDocs, collection, getDoc } from 'firebase/firestore';
 
 // Create admin Supabase client for data migration
 const getSupabaseAdmin = () => {
@@ -376,7 +373,8 @@ export const migrateAllData = async () => {
 
     // الآن ننقل البيانات مباشرة إلى Firebase
     const { getFirestoreDB } = await import('./firestore');
-    const { doc, setDoc, collection } = await import('firebase/firestore');
+    const { doc, setDoc, collection: firestoreCollection } = await import('firebase/firestore');
+    void firestoreCollection; // Reserved for dynamic import usage
     const firestore = await getFirestoreDB();
 
     // 1. نقل المستخدمين

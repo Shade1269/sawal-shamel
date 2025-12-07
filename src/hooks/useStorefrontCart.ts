@@ -7,10 +7,10 @@ interface CartItem {
   product_id: string;
   quantity: number;
   unit_price_sar: number;
-  total_price_sar: number;
+  total_price_sar: number | null;
   products: {
     title: string;
-    image_urls?: string[];
+    image_urls?: string[] | null;
   };
 }
 
@@ -180,7 +180,7 @@ export const useStorefrontCart = (cartId?: string) => {
   };
 
   const getTotal = () => {
-    return items.reduce((sum, item) => sum + item.total_price_sar, 0);
+    return items.reduce((sum, item) => sum + (item.total_price_sar ?? 0), 0);
   };
 
   const getItemsCount = () => {
