@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,12 +9,10 @@ import { Switch } from '@/components/ui/switch';
 import { 
   Ticket, 
   Plus, 
-  Edit, 
   Trash2, 
   Copy,
   Calendar,
   Gift,
-  TrendingUp,
   Eye,
   Loader2
 } from 'lucide-react';

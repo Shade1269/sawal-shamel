@@ -7,12 +7,6 @@ import {
   TrendingUp,
   TrendingDown,
   ArrowUpRight,
-  ArrowDownRight,
-  Eye,
-  Users,
-  ShoppingCart,
-  DollarSign,
-  Package,
   Activity,
   Zap,
   Target

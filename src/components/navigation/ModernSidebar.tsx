@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
-  Clock,
   Star,
   Menu,
   X
@@ -82,7 +81,7 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
     : navigationSections;
 
   // Get recent pages items
-  const recentItems = state.recentPages
+  const _recentItems = state.recentPages
     .slice(0, 5)
     .map(path => {
       for (const section of navigationSections) {

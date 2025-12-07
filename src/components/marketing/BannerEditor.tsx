@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,13 +19,10 @@ import {
   Settings, 
   Target, 
   Calendar as CalendarIcon,
-  Image,
-  Type,
-  Layout
+  Type
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
-import { motion } from 'framer-motion';
 import { usePromotionalBanners } from '@/hooks/usePromotionalBanners';
 import { BannerPreview } from './BannerPreview';
 import { supabase } from '@/integrations/supabase/client';
@@ -50,7 +47,33 @@ export const BannerEditor: React.FC<BannerEditorProps> = ({
   const [availableProducts, setAvailableProducts] = useState<any[]>([]);
   const [productsLoading, setProductsLoading] = useState(false);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    title_ar: string;
+    description: string;
+    description_ar: string;
+    banner_type: string;
+    position: string;
+    priority: number;
+    content_config: Record<string, unknown>;
+    image_url: string;
+    background_color: string;
+    text_color: string;
+    button_text: string;
+    button_text_ar: string;
+    button_url: string;
+    button_color: string;
+    target_audience: Record<string, unknown>;
+    display_conditions: Record<string, unknown>;
+    max_impressions: number | null;
+    max_clicks: number | null;
+    start_date: Date | undefined;
+    end_date: Date | undefined;
+    is_active: boolean;
+    auto_hide_after_interaction: boolean;
+    show_close_button: boolean;
+    animation_type: string;
+  }>({
     title: '',
     title_ar: '',
     description: '',
@@ -70,8 +93,8 @@ export const BannerEditor: React.FC<BannerEditorProps> = ({
     display_conditions: {},
     max_impressions: null,
     max_clicks: null,
-    start_date: null,
-    end_date: null,
+    start_date: undefined,
+    end_date: undefined,
     is_active: true,
     auto_hide_after_interaction: false,
     show_close_button: true,
@@ -102,8 +125,8 @@ export const BannerEditor: React.FC<BannerEditorProps> = ({
         display_conditions: banner.display_conditions || {},
         max_impressions: banner.max_impressions || null,
         max_clicks: banner.max_clicks || null,
-        start_date: banner.start_date ? new Date(banner.start_date) : null,
-        end_date: banner.end_date ? new Date(banner.end_date) : null,
+        start_date: banner.start_date ? new Date(banner.start_date) : undefined,
+        end_date: banner.end_date ? new Date(banner.end_date) : undefined,
         is_active: banner.is_active ?? true,
         auto_hide_after_interaction: banner.auto_hide_after_interaction ?? false,
         show_close_button: banner.show_close_button ?? true,

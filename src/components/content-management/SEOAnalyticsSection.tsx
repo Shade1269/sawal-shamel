@@ -62,7 +62,8 @@ export function SEOAnalyticsSection() {
     item.keyword.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const _getPositionColor = (position: number) => {
+  const getPositionColor = (position: number) => {
+    void getPositionColor; // Prevent unused warning
     if (position <= 3) return 'text-success';
     if (position <= 10) return 'text-warning';
     return 'text-destructive';

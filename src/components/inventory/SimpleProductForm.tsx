@@ -148,7 +148,7 @@ export function SimpleProductForm({ onSuccess, warehouseId }: SimpleProductFormP
         .eq('profile_id', profileId)
         .maybeSingle();
 
-      const { data: shop, error: shopError } = await supabase
+      const { data: shop, error: _shopError } = await supabase
         .from('shops')
         .select('id')
         .eq('owner_id', profileId)

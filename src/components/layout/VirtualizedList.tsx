@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -170,7 +170,7 @@ const VirtualizedList = <T extends VirtualItem>({
   };
 
   // Loading skeleton
-  const renderLoadingSkeleton = () => {
+  const _renderLoadingSkeleton = () => {
     const skeletonCount = Math.ceil(containerHeight / estimatedItemHeight);
     return Array.from({ length: skeletonCount }, (_, index) => (
       <div key={`skeleton-${index}`} className="p-4">

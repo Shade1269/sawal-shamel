@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -7,13 +7,10 @@ import { Progress } from '@/components/ui/progress';
 import {
   AlertTriangle,
   CheckCircle,
-  Activity,
   Users,
-  TrendingUp,
   Download,
   RefreshCw,
   Eye,
-  Bug,
   Zap
 } from 'lucide-react';
 import { getErrorTracker } from '@/utils/errorTracking';
@@ -102,7 +99,7 @@ export const MonitoringDashboard: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  const getErrorSeverityColor = (level: string) => {
+  const _getErrorSeverityColor = (level: string) => {
     switch (level) {
       case 'critical': return 'destructive';
       case 'error': return 'destructive';
