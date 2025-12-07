@@ -12,7 +12,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { useShoppingCart } from '@/hooks/useShoppingCart';
-import { ShoppingCart, Plus, Minus, Trash2, X } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ShoppingCartDrawerProps {

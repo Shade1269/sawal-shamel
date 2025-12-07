@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { ShoppingCart, Plus, Minus, Trash2, ShoppingBag } from 'lucide-react';
 import { toast } from 'sonner';
 import { safeJsonParse } from '@/lib/utils';
@@ -42,7 +41,7 @@ export const SimpleCart: React.FC<SimpleCartProps> = ({
     setCartItems(items);
   };
 
-  const addToCart = (product: Omit<CartItem, 'quantity'>) => {
+  const addItemToCart = (product: Omit<CartItem, 'quantity'>) => {
     const existingItem = cartItems.find(item => item.id === product.id);
     
     if (existingItem) {
@@ -53,6 +52,9 @@ export const SimpleCart: React.FC<SimpleCartProps> = ({
       toast.success(`تم إضافة ${product.name} للسلة`);
     }
   };
+
+  // Export function for external use
+  void addItemToCart;
 
   const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {

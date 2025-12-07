@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle, Package, Banknote, MapPin, Phone, User } from 'lucide-react';
+import { CheckCircle, Package, Banknote, MapPin, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -35,9 +34,6 @@ interface CustomerInfo {
   notes: string;
 }
 
-const PAYMENT_METHOD_COD = 'CASH_ON_DELIVERY';
-const PAYMENT_STATUS_PENDING = 'PENDING';
-const ORDER_STATUS_PENDING = 'PENDING';
 const generateOrderNumber = () =>
   `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
 
@@ -47,7 +43,6 @@ export const SimpleCheckout: React.FC<SimpleCheckoutProps> = ({
   onOrderComplete,
   onCancel
 }) => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');

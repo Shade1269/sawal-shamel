@@ -4,11 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { StoreThemeProvider } from "@/components/store/ThemeProvider";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { StorefrontSession } from "@/utils/storefrontSession";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsolatedStoreCart } from "@/hooks/useIsolatedStoreCart";
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
-import { parseFeaturedCategories } from "@/hooks/useStoreSettings";
 import type { StoreSettings } from "@/hooks/useStoreSettings";
 
 // New Components
@@ -124,11 +123,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   // Cart management
   const {
     cart: isolatedCart,
-    loading: cartLoading,
     addToCart: addToIsolatedCart,
     updateQuantity: updateIsolatedQuantity,
     removeFromCart: removeFromIsolatedCart,
-    clearCart,
   } = useIsolatedStoreCart(affiliateStore?.id || "", storeSlug);
 
   // Fetch products
@@ -163,14 +160,15 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         affiliateProducts
           .filter((item) => item.products && item.products.is_active)
           .map(async (item) => {
+            const products = item.products!;
             const { data: ratingStats } = await (supabase.rpc as any)("get_product_rating_stats", {
-              p_product_id: item.products.id,
+              p_product_id: products.id,
             });
 
             return {
-              ...item.products,
-              commission_amount: item.products.price_sar * (item.commission_rate / 100),
-              final_price: item.products.price_sar,
+              ...products,
+              commission_amount: products.price_sar * ((item.commission_rate ?? 0) / 100),
+              final_price: products.price_sar,
               average_rating: ratingStats?.[0]?.average_rating || 0,
               total_reviews: ratingStats?.[0]?.total_reviews || 0,
               discount_percentage: Math.random() > 0.7 ? Math.floor(Math.random() * 30) + 10 : 0,
@@ -218,7 +216,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   });
 
   // Fetch store settings & banners
-  const { data: storeSettings } = useQuery<StoreSettings | null>({
+  const { data: _storeSettings } = useQuery<StoreSettings | null>({
     queryKey: ["affiliate-store-settings", affiliateStore?.id],
     queryFn: async () => {
       if (!affiliateStore?.id) return null;
@@ -281,7 +279,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         ?.filter((product) => {
           const matchesSearch =
             product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.description.toLowerCase().includes(searchQuery.toLowerCase());
+            (product.description || '').toLowerCase().includes(searchQuery.toLowerCase());
           const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
           const price = product.final_price || product.price_sar;
           const matchesPrice = price >= priceRange[0] && price <= priceRange[1];
@@ -676,10 +674,10 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             products={products.map((p) => ({
               id: p.id,
               title: p.title,
-              description: p.description,
+              description: p.description || '',
               price_sar: p.price_sar,
               stock: p.stock,
-              category: p.category,
+              category: p.category || '',
             }))}
             customerProfileId={customer?.profile_id}
             isAuthenticated={isAuthenticated}
