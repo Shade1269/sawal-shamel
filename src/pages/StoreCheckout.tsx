@@ -1,12 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  EnhancedButton,
   Card,
   CardContent,
   CardHeader,
@@ -17,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, ShoppingBag, MapPin, Phone, Mail, User } from 'lucide-react';
+import { ArrowRight, ShoppingBag, MapPin, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useSimpleCart } from '@/features/commerce';
@@ -27,14 +21,13 @@ interface AffiliateStore {
   store_name: string;
   store_slug: string;
   profiles?: {
-    full_name: string;
-  };
+    full_name: string | null;
+  } | null;
 }
 
 const StoreCheckout = () => {
   const { storeSlug } = useParams();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const [store, setStore] = useState<AffiliateStore | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -69,12 +62,12 @@ const StoreCheckout = () => {
             full_name
           )
         `)
-        .eq('store_slug', storeSlug)
+        .eq('store_slug', storeSlug ?? '')
         .eq('is_active', true)
         .maybeSingle();
 
       if (error) throw error;
-      setStore(storeData);
+      setStore(storeData as unknown as AffiliateStore);
     } catch (error) {
       console.error('Error fetching store data:', error);
       toast.error('خطأ في تحميل بيانات المتجر');

@@ -1,23 +1,16 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { 
-  EnhancedCard,
-  EnhancedCardContent,
-  EnhancedCardHeader,
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  EnhancedButton,
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { 
+  Card as EnhancedCard,
+  CardContent as EnhancedCardContent,
+  CardHeader as EnhancedCardHeader,
+  CardTitle as EnhancedCardTitle
+} from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,13 +33,6 @@ interface CustomerInfo {
   address: string;
   city: string;
   notes?: string;
-}
-
-interface ShippingMethod {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
 }
 
 const Shipping = () => {
@@ -83,6 +69,7 @@ const Shipping = () => {
   useEffect(() => {
     // فقط إذا كان المستخدم مسجل دخول
     if (!firebaseUser) return;
+    if (!slug) return;
     
     const fetchShopAndLoadData = async () => {
       // Fetch shop data first
@@ -138,7 +125,7 @@ const Shipping = () => {
   };
 
   const getShippingCost = () => {
-    const method = shippingMethods.find(m => m.id === selectedShipping);
+    const method = shippingMethods.find((m: { id: string; price: number }) => m.id === selectedShipping);
     return method ? method.price : 0;
   };
 

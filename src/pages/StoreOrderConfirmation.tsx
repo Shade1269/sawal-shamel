@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -75,6 +75,8 @@ const StoreOrderConfirmation = () => {
   }, [orderId, storeSlug]);
 
   const fetchOrderData = async () => {
+    if (!orderId || !storeSlug) return;
+    
     try {
       // جلب بيانات الطلب من order_hub - البحث باستخدام source_order_id أولاً
       let hubOrder = null;

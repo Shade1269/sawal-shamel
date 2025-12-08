@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { UnifiedButton as Button, UnifiedInput as Input, UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardDescription as CardDescription, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle, UnifiedBadge as Badge } from "@/components/design-system";
+import { UnifiedButton as Button, UnifiedInput as Input, UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle, UnifiedBadge as Badge } from "@/components/design-system";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
@@ -24,10 +24,6 @@ import { CronJobsMonitoring } from './components/CronJobsMonitoring';
 
 import { 
   Shield, 
-  Ban, 
-  VolumeX, 
-  Clock, 
-  AlertTriangle,
   User,
   Users,
   MessageSquare,
@@ -49,7 +45,7 @@ const ADMIN_EMAIL = "Shade199633@icloud.com";
 const Admin = () => {
   const { user } = useSupabaseAuth();
   const navigate = useNavigate();
-  const { addProduct, getShopProducts, addProductToLibrary } = useSupabaseUserData();
+  const { addProduct, getShopProducts } = useSupabaseUserData();
   const { toast } = useToast();
 
   const isAllowed = useMemo(() => user?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase(), [user]);
@@ -62,11 +58,12 @@ const Admin = () => {
   const [search, setSearch] = useState("");
   const [targetEmail, setTargetEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [selectedUserForProfile, setSelectedUserForProfile] = useState<any>(null);
   const [moderationReason, setModerationReason] = useState("");
-  const [moderationDuration, setModerationDuration] = useState("24h");
+  const [_moderationDuration, setModerationDuration] = useState("24h");
   const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
 const [loading, setLoading] = useState(false);
 const [addingProduct, setAddingProduct] = useState(false);
@@ -215,7 +212,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
 
-  const callAdminApi = async (action: string, body: any = {}) => {
+  const callAdminApi = async (_action: string, _body: object = {}) => {
     if (!user) {
       toast({ title: "غير مصرح", description: "سجل دخولك أولاً", variant: "destructive" });
       return { error: "unauthorized" };

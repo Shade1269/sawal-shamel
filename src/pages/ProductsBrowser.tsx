@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+
 import { 
   Package, 
   Search, 

@@ -1,20 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  EnhancedCard,
-  EnhancedCardContent,
-  EnhancedCardHeader,
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  EnhancedButton
-} from '@/components/ui/index';
-import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedBadge, UnifiedInput } from '@/components/design-system';
+import { useState, useEffect } from 'react';
+import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedInput } from '@/components/design-system';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Package, Edit, Eye, Truck, MapPin } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useShipmentTracking } from '@/hooks/useShipmentTracking';
 import { useShippingManagement } from '@/hooks/useShippingManagement';
 import ShipmentTrackingCard from '@/components/ShipmentTrackingCard';

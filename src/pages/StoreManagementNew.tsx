@@ -1,25 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  EnhancedCard,
-  EnhancedCardContent,
-  EnhancedCardHeader,
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  EnhancedButton
-} from '@/components/ui/index';
+import { useState, useEffect } from 'react';
 import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle, UnifiedInput } from '@/components/design-system';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useUserDataContext } from '@/contexts/UserDataContext';
-import { Package, Plus, Store, Activity, BarChart3, User, Calendar } from 'lucide-react';
-import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { Package, Plus, Store, Activity, BarChart3, Calendar } from 'lucide-react';
 import { UserDashboard } from '@/components/UserDashboard';
 import { ProductImageCarousel } from '@/features/commerce/components/ProductImageCarousel';
 
 const StoreManagement = () => {
-  const { user } = useSupabaseAuth();
   const { 
     userShop, 
     userActivities,
@@ -27,7 +16,6 @@ const StoreManagement = () => {
     createShop, 
     addProduct,
     getShopProducts,
-    logActivity 
   } = useUserDataContext();
   
   const { toast } = useToast();
@@ -338,7 +326,7 @@ const StoreManagement = () => {
                       <p className="text-sm font-medium">{activity.description}</p>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Calendar className="h-3 w-3" />
-                        {new Date(activity.created_at).toLocaleString('ar-SA')}
+                        {new Date(activity.created_at ?? new Date().toISOString()).toLocaleString('ar-SA')}
                       </div>
                     </div>
                   </div>

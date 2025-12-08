@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -30,7 +30,8 @@ const SimpleCODCheckout = () => {
     }
   }, [slug, navigate]);
 
-  const handleOrderComplete = (orderNumber: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleOrderComplete = (_orderNumber: string) => {
     // Clear cart after successful order
     localStorage.removeItem(`cart_${slug}`);
     

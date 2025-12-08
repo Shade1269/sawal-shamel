@@ -8,7 +8,7 @@ import {
   UnifiedBadge
 } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { 
   Plus, 
   Search, 
