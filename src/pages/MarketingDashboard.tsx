@@ -1,5 +1,4 @@
 import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
-import { UnifiedCard, UnifiedCardContent, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SocialMediaManager from '@/components/marketing/SocialMediaManager';
 import EmailCampaignManager from '@/components/marketing/EmailCampaignManager';

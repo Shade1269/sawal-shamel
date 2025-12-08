@@ -1,14 +1,5 @@
 import { useState, useEffect } from 'react';
 import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  InteractiveWidget,
-  EnhancedButton,
   Card,
   CardContent,
   CardDescription,
@@ -21,7 +12,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   CreditCard, 
@@ -31,18 +21,11 @@ import {
   EyeOff,
   TestTube,
   Check,
-  X,
   AlertTriangle,
   Smartphone,
   Banknote,
   Building,
-  Globe,
   Percent,
-  DollarSign,
-  Shield,
-  Activity,
-  TrendingUp,
-  Users
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -55,14 +38,14 @@ interface PaymentGateway {
   provider: string;
   is_enabled: boolean;
   is_test_mode: boolean;
-  fixed_fee_sar: number;
-  percentage_fee: number;
-  min_amount_sar: number;
-  max_amount_sar: number;
-  api_key: string;
-  secret_key: string;
-  merchant_id: string;
-  api_url: string;
+  fixed_fee_sar: number | null;
+  percentage_fee: number | null;
+  min_amount_sar: number | null;
+  max_amount_sar: number | null;
+  api_key: string | null;
+  secret_key: string | null;
+  merchant_id: string | null;
+  api_url: string | null;
   configuration: any;
   created_at: string;
 }
@@ -601,7 +584,7 @@ const PaymentGateways = () => {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">متوسط الرسوم</p>
                 <p className="text-2xl font-bold text-premium">
-                  {gateways.length ? (gateways.reduce((sum, g) => sum + g.percentage_fee, 0) / gateways.length).toFixed(1) : 0}%
+                  {gateways.length ? (gateways.reduce((sum, g) => sum + (g.percentage_fee ?? 0), 0) / gateways.length).toFixed(1) : 0}%
                 </p>
               </div>
               <div className="w-10 h-10 bg-premium/10 rounded-lg flex items-center justify-center">

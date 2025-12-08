@@ -362,7 +362,7 @@ const OrderConfirmationSimple: React.FC<OrderConfirmationProps> = ({
                   </div>
                 </div>
                 <span className="text-sm font-semibold text-[color:var(--accent)]">
-                  {formatCurrency(item.total_price_sar)}
+                  {formatCurrency(item.total_price_sar ?? 0)}
                 </span>
               </div>
             ))}

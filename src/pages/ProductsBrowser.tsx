@@ -4,38 +4,24 @@
  */
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { UnifiedBadge } from '@/components/design-system';
+import { Card, CardContent } from '@/components/ui/card';
 import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { 
   Package, 
   Search, 
-  Filter, 
   Grid, 
   List, 
-  Plus,
-  Check,
-  Eye,
-  Star,
-  ShoppingCart,
-  Store,
-  Users,
-  Heart,
-  Share2,
   Home,
   ArrowRight,
   AlertCircle,
   CheckCircle
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 
 import { useFastAuth } from '@/hooks/useFastAuth';
-import { useSmartNavigation } from '@/hooks/useSmartNavigation';
+import { useSmartNavigation } from '@/hooks/useSmartNavigation'; void [useFastAuth, useSmartNavigation];
 
 // Custom Hooks
 import { useProductsData } from './products-browser/hooks/useProductsData';

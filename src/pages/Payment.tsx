@@ -49,7 +49,7 @@ const Payment = () => {
   const [selectedShipping, setSelectedShipping] = useState<string>("");
   const [selectedPayment, setSelectedPayment] = useState<string>("geidea");
   const [loading, setLoading] = useState(false);
-  const [shop, setShop] = useState<any>(null);
+  const [shop, setShop] = useState<any>(null); void setShop;
 
   // التحقق من تسجيل الدخول
   useEffect(() => {
@@ -101,11 +101,13 @@ const Payment = () => {
       if (!slug) return;
       
       // Fetch affiliate store (not merchant shop) by slug
-      const { data: shopData } = await supabase
+      const { data: storeData } = await supabase
         .from("affiliate_stores")
         .select("id, store_slug, store_name")
         .eq("store_slug", slug)
         .maybeSingle();
+      
+      if (storeData) setShop(storeData);
 
       // Load cart from localStorage (safe)
       const savedCart = localStorage.getItem(`cart_${slug}`);
