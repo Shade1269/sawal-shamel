@@ -85,6 +85,7 @@ const AtlantisGuide = lazy(() => import("./pages/AtlantisGuide"));
 const ChatLanding = lazy(() => import("./features/chat/components/ChatLanding"));
 const AtlantisChatRooms = lazy(() => import("./features/chat/components/AtlantisChatRooms"));
 const AtlantisChat = lazy(() => import("./features/chat/components/AtlantisChat"));
+const FrostSurvival = lazy(() => import("./pages/FrostSurvival"));
 
 // AI Studio
 const AIStudio = lazy(() => import("./pages/AIStudio"));
@@ -149,6 +150,7 @@ const App = () => {
 
           {/* Atlantis System Routes */}
           <Route path="/atlantis" element={<AtlantisSystem />} />
+          <Route path="/atlantis/frost" element={<FrostSurvival />} />
           <Route path="/atlantis/chat" element={<AtlantisChatRooms />} />
           <Route path="/atlantis/chat/:roomId" element={<AtlantisChat />} />
 
