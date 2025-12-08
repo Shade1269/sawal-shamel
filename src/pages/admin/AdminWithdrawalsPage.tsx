@@ -40,7 +40,7 @@ const statusLabels = {
   COMPLETED: 'مكتمل',
 };
 
-const statusColors: Record<string, "default" | "secondary" | "destructive"> = {
+const _statusColors: Record<string, "default" | "secondary" | "destructive"> = {
   PENDING: "default",
   APPROVED: "secondary",
   REJECTED: "destructive",

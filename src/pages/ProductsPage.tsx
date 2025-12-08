@@ -46,12 +46,9 @@ const ProductsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [categories, setCategories] = useState<string[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [_selectedProduct, _setSelectedProduct] = useState<Product | null>(null);
+  const [_isProductModalOpen, _setIsProductModalOpen] = useState(false);
 
   useEffect(() => {
     fetchProducts();

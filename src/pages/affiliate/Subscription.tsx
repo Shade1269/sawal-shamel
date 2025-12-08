@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAffiliateSubscription } from '@/hooks/useAffiliateSubscription';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';

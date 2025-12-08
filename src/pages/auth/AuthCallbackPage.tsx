@@ -15,7 +15,7 @@ const AuthCallbackPage = () => {
 
   useEffect(() => {
     // 1) استمع لحالة المصادقة أولاً لمنع فقدان الأحداث
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
         setState('success');
         setMessage('تم التحقق من الجلسة بنجاح. جارٍ توجيهك...');

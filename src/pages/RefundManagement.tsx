@@ -79,10 +79,8 @@ const RefundManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showCreateRefund, setShowCreateRefund] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedRefund, setSelectedRefund] = useState<Refund | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [refundItems, setRefundItems] = useState<RefundItem[]>([]);
+  const [_selectedRefund, _setSelectedRefund] = useState<Refund | null>(null);
+  const [_refundItems, _setRefundItems] = useState<RefundItem[]>([]);
   
   // بيانات إنشاء مرتجع جديد
   const [newRefund, setNewRefund] = useState({
@@ -148,7 +146,7 @@ const RefundManagement = () => {
 
       if (error) throw error;
       
-      setRefundItems((data || []) as unknown as RefundItem[]);
+      _setRefundItems((data || []) as unknown as RefundItem[]);
     } catch (error) {
       console.error('Error fetching refund items:', error);
     }

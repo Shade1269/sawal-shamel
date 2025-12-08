@@ -1,31 +1,20 @@
-import React, { useState } from 'react';
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  InteractiveWidget,
-  EnhancedButton
-} from '@/components/ui/index';
-import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
-import { UnifiedBadge } from '@/components/design-system';
+import { useState } from 'react';
+import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle, UnifiedButton, UnifiedBadge } from '@/components/design-system';
 import { Switch } from '@/components/ui/switch';
 import { 
   Shield, 
-  Users, 
   Crown, 
   Store, 
   Star, 
   ShoppingCart,
-  Settings,
   Eye,
   Edit,
-  Trash2,
-  Plus
+  Plus,
+  Settings
 } from 'lucide-react';
+
+type RoleKey = 'admin' | 'merchant' | 'affiliate' | 'customer';
+type PermissionKey = 'users_manage' | 'products_manage' | 'orders_manage' | 'reports_view' | 'settings_manage' | 'system_admin';
 
 const AdminPermissions = () => {
   const [permissions, setPermissions] = useState({
@@ -92,7 +81,7 @@ const AdminPermissions = () => {
     system_admin: 'إدارة النظام'
   };
 
-  const togglePermission = (role: string, permission: string) => {
+  const togglePermission = (role: RoleKey, permission: PermissionKey) => {
     setPermissions(prev => ({
       ...prev,
       [role]: {
@@ -155,8 +144,8 @@ const AdminPermissions = () => {
                       {Object.entries(permissionLabels).map(([permKey]) => (
                        <td key={permKey} className="text-center p-2 md:p-4">
                           <Switch
-                            checked={role.permissions[permKey]}
-                            onCheckedChange={() => togglePermission(roleKey, permKey)}
+                            checked={role.permissions[permKey as PermissionKey]}
+                            onCheckedChange={() => togglePermission(roleKey as RoleKey, permKey as PermissionKey)}
                             disabled={roleKey === 'admin' && permKey === 'system_admin'}
                           />
                         </td>

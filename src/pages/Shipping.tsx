@@ -267,7 +267,7 @@ const Shipping = () => {
                   </div>
                 ) : shippingMethods.length > 0 ? (
                   <RadioGroup value={selectedShipping} onValueChange={handleShippingChange}>
-                    {shippingMethods.map((method) => (
+                    {shippingMethods.map((method: { id: string; name: string; description?: string; price: number }) => (
                       <div key={method.id} className="flex items-center space-x-2 space-x-reverse p-4 border rounded-lg">
                         <RadioGroupItem value={method.id} id={method.id} />
                         <Label htmlFor={method.id} className="flex-1 cursor-pointer">

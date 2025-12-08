@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Crown,
   Flame,
@@ -10,8 +10,7 @@ import {
   Sword,
   Shield,
   Star,
-  TrendingUp,
-  ChevronUp
+  TrendingUp
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -395,7 +394,7 @@ const MiniLeaderboard = () => {
 
 // الصفحة الرئيسية
 export default function FrostSurvival() {
-  const [temperature, setTemperature] = useState(72);
+  const [temperature, _setTemperature] = useState(72);
 
   // بيانات تجريبية
   const players = [

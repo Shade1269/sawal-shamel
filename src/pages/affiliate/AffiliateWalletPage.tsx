@@ -35,7 +35,6 @@ import {
   CheckCircle,
   XCircle,
   DollarSign,
-  TrendingUp,
   Send,
   History
 } from 'lucide-react';

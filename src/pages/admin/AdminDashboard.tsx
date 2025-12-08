@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { UnifiedButton as Button, UnifiedInput as Input, UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle, UnifiedBadge as Badge } from "@/components/design-system";
 import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -58,12 +58,11 @@ const Admin = () => {
   const [search, setSearch] = useState("");
   const [targetEmail, setTargetEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [_selectedUser, _setSelectedUser] = useState<any>(null);
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [selectedUserForProfile, setSelectedUserForProfile] = useState<any>(null);
   const [moderationReason, setModerationReason] = useState("");
-  const [_moderationDuration, setModerationDuration] = useState("24h");
+  const [moderationDuration, _setModerationDuration] = useState("24h");
   const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
 const [loading, setLoading] = useState(false);
 const [addingProduct, setAddingProduct] = useState(false);
@@ -299,8 +298,8 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
       }
       
       // Process variants with their images
-      const processedVariants = productVariants
-        .filter(v => v.size || v.color) // Only include variants with at least size or color
+      void productVariants
+        .filter(v => v.size || v.color)
         .map(variant => ({
           variant_type: variant.size && variant.color ? 'size_color' : variant.size ? 'size' : 'color',
           variant_value: variant.size && variant.color ? `${variant.size} - ${variant.color}` : variant.size || variant.color,
@@ -412,9 +411,8 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
         expiresAt = new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
       }
 
-      let insertData;
       if (action === 'mute') {
-        insertData = {
+        void {
           user_id: targetUser.id,
           muted_by: currentProfile.id,
           channel_id: channels[0]?.id || null,
@@ -424,7 +422,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
         };
         // Firebase moderation logic will be implemented here
       } else {
-        insertData = {
+        void {
           user_id: targetUser.id,
           banned_by: currentProfile.id,
           channel_id: action === 'tempban' ? channels[0]?.id : null,
@@ -440,7 +438,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
         description: `تم ${action === 'ban' ? 'حظر' : action === 'tempban' ? 'حظر مؤقت' : 'إسكات'} ${targetUser.full_name || targetUser.email} بنجاح`
       });
 
-      setSelectedUser(null);
+      _setSelectedUser(null);
       setModerationReason("");
       loadLists();
     } catch (error) {
@@ -1495,7 +1493,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
                       <UserSettingsMenu 
                         user={user}
                         currentUserRole={currentUserProfile?.role || 'affiliate'}
-                        onModerationAction={handleModerationAction}
+                        onModerationAction={handleModerationAction as (action: string, user: any, reason: string, duration?: string) => Promise<void>}
                         onRoleChange={handleRoleChange}
                       />
                     </div>

@@ -46,12 +46,11 @@ const ThemeStudioPage: React.FC = () => {
 
   // استخدام محرك الثيمات المتقدم
   const {
-    isLoading,
     applyTemplate,
     previewTheme,
     exitPreview,
     generateSmartPalette
-  } = useAdvancedThemes(storeId || undefined);
+  } = useAdvancedThemes(storeId ?? undefined);
   void [applyTemplate, previewTheme, exitPreview, generateSmartPalette];
 
   const handleThemeApplied = (theme: any) => {
@@ -160,7 +159,7 @@ const ThemeStudioPage: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <AdvancedThemeBuilder
-                storeId={storeId}
+                storeId={storeId ?? undefined}
                 onThemeApplied={handleThemeApplied}
               />
             </motion.div>

@@ -32,7 +32,7 @@ const MerchantDashboard = () => {
       const { data: profileRow, error: profileErr } = await supabase
         .from('profiles')
         .select('id, full_name, email')
-        .eq('auth_user_id', profile.auth_user_id)
+        .eq('auth_user_id', profile.auth_user_id ?? '')
         .maybeSingle();
 
       if (profileErr && profileErr.code !== 'PGRST116') {

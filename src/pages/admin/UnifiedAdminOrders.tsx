@@ -1,5 +1,5 @@
-import { lazy, Suspense, useMemo, useState } from "react";
-import { CalendarDays, Download, Filter, Loader2, RefreshCw, Search, Eye } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Download, RefreshCw, Search } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { useFastAuth } from "@/hooks/useFastAuth";
 import { maskPhone, shouldShowFullCustomerData } from "@/lib/privacy";
@@ -39,8 +39,8 @@ const UnifiedAdminOrders = () => {
   const { profile } = useFastAuth();
   const showFullData = shouldShowFullCustomerData(profile?.role);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [_selectedOrderId, _setSelectedOrderId] = useState<string | null>(null);
+  const [_drawerOpen, _setDrawerOpen] = useState(false);
 
   const status = searchParams.get("status") || "";
   const dateRange = searchParams.get("dateRange") || "30d";
@@ -78,9 +78,9 @@ const UnifiedAdminOrders = () => {
           order.order_number,
           order.customer_name,
           showFullData ? order.customer_phone : maskPhone(order.customer_phone),
-          order.total_amount_sar,
-          statusLabels[order.status] || order.status,
-          sourceLabels[order.source] || order.source,
+          order.total_amount_sar ?? 0,
+          statusLabels[order.status ?? 'pending'] || order.status,
+          sourceLabels[order.source ?? 'manual'] || order.source,
           new Date(order.created_at).toLocaleDateString("ar-SA"),
         ].join(",")
       ),
@@ -236,10 +236,10 @@ const UnifiedAdminOrders = () => {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="font-semibold text-lg">#{order.order_number}</span>
-                    <UnifiedBadge variant={statusVariants[order.status] as any}>
-                      {statusLabels[order.status] || order.status}
+                    <UnifiedBadge variant={statusVariants[order.status ?? 'pending'] as any}>
+                      {statusLabels[order.status ?? 'pending'] || order.status}
                     </UnifiedBadge>
-                    <UnifiedBadge variant="outline">{sourceLabels[order.source] || order.source}</UnifiedBadge>
+                    <UnifiedBadge variant="outline">{sourceLabels[order.source ?? 'manual'] || order.source}</UnifiedBadge>
                   </div>
                   <div className="text-sm text-muted-foreground space-y-1">
                     <p>
@@ -254,7 +254,7 @@ const UnifiedAdminOrders = () => {
                     <p>
                       المبلغ:{" "}
                       <span className="text-foreground font-semibold">
-                        {order.total_amount_sar.toFixed(2)} ر.س
+                        {(order.total_amount_sar ?? 0).toFixed(2)} ر.س
                       </span>
                     </p>
                   </div>
