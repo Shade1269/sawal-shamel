@@ -14,7 +14,6 @@ import {
   Keyboard, 
   TrendingUp, 
   Users, 
-  BarChart3,
   Sparkles,
   Rocket,
   Target

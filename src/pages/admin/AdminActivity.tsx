@@ -1,15 +1,4 @@
-import React, { useState } from 'react';
-import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  VirtualizedList,
-  EnhancedButton
-} from '@/components/ui/index';
+import { useState } from 'react';
 import { UnifiedButton, UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { UnifiedBadge } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
@@ -21,11 +10,8 @@ import {
   Download,
   User,
   ShoppingCart,
-  Settings,
   Shield,
   Eye,
-  Edit,
-  Trash2,
   RefreshCw
 } from 'lucide-react';
 

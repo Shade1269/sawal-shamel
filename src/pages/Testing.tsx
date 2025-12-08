@@ -1,4 +1,3 @@
-import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DataQualityDashboard } from '@/components/testing/DataQualityDashboard';
 import { UnifiedSystemTester } from '@/components/testing/UnifiedSystemTester';

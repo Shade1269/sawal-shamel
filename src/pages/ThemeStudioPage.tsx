@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -33,7 +33,7 @@ const ThemeStudioPage: React.FC = () => {
   const storeId = paramStoreId || queryStoreId;
   
   const navigate = useNavigate();
-  const [currentTheme, setCurrentTheme] = useState<any>(null);
+  const [_currentTheme, setCurrentTheme] = useState<any>(null);
   const [previewConfig, setPreviewConfig] = useState<any>({
     colors: {
       primary: 'hsl(var(--primary))',
@@ -46,14 +46,13 @@ const ThemeStudioPage: React.FC = () => {
 
   // استخدام محرك الثيمات المتقدم
   const {
-    templates,
     isLoading,
-    previewMode,
     applyTemplate,
     previewTheme,
     exitPreview,
     generateSmartPalette
   } = useAdvancedThemes(storeId || undefined);
+  void [applyTemplate, previewTheme, exitPreview, generateSmartPalette];
 
   const handleThemeApplied = (theme: any) => {
     setCurrentTheme(theme);

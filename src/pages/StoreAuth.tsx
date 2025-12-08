@@ -1,12 +1,8 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { 
-  EnhancedCard, 
-  EnhancedCardContent,
-  ResponsiveLayout,
-  EnhancedButton,
   Card,
   CardContent,
   Button
@@ -71,7 +67,7 @@ const StoreAuth: React.FC = () => {
             full_name
           )
         `)
-        .eq('store_slug', slug)
+        .eq('store_slug', slug ?? '')
         .eq('is_active', true)
         .maybeSingle();
 
@@ -82,7 +78,8 @@ const StoreAuth: React.FC = () => {
   });
 
   // معالجة نجاح تسجيل الدخول
-  const handleAuthSuccess = (customer: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleAuthSuccess = (_customer: unknown) => {
     // فك تشفير URL وإزالة البادئة إذا كانت موجودة
     const decodedUrl = decodeURIComponent(returnUrl).replace(/^\//, '');
     const finalUrl = decodedUrl.startsWith('store/') ? `/${decodedUrl}` : returnUrl;

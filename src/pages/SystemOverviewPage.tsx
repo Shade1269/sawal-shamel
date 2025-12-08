@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { UnifiedBadge } from '@/components/design-system';
-import { UnifiedButton } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { 
@@ -11,24 +10,15 @@ import {
   Layers, 
   Database, 
   Sparkles, 
-  TrendingUp, 
-  Users, 
-  Zap,
   Navigation,
   Layout,
-  ShoppingCart,
   BarChart3,
-  Settings,
-  Search,
-  Activity,
-  Target,
   Star,
   Calendar,
   Globe,
   Shield,
   Cpu,
   Palette,
-  MousePointer,
   Trophy
 } from 'lucide-react';
 import { motion } from 'framer-motion';

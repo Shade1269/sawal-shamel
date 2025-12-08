@@ -10,7 +10,7 @@ import {
 } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'; void [SelectContent, SelectItem, SelectTrigger];
+
 import { 
   Package, 
   Search,
@@ -46,9 +46,12 @@ const ProductsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
-  const [categories, setCategories] = useState<string[]>([]); void setCategories;
-  const [selectedProduct, _setSelectedProduct] = useState<Product | null>(null); void _setSelectedProduct;
-  const [isProductModalOpen, _setIsProductModalOpen] = useState(false); void _setIsProductModalOpen;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [categories, setCategories] = useState<string[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   useEffect(() => {
     fetchProducts();

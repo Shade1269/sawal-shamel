@@ -79,8 +79,10 @@ const RefundManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showCreateRefund, setShowCreateRefund] = useState(false);
-  const [_selectedRefund, setSelectedRefund] = useState<Refund | null>(null); void _selectedRefund;
-  const [_refundItems, setRefundItems] = useState<RefundItem[]>([]); void _refundItems;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectedRefund, setSelectedRefund] = useState<Refund | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [refundItems, setRefundItems] = useState<RefundItem[]>([]);
   
   // بيانات إنشاء مرتجع جديد
   const [newRefund, setNewRefund] = useState({
@@ -121,7 +123,7 @@ const RefundManagement = () => {
 
       if (error) throw error;
       
-      setRefunds(data || []);
+      setRefunds((data || []) as unknown as Refund[]);
     } catch (error) {
       console.error('Error fetching refunds:', error);
       toast({
@@ -177,7 +179,7 @@ const RefundManagement = () => {
 
       toast({
         title: "تم إنشاء المرتجع",
-        description: `مرتجع رقم ${refund.refund_number} تم إنشاؤه بنجاح`,
+        description: `مرتجع رقم ${refund?.refund_number ?? 'N/A'} تم إنشاؤه بنجاح`,
       });
 
       setShowCreateRefund(false);

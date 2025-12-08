@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  EnhancedButton,
   Card,
   CardContent,
   CardHeader,
@@ -22,7 +16,6 @@ import {
   Database, 
   Lock, 
   FileText, 
-  Settings,
   RefreshCw,
   Eye
 } from "lucide-react";
