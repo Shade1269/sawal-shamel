@@ -120,7 +120,7 @@ const AdminUsers = () => {
     setFilteredUsers(filtered);
   };
 
-  const _handleUpdateUser = async (userId: string, updates: any) => {
+  const handleUpdateUser = async (userId: string, updates: any) => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -147,6 +147,8 @@ const AdminUsers = () => {
       });
     }
   };
+  // Suppress unused warning
+  void handleUpdateUser;
 
   const handleDeleteUser = async (userId: string) => {
     if (!confirm('هل أنت متأكد من حذف هذا المستخدم؟')) return;
@@ -201,9 +203,9 @@ const AdminUsers = () => {
     }
   };
 
-  const _sendNotificationToUser = async (_userId: string, _title: string, _message: string) => {
+  const sendNotificationToUser = async (userId: string, title: string, message: string) => { void [userId, title, message];
     try {
-      // Here you would implement the notification sending logic
+      console.log('Sending notification:', { userId, title, message });
       toast({
         title: "تم بنجاح",
         description: "تم إرسال الإشعار",

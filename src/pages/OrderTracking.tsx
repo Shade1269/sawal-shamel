@@ -84,12 +84,12 @@ const OrderTracking = () => {
 
       setOrder({
         id: hubOrder.id,
-        order_number: hubOrder.order_number,
-        customer_name: hubOrder.customer_name,
-        customer_phone: hubOrder.customer_phone,
-        status: hubOrder.status,
+        order_number: hubOrder.order_number ?? '',
+        customer_name: hubOrder.customer_name ?? '',
+        customer_phone: hubOrder.customer_phone ?? '',
+        status: hubOrder.status ?? 'PENDING',
         payment_status: hubOrder.payment_status || 'PENDING',
-        total_sar: hubOrder.total_amount_sar,
+        total_sar: hubOrder.total_amount_sar ?? 0,
         created_at: hubOrder.created_at,
         tracking_number: additionalData.tracking_number || null,
         shipping_address: additionalData.shipping_address || {},

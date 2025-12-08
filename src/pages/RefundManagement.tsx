@@ -1,15 +1,5 @@
 import { useState, useEffect } from 'react';
 import { 
-  EnhancedCard, 
-  EnhancedCardContent, 
-  EnhancedCardDescription, 
-  EnhancedCardHeader, 
-  EnhancedCardTitle,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  VirtualizedList,
-  InteractiveWidget,
-  EnhancedButton,
   Card,
   CardContent,
   CardDescription,
@@ -25,7 +15,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   RefreshCw, 
-  Plus, 
   Search, 
   Download, 
   Eye, 
@@ -34,12 +23,7 @@ import {
   Clock,
   AlertTriangle,
   DollarSign,
-  Receipt,
-  Package,
-  CreditCard,
-  FileText,
-  User,
-  Calendar,
+  Plus,
   ArrowLeft,
   CheckCircle,
   XCircle
@@ -53,7 +37,7 @@ interface Refund {
   refund_number: string;
   refund_type: string;
   reason: string;
-  description: string;
+  description: string | null;
   original_amount_sar: number;
   refund_amount_sar: number;
   refund_fee_sar: number;
@@ -95,8 +79,8 @@ const RefundManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showCreateRefund, setShowCreateRefund] = useState(false);
-  const [selectedRefund, setSelectedRefund] = useState<Refund | null>(null);
-  const [refundItems, setRefundItems] = useState<RefundItem[]>([]);
+  const [_selectedRefund, setSelectedRefund] = useState<Refund | null>(null); void _selectedRefund;
+  const [_refundItems, setRefundItems] = useState<RefundItem[]>([]); void _refundItems;
   
   // بيانات إنشاء مرتجع جديد
   const [newRefund, setNewRefund] = useState({
@@ -150,7 +134,7 @@ const RefundManagement = () => {
     }
   };
 
-  const fetchRefundItems = async (refundId: string) => {
+  const fetchRefundItems = async (refundId: string) => { void refundId;
     try {
       const { data, error } = await supabase
         .from('refund_items')
@@ -162,11 +146,11 @@ const RefundManagement = () => {
 
       if (error) throw error;
       
-      setRefundItems(data || []);
+      setRefundItems((data || []) as unknown as RefundItem[]);
     } catch (error) {
       console.error('Error fetching refund items:', error);
     }
-  };
+  }; void fetchRefundItems;
 
   const createRefund = async () => {
     try {

@@ -49,8 +49,8 @@ interface Transaction {
   gateway_name: string | null;
   created_at: string;
   order_id: string;
-  customer_name?: string;
-  net_amount_sar?: number;
+  customer_name?: string | null;
+  net_amount_sar?: number | null;
 }
 
 interface PaymentGateway {
@@ -556,7 +556,7 @@ const PaymentDashboard = () => {
                     </td>
                     <td className="p-3">
                       <div className="font-medium">
-                        {transaction.net_amount_sar.toLocaleString()} ر.س
+                        {(transaction.net_amount_sar ?? 0).toLocaleString()} ر.س
                       </div>
                     </td>
                     <td className="p-3">

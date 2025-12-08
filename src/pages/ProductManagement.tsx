@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   UnifiedButton,
   UnifiedCard,
   UnifiedCardContent,
-  UnifiedCardDescription,
   UnifiedCardHeader,
   UnifiedCardTitle,
   UnifiedBadge
@@ -13,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Plus, 
   Search, 
-  Filter, 
+  Filter,
   Edit, 
   Eye, 
   Trash2, 
@@ -31,23 +30,27 @@ import { useToast } from '@/hooks/use-toast';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { BackButton } from '@/components/ui/back-button';
 
+interface Category {
+  id: string;
+  name: string;
+}
+
+interface Brand {
+  id: string;
+  name: string;
+}
+
 interface Product {
   id: string;
   title: string;
-  description?: string;
+  description?: string | null;
   price_sar: number;
   stock: number;
   is_active: boolean;
-  featured: boolean;
-  sku?: string;
-  category?: {
-    id: string;
-    name: string;
-  };
-  brand?: {
-    id: string;
-    name: string;
-  };
+  featured: boolean | null;
+  sku?: string | null;
+  category?: Category | null;
+  brand?: Brand | null;
   images: Array<{
     id: string;
     image_url: string;
@@ -59,13 +62,13 @@ interface Product {
 }
 
 const ProductManagement = () => {
-  const { profile } = useFastAuth();
+  const { } = useFastAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [_brands, setBrands] = useState<Brand[]>([]); void _brands;
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -108,9 +111,9 @@ const ProductManagement = () => {
 
       if (brandsError) throw brandsError;
 
-      setProducts(productsData || []);
-      setCategories(categoriesData || []);
-      setBrands(brandsData || []);
+      setProducts((productsData || []) as unknown as Product[]);
+      setCategories((categoriesData || []) as unknown as Category[]);
+      setBrands((brandsData || []) as unknown as Brand[]);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast({

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { 
   UnifiedCard, 
   UnifiedCardContent, 
-  UnifiedCardDescription, 
   UnifiedCardHeader, 
   UnifiedCardTitle,
   UnifiedButton,
@@ -11,39 +10,45 @@ import {
 } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'; void [SelectContent, SelectItem, SelectTrigger];
 import { 
   Package, 
   Search,
-  Filter,
-  ShoppingCart,
-  Star,
   Eye,
-  Heart,
-  Share,
   Plus,
   Home,
-  ArrowRight
+  ArrowRight,
+  Filter
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { ProductVariantDisplay } from '@/components/products/ProductVariantDisplay';
 
+interface Product {
+  id: string;
+  title: string;
+  description?: string | null;
+  price_sar: number;
+  view_count?: number | null;
+  created_at: string;
+  category?: string | null;
+}
+
 const ProductsPage = () => {
   const navigate = useNavigate();
   const { profile, isAuthenticated } = useFastAuth();
   const { toast } = useToast();
   
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
-  const [categories, setCategories] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [categories, setCategories] = useState<string[]>([]); void setCategories;
+  const [selectedProduct, _setSelectedProduct] = useState<Product | null>(null); void _setSelectedProduct;
+  const [isProductModalOpen, _setIsProductModalOpen] = useState(false); void _setIsProductModalOpen;
 
   useEffect(() => {
     fetchProducts();
@@ -70,10 +75,10 @@ const ProductsPage = () => {
 
       if (error) throw error;
 
-      setProducts(data || []);
+      setProducts((data || []) as unknown as Product[]);
       
       // استخراج الفئات
-      const uniqueCategories = [...new Set(data?.map(p => p.category).filter(Boolean))];
+      const uniqueCategories = [...new Set((data || []).map((p: { category?: string | null }) => p.category).filter((c): c is string => Boolean(c)))];
       setCategories(uniqueCategories);
 
     } catch (error) {
@@ -137,7 +142,7 @@ const ProductsPage = () => {
       const { data: baseProfile, error: baseProfileError } = await supabase
         .from('profiles')
         .select('id, full_name')
-        .eq('auth_user_id', profile.auth_user_id)
+        .eq('auth_user_id', profile?.auth_user_id ?? '')
         .maybeSingle();
 
       if (baseProfileError || !baseProfile) {
@@ -176,6 +181,15 @@ const ProductsPage = () => {
       }
 
       // أضف المنتج إلى مكتبة المتجر
+      if (!store) {
+        toast({
+          title: "خطأ",
+          description: "تعذر إنشاء المتجر",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('affiliate_products')
         .insert({
