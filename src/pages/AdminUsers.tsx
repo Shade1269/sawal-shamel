@@ -203,8 +203,7 @@ const AdminUsers = () => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const sendNotificationToUser = async (userId: string, title: string, message: string) => { void [userId, title, message];
+  const _sendNotificationToUser = async (userId: string, title: string, message: string) => {
     try {
       console.log('Sending notification:', { userId, title, message });
       toast({

@@ -16,7 +16,7 @@ const MerchantOrders = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'confirmed' | 'delivered'>('all');
 
-  const { data: orders = [], isLoading } = useOrdersByMerchant(merchantId);
+  const { data: orders = [], isLoading } = useOrdersByMerchant(merchantId ?? undefined);
 
   useEffect(() => {
     const fetchMerchantId = async () => {

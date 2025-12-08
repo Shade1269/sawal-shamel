@@ -19,7 +19,6 @@ import {
   CheckCircle,
   XCircle,
   User,
-  Phone,
   DollarSign,
 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -39,7 +38,7 @@ const statusLabels = {
   COMPLETED: 'مكتمل',
 };
 
-const statusColors: Record<string, "default" | "secondary" | "destructive"> = {
+const _statusColors: Record<string, "default" | "secondary" | "destructive"> = {
   PENDING: "default",
   APPROVED: "secondary",
   REJECTED: "destructive",

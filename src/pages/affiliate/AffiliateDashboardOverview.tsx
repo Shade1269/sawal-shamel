@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useAffiliateOrders } from '@/hooks/useAffiliateOrders';
 import { UnifiedCard, UnifiedCardHeader, UnifiedCardTitle, UnifiedCardContent } from '@/components/design-system';
 import { UnifiedButton } from '@/components/design-system';
 import { UnifiedBadge } from '@/components/design-system';
-import { Store, Package, ShoppingBag, DollarSign, Users, TrendingUp, ExternalLink, Palette, FileText, Megaphone, Sparkles } from 'lucide-react';
+import { Store, Package, ShoppingBag, DollarSign, TrendingUp, ExternalLink, Palette, FileText, Megaphone, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createStoreUrl } from '@/utils/domains';
 
 export default function AffiliateDashboardOverview() {
   const { user } = useSupabaseAuth();
-  const queryClient = useQueryClient();
-  const [creating, setCreating] = useState(false);
+  const [_creating, _setCreating] = useState(false);
 
   const handleCreateStore = () => {
     // توجيه المستخدم لصفحة إنشاء المتجر
@@ -47,7 +46,7 @@ export default function AffiliateDashboardOverview() {
   });
 
   // Use affiliate orders hook
-  const { stats: orderStats, loading: ordersLoading } = useAffiliateOrders(affiliateStore?.id);
+  const { stats: orderStats } = useAffiliateOrders(affiliateStore?.id);
 
   // Get products count
   const { data: productsCount } = useQuery({

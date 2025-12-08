@@ -1,9 +1,8 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
-import { UnifiedCard, UnifiedCardHeader, UnifiedCardTitle, UnifiedCardContent } from '@/components/design-system';
+import { UnifiedCard, UnifiedCardContent } from '@/components/design-system';
 import { UnifiedButton } from '@/components/design-system';
 import { UnifiedBadge } from '@/components/design-system';
 import { Switch } from '@/components/ui/switch';
@@ -100,7 +99,7 @@ export default function AffiliateProductsPage() {
         description: "تم تحديث إعدادات المنتج بنجاح",
       });
     },
-    onError: (error) => {
+    onError: (_error) => {
       toast({
         title: "خطأ في التحديث",
         description: "فشل في تحديث إعدادات المنتج",

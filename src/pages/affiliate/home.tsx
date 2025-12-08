@@ -32,10 +32,10 @@ export const AffiliateHomeView = (props: AffiliateHomeViewProps) => <AffiliateHo
 
 export const resolveAffiliateHomeState = (
   props: Pick<AffiliateHomeViewProps, 'loading' | 'isAuthorized' | 'store'>,
-) => resolveAffiliateHomeStateRuntime(props);
+) => resolveAffiliateHomeStateRuntime(props as any);
 
-export const describeAffiliateHomeSections = (props: AffiliateHomeViewProps) =>
-  describeAffiliateHomeSectionsRuntime(props);
+export const describeAffiliateHomeSections = (_props: AffiliateHomeViewProps) =>
+  describeAffiliateHomeSectionsRuntime();
 
 const AffiliateHomePage = () => {
   const { profile, loading: authLoading, isAffiliate, isAdmin } = useFastAuth();

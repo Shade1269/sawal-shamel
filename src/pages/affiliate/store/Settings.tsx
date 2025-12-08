@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAffiliateStore } from '@/hooks/useAffiliateStore';
 import { AffiliateStoreManager } from '@/features/affiliate/components/AffiliateStoreManager';

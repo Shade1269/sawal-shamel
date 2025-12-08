@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
@@ -11,7 +11,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { ShoppingCart, Plus, Minus, Store, Package, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
-import { useDarkMode } from '@/shared/components/DarkModeProvider';
 
 interface AffiliateStore {
   id: string;
@@ -41,7 +40,6 @@ interface StoreProduct {
 
 export default function AffiliateStorefrontPage() {
   const { store_slug } = useParams<{ store_slug: string }>();
-  const { isDarkMode } = useDarkMode();
 
   const [showCheckout, setShowCheckout] = useState(false);
   const [customerData, setCustomerData] = useState({
