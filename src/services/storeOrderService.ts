@@ -1,9 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
+// Database types available from @/integrations/supabase/types
 
-type PaymentMethod = Database['public']['Enums']['payment_method'];
-type PaymentStatus = Database['public']['Enums']['payment_status'];
-type OrderStatus = Database['public']['Enums']['order_status'];
+// Types available: PaymentMethod, PaymentStatus, OrderStatus from Database['public']['Enums']
 
 interface CreateOrderData {
   customerName: string;
@@ -19,13 +17,7 @@ interface CreateOrderData {
   };
 }
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-const PAYMENT_METHOD_COD: PaymentMethod = 'CASH_ON_DELIVERY';
-const PAYMENT_STATUS_PENDING: PaymentStatus = 'PENDING';
-const ORDER_STATUS_PENDING: OrderStatus = 'PENDING';
-const generateOrderNumber = () =>
-  `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
-/* eslint-enable @typescript-eslint/no-unused-vars */
+// Reserved order constants: PAYMENT_METHOD_COD, PAYMENT_STATUS_PENDING, ORDER_STATUS_PENDING, generateOrderNumber
 
 export const storeOrderService = {
   async createOrderFromCart(

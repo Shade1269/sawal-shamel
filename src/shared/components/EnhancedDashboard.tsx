@@ -11,10 +11,8 @@ import {
   Users, 
   Award,
   Target,
-  Zap,
   Bell,
   Settings,
-  BarChart3,
   Activity,
   Crown,
   Star,
@@ -24,11 +22,8 @@ import {
 import { motion } from 'framer-motion';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useAtlantisSystem } from '@/hooks/useAtlantisSystem';
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import StatsOverview, { getDashboardStats, getInventoryStats } from './StatsOverview';
-import QuickActionPanel, { getAdminActions, getAffiliateActions, getCustomerActions } from './QuickActionPanel';
-import ActivityFeed, { generateSampleActivities } from './ActivityFeed';
-/* eslint-enable @typescript-eslint/no-unused-vars */
+import { getDashboardStats, getInventoryStats } from './StatsOverview';
+import { generateSampleActivities } from './ActivityFeed';
 
 interface QuickAction {
   id: string;
@@ -156,32 +151,7 @@ const EnhancedDashboard: React.FC = () => {
     ];
   };
 
-  const _stats = [
-    {
-      title: 'النقاط الإجمالية',
-      value: userLevel?.total_points || 0,
-      change: '+12%',
-      icon: <Zap className="w-4 h-4" />
-    },
-    {
-      title: 'المستوى الحالي',
-      value: userLevel?.current_level || 'برونزي',
-      change: '',
-      icon: <Award className="w-4 h-4" />
-    },
-    {
-      title: 'العمليات اليوم',
-      value: 5,
-      change: '+8%',
-      icon: <Activity className="w-4 h-4" />
-    },
-    {
-      title: 'نشاط الأسبوع',
-      value: '85%',
-      change: '+5%',
-      icon: <BarChart3 className="w-4 h-4" />
-    }
-  ];
+  // Stats data computed based on userLevel
 
   if (!isAuthenticated) {
     return (

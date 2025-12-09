@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getTheme } from '@/themes/registry';
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import type { ThemeConfig } from '@/themes/types';
-/* eslint-enable @typescript-eslint/no-unused-vars */
+// ThemeConfig type available from @/themes/types
 
 /**
  * Unified Theme Provider

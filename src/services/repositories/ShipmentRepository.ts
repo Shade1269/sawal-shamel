@@ -3,9 +3,7 @@ import type { Database } from "@/integrations/supabase/types";
 
 type Shipment = Database['public']['Tables']['shipments']['Row'];
 type ShipmentInsert = Database['public']['Tables']['shipments']['Insert'];
-/* eslint-disable @typescript-eslint/no-unused-vars */
-type ShipmentEvent = Database['public']['Tables']['shipment_events']['Row'];
-/* eslint-enable @typescript-eslint/no-unused-vars */
+// ShipmentEvent type available from Database['public']['Tables']['shipment_events']['Row']
 
 export interface ShipmentHistory {
   event_id: string;

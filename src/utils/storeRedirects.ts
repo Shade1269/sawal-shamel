@@ -10,10 +10,7 @@ export const STORE_DOMAINS = {
   'sawalshamel.com': 'my-boutique',
 } as const;
 
-// فحص إذا كان النطاق الحالي متجر
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { ATLANTIS_DOMAIN } from '@/utils/domains';
-/* eslint-enable @typescript-eslint/no-unused-vars */
+// ATLANTIS_DOMAIN available from @/utils/domains
 
 // ... الكود الموجود ...
 
