@@ -152,6 +152,7 @@ const App = () => {
           {/* Atlantis System Routes */}
           <Route path="/atlantis" element={<AtlantisSystem />} />
           <Route path="/atlantis/frost" element={<FrostSurvival />} />
+          <Route path="/atlantis/world" element={<AtlantisWorld />} />
           <Route path="/atlantis/chat" element={<AtlantisChatRooms />} />
           <Route path="/atlantis/chat/:roomId" element={<AtlantisChat />} />
 
