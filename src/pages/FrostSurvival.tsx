@@ -233,7 +233,7 @@ const TroopsPanel = ({ troops, onTrain }: any) => {
 };
 
 // استيراد الخريطة الموسعة
-import { ExpandedWorldMap } from '@/features/atlantis-world/components/ExpandedWorldMap';
+import { GameWorldMap } from '@/features/atlantis-world/components/GameWorldMap';
 
 // المتصدرين
 const MiniLeaderboard = ({ currentRank }: { currentRank: number }) => {
@@ -458,30 +458,13 @@ export default function AtlantisWorld() {
       {/* المحتوى */}
       <main className="relative z-20 container mx-auto px-4 pb-20">
         {activeView === 'map' ? (
-          <Card className="bg-card border-border p-6">
-            <h3 className="text-foreground font-bold mb-4 flex items-center gap-2">
-              <Crown className="w-5 h-5 text-accent" /> خريطة العالم
-            </h3>
-            <ExpandedWorldMap 
-              player={player} 
-              onTileClick={(tile: any) => toast.info(`الإحداثيات: ${tile.x}, ${tile.y}`)}
-              onMove={(pos) => setPlayer(p => ({ ...p, position: pos }))}
-              onGather={(tile: any) => {
-                if (tile.type === 'forest') setResources(r => ({ ...r, wood: r.wood + 30 }));
-                else if (tile.type === 'goldmine') setResources(r => ({ ...r, coins: r.coins + 50 }));
-                else if (tile.type === 'farm') setResources(r => ({ ...r, food: r.food + 20 }));
-              }}
-              onAttack={(tile: any) => {
-                const power = tile.level * 300;
-                if (player.power > power) {
-                  setResources(r => ({ ...r, coins: r.coins + 100, gems: r.gems + 5 }));
-                  toast.success('انتصرت في المعركة! 🎉');
-                } else {
-                  toast.error('خسرت المعركة!');
-                }
-              }}
-            />
-          </Card>
+          <GameWorldMap 
+            playerPosition={player.position}
+            playerName={player.name}
+            playerPower={player.power}
+            onLocationClick={(loc) => toast.info(`اخترت: ${loc.name}`)}
+            onMove={(x, y) => setPlayer(p => ({ ...p, position: { x, y } }))}
+          />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* الشريط الجانبي */}
