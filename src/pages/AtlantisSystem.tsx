@@ -25,7 +25,6 @@ import {
   Sparkles,
   MessageCircle,
   Gamepad2,
-  Snowflake,
   Zap,
   Gift,
   Globe
@@ -55,11 +54,11 @@ export const AtlantisSystem = () => {
       route: '/atlantis/world'
     },
     {
-      icon: <Snowflake className="w-6 h-6" />,
-      title: 'صقيع أتلانتس',
-      description: 'لعبة البقاء والمنافسة',
-      color: 'from-blue-600 to-cyan-600',
-      route: '/atlantis/frost'
+      icon: <MessageCircle className="w-6 h-6" />,
+      title: 'غرف الدردشة',
+      description: 'تواصل مع المجتمع',
+      color: 'from-purple-600 to-pink-600',
+      route: '/atlantis/chat'
     },
     {
       icon: <MessageCircle className="w-6 h-6" />,

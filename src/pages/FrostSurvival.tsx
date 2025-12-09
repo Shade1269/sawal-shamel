@@ -1,36 +1,60 @@
-import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import {
   Crown,
   Flame,
   Snowflake,
   Home,
-  Trophy,
-  Sword,
   Shield,
-  Star,
   TrendingUp,
   Zap,
-  Gift,
-  Timer,
-  Sparkles
+  Sparkles,
+  Map,
+  LayoutGrid,
+  Building2,
+  Swords,
+  Users,
+  ArrowUp,
+  Plus
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { BackButton } from '@/components/ui/back-button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
+import { useAtlantisSystem } from '@/hooks/useAtlantisSystem';
+
+// ================= الإعدادات =================
+const BUILDING_CONFIGS = {
+  castle: { icon: '🏰', nameAr: 'القلعة', maxLevel: 30, baseCost: { wood: 0, coins: 0 } },
+  barracks: { icon: '⚔️', nameAr: 'الثكنة', maxLevel: 25, baseCost: { wood: 200, coins: 500 } },
+  farm: { icon: '🌾', nameAr: 'المزرعة', maxLevel: 25, baseCost: { wood: 150, coins: 100 } },
+  lumbermill: { icon: '🪓', nameAr: 'المنشرة', maxLevel: 25, baseCost: { wood: 0, coins: 150 } },
+  goldmine: { icon: '💰', nameAr: 'منجم الذهب', maxLevel: 25, baseCost: { wood: 200, coins: 0 } },
+  wall: { icon: '🧱', nameAr: 'السور', maxLevel: 30, baseCost: { wood: 100, coins: 400 } },
+};
+
+const TROOP_CONFIGS = {
+  warrior: { icon: '⚔️', nameAr: 'محارب', attack: 10, defense: 8, cost: { food: 10, coins: 50 } },
+  archer: { icon: '🏹', nameAr: 'رامي', attack: 12, defense: 4, cost: { food: 10, coins: 60 } },
+  cavalry: { icon: '🐴', nameAr: 'فارس', attack: 15, defense: 10, cost: { food: 20, coins: 100 } },
+};
+
+// ================= المكونات =================
 
 // مكون الثلج المتساقط
 const Snowfall = () => {
-  const snowflakes = Array.from({ length: 50 }, (_, i) => ({
+  const snowflakes = useMemo(() => Array.from({ length: 40 }, (_, i) => ({
     id: i,
     left: Math.random() * 100,
     delay: Math.random() * 5,
     duration: 3 + Math.random() * 4,
     size: 4 + Math.random() * 8,
-  }));
+  })), []);
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-10">
@@ -40,17 +64,8 @@ const Snowfall = () => {
           className="absolute text-white/60"
           style={{ left: `${flake.left}%`, fontSize: flake.size }}
           initial={{ y: -20, opacity: 0 }}
-          animate={{
-            y: '100vh',
-            opacity: [0, 1, 1, 0],
-            x: [0, 10, -10, 0]
-          }}
-          transition={{
-            duration: flake.duration,
-            delay: flake.delay,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
+          animate={{ y: '100vh', opacity: [0, 1, 1, 0], x: [0, 10, -10, 0] }}
+          transition={{ duration: flake.duration, delay: flake.delay, repeat: Infinity, ease: 'linear' }}
         >
           ❄
         </motion.div>
@@ -59,169 +74,26 @@ const Snowfall = () => {
   );
 };
 
-// مكون القاعدة
-const PlayerBase = ({
-  player,
-  position,
-  isCurrentUser = false
-}: {
-  player: { name: string; level: number; avatar: string; houses: number };
-  position: { x: number; y: number };
-  isCurrentUser?: boolean;
-}) => {
-  const houses = Array.from({ length: Math.min(player.houses, 5) }, (_, i) => i);
+// شريط الموارد
+const ResourcesBar = ({ resources }: { resources: any }) => (
+  <div className="flex items-center gap-2 flex-wrap">
+    <Badge variant="outline" className="bg-yellow-500/20 text-yellow-300 gap-1">💰 {resources.coins}</Badge>
+    <Badge variant="outline" className="bg-amber-600/20 text-amber-300 gap-1">🪵 {resources.wood}</Badge>
+    <Badge variant="outline" className="bg-green-500/20 text-green-300 gap-1">🍖 {resources.food}</Badge>
+    <Badge variant="outline" className="bg-purple-500/20 text-purple-300 gap-1">💎 {resources.gems}</Badge>
+  </div>
+);
 
-  return (
-    <motion.div
-      className="absolute flex flex-col items-center"
-      style={{ left: `${position.x}%`, top: `${position.y}%` }}
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 0.5, type: 'spring' }}
-      whileHover={{ scale: 1.1 }}
-    >
-      {/* النار */}
-      <motion.div
-        className="text-2xl mb-1"
-        animate={{ scale: [1, 1.2, 1] }}
-        transition={{ duration: 0.5, repeat: Infinity }}
-      >
-        🔥
-      </motion.div>
-
-      {/* البيوت */}
-      <div className="flex gap-1 mb-1">
-        {houses.map((_, i) => (
-          <motion.span
-            key={i}
-            className="text-lg"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.7 + i * 0.1 }}
-          >
-            🏠
-          </motion.span>
-        ))}
-      </div>
-
-      {/* الشخصية */}
-      <motion.div
-        className={`text-3xl ${isCurrentUser ? 'drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]' : ''}`}
-        animate={{ y: [0, -3, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        {player.avatar}
-      </motion.div>
-
-      {/* الاسم */}
-      <div className={`mt-1 px-2 py-0.5 rounded-full text-xs font-bold ${
-        isCurrentUser
-          ? 'bg-blue-500 text-white'
-          : 'bg-black/50 text-white'
-      }`}>
-        {player.name}
-      </div>
-
-      {/* المستوى */}
-      <div className="flex items-center gap-1 mt-1">
-        <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-        <span className="text-xs text-white font-bold">{player.level}</span>
-      </div>
-    </motion.div>
-  );
-};
-
-// مكون القلعة
-const Castle = ({ owner, alliance }: { owner: string; alliance: string }) => {
-  return (
-    <motion.div
-      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ delay: 0.3, type: 'spring', stiffness: 100 }}
-    >
-      {/* التاج */}
-      <motion.div
-        className="text-4xl mb-2"
-        animate={{
-          y: [0, -5, 0],
-          rotateZ: [0, 5, -5, 0]
-        }}
-        transition={{ duration: 3, repeat: Infinity }}
-      >
-        👑
-      </motion.div>
-
-      {/* القلعة */}
-      <motion.div
-        className="text-7xl drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]"
-        animate={{ scale: [1, 1.02, 1] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        🏰
-      </motion.div>
-
-      {/* النيران حول القلعة */}
-      <div className="flex gap-4 mt-2">
-        <motion.span
-          className="text-2xl"
-          animate={{ scale: [1, 1.3, 1] }}
-          transition={{ duration: 0.6, repeat: Infinity }}
-        >
-          🔥
-        </motion.span>
-        <motion.span
-          className="text-2xl"
-          animate={{ scale: [1, 1.3, 1] }}
-          transition={{ duration: 0.6, repeat: Infinity, delay: 0.3 }}
-        >
-          🔥
-        </motion.span>
-      </div>
-
-      {/* معلومات المالك */}
-      <motion.div
-        className="mt-3 bg-gradient-to-r from-yellow-600 to-amber-500 px-4 py-2 rounded-lg shadow-lg"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-      >
-        <div className="text-white text-center">
-          <div className="flex items-center justify-center gap-2 font-bold">
-            <Sword className="w-4 h-4" />
-            <span>{owner}</span>
-          </div>
-          <div className="text-xs text-yellow-100 flex items-center justify-center gap-1">
-            <Shield className="w-3 h-3" />
-            {alliance}
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-};
-
-// مكون شريط الحرارة
+// شريط الحرارة
 const TemperatureBar = ({ value, onDanger }: { value: number; onDanger?: () => void }) => {
   useEffect(() => {
-    if (value < 20 && onDanger) {
-      onDanger();
-    }
+    if (value < 20 && onDanger) onDanger();
   }, [value, onDanger]);
 
-  const getColor = () => {
-    if (value < 30) return 'bg-blue-500';
-    if (value < 60) return 'bg-yellow-500';
-    return 'bg-orange-500';
-  };
-
-  const getStatus = () => {
-    if (value < 30) return { text: 'خطر! 🥶', color: 'text-blue-400' };
-    if (value < 60) return { text: 'حذر ⚠️', color: 'text-yellow-400' };
-    return { text: 'دافئ 🔥', color: 'text-orange-400' };
-  };
-
-  const status = getStatus();
+  const getColor = () => value < 30 ? 'bg-blue-500' : value < 60 ? 'bg-yellow-500' : 'bg-orange-500';
+  const status = value < 30 ? { text: 'خطر! 🥶', color: 'text-blue-400' } : 
+                 value < 60 ? { text: 'حذر ⚠️', color: 'text-yellow-400' } : 
+                 { text: 'دافئ 🔥', color: 'text-orange-400' };
 
   return (
     <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-4">
@@ -230,160 +102,212 @@ const TemperatureBar = ({ value, onDanger }: { value: number; onDanger?: () => v
           <Snowflake className="w-5 h-5 text-blue-300" />
           <span className="text-white font-bold">الحرارة</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Flame className="w-5 h-5 text-orange-400" />
-          <span className={`font-bold ${status.color}`}>{status.text}</span>
-        </div>
+        <span className={`font-bold ${status.color}`}>{status.text}</span>
       </div>
       <div className="relative h-4 bg-gray-700 rounded-full overflow-hidden">
-        <motion.div
-          className={`h-full ${getColor()} rounded-full`}
-          initial={{ width: 0 }}
-          animate={{ width: `${value}%` }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-xs font-bold text-white drop-shadow">{value}%</span>
-        </div>
+        <motion.div className={`h-full ${getColor()} rounded-full`} animate={{ width: `${value}%` }} />
+        <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">{value}%</span>
       </div>
     </Card>
   );
 };
 
-// مكون إحصائيات اللاعب
-const PlayerStats = ({ stats }: { stats: { wood: number; food: number; coins: number; rank: number } }) => {
+// بطاقة البروفايل
+const PlayerProfileCard = ({ player, atlantisLevel }: { player: any; atlantisLevel: string }) => {
+  const levelStyles: any = {
+    bronze: { bg: 'bg-orange-500/20', text: 'text-orange-400', icon: '🥉' },
+    silver: { bg: 'bg-gray-400/20', text: 'text-gray-300', icon: '🥈' },
+    gold: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', icon: '🥇' },
+    legendary: { bg: 'bg-purple-500/20', text: 'text-purple-400', icon: '👑' }
+  };
+  const style = levelStyles[atlantisLevel] || levelStyles.bronze;
+
   return (
     <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-4">
-      <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-        <Trophy className="w-5 h-5 text-yellow-400" />
-        مواردك
-      </h3>
-      <div className="grid grid-cols-2 gap-3">
-        <motion.div 
-          className="flex items-center gap-2 bg-white/10 rounded-lg p-2"
-          whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.2)' }}
-        >
-          <span className="text-2xl">🪵</span>
-          <div>
-            <div className="text-xs text-gray-400">حطب</div>
-            <div className="text-white font-bold">{stats.wood}</div>
-          </div>
-        </motion.div>
-        <motion.div 
-          className="flex items-center gap-2 bg-white/10 rounded-lg p-2"
-          whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.2)' }}
-        >
-          <span className="text-2xl">🍖</span>
-          <div>
-            <div className="text-xs text-gray-400">طعام</div>
-            <div className="text-white font-bold">{stats.food}</div>
-          </div>
-        </motion.div>
-        <motion.div 
-          className="flex items-center gap-2 bg-white/10 rounded-lg p-2"
-          whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.2)' }}
-        >
-          <span className="text-2xl">💰</span>
-          <div>
-            <div className="text-xs text-gray-400">عملات</div>
-            <div className="text-white font-bold">{stats.coins}</div>
-          </div>
-        </motion.div>
-        <motion.div 
-          className="flex items-center gap-2 bg-white/10 rounded-lg p-2"
-          whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.2)' }}
-        >
-          <span className="text-2xl">🏆</span>
-          <div>
-            <div className="text-xs text-gray-400">ترتيبك</div>
-            <div className="text-white font-bold">#{stats.rank}</div>
-          </div>
-        </motion.div>
+      <div className="flex items-center gap-4 mb-4">
+        <div className={`w-16 h-16 rounded-xl ${style.bg} flex items-center justify-center text-3xl`}>
+          {player.avatar}
+        </div>
+        <div>
+          <h3 className="text-white font-bold text-lg">{player.name}</h3>
+          <Badge className={`${style.bg} ${style.text}`}>{style.icon} {atlantisLevel}</Badge>
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-center">
+        <div className="bg-white/10 rounded-lg p-2">
+          <Shield className="w-4 h-4 mx-auto text-primary mb-1" />
+          <p className="text-white font-bold">{player.power}</p>
+          <p className="text-xs text-gray-400">قوة</p>
+        </div>
+        <div className="bg-white/10 rounded-lg p-2">
+          <Building2 className="w-4 h-4 mx-auto text-accent mb-1" />
+          <p className="text-white font-bold">{player.buildings}</p>
+          <p className="text-xs text-gray-400">مباني</p>
+        </div>
+        <div className="bg-white/10 rounded-lg p-2">
+          <Swords className="w-4 h-4 mx-auto text-destructive mb-1" />
+          <p className="text-white font-bold">{player.troops}</p>
+          <p className="text-xs text-gray-400">جنود</p>
+        </div>
       </div>
     </Card>
   );
 };
 
-// مكون التحدي الأسبوعي
-const WeeklyChallenge = ({ progress, target }: { progress: number; target: number }) => {
-  const [timeLeft, setTimeLeft] = useState({ days: 3, hours: 14, minutes: 22 });
+// لوحة المباني
+const BuildingsPanel = ({ buildings, onBuild, onUpgrade }: any) => (
+  <ScrollArea className="h-[350px]">
+    <div className="space-y-3 pr-2">
+      {buildings.map((building: any) => {
+        const config = BUILDING_CONFIGS[building.type as keyof typeof BUILDING_CONFIGS];
+        return (
+          <motion.div
+            key={building.id}
+            className="p-3 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-2xl">
+                {config?.icon}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-white font-bold">{config?.nameAr}</h4>
+                  <Badge variant="secondary">مستوى {building.level}</Badge>
+                </div>
+                <Progress value={(building.level / 25) * 100} className="h-1.5 mt-2" />
+              </div>
+              <Button size="sm" onClick={() => onUpgrade(building.id)} className="gap-1">
+                <ArrowUp className="w-3 h-3" /> ترقية
+              </Button>
+            </div>
+          </motion.div>
+        );
+      })}
+      
+      <Button 
+        variant="outline" 
+        className="w-full border-dashed border-white/30 text-white hover:bg-white/10"
+        onClick={() => onBuild('farm')}
+      >
+        <Plus className="w-4 h-4 ml-2" /> بناء مبنى جديد
+      </Button>
+    </div>
+  </ScrollArea>
+);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev.minutes > 0) {
-          return { ...prev, minutes: prev.minutes - 1 };
-        } else if (prev.hours > 0) {
-          return { ...prev, hours: prev.hours - 1, minutes: 59 };
-        } else if (prev.days > 0) {
-          return { ...prev, days: prev.days - 1, hours: 23, minutes: 59 };
-        }
-        return prev;
-      });
-    }, 60000);
-    return () => clearInterval(timer);
+// لوحة الجيش
+const TroopsPanel = ({ troops, onTrain }: any) => {
+  const totalTroops = troops.reduce((s: number, t: any) => s + t.count, 0);
+  
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-3 gap-2 text-center">
+        <div className="bg-white/10 rounded-lg p-3">
+          <Users className="w-5 h-5 mx-auto text-white mb-1" />
+          <p className="text-white font-bold">{totalTroops}</p>
+          <p className="text-xs text-gray-400">إجمالي</p>
+        </div>
+        <div className="bg-red-500/20 rounded-lg p-3">
+          <Swords className="w-5 h-5 mx-auto text-red-400 mb-1" />
+          <p className="text-white font-bold">{troops.reduce((s: number, t: any) => s + (TROOP_CONFIGS[t.type as keyof typeof TROOP_CONFIGS]?.attack || 0) * t.count, 0)}</p>
+          <p className="text-xs text-gray-400">هجوم</p>
+        </div>
+        <div className="bg-blue-500/20 rounded-lg p-3">
+          <Shield className="w-5 h-5 mx-auto text-blue-400 mb-1" />
+          <p className="text-white font-bold">{troops.reduce((s: number, t: any) => s + (TROOP_CONFIGS[t.type as keyof typeof TROOP_CONFIGS]?.defense || 0) * t.count, 0)}</p>
+          <p className="text-xs text-gray-400">دفاع</p>
+        </div>
+      </div>
+      
+      <ScrollArea className="h-[250px]">
+        <div className="space-y-2">
+          {troops.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              <Swords className="w-12 h-12 mx-auto mb-3 opacity-30" />
+              <p>لا يوجد جنود</p>
+            </div>
+          ) : troops.map((troop: any) => {
+            const config = TROOP_CONFIGS[troop.type as keyof typeof TROOP_CONFIGS];
+            return (
+              <div key={troop.id} className="p-3 rounded-lg bg-white/5 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{config?.icon}</span>
+                  <div>
+                    <p className="text-white font-medium">{config?.nameAr}</p>
+                    <p className="text-xs text-gray-400">⚔️{config?.attack} 🛡️{config?.defense}</p>
+                  </div>
+                </div>
+                <Badge variant="secondary">×{troop.count}</Badge>
+              </div>
+            );
+          })}
+        </div>
+      </ScrollArea>
+      
+      <div className="grid grid-cols-3 gap-2">
+        {Object.entries(TROOP_CONFIGS).map(([type, config]) => (
+          <Button 
+            key={type}
+            size="sm" 
+            variant="outline"
+            className="text-white border-white/30"
+            onClick={() => onTrain(type, 5)}
+          >
+            {config.icon} +5
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// خريطة العالم
+const WorldMap = ({ player, onTileClick }: any) => {
+  const tiles = useMemo(() => {
+    const t = [];
+    for (let y = 0; y < 8; y++) {
+      for (let x = 0; x < 10; x++) {
+        const r = Math.random();
+        t.push({
+          id: `${x}_${y}`, x, y,
+          type: r < 0.15 ? 'forest' : r < 0.25 ? 'mountain' : r < 0.30 ? 'goldmine' : 'empty'
+        });
+      }
+    }
+    return t;
   }, []);
 
-  const percentage = Math.min((progress / target) * 100, 100);
+  const icons: any = { forest: '🌲', mountain: '⛰️', goldmine: '💰', empty: null };
+  const colors: any = { forest: 'bg-green-500/30', mountain: 'bg-stone-500/30', goldmine: 'bg-yellow-500/30', empty: 'bg-white/5' };
 
   return (
-    <Card className="bg-gradient-to-br from-purple-900/60 to-blue-900/60 backdrop-blur-sm border-purple-500/30 p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-white font-bold flex items-center gap-2">
-          <motion.span
-            animate={{ rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            🌨️
-          </motion.span>
-          العاصفة الأسبوعية
-        </h3>
-        <Badge className="bg-red-500/80">نشط</Badge>
-      </div>
-
-      <div className="bg-black/30 rounded-lg p-3 mb-3">
-        <p className="text-white text-sm mb-2">🎯 اجمع الموارد قبل انتهاء العاصفة</p>
-        <div className="flex items-center gap-2">
-          <Progress value={percentage} className="flex-1" />
-          <span className="text-white text-sm font-bold">{progress}/{target}</span>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between">
-        <div className="text-gray-300 text-xs flex items-center gap-1">
-          <Timer className="w-3 h-3" />
-          الوقت المتبقي:
-        </div>
-        <div className="flex gap-2 text-white font-mono">
-          <span className="bg-black/40 px-2 py-1 rounded">{timeLeft.days}d</span>
-          <span className="bg-black/40 px-2 py-1 rounded">{timeLeft.hours}h</span>
-          <span className="bg-black/40 px-2 py-1 rounded">{timeLeft.minutes}m</span>
-        </div>
-      </div>
-
-      <div className="mt-3 pt-3 border-t border-white/10">
-        <div className="text-xs text-gray-400 mb-1 flex items-center gap-1">
-          <Gift className="w-3 h-3" />
-          المكافأة:
-        </div>
-        <div className="flex gap-2">
-          <Badge variant="secondary">+50 🪵</Badge>
-          <Badge variant="secondary">+30 🍖</Badge>
-          <Badge variant="secondary">+100 💰</Badge>
-        </div>
-      </div>
-    </Card>
+    <div className="grid grid-cols-10 gap-1">
+      {tiles.map((tile) => (
+        <motion.div
+          key={tile.id}
+          className={`aspect-square rounded ${colors[tile.type]} flex items-center justify-center cursor-pointer hover:scale-110 transition-transform`}
+          onClick={() => onTileClick?.(tile)}
+          whileHover={{ scale: 1.1 }}
+        >
+          {tile.x === player.position.x && tile.y === player.position.y ? (
+            <span className="text-lg">🏰</span>
+          ) : icons[tile.type] ? (
+            <span className="text-sm opacity-70">{icons[tile.type]}</span>
+          ) : null}
+        </motion.div>
+      ))}
+    </div>
   );
 };
 
-// مكون المتصدرين المصغر
+// المتصدرين
 const MiniLeaderboard = ({ currentRank }: { currentRank: number }) => {
   const leaders = [
     { rank: 1, name: 'أحمد', points: 2450, avatar: '👨‍💼' },
     { rank: 2, name: 'سارة', points: 2180, avatar: '👩‍💼' },
     { rank: 3, name: 'خالد', points: 1920, avatar: '🧔' },
     { rank: currentRank, name: 'أنت', points: 1650, avatar: '😎', isYou: true },
-    { rank: 5, name: 'نورة', points: 1580, avatar: '👩' },
   ];
 
   return (
@@ -396,26 +320,14 @@ const MiniLeaderboard = ({ currentRank }: { currentRank: number }) => {
         {leaders.map((leader) => (
           <motion.div
             key={leader.rank}
-            className={`flex items-center gap-2 p-2 rounded-lg ${
-              leader.isYou ? 'bg-blue-500/30 border border-blue-500/50' : 'bg-white/5'
-            }`}
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: leader.rank * 0.1 }}
-            whileHover={{ scale: 1.02, x: 5 }}
+            className={`flex items-center gap-2 p-2 rounded-lg ${leader.isYou ? 'bg-blue-500/30' : 'bg-white/5'}`}
+            whileHover={{ x: 5 }}
           >
-            <span className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${
-              leader.rank === 1 ? 'bg-yellow-500 text-black' :
-              leader.rank === 2 ? 'bg-gray-400 text-black' :
-              leader.rank === 3 ? 'bg-amber-700 text-white' :
-              'bg-gray-700 text-white'
-            }`}>
-              {leader.rank}
-            </span>
+            <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
+              leader.rank === 1 ? 'bg-yellow-500' : leader.rank === 2 ? 'bg-gray-400' : 'bg-gray-700 text-white'
+            }`}>{leader.rank}</span>
             <span className="text-xl">{leader.avatar}</span>
-            <span className={`flex-1 text-sm ${leader.isYou ? 'text-blue-300 font-bold' : 'text-white'}`}>
-              {leader.name}
-            </span>
+            <span className={`flex-1 text-sm ${leader.isYou ? 'text-blue-300 font-bold' : 'text-white'}`}>{leader.name}</span>
             <span className="text-yellow-400 font-bold text-sm">{leader.points}</span>
           </motion.div>
         ))}
@@ -424,349 +336,280 @@ const MiniLeaderboard = ({ currentRank }: { currentRank: number }) => {
   );
 };
 
-// مكون الإشعار المنبثق
-const ActionNotification = ({ 
-  message, 
-  icon, 
-  type 
-}: { 
-  message: string; 
-  icon: string; 
-  type: 'success' | 'warning' | 'info';
-}) => {
-  const bgColor = {
-    success: 'from-green-600/90 to-emerald-600/90',
-    warning: 'from-orange-600/90 to-amber-600/90',
-    info: 'from-blue-600/90 to-cyan-600/90'
-  }[type];
-
-  return (
-    <motion.div
-      className={`fixed top-20 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full bg-gradient-to-r ${bgColor} backdrop-blur-sm shadow-2xl`}
-      initial={{ y: -50, opacity: 0, scale: 0.8 }}
-      animate={{ y: 0, opacity: 1, scale: 1 }}
-      exit={{ y: -50, opacity: 0, scale: 0.8 }}
-    >
-      <div className="flex items-center gap-3 text-white font-bold">
-        <span className="text-2xl">{icon}</span>
-        <span>{message}</span>
+// التحدي الأسبوعي
+const WeeklyChallenge = ({ progress, target }: { progress: number; target: number }) => (
+  <Card className="bg-gradient-to-br from-purple-900/60 to-blue-900/60 backdrop-blur-sm border-purple-500/30 p-4">
+    <div className="flex items-center justify-between mb-3">
+      <h3 className="text-white font-bold flex items-center gap-2">🌨️ العاصفة الأسبوعية</h3>
+      <Badge className="bg-red-500/80">نشط</Badge>
+    </div>
+    <div className="bg-black/30 rounded-lg p-3 mb-3">
+      <p className="text-white text-sm mb-2">🎯 اجمع الموارد قبل انتهاء العاصفة</p>
+      <div className="flex items-center gap-2">
+        <Progress value={(progress / target) * 100} className="flex-1" />
+        <span className="text-white text-sm font-bold">{progress}/{target}</span>
       </div>
-    </motion.div>
-  );
-};
+    </div>
+    <div className="flex gap-2">
+      <Badge variant="secondary">+50 🪵</Badge>
+      <Badge variant="secondary">+30 🍖</Badge>
+      <Badge variant="secondary">+100 💰</Badge>
+    </div>
+  </Card>
+);
 
-// الصفحة الرئيسية
-export default function FrostSurvival() {
-  const { toast } = useToast();
+// ================= الصفحة الرئيسية =================
+export default function AtlantisWorld() {
+  const { toast: toastHook } = useToast();
+  const atlantisSystem = useAtlantisSystem();
+  const [activeView, setActiveView] = useState<'kingdom' | 'map'>('kingdom');
   const [temperature, setTemperature] = useState(72);
-  const [playerStats, setPlayerStats] = useState({ wood: 156, food: 89, coins: 1250, rank: 4 });
   const [challengeProgress, setChallengeProgress] = useState(9);
-  const [notification, setNotification] = useState<{ message: string; icon: string; type: 'success' | 'warning' | 'info' } | null>(null);
-  const [houses, setHouses] = useState(3);
+  
+  // بيانات اللاعب
+  const [player, setPlayer] = useState({
+    name: 'مملكتي',
+    avatar: '👑',
+    level: 5,
+    power: 1250,
+    position: { x: 5, y: 4 },
+    buildings: 4,
+    troops: 25,
+  });
+  
+  const [resources, setResources] = useState({
+    coins: 1500,
+    wood: 800,
+    food: 600,
+    gems: 15,
+  });
+  
+  const [buildings, setBuildings] = useState([
+    { id: 'castle_1', type: 'castle', level: 5 },
+    { id: 'farm_1', type: 'farm', level: 3 },
+    { id: 'lumbermill_1', type: 'lumbermill', level: 2 },
+    { id: 'barracks_1', type: 'barracks', level: 2 },
+  ]);
+  
+  const [troops, setTroops] = useState([
+    { id: 'warrior_1', type: 'warrior', count: 15 },
+    { id: 'archer_1', type: 'archer', count: 10 },
+  ]);
 
-  // بيانات اللاعبين
-  const players = [
-    { name: 'أحمد', level: 12, avatar: '👨‍💼', houses: 4 },
-    { name: 'سارة', level: 10, avatar: '👩‍💼', houses: 3 },
-    { name: 'خالد', level: 8, avatar: '🧔', houses: 2 },
-    { name: 'نورة', level: 7, avatar: '👩', houses: 2 },
-  ];
-
-  const currentPlayer = { name: 'أنت', level: 9, avatar: '😎', houses };
-
-  const positions = [
-    { x: 15, y: 25 },
-    { x: 80, y: 20 },
-    { x: 12, y: 70 },
-    { x: 85, y: 75 },
-  ];
-
-  // تأثير انخفاض الحرارة تلقائياً
+  // تأثير انخفاض الحرارة
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTemperature(prev => Math.max(0, prev - 1));
-    }, 5000);
+    const timer = setInterval(() => setTemperature(prev => Math.max(0, prev - 1)), 8000);
     return () => clearInterval(timer);
   }, []);
 
-  const showNotification = useCallback((message: string, icon: string, type: 'success' | 'warning' | 'info') => {
-    setNotification({ message, icon, type });
-    setTimeout(() => setNotification(null), 3000);
-  }, []);
-
-  // أشعل النار
+  // إجراءات اللعبة
   const handleLightFire = () => {
-    if (playerStats.wood >= 10) {
-      setPlayerStats(prev => ({ ...prev, wood: prev.wood - 10 }));
-      setTemperature(prev => Math.min(100, prev + 25));
-      showNotification('+25 حرارة! 🔥', '🔥', 'success');
-      setChallengeProgress(prev => prev + 1);
+    if (resources.wood >= 10) {
+      setResources(r => ({ ...r, wood: r.wood - 10 }));
+      setTemperature(t => Math.min(100, t + 25));
+      toast.success('+25 حرارة! 🔥');
+      setChallengeProgress(p => p + 1);
     } else {
-      toast({
-        title: 'لا يوجد حطب كافٍ!',
-        description: 'تحتاج 10 حطب لإشعال النار',
-        variant: 'destructive'
-      });
+      toast.error('تحتاج 10 حطب');
     }
   };
 
-  // ابنِ بيت
   const handleBuildHouse = () => {
-    if (playerStats.wood >= 50 && playerStats.coins >= 100) {
-      setPlayerStats(prev => ({ 
-        ...prev, 
-        wood: prev.wood - 50, 
-        coins: prev.coins - 100 
-      }));
-      setHouses(prev => prev + 1);
-      showNotification('بنيت بيتاً جديداً! 🏠', '🏠', 'success');
-      setChallengeProgress(prev => prev + 2);
+    if (resources.wood >= 50 && resources.coins >= 100) {
+      setResources(r => ({ ...r, wood: r.wood - 50, coins: r.coins - 100 }));
+      setPlayer(p => ({ ...p, buildings: p.buildings + 1 }));
+      toast.success('بنيت بيتاً جديداً! 🏠');
     } else {
-      toast({
-        title: 'موارد غير كافية!',
-        description: 'تحتاج 50 حطب و 100 عملة',
-        variant: 'destructive'
-      });
+      toast.error('موارد غير كافية');
     }
   };
 
-  // اجمع الموارد
   const handleGatherResources = () => {
-    const woodGained = Math.floor(Math.random() * 20) + 10;
-    const foodGained = Math.floor(Math.random() * 10) + 5;
-    setPlayerStats(prev => ({ 
-      ...prev, 
-      wood: prev.wood + woodGained, 
-      food: prev.food + foodGained 
-    }));
-    setTemperature(prev => Math.max(0, prev - 5));
-    showNotification(`+${woodGained} حطب، +${foodGained} طعام`, '🪓', 'info');
-    setChallengeProgress(prev => prev + 1);
+    const wood = Math.floor(Math.random() * 20) + 10;
+    const food = Math.floor(Math.random() * 10) + 5;
+    setResources(r => ({ ...r, wood: r.wood + wood, food: r.food + food }));
+    setTemperature(t => Math.max(0, t - 5));
+    toast.success(`+${wood} حطب، +${food} طعام`);
   };
 
-  // تحذير عند انخفاض الحرارة
-  const handleTemperatureDanger = useCallback(() => {
-    toast({
-      title: 'تحذير! الحرارة منخفضة جداً 🥶',
-      description: 'أشعل النار قبل أن تتجمد!',
-      variant: 'destructive'
-    });
-  }, [toast]);
+  const handleBuild = (type: string) => {
+    const config = BUILDING_CONFIGS[type as keyof typeof BUILDING_CONFIGS];
+    if (!config) return;
+    if (resources.wood >= config.baseCost.wood && resources.coins >= config.baseCost.coins) {
+      setResources(r => ({ ...r, wood: r.wood - config.baseCost.wood, coins: r.coins - config.baseCost.coins }));
+      setBuildings(b => [...b, { id: `${type}_${Date.now()}`, type, level: 1 }]);
+      setPlayer(p => ({ ...p, buildings: p.buildings + 1, power: p.power + 50 }));
+      toast.success(`تم بناء ${config.nameAr}`);
+    } else {
+      toast.error('موارد غير كافية');
+    }
+  };
+
+  const handleUpgrade = (id: string) => {
+    if (resources.coins >= 100) {
+      setResources(r => ({ ...r, coins: r.coins - 100 }));
+      setBuildings(b => b.map(building => building.id === id ? { ...building, level: building.level + 1 } : building));
+      setPlayer(p => ({ ...p, power: p.power + 25 }));
+      toast.success('تمت الترقية!');
+    } else {
+      toast.error('عملات غير كافية');
+    }
+  };
+
+  const handleTrain = (type: string, count: number) => {
+    const config = TROOP_CONFIGS[type as keyof typeof TROOP_CONFIGS];
+    if (!config) return;
+    const cost = { food: config.cost.food * count, coins: config.cost.coins * count };
+    if (resources.food >= cost.food && resources.coins >= cost.coins) {
+      setResources(r => ({ ...r, food: r.food - cost.food, coins: r.coins - cost.coins }));
+      const existing = troops.find(t => t.type === type);
+      if (existing) {
+        setTroops(t => t.map(troop => troop.type === type ? { ...troop, count: troop.count + count } : troop));
+      } else {
+        setTroops(t => [...t, { id: `${type}_${Date.now()}`, type, count }]);
+      }
+      setPlayer(p => ({ ...p, troops: p.troops + count, power: p.power + count * 10 }));
+      toast.success(`تم تدريب ${count} ${config.nameAr}`);
+    } else {
+      toast.error('موارد غير كافية');
+    }
+  };
+
+  const atlantisLevel = atlantisSystem.userLevel?.current_level || 'bronze';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 relative overflow-hidden">
-      {/* خلفية الجبال الثلجية */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-white/10 to-transparent" />
-        <div className="absolute bottom-20 left-10 text-8xl opacity-30">🏔️</div>
-        <div className="absolute bottom-16 right-20 text-7xl opacity-25">🏔️</div>
-        <div className="absolute bottom-24 left-1/3 text-9xl opacity-20">🏔️</div>
-      </div>
-
-      {/* الثلج المتساقط */}
       <Snowfall />
-
-      {/* الأشجار */}
-      <div className="absolute inset-0 pointer-events-none">
-        <span className="absolute text-4xl opacity-60" style={{ left: '5%', top: '40%' }}>🌲</span>
-        <span className="absolute text-3xl opacity-50" style={{ left: '8%', top: '50%' }}>🌲</span>
-        <span className="absolute text-4xl opacity-60" style={{ right: '6%', top: '35%' }}>🌲</span>
-        <span className="absolute text-3xl opacity-50" style={{ right: '10%', top: '55%' }}>🌲</span>
-        <span className="absolute text-5xl opacity-40" style={{ left: '30%', top: '75%' }}>🌲</span>
-        <span className="absolute text-4xl opacity-50" style={{ right: '35%', top: '80%' }}>🌲</span>
-      </div>
-
-      {/* إشعارات الإجراءات */}
-      <AnimatePresence>
-        {notification && (
-          <ActionNotification 
-            message={notification.message} 
-            icon={notification.icon} 
-            type={notification.type} 
-          />
-        )}
-      </AnimatePresence>
-
+      
       {/* Header */}
-      <div className="relative z-20 border-b border-white/10 bg-black/30 backdrop-blur-sm">
+      <header className="relative z-20 border-b border-white/10 bg-black/40 backdrop-blur-sm sticky top-0">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <BackButton fallbackRoute="/atlantis" />
               <div className="flex items-center gap-3">
-                <motion.div
-                  className="text-4xl"
-                  animate={{ rotate: [0, 5, -5, 0] }}
-                  transition={{ duration: 4, repeat: Infinity }}
-                >
-                  ❄️
+                <motion.div className="text-4xl" animate={{ rotate: [0, 5, -5, 0] }} transition={{ duration: 4, repeat: Infinity }}>
+                  🌍
                 </motion.div>
                 <div>
-                  <h1 className="text-2xl font-bold text-white">صقيع أتلانتس</h1>
-                  <p className="text-blue-300 text-sm">انجُ من البرد واحتل القلعة!</p>
+                  <h1 className="text-2xl font-bold text-white">عالم أتلانتس</h1>
+                  <p className="text-blue-300 text-sm">ابنِ مملكتك وحارب من أجل المجد</p>
                 </div>
               </div>
             </div>
-
-            <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full">
-                <span className="text-2xl">{currentPlayer.avatar}</span>
-                <div>
-                  <div className="text-white font-bold text-sm">{currentPlayer.name}</div>
-                  <div className="text-yellow-400 text-xs flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-yellow-400" />
-                    المستوى {currentPlayer.level}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ResourcesBar resources={resources} />
           </div>
+        </div>
+      </header>
+
+      {/* أزرار التبديل */}
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-center gap-2">
+          <Button variant={activeView === 'kingdom' ? 'default' : 'outline'} onClick={() => setActiveView('kingdom')} className="gap-2 text-white">
+            <LayoutGrid className="w-4 h-4" /> مملكتي
+          </Button>
+          <Button variant={activeView === 'map' ? 'default' : 'outline'} onClick={() => setActiveView('map')} className="gap-2 text-white">
+            <Map className="w-4 h-4" /> خريطة العالم
+          </Button>
         </div>
       </div>
 
-      {/* المحتوى الرئيسي */}
-      <div className="relative z-20 container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      {/* المحتوى */}
+      <main className="relative z-20 container mx-auto px-4 pb-20">
+        {activeView === 'map' ? (
+          <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-6">
+            <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+              <Crown className="w-5 h-5 text-yellow-400" /> خريطة العالم
+            </h3>
+            <WorldMap player={player} onTileClick={(tile: any) => toast.info(`الإحداثيات: ${tile.x}, ${tile.y}`)} />
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* الشريط الجانبي */}
+            <div className="space-y-4">
+              <PlayerProfileCard player={player} atlantisLevel={atlantisLevel} />
+              <TemperatureBar value={temperature} onDanger={() => toastHook({ title: 'تحذير! 🥶', variant: 'destructive' })} />
+              <WeeklyChallenge progress={challengeProgress} target={15} />
+            </div>
 
-          {/* الشريط الجانبي */}
-          <div className="lg:col-span-1 space-y-4">
-            <TemperatureBar value={temperature} onDanger={handleTemperatureDanger} />
-            <PlayerStats stats={playerStats} />
-            <WeeklyChallenge progress={challengeProgress} target={15} />
-          </div>
+            {/* المحتوى الرئيسي */}
+            <div className="lg:col-span-2 space-y-4">
+              <Tabs defaultValue="buildings">
+                <TabsList className="w-full grid grid-cols-2 bg-black/40">
+                  <TabsTrigger value="buildings" className="text-white data-[state=active]:bg-primary">
+                    <Building2 className="w-4 h-4 ml-2" /> المباني
+                  </TabsTrigger>
+                  <TabsTrigger value="troops" className="text-white data-[state=active]:bg-primary">
+                    <Swords className="w-4 h-4 ml-2" /> الجيش
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="buildings">
+                  <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-4">
+                    <BuildingsPanel buildings={buildings} resources={resources} onBuild={handleBuild} onUpgrade={handleUpgrade} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="troops">
+                  <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-4">
+                    <TroopsPanel troops={troops} resources={resources} onTrain={handleTrain} />
+                  </Card>
+                </TabsContent>
+              </Tabs>
 
-          {/* خريطة اللعبة */}
-          <div className="lg:col-span-2">
-            <Card className="bg-black/30 backdrop-blur-sm border-white/20 p-4 h-[500px] relative overflow-hidden">
-              <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-                <Crown className="w-5 h-5 text-yellow-400" />
-                خريطة المملكة
-              </h3>
-
-              {/* الخريطة */}
-              <div className="relative h-[calc(100%-40px)] bg-gradient-to-b from-blue-900/50 to-slate-900/50 rounded-lg overflow-hidden">
-                {/* القلعة المركزية */}
-                <Castle owner="أحمد" alliance="تحالف النسور" />
-
-                {/* قواعد اللاعبين */}
-                {players.map((player, i) => (
-                  <PlayerBase
-                    key={player.name}
-                    player={player}
-                    position={positions[i]}
-                  />
-                ))}
-
-                {/* قاعدتك */}
-                <PlayerBase
-                  player={currentPlayer}
-                  position={{ x: 50, y: 82 }}
-                  isCurrentUser
-                />
-
-                {/* الأشجار على الخريطة */}
-                <span className="absolute text-2xl opacity-40" style={{ left: '25%', top: '45%' }}>🌲</span>
-                <span className="absolute text-2xl opacity-40" style={{ right: '25%', top: '40%' }}>🌲</span>
-              </div>
-            </Card>
-
-            {/* أزرار الإجراءات */}
-            <div className="grid grid-cols-3 gap-3 mt-4">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button 
-                  onClick={handleLightFire}
-                  className="w-full bg-orange-600 hover:bg-orange-700 text-white gap-2 h-14"
-                  disabled={playerStats.wood < 10}
-                >
+              {/* أزرار الإجراءات */}
+              <div className="grid grid-cols-3 gap-3">
+                <Button onClick={handleLightFire} className="bg-orange-600 hover:bg-orange-700 h-14 gap-2" disabled={resources.wood < 10}>
                   <Flame className="w-5 h-5" />
-                  <div className="flex flex-col items-start">
-                    <span>أشعل النار</span>
-                    <span className="text-xs opacity-75">-10 🪵</span>
+                  <div className="text-right">
+                    <div>أشعل النار</div>
+                    <div className="text-xs opacity-75">-10 🪵</div>
                   </div>
                 </Button>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button 
-                  onClick={handleBuildHouse}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white gap-2 h-14"
-                  disabled={playerStats.wood < 50 || playerStats.coins < 100}
-                >
+                <Button onClick={handleBuildHouse} className="bg-green-600 hover:bg-green-700 h-14 gap-2" disabled={resources.wood < 50}>
                   <Home className="w-5 h-5" />
-                  <div className="flex flex-col items-start">
-                    <span>ابنِ بيت</span>
-                    <span className="text-xs opacity-75">-50🪵 -100💰</span>
+                  <div className="text-right">
+                    <div>ابنِ بيت</div>
+                    <div className="text-xs opacity-75">-50🪵 -100💰</div>
                   </div>
                 </Button>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button 
-                  onClick={handleGatherResources}
-                  className="w-full bg-cyan-600 hover:bg-cyan-700 text-white gap-2 h-14"
-                >
+                <Button onClick={handleGatherResources} className="bg-cyan-600 hover:bg-cyan-700 h-14 gap-2">
                   <Zap className="w-5 h-5" />
-                  <div className="flex flex-col items-start">
-                    <span>اجمع موارد</span>
-                    <span className="text-xs opacity-75">-5 حرارة</span>
+                  <div className="text-right">
+                    <div>اجمع موارد</div>
+                    <div className="text-xs opacity-75">-5 حرارة</div>
                   </div>
                 </Button>
-              </motion.div>
+              </div>
+            </div>
+
+            {/* لوحة المتصدرين */}
+            <div className="space-y-4">
+              <MiniLeaderboard currentRank={4} />
+              <Card className="bg-gradient-to-br from-yellow-900/40 to-amber-900/40 border-yellow-500/30 p-4">
+                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+                  <Crown className="w-5 h-5 text-yellow-400" /> مكافآت القلعة
+                </h3>
+                <div className="space-y-2 text-sm text-white">
+                  <p className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-purple-400" /> ثيم ملكي حصري</p>
+                  <p className="flex items-center gap-2">💰 +20% عمولة إضافية</p>
+                  <p className="flex items-center gap-2"><Crown className="w-4 h-4 text-yellow-400" /> تاج بجانب اسمك</p>
+                </div>
+              </Card>
             </div>
           </div>
+        )}
+      </main>
 
-          {/* لوحة المتصدرين */}
-          <div className="lg:col-span-1 space-y-4">
-            <MiniLeaderboard currentRank={playerStats.rank} />
-
-            {/* مكافآت القلعة */}
-            <Card className="bg-gradient-to-br from-yellow-900/40 to-amber-900/40 backdrop-blur-sm border-yellow-500/30 p-4">
-              <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-                <Crown className="w-5 h-5 text-yellow-400" />
-                مكافآت القلعة
-              </h3>
-              <div className="space-y-2 text-sm">
-                <motion.div 
-                  className="flex items-center gap-2 text-white p-2 rounded hover:bg-white/10 transition-colors"
-                  whileHover={{ x: 5 }}
-                >
-                  <Sparkles className="w-4 h-4 text-purple-400" />
-                  <span>ثيم ملكي حصري</span>
-                </motion.div>
-                <motion.div 
-                  className="flex items-center gap-2 text-white p-2 rounded hover:bg-white/10 transition-colors"
-                  whileHover={{ x: 5 }}
-                >
-                  <span>💰</span>
-                  <span>+20% عمولة إضافية</span>
-                </motion.div>
-                <motion.div 
-                  className="flex items-center gap-2 text-white p-2 rounded hover:bg-white/10 transition-colors"
-                  whileHover={{ x: 5 }}
-                >
-                  <Crown className="w-4 h-4 text-yellow-400" />
-                  <span>تاج بجانب اسمك</span>
-                </motion.div>
-                <motion.div 
-                  className="flex items-center gap-2 text-white p-2 rounded hover:bg-white/10 transition-colors"
-                  whileHover={{ x: 5 }}
-                >
-                  <span>📍</span>
-                  <span>ظهور أول في المنصة</span>
-                </motion.div>
-              </div>
-            </Card>
-
-            {/* نصائح اللعبة */}
-            <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-4">
-              <h3 className="text-white font-bold mb-2 flex items-center gap-2">
-                💡 نصيحة
-              </h3>
-              <p className="text-gray-300 text-sm">
-                حافظ على الحرارة فوق 30% لتجنب خسارة الموارد. اجمع الحطب باستمرار!
-              </p>
-            </Card>
+      {/* شريط سفلي */}
+      <footer className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur border-t border-white/10 py-3 z-40">
+        <div className="container mx-auto px-4 flex items-center justify-between text-sm text-white">
+          <div className="flex items-center gap-6">
+            <span><Shield className="w-4 h-4 inline ml-1" /> القوة: <strong>{player.power}</strong></span>
+            <span><Building2 className="w-4 h-4 inline ml-1" /> المباني: <strong>{buildings.length}</strong></span>
+            <span><Swords className="w-4 h-4 inline ml-1" /> الجنود: <strong>{troops.reduce((s, t) => s + t.count, 0)}</strong></span>
           </div>
+          <Badge className="bg-accent/20 text-accent">مرتبط بنظام نقاط أتلانتس</Badge>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
