@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, Suspense, useEffect, useCallback } from 'react';
+import { useRef, useState, useMemo, Suspense, useCallback } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { 
   OrbitControls, 
@@ -6,16 +6,19 @@ import {
   Sky, 
   Cloud,
   Html,
+  Line,
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Eye, X, Maximize2, Minimize2, 
-  Compass, Target
+  Compass, Target, Swords, Shield,
+  Users, Timer, Zap
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 
 // ================= أنواع البيانات =================
@@ -29,55 +32,69 @@ interface MapLocation {
   level?: number;
   isPlayer?: boolean;
   resources?: number;
+  discovered?: boolean;
+}
+
+interface TroopMovement {
+  id: string;
+  from: [number, number, number];
+  to: [number, number, number];
+  targetId: string;
+  troopCount: number;
+  progress: number; // 0-1
+  type: 'attack' | 'gather' | 'scout';
+  startTime: number;
+  duration: number; // بالثواني
+}
+
+interface BattleResult {
+  id: string;
+  locationName: string;
+  won: boolean;
+  troopsLost: number;
+  troopsSurvived: number;
+  loot: { gold: number; resources: number };
+  timestamp: number;
 }
 
 interface World3DMapProps {
   playerCastlePosition?: [number, number, number];
+  playerPower?: number;
   onLocationSelect?: (location: MapLocation) => void;
+  onBattleResult?: (result: BattleResult) => void;
 }
 
 // ================= المواقع =================
-const LOCATIONS: MapLocation[] = [
-  // قلعة اللاعب (المركز)
-  { id: 'player', name: 'قلعتك', type: 'castle', position: [0, 0, 0], isPlayer: true, color: '#C89B3C' },
+const createLocations = (): MapLocation[] => [
+  // قلعة اللاعب
+  { id: 'player', name: 'قلعتك', type: 'castle', position: [0, 0, 0], isPlayer: true, discovered: true },
   
-  // القرى
-  { id: 'village1', name: 'قرية النخيل', type: 'village', position: [15, 0, -10], resources: 500 },
-  { id: 'village2', name: 'قرية الوادي', type: 'village', position: [-18, 0, 5], resources: 350 },
-  { id: 'village3', name: 'قرية الساحل', type: 'village', position: [8, 0, 20], resources: 420 },
-  { id: 'village4', name: 'قرية الجبل', type: 'village', position: [-12, 0, -18], resources: 380 },
+  // المناطق المكتشفة (قريبة)
+  { id: 'village1', name: 'قرية النخيل', type: 'village', position: [12, 0, -8], resources: 500, discovered: true },
+  { id: 'forest1', name: 'غابة الصنوبر', type: 'forest', position: [-10, 0, 6], resources: 300, discovered: true },
+  { id: 'mine1', name: 'منجم الذهب', type: 'mine', position: [8, 0, 10], resources: 800, discovered: true },
+  { id: 'tower1', name: 'برج المراقبة', type: 'tower', position: [-6, 0, -10], discovered: true },
+  { id: 'enemy1', name: 'معسكر اللصوص', type: 'enemy', position: [15, 0, 5], level: 3, discovered: true },
   
-  // المناجم
-  { id: 'mine1', name: 'منجم الذهب الكبير', type: 'mine', position: [25, 0, 0], color: '#FFD700', resources: 1200 },
-  { id: 'mine2', name: 'منجم الفضة', type: 'mine', position: [-25, 0, -12], color: '#C0C0C0', resources: 900 },
-  { id: 'mine3', name: 'منجم الحديد', type: 'mine', position: [5, 0, -25], color: '#8B4513', resources: 700 },
-  
-  // معسكرات الأعداء
-  { id: 'enemy1', name: 'قلعة الظلام', type: 'enemy', position: [20, 0, 15], level: 8 },
-  { id: 'enemy2', name: 'معسكر اللصوص', type: 'enemy', position: [-15, 0, 18], level: 4 },
-  { id: 'enemy3', name: 'وكر التنين', type: 'enemy', position: [-8, 0, -28], level: 10 },
-  { id: 'enemy4', name: 'خيمة البرابرة', type: 'enemy', position: [28, 0, -15], level: 6 },
-  
-  // الموانئ
-  { id: 'port1', name: 'ميناء التجار', type: 'port', position: [-30, 0, 0], resources: 600 },
-  { id: 'port2', name: 'مرسى الصيادين', type: 'port', position: [12, 0, 28], resources: 400 },
-  
-  // الأطلال
-  { id: 'ruins1', name: 'أطلال المعبد القديم', type: 'ruins', position: [0, 0, -20], resources: 2000 },
-  { id: 'ruins2', name: 'قصر مهجور', type: 'ruins', position: [-22, 0, -25], resources: 1500 },
-  
-  // الأبراج
-  { id: 'tower1', name: 'برج المراقبة الشمالي', type: 'tower', position: [10, 0, -15] },
-  { id: 'tower2', name: 'برج الحراسة الغربي', type: 'tower', position: [-10, 0, 10] },
+  // المناطق غير المكتشفة (بعيدة) - ضباب الحرب
+  { id: 'village2', name: 'قرية الوادي', type: 'village', position: [-22, 0, 15], resources: 600, discovered: false },
+  { id: 'village3', name: 'قرية الساحل', type: 'village', position: [25, 0, -15], resources: 450, discovered: false },
+  { id: 'mine2', name: 'منجم الفضة', type: 'mine', position: [-28, 0, -8], resources: 1000, discovered: false },
+  { id: 'mine3', name: 'منجم الحديد', type: 'mine', position: [5, 0, -28], resources: 700, discovered: false },
+  { id: 'enemy2', name: 'قلعة الظلام', type: 'enemy', position: [28, 0, 20], level: 7, discovered: false },
+  { id: 'enemy3', name: 'وكر التنين', type: 'enemy', position: [-15, 0, -25], level: 10, discovered: false },
+  { id: 'enemy4', name: 'خيمة البرابرة', type: 'enemy', position: [30, 0, -25], level: 5, discovered: false },
+  { id: 'ruins1', name: 'أطلال المعبد', type: 'ruins', position: [-8, 0, 28], resources: 2000, discovered: false },
+  { id: 'ruins2', name: 'قصر مهجور', type: 'ruins', position: [20, 0, 28], resources: 1500, discovered: false },
+  { id: 'port1', name: 'ميناء التجار', type: 'port', position: [-32, 0, 0], resources: 400, discovered: false },
+  { id: 'tower2', name: 'برج الحراسة', type: 'tower', position: [0, 0, -32], discovered: false },
 ];
 
-// ================= الأرضية المحسنة =================
-const EnhancedTerrain = () => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  
+// ================= التضاريس المحسنة =================
+const EnhancedTerrain = ({ fogRadius }: { fogRadius: number }) => {
   const geometry = useMemo(() => {
-    const size = 80;
-    const segments = 150;
+    const size = 100;
+    const segments = 200;
     const geo = new THREE.PlaneGeometry(size, size, segments, segments);
     const positions = geo.attributes.position;
     const colorArray = new Float32Array(positions.count * 3);
@@ -85,62 +102,51 @@ const EnhancedTerrain = () => {
     for (let i = 0; i < positions.count; i++) {
       const x = positions.getX(i);
       const y = positions.getY(i);
+      const distFromCenter = Math.sqrt(x * x + y * y);
       
-      // تضاريس معقدة
+      // تضاريس
       let height = 0;
-      
-      // تلال كبيرة
-      height += Math.sin(x * 0.08) * Math.cos(y * 0.08) * 2;
-      height += Math.sin(x * 0.15 + 2) * Math.cos(y * 0.12) * 1;
-      
-      // تفاصيل صغيرة
-      height += Math.sin(x * 0.4) * Math.cos(y * 0.4) * 0.3;
+      height += Math.sin(x * 0.06) * Math.cos(y * 0.06) * 2.5;
+      height += Math.sin(x * 0.12 + 1) * Math.cos(y * 0.1) * 1.2;
+      height += Math.sin(x * 0.25) * Math.cos(y * 0.25) * 0.4;
       
       // جبال في الأطراف
-      const distFromCenter = Math.sqrt(x * x + y * y);
-      if (distFromCenter > 25) {
-        height += (distFromCenter - 25) * 0.15;
-        height += Math.sin(distFromCenter * 0.3) * 1.5;
+      if (distFromCenter > 30) {
+        height += (distFromCenter - 30) * 0.12;
+        height += Math.sin(distFromCenter * 0.2) * 2;
       }
       
-      // تسطيح المنطقة المركزية للقلعة
-      if (distFromCenter < 8) {
-        height *= distFromCenter / 8;
+      // تسطيح المركز
+      if (distFromCenter < 10) {
+        height *= distFromCenter / 10;
       }
       
-      // منخفضات للبحيرات
-      const lake1Dist = Math.sqrt((x - 20) ** 2 + (y + 5) ** 2);
-      const lake2Dist = Math.sqrt((x + 28) ** 2 + (y - 8) ** 2);
-      if (lake1Dist < 8) height = Math.min(height, -0.5);
-      if (lake2Dist < 6) height = Math.min(height, -0.5);
+      // بحيرات
+      const lake1 = Math.sqrt((x - 18) ** 2 + (y + 5) ** 2);
+      const lake2 = Math.sqrt((x + 25) ** 2 + (y - 12) ** 2);
+      const lake3 = Math.sqrt((x - 5) ** 2 + (y - 22) ** 2);
+      if (lake1 < 7) height = Math.min(height, -0.8);
+      if (lake2 < 5) height = Math.min(height, -0.8);
+      if (lake3 < 6) height = Math.min(height, -0.8);
       
       positions.setZ(i, height);
       
-      // الألوان حسب الارتفاع
+      // ألوان مع ضباب الحرب
       let r, g, b;
-      if (height < -0.3) {
-        // ماء
-        r = 0.1; g = 0.4; b = 0.7;
-      } else if (height < 0.5) {
-        // عشب أخضر
-        r = 0.2 + Math.random() * 0.1;
-        g = 0.5 + Math.random() * 0.15;
-        b = 0.15;
-      } else if (height < 2) {
-        // عشب فاتح
-        r = 0.35;
-        g = 0.55;
-        b = 0.2;
-      } else if (height < 4) {
-        // صخور
-        r = 0.45;
-        g = 0.4;
-        b = 0.35;
+      const fogFactor = distFromCenter > fogRadius ? 0.3 : 1;
+      
+      if (height < -0.5) {
+        r = 0.1 * fogFactor; g = 0.35 * fogFactor; b = 0.65 * fogFactor;
+      } else if (height < 0.8) {
+        r = (0.22 + Math.random() * 0.08) * fogFactor;
+        g = (0.48 + Math.random() * 0.12) * fogFactor;
+        b = 0.18 * fogFactor;
+      } else if (height < 2.5) {
+        r = 0.38 * fogFactor; g = 0.52 * fogFactor; b = 0.22 * fogFactor;
+      } else if (height < 5) {
+        r = 0.5 * fogFactor; g = 0.45 * fogFactor; b = 0.38 * fogFactor;
       } else {
-        // ثلج
-        r = 0.9;
-        g = 0.92;
-        b = 0.95;
+        r = 0.92 * fogFactor; g = 0.94 * fogFactor; b = 0.96 * fogFactor;
       }
       
       colorArray[i * 3] = r;
@@ -150,140 +156,190 @@ const EnhancedTerrain = () => {
     
     geo.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
     geo.computeVertexNormals();
-    
-    return { geometry: geo, colors: colorArray };
-  }, []);
+    return geo;
+  }, [fogRadius]);
   
   return (
-    <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+    <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
       <primitive object={geometry} />
-      <meshStandardMaterial 
-        vertexColors
-        roughness={0.85}
-        metalness={0.05}
+      <meshStandardMaterial vertexColors roughness={0.85} metalness={0.05} />
+    </mesh>
+  );
+};
+
+// ================= ضباب الحرب =================
+const FogOfWar = ({ radius }: { radius: number }) => {
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.5, 0]}>
+      <ringGeometry args={[radius, 60, 64]} />
+      <meshBasicMaterial 
+        color="#1a1a2e" 
+        transparent 
+        opacity={0.7}
+        side={THREE.DoubleSide}
       />
     </mesh>
   );
 };
 
-// ================= البحيرة =================
-const Lake = ({ position, size = 8 }: { position: [number, number, number]; size?: number }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
+// ================= حركة الجنود =================
+const TroopMarch = ({ movement, onComplete }: { 
+  movement: TroopMovement; 
+  onComplete: () => void;
+}) => {
+  const groupRef = useRef<THREE.Group>(null);
+  const [currentProgress, setCurrentProgress] = useState(movement.progress);
   
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.position.y = -0.2 + Math.sin(state.clock.elapsedTime * 0.5) * 0.03;
+  useFrame(() => {
+    const elapsed = (Date.now() - movement.startTime) / 1000;
+    const newProgress = Math.min(1, elapsed / movement.duration);
+    setCurrentProgress(newProgress);
+    
+    if (groupRef.current) {
+      const x = movement.from[0] + (movement.to[0] - movement.from[0]) * newProgress;
+      const z = movement.from[2] + (movement.to[2] - movement.from[2]) * newProgress;
+      groupRef.current.position.set(x, 0.5, z);
+      
+      // توجيه الجنود
+      const angle = Math.atan2(movement.to[2] - movement.from[2], movement.to[0] - movement.from[0]);
+      groupRef.current.rotation.y = -angle + Math.PI / 2;
+    }
+    
+    if (newProgress >= 1) {
+      onComplete();
     }
   });
   
-  return (
-    <mesh ref={meshRef} position={position} rotation={[-Math.PI / 2, 0, 0]}>
-      <circleGeometry args={[size, 48]} />
-      <meshStandardMaterial 
-        color="#1a6eb5"
-        transparent
-        opacity={0.85}
-        roughness={0.1}
-        metalness={0.4}
-      />
-    </mesh>
-  );
-};
-
-// ================= الشجرة =================
-const Tree = ({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) => {
-  const treeType = useMemo(() => Math.random() > 0.5 ? 'pine' : 'oak', []);
-  
-  if (treeType === 'pine') {
-    return (
-      <group position={position}>
-        <mesh castShadow position={[0, scale * 0.4, 0]}>
-          <cylinderGeometry args={[scale * 0.08, scale * 0.12, scale * 0.8, 6]} />
-          <meshStandardMaterial color="#4a3728" roughness={0.9} />
-        </mesh>
-        <mesh castShadow position={[0, scale * 1, 0]}>
-          <coneGeometry args={[scale * 0.5, scale * 1.2, 8]} />
-          <meshStandardMaterial color="#1a472a" roughness={0.8} />
-        </mesh>
-        <mesh castShadow position={[0, scale * 1.6, 0]}>
-          <coneGeometry args={[scale * 0.35, scale * 0.9, 8]} />
-          <meshStandardMaterial color="#22543d" roughness={0.8} />
-        </mesh>
-      </group>
-    );
-  }
+  const color = movement.type === 'attack' ? '#DC143C' : 
+                movement.type === 'scout' ? '#4169E1' : '#228B22';
   
   return (
-    <group position={position}>
-      <mesh castShadow position={[0, scale * 0.5, 0]}>
-        <cylinderGeometry args={[scale * 0.1, scale * 0.15, scale, 6]} />
-        <meshStandardMaterial color="#5d4037" roughness={0.9} />
-      </mesh>
-      <mesh castShadow position={[0, scale * 1.3, 0]}>
-        <sphereGeometry args={[scale * 0.7, 8, 8]} />
-        <meshStandardMaterial color="#2d5016" roughness={0.8} />
-      </mesh>
-    </group>
-  );
-};
-
-// ================= الغابة =================
-const Forest = ({ position, count = 20, spread = 5 }: { 
-  position: [number, number, number]; 
-  count?: number;
-  spread?: number;
-}) => {
-  const trees = useMemo(() => {
-    const result = [];
-    for (let i = 0; i < count; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const radius = Math.random() * spread;
-      const x = Math.cos(angle) * radius;
-      const z = Math.sin(angle) * radius;
-      const scale = 0.4 + Math.random() * 0.6;
-      result.push({ x, z, scale, key: i });
-    }
-    return result;
-  }, [count, spread]);
-  
-  return (
-    <group position={position}>
-      {trees.map((tree) => (
-        <Tree key={tree.key} position={[tree.x, 0, tree.z]} scale={tree.scale} />
+    <group ref={groupRef}>
+      {/* أيقونة الجنود */}
+      {[...Array(Math.min(5, Math.ceil(movement.troopCount / 20)))].map((_, i) => (
+        <mesh key={i} position={[(i - 2) * 0.3, 0.3, 0]} castShadow>
+          <capsuleGeometry args={[0.15, 0.3, 4, 8]} />
+          <meshStandardMaterial color={color} />
+        </mesh>
       ))}
+      
+      {/* العلم */}
+      <mesh position={[0, 1, 0]}>
+        <cylinderGeometry args={[0.03, 0.03, 1, 8]} />
+        <meshStandardMaterial color="#4a3728" />
+      </mesh>
+      <mesh position={[0.2, 0.8, 0]}>
+        <boxGeometry args={[0.4, 0.25, 0.02]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+      
+      {/* خط المسار */}
+      <Line
+        points={[
+          new THREE.Vector3(...movement.from),
+          new THREE.Vector3(...movement.to)
+        ]}
+        color={color}
+        lineWidth={2}
+        dashed
+        dashScale={2}
+        dashSize={0.5}
+        gapSize={0.3}
+      />
+      
+      {/* التسمية */}
+      <Html position={[0, 1.5, 0]} center distanceFactor={15}>
+        <div className="bg-card/90 backdrop-blur px-2 py-1 rounded text-xs font-bold whitespace-nowrap border border-border">
+          <span>{movement.type === 'attack' ? '⚔️' : movement.type === 'scout' ? '👁️' : '📦'}</span>
+          <span className="mx-1">{movement.troopCount}</span>
+          <span className="text-muted-foreground">{Math.round(currentProgress * 100)}%</span>
+        </div>
+      </Html>
     </group>
   );
 };
 
-// ================= القلعة =================
-const Castle3D = ({ 
-  location,
-  onClick,
-  isSelected
-}: { 
+// ================= تأثير المعركة =================
+const BattleEffect = ({ position, isVictory }: { 
+  position: [number, number, number]; 
+  isVictory: boolean;
+}) => {
+  const groupRef = useRef<THREE.Group>(null);
+  const [opacity, setOpacity] = useState(1);
+  
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 2;
+      groupRef.current.position.y += delta * 0.5;
+    }
+    setOpacity(prev => Math.max(0, prev - delta * 0.3));
+  });
+  
+  if (opacity <= 0) return null;
+  
+  return (
+    <group ref={groupRef} position={position}>
+      {/* انفجار */}
+      <mesh>
+        <sphereGeometry args={[2, 16, 16]} />
+        <meshBasicMaterial 
+          color={isVictory ? '#FFD700' : '#DC143C'} 
+          transparent 
+          opacity={opacity * 0.5}
+        />
+      </mesh>
+      
+      {/* شرارات */}
+      {[...Array(8)].map((_, i) => {
+        const angle = (i / 8) * Math.PI * 2;
+        return (
+          <mesh key={i} position={[
+            Math.cos(angle) * 1.5,
+            0,
+            Math.sin(angle) * 1.5
+          ]}>
+            <boxGeometry args={[0.2, 0.2, 0.2]} />
+            <meshBasicMaterial 
+              color={isVictory ? '#FFA500' : '#FF4500'} 
+              transparent 
+              opacity={opacity}
+            />
+          </mesh>
+        );
+      })}
+      
+      <Html position={[0, 2, 0]} center>
+        <div className={`text-2xl font-bold ${isVictory ? 'text-yellow-400' : 'text-red-500'}`}>
+          {isVictory ? '🏆 انتصار!' : '💀 هزيمة!'}
+        </div>
+      </Html>
+    </group>
+  );
+};
+
+// ================= مكونات المواقع =================
+const Castle3D = ({ location, onClick, isSelected, isDiscovered }: { 
   location: MapLocation;
   onClick?: () => void;
   isSelected?: boolean;
+  isDiscovered?: boolean;
 }) => {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
-  const { isPlayer, position, name, color = '#808080' } = location;
+  const { isPlayer, position, name } = location;
   
   useFrame((state) => {
-    if (groupRef.current) {
-      if (isPlayer) {
-        // تأثير التوهج للقلعة الخاصة
-        const scale = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.02;
-        groupRef.current.scale.setScalar(scale);
-      }
-      if (isSelected || hovered) {
-        groupRef.current.rotation.y += 0.005;
-      }
+    if (groupRef.current && isPlayer) {
+      const scale = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.02;
+      groupRef.current.scale.setScalar(scale);
     }
   });
   
+  if (!isDiscovered && !isPlayer) return null;
+  
+  const opacity = isDiscovered ? 1 : 0.4;
   const wallColor = isPlayer ? '#C89B3C' : hovered ? '#aaa' : '#666';
-  const roofColor = isPlayer ? '#8B0000' : color;
+  const roofColor = isPlayer ? '#8B0000' : '#555';
   
   return (
     <group 
@@ -296,48 +352,37 @@ const Castle3D = ({
       {/* القاعدة */}
       <mesh castShadow position={[0, 0.6, 0]}>
         <boxGeometry args={[3, 1.2, 3]} />
-        <meshStandardMaterial color={wallColor} roughness={0.8} />
+        <meshStandardMaterial color={wallColor} roughness={0.8} transparent opacity={opacity} />
       </mesh>
       
       {/* الجدران العليا */}
       <mesh castShadow position={[0, 1.5, 0]}>
         <boxGeometry args={[2.5, 0.6, 2.5]} />
-        <meshStandardMaterial color={wallColor} roughness={0.8} />
+        <meshStandardMaterial color={wallColor} roughness={0.8} transparent opacity={opacity} />
       </mesh>
       
-      {/* الأبراج الأربعة */}
+      {/* الأبراج */}
       {[[-1.2, -1.2], [1.2, -1.2], [-1.2, 1.2], [1.2, 1.2]].map(([x, z], i) => (
         <group key={i} position={[x, 0, z]}>
           <mesh castShadow position={[0, 1.5, 0]}>
             <cylinderGeometry args={[0.4, 0.5, 3, 8]} />
-            <meshStandardMaterial color={wallColor} roughness={0.7} />
+            <meshStandardMaterial color={wallColor} roughness={0.7} transparent opacity={opacity} />
           </mesh>
           <mesh position={[0, 3.2, 0]}>
             <coneGeometry args={[0.55, 0.8, 8]} />
-            <meshStandardMaterial color={roofColor} roughness={0.5} />
+            <meshStandardMaterial color={roofColor} roughness={0.5} transparent opacity={opacity} />
           </mesh>
-          {/* شرفات */}
-          {[0, 90, 180, 270].map((angle, j) => (
-            <mesh key={j} position={[
-              Math.cos(angle * Math.PI / 180) * 0.45,
-              2.9,
-              Math.sin(angle * Math.PI / 180) * 0.45
-            ]}>
-              <boxGeometry args={[0.15, 0.3, 0.15]} />
-              <meshStandardMaterial color={wallColor} />
-            </mesh>
-          ))}
         </group>
       ))}
       
       {/* البرج الرئيسي */}
       <mesh castShadow position={[0, 2.5, 0]}>
         <boxGeometry args={[1.2, 2.5, 1.2]} />
-        <meshStandardMaterial color={wallColor} roughness={0.7} />
+        <meshStandardMaterial color={wallColor} roughness={0.7} transparent opacity={opacity} />
       </mesh>
       <mesh position={[0, 4, 0]}>
         <coneGeometry args={[0.85, 1.2, 4]} />
-        <meshStandardMaterial color={roofColor} roughness={0.5} />
+        <meshStandardMaterial color={roofColor} roughness={0.5} transparent opacity={opacity} />
       </mesh>
       
       {/* العلم */}
@@ -363,141 +408,25 @@ const Castle3D = ({
       )}
       
       {/* التسمية */}
-      <Html position={[0, 5.5, 0]} center distanceFactor={20}>
-        <div className={`px-3 py-1.5 rounded-lg text-sm font-bold whitespace-nowrap border shadow-lg ${
-          isPlayer ? 'bg-accent text-accent-foreground border-accent' : 'bg-card/95 text-foreground border-border'
-        }`}>
-          {isPlayer && '👑 '}{name}
-        </div>
-      </Html>
-    </group>
-  );
-};
-
-// ================= القرية =================
-const Village3D = ({ location, onClick, isSelected }: { 
-  location: MapLocation;
-  onClick?: () => void;
-  isSelected?: boolean;
-}) => {
-  const [hovered, setHovered] = useState(false);
-  const { position, name } = location;
-  
-  return (
-    <group 
-      position={position}
-      onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-      onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
-      onPointerOut={() => { setHovered(false); document.body.style.cursor = 'auto'; }}
-    >
-      {/* البيوت */}
-      {[[0, 0], [1.5, 0.8], [-1.2, 0.5], [0.5, -1.2], [-0.8, -0.8]].map(([x, z], i) => (
-        <group key={i} position={[x, 0, z]}>
-          <mesh castShadow position={[0, 0.35, 0]}>
-            <boxGeometry args={[0.7, 0.7, 0.7]} />
-            <meshStandardMaterial color={hovered ? '#fff' : '#D2B48C'} roughness={0.8} />
-          </mesh>
-          <mesh position={[0, 0.85, 0]}>
-            <coneGeometry args={[0.55, 0.5, 4]} />
-            <meshStandardMaterial color="#8B4513" roughness={0.7} />
-          </mesh>
-        </group>
-      ))}
-      
-      {/* البئر */}
-      <mesh position={[0.8, 0.2, 0]}>
-        <cylinderGeometry args={[0.25, 0.25, 0.4, 12]} />
-        <meshStandardMaterial color="#696969" />
-      </mesh>
-      
-      {(isSelected || hovered) && (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-          <ringGeometry args={[2, 2.3, 32]} />
-          <meshBasicMaterial color="#8B7355" transparent opacity={0.5} />
-        </mesh>
+      {isDiscovered && (
+        <Html position={[0, 5.5, 0]} center distanceFactor={20}>
+          <div className={`px-3 py-1.5 rounded-lg text-sm font-bold whitespace-nowrap border shadow-lg ${
+            isPlayer ? 'bg-accent text-accent-foreground border-accent' : 'bg-card/95 text-foreground border-border'
+          }`}>
+            {isPlayer && '👑 '}{name}
+          </div>
+        </Html>
       )}
-      
-      <Html position={[0, 2.5, 0]} center distanceFactor={20}>
-        <div className="bg-card/95 px-2 py-1 rounded text-xs font-bold whitespace-nowrap border border-border text-foreground shadow-lg">
-          🏘️ {name}
-        </div>
-      </Html>
     </group>
   );
 };
 
-// ================= المنجم =================
-const Mine3D = ({ location, onClick, isSelected }: { 
+// معسكر العدو مع مؤشر المستوى
+const EnemyCamp3D = ({ location, onClick, isSelected, isDiscovered }: { 
   location: MapLocation;
   onClick?: () => void;
   isSelected?: boolean;
-}) => {
-  const [hovered, setHovered] = useState(false);
-  const { position, name, color = '#FFD700' } = location;
-  
-  return (
-    <group 
-      position={position}
-      onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-      onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
-      onPointerOut={() => { setHovered(false); document.body.style.cursor = 'auto'; }}
-    >
-      {/* مدخل المنجم */}
-      <mesh castShadow position={[0, 0.5, 0]}>
-        <boxGeometry args={[2, 1, 1.5]} />
-        <meshStandardMaterial color={hovered ? '#888' : '#4a4a4a'} roughness={0.9} />
-      </mesh>
-      
-      {/* الفتحة */}
-      <mesh position={[0, 0.5, 0.76]}>
-        <planeGeometry args={[1.2, 0.8]} />
-        <meshStandardMaterial color="#1a1a1a" />
-      </mesh>
-      
-      {/* عربة المنجم */}
-      <group position={[-1.2, 0.3, 0.5]}>
-        <mesh>
-          <boxGeometry args={[0.6, 0.4, 0.5]} />
-          <meshStandardMaterial color="#5d4037" />
-        </mesh>
-        {/* العجلات */}
-        <mesh position={[-0.25, -0.15, 0.3]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.12, 0.12, 0.05, 12]} />
-          <meshStandardMaterial color="#333" />
-        </mesh>
-        <mesh position={[0.25, -0.15, 0.3]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.12, 0.12, 0.05, 12]} />
-          <meshStandardMaterial color="#333" />
-        </mesh>
-      </group>
-      
-      {/* أكوام المعادن */}
-      <mesh position={[1.2, 0.3, 0]}>
-        <sphereGeometry args={[0.5, 8, 8]} />
-        <meshStandardMaterial color={color} metalness={0.7} roughness={0.3} />
-      </mesh>
-      
-      {(isSelected || hovered) && (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-          <ringGeometry args={[2, 2.3, 32]} />
-          <meshBasicMaterial color={color} transparent opacity={0.5} />
-        </mesh>
-      )}
-      
-      <Html position={[0, 2, 0]} center distanceFactor={20}>
-        <div className="bg-card/95 px-2 py-1 rounded text-xs font-bold whitespace-nowrap border border-border text-foreground shadow-lg">
-          ⛏️ {name}
-        </div>
-      </Html>
-    </group>
-  );
-};
-
-// ================= معسكر العدو =================
-const EnemyCamp3D = ({ location, onClick, isSelected }: { 
-  location: MapLocation;
-  onClick?: () => void;
-  isSelected?: boolean;
+  isDiscovered?: boolean;
 }) => {
   const [hovered, setHovered] = useState(false);
   const flagRef = useRef<THREE.Mesh>(null);
@@ -508,6 +437,23 @@ const EnemyCamp3D = ({ location, onClick, isSelected }: {
       flagRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 3) * 0.3;
     }
   });
+  
+  if (!isDiscovered) {
+    // موقع مجهول
+    return (
+      <group position={position}>
+        <mesh position={[0, 1, 0]}>
+          <sphereGeometry args={[0.5, 8, 8]} />
+          <meshBasicMaterial color="#333" transparent opacity={0.5} />
+        </mesh>
+        <Html position={[0, 2, 0]} center distanceFactor={20}>
+          <div className="bg-gray-800/80 px-2 py-1 rounded text-xs text-gray-400">
+            ❓ منطقة مجهولة
+          </div>
+        </Html>
+      </group>
+    );
+  }
   
   return (
     <group 
@@ -524,20 +470,18 @@ const EnemyCamp3D = ({ location, onClick, isSelected }: {
         </mesh>
       ))}
       
-      {/* سياج خشبي */}
+      {/* سياج */}
       {[...Array(8)].map((_, i) => {
         const angle = (i / 8) * Math.PI * 2;
-        const x = Math.cos(angle) * 3;
-        const z = Math.sin(angle) * 3;
         return (
-          <mesh key={i} position={[x, 0.5, z]}>
+          <mesh key={i} position={[Math.cos(angle) * 3, 0.5, Math.sin(angle) * 3]}>
             <boxGeometry args={[0.1, 1, 0.1]} />
             <meshStandardMaterial color="#4a3728" />
           </mesh>
         );
       })}
       
-      {/* العلم الأحمر */}
+      {/* العلم */}
       <group position={[0, 0, -2]}>
         <mesh position={[0, 1.2, 0]}>
           <cylinderGeometry args={[0.04, 0.04, 2.4, 8]} />
@@ -549,7 +493,7 @@ const EnemyCamp3D = ({ location, onClick, isSelected }: {
         </mesh>
       </group>
       
-      {/* نار المعسكر */}
+      {/* نار */}
       <pointLight position={[0, 0.5, 0]} color="#ff6600" intensity={0.5} distance={5} />
       
       {(isSelected || hovered) && (
@@ -560,232 +504,175 @@ const EnemyCamp3D = ({ location, onClick, isSelected }: {
       )}
       
       <Html position={[0, 3, 0]} center distanceFactor={20}>
-        <div className="bg-red-600 px-2 py-1 rounded text-xs font-bold whitespace-nowrap text-white shadow-lg">
-          ⚔️ {name} (Lv.{level})
+        <div className="bg-red-600 px-2 py-1 rounded text-xs font-bold whitespace-nowrap text-white shadow-lg flex items-center gap-1">
+          <span>⚔️ {name}</span>
+          <Badge variant="secondary" className="bg-white/20 text-white text-[10px] px-1">
+            Lv.{level}
+          </Badge>
         </div>
       </Html>
     </group>
   );
 };
 
-// ================= الميناء =================
-const Port3D = ({ location, onClick, isSelected }: { 
+// باقي المواقع (مختصرة)
+const GenericLocation3D = ({ location, onClick, isSelected, isDiscovered }: { 
   location: MapLocation;
   onClick?: () => void;
   isSelected?: boolean;
+  isDiscovered?: boolean;
 }) => {
   const [hovered, setHovered] = useState(false);
-  const boatRef = useRef<THREE.Group>(null);
-  const { position, name } = location;
+  const { position, name, type } = location;
+  
+  if (!isDiscovered) {
+    return (
+      <group position={position}>
+        <mesh position={[0, 0.8, 0]}>
+          <sphereGeometry args={[0.4, 8, 8]} />
+          <meshBasicMaterial color="#333" transparent opacity={0.4} />
+        </mesh>
+      </group>
+    );
+  }
+  
+  const configs: Record<string, { color: string; icon: string; height: number }> = {
+    village: { color: '#D2B48C', icon: '🏘️', height: 1 },
+    forest: { color: '#228B22', icon: '🌲', height: 1.5 },
+    mine: { color: '#FFD700', icon: '⛏️', height: 0.8 },
+    port: { color: '#4169E1', icon: '⚓', height: 0.6 },
+    ruins: { color: '#9370DB', icon: '🏛️', height: 1.2 },
+    tower: { color: '#708090', icon: '🗼', height: 2 },
+  };
+  
+  const config = configs[type] || configs.village;
+  
+  return (
+    <group 
+      position={position}
+      onClick={(e) => { e.stopPropagation(); onClick?.(); }}
+      onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
+      onPointerOut={() => { setHovered(false); document.body.style.cursor = 'auto'; }}
+    >
+      <mesh castShadow position={[0, config.height / 2, 0]}>
+        <boxGeometry args={[1.5, config.height, 1.5]} />
+        <meshStandardMaterial color={hovered ? '#fff' : config.color} roughness={0.8} />
+      </mesh>
+      
+      {(isSelected || hovered) && (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
+          <ringGeometry args={[1.8, 2.1, 32]} />
+          <meshBasicMaterial color={config.color} transparent opacity={0.5} />
+        </mesh>
+      )}
+      
+      <Html position={[0, config.height + 1, 0]} center distanceFactor={20}>
+        <div className="bg-card/95 px-2 py-1 rounded text-xs font-bold whitespace-nowrap border border-border text-foreground shadow-lg">
+          {config.icon} {name}
+        </div>
+      </Html>
+    </group>
+  );
+};
+
+// ================= البحيرة =================
+const Lake = ({ position, size = 6 }: { position: [number, number, number]; size?: number }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
   
   useFrame((state) => {
-    if (boatRef.current) {
-      boatRef.current.position.y = Math.sin(state.clock.elapsedTime) * 0.1;
-      boatRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.5) * 0.05;
+    if (meshRef.current) {
+      meshRef.current.position.y = -0.3 + Math.sin(state.clock.elapsedTime * 0.5) * 0.03;
     }
   });
   
   return (
-    <group 
-      position={position}
-      onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-      onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
-      onPointerOut={() => { setHovered(false); document.body.style.cursor = 'auto'; }}
-    >
-      {/* الرصيف */}
-      <mesh position={[0, 0.15, 0]}>
-        <boxGeometry args={[4, 0.3, 2]} />
-        <meshStandardMaterial color="#8B7355" />
-      </mesh>
-      
-      {/* المخزن */}
-      <mesh castShadow position={[0, 0.7, -0.5]}>
-        <boxGeometry args={[2, 1, 1]} />
-        <meshStandardMaterial color={hovered ? '#ddd' : '#A0522D'} />
-      </mesh>
-      <mesh position={[0, 1.4, -0.5]}>
-        <boxGeometry args={[2.2, 0.4, 1.2]} />
-        <meshStandardMaterial color="#8B4513" />
-      </mesh>
-      
-      {/* القارب */}
-      <group ref={boatRef} position={[0, 0, 2]}>
-        <mesh>
-          <boxGeometry args={[1.5, 0.4, 0.8]} />
-          <meshStandardMaterial color="#5d4037" />
-        </mesh>
-        <mesh position={[0, 0.8, 0]}>
-          <cylinderGeometry args={[0.05, 0.05, 1.2, 8]} />
-          <meshStandardMaterial color="#4a3728" />
-        </mesh>
-        <mesh position={[0.3, 0.6, 0]}>
-          <planeGeometry args={[0.6, 0.8]} />
-          <meshStandardMaterial color="#f5f5dc" side={THREE.DoubleSide} />
-        </mesh>
-      </group>
-      
-      {(isSelected || hovered) && (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-          <ringGeometry args={[3, 3.3, 32]} />
-          <meshBasicMaterial color="#4169E1" transparent opacity={0.5} />
-        </mesh>
-      )}
-      
-      <Html position={[0, 2.5, 0]} center distanceFactor={20}>
-        <div className="bg-card/95 px-2 py-1 rounded text-xs font-bold whitespace-nowrap border border-border text-foreground shadow-lg">
-          ⚓ {name}
-        </div>
-      </Html>
-    </group>
+    <mesh ref={meshRef} position={position} rotation={[-Math.PI / 2, 0, 0]}>
+      <circleGeometry args={[size, 48]} />
+      <meshStandardMaterial color="#1a6eb5" transparent opacity={0.85} roughness={0.1} metalness={0.4} />
+    </mesh>
   );
 };
 
-// ================= الأطلال =================
-const Ruins3D = ({ location, onClick, isSelected }: { 
-  location: MapLocation;
-  onClick?: () => void;
-  isSelected?: boolean;
-}) => {
-  const [hovered, setHovered] = useState(false);
-  const { position, name } = location;
-  
-  return (
-    <group 
-      position={position}
-      onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-      onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
-      onPointerOut={() => { setHovered(false); document.body.style.cursor = 'auto'; }}
-    >
-      {/* الأعمدة المكسورة */}
-      {[[0, 0], [2, 0], [-2, 0], [0, 2], [0, -2]].map(([x, z], i) => (
-        <mesh key={i} castShadow position={[x, 0.5 + Math.random() * 0.5, z]}>
-          <cylinderGeometry args={[0.3, 0.35, 1 + Math.random(), 8]} />
-          <meshStandardMaterial color={hovered ? '#ccc' : '#9e9e9e'} roughness={0.9} />
-        </mesh>
-      ))}
-      
-      {/* القاعدة */}
-      <mesh position={[0, 0.1, 0]}>
-        <boxGeometry args={[5, 0.2, 5]} />
-        <meshStandardMaterial color="#757575" />
-      </mesh>
-      
-      {/* الحجارة المتناثرة */}
-      {[...Array(6)].map((_, i) => (
-        <mesh key={i} position={[
-          (Math.random() - 0.5) * 4,
-          0.15,
-          (Math.random() - 0.5) * 4
-        ]}>
-          <boxGeometry args={[0.3 + Math.random() * 0.3, 0.2, 0.3 + Math.random() * 0.3]} />
-          <meshStandardMaterial color="#888" />
-        </mesh>
-      ))}
-      
-      {(isSelected || hovered) && (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-          <ringGeometry args={[3, 3.3, 32]} />
-          <meshBasicMaterial color="#9370DB" transparent opacity={0.5} />
-        </mesh>
-      )}
-      
-      <Html position={[0, 2.5, 0]} center distanceFactor={20}>
-        <div className="bg-purple-600/90 px-2 py-1 rounded text-xs font-bold whitespace-nowrap text-white shadow-lg">
-          🏛️ {name}
-        </div>
-      </Html>
-    </group>
-  );
-};
+// ================= الشجرة والغابة =================
+const Tree = ({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) => (
+  <group position={position}>
+    <mesh castShadow position={[0, scale * 0.4, 0]}>
+      <cylinderGeometry args={[scale * 0.08, scale * 0.12, scale * 0.8, 6]} />
+      <meshStandardMaterial color="#4a3728" roughness={0.9} />
+    </mesh>
+    <mesh castShadow position={[0, scale * 1, 0]}>
+      <coneGeometry args={[scale * 0.5, scale * 1.2, 8]} />
+      <meshStandardMaterial color="#1a472a" roughness={0.8} />
+    </mesh>
+  </group>
+);
 
-// ================= البرج =================
-const Tower3D = ({ location, onClick, isSelected }: { 
-  location: MapLocation;
-  onClick?: () => void;
-  isSelected?: boolean;
+const Forest = ({ position, count = 15, spread = 4, discovered = true }: { 
+  position: [number, number, number]; 
+  count?: number;
+  spread?: number;
+  discovered?: boolean;
 }) => {
-  const [hovered, setHovered] = useState(false);
-  const { position, name } = location;
+  const trees = useMemo(() => {
+    const result = [];
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.random() * spread;
+      result.push({ 
+        x: Math.cos(angle) * radius, 
+        z: Math.sin(angle) * radius, 
+        scale: 0.4 + Math.random() * 0.5, 
+        key: i 
+      });
+    }
+    return result;
+  }, [count, spread]);
   
   return (
-    <group 
-      position={position}
-      onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-      onPointerOver={(e) => { e.stopPropagation(); setHovered(true); document.body.style.cursor = 'pointer'; }}
-      onPointerOut={() => { setHovered(false); document.body.style.cursor = 'auto'; }}
-    >
-      <mesh castShadow position={[0, 2, 0]}>
-        <cylinderGeometry args={[0.6, 0.8, 4, 8]} />
-        <meshStandardMaterial color={hovered ? '#999' : '#696969'} />
-      </mesh>
-      <mesh position={[0, 4.3, 0]}>
-        <coneGeometry args={[0.9, 0.8, 8]} />
-        <meshStandardMaterial color="#4a4a4a" />
-      </mesh>
-      
-      {/* النوافذ */}
-      {[0, 90, 180, 270].map((angle, i) => (
-        <mesh key={i} position={[
-          Math.cos(angle * Math.PI / 180) * 0.61,
-          2.5,
-          Math.sin(angle * Math.PI / 180) * 0.61
-        ]}>
-          <boxGeometry args={[0.2, 0.4, 0.1]} />
-          <meshStandardMaterial color="#1a1a1a" />
-        </mesh>
+    <group position={position}>
+      {trees.map((tree) => (
+        <Tree key={tree.key} position={[tree.x, 0, tree.z]} scale={tree.scale * (discovered ? 1 : 0.6)} />
       ))}
-      
-      {(isSelected || hovered) && (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-          <ringGeometry args={[1.5, 1.8, 32]} />
-          <meshBasicMaterial color="#708090" transparent opacity={0.5} />
-        </mesh>
-      )}
-      
-      <Html position={[0, 5.5, 0]} center distanceFactor={20}>
-        <div className="bg-card/95 px-2 py-1 rounded text-xs font-bold whitespace-nowrap border border-border text-foreground shadow-lg">
-          🗼 {name}
-        </div>
-      </Html>
     </group>
   );
 };
 
 // ================= تحكم الكاميرا =================
-const CameraController = ({ targetPosition }: { targetPosition?: [number, number, number] }) => {
+const CameraController = () => {
   useThree();
-  const controlsRef = useRef<any>(null);
-  
-  useEffect(() => {
-    if (targetPosition && controlsRef.current) {
-      controlsRef.current.target.set(...targetPosition);
-    }
-  }, [targetPosition]);
   
   return (
     <OrbitControls 
-      ref={controlsRef}
       enablePan={true}
       enableZoom={true}
       enableRotate={true}
-      minDistance={8}
-      maxDistance={60}
+      minDistance={10}
+      maxDistance={70}
       maxPolarAngle={Math.PI / 2.1}
       minPolarAngle={Math.PI / 6}
       panSpeed={1.5}
       zoomSpeed={1.2}
-      rotateSpeed={0.8}
     />
   );
 };
 
 // ================= المشهد الرئيسي =================
 const Scene = ({ 
+  locations,
+  movements,
+  battles,
+  fogRadius,
+  selectedLocationId,
   onLocationSelect,
-  selectedLocationId
+  onMovementComplete,
 }: { 
-  onLocationSelect?: (location: MapLocation) => void;
+  locations: MapLocation[];
+  movements: TroopMovement[];
+  battles: { position: [number, number, number]; isVictory: boolean }[];
+  fogRadius: number;
   selectedLocationId?: string;
+  onLocationSelect?: (location: MapLocation) => void;
+  onMovementComplete: (id: string) => void;
 }) => {
   return (
     <>
@@ -797,11 +684,6 @@ const Scene = ({
         castShadow
         shadow-mapSize-width={4096}
         shadow-mapSize-height={4096}
-        shadow-camera-far={100}
-        shadow-camera-left={-50}
-        shadow-camera-right={50}
-        shadow-camera-top={50}
-        shadow-camera-bottom={-50}
       />
       <hemisphereLight intensity={0.3} color="#87ceeb" groundColor="#8B7355" />
       
@@ -809,112 +691,183 @@ const Scene = ({
       <Sky sunPosition={[100, 50, 100]} turbidity={0.3} rayleigh={0.5} />
       <Cloud position={[-20, 20, -20]} speed={0.1} opacity={0.4} />
       <Cloud position={[25, 18, 10]} speed={0.15} opacity={0.3} />
-      <Cloud position={[0, 22, -30]} speed={0.08} opacity={0.35} />
       
       {/* التضاريس */}
-      <EnhancedTerrain />
+      <EnhancedTerrain fogRadius={fogRadius} />
+      
+      {/* ضباب الحرب */}
+      <FogOfWar radius={fogRadius} />
       
       {/* البحيرات */}
-      <Lake position={[20, 0, -5]} size={7} />
-      <Lake position={[-28, 0, 8]} size={5} />
+      <Lake position={[18, 0, -5]} size={6} />
+      <Lake position={[-25, 0, 12]} size={4} />
+      <Lake position={[5, 0, 22]} size={5} />
       
       {/* الغابات */}
-      <Forest position={[8, 0, 8]} count={25} spread={4} />
-      <Forest position={[-15, 0, -8]} count={20} spread={3.5} />
-      <Forest position={[0, 0, 15]} count={18} spread={3} />
-      <Forest position={[-25, 0, 20]} count={22} spread={4} />
-      <Forest position={[22, 0, -20]} count={15} spread={3} />
-      <Forest position={[-5, 0, -25]} count={20} spread={3.5} />
+      <Forest position={[6, 0, 6]} count={20} spread={4} discovered={fogRadius > 10} />
+      <Forest position={[-12, 0, -6]} count={15} spread={3} discovered={fogRadius > 15} />
+      <Forest position={[0, 0, 15]} count={18} spread={3.5} discovered={fogRadius > 18} />
+      <Forest position={[-20, 0, 20]} count={12} spread={3} discovered={fogRadius > 25} />
+      <Forest position={[20, 0, -18]} count={14} spread={3.5} discovered={fogRadius > 25} />
       
       {/* المواقع */}
-      {LOCATIONS.map(location => {
+      {locations.map(location => {
         const isSelected = selectedLocationId === location.id;
-        const props = { location, onClick: () => onLocationSelect?.(location), isSelected };
+        const isDiscovered = location.discovered || location.isPlayer;
         
-        switch (location.type) {
-          case 'castle':
-            return <Castle3D key={location.id} {...props} />;
-          case 'village':
-            return <Village3D key={location.id} {...props} />;
-          case 'mine':
-            return <Mine3D key={location.id} {...props} />;
-          case 'enemy':
-            return <EnemyCamp3D key={location.id} {...props} />;
-          case 'port':
-            return <Port3D key={location.id} {...props} />;
-          case 'ruins':
-            return <Ruins3D key={location.id} {...props} />;
-          case 'tower':
-            return <Tower3D key={location.id} {...props} />;
-          default:
-            return null;
+        if (location.type === 'castle') {
+          return <Castle3D key={location.id} location={location} onClick={() => onLocationSelect?.(location)} isSelected={isSelected} isDiscovered={isDiscovered} />;
         }
+        if (location.type === 'enemy') {
+          return <EnemyCamp3D key={location.id} location={location} onClick={() => onLocationSelect?.(location)} isSelected={isSelected} isDiscovered={isDiscovered} />;
+        }
+        return <GenericLocation3D key={location.id} location={location} onClick={() => onLocationSelect?.(location)} isSelected={isSelected} isDiscovered={isDiscovered} />;
       })}
+      
+      {/* حركة الجنود */}
+      {movements.map(movement => (
+        <TroopMarch 
+          key={movement.id} 
+          movement={movement} 
+          onComplete={() => onMovementComplete(movement.id)}
+        />
+      ))}
+      
+      {/* تأثيرات المعارك */}
+      {battles.map((battle, i) => (
+        <BattleEffect key={i} position={battle.position} isVictory={battle.isVictory} />
+      ))}
       
       <CameraController />
     </>
   );
 };
 
-// ================= لوحة التفاصيل =================
-const LocationDetailPanel = ({ 
+// ================= لوحة إرسال الجنود =================
+const SendTroopsPanel = ({ 
   location, 
-  onClose,
-  onAction
+  maxTroops,
+  onSend,
+  onClose 
 }: { 
-  location: MapLocation | null;
+  location: MapLocation;
+  maxTroops: number;
+  onSend: (count: number, type: 'attack' | 'gather' | 'scout') => void;
   onClose: () => void;
-  onAction: (action: string) => void;
 }) => {
-  if (!location) return null;
+  const [troopCount, setTroopCount] = useState(Math.min(50, maxTroops));
+  const [actionType, setActionType] = useState<'attack' | 'gather' | 'scout'>('attack');
   
-  const getIcon = () => {
-    const icons: Record<string, string> = {
-      castle: '🏰', village: '🏘️', mine: '⛏️', 
-      enemy: '⚔️', port: '⚓', ruins: '🏛️', tower: '🗼'
-    };
-    return icons[location.type] || '📍';
-  };
+  const isEnemy = location.type === 'enemy';
+  const canGather = ['mine', 'forest', 'ruins'].includes(location.type);
   
-  const getActions = () => {
-    switch (location.type) {
-      case 'castle':
-        return location.isPlayer 
-          ? [{ id: 'manage', label: 'إدارة القلعة', icon: '⚙️' }]
-          : [{ id: 'attack', label: 'هجوم', icon: '⚔️', variant: 'destructive' }];
-      case 'village':
-        return [
-          { id: 'trade', label: 'تجارة', icon: '💰' },
-          { id: 'recruit', label: 'تجنيد جنود', icon: '👥' },
-        ];
-      case 'mine':
-        return [
-          { id: 'mine', label: 'بدء التعدين', icon: '⛏️' },
-          { id: 'occupy', label: 'احتلال المنجم', icon: '🏴' },
-        ];
-      case 'enemy':
-        return [
-          { id: 'scout', label: 'استطلاع', icon: '👁️' },
-          { id: 'attack', label: 'هجوم', icon: '⚔️', variant: 'destructive' },
-        ];
-      case 'port':
-        return [
-          { id: 'trade', label: 'تجارة بحرية', icon: '⛵' },
-          { id: 'travel', label: 'سفر لمنطقة جديدة', icon: '🗺️' },
-        ];
-      case 'ruins':
-        return [
-          { id: 'explore', label: 'استكشاف', icon: '🔍' },
-          { id: 'excavate', label: 'تنقيب', icon: '⛏️' },
-        ];
-      case 'tower':
-        return [
-          { id: 'scout', label: 'مراقبة المنطقة', icon: '👁️' },
-          { id: 'occupy', label: 'السيطرة', icon: '🏴' },
-        ];
-      default:
-        return [];
-    }
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      className="absolute bottom-4 left-4 right-4 z-30"
+    >
+      <Card className="bg-card/98 backdrop-blur border-border p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold flex items-center gap-2">
+            <Users className="w-5 h-5 text-primary" />
+            إرسال قوات إلى {location.name}
+          </h3>
+          <Button variant="ghost" size="icon" onClick={onClose}>
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+        
+        {/* نوع المهمة */}
+        <div className="flex gap-2 mb-4">
+          {isEnemy && (
+            <Button 
+              variant={actionType === 'attack' ? 'destructive' : 'outline'}
+              size="sm"
+              onClick={() => setActionType('attack')}
+              className="flex-1 gap-1"
+            >
+              <Swords className="w-4 h-4" /> هجوم
+            </Button>
+          )}
+          {canGather && (
+            <Button 
+              variant={actionType === 'gather' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setActionType('gather')}
+              className="flex-1 gap-1"
+            >
+              <Target className="w-4 h-4" /> جمع
+            </Button>
+          )}
+          <Button 
+            variant={actionType === 'scout' ? 'secondary' : 'outline'}
+            size="sm"
+            onClick={() => setActionType('scout')}
+            className="flex-1 gap-1"
+          >
+            <Eye className="w-4 h-4" /> استطلاع
+          </Button>
+        </div>
+        
+        {/* عدد الجنود */}
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-muted-foreground">عدد الجنود</span>
+            <span className="font-bold">{troopCount}</span>
+          </div>
+          <input 
+            type="range" 
+            min={10} 
+            max={maxTroops} 
+            value={troopCount}
+            onChange={(e) => setTroopCount(Number(e.target.value))}
+            className="w-full"
+          />
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>10</span>
+            <span>المتاح: {maxTroops}</span>
+          </div>
+        </div>
+        
+        {/* الوقت المتوقع */}
+        <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+          <Timer className="w-4 h-4" />
+          <span>وقت الوصول: ~{Math.ceil(Math.sqrt(location.position[0]**2 + location.position[2]**2) / 5)} دقائق</span>
+        </div>
+        
+        <Button 
+          className="w-full gap-2" 
+          variant={actionType === 'attack' ? 'destructive' : 'default'}
+          onClick={() => onSend(troopCount, actionType)}
+        >
+          {actionType === 'attack' ? <Swords className="w-4 h-4" /> : 
+           actionType === 'gather' ? <Target className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          إرسال {troopCount} جندي
+        </Button>
+      </Card>
+    </motion.div>
+  );
+};
+
+// ================= لوحة تفاصيل الموقع =================
+const LocationPanel = ({ 
+  location, 
+  playerPower,
+  onClose,
+  onSendTroops,
+  onDiscover
+}: { 
+  location: MapLocation;
+  playerPower: number;
+  onClose: () => void;
+  onSendTroops: () => void;
+  onDiscover: () => void;
+}) => {
+  const icons: Record<string, string> = {
+    castle: '🏰', village: '🏘️', mine: '⛏️', 
+    enemy: '⚔️', port: '⚓', ruins: '🏛️', tower: '🗼', forest: '🌲'
   };
   
   const bgColors: Record<string, string> = {
@@ -927,17 +880,21 @@ const LocationDetailPanel = ({
     tower: 'from-gray-500 to-gray-400',
     forest: 'from-green-600 to-green-500',
   };
-  const bgColor = bgColors[location.type] || 'from-gray-600 to-gray-500';
+  
+  const enemyPower = location.level ? location.level * 150 : 0;
+  const winChance = location.type === 'enemy' 
+    ? Math.min(95, Math.max(5, Math.round((playerPower / (enemyPower || 1)) * 50)))
+    : null;
   
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20, scale: 0.95 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 20, scale: 0.95 }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
       className="absolute top-4 right-4 z-30 w-72"
     >
-      <Card className="bg-card/98 backdrop-blur-lg border-border overflow-hidden shadow-2xl">
-        <div className={`p-4 text-white bg-gradient-to-br ${bgColor}`}>
+      <Card className="bg-card/98 backdrop-blur border-border overflow-hidden shadow-xl">
+        <div className={`p-4 text-white bg-gradient-to-br ${bgColors[location.type] || 'from-gray-600 to-gray-500'}`}>
           <Button 
             variant="ghost" 
             size="icon" 
@@ -947,7 +904,7 @@ const LocationDetailPanel = ({
             <X className="w-4 h-4" />
           </Button>
           <div className="flex items-center gap-3">
-            <span className="text-4xl drop-shadow-lg">{getIcon()}</span>
+            <span className="text-4xl">{icons[location.type]}</span>
             <div>
               <h3 className="font-bold text-lg">{location.name}</h3>
               <div className="flex gap-2 mt-1">
@@ -966,27 +923,47 @@ const LocationDetailPanel = ({
           </div>
         </div>
         
-        <div className="p-4 space-y-2">
-          {getActions().map((action: any) => (
-            <Button 
-              key={action.id}
-              variant={action.variant || 'outline'}
-              className="w-full gap-2 justify-start"
-              onClick={() => onAction(action.id)}
-            >
-              <span>{action.icon}</span>
-              {action.label}
-            </Button>
-          ))}
+        <div className="p-4 space-y-3">
+          {/* فرصة النصر للأعداء */}
+          {winChance !== null && (
+            <div className="space-y-1">
+              <div className="flex items-center justify-between text-sm">
+                <span className="flex items-center gap-1">
+                  <Zap className="w-4 h-4" /> فرصة النصر
+                </span>
+                <span className={winChance > 60 ? 'text-green-500' : winChance > 30 ? 'text-yellow-500' : 'text-red-500'}>
+                  {winChance}%
+                </span>
+              </div>
+              <Progress value={winChance} className="h-2" />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>قوتك: {playerPower}</span>
+                <span>قوة العدو: {enemyPower}</span>
+              </div>
+            </div>
+          )}
           
-          <Button 
-            variant="secondary" 
-            className="w-full gap-2 justify-start mt-2"
-            onClick={() => onAction('sendTroops')}
-          >
-            <Target className="w-4 h-4" />
-            إرسال قوات
-          </Button>
+          {/* الإجراءات */}
+          {!location.isPlayer && location.discovered && (
+            <Button className="w-full gap-2" onClick={onSendTroops}>
+              <Users className="w-4 h-4" />
+              إرسال قوات
+            </Button>
+          )}
+          
+          {!location.discovered && (
+            <Button className="w-full gap-2" variant="secondary" onClick={onDiscover}>
+              <Eye className="w-4 h-4" />
+              استكشاف المنطقة
+            </Button>
+          )}
+          
+          {location.isPlayer && (
+            <Button className="w-full gap-2" variant="outline">
+              <Shield className="w-4 h-4" />
+              إدارة القلعة
+            </Button>
+          )}
         </div>
       </Card>
     </motion.div>
@@ -994,23 +971,33 @@ const LocationDetailPanel = ({
 };
 
 // ================= الخريطة المصغرة =================
-const MiniMap = ({ 
-  locations, 
-  selectedId,
-  onSelect 
-}: { 
+const MiniMap = ({ locations, fogRadius, selectedId, onSelect }: { 
   locations: MapLocation[];
+  fogRadius: number;
   selectedId?: string;
   onSelect: (loc: MapLocation) => void;
 }) => {
   return (
-    <div className="absolute bottom-4 right-4 w-48 h-48 bg-card/90 backdrop-blur rounded-lg border border-border overflow-hidden shadow-xl">
-      <div className="absolute inset-0 bg-gradient-to-br from-green-900/50 to-green-800/50" />
+    <div className="absolute bottom-4 right-4 w-44 h-44 bg-card/90 backdrop-blur rounded-lg border border-border overflow-hidden shadow-xl">
+      <div className="absolute inset-0 bg-gradient-to-br from-green-900/60 to-green-800/60" />
       
-      {/* نقاط المواقع */}
+      {/* دائرة الرؤية */}
+      <div 
+        className="absolute rounded-full border-2 border-accent/50 bg-accent/10"
+        style={{
+          width: `${fogRadius * 2.5}%`,
+          height: `${fogRadius * 2.5}%`,
+          left: '50%',
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      />
+      
+      {/* النقاط */}
       {locations.map(loc => {
-        const x = (loc.position[0] + 35) / 70 * 100;
-        const y = (loc.position[2] + 35) / 70 * 100;
+        const x = (loc.position[0] + 40) / 80 * 100;
+        const y = (loc.position[2] + 40) / 80 * 100;
+        const isVisible = loc.discovered || loc.isPlayer;
         
         const colors: Record<string, string> = {
           castle: loc.isPlayer ? '#C89B3C' : '#666',
@@ -1020,28 +1007,27 @@ const MiniMap = ({
           port: '#4169E1',
           ruins: '#9370DB',
           tower: '#708090',
+          forest: '#228B22',
         };
         
         return (
           <button
             key={loc.id}
-            className={`absolute w-3 h-3 rounded-full transition-transform hover:scale-150 ${
-              selectedId === loc.id ? 'ring-2 ring-white scale-125' : ''
-            }`}
+            className={`absolute w-2.5 h-2.5 rounded-full transition-all ${
+              selectedId === loc.id ? 'ring-2 ring-white scale-150' : ''
+            } ${isVisible ? '' : 'opacity-30'}`}
             style={{
               left: `${x}%`,
               top: `${y}%`,
               transform: 'translate(-50%, -50%)',
               backgroundColor: colors[loc.type] || '#888',
-              boxShadow: `0 0 4px ${colors[loc.type]}`,
             }}
             onClick={() => onSelect(loc)}
           />
         );
       })}
       
-      {/* عنوان */}
-      <div className="absolute top-1 left-1 text-[10px] text-muted-foreground font-medium">
+      <div className="absolute top-1 left-1 text-[10px] text-white/70 font-medium">
         🗺️ الخريطة
       </div>
     </div>
@@ -1049,34 +1035,123 @@ const MiniMap = ({
 };
 
 // ================= المكون الرئيسي =================
-export const World3DMap = ({ onLocationSelect }: World3DMapProps) => {
+export const World3DMap = ({ 
+  playerPower = 500,
+  onLocationSelect,
+  onBattleResult 
+}: World3DMapProps) => {
+  const [locations, setLocations] = useState<MapLocation[]>(createLocations);
   const [selectedLocation, setSelectedLocation] = useState<MapLocation | null>(null);
+  const [showTroopsPanel, setShowTroopsPanel] = useState(false);
+  const [movements, setMovements] = useState<TroopMovement[]>([]);
+  const [battles, setBattles] = useState<{ position: [number, number, number]; isVictory: boolean }[]>([]);
+  const [fogRadius, setFogRadius] = useState(20);
+  const [availableTroops, setAvailableTroops] = useState(200);
   const [isFullscreen, setIsFullscreen] = useState(false);
   
+  // معالجة اختيار موقع
   const handleLocationSelect = useCallback((location: MapLocation) => {
     setSelectedLocation(location);
+    setShowTroopsPanel(false);
     onLocationSelect?.(location);
   }, [onLocationSelect]);
   
-  const handleAction = useCallback((action: string) => {
-    if (!selectedLocation) return;
+  // إرسال القوات
+  const handleSendTroops = useCallback((count: number, type: 'attack' | 'gather' | 'scout') => {
+    if (!selectedLocation || count > availableTroops) return;
     
-    const messages: Record<string, string> = {
-      attack: `بدأت الهجوم على ${selectedLocation.name}! ⚔️`,
-      trade: `فتحت التجارة مع ${selectedLocation.name}! 💰`,
-      recruit: 'جندت 10 مقاتلين جدد! 👥',
-      mine: `بدأت التعدين في ${selectedLocation.name}! ⛏️`,
-      manage: 'فتحت إدارة القلعة',
-      scout: `استطلعت ${selectedLocation.name}`,
-      explore: `اكتشفت كنزاً في ${selectedLocation.name}! 💎`,
-      excavate: 'بدأت التنقيب عن الآثار',
-      travel: 'بدأت الرحلة البحرية! ⛵',
-      occupy: `سيطرت على ${selectedLocation.name}!`,
-      sendTroops: `أرسلت قوات إلى ${selectedLocation.name}`,
+    const duration = Math.sqrt(
+      selectedLocation.position[0] ** 2 + 
+      selectedLocation.position[2] ** 2
+    ) / 3; // ثانية لكل وحدة مسافة
+    
+    const movement: TroopMovement = {
+      id: Date.now().toString(),
+      from: [0, 0, 0],
+      to: selectedLocation.position,
+      targetId: selectedLocation.id,
+      troopCount: count,
+      progress: 0,
+      type,
+      startTime: Date.now(),
+      duration: Math.max(3, duration),
     };
     
-    toast.success(messages[action] || 'تم التنفيذ!');
+    setMovements(prev => [...prev, movement]);
+    setAvailableTroops(prev => prev - count);
+    setShowTroopsPanel(false);
     setSelectedLocation(null);
+    
+    toast.success(`تم إرسال ${count} جندي! ⚔️`);
+  }, [selectedLocation, availableTroops]);
+  
+  // إكمال الحركة
+  const handleMovementComplete = useCallback((movementId: string) => {
+    const movement = movements.find(m => m.id === movementId);
+    if (!movement) return;
+    
+    const target = locations.find(l => l.id === movement.targetId);
+    if (!target) return;
+    
+    setMovements(prev => prev.filter(m => m.id !== movementId));
+    
+    if (movement.type === 'scout') {
+      // استكشاف
+      setLocations(prev => prev.map(l => 
+        l.id === movement.targetId ? { ...l, discovered: true } : l
+      ));
+      setFogRadius(prev => Math.min(40, prev + 3));
+      toast.success(`تم استكشاف ${target.name}! 👁️`);
+      setAvailableTroops(prev => prev + movement.troopCount);
+    } else if (movement.type === 'attack' && target.type === 'enemy') {
+      // معركة
+      const enemyPower = (target.level || 1) * 150;
+      const attackPower = movement.troopCount * 3;
+      const isVictory = attackPower > enemyPower * 0.7;
+      
+      setBattles(prev => [...prev, { position: target.position, isVictory }]);
+      setTimeout(() => setBattles(prev => prev.slice(1)), 3000);
+      
+      const result: BattleResult = {
+        id: Date.now().toString(),
+        locationName: target.name,
+        won: isVictory,
+        troopsLost: isVictory ? Math.floor(movement.troopCount * 0.2) : movement.troopCount,
+        troopsSurvived: isVictory ? Math.floor(movement.troopCount * 0.8) : 0,
+        loot: isVictory ? { gold: (target.level || 1) * 100, resources: (target.level || 1) * 50 } : { gold: 0, resources: 0 },
+        timestamp: Date.now(),
+      };
+      
+      if (isVictory) {
+        toast.success(`انتصرت على ${target.name}! 🏆 +${result.loot.gold} ذهب`);
+        setLocations(prev => prev.filter(l => l.id !== target.id));
+        setAvailableTroops(prev => prev + result.troopsSurvived);
+      } else {
+        toast.error(`خسرت المعركة في ${target.name}! 💀`);
+      }
+      
+      onBattleResult?.(result);
+    } else if (movement.type === 'gather') {
+      // جمع
+      const gathered = Math.min(target.resources || 100, movement.troopCount * 5);
+      toast.success(`جمعت ${gathered} موارد من ${target.name}! 📦`);
+      setLocations(prev => prev.map(l => 
+        l.id === target.id ? { ...l, resources: Math.max(0, (l.resources || 0) - gathered) } : l
+      ));
+      setAvailableTroops(prev => prev + movement.troopCount);
+    }
+  }, [movements, locations, onBattleResult]);
+  
+  // استكشاف منطقة
+  const handleDiscover = useCallback(() => {
+    if (!selectedLocation) return;
+    
+    setLocations(prev => prev.map(l => 
+      l.id === selectedLocation.id ? { ...l, discovered: true } : l
+    ));
+    setFogRadius(prev => Math.min(40, prev + 2));
+    setSelectedLocation(null);
+    toast.success('تم اكتشاف المنطقة! 🔍');
   }, [selectedLocation]);
 
   return (
@@ -1089,22 +1164,23 @@ export const World3DMap = ({ onLocationSelect }: World3DMapProps) => {
             خريطة ثلاثية الأبعاد
           </Badge>
           <Badge variant="secondary" className="gap-1">
+            <Users className="w-3 h-3" />
+            {availableTroops} جندي
+          </Badge>
+          <Badge variant="secondary" className="gap-1">
             <Compass className="w-3 h-3" />
-            {LOCATIONS.length} موقع
+            رؤية: {Math.round(fogRadius * 2.5)}%
           </Badge>
         </div>
         
         <div className="flex items-center gap-2">
-          <div className="text-xs text-muted-foreground hidden sm:flex items-center gap-3">
-            <span>🖱️ سحب = تدوير</span>
-            <span>🔍 تمرير = تكبير</span>
-            <span>⌨️ Shift+سحب = تحريك</span>
-          </div>
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={() => setIsFullscreen(!isFullscreen)}
-          >
+          {movements.length > 0 && (
+            <Badge variant="default" className="gap-1 animate-pulse">
+              <Timer className="w-3 h-3" />
+              {movements.length} مهمة نشطة
+            </Badge>
+          )}
+          <Button variant="outline" size="icon" onClick={() => setIsFullscreen(!isFullscreen)}>
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </Button>
         </div>
@@ -1117,42 +1193,55 @@ export const World3DMap = ({ onLocationSelect }: World3DMapProps) => {
       >
         <Canvas shadows>
           <Suspense fallback={null}>
-            <PerspectiveCamera makeDefault position={[0, 35, 45]} fov={45} />
+            <PerspectiveCamera makeDefault position={[0, 40, 50]} fov={45} />
             <Scene 
-              onLocationSelect={handleLocationSelect} 
+              locations={locations}
+              movements={movements}
+              battles={battles}
+              fogRadius={fogRadius}
               selectedLocationId={selectedLocation?.id}
+              onLocationSelect={handleLocationSelect}
+              onMovementComplete={handleMovementComplete}
             />
           </Suspense>
         </Canvas>
         
         {/* دليل الخريطة */}
         <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur rounded-lg p-3 border border-border shadow-lg">
-          <div className="grid grid-cols-4 gap-x-4 gap-y-2 text-xs">
+          <div className="grid grid-cols-4 gap-x-4 gap-y-1 text-xs">
             <div className="flex items-center gap-1"><span>🏰</span><span className="text-muted-foreground">قلعة</span></div>
+            <div className="flex items-center gap-1"><span>⚔️</span><span className="text-muted-foreground">عدو</span></div>
             <div className="flex items-center gap-1"><span>🏘️</span><span className="text-muted-foreground">قرية</span></div>
             <div className="flex items-center gap-1"><span>⛏️</span><span className="text-muted-foreground">منجم</span></div>
-            <div className="flex items-center gap-1"><span>⚔️</span><span className="text-muted-foreground">عدو</span></div>
-            <div className="flex items-center gap-1"><span>⚓</span><span className="text-muted-foreground">ميناء</span></div>
-            <div className="flex items-center gap-1"><span>🏛️</span><span className="text-muted-foreground">أطلال</span></div>
-            <div className="flex items-center gap-1"><span>🗼</span><span className="text-muted-foreground">برج</span></div>
-            <div className="flex items-center gap-1"><span>🌲</span><span className="text-muted-foreground">غابة</span></div>
           </div>
         </div>
         
         {/* الخريطة المصغرة */}
         <MiniMap 
-          locations={LOCATIONS} 
+          locations={locations}
+          fogRadius={fogRadius}
           selectedId={selectedLocation?.id}
           onSelect={handleLocationSelect}
         />
         
-        {/* لوحة التفاصيل */}
+        {/* لوحات التحكم */}
         <AnimatePresence>
-          {selectedLocation && (
-            <LocationDetailPanel
+          {selectedLocation && !showTroopsPanel && (
+            <LocationPanel
               location={selectedLocation}
+              playerPower={playerPower}
               onClose={() => setSelectedLocation(null)}
-              onAction={handleAction}
+              onSendTroops={() => setShowTroopsPanel(true)}
+              onDiscover={handleDiscover}
+            />
+          )}
+          
+          {showTroopsPanel && selectedLocation && (
+            <SendTroopsPanel
+              location={selectedLocation}
+              maxTroops={availableTroops}
+              onSend={handleSendTroops}
+              onClose={() => setShowTroopsPanel(false)}
             />
           )}
         </AnimatePresence>
