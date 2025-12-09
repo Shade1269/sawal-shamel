@@ -1,22 +1,26 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Crown,
   Flame,
   Snowflake,
   Home,
-  Users,
   Trophy,
   Sword,
   Shield,
   Star,
-  TrendingUp
+  TrendingUp,
+  Zap,
+  Gift,
+  Timer,
+  Sparkles
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { BackButton } from '@/components/ui/back-button';
+import { useToast } from '@/hooks/use-toast';
 
 // مكون الثلج المتساقط
 const Snowfall = () => {
@@ -74,6 +78,7 @@ const PlayerBase = ({
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 0.5, type: 'spring' }}
+      whileHover={{ scale: 1.1 }}
     >
       {/* النار */}
       <motion.div
@@ -197,7 +202,13 @@ const Castle = ({ owner, alliance }: { owner: string; alliance: string }) => {
 };
 
 // مكون شريط الحرارة
-const TemperatureBar = ({ value }: { value: number }) => {
+const TemperatureBar = ({ value, onDanger }: { value: number; onDanger?: () => void }) => {
+  useEffect(() => {
+    if (value < 20 && onDanger) {
+      onDanger();
+    }
+  }, [value, onDanger]);
+
   const getColor = () => {
     if (value < 30) return 'bg-blue-500';
     if (value < 60) return 'bg-yellow-500';
@@ -229,7 +240,7 @@ const TemperatureBar = ({ value }: { value: number }) => {
           className={`h-full ${getColor()} rounded-full`}
           initial={{ width: 0 }}
           animate={{ width: `${value}%` }}
-          transition={{ duration: 1, ease: 'easeOut' }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
         />
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-xs font-bold text-white drop-shadow">{value}%</span>
@@ -248,41 +259,53 @@ const PlayerStats = ({ stats }: { stats: { wood: number; food: number; coins: nu
         مواردك
       </h3>
       <div className="grid grid-cols-2 gap-3">
-        <div className="flex items-center gap-2 bg-white/10 rounded-lg p-2">
+        <motion.div 
+          className="flex items-center gap-2 bg-white/10 rounded-lg p-2"
+          whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.2)' }}
+        >
           <span className="text-2xl">🪵</span>
           <div>
             <div className="text-xs text-gray-400">حطب</div>
             <div className="text-white font-bold">{stats.wood}</div>
           </div>
-        </div>
-        <div className="flex items-center gap-2 bg-white/10 rounded-lg p-2">
+        </motion.div>
+        <motion.div 
+          className="flex items-center gap-2 bg-white/10 rounded-lg p-2"
+          whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.2)' }}
+        >
           <span className="text-2xl">🍖</span>
           <div>
             <div className="text-xs text-gray-400">طعام</div>
             <div className="text-white font-bold">{stats.food}</div>
           </div>
-        </div>
-        <div className="flex items-center gap-2 bg-white/10 rounded-lg p-2">
+        </motion.div>
+        <motion.div 
+          className="flex items-center gap-2 bg-white/10 rounded-lg p-2"
+          whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.2)' }}
+        >
           <span className="text-2xl">💰</span>
           <div>
             <div className="text-xs text-gray-400">عملات</div>
             <div className="text-white font-bold">{stats.coins}</div>
           </div>
-        </div>
-        <div className="flex items-center gap-2 bg-white/10 rounded-lg p-2">
+        </motion.div>
+        <motion.div 
+          className="flex items-center gap-2 bg-white/10 rounded-lg p-2"
+          whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.2)' }}
+        >
           <span className="text-2xl">🏆</span>
           <div>
             <div className="text-xs text-gray-400">ترتيبك</div>
             <div className="text-white font-bold">#{stats.rank}</div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </Card>
   );
 };
 
 // مكون التحدي الأسبوعي
-const WeeklyChallenge = () => {
+const WeeklyChallenge = ({ progress, target }: { progress: number; target: number }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 3, hours: 14, minutes: 22 });
 
   useEffect(() => {
@@ -301,6 +324,8 @@ const WeeklyChallenge = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const percentage = Math.min((progress / target) * 100, 100);
+
   return (
     <Card className="bg-gradient-to-br from-purple-900/60 to-blue-900/60 backdrop-blur-sm border-purple-500/30 p-4">
       <div className="flex items-center justify-between mb-3">
@@ -317,15 +342,18 @@ const WeeklyChallenge = () => {
       </div>
 
       <div className="bg-black/30 rounded-lg p-3 mb-3">
-        <p className="text-white text-sm mb-2">🎯 بيع 15 منتج قبل انتهاء العاصفة</p>
+        <p className="text-white text-sm mb-2">🎯 اجمع الموارد قبل انتهاء العاصفة</p>
         <div className="flex items-center gap-2">
-          <Progress value={60} className="flex-1" />
-          <span className="text-white text-sm font-bold">9/15</span>
+          <Progress value={percentage} className="flex-1" />
+          <span className="text-white text-sm font-bold">{progress}/{target}</span>
         </div>
       </div>
 
       <div className="flex items-center justify-between">
-        <div className="text-gray-300 text-xs">الوقت المتبقي:</div>
+        <div className="text-gray-300 text-xs flex items-center gap-1">
+          <Timer className="w-3 h-3" />
+          الوقت المتبقي:
+        </div>
         <div className="flex gap-2 text-white font-mono">
           <span className="bg-black/40 px-2 py-1 rounded">{timeLeft.days}d</span>
           <span className="bg-black/40 px-2 py-1 rounded">{timeLeft.hours}h</span>
@@ -334,7 +362,10 @@ const WeeklyChallenge = () => {
       </div>
 
       <div className="mt-3 pt-3 border-t border-white/10">
-        <div className="text-xs text-gray-400 mb-1">🎁 المكافأة:</div>
+        <div className="text-xs text-gray-400 mb-1 flex items-center gap-1">
+          <Gift className="w-3 h-3" />
+          المكافأة:
+        </div>
         <div className="flex gap-2">
           <Badge variant="secondary">+50 🪵</Badge>
           <Badge variant="secondary">+30 🍖</Badge>
@@ -346,12 +377,12 @@ const WeeklyChallenge = () => {
 };
 
 // مكون المتصدرين المصغر
-const MiniLeaderboard = () => {
+const MiniLeaderboard = ({ currentRank }: { currentRank: number }) => {
   const leaders = [
     { rank: 1, name: 'أحمد', points: 2450, avatar: '👨‍💼' },
     { rank: 2, name: 'سارة', points: 2180, avatar: '👩‍💼' },
     { rank: 3, name: 'خالد', points: 1920, avatar: '🧔' },
-    { rank: 4, name: 'أنت', points: 1650, avatar: '😎', isYou: true },
+    { rank: currentRank, name: 'أنت', points: 1650, avatar: '😎', isYou: true },
     { rank: 5, name: 'نورة', points: 1580, avatar: '👩' },
   ];
 
@@ -371,6 +402,7 @@ const MiniLeaderboard = () => {
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: leader.rank * 0.1 }}
+            whileHover={{ scale: 1.02, x: 5 }}
           >
             <span className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${
               leader.rank === 1 ? 'bg-yellow-500 text-black' :
@@ -392,11 +424,47 @@ const MiniLeaderboard = () => {
   );
 };
 
+// مكون الإشعار المنبثق
+const ActionNotification = ({ 
+  message, 
+  icon, 
+  type 
+}: { 
+  message: string; 
+  icon: string; 
+  type: 'success' | 'warning' | 'info';
+}) => {
+  const bgColor = {
+    success: 'from-green-600/90 to-emerald-600/90',
+    warning: 'from-orange-600/90 to-amber-600/90',
+    info: 'from-blue-600/90 to-cyan-600/90'
+  }[type];
+
+  return (
+    <motion.div
+      className={`fixed top-20 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full bg-gradient-to-r ${bgColor} backdrop-blur-sm shadow-2xl`}
+      initial={{ y: -50, opacity: 0, scale: 0.8 }}
+      animate={{ y: 0, opacity: 1, scale: 1 }}
+      exit={{ y: -50, opacity: 0, scale: 0.8 }}
+    >
+      <div className="flex items-center gap-3 text-white font-bold">
+        <span className="text-2xl">{icon}</span>
+        <span>{message}</span>
+      </div>
+    </motion.div>
+  );
+};
+
 // الصفحة الرئيسية
 export default function FrostSurvival() {
-  const [temperature, _setTemperature] = useState(72);
+  const { toast } = useToast();
+  const [temperature, setTemperature] = useState(72);
+  const [playerStats, setPlayerStats] = useState({ wood: 156, food: 89, coins: 1250, rank: 4 });
+  const [challengeProgress, setChallengeProgress] = useState(9);
+  const [notification, setNotification] = useState<{ message: string; icon: string; type: 'success' | 'warning' | 'info' } | null>(null);
+  const [houses, setHouses] = useState(3);
 
-  // بيانات تجريبية
+  // بيانات اللاعبين
   const players = [
     { name: 'أحمد', level: 12, avatar: '👨‍💼', houses: 4 },
     { name: 'سارة', level: 10, avatar: '👩‍💼', houses: 3 },
@@ -404,9 +472,7 @@ export default function FrostSurvival() {
     { name: 'نورة', level: 7, avatar: '👩', houses: 2 },
   ];
 
-  const currentPlayer = { name: 'أنت', level: 9, avatar: '😎', houses: 3 };
-
-  const playerStats = { wood: 156, food: 89, coins: 1250, rank: 4 };
+  const currentPlayer = { name: 'أنت', level: 9, avatar: '😎', houses };
 
   const positions = [
     { x: 15, y: 25 },
@@ -414,6 +480,78 @@ export default function FrostSurvival() {
     { x: 12, y: 70 },
     { x: 85, y: 75 },
   ];
+
+  // تأثير انخفاض الحرارة تلقائياً
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTemperature(prev => Math.max(0, prev - 1));
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const showNotification = useCallback((message: string, icon: string, type: 'success' | 'warning' | 'info') => {
+    setNotification({ message, icon, type });
+    setTimeout(() => setNotification(null), 3000);
+  }, []);
+
+  // أشعل النار
+  const handleLightFire = () => {
+    if (playerStats.wood >= 10) {
+      setPlayerStats(prev => ({ ...prev, wood: prev.wood - 10 }));
+      setTemperature(prev => Math.min(100, prev + 25));
+      showNotification('+25 حرارة! 🔥', '🔥', 'success');
+      setChallengeProgress(prev => prev + 1);
+    } else {
+      toast({
+        title: 'لا يوجد حطب كافٍ!',
+        description: 'تحتاج 10 حطب لإشعال النار',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  // ابنِ بيت
+  const handleBuildHouse = () => {
+    if (playerStats.wood >= 50 && playerStats.coins >= 100) {
+      setPlayerStats(prev => ({ 
+        ...prev, 
+        wood: prev.wood - 50, 
+        coins: prev.coins - 100 
+      }));
+      setHouses(prev => prev + 1);
+      showNotification('بنيت بيتاً جديداً! 🏠', '🏠', 'success');
+      setChallengeProgress(prev => prev + 2);
+    } else {
+      toast({
+        title: 'موارد غير كافية!',
+        description: 'تحتاج 50 حطب و 100 عملة',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  // اجمع الموارد
+  const handleGatherResources = () => {
+    const woodGained = Math.floor(Math.random() * 20) + 10;
+    const foodGained = Math.floor(Math.random() * 10) + 5;
+    setPlayerStats(prev => ({ 
+      ...prev, 
+      wood: prev.wood + woodGained, 
+      food: prev.food + foodGained 
+    }));
+    setTemperature(prev => Math.max(0, prev - 5));
+    showNotification(`+${woodGained} حطب، +${foodGained} طعام`, '🪓', 'info');
+    setChallengeProgress(prev => prev + 1);
+  };
+
+  // تحذير عند انخفاض الحرارة
+  const handleTemperatureDanger = useCallback(() => {
+    toast({
+      title: 'تحذير! الحرارة منخفضة جداً 🥶',
+      description: 'أشعل النار قبل أن تتجمد!',
+      variant: 'destructive'
+    });
+  }, [toast]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 relative overflow-hidden">
@@ -437,6 +575,17 @@ export default function FrostSurvival() {
         <span className="absolute text-5xl opacity-40" style={{ left: '30%', top: '75%' }}>🌲</span>
         <span className="absolute text-4xl opacity-50" style={{ right: '35%', top: '80%' }}>🌲</span>
       </div>
+
+      {/* إشعارات الإجراءات */}
+      <AnimatePresence>
+        {notification && (
+          <ActionNotification 
+            message={notification.message} 
+            icon={notification.icon} 
+            type={notification.type} 
+          />
+        )}
+      </AnimatePresence>
 
       {/* Header */}
       <div className="relative z-20 border-b border-white/10 bg-black/30 backdrop-blur-sm">
@@ -481,9 +630,9 @@ export default function FrostSurvival() {
 
           {/* الشريط الجانبي */}
           <div className="lg:col-span-1 space-y-4">
-            <TemperatureBar value={temperature} />
+            <TemperatureBar value={temperature} onDanger={handleTemperatureDanger} />
             <PlayerStats stats={playerStats} />
-            <WeeklyChallenge />
+            <WeeklyChallenge progress={challengeProgress} target={15} />
           </div>
 
           {/* خريطة اللعبة */}
@@ -523,24 +672,50 @@ export default function FrostSurvival() {
 
             {/* أزرار الإجراءات */}
             <div className="grid grid-cols-3 gap-3 mt-4">
-              <Button className="bg-orange-600 hover:bg-orange-700 text-white gap-2">
-                <Flame className="w-4 h-4" />
-                أشعل النار
-              </Button>
-              <Button className="bg-green-600 hover:bg-green-700 text-white gap-2">
-                <Home className="w-4 h-4" />
-                ابنِ بيت
-              </Button>
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white gap-2">
-                <Users className="w-4 h-4" />
-                تحالفات
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button 
+                  onClick={handleLightFire}
+                  className="w-full bg-orange-600 hover:bg-orange-700 text-white gap-2 h-14"
+                  disabled={playerStats.wood < 10}
+                >
+                  <Flame className="w-5 h-5" />
+                  <div className="flex flex-col items-start">
+                    <span>أشعل النار</span>
+                    <span className="text-xs opacity-75">-10 🪵</span>
+                  </div>
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button 
+                  onClick={handleBuildHouse}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white gap-2 h-14"
+                  disabled={playerStats.wood < 50 || playerStats.coins < 100}
+                >
+                  <Home className="w-5 h-5" />
+                  <div className="flex flex-col items-start">
+                    <span>ابنِ بيت</span>
+                    <span className="text-xs opacity-75">-50🪵 -100💰</span>
+                  </div>
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button 
+                  onClick={handleGatherResources}
+                  className="w-full bg-cyan-600 hover:bg-cyan-700 text-white gap-2 h-14"
+                >
+                  <Zap className="w-5 h-5" />
+                  <div className="flex flex-col items-start">
+                    <span>اجمع موارد</span>
+                    <span className="text-xs opacity-75">-5 حرارة</span>
+                  </div>
+                </Button>
+              </motion.div>
             </div>
           </div>
 
           {/* لوحة المتصدرين */}
           <div className="lg:col-span-1 space-y-4">
-            <MiniLeaderboard />
+            <MiniLeaderboard currentRank={playerStats.rank} />
 
             {/* مكافآت القلعة */}
             <Card className="bg-gradient-to-br from-yellow-900/40 to-amber-900/40 backdrop-blur-sm border-yellow-500/30 p-4">
@@ -549,23 +724,45 @@ export default function FrostSurvival() {
                 مكافآت القلعة
               </h3>
               <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2 text-white">
-                  <span>🎨</span>
+                <motion.div 
+                  className="flex items-center gap-2 text-white p-2 rounded hover:bg-white/10 transition-colors"
+                  whileHover={{ x: 5 }}
+                >
+                  <Sparkles className="w-4 h-4 text-purple-400" />
                   <span>ثيم ملكي حصري</span>
-                </div>
-                <div className="flex items-center gap-2 text-white">
+                </motion.div>
+                <motion.div 
+                  className="flex items-center gap-2 text-white p-2 rounded hover:bg-white/10 transition-colors"
+                  whileHover={{ x: 5 }}
+                >
                   <span>💰</span>
                   <span>+20% عمولة إضافية</span>
-                </div>
-                <div className="flex items-center gap-2 text-white">
-                  <span>👑</span>
+                </motion.div>
+                <motion.div 
+                  className="flex items-center gap-2 text-white p-2 rounded hover:bg-white/10 transition-colors"
+                  whileHover={{ x: 5 }}
+                >
+                  <Crown className="w-4 h-4 text-yellow-400" />
                   <span>تاج بجانب اسمك</span>
-                </div>
-                <div className="flex items-center gap-2 text-white">
+                </motion.div>
+                <motion.div 
+                  className="flex items-center gap-2 text-white p-2 rounded hover:bg-white/10 transition-colors"
+                  whileHover={{ x: 5 }}
+                >
                   <span>📍</span>
                   <span>ظهور أول في المنصة</span>
-                </div>
+                </motion.div>
               </div>
+            </Card>
+
+            {/* نصائح اللعبة */}
+            <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-4">
+              <h3 className="text-white font-bold mb-2 flex items-center gap-2">
+                💡 نصيحة
+              </h3>
+              <p className="text-gray-300 text-sm">
+                حافظ على الحرارة فوق 30% لتجنب خسارة الموارد. اجمع الحطب باستمرار!
+              </p>
             </Card>
           </div>
         </div>
