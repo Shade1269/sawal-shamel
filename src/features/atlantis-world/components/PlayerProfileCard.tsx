@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Crown, Shield, Swords, Trophy, TrendingUp, Building2, Gem } from 'lucide-react';
+import { Crown, Shield, Swords, Trophy, TrendingUp, Building2, Gem, Coins } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
