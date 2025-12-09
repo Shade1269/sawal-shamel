@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import {
   Crown,
   Flame,
-  Snowflake,
   Home,
   Shield,
   TrendingUp,
@@ -91,22 +90,22 @@ const TemperatureBar = ({ value, onDanger }: { value: number; onDanger?: () => v
   }, [value, onDanger]);
 
   const getColor = () => value < 30 ? 'bg-blue-500' : value < 60 ? 'bg-yellow-500' : 'bg-orange-500';
-  const status = value < 30 ? { text: 'خطر! 🥶', color: 'text-blue-400' } : 
-                 value < 60 ? { text: 'حذر ⚠️', color: 'text-yellow-400' } : 
-                 { text: 'دافئ 🔥', color: 'text-orange-400' };
+  const status = value < 30 ? { text: 'خطر! 🥶', color: 'text-blue-300' } : 
+                 value < 60 ? { text: 'حذر ⚠️', color: 'text-yellow-300' } : 
+                 { text: 'دافئ 🔥', color: 'text-orange-300' };
 
   return (
-    <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-4">
+    <Card className="bg-gradient-to-r from-amber-900/70 to-orange-900/50 backdrop-blur-sm border-orange-600/40 p-4">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Snowflake className="w-5 h-5 text-blue-300" />
+          <Flame className="w-5 h-5 text-orange-400" />
           <span className="text-white font-bold">الحرارة</span>
         </div>
         <span className={`font-bold ${status.color}`}>{status.text}</span>
       </div>
-      <div className="relative h-4 bg-gray-700 rounded-full overflow-hidden">
+      <div className="relative h-4 bg-slate-700/80 rounded-full overflow-hidden border border-slate-500/30">
         <motion.div className={`h-full ${getColor()} rounded-full`} animate={{ width: `${value}%` }} />
-        <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">{value}%</span>
+        <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white drop-shadow-md">{value}%</span>
       </div>
     </Card>
   );
@@ -115,39 +114,39 @@ const TemperatureBar = ({ value, onDanger }: { value: number; onDanger?: () => v
 // بطاقة البروفايل
 const PlayerProfileCard = ({ player, atlantisLevel }: { player: any; atlantisLevel: string }) => {
   const levelStyles: any = {
-    bronze: { bg: 'bg-orange-500/20', text: 'text-orange-400', icon: '🥉' },
-    silver: { bg: 'bg-gray-400/20', text: 'text-gray-300', icon: '🥈' },
-    gold: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', icon: '🥇' },
-    legendary: { bg: 'bg-purple-500/20', text: 'text-purple-400', icon: '👑' }
+    bronze: { bg: 'bg-orange-500/30', text: 'text-orange-300', icon: '🥉' },
+    silver: { bg: 'bg-gray-400/30', text: 'text-gray-200', icon: '🥈' },
+    gold: { bg: 'bg-yellow-500/30', text: 'text-yellow-300', icon: '🥇' },
+    legendary: { bg: 'bg-purple-500/30', text: 'text-purple-300', icon: '👑' }
   };
   const style = levelStyles[atlantisLevel] || levelStyles.bronze;
 
   return (
-    <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-4">
+    <Card className="bg-amber-900/60 backdrop-blur-sm border-amber-600/40 p-4">
       <div className="flex items-center gap-4 mb-4">
-        <div className={`w-16 h-16 rounded-xl ${style.bg} flex items-center justify-center text-3xl`}>
+        <div className={`w-16 h-16 rounded-xl ${style.bg} flex items-center justify-center text-3xl border border-white/20`}>
           {player.avatar}
         </div>
         <div>
           <h3 className="text-white font-bold text-lg">{player.name}</h3>
-          <Badge className={`${style.bg} ${style.text}`}>{style.icon} {atlantisLevel}</Badge>
+          <Badge className={`${style.bg} ${style.text} border border-white/20`}>{style.icon} {atlantisLevel}</Badge>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2 text-center">
-        <div className="bg-white/10 rounded-lg p-2">
-          <Shield className="w-4 h-4 mx-auto text-primary mb-1" />
+        <div className="bg-slate-800/70 rounded-lg p-2 border border-slate-600/50">
+          <Shield className="w-4 h-4 mx-auto text-red-400 mb-1" />
           <p className="text-white font-bold">{player.power}</p>
-          <p className="text-xs text-gray-400">قوة</p>
+          <p className="text-xs text-slate-300">قوة</p>
         </div>
-        <div className="bg-white/10 rounded-lg p-2">
-          <Building2 className="w-4 h-4 mx-auto text-accent mb-1" />
+        <div className="bg-slate-800/70 rounded-lg p-2 border border-slate-600/50">
+          <Building2 className="w-4 h-4 mx-auto text-yellow-400 mb-1" />
           <p className="text-white font-bold">{player.buildings}</p>
-          <p className="text-xs text-gray-400">مباني</p>
+          <p className="text-xs text-slate-300">مباني</p>
         </div>
-        <div className="bg-white/10 rounded-lg p-2">
-          <Swords className="w-4 h-4 mx-auto text-destructive mb-1" />
+        <div className="bg-slate-800/70 rounded-lg p-2 border border-slate-600/50">
+          <Swords className="w-4 h-4 mx-auto text-red-400 mb-1" />
           <p className="text-white font-bold">{player.troops}</p>
-          <p className="text-xs text-gray-400">جنود</p>
+          <p className="text-xs text-slate-300">جنود</p>
         </div>
       </div>
     </Card>
@@ -311,7 +310,7 @@ const MiniLeaderboard = ({ currentRank }: { currentRank: number }) => {
   ];
 
   return (
-    <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-4">
+    <Card className="bg-slate-900/80 backdrop-blur-sm border-slate-600/50 p-4">
       <h3 className="text-white font-bold mb-3 flex items-center gap-2">
         <TrendingUp className="w-5 h-5 text-green-400" />
         سباق القلعة
@@ -320,15 +319,15 @@ const MiniLeaderboard = ({ currentRank }: { currentRank: number }) => {
         {leaders.map((leader) => (
           <motion.div
             key={leader.rank}
-            className={`flex items-center gap-2 p-2 rounded-lg ${leader.isYou ? 'bg-blue-500/30' : 'bg-white/5'}`}
+            className={`flex items-center gap-2 p-2 rounded-lg ${leader.isYou ? 'bg-blue-600/40 border border-blue-400/50' : 'bg-slate-700/50'}`}
             whileHover={{ x: 5 }}
           >
-            <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
-              leader.rank === 1 ? 'bg-yellow-500' : leader.rank === 2 ? 'bg-gray-400' : 'bg-gray-700 text-white'
+            <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center text-black ${
+              leader.rank === 1 ? 'bg-yellow-400' : leader.rank === 2 ? 'bg-gray-300' : leader.rank === 3 ? 'bg-orange-400' : 'bg-blue-400'
             }`}>{leader.rank}</span>
             <span className="text-xl">{leader.avatar}</span>
-            <span className={`flex-1 text-sm ${leader.isYou ? 'text-blue-300 font-bold' : 'text-white'}`}>{leader.name}</span>
-            <span className="text-yellow-400 font-bold text-sm">{leader.points}</span>
+            <span className={`flex-1 text-sm font-medium ${leader.isYou ? 'text-blue-200' : 'text-white'}`}>{leader.name}</span>
+            <span className="text-yellow-300 font-bold text-sm">{leader.points}</span>
           </motion.div>
         ))}
       </div>
