@@ -233,7 +233,7 @@ const TroopsPanel = ({ troops, onTrain }: any) => {
 };
 
 // استيراد الخريطة الموسعة
-import { GameWorldMap } from '@/features/atlantis-world/components/GameWorldMap';
+import { World3DMap } from '@/features/atlantis-world/components/World3DMap';
 
 // المتصدرين
 const MiniLeaderboard = ({ currentRank }: { currentRank: number }) => {
@@ -458,12 +458,9 @@ export default function AtlantisWorld() {
       {/* المحتوى */}
       <main className="relative z-20 container mx-auto px-4 pb-20">
         {activeView === 'map' ? (
-          <GameWorldMap 
-            playerPosition={player.position}
-            playerName={player.name}
-            playerPower={player.power}
-            onLocationClick={(loc) => toast.info(`اخترت: ${loc.name}`)}
-            onMove={(x, y) => setPlayer(p => ({ ...p, position: { x, y } }))}
+          <World3DMap 
+            playerCastlePosition={[player.position.x, 0, player.position.y]}
+            onLocationSelect={(loc) => toast.info(`اخترت: ${loc.name}`)}
           />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
