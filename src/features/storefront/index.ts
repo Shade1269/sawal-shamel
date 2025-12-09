@@ -1,5 +1,7 @@
 // Components
 export { WishlistButton } from './components/WishlistButton';
+export { HeaderWishlistButton } from './components/HeaderWishlistButton';
+export { HeaderCompareButton } from './components/HeaderCompareButton';
 export { CompareProducts, CompareButton } from './components/CompareProducts';
 export { AdvancedSearch, FiltersSidebar, type SearchFilters } from './components/AdvancedSearch';
 export { RelatedProducts, FrequentlyBoughtTogether } from './components/RelatedProducts';

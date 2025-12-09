@@ -33,6 +33,16 @@ import { ModernFooter } from "@/components/storefront/modern/ModernFooter";
 import { ModernCustomerOrders } from "@/components/storefront/modern/ModernCustomerOrders";
 import { ModernInvoice } from "@/components/storefront/modern/ModernInvoice";
 import { StorefrontThemeToggle } from "@/components/storefront/StorefrontThemeToggle";
+import { 
+  HeaderWishlistButton, 
+  HeaderCompareButton,
+  CompareProducts, 
+  AdvancedSearch,
+  CustomerLoyaltyCard,
+  AbandonedCartRecovery,
+  useWishlist,
+  useCompare
+} from "@/features/storefront";
 
 interface Product {
   id: string;
@@ -122,7 +132,6 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [_showOrdersModal, setShowOrdersModal] = useState(false); // showOrdersModal
   const [pendingCheckout, setPendingCheckout] = useState(false);
-  const [wishlist, setWishlist] = useState<string[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [variantError, setVariantError] = useState<string | null>(null);
@@ -135,6 +144,16 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   const [_viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showOrders, setShowOrders] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [showCompare, setShowCompare] = useState(false);
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const [showLoyalty, setShowLoyalty] = useState(false);
+  
+  // New hooks for storefront features
+  const { getWishlistProductIds, toggleWishlist: toggleWishlistFromHook } = useWishlist(storeSlug || '');
+  const { compareList, compareCount } = useCompare(storeSlug || '');
+  
+  // Wishlist as array of productIds for compatibility
+  const wishlist = getWishlistProductIds();
   
   // Mark setters as used
   void setShowOrdersModal;
@@ -568,15 +587,7 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   };
 
   const toggleWishlist = (productId: string) => {
-    const newWishlist = wishlist.includes(productId)
-      ? wishlist.filter(id => id !== productId)
-      : [...wishlist, productId];
-    setWishlist(newWishlist);
-    
-    toast({
-      title: wishlist.includes(productId) ? "💔 تم الحذف من المفضلة" : "❤️ تم الإضافة للمفضلة",
-      description: wishlist.includes(productId) ? "تم حذف المنتج من قائمة المفضلة" : "تم إضافة المنتج لقائمة المفضلة",
-    });
+    toggleWishlistFromHook(productId);
   };
 
   const handleCheckoutClick = () => {
@@ -866,7 +877,10 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
           <div className="container mx-auto px-6 py-5">
             <div className="flex items-center justify-between max-w-7xl mx-auto">
               {/* Search */}
-              <button className="p-2.5 hover:bg-secondary/50 rounded-lg transition-colors">
+              <button 
+                onClick={() => setShowAdvancedSearch(true)}
+                className="p-2.5 hover:bg-secondary/50 rounded-lg transition-colors"
+              >
                 <Search className="w-6 h-6 text-foreground/70" />
               </button>
 
@@ -879,6 +893,18 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
               <div className="flex items-center gap-2">
                 {/* Theme Toggle */}
                 {storeSlug && <StorefrontThemeToggle storeSlug={storeSlug} />}
+                
+                {/* Compare Button */}
+                <HeaderCompareButton
+                  count={compareCount}
+                  onClick={() => setShowCompare(true)}
+                />
+                
+                {/* Wishlist Button */}
+                <HeaderWishlistButton
+                  count={wishlist.length}
+                  onClick={() => setShowLoyalty(true)}
+                />
                 
                 <button 
                   onClick={() => {
@@ -1135,6 +1161,96 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
             });
             setShowAuthModal(true);
           }}
+        />
+      )}
+
+      {/* Advanced Search - using filters state */}
+      {showAdvancedSearch && (
+        <Dialog open={showAdvancedSearch} onOpenChange={setShowAdvancedSearch}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <AdvancedSearch
+              filters={{
+                query: searchQuery,
+                priceRange: priceRange,
+                categories: selectedCategory !== 'all' ? [selectedCategory] : [],
+                rating: null,
+                inStock: false,
+                sortBy: sortBy as any,
+                colors: [],
+                sizes: []
+              }}
+              onFiltersChange={(newFilters) => {
+                setSearchQuery(newFilters.query);
+                setPriceRange(newFilters.priceRange);
+                setSelectedCategory(newFilters.categories[0] || 'all');
+                setSortBy(newFilters.sortBy);
+                setShowAdvancedSearch(false);
+              }}
+              categories={visibleCategories.map(c => c.name)}
+              maxPrice={1000}
+              totalResults={filteredProducts.length}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Compare Products Modal */}
+      {showCompare && products && (
+        <Dialog open={showCompare} onOpenChange={setShowCompare}>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+            <CompareProducts
+              products={products
+                .filter(p => compareList.includes(p.id))
+                .map(p => ({
+                  id: p.id,
+                  title: p.title,
+                  description: p.description,
+                  price_sar: p.final_price || p.price_sar,
+                  image_urls: p.image_urls,
+                  rating: p.average_rating,
+                  reviews_count: p.total_reviews,
+                  stock_quantity: p.stock,
+                  category: p.category
+                }))}
+              storeId={affiliateStore?.id || ''}
+              onAddToCart={(productId: string) => {
+                const product = products.find(p => p.id === productId);
+                if (product) {
+                  addToCart(product);
+                }
+              }}
+              onClose={() => setShowCompare(false)}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Customer Loyalty Modal */}
+      {showLoyalty && (
+        <Dialog open={showLoyalty} onOpenChange={setShowLoyalty}>
+          <DialogContent className="max-w-lg">
+            <CustomerLoyaltyCard
+              points={customer?.loyalty_points || 0}
+              totalOrders={0}
+              totalSpent={0}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Abandoned Cart Recovery */}
+      {affiliateStore && storeSlug && (isolatedCart?.items?.length || 0) > 0 && (
+        <AbandonedCartRecovery
+          storeSlug={storeSlug}
+          items={(isolatedCart?.items || []).map((item: any) => ({
+            id: item.product_id,
+            title: item.title || 'منتج',
+            price: item.unit_price_sar || 0,
+            image: item.image_url,
+            quantity: item.quantity || 1
+          }))}
+          lastUpdated={new Date()}
+          discountPercent={10}
         />
       )}
 
