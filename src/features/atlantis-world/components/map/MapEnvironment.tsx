@@ -131,11 +131,12 @@ export const EnhancedTerrain = ({ fogRadius }: { fogRadius: number }) => {
 // ============== ضباب الحرب ==============
 export const FogOfWar = ({ radius }: { radius: number }) => {
   const meshRef = useRef<THREE.Mesh>(null);
+  const materialRef = useRef<THREE.MeshBasicMaterial>(null);
   
   useFrame((state) => {
-    if (meshRef.current) {
+    if (materialRef.current) {
       // تأثير التموج
-      meshRef.current.material.opacity = 0.65 + Math.sin(state.clock.elapsedTime * 0.5) * 0.05;
+      materialRef.current.opacity = 0.65 + Math.sin(state.clock.elapsedTime * 0.5) * 0.05;
     }
   });
   
@@ -143,6 +144,7 @@ export const FogOfWar = ({ radius }: { radius: number }) => {
     <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.3, 0]}>
       <ringGeometry args={[radius, 70, 128]} />
       <meshBasicMaterial 
+        ref={materialRef}
         color="#0a0a15" 
         transparent 
         opacity={0.7}
@@ -169,7 +171,6 @@ export const AnimatedWater = ({ position, size = 8 }: {
     <mesh ref={meshRef} position={position} rotation={[-Math.PI / 2, 0, 0]}>
       <circleGeometry args={[size, 64]} />
       <meshStandardMaterial 
-        ref={materialRef}
         color="#1a6eb5" 
         transparent 
         opacity={0.85} 
@@ -246,8 +247,6 @@ export const Forest = ({
     }
     return result;
   }, [count, spread]);
-  
-  const opacity = discovered ? 1 : 0.4;
   
   return (
     <group position={position}>
