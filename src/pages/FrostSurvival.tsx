@@ -504,10 +504,18 @@ export default function AtlantisWorld() {
       {/* أزرار التبديل */}
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-center gap-2">
-          <Button variant={activeView === 'kingdom' ? 'default' : 'outline'} onClick={() => setActiveView('kingdom')} className="gap-2 text-white">
+          <Button 
+            variant={activeView === 'kingdom' ? 'default' : 'outline'} 
+            onClick={() => setActiveView('kingdom')} 
+            className={`gap-2 ${activeView === 'kingdom' ? 'bg-primary text-white' : 'bg-slate-800/80 text-white border-slate-500 hover:bg-slate-700'}`}
+          >
             <LayoutGrid className="w-4 h-4" /> مملكتي
           </Button>
-          <Button variant={activeView === 'map' ? 'default' : 'outline'} onClick={() => setActiveView('map')} className="gap-2 text-white">
+          <Button 
+            variant={activeView === 'map' ? 'default' : 'outline'} 
+            onClick={() => setActiveView('map')} 
+            className={`gap-2 ${activeView === 'map' ? 'bg-primary text-white' : 'bg-slate-800/80 text-white border-slate-500 hover:bg-slate-700'}`}
+          >
             <Map className="w-4 h-4" /> خريطة العالم
           </Button>
         </div>
@@ -599,14 +607,14 @@ export default function AtlantisWorld() {
       </main>
 
       {/* شريط سفلي */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur border-t border-white/10 py-3 z-40">
-        <div className="container mx-auto px-4 flex items-center justify-between text-sm text-white">
-          <div className="flex items-center gap-6">
-            <span><Shield className="w-4 h-4 inline ml-1" /> القوة: <strong>{player.power}</strong></span>
-            <span><Building2 className="w-4 h-4 inline ml-1" /> المباني: <strong>{buildings.length}</strong></span>
-            <span><Swords className="w-4 h-4 inline ml-1" /> الجنود: <strong>{troops.reduce((s, t) => s + t.count, 0)}</strong></span>
+      <footer className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur border-t border-slate-600/50 py-3 z-40">
+        <div className="container mx-auto px-4 flex items-center justify-between text-sm">
+          <div className="flex items-center gap-6 text-white">
+            <span className="flex items-center gap-1"><Shield className="w-4 h-4 text-cyan-400" /> القوة: <strong className="text-cyan-300">{player.power}</strong></span>
+            <span className="flex items-center gap-1"><Building2 className="w-4 h-4 text-yellow-400" /> المباني: <strong className="text-yellow-300">{buildings.length}</strong></span>
+            <span className="flex items-center gap-1"><Swords className="w-4 h-4 text-red-400" /> الجنود: <strong className="text-red-300">{troops.reduce((s, t) => s + t.count, 0)}</strong></span>
           </div>
-          <Badge className="bg-accent/20 text-accent">مرتبط بنظام نقاط أتلانتس</Badge>
+          <Badge className="bg-amber-500/30 text-amber-200 border border-amber-400/50">مرتبط بنظام نقاط أتلانتس</Badge>
         </div>
       </footer>
     </div>
