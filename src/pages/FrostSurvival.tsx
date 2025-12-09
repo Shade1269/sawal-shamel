@@ -45,67 +45,39 @@ const TROOP_CONFIGS = {
 
 // ================= المكونات =================
 
-// مكون الثلج المتساقط
-const Snowfall = () => {
-  const snowflakes = useMemo(() => Array.from({ length: 40 }, (_, i) => ({
-    id: i,
-    left: Math.random() * 100,
-    delay: Math.random() * 5,
-    duration: 3 + Math.random() * 4,
-    size: 4 + Math.random() * 8,
-  })), []);
-
-  return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-10">
-      {snowflakes.map((flake) => (
-        <motion.div
-          key={flake.id}
-          className="absolute text-white/60"
-          style={{ left: `${flake.left}%`, fontSize: flake.size }}
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: '100vh', opacity: [0, 1, 1, 0], x: [0, 10, -10, 0] }}
-          transition={{ duration: flake.duration, delay: flake.delay, repeat: Infinity, ease: 'linear' }}
-        >
-          ❄
-        </motion.div>
-      ))}
-    </div>
-  );
-};
-
 // شريط الموارد
 const ResourcesBar = ({ resources }: { resources: any }) => (
   <div className="flex items-center gap-2 flex-wrap">
-    <Badge variant="outline" className="bg-yellow-500/20 text-yellow-300 gap-1">💰 {resources.coins}</Badge>
-    <Badge variant="outline" className="bg-amber-600/20 text-amber-300 gap-1">🪵 {resources.wood}</Badge>
-    <Badge variant="outline" className="bg-green-500/20 text-green-300 gap-1">🍖 {resources.food}</Badge>
-    <Badge variant="outline" className="bg-purple-500/20 text-purple-300 gap-1">💎 {resources.gems}</Badge>
+    <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30 gap-1">💰 {resources.coins}</Badge>
+    <Badge variant="outline" className="bg-amber-600/20 text-amber-700 dark:text-amber-300 border-amber-500/30 gap-1">🪵 {resources.wood}</Badge>
+    <Badge variant="outline" className="bg-green-500/20 text-green-700 dark:text-green-400 border-green-500/30 gap-1">🍖 {resources.food}</Badge>
+    <Badge variant="outline" className="bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/30 gap-1">💎 {resources.gems}</Badge>
   </div>
 );
 
-// شريط الحرارة
+// شريط الطاقة
 const TemperatureBar = ({ value, onDanger }: { value: number; onDanger?: () => void }) => {
   useEffect(() => {
     if (value < 20 && onDanger) onDanger();
   }, [value, onDanger]);
 
-  const getColor = () => value < 30 ? 'bg-blue-500' : value < 60 ? 'bg-yellow-500' : 'bg-orange-500';
-  const status = value < 30 ? { text: 'خطر! 🥶', color: 'text-blue-300' } : 
-                 value < 60 ? { text: 'حذر ⚠️', color: 'text-yellow-300' } : 
-                 { text: 'دافئ 🔥', color: 'text-orange-300' };
+  const getColor = () => value < 30 ? 'bg-red-500' : value < 60 ? 'bg-accent' : 'bg-green-500';
+  const status = value < 30 ? { text: 'منخفض! ⚠️', color: 'text-red-500' } : 
+                 value < 60 ? { text: 'متوسط 💪', color: 'text-accent' } : 
+                 { text: 'ممتاز 🔥', color: 'text-green-500' };
 
   return (
-    <Card className="bg-gradient-to-r from-amber-900/70 to-orange-900/50 backdrop-blur-sm border-orange-600/40 p-4">
+    <Card className="bg-card border-border p-4">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Flame className="w-5 h-5 text-orange-400" />
-          <span className="text-white font-bold">الحرارة</span>
+          <Flame className="w-5 h-5 text-primary" />
+          <span className="text-foreground font-bold">الطاقة</span>
         </div>
         <span className={`font-bold ${status.color}`}>{status.text}</span>
       </div>
-      <div className="relative h-4 bg-slate-700/80 rounded-full overflow-hidden border border-slate-500/30">
+      <div className="relative h-4 bg-muted rounded-full overflow-hidden border border-border">
         <motion.div className={`h-full ${getColor()} rounded-full`} animate={{ width: `${value}%` }} />
-        <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white drop-shadow-md">{value}%</span>
+        <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-foreground">{value}%</span>
       </div>
     </Card>
   );
@@ -114,39 +86,39 @@ const TemperatureBar = ({ value, onDanger }: { value: number; onDanger?: () => v
 // بطاقة البروفايل
 const PlayerProfileCard = ({ player, atlantisLevel }: { player: any; atlantisLevel: string }) => {
   const levelStyles: any = {
-    bronze: { bg: 'bg-orange-500/30', text: 'text-orange-300', icon: '🥉' },
-    silver: { bg: 'bg-gray-400/30', text: 'text-gray-200', icon: '🥈' },
-    gold: { bg: 'bg-yellow-500/30', text: 'text-yellow-300', icon: '🥇' },
-    legendary: { bg: 'bg-purple-500/30', text: 'text-purple-300', icon: '👑' }
+    bronze: { bg: 'bg-orange-500/20', text: 'text-orange-600 dark:text-orange-400', icon: '🥉' },
+    silver: { bg: 'bg-gray-400/20', text: 'text-gray-600 dark:text-gray-300', icon: '🥈' },
+    gold: { bg: 'bg-accent/20', text: 'text-accent', icon: '🥇' },
+    legendary: { bg: 'bg-purple-500/20', text: 'text-purple-600 dark:text-purple-400', icon: '👑' }
   };
   const style = levelStyles[atlantisLevel] || levelStyles.bronze;
 
   return (
-    <Card className="bg-amber-900/60 backdrop-blur-sm border-amber-600/40 p-4">
+    <Card className="bg-card border-border p-4">
       <div className="flex items-center gap-4 mb-4">
-        <div className={`w-16 h-16 rounded-xl ${style.bg} flex items-center justify-center text-3xl border border-white/20`}>
+        <div className={`w-16 h-16 rounded-xl ${style.bg} flex items-center justify-center text-3xl border border-border`}>
           {player.avatar}
         </div>
         <div>
-          <h3 className="text-white font-bold text-lg">{player.name}</h3>
-          <Badge className={`${style.bg} ${style.text} border border-white/20`}>{style.icon} {atlantisLevel}</Badge>
+          <h3 className="text-foreground font-bold text-lg">{player.name}</h3>
+          <Badge className={`${style.bg} ${style.text} border border-border`}>{style.icon} {atlantisLevel}</Badge>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2 text-center">
-        <div className="bg-slate-800/70 rounded-lg p-2 border border-slate-600/50">
-          <Shield className="w-4 h-4 mx-auto text-red-400 mb-1" />
-          <p className="text-white font-bold">{player.power}</p>
-          <p className="text-xs text-slate-300">قوة</p>
+        <div className="bg-muted rounded-lg p-2 border border-border">
+          <Shield className="w-4 h-4 mx-auto text-primary mb-1" />
+          <p className="text-foreground font-bold">{player.power}</p>
+          <p className="text-xs text-muted-foreground">قوة</p>
         </div>
-        <div className="bg-slate-800/70 rounded-lg p-2 border border-slate-600/50">
-          <Building2 className="w-4 h-4 mx-auto text-yellow-400 mb-1" />
-          <p className="text-white font-bold">{player.buildings}</p>
-          <p className="text-xs text-slate-300">مباني</p>
+        <div className="bg-muted rounded-lg p-2 border border-border">
+          <Building2 className="w-4 h-4 mx-auto text-accent mb-1" />
+          <p className="text-foreground font-bold">{player.buildings}</p>
+          <p className="text-xs text-muted-foreground">مباني</p>
         </div>
-        <div className="bg-slate-800/70 rounded-lg p-2 border border-slate-600/50">
-          <Swords className="w-4 h-4 mx-auto text-red-400 mb-1" />
-          <p className="text-white font-bold">{player.troops}</p>
-          <p className="text-xs text-slate-300">جنود</p>
+        <div className="bg-muted rounded-lg p-2 border border-border">
+          <Swords className="w-4 h-4 mx-auto text-primary mb-1" />
+          <p className="text-foreground font-bold">{player.troops}</p>
+          <p className="text-xs text-muted-foreground">جنود</p>
         </div>
       </div>
     </Card>
@@ -162,16 +134,16 @@ const BuildingsPanel = ({ buildings, onBuild, onUpgrade }: any) => (
         return (
           <motion.div
             key={building.id}
-            className="p-3 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10"
+            className="p-3 rounded-xl border border-border bg-muted/50 hover:bg-muted"
             whileHover={{ scale: 1.02 }}
           >
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-2xl">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-2xl">
                 {config?.icon}
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-white font-bold">{config?.nameAr}</h4>
+                  <h4 className="text-foreground font-bold">{config?.nameAr}</h4>
                   <Badge variant="secondary">مستوى {building.level}</Badge>
                 </div>
                 <Progress value={(building.level / 25) * 100} className="h-1.5 mt-2" />
@@ -186,7 +158,7 @@ const BuildingsPanel = ({ buildings, onBuild, onUpgrade }: any) => (
       
       <Button 
         variant="outline" 
-        className="w-full border-dashed border-white/30 text-white hover:bg-white/10"
+        className="w-full border-dashed"
         onClick={() => onBuild('farm')}
       >
         <Plus className="w-4 h-4 ml-2" /> بناء مبنى جديد
@@ -202,39 +174,39 @@ const TroopsPanel = ({ troops, onTrain }: any) => {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2 text-center">
-        <div className="bg-white/10 rounded-lg p-3">
-          <Users className="w-5 h-5 mx-auto text-white mb-1" />
-          <p className="text-white font-bold">{totalTroops}</p>
-          <p className="text-xs text-gray-400">إجمالي</p>
+        <div className="bg-muted rounded-lg p-3 border border-border">
+          <Users className="w-5 h-5 mx-auto text-foreground mb-1" />
+          <p className="text-foreground font-bold">{totalTroops}</p>
+          <p className="text-xs text-muted-foreground">إجمالي</p>
         </div>
-        <div className="bg-red-500/20 rounded-lg p-3">
-          <Swords className="w-5 h-5 mx-auto text-red-400 mb-1" />
-          <p className="text-white font-bold">{troops.reduce((s: number, t: any) => s + (TROOP_CONFIGS[t.type as keyof typeof TROOP_CONFIGS]?.attack || 0) * t.count, 0)}</p>
-          <p className="text-xs text-gray-400">هجوم</p>
+        <div className="bg-primary/10 rounded-lg p-3 border border-primary/20">
+          <Swords className="w-5 h-5 mx-auto text-primary mb-1" />
+          <p className="text-foreground font-bold">{troops.reduce((s: number, t: any) => s + (TROOP_CONFIGS[t.type as keyof typeof TROOP_CONFIGS]?.attack || 0) * t.count, 0)}</p>
+          <p className="text-xs text-muted-foreground">هجوم</p>
         </div>
-        <div className="bg-blue-500/20 rounded-lg p-3">
-          <Shield className="w-5 h-5 mx-auto text-blue-400 mb-1" />
-          <p className="text-white font-bold">{troops.reduce((s: number, t: any) => s + (TROOP_CONFIGS[t.type as keyof typeof TROOP_CONFIGS]?.defense || 0) * t.count, 0)}</p>
-          <p className="text-xs text-gray-400">دفاع</p>
+        <div className="bg-accent/10 rounded-lg p-3 border border-accent/20">
+          <Shield className="w-5 h-5 mx-auto text-accent mb-1" />
+          <p className="text-foreground font-bold">{troops.reduce((s: number, t: any) => s + (TROOP_CONFIGS[t.type as keyof typeof TROOP_CONFIGS]?.defense || 0) * t.count, 0)}</p>
+          <p className="text-xs text-muted-foreground">دفاع</p>
         </div>
       </div>
       
       <ScrollArea className="h-[250px]">
         <div className="space-y-2">
           {troops.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-muted-foreground">
               <Swords className="w-12 h-12 mx-auto mb-3 opacity-30" />
               <p>لا يوجد جنود</p>
             </div>
           ) : troops.map((troop: any) => {
             const config = TROOP_CONFIGS[troop.type as keyof typeof TROOP_CONFIGS];
             return (
-              <div key={troop.id} className="p-3 rounded-lg bg-white/5 flex items-center justify-between">
+              <div key={troop.id} className="p-3 rounded-lg bg-muted/50 border border-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{config?.icon}</span>
                   <div>
-                    <p className="text-white font-medium">{config?.nameAr}</p>
-                    <p className="text-xs text-gray-400">⚔️{config?.attack} 🛡️{config?.defense}</p>
+                    <p className="text-foreground font-medium">{config?.nameAr}</p>
+                    <p className="text-xs text-muted-foreground">⚔️{config?.attack} 🛡️{config?.defense}</p>
                   </div>
                 </div>
                 <Badge variant="secondary">×{troop.count}</Badge>
@@ -250,7 +222,6 @@ const TroopsPanel = ({ troops, onTrain }: any) => {
             key={type}
             size="sm" 
             variant="outline"
-            className="text-white border-white/30"
             onClick={() => onTrain(type, 5)}
           >
             {config.icon} +5
@@ -278,14 +249,14 @@ const WorldMap = ({ player, onTileClick }: any) => {
   }, []);
 
   const icons: any = { forest: '🌲', mountain: '⛰️', goldmine: '💰', empty: null };
-  const colors: any = { forest: 'bg-green-500/30', mountain: 'bg-stone-500/30', goldmine: 'bg-yellow-500/30', empty: 'bg-white/5' };
+  const colors: any = { forest: 'bg-green-500/20', mountain: 'bg-stone-500/20', goldmine: 'bg-accent/20', empty: 'bg-muted/50' };
 
   return (
     <div className="grid grid-cols-10 gap-1">
       {tiles.map((tile) => (
         <motion.div
           key={tile.id}
-          className={`aspect-square rounded ${colors[tile.type]} flex items-center justify-center cursor-pointer hover:scale-110 transition-transform`}
+          className={`aspect-square rounded border border-border ${colors[tile.type]} flex items-center justify-center cursor-pointer hover:scale-110 transition-transform`}
           onClick={() => onTileClick?.(tile)}
           whileHover={{ scale: 1.1 }}
         >
@@ -310,24 +281,24 @@ const MiniLeaderboard = ({ currentRank }: { currentRank: number }) => {
   ];
 
   return (
-    <Card className="bg-slate-900/80 backdrop-blur-sm border-slate-600/50 p-4">
-      <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-        <TrendingUp className="w-5 h-5 text-green-400" />
+    <Card className="bg-card border-border p-4">
+      <h3 className="text-foreground font-bold mb-3 flex items-center gap-2">
+        <TrendingUp className="w-5 h-5 text-green-500" />
         سباق القلعة
       </h3>
       <div className="space-y-2">
         {leaders.map((leader) => (
           <motion.div
             key={leader.rank}
-            className={`flex items-center gap-2 p-2 rounded-lg ${leader.isYou ? 'bg-blue-600/40 border border-blue-400/50' : 'bg-slate-700/50'}`}
+            className={`flex items-center gap-2 p-2 rounded-lg ${leader.isYou ? 'bg-primary/10 border border-primary/30' : 'bg-muted/50 border border-border'}`}
             whileHover={{ x: 5 }}
           >
-            <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center text-black ${
-              leader.rank === 1 ? 'bg-yellow-400' : leader.rank === 2 ? 'bg-gray-300' : leader.rank === 3 ? 'bg-orange-400' : 'bg-blue-400'
+            <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center text-white ${
+              leader.rank === 1 ? 'bg-accent' : leader.rank === 2 ? 'bg-gray-400' : leader.rank === 3 ? 'bg-orange-400' : 'bg-primary'
             }`}>{leader.rank}</span>
             <span className="text-xl">{leader.avatar}</span>
-            <span className={`flex-1 text-sm font-medium ${leader.isYou ? 'text-blue-200' : 'text-white'}`}>{leader.name}</span>
-            <span className="text-yellow-300 font-bold text-sm">{leader.points}</span>
+            <span className={`flex-1 text-sm font-medium ${leader.isYou ? 'text-primary' : 'text-foreground'}`}>{leader.name}</span>
+            <span className="text-accent font-bold text-sm">{leader.points}</span>
           </motion.div>
         ))}
       </div>
@@ -337,16 +308,16 @@ const MiniLeaderboard = ({ currentRank }: { currentRank: number }) => {
 
 // التحدي الأسبوعي
 const WeeklyChallenge = ({ progress, target }: { progress: number; target: number }) => (
-  <Card className="bg-gradient-to-br from-purple-900/60 to-blue-900/60 backdrop-blur-sm border-purple-500/30 p-4">
+  <Card className="bg-primary/5 border-primary/20 p-4">
     <div className="flex items-center justify-between mb-3">
-      <h3 className="text-white font-bold flex items-center gap-2">🌨️ العاصفة الأسبوعية</h3>
-      <Badge className="bg-red-500/80">نشط</Badge>
+      <h3 className="text-foreground font-bold flex items-center gap-2">🏆 التحدي الأسبوعي</h3>
+      <Badge className="bg-green-500 text-white">نشط</Badge>
     </div>
-    <div className="bg-black/30 rounded-lg p-3 mb-3">
-      <p className="text-white text-sm mb-2">🎯 اجمع الموارد قبل انتهاء العاصفة</p>
+    <div className="bg-muted rounded-lg p-3 mb-3">
+      <p className="text-foreground text-sm mb-2">🎯 اجمع الموارد لتحقيق الهدف</p>
       <div className="flex items-center gap-2">
         <Progress value={(progress / target) * 100} className="flex-1" />
-        <span className="text-white text-sm font-bold">{progress}/{target}</span>
+        <span className="text-foreground text-sm font-bold">{progress}/{target}</span>
       </div>
     </div>
     <div className="flex gap-2">
@@ -477,11 +448,10 @@ export default function AtlantisWorld() {
   const atlantisLevel = atlantisSystem.userLevel?.current_level || 'bronze';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 relative overflow-hidden">
-      <Snowfall />
+    <div className="min-h-screen bg-background relative overflow-hidden">
       
       {/* Header */}
-      <header className="relative z-20 border-b border-white/10 bg-black/40 backdrop-blur-sm sticky top-0">
+      <header className="relative z-20 border-b border-border bg-card/80 backdrop-blur-sm sticky top-0">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -491,8 +461,8 @@ export default function AtlantisWorld() {
                   🌍
                 </motion.div>
                 <div>
-                  <h1 className="text-2xl font-bold text-white">عالم أتلانتس</h1>
-                  <p className="text-blue-300 text-sm">ابنِ مملكتك وحارب من أجل المجد</p>
+                  <h1 className="text-2xl font-bold text-foreground">عالم أتلانتس</h1>
+                  <p className="text-muted-foreground text-sm">ابنِ مملكتك وحارب من أجل المجد</p>
                 </div>
               </div>
             </div>
@@ -507,14 +477,14 @@ export default function AtlantisWorld() {
           <Button 
             variant={activeView === 'kingdom' ? 'default' : 'outline'} 
             onClick={() => setActiveView('kingdom')} 
-            className={`gap-2 ${activeView === 'kingdom' ? 'bg-primary text-white' : 'bg-slate-800/80 text-white border-slate-500 hover:bg-slate-700'}`}
+            className="gap-2"
           >
             <LayoutGrid className="w-4 h-4" /> مملكتي
           </Button>
           <Button 
             variant={activeView === 'map' ? 'default' : 'outline'} 
             onClick={() => setActiveView('map')} 
-            className={`gap-2 ${activeView === 'map' ? 'bg-primary text-white' : 'bg-slate-800/80 text-white border-slate-500 hover:bg-slate-700'}`}
+            className="gap-2"
           >
             <Map className="w-4 h-4" /> خريطة العالم
           </Button>
@@ -524,9 +494,9 @@ export default function AtlantisWorld() {
       {/* المحتوى */}
       <main className="relative z-20 container mx-auto px-4 pb-20">
         {activeView === 'map' ? (
-          <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-6">
-            <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-              <Crown className="w-5 h-5 text-yellow-400" /> خريطة العالم
+          <Card className="bg-card border-border p-6">
+            <h3 className="text-foreground font-bold mb-4 flex items-center gap-2">
+              <Crown className="w-5 h-5 text-accent" /> خريطة العالم
             </h3>
             <WorldMap player={player} onTileClick={(tile: any) => toast.info(`الإحداثيات: ${tile.x}, ${tile.y}`)} />
           </Card>
@@ -535,28 +505,28 @@ export default function AtlantisWorld() {
             {/* الشريط الجانبي */}
             <div className="space-y-4">
               <PlayerProfileCard player={player} atlantisLevel={atlantisLevel} />
-              <TemperatureBar value={temperature} onDanger={() => toastHook({ title: 'تحذير! 🥶', variant: 'destructive' })} />
+              <TemperatureBar value={temperature} onDanger={() => toastHook({ title: 'تحذير!', variant: 'destructive' })} />
               <WeeklyChallenge progress={challengeProgress} target={15} />
             </div>
 
             {/* المحتوى الرئيسي */}
             <div className="lg:col-span-2 space-y-4">
               <Tabs defaultValue="buildings">
-                <TabsList className="w-full grid grid-cols-2 bg-black/40">
-                  <TabsTrigger value="buildings" className="text-white data-[state=active]:bg-primary">
+                <TabsList className="w-full grid grid-cols-2">
+                  <TabsTrigger value="buildings">
                     <Building2 className="w-4 h-4 ml-2" /> المباني
                   </TabsTrigger>
-                  <TabsTrigger value="troops" className="text-white data-[state=active]:bg-primary">
+                  <TabsTrigger value="troops">
                     <Swords className="w-4 h-4 ml-2" /> الجيش
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="buildings">
-                  <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-4">
+                  <Card className="bg-card border-border p-4">
                     <BuildingsPanel buildings={buildings} resources={resources} onBuild={handleBuild} onUpgrade={handleUpgrade} />
                   </Card>
                 </TabsContent>
                 <TabsContent value="troops">
-                  <Card className="bg-black/40 backdrop-blur-sm border-white/20 p-4">
+                  <Card className="bg-card border-border p-4">
                     <TroopsPanel troops={troops} resources={resources} onTrain={handleTrain} />
                   </Card>
                 </TabsContent>
@@ -564,25 +534,25 @@ export default function AtlantisWorld() {
 
               {/* أزرار الإجراءات */}
               <div className="grid grid-cols-3 gap-3">
-                <Button onClick={handleLightFire} className="bg-orange-600 hover:bg-orange-700 h-14 gap-2" disabled={resources.wood < 10}>
+                <Button onClick={handleLightFire} className="bg-primary hover:bg-primary/90 h-14 gap-2" disabled={resources.wood < 10}>
                   <Flame className="w-5 h-5" />
                   <div className="text-right">
-                    <div>أشعل النار</div>
+                    <div>زيادة الطاقة</div>
                     <div className="text-xs opacity-75">-10 🪵</div>
                   </div>
                 </Button>
-                <Button onClick={handleBuildHouse} className="bg-green-600 hover:bg-green-700 h-14 gap-2" disabled={resources.wood < 50}>
+                <Button onClick={handleBuildHouse} variant="secondary" className="h-14 gap-2" disabled={resources.wood < 50}>
                   <Home className="w-5 h-5" />
                   <div className="text-right">
                     <div>ابنِ بيت</div>
                     <div className="text-xs opacity-75">-50🪵 -100💰</div>
                   </div>
                 </Button>
-                <Button onClick={handleGatherResources} className="bg-cyan-600 hover:bg-cyan-700 h-14 gap-2">
+                <Button onClick={handleGatherResources} variant="outline" className="h-14 gap-2">
                   <Zap className="w-5 h-5" />
                   <div className="text-right">
                     <div>اجمع موارد</div>
-                    <div className="text-xs opacity-75">-5 حرارة</div>
+                    <div className="text-xs opacity-75">-5 طاقة</div>
                   </div>
                 </Button>
               </div>
@@ -591,14 +561,14 @@ export default function AtlantisWorld() {
             {/* لوحة المتصدرين */}
             <div className="space-y-4">
               <MiniLeaderboard currentRank={4} />
-              <Card className="bg-gradient-to-br from-yellow-900/40 to-amber-900/40 border-yellow-500/30 p-4">
-                <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-                  <Crown className="w-5 h-5 text-yellow-400" /> مكافآت القلعة
+              <Card className="bg-accent/10 border-accent/30 p-4">
+                <h3 className="text-foreground font-bold mb-3 flex items-center gap-2">
+                  <Crown className="w-5 h-5 text-accent" /> مكافآت القلعة
                 </h3>
-                <div className="space-y-2 text-sm text-white">
-                  <p className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-purple-400" /> ثيم ملكي حصري</p>
+                <div className="space-y-2 text-sm text-foreground">
+                  <p className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-primary" /> ثيم ملكي حصري</p>
                   <p className="flex items-center gap-2">💰 +20% عمولة إضافية</p>
-                  <p className="flex items-center gap-2"><Crown className="w-4 h-4 text-yellow-400" /> تاج بجانب اسمك</p>
+                  <p className="flex items-center gap-2"><Crown className="w-4 h-4 text-accent" /> تاج بجانب اسمك</p>
                 </div>
               </Card>
             </div>
@@ -607,14 +577,14 @@ export default function AtlantisWorld() {
       </main>
 
       {/* شريط سفلي */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur border-t border-slate-600/50 py-3 z-40">
+      <footer className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur border-t border-border py-3 z-40">
         <div className="container mx-auto px-4 flex items-center justify-between text-sm">
-          <div className="flex items-center gap-6 text-white">
-            <span className="flex items-center gap-1"><Shield className="w-4 h-4 text-cyan-400" /> القوة: <strong className="text-cyan-300">{player.power}</strong></span>
-            <span className="flex items-center gap-1"><Building2 className="w-4 h-4 text-yellow-400" /> المباني: <strong className="text-yellow-300">{buildings.length}</strong></span>
-            <span className="flex items-center gap-1"><Swords className="w-4 h-4 text-red-400" /> الجنود: <strong className="text-red-300">{troops.reduce((s, t) => s + t.count, 0)}</strong></span>
+          <div className="flex items-center gap-6 text-foreground">
+            <span className="flex items-center gap-1"><Shield className="w-4 h-4 text-primary" /> القوة: <strong className="text-primary">{player.power}</strong></span>
+            <span className="flex items-center gap-1"><Building2 className="w-4 h-4 text-accent" /> المباني: <strong className="text-accent">{buildings.length}</strong></span>
+            <span className="flex items-center gap-1"><Swords className="w-4 h-4 text-primary" /> الجنود: <strong className="text-primary">{troops.reduce((s, t) => s + t.count, 0)}</strong></span>
           </div>
-          <Badge className="bg-amber-500/30 text-amber-200 border border-amber-400/50">مرتبط بنظام نقاط أتلانتس</Badge>
+          <Badge variant="secondary">مرتبط بنظام نقاط أتلانتس</Badge>
         </div>
       </footer>
     </div>
