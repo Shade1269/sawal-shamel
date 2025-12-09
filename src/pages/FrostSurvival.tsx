@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Crown,
@@ -232,44 +232,8 @@ const TroopsPanel = ({ troops, onTrain }: any) => {
   );
 };
 
-// خريطة العالم
-const WorldMap = ({ player, onTileClick }: any) => {
-  const tiles = useMemo(() => {
-    const t = [];
-    for (let y = 0; y < 8; y++) {
-      for (let x = 0; x < 10; x++) {
-        const r = Math.random();
-        t.push({
-          id: `${x}_${y}`, x, y,
-          type: r < 0.15 ? 'forest' : r < 0.25 ? 'mountain' : r < 0.30 ? 'goldmine' : 'empty'
-        });
-      }
-    }
-    return t;
-  }, []);
-
-  const icons: any = { forest: '🌲', mountain: '⛰️', goldmine: '💰', empty: null };
-  const colors: any = { forest: 'bg-green-500/20', mountain: 'bg-stone-500/20', goldmine: 'bg-accent/20', empty: 'bg-muted/50' };
-
-  return (
-    <div className="grid grid-cols-10 gap-1">
-      {tiles.map((tile) => (
-        <motion.div
-          key={tile.id}
-          className={`aspect-square rounded border border-border ${colors[tile.type]} flex items-center justify-center cursor-pointer hover:scale-110 transition-transform`}
-          onClick={() => onTileClick?.(tile)}
-          whileHover={{ scale: 1.1 }}
-        >
-          {tile.x === player.position.x && tile.y === player.position.y ? (
-            <span className="text-lg">🏰</span>
-          ) : icons[tile.type] ? (
-            <span className="text-sm opacity-70">{icons[tile.type]}</span>
-          ) : null}
-        </motion.div>
-      ))}
-    </div>
-  );
-};
+// استيراد الخريطة الموسعة
+import { ExpandedWorldMap } from '@/features/atlantis-world/components/ExpandedWorldMap';
 
 // المتصدرين
 const MiniLeaderboard = ({ currentRank }: { currentRank: number }) => {
@@ -498,7 +462,25 @@ export default function AtlantisWorld() {
             <h3 className="text-foreground font-bold mb-4 flex items-center gap-2">
               <Crown className="w-5 h-5 text-accent" /> خريطة العالم
             </h3>
-            <WorldMap player={player} onTileClick={(tile: any) => toast.info(`الإحداثيات: ${tile.x}, ${tile.y}`)} />
+            <ExpandedWorldMap 
+              player={player} 
+              onTileClick={(tile: any) => toast.info(`الإحداثيات: ${tile.x}, ${tile.y}`)}
+              onMove={(pos) => setPlayer(p => ({ ...p, position: pos }))}
+              onGather={(tile: any) => {
+                if (tile.type === 'forest') setResources(r => ({ ...r, wood: r.wood + 30 }));
+                else if (tile.type === 'goldmine') setResources(r => ({ ...r, coins: r.coins + 50 }));
+                else if (tile.type === 'farm') setResources(r => ({ ...r, food: r.food + 20 }));
+              }}
+              onAttack={(tile: any) => {
+                const power = tile.level * 300;
+                if (player.power > power) {
+                  setResources(r => ({ ...r, coins: r.coins + 100, gems: r.gems + 5 }));
+                  toast.success('انتصرت في المعركة! 🎉');
+                } else {
+                  toast.error('خسرت المعركة!');
+                }
+              }}
+            />
           </Card>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
