@@ -27,7 +27,8 @@ import {
   Gamepad2,
   Snowflake,
   Zap,
-  Gift
+  Gift,
+  Globe
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -46,6 +47,13 @@ export const AtlantisSystem = () => {
   const { currentAnimation, showAnimation: _showAnimation, hideAnimation } = useAtlantisAnimations();
 
   const quickActions = [
+    {
+      icon: <Globe className="w-6 h-6" />,
+      title: 'عالم أتلانتس',
+      description: 'ابنِ مملكتك وحارب من أجل المجد',
+      color: 'from-emerald-600 to-teal-600',
+      route: '/atlantis/world'
+    },
     {
       icon: <Snowflake className="w-6 h-6" />,
       title: 'صقيع أتلانتس',
@@ -110,7 +118,7 @@ export const AtlantisSystem = () => {
 
       {/* Quick Actions */}
       <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {quickActions.map((action, index) => (
             <motion.div
               key={action.title}
