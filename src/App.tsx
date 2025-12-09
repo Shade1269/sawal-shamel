@@ -86,6 +86,7 @@ const ChatLanding = lazy(() => import("./features/chat/components/ChatLanding"))
 const AtlantisChatRooms = lazy(() => import("./features/chat/components/AtlantisChatRooms"));
 const AtlantisChat = lazy(() => import("./features/chat/components/AtlantisChat"));
 const FrostSurvival = lazy(() => import("./pages/FrostSurvival"));
+const AtlantisWorld = lazy(() => import("./pages/AtlantisWorld"));
 
 // AI Studio
 const AIStudio = lazy(() => import("./pages/AIStudio"));
