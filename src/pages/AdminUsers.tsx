@@ -70,7 +70,7 @@ const AdminUsers = () => {
   const [roleFilter, setRoleFilter] = useState('all');
   const [_selectedUser, _setSelectedUser] = useState<User | null>(null);
   const [_isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [_isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
+  const [_isNotificationDialogOpen, _setIsNotificationDialogOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -203,24 +203,7 @@ const AdminUsers = () => {
     }
   };
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  const sendNotificationToUser = async (userId: string, title: string, message: string) => {
-    try {
-      console.log('Sending notification:', { userId, title, message });
-      toast({
-        title: "تم بنجاح",
-        description: "تم إرسال الإشعار",
-      });
-      setIsNotificationDialogOpen(false);
-    } catch (error) {
-      console.error('Error sending notification:', error);
-      toast({
-        title: "خطأ",
-        description: "فشل في إرسال الإشعار",
-        variant: "destructive",
-      });
-    }
-  };
+  // Notification feature placeholder - implementation pending
 
   if (loading) {
     return (

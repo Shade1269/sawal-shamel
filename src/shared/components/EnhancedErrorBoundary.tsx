@@ -3,9 +3,7 @@ import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
 import { EnhancedButton } from '@/components/ui/enhanced-button';
 import { EnhancedCard, EnhancedCardHeader, EnhancedCardTitle, EnhancedCardContent } from '@/components/ui/enhanced-card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useDesignSystem } from '@/hooks/useDesignSystem';
-/* eslint-enable @typescript-eslint/no-unused-vars */
+// useDesignSystem hook available from @/hooks/useDesignSystem
 
 interface Props {
   children?: ReactNode;

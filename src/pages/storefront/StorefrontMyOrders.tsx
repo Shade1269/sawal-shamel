@@ -211,7 +211,7 @@ const StorefrontMyOrders = () => {
   };
 
   // ألوان حالات الطلب
-  /* eslint-disable @typescript-eslint/no-unused-vars */
+  // @ts-expect-error Reserved for future status display
   const getStatusColor = (status: string) => {
     const colorMap: Record<string, string> = {
       'PENDING': 'bg-warning/20 text-warning',

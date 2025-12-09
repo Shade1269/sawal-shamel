@@ -127,7 +127,7 @@ const InventoryOverviewPage = () => {
     setFilteredItems(items);
   }, [items]);
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
+  // @ts-expect-error Reserved for future dashboard stats
   const totals = useMemo(() => {
     return filteredItems.reduce(
       (acc, item) => {
