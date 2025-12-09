@@ -19,28 +19,53 @@ interface AbandonedCartRecoveryProps {
   items: AbandonedCartItem[];
   lastUpdated: Date;
   discountPercent?: number;
+  /** الحد الأدنى للوقت (بالدقائق) لاعتبار السلة متروكة - الافتراضي 30 دقيقة */
+  abandonmentThresholdMinutes?: number;
+  /** تأخير إظهار الإشعار (بالثواني) بعد دخول الصفحة - الافتراضي 5 ثواني */
+  displayDelaySeconds?: number;
 }
 
 export const AbandonedCartRecovery: React.FC<AbandonedCartRecoveryProps> = ({
   storeSlug,
   items,
   lastUpdated,
-  discountPercent = 10
+  discountPercent = 10,
+  abandonmentThresholdMinutes = 30,
+  displayDelaySeconds = 5
 }) => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
+  // التحقق من أن السلة فعلاً متروكة (مضى عليها الوقت المحدد)
+  const isCartAbandoned = () => {
+    const timeSinceUpdate = Date.now() - lastUpdated.getTime();
+    const thresholdMs = abandonmentThresholdMinutes * 60 * 1000;
+    return timeSinceUpdate >= thresholdMs;
+  };
+
   useEffect(() => {
-    // عرض الرسالة بعد 3 ثوان
+    // التحقق من الإخفاء السابق في هذه الجلسة
+    const wasDismissed = sessionStorage.getItem(`cart_recovery_dismissed_${storeSlug}`);
+    if (wasDismissed) {
+      setDismissed(true);
+      return;
+    }
+
+    // التحقق من أن السلة متروكة فعلاً (مضى عليها 30 دقيقة على الأقل)
+    if (!isCartAbandoned() || items.length === 0) {
+      return;
+    }
+
+    // عرض الإشعار بعد تأخير قصير عند دخول الصفحة
     const timer = setTimeout(() => {
       if (!dismissed && items.length > 0) {
         setIsVisible(true);
       }
-    }, 3000);
+    }, displayDelaySeconds * 1000);
 
     return () => clearTimeout(timer);
-  }, [items.length, dismissed]);
+  }, [items.length, dismissed, lastUpdated, abandonmentThresholdMinutes, displayDelaySeconds]);
 
   const handleDismiss = () => {
     setIsVisible(false);
