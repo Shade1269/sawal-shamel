@@ -11,7 +11,9 @@ export const STORE_DOMAINS = {
 } as const;
 
 // فحص إذا كان النطاق الحالي متجر
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ATLANTIS_DOMAIN } from '@/utils/domains';
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 // ... الكود الموجود ...
 

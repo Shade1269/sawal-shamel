@@ -1,4 +1,4 @@
-function normalizeHex(color) {
+function normalizeHex(color: string | null | undefined): string | null {
   if (!color) {
     return null;
   }
@@ -7,7 +7,7 @@ function normalizeHex(color) {
   if (hex.length === 3) {
     return hex
       .split('')
-      .map((char) => char + char)
+      .map((char: string) => char + char)
       .join('');
   }
 
@@ -18,7 +18,7 @@ function normalizeHex(color) {
   return null;
 }
 
-function hexToRgb(color) {
+function hexToRgb(color: string): [number, number, number] | null {
   const normalized = normalizeHex(color);
   if (!normalized) {
     return null;
@@ -31,7 +31,7 @@ function hexToRgb(color) {
   return [r, g, b];
 }
 
-function relativeLuminance(color) {
+function relativeLuminance(color: string): number | null {
   const rgb = hexToRgb(color);
   if (!rgb) {
     return null;
@@ -45,7 +45,7 @@ function relativeLuminance(color) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
-export function getContrastRatio(foreground, background) {
+export function getContrastRatio(foreground: string, background: string): number {
   const fgLum = relativeLuminance(foreground);
   const bgLum = relativeLuminance(background);
 

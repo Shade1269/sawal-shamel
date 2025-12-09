@@ -19,12 +19,13 @@ interface CreateOrderData {
   };
 }
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const PAYMENT_METHOD_COD: PaymentMethod = 'CASH_ON_DELIVERY';
 const PAYMENT_STATUS_PENDING: PaymentStatus = 'PENDING';
 const ORDER_STATUS_PENDING: OrderStatus = 'PENDING';
-
 const generateOrderNumber = () =>
   `EC-${Date.now()}-${Math.random().toString(36).slice(-6).toUpperCase()}`;
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 export const storeOrderService = {
   async createOrderFromCart(

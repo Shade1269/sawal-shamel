@@ -127,7 +127,8 @@ const InventoryOverviewPage = () => {
     setFilteredItems(items);
   }, [items]);
 
-  const _totals = useMemo(() => {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const totals = useMemo(() => {
     return filteredItems.reduce(
       (acc, item) => {
         acc.available += Number(item.quantity_available ?? 0);

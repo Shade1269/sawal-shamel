@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { User, Mail, Shield, Crown, Store, Users, MessageSquare, Calendar, Award, Phone, MapPin } from "lucide-react";
+import { User, Mail, Shield, Crown, Store, Users, MessageSquare, Calendar, Award, Phone } from "lucide-react";
 import NotificationSettings from './NotificationSettings';
 
 interface UserProfileDialogProps {

@@ -1,10 +1,10 @@
 import { lazy, ComponentType } from 'react';
-import { LoadingSpinner } from '@/components/ui/loading-states';
 
 // Lazy loading wrapper with error boundary
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createLazyComponent = <T extends ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
-  fallback?: ComponentType
+  _fallback?: ComponentType
 ) => {
   const LazyComponent = lazy(importFn);
   

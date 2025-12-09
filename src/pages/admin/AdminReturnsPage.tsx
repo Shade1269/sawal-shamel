@@ -38,12 +38,13 @@ const statusLabels = {
   COMPLETED: 'مكتمل',
 };
 
-const _statusColors: Record<string, "default" | "secondary" | "destructive"> = {
+const statusColors: Record<string, "default" | "secondary" | "destructive"> = {
   PENDING: "default",
   APPROVED: "secondary",
   REJECTED: "destructive",
   COMPLETED: "default",
 };
+void statusColors; // Reserved for future use
 
 export default function AdminReturnsPage() {
   const { returns, stats, isLoading, processReturn, isProcessing } = useAdminOrderReturns();

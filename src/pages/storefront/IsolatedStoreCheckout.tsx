@@ -41,8 +41,8 @@ export const IsolatedStoreCheckout: React.FC = () => {
   const navigate = useNavigate();
   const { store } = useOutletContext<StoreContextType>();
   const { cart, loading: cartLoading, clearCart } = useIsolatedStoreCart(store?.id || '', storeSlug);
-  const { sessionId } = useStorefrontOtp({ storeSlug: storeSlug || '', storeId: store?.id });
-  const { calculateShippingCost, loading: shippingLoading } = useShippingManagement();
+  const { sessionId: _sessionId } = useStorefrontOtp({ storeSlug: storeSlug || '', storeId: store?.id });
+  const { calculateShippingCost, loading: _shippingLoading } = useShippingManagement();
 
   // التحقق من تسجيل دخول العميل باستخدام StorefrontSession
   useEffect(() => {
@@ -205,7 +205,7 @@ export const IsolatedStoreCheckout: React.FC = () => {
       }
 
       // التحقق من حد الاستخدام
-      if (coupon.usage_limit && coupon.usage_count >= coupon.usage_limit) {
+      if (coupon.usage_limit && (coupon.usage_count ?? 0) >= coupon.usage_limit) {
         toast.error('تم استخدام هذا الكوبون بالكامل');
         return;
       }

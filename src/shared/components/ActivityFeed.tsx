@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,15 +24,11 @@ import {
   RefreshCw,
   ExternalLink,
   Eye,
-  Heart,
-  DollarSign,
-  Truck,
   CheckCircle,
-  AlertTriangle,
-  UserPlus,
-  Edit,
   Trash2,
-  MoreHorizontal
+  MoreHorizontal,
+  DollarSign,
+  AlertTriangle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
@@ -74,7 +69,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
   autoRefresh = false,
   className = ""
 }) => {
-  const { profile } = useFastAuth();
+  const { profile: _profile } = useFastAuth();
   const [filteredActivities, setFilteredActivities] = useState<ActivityItem[]>([]);
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [isRefreshing, setIsRefreshing] = useState(false);

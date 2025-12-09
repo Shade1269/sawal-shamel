@@ -6,12 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
 import { 
   TrendingUp, 
-  ShoppingBag, 
   Users, 
-  DollarSign,
   Award,
   Target,
   Zap,
@@ -24,12 +21,14 @@ import {
   Gift,
   MessageSquare
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useAtlantisSystem } from '@/hooks/useAtlantisSystem';
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import StatsOverview, { getDashboardStats, getInventoryStats } from './StatsOverview';
 import QuickActionPanel, { getAdminActions, getAffiliateActions, getCustomerActions } from './QuickActionPanel';
 import ActivityFeed, { generateSampleActivities } from './ActivityFeed';
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 interface QuickAction {
   id: string;
@@ -58,7 +57,7 @@ const EnhancedDashboard: React.FC = () => {
   const [quickActions, setQuickActions] = useState<any[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [dashboardStats, setDashboardStats] = useState<any[]>([]);
-  const [activities, setActivities] = useState<any[]>([]);
+  const [_activities, setActivities] = useState<any[]>([]);
 
   useEffect(() => {
     if (profile?.role) {
@@ -157,7 +156,7 @@ const EnhancedDashboard: React.FC = () => {
     ];
   };
 
-  const stats = [
+  const _stats = [
     {
       title: 'النقاط الإجمالية',
       value: userLevel?.total_points || 0,
@@ -204,7 +203,7 @@ const EnhancedDashboard: React.FC = () => {
       >
         <div className="flex items-center gap-4">
           <Avatar className="w-16 h-16 border-4 border-primary">
-            <AvatarImage src={profile?.avatar_url} alt={profile?.full_name} />
+            <AvatarImage src={profile?.avatar_url ?? undefined} alt={profile?.full_name ?? undefined} />
             <AvatarFallback className="text-lg font-bold bg-primary text-primary-foreground">
               {profile?.full_name?.charAt(0) || 'ن'}
             </AvatarFallback>
@@ -250,7 +249,7 @@ const EnhancedDashboard: React.FC = () => {
         transition={{ delay: 0.1 }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
       >
-        {dashboardStats.map((stat, index) => (
+        {dashboardStats.map((stat) => (
           <Card key={stat.title} className="relative overflow-hidden">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">

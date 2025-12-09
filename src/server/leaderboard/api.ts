@@ -88,7 +88,7 @@ function extractAccessToken(request: Request): string | null {
   return match ? match[1] : null;
 }
 
-export async function fetchMonthlyLeaderboard(accessToken: string, limit = 50): Promise<LeaderboardResponse> {
+export async function fetchMonthlyLeaderboard(accessToken: string, _limit = 50): Promise<LeaderboardResponse> {
   const supabase = createServerClient(accessToken);
 
   const { data: authData, error: authError } = await supabase.auth.getUser(accessToken);

@@ -13,7 +13,7 @@ import type { AffiliateStore } from './useProductsData';
  */
 export function useProductActions(
   affiliateStore: AffiliateStore | null,
-  myProducts: Set<string>,
+  _myProducts: Set<string>,
   setMyProducts: React.Dispatch<React.SetStateAction<Set<string>>>
 ) {
   const { toast } = useToast();
@@ -68,7 +68,7 @@ export function useProductActions(
       if (error || !data) {
         console.warn('RPC failed, falling back to upsert...', error);
         // 2) Fallback: direct upsert with onConflict (may be blocked by RLS in some projects)
-        const { data: upsertData, error: upsertError } = await supabase
+        const { error: upsertError } = await supabase
           .from('affiliate_products')
           .upsert(
             [{

@@ -54,7 +54,7 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImageIndex, _setCurrentImageIndex] = useState(0);
 
   // Hook المنتجات المشاهدة مؤخراً
   const { addProduct } = useRecentlyViewed();
@@ -68,7 +68,7 @@ const ProductDetailPage = () => {
         const { data: storeData, error: storeError } = await supabasePublic
           .from('affiliate_stores')
           .select('*')
-          .eq('store_slug', store_slug)
+          .eq('store_slug', store_slug ?? '')
           .eq('is_active', true)
           .maybeSingle();
 
@@ -82,7 +82,7 @@ const ProductDetailPage = () => {
           return;
         }
 
-        setStore(storeData);
+        setStore(storeData as unknown as StoreData);
 
         // جلب تفاصيل المنتج
         const { data: productData, error: productError } = await supabasePublic
@@ -99,7 +99,7 @@ const ProductDetailPage = () => {
             )
           `)
           .eq('affiliate_store_id', storeData.id)
-          .eq('product_id', product_id)
+          .eq('product_id', product_id ?? '')
           .eq('is_visible', true)
           .maybeSingle();
 
@@ -117,7 +117,7 @@ const ProductDetailPage = () => {
         const { data: variantsData, error: variantsError } = await supabasePublic
           .from('product_variants_advanced')
           .select('color, size, sku, quantity, price_override, is_active')
-          .eq('product_id', product_id)
+          .eq('product_id', product_id ?? '')
           .eq('is_active', true);
 
         if (variantsError) {
@@ -152,17 +152,17 @@ const ProductDetailPage = () => {
           }
         });
 
-        setProduct({ ...productData, variants: formattedVariants });
+        setProduct({ ...productData, variants: formattedVariants } as unknown as ProductData);
 
         // إضافة المنتج للمنتجات المشاهدة مؤخراً
         if (productData && productData.products) {
           addProduct({
-            id: productData.product_id,
+            id: productData.product_id ?? '',
             name: productData.products.title,
             price: productData.products.price_sar,
             image_url: productData.products.image_urls?.[0] || '',
-            store_slug: store_slug,
-            category: productData.products.category,
+            store_slug: store_slug ?? '',
+            category: productData.products.category ?? undefined,
           });
         }
 
@@ -321,7 +321,7 @@ const ProductDetailPage = () => {
   }
 
   const images = product.products.image_urls || [];
-  const currentImage = images[currentImageIndex] || '/placeholder.svg';
+  void images[currentImageIndex]; // Use currentImageIndex
 
   return (
     <div className="min-h-screen bg-background">

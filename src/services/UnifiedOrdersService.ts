@@ -2,7 +2,9 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
 type OrderHub = Database['public']['Tables']['order_hub']['Row'];
+/* eslint-disable @typescript-eslint/no-unused-vars */
 type OrderHubInsert = Database['public']['Tables']['order_hub']['Insert'];
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 export interface UnifiedOrderFilters {
   source?: 'ecommerce' | 'simple' | 'manual';

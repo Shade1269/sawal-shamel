@@ -6,7 +6,7 @@ import { UnifiedInput } from '@/components/design-system';
 import { Label } from '@/components/ui/label';
 import { UnifiedBadge } from '@/components/design-system';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Package, Phone, MessageCircle, RefreshCw, Eye } from 'lucide-react';
+import { ArrowLeft, Package, Phone, MessageCircle, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabasePublic } from '@/integrations/supabase/publicClient';
 import { useCustomerAuth } from '@/hooks/useCustomerAuth';
@@ -47,7 +47,7 @@ const StorefrontMyOrders = () => {
   const [loadingOrders, setLoadingOrders] = useState(false);
 
   // استخدام hook إدارة المصادقة
-  const { sendOTP, verifyOTP, refreshSession } = useCustomerAuth();
+  const { sendOTP, verifyOTP, refreshSession: _refreshSession } = useCustomerAuth();
 
   // جلب بيانات المتجر
   useEffect(() => {
@@ -211,6 +211,7 @@ const StorefrontMyOrders = () => {
   };
 
   // ألوان حالات الطلب
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   const getStatusColor = (status: string) => {
     const colorMap: Record<string, string> = {
       'PENDING': 'bg-warning/20 text-warning',
