@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { UnifiedButton as Button, UnifiedInput as Input, UnifiedCard as Card, UnifiedCardContent as CardContent, UnifiedCardHeader as CardHeader, UnifiedCardTitle as CardTitle, UnifiedBadge as Badge } from "@/components/design-system";
 import { Label } from "@/components/ui/label";
-import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+/* eslint-enable @typescript-eslint/no-unused-vars */
 import { useToast } from "@/hooks/use-toast";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";

@@ -3,16 +3,10 @@ import { useParams, useOutletContext, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { 
-  EnhancedCard, 
-  EnhancedCardContent,
-  ResponsiveLayout,
-  ResponsiveGrid,
-  EnhancedButton,
   Card,
   CardContent,
   Button
 } from '@/components/ui/index';
-import { Badge } from '@/components/ui/badge';
 import { Loader2, ShoppingCart, Star } from 'lucide-react';
 import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 import { PromotionalBannerDisplay } from '@/components/storefront/PromotionalBannerDisplay';

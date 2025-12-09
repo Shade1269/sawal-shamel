@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { UnifiedButton } from '@/components/design-system';
@@ -110,12 +110,12 @@ const OrderTrackingPage = () => {
         id: hubData.id,
         order_number: hubData.order_number || hubData.id,
         status: hubData.status || 'PENDING',
-        customer_name: hubData.customer_name,
-        customer_phone: hubData.customer_phone,
+        customer_name: hubData.customer_name ?? '',
+        customer_phone: hubData.customer_phone ?? '',
         total_sar: hubData.total_amount_sar || 0,
         created_at: hubData.created_at,
-        tracking_number: orderDetails?.tracking_number,
-        estimated_delivery_date: hubData.estimated_delivery_date,
+        tracking_number: orderDetails?.tracking_number ?? undefined,
+        estimated_delivery_date: hubData.estimated_delivery_date ?? undefined,
         items: items.map(item => ({
           id: item.id,
           product_title: item.product_title,

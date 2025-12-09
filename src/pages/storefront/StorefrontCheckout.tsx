@@ -154,7 +154,14 @@ const StorefrontCheckout = () => {
           return;
         }
 
-        setCartItems(items);
+        setCartItems(items.map(item => ({
+          ...item,
+          total_price_sar: item.total_price_sar ?? 0,
+          products: {
+            ...item.products,
+            image_urls: item.products.image_urls ?? undefined
+          }
+        })));
 
       } catch (error: any) {
         console.error('Error fetching checkout data:', error);

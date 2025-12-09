@@ -100,7 +100,7 @@ export function useProductsData(profile: any) {
         }
       }
 
-      setAffiliateStore(storeData);
+      setAffiliateStore(storeData as AffiliateStore | null);
 
       // جلب منتجات المسوق الحالية
       if (storeData) {
@@ -109,11 +109,11 @@ export function useProductsData(profile: any) {
           .select('product_id')
           .eq('affiliate_store_id', storeData.id);
 
-        setMyProducts(new Set(myProductsData?.map(p => p.product_id) || []));
+        setMyProducts(new Set(myProductsData?.map(p => p.product_id).filter((id): id is string => id !== null) || []));
       }
 
       // جلب جميع المنتجات النشطة مع معلومات التجار
-      const { data: productsData, error: productsError } = await supabase
+      const { data: productsData } = await supabase
         .from('products')
         .select(`
           *,
@@ -170,7 +170,7 @@ export function useProductsData(profile: any) {
         })
       );
 
-      setProducts(productsWithVariants || []);
+      setProducts((productsWithVariants || []) as unknown as Product[]);
 
     } catch (error) {
       console.error('Error fetching data:', error);

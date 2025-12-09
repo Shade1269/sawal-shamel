@@ -16,7 +16,7 @@ interface ProductsBrowserHeaderProps {
 export function ProductsBrowserHeader({
   productsCount,
   myProductsCount,
-  userRole,
+  userRole: _userRole,
   onNavigateHome,
 }: ProductsBrowserHeaderProps) {
   return (

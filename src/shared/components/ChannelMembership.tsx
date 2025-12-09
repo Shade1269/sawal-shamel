@@ -13,8 +13,7 @@ import {
   User,
   Circle,
   WifiOff,
-  Clock,
-  Briefcase
+  Clock
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -88,7 +87,7 @@ const ChannelMembership: React.FC<ChannelMembershipProps> = ({
           }
         }));
 
-        setMembers(allUsers);
+        setMembers(allUsers as unknown as Member[]);
         setOnlineCount(Math.floor(allUsers.length * 0.8)); // Mock online count
       } else {
         // Original behavior for regular users - show channel members only
@@ -105,7 +104,7 @@ const ChannelMembership: React.FC<ChannelMembershipProps> = ({
           return;
         }
 
-        setMembers(data || []);
+        setMembers((data || []) as unknown as Member[]);
         setOnlineCount(Math.floor((data?.length || 0) * 0.7));
       }
     } catch (error) {
