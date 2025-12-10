@@ -52,7 +52,7 @@ const MeetingHall: React.FC = () => {
   };
 
   if (showRoom && isConnected) {
-    return <MeetingRoom roomName={roomName} onLeave={handleLeave} />;
+    return <MeetingRoom roomName={roomName} onLeave={handleLeave} selectedRole={role} />;
   }
 
   return (

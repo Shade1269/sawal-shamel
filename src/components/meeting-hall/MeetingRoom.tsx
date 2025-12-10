@@ -6,17 +6,18 @@ import { toast } from 'sonner';
 import { Video, Mic, Users, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { ParticipantRole } from '@/hooks/useLiveKit';
 
 interface MeetingRoomProps {
   roomName: string;
   onLeave: () => void;
+  selectedRole: ParticipantRole;
 }
 
-export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave }) => {
+export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave, selectedRole }) => {
   const {
     room,
     participants,
-    localRole,
     audioEnabled,
     videoEnabled,
     toggleAudio,
@@ -33,7 +34,7 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave }) =
     toast.info('تم رفع يدك! سيراك المتحدثون');
   };
 
-  const isSpeaker = localRole === 'speaker';
+  const isSpeaker = selectedRole === 'speaker';
 
   // Separate speakers from listeners based on track publications
   const speakers = participants.filter((p: any) => {
@@ -188,7 +189,7 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave }) =
 
       {/* Controls */}
       <MeetingControls
-        role={localRole}
+        role={selectedRole}
         audioEnabled={audioEnabled}
         videoEnabled={videoEnabled}
         participantCount={participants.length}
