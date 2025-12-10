@@ -14210,6 +14210,10 @@ export type Database = {
         Args: { p_shipment_id: string }
         Returns: string
       }
+      get_or_create_customer_service_chat: {
+        Args: { p_customer_profile_id: string; p_store_id: string }
+        Returns: string
+      }
       get_page_with_widgets: {
         Args: { p_page_id: string }
         Returns: {
