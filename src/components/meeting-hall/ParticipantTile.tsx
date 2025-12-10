@@ -1,10 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { Participant, Track } from 'livekit-client';
 import { Mic, MicOff, Video, VideoOff, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ParticipantTileProps {
-  participant: Participant;
+  participant: any;
   isSpeaker?: boolean;
   isLocal?: boolean;
 }
@@ -17,8 +16,8 @@ export const ParticipantTile: React.FC<ParticipantTileProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const videoTrack = participant.getTrackPublication(Track.Source.Camera);
-  const audioTrack = participant.getTrackPublication(Track.Source.Microphone);
+  const videoTrack = participant?.getTrackPublication?.('camera');
+  const audioTrack = participant?.getTrackPublication?.('microphone');
 
   const hasVideo = videoTrack?.isSubscribed && !videoTrack.isMuted;
   const hasAudio = audioTrack?.isSubscribed && !audioTrack.isMuted;
@@ -65,7 +64,7 @@ export const ParticipantTile: React.FC<ParticipantTileProps> = ({
         <div className="w-full h-full flex items-center justify-center bg-muted">
           <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center">
             <span className="text-3xl font-bold text-primary">
-              {participant.name?.charAt(0).toUpperCase() || '?'}
+              {participant?.name?.charAt(0).toUpperCase() || '?'}
             </span>
           </div>
         </div>
@@ -81,7 +80,7 @@ export const ParticipantTile: React.FC<ParticipantTileProps> = ({
               <Crown className="w-4 h-4 text-warning" />
             )}
             <span className="text-white text-sm font-medium truncate">
-              {participant.name || 'مشارك'}
+              {participant?.name || 'مشارك'}
               {isLocal && ' (أنت)'}
             </span>
           </div>
