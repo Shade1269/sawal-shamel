@@ -5164,6 +5164,152 @@ export type Database = {
           },
         ]
       }
+      meeting_participants: {
+        Row: {
+          duration_seconds: number | null
+          id: string
+          joined_at: string
+          left_at: string | null
+          participant_name: string
+          profile_id: string | null
+          role: string
+          room_id: string
+        }
+        Insert: {
+          duration_seconds?: number | null
+          id?: string
+          joined_at?: string
+          left_at?: string | null
+          participant_name: string
+          profile_id?: string | null
+          role?: string
+          room_id: string
+        }
+        Update: {
+          duration_seconds?: number | null
+          id?: string
+          joined_at?: string
+          left_at?: string | null
+          participant_name?: string
+          profile_id?: string | null
+          role?: string
+          room_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_participants_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_participants_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "meeting_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meeting_rooms: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          ended_at: string | null
+          id: string
+          is_active: boolean
+          is_private: boolean
+          max_participants: number | null
+          participant_count: number | null
+          password_hash: string | null
+          room_code: string
+          room_name: string
+          started_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          ended_at?: string | null
+          id?: string
+          is_active?: boolean
+          is_private?: boolean
+          max_participants?: number | null
+          participant_count?: number | null
+          password_hash?: string | null
+          room_code: string
+          room_name: string
+          started_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          ended_at?: string | null
+          id?: string
+          is_active?: boolean
+          is_private?: boolean
+          max_participants?: number | null
+          participant_count?: number | null
+          password_hash?: string | null
+          room_code?: string
+          room_name?: string
+          started_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_rooms_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_rooms_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "safe_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_rooms_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_profiles_compat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_rooms_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "v_user_stats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       merchant_transactions: {
         Row: {
           amount_sar: number
@@ -14153,6 +14299,7 @@ export type Database = {
       generate_movement_number: { Args: never; Returns: string }
       generate_refund_number: { Args: never; Returns: string }
       generate_return_number: { Args: never; Returns: string }
+      generate_room_code: { Args: never; Returns: string }
       generate_shipment_number: { Args: never; Returns: string }
       generate_shipment_tracking_number: { Args: never; Returns: string }
       get_all_columns: {
