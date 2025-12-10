@@ -201,7 +201,19 @@ const CustomerAuthProvider: React.FC<CustomerAuthProviderProps> = ({ children })
         body: { phone: fullPhone, storeId }
       });
 
-      if (error) throw error;
+      // معالجة خطأ الـ edge function
+      if (error) {
+        // إذا كان الخطأ يحتوي على رسالة من الـ function
+        if (data?.error) {
+          throw new Error(data.error);
+        }
+        throw error;
+      }
+      
+      // إذا كانت الاستجابة تحتوي على خطأ
+      if (data && !data.success && data.error) {
+        throw new Error(data.error);
+      }
 
       // إذا تم الحظر من المزود لكن أعاد الخادم كوداً للاختبار، نعرض تنبيه ونواصل
       if (data?.blocked) {

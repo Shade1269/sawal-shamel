@@ -93,12 +93,14 @@ serve(async (req) => {
       const timeSinceLastOtp = Date.now() - new Date(recentOtp.created_at).getTime();
       if (timeSinceLastOtp < 60000) { // 60 ثانية
         const waitTime = Math.ceil((60000 - timeSinceLastOtp) / 1000);
+        console.log('Cooldown active, wait time:', waitTime, 'seconds');
+        // نرجع 200 مع success: false لتجنب خطأ Edge Function non-2xx
         return new Response(
           JSON.stringify({ 
             success: false, 
             error: `الرجاء الانتظار ${waitTime} ثانية قبل طلب رمز جديد` 
           }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
     }
