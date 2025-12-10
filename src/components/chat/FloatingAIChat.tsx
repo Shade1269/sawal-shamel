@@ -6,13 +6,18 @@ import { Input } from '@/components/ui/input';
 import { useAIChat } from '@/hooks/useAIChat';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useUserRoles } from '@/hooks/useUserRoles';
+import { useLocation } from 'react-router-dom';
 
 export const FloatingAIChat = () => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated } = useFastAuth();
   const { primaryRole } = useUserRoles();
+  
+  // Hide on meeting hall page
+  if (location.pathname === '/meeting-hall') return null;
 
   const {
     messages,
