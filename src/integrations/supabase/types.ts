@@ -13917,7 +13917,6 @@ export type Database = {
       add_affiliate_product:
         | {
             Args: {
-              p_custom_price?: number
               p_is_visible?: boolean
               p_product_id: string
               p_sort_order?: number
@@ -13927,6 +13926,7 @@ export type Database = {
           }
         | {
             Args: {
+              p_custom_price?: number
               p_is_visible?: boolean
               p_product_id: string
               p_sort_order?: number
