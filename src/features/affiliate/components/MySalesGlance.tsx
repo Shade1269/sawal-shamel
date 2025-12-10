@@ -14,23 +14,23 @@ const formatter = new Intl.NumberFormat('ar-SA', { minimumFractionDigits: 0 });
 const currencyFormatter = new Intl.NumberFormat('ar-SA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const MetricCard = ({ title, snapshot }: { title: string; snapshot: SalesSnapshot }) => (
-  <div className="rounded-2xl border border-border bg-card/70 p-4 shadow-sm">
-    <p className="text-sm font-semibold text-muted-foreground">{title}</p>
-    <div className="mt-3 flex flex-wrap items-center gap-6">
+  <div className="rounded-2xl border border-border bg-card/70 p-3 sm:p-4 shadow-sm">
+    <p className="text-xs sm:text-sm font-semibold text-muted-foreground">{title}</p>
+    <div className="mt-2 sm:mt-3 flex flex-wrap items-center gap-3 sm:gap-6">
       <div className="flex items-baseline gap-1">
-        <ShoppingBag className="h-4 w-4 text-primary" />
-        <span className="text-lg font-bold text-foreground">{formatter.format(snapshot.orders)}</span>
-        <span className="text-xs text-muted-foreground">طلب</span>
+        <ShoppingBag className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+        <span className="text-base sm:text-lg font-bold text-foreground">{formatter.format(snapshot.orders)}</span>
+        <span className="text-[10px] sm:text-xs text-muted-foreground">طلب</span>
       </div>
       <div className="flex items-baseline gap-1">
-        <ShoppingCart className="h-4 w-4 text-accent" />
-        <span className="text-lg font-bold text-foreground">{formatter.format(snapshot.items)}</span>
-        <span className="text-xs text-muted-foreground">منتج</span>
+        <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 text-accent" />
+        <span className="text-base sm:text-lg font-bold text-foreground">{formatter.format(snapshot.items)}</span>
+        <span className="text-[10px] sm:text-xs text-muted-foreground">منتج</span>
       </div>
       <div className="flex items-baseline gap-1">
-        <TrendingUp className="h-4 w-4 text-emerald-500" />
-        <span className="text-lg font-bold text-foreground">{currencyFormatter.format(snapshot.revenue)}</span>
-        <span className="text-xs text-muted-foreground">ر.س</span>
+        <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-emerald-500" />
+        <span className="text-base sm:text-lg font-bold text-foreground">{currencyFormatter.format(snapshot.revenue)}</span>
+        <span className="text-[10px] sm:text-xs text-muted-foreground">ر.س</span>
       </div>
     </div>
   </div>
@@ -59,13 +59,13 @@ export const MySalesGlance = ({ metrics, loading, onRefresh }: MySalesGlanceProp
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className="grid gap-4 md:grid-cols-3">
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
+            <Skeleton className="h-24 sm:h-32" />
+            <Skeleton className="h-24 sm:h-32" />
+            <Skeleton className="h-24 sm:h-32" />
           </div>
         ) : metrics ? (
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
             <MetricCard title="اليوم" snapshot={metrics.today} />
             <MetricCard title="هذا الأسبوع" snapshot={metrics.week} />
             <MetricCard title="هذا الشهر" snapshot={metrics.month} />

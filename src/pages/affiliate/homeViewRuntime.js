@@ -62,10 +62,10 @@ export const AffiliateHomeViewRuntime = ({
 
   return React.createElement(
     'div',
-    { className: 'min-h-screen bg-background', dir: 'rtl' },
+    { className: 'min-h-screen bg-background overflow-x-hidden', dir: 'rtl' },
     React.createElement(
       'div',
-      { className: 'mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8' },
+      { className: 'mx-auto flex max-w-6xl flex-col gap-4 px-3 py-6 sm:px-4 sm:gap-6 sm:py-8' },
       // Home Button
       React.createElement(
         'div',
@@ -89,7 +89,7 @@ export const AffiliateHomeViewRuntime = ({
         : null,
       React.createElement(
         'div',
-        { className: 'grid gap-4 md:grid-cols-2' },
+        { className: 'grid gap-4 grid-cols-1 lg:grid-cols-2' },
         React.createElement(MyScoreCard, { storeName: store.store_name }),
         React.createElement(ShareTools, { store, shareUrl, products: topProducts }),
       ),
