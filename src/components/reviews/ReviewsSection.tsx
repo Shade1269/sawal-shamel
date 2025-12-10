@@ -3,8 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Star, MessageSquarePlus } from 'lucide-react';
 import { ReviewCard } from './ReviewCard';
+import { ReviewSubmissionDialog } from './ReviewSubmissionDialog';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -17,6 +19,72 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
   const queryClient = useQueryClient();
   const [sortBy, setSortBy] = useState<'helpful' | 'recent' | 'rating_high' | 'rating_low'>('helpful');
   const [filterRating, setFilterRating] = useState<number | 'all'>('all');
+  const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
+
+  // الحصول على profile_id للمستخدم الحالي
+  const { data: profileData } = useQuery({
+    queryKey: ['user-profile', currentUserId],
+    queryFn: async () => {
+      if (!currentUserId) return null;
+      const { data } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', currentUserId)
+        .single();
+      return data;
+    },
+    enabled: !!currentUserId
+  });
+
+  // التحقق إذا كان العميل قد اشترى هذا المنتج سابقاً
+  const { data: purchaseData } = useQuery({
+    queryKey: ['customer-purchase', productId, profileData?.id],
+    queryFn: async () => {
+      if (!profileData?.id) return null;
+      
+      // البحث في طلبات العميل عن هذا المنتج
+      const { data: orderItems } = await (supabase as any)
+        .from('ecommerce_order_items')
+        .select(`
+          id,
+          ecommerce_orders!inner (
+            id,
+            customer_profile_id,
+            payment_status
+          )
+        `)
+        .eq('product_id', productId)
+        .eq('ecommerce_orders.customer_profile_id', profileData.id)
+        .eq('ecommerce_orders.payment_status', 'COMPLETED')
+        .limit(1);
+
+      if (orderItems && orderItems.length > 0) {
+        return { 
+          canReview: true, 
+          orderItemId: orderItems[0].id 
+        };
+      }
+      
+      return { canReview: false, orderItemId: null };
+    },
+    enabled: !!profileData?.id
+  });
+
+  // التحقق إذا كان العميل قد قيّم هذا المنتج من قبل
+  const { data: existingReview } = useQuery({
+    queryKey: ['existing-review', productId, profileData?.id],
+    queryFn: async () => {
+      if (!profileData?.id) return null;
+      const { data } = await (supabase as any)
+        .from('product_reviews')
+        .select('id')
+        .eq('product_id', productId)
+        .eq('customer_profile_id', profileData.id)
+        .single();
+      return data;
+    },
+    enabled: !!profileData?.id
+  });
 
   const { data: stats } = useQuery({
     queryKey: ['product-rating-stats', productId],
@@ -25,7 +93,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
         p_product_id: productId
       });
       if (error) throw error;
-      return data[0];
+      return data?.[0] || { average_rating: 0, total_reviews: 0, rating_distribution: {} };
     }
   });
 
@@ -45,7 +113,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
           )
         `)
         .eq('product_id', productId)
-        .eq('is_verified', true)
+        .eq('is_approved', true)
         .eq('is_hidden', false);
 
       if (filterRating !== 'all') {
@@ -65,34 +133,20 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
       const { data, error } = await query;
       if (error) throw error;
 
-      if (currentUserId) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('auth_user_id', currentUserId)
-          .single();
-
-        if (profileData) {
-          return data.map((review: any) => ({
-            ...review,
-            user_vote: review.review_votes?.find((v: any) => v.voter_profile_id === profileData.id)
-          }));
-        }
+      if (currentUserId && profileData) {
+        return data.map((review: any) => ({
+          ...review,
+          user_vote: review.review_votes?.find((v: any) => v.voter_profile_id === profileData.id)
+        }));
       }
 
-      return data;
+      return data || [];
     }
   });
 
   const voteMutation = useMutation({
     mutationFn: async ({ reviewId, isHelpful }: { reviewId: string; isHelpful: boolean }) => {
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('auth_user_id', currentUserId!)
-        .single();
-
-      if (!profileData) throw new Error('Profile not found');
+      if (!profileData?.id) throw new Error('Profile not found');
 
       const { data: existingVote } = await (supabase as any)
         .from('review_votes')
@@ -135,18 +189,50 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
     voteMutation.mutate({ reviewId, isHelpful });
   };
 
+  const handleAddReviewClick = () => {
+    if (!currentUserId) {
+      toast.error('يجب تسجيل الدخول لإضافة تقييم');
+      return;
+    }
+    if (!purchaseData?.canReview) {
+      toast.error('يجب شراء المنتج أولاً لتتمكن من تقييمه');
+      return;
+    }
+    if (existingReview) {
+      toast.error('لقد قمت بتقييم هذا المنتج من قبل');
+      return;
+    }
+    setIsReviewDialogOpen(true);
+  };
+
+  // حساب هل يمكن عرض زر التقييم
+  const canShowReviewButton = currentUserId && purchaseData?.canReview && !existingReview;
+
   if (isLoading) {
-    return <div className="text-center py-8">جاري التحميل...</div>;
+    return <div className="text-center py-8 text-muted-foreground">جاري التحميل...</div>;
   }
 
   return (
     <div className="space-y-6" dir="rtl">
+      {/* زر إضافة تقييم للمشترين */}
+      {canShowReviewButton && (
+        <div className="flex justify-center">
+          <Button 
+            onClick={handleAddReviewClick}
+            className="gap-2"
+          >
+            <MessageSquarePlus className="h-5 w-5" />
+            أضف تقييمك
+          </Button>
+        </div>
+      )}
+
       {stats && (
         <div className="bg-card/50 backdrop-blur-sm rounded-xl p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="text-center">
               <div className="text-5xl font-bold text-primary mb-2">
-                {stats.average_rating || 0}
+                {Number(stats.average_rating || 0).toFixed(1)}
               </div>
               <div className="flex items-center justify-center gap-1 mb-2">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -161,7 +247,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
                 ))}
               </div>
               <p className="text-muted-foreground">
-                بناءً على {stats.total_reviews} تقييم
+                بناءً على {stats.total_reviews || 0} تقييم
               </p>
             </div>
 
@@ -174,14 +260,17 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
 
                 return (
                   <div key={rating} className="flex items-center gap-3">
-                    <span className="text-sm w-8">{rating} نجوم</span>
+                    <div className="flex items-center gap-1 w-16">
+                      <span className="text-sm">{rating}</span>
+                      <Star className="h-4 w-4 fill-warning text-warning" />
+                    </div>
                     <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-warning"
+                        className="h-full bg-warning transition-all"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
-                    <span className="text-sm text-muted-foreground w-12 text-right">
+                    <span className="text-sm text-muted-foreground w-8 text-left">
                       {count}
                     </span>
                   </div>
@@ -244,6 +333,18 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({ productId, curre
           </div>
         )}
       </AnimatePresence>
+
+      {/* Dialog لإضافة تقييم */}
+      {purchaseData?.orderItemId && profileData?.id && (
+        <ReviewSubmissionDialog
+          isOpen={isReviewDialogOpen}
+          onClose={() => setIsReviewDialogOpen(false)}
+          productId={productId}
+          productTitle=""
+          orderItemId={purchaseData.orderItemId}
+          customerProfileId={profileData.id}
+        />
+      )}
     </div>
   );
 };
