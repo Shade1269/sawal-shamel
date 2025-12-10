@@ -39,7 +39,7 @@ export const MyScoreCard = ({ scope = 'users', summary, loading, storeName }: My
   const isBusy = loading ?? (queryEnabled ? isLoading : false);
 
   return (
-    <Card className="anaqti-card h-full overflow-hidden" dir="rtl">
+    <Card className="anaqti-card w-full h-full overflow-hidden" dir="rtl">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="anaqti-section-title text-lg">

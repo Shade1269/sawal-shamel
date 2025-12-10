@@ -196,13 +196,13 @@ export const ShareTools = ({ store, shareUrl, products }: ShareToolsProps) => {
   };
 
   return (
-    <Card className="anaqti-card" dir="rtl">
+    <Card className="anaqti-card w-full overflow-hidden" dir="rtl">
       <CardHeader className="pb-4">
         <CardTitle className="anaqti-section-title text-lg">أدوات المشاركة</CardTitle>
         <p className="text-sm anaqti-muted">انسخ رابط متجرك، شاركه فورًا، أو حمّل رمز QR الأنيق.</p>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1fr)_200px]">
+      <CardContent className="p-3 sm:p-6">
+        <div className="flex flex-col gap-4 sm:gap-6">
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground" htmlFor="affiliate-share-link">
@@ -282,16 +282,18 @@ export const ShareTools = ({ store, shareUrl, products }: ShareToolsProps) => {
             ) : null}
           </div>
 
-          <div className="flex flex-col items-center gap-3 order-first md:order-none">
-            <canvas
-              ref={canvasRef}
-              width={160}
-              height={160}
-              className="rounded-2xl border border-border bg-card w-32 h-32 md:w-40 md:h-40"
-            />
-            <p className="text-xs anaqti-muted text-center">
-              {qrReady ? 'امسح الرمز للوصول المباشر' : 'سيتم توليد QR عند توفر الرابط'}
-            </p>
+          <div className="flex justify-center">
+            <div className="flex flex-col items-center gap-2">
+              <canvas
+                ref={canvasRef}
+                width={120}
+                height={120}
+                className="rounded-xl border border-border bg-card w-24 h-24 sm:w-32 sm:h-32"
+              />
+              <p className="text-xs anaqti-muted text-center">
+                {qrReady ? 'امسح الرمز للوصول المباشر' : 'سيتم توليد QR عند توفر الرابط'}
+              </p>
+            </div>
           </div>
         </div>
       </CardContent>
