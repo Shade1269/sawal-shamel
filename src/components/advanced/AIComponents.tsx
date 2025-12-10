@@ -19,11 +19,11 @@ import {
   Copy,
   Download,
   Eye,
-  Settings,
   Loader2
 } from 'lucide-react';
 import { EnhancedCard } from '@/components/ui/enhanced-card';
 import { useSmartSearch, useContentGeneration } from '@/hooks/useAIComponents';
+import { useAIChat } from '@/hooks/useAIChat';
 import { useToast } from '@/hooks/use-toast';
 
 interface AIComponentsProps {
@@ -74,6 +74,23 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
   const [aiEnabled, setAiEnabled] = useState(true);
   const [contentPrompt, setContentPrompt] = useState('');
   const [selectedTone, setSelectedTone] = useState<'formal' | 'casual' | 'professional' | 'friendly'>('professional');
+  
+  // AI Chat state
+  const [chatInput, setChatInput] = useState('');
+  const {
+    messages: chatMessages,
+    isLoading: chatLoading,
+    error: chatError,
+    sendMessage: sendChatMessage,
+    clearChat: clearChatMessages,
+  } = useAIChat({});
+
+  const handleSendChatMessage = () => {
+    if (chatInput.trim() && !chatLoading) {
+      sendChatMessage(chatInput);
+      setChatInput('');
+    }
+  };
 
   // نسخ المحتوى إلى الحافظة
   const copyToClipboard = async (text: string) => {
@@ -479,26 +496,105 @@ export const AIComponents: React.FC<AIComponentsProps> = ({
         </div>
       )}
 
-      {/* AI Chat (Placeholder for future implementation) */}
+      {/* AI Chat - Fully Functional */}
       {activeTab === 'chat' && (
-        <EnhancedCard variant="glass">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5" />
-              المحادثة الذكية
-            </CardTitle>
-            <CardDescription>محادثة تفاعلية مع مساعد ذكي (قريباً)</CardDescription>
+        <EnhancedCard variant="glass" className="h-[600px] flex flex-col">
+          <CardHeader className="flex-shrink-0">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5" />
+                  المحادثة الذكية
+                </CardTitle>
+                <CardDescription>محادثة تفاعلية مع مساعد ذكي</CardDescription>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => clearChatMessages()}
+                disabled={chatMessages.length === 0}
+              >
+                <RefreshCw className="w-4 h-4 mr-1" />
+                محادثة جديدة
+              </Button>
+            </div>
           </CardHeader>
-          <CardContent className="text-center py-8">
-            <Brain className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
-            <h3 className="text-lg font-semibold text-muted-foreground mb-2">المحادثة الذكية</h3>
-            <p className="text-muted-foreground mb-4">
-              ستتمكن قريباً من المحادثة المباشرة مع المساعد الذكي
-            </p>
-            <Button disabled>
-              <Settings className="w-4 h-4 mr-2" />
-              قيد التطوير
-            </Button>
+          <CardContent className="flex-1 flex flex-col overflow-hidden">
+            {/* Messages Container */}
+            <div className="flex-1 overflow-y-auto space-y-4 mb-4 p-2">
+              {chatMessages.length === 0 ? (
+                <div className="text-center py-12">
+                  <Brain className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+                  <h3 className="text-lg font-semibold text-muted-foreground mb-2">مرحباً بك!</h3>
+                  <p className="text-muted-foreground text-sm">
+                    اكتب رسالتك للبدء في المحادثة مع المساعد الذكي
+                  </p>
+                </div>
+              ) : (
+                chatMessages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                        message.role === 'user'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted text-foreground'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{message.content || '...'}</p>
+                      <span className="text-xs opacity-70 mt-1 block">
+                        {message.timestamp.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
+              {chatLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-muted rounded-2xl px-4 py-3 flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="text-sm">جاري الكتابة...</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Chat Error */}
+            {chatError && (
+              <div className="bg-destructive/10 border border-destructive/30 text-destructive rounded-lg px-3 py-2 mb-3 text-sm">
+                {chatError}
+              </div>
+            )}
+
+            {/* Input Area */}
+            <div className="flex-shrink-0 flex gap-2">
+              <Input
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendChatMessage();
+                  }
+                }}
+                placeholder="اكتب رسالتك هنا..."
+                disabled={chatLoading}
+                className="flex-1"
+              />
+              <Button 
+                onClick={handleSendChatMessage} 
+                disabled={!chatInput.trim() || chatLoading}
+                className="px-6"
+              >
+                {chatLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Sparkles className="w-4 h-4" />
+                )}
+              </Button>
+            </div>
           </CardContent>
         </EnhancedCard>
       )}
