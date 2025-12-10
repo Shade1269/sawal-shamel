@@ -3,6 +3,9 @@ import { ParticipantTile } from './ParticipantTile';
 import { MeetingControls } from './MeetingControls';
 import { useLiveKit } from '@/hooks/useLiveKit';
 import { toast } from 'sonner';
+import { Video, Mic, Users, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface MeetingRoomProps {
   roomName: string;
@@ -30,6 +33,8 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave }) =
     toast.info('تم رفع يدك! سيراك المتحدثون');
   };
 
+  const isSpeaker = localRole === 'speaker';
+
   // Separate speakers from listeners based on track publications
   const speakers = participants.filter((p: any) => {
     const videoTrack = p?.getTrackPublication?.('camera');
@@ -47,23 +52,74 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave }) =
     room?.localParticipant?.identity === p?.identity;
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-28">
       {/* Header */}
-      <div className="bg-card border-b border-border p-4">
+      <div className="bg-card border-b border-border p-4 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <h1 className="text-xl font-bold text-foreground">{roomName}</h1>
-          <span className="text-sm text-muted-foreground">
-            قاعة الاجتماعات
-          </span>
+          <h1 className="text-xl font-bold text-foreground">🎥 {roomName}</h1>
+          <div className="flex items-center gap-2">
+            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+              isSpeaker ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
+            }`}>
+              {isSpeaker ? '🎤 متحدث' : '👂 مستمع'}
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Main content */}
       <div className="max-w-7xl mx-auto p-4 space-y-6">
+        
+        {/* Instructions for speakers */}
+        {isSpeaker && !audioEnabled && !videoEnabled && (
+          <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-primary/20 rounded-full">
+                  <Video className="w-8 h-8 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-foreground mb-1">ابدأ البث المباشر!</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    اضغط على الأزرار في الأسفل لتفعيل الميكروفون والكاميرا
+                  </p>
+                  <div className="flex gap-3">
+                    <Button onClick={toggleAudio} variant="default" className="gap-2">
+                      <Mic className="w-4 h-4" />
+                      تفعيل الصوت
+                    </Button>
+                    <Button onClick={toggleVideo} variant="outline" className="gap-2">
+                      <Video className="w-4 h-4" />
+                      تفعيل الكاميرا
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Active broadcast indicator */}
+        {isSpeaker && (audioEnabled || videoEnabled) && (
+          <Card className="bg-success/10 border-success/30">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 bg-success rounded-full animate-pulse"></div>
+                <span className="font-medium text-success">أنت تبث الآن!</span>
+                <div className="flex gap-2 mr-auto">
+                  {audioEnabled && <span className="text-xs bg-success/20 text-success px-2 py-1 rounded">🎤 الصوت مفعل</span>}
+                  {videoEnabled && <span className="text-xs bg-success/20 text-success px-2 py-1 rounded">📹 الكاميرا مفعلة</span>}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Speakers section */}
         {speakers.length > 0 && (
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-4">
+            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+              <Video className="w-5 h-5 text-primary" />
               المتحدثون ({speakers.length})
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -82,7 +138,8 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave }) =
         {/* Listeners section */}
         {listeners.length > 0 && (
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-4">
+            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+              <Users className="w-5 h-5 text-muted-foreground" />
               المستمعون ({listeners.length})
             </h2>
             <div className="flex flex-wrap gap-3">
@@ -106,11 +163,24 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave }) =
           </section>
         )}
 
-        {/* Empty state */}
-        {participants.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-muted-foreground">
-              لا يوجد مشاركون في القاعة حالياً
+        {/* Empty state - waiting for broadcast */}
+        {speakers.length === 0 && (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-6">
+              {isSpeaker ? (
+                <Video className="w-12 h-12 text-muted-foreground" />
+              ) : (
+                <Loader2 className="w-12 h-12 text-muted-foreground animate-spin" />
+              )}
+            </div>
+            <h3 className="text-xl font-semibold text-foreground mb-2">
+              {isSpeaker ? 'ابدأ البث الآن!' : 'في انتظار المتحدث...'}
+            </h3>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              {isSpeaker 
+                ? 'اضغط على زر الميكروفون أو الكاميرا في الأسفل لبدء البث المباشر'
+                : 'سيبدأ البث عندما يفعل المتحدث الصوت أو الفيديو'
+              }
             </p>
           </div>
         )}
