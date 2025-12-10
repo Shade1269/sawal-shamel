@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, X, Sparkles, FileText, ImageIcon, Brain } from 'lucide-react';
 import { UnifiedAIAssistant } from './UnifiedAIAssistant';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface FloatingAIButtonProps {
   context?: 'marketer' | 'customer' | 'admin';
@@ -16,6 +16,12 @@ export function FloatingAIButton({ context = 'marketer', storeInfo }: FloatingAI
   const [isOpen, setIsOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Hide on meeting hall page
+  if (location.pathname === '/meeting-hall') {
+    return null;
+  }
 
   const menuItems = [
     { id: 'chat', label: 'المساعد الذكي', icon: Bot, action: () => setIsOpen(true) },
