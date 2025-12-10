@@ -60,7 +60,7 @@ export const useCustomerServiceChat = ({
 
     try {
       setLoading(true);
-      const { data, error } = await (supabase.rpc as any)('get_or_create_customer_service_chat', {
+      const { data, error } = await supabase.rpc('get_or_create_customer_service_chat', {
         p_store_id: storeId,
         p_customer_profile_id: customerProfileId
       });
