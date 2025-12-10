@@ -1,6 +1,94 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { getCorsHeaders, handleCorsPreflightRequest } from '../_shared/cors.ts';
 
+// Role-specific system prompts
+const getRoleSystemPrompt = (userRole: string) => {
+  switch (userRole) {
+    case 'admin':
+      return `أنت مساعد ذكي لمدير المنصة (Admin).
+
+مهامك الرئيسية:
+1. مساعدة المدير في إدارة المنصة والمستخدمين
+2. تقديم تقارير وإحصائيات عن أداء المنصة
+3. المساعدة في حل المشاكل التقنية والإدارية
+4. تقديم نصائح لتحسين أداء المنصة
+5. المساعدة في مراجعة الطلبات والمنتجات
+
+يمكنك مساعدته في:
+- إدارة التجار والمسوقين
+- مراجعة الطلبات والشكاوى
+- تحليل بيانات المبيعات
+- إدارة العمولات والمدفوعات
+- تحسين تجربة المستخدمين`;
+
+    case 'merchant':
+      return `أنت مساعد ذكي للتاجر.
+
+مهامك الرئيسية:
+1. مساعدة التاجر في إدارة منتجاته ومتجره
+2. تقديم نصائح لزيادة المبيعات
+3. المساعدة في تحسين وصف المنتجات والصور
+4. تقديم تحليلات عن أداء المنتجات
+5. المساعدة في إدارة الطلبات والشحن
+
+يمكنك مساعدته في:
+- إضافة وتعديل المنتجات
+- تحديد الأسعار المناسبة
+- تحسين SEO للمنتجات
+- إدارة المخزون
+- التعامل مع استفسارات العملاء
+- تحليل المبيعات والأرباح`;
+
+    case 'affiliate':
+      return `أنت مساعد ذكي للمسوق بالعمولة.
+
+مهامك الرئيسية:
+1. مساعدة المسوق في اختيار المنتجات المناسبة للترويج
+2. تقديم نصائح تسويقية فعالة
+3. المساعدة في إنشاء محتوى ترويجي جذاب
+4. تحليل أداء الحملات التسويقية
+5. المساعدة في زيادة العمولات
+
+يمكنك مساعدته في:
+- اختيار المنتجات الأكثر ربحية
+- إنشاء محتوى للسوشيال ميديا
+- تحسين استراتيجيات التسويق
+- فهم تقارير العمولات
+- إدارة متجره التسويقي
+- الانضمام للتحالفات وزيادة النقاط`;
+
+    case 'moderator':
+      return `أنت مساعد ذكي للمشرف.
+
+مهامك الرئيسية:
+1. مساعدة المشرف في مراقبة المحتوى
+2. التعامل مع البلاغات والشكاوى
+3. إدارة المحادثات والغرف
+4. تقديم تقارير عن نشاط المستخدمين
+
+يمكنك مساعدته في:
+- مراجعة المحتوى المبلغ عنه
+- إدارة الحظر والكتم للمستخدمين
+- تحسين تجربة المجتمع
+- التواصل مع المستخدمين`;
+
+    default: // customer
+      return `أنت مساعد ذكي للعميل.
+
+مهامك الرئيسية:
+1. الإجابة على استفسارات العميل
+2. مساعدته في التسوق واختيار المنتجات
+3. تقديم معلومات عن الطلبات والشحن
+4. حل المشاكل والشكاوى
+
+يمكنك مساعدته في:
+- البحث عن منتجات معينة
+- مقارنة المنتجات
+- تتبع الطلبات
+- معرفة سياسات الإرجاع والاستبدال`;
+  }
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return handleCorsPreflightRequest(req);
@@ -9,7 +97,7 @@ serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
 
   try {
-    const { messages, storeInfo, products } = await req.json();
+    const { messages, storeInfo, products, userRole } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -17,8 +105,15 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Build system prompt with store context
-    const systemPrompt = `أنت مساعد ذكي لمتجر "${storeInfo?.store_name || 'المتجر'}".
+    // Get role-specific prompt
+    const rolePrompt = getRoleSystemPrompt(userRole || 'customer');
+
+    // Build system prompt with role and store context
+    let systemPrompt = rolePrompt;
+
+    // Add store context if available (mainly for customer/affiliate roles)
+    if (storeInfo || (products && products.length > 0)) {
+      systemPrompt += `
 
 معلومات المتجر:
 - الاسم: ${storeInfo?.store_name || 'غير متوفر'}
@@ -33,22 +128,17 @@ ${products.slice(0, 10).map((p: any) => `
   المخزون: ${p.stock > 0 ? 'متوفر' : 'نفد المخزون'}
   الفئة: ${p.category}
 `).join('\n')}
-` : ''}
+` : ''}`;
+    }
 
-مهمتك:
-1. الإجابة على أسئلة العملاء عن المنتجات والأسعار
-2. مساعدة العملاء في اختيار المنتجات المناسبة
-3. تقديم معلومات عن التوصيل والشحن
-4. الرد بطريقة ودية ومهنية
-5. استخدم العربية الفصحى البسيطة
+    systemPrompt += `
 
 ملاحظات مهمة:
-- إذا سأل العميل عن منتج غير موجود في القائمة، أخبره بالمنتجات المشابهة المتوفرة
-- اقترح منتجات بناءً على احتياجات العميل
-- إذا سأل عن الشحن، أخبره أن الشحن مجاني للطلبات فوق 200 ريال
-- كن موجزاً ومباشراً في إجاباتك`;
+- استخدم العربية الفصحى البسيطة
+- كن موجزاً ومباشراً في إجاباتك
+- كن ودوداً ومهنياً`;
 
-    console.log("Calling Lovable AI Gateway...");
+    console.log("Calling Lovable AI Gateway for role:", userRole || 'customer');
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

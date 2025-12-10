@@ -14,6 +14,7 @@ interface UseAIChatOptions {
     bio?: string;
   };
   products?: any[];
+  userRole?: string;
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
@@ -68,6 +69,7 @@ export const useAIChat = (options: UseAIChatOptions = {}) => {
           messages: apiMessages,
           storeInfo: options.storeInfo,
           products: options.products,
+          userRole: options.userRole,
         }),
         signal: abortControllerRef.current.signal,
       });
@@ -170,7 +172,7 @@ export const useAIChat = (options: UseAIChatOptions = {}) => {
       setIsLoading(false);
       abortControllerRef.current = null;
     }
-  }, [messages, isLoading, options.storeInfo, options.products]);
+  }, [messages, isLoading, options.storeInfo, options.products, options.userRole]);
 
   const clearChat = useCallback(() => {
     setMessages([]);

@@ -5,12 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAIChat } from '@/hooks/useAIChat';
 import { useFastAuth } from '@/hooks/useFastAuth';
+import { useUserRoles } from '@/hooks/useUserRoles';
 
 export const FloatingAIChat = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated } = useFastAuth();
+  const { primaryRole } = useUserRoles();
 
   const {
     messages,
@@ -18,7 +20,7 @@ export const FloatingAIChat = () => {
     error,
     sendMessage,
     clearChat,
-  } = useAIChat({});
+  } = useAIChat({ userRole: primaryRole || 'customer' });
 
   // Auto-scroll to bottom
   useEffect(() => {
