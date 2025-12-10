@@ -150,28 +150,64 @@ export const useLiveKit = () => {
   }, [state.liveKitLoaded]);
 
   const toggleAudio = useCallback(async () => {
-    if (!roomRef.current) return;
+    if (!roomRef.current) {
+      console.warn('Room not connected, cannot toggle audio');
+      toast.error('الغرفة غير متصلة');
+      return;
+    }
+    
+    if (!roomRef.current.localParticipant) {
+      console.warn('Local participant not ready');
+      toast.error('المشارك المحلي غير جاهز');
+      return;
+    }
     
     try {
       const enabled = !state.audioEnabled;
+      console.log('Toggling audio to:', enabled);
       await roomRef.current.localParticipant.setMicrophoneEnabled(enabled);
       setState(prev => ({ ...prev, audioEnabled: enabled }));
-    } catch (error) {
+      toast.success(enabled ? 'تم تفعيل الميكروفون' : 'تم إيقاف الميكروفون');
+    } catch (error: any) {
       console.error('Failed to toggle audio:', error);
-      toast.error('فشل تغيير حالة الصوت');
+      if (error?.name === 'NotAllowedError') {
+        toast.error('يرجى السماح بالوصول للميكروفون من إعدادات المتصفح');
+      } else if (error?.name === 'NotFoundError') {
+        toast.error('لم يتم العثور على ميكروفون');
+      } else {
+        toast.error('فشل تغيير حالة الصوت: ' + (error?.message || 'خطأ غير معروف'));
+      }
     }
   }, [state.audioEnabled]);
 
   const toggleVideo = useCallback(async () => {
-    if (!roomRef.current) return;
+    if (!roomRef.current) {
+      console.warn('Room not connected, cannot toggle video');
+      toast.error('الغرفة غير متصلة');
+      return;
+    }
+    
+    if (!roomRef.current.localParticipant) {
+      console.warn('Local participant not ready');
+      toast.error('المشارك المحلي غير جاهز');
+      return;
+    }
     
     try {
       const enabled = !state.videoEnabled;
+      console.log('Toggling video to:', enabled);
       await roomRef.current.localParticipant.setCameraEnabled(enabled);
       setState(prev => ({ ...prev, videoEnabled: enabled }));
-    } catch (error) {
+      toast.success(enabled ? 'تم تفعيل الكاميرا' : 'تم إيقاف الكاميرا');
+    } catch (error: any) {
       console.error('Failed to toggle video:', error);
-      toast.error('فشل تغيير حالة الفيديو');
+      if (error?.name === 'NotAllowedError') {
+        toast.error('يرجى السماح بالوصول للكاميرا من إعدادات المتصفح');
+      } else if (error?.name === 'NotFoundError') {
+        toast.error('لم يتم العثور على كاميرا');
+      } else {
+        toast.error('فشل تغيير حالة الفيديو: ' + (error?.message || 'خطأ غير معروف'));
+      }
     }
   }, [state.videoEnabled]);
 
