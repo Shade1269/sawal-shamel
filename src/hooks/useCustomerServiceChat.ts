@@ -108,12 +108,29 @@ export const useCustomerServiceChat = ({
     if (!isStoreOwner) return;
 
     try {
+      // Get store owner profile id first
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single();
+
+      if (!profile) return;
+
+      // Get customer_service rooms where the store owner is a member
       const { data, error } = await supabase
         .from('chat_rooms')
-        .select('*')
-        .eq('type', 'direct')
+        .select(`
+          *,
+          room_members!inner(user_id, role)
+        `)
+        .eq('type', 'customer_service')
         .eq('is_active', true)
-        .order('created_at', { ascending: false });
+        .eq('room_members.user_id', profile.id)
+        .order('updated_at', { ascending: false });
 
       if (error) throw error;
       setRooms(data || []);
