@@ -59,7 +59,7 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex w-full bg-background">
+    <div className="min-h-screen flex w-full bg-background overflow-x-hidden">
       {/* Sidebar - Desktop */}
       {showSidebar && sidebarSections.length > 0 && (
         <UnifiedSidebar
@@ -74,9 +74,8 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
       {/* Main Content Area */}
       <div
         className={cn(
-          'flex-1 flex flex-col min-w-0 transition-all duration-300',
-          showSidebar && (sidebarCollapsed ? 'mr-16' : 'mr-64'),
-          'max-md:mr-0', // No margin on mobile
+          'flex-1 flex flex-col min-w-0 w-full transition-all duration-300 overflow-x-hidden',
+          showSidebar && (sidebarCollapsed ? 'md:mr-16' : 'md:mr-64'),
           className
         )}
       >
@@ -87,12 +86,12 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
         />
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto">
           <div
             className={cn(
-              'p-4 md:p-6 lg:p-8',
-              !fullWidth && 'container mx-auto',
-              showMobileNav && 'pb-20 md:pb-6' // Extra padding for mobile nav
+              'w-full px-3 py-4 sm:p-4 md:p-6 lg:p-8 box-border',
+              !fullWidth && 'max-w-7xl mx-auto',
+              showMobileNav && 'pb-24 md:pb-6' // Extra padding for mobile nav
             )}
           >
             {children}

@@ -302,7 +302,7 @@ export function UnifiedDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-4 sm:space-y-6 overflow-x-hidden">
       {/* Enhanced Header - Mobile Responsive */}
       <motion.div 
         className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0"
