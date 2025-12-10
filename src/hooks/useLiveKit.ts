@@ -150,7 +150,7 @@ export const useLiveKit = () => {
   }, [state.liveKitLoaded]);
 
   const toggleAudio = useCallback(async () => {
-    if (!roomRef.current || state.localRole !== 'speaker') return;
+    if (!roomRef.current) return;
     
     try {
       const enabled = !state.audioEnabled;
@@ -160,10 +160,10 @@ export const useLiveKit = () => {
       console.error('Failed to toggle audio:', error);
       toast.error('فشل تغيير حالة الصوت');
     }
-  }, [state.audioEnabled, state.localRole]);
+  }, [state.audioEnabled]);
 
   const toggleVideo = useCallback(async () => {
-    if (!roomRef.current || state.localRole !== 'speaker') return;
+    if (!roomRef.current) return;
     
     try {
       const enabled = !state.videoEnabled;
@@ -173,7 +173,7 @@ export const useLiveKit = () => {
       console.error('Failed to toggle video:', error);
       toast.error('فشل تغيير حالة الفيديو');
     }
-  }, [state.videoEnabled, state.localRole]);
+  }, [state.videoEnabled]);
 
   useEffect(() => {
     return () => {

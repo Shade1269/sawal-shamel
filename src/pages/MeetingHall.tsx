@@ -12,7 +12,8 @@ import { Navigate } from 'react-router-dom';
 
 const MeetingHall: React.FC = () => {
   const { user, profile, loading: authLoading } = useUnifiedAuth();
-  const { isConnected, isConnecting, connect } = useLiveKit();
+  const liveKitHook = useLiveKit();
+  const { isConnected, isConnecting, connect, disconnect } = liveKitHook;
   
   const [roomName, setRoomName] = useState('');
   const [role, setRole] = useState<ParticipantRole>('listener');
@@ -46,13 +47,14 @@ const MeetingHall: React.FC = () => {
     }
   };
 
-  const handleLeave = () => {
+  const handleLeave = async () => {
+    await disconnect();
     setShowRoom(false);
     setRoomName('');
   };
 
   if (showRoom && isConnected) {
-    return <MeetingRoom roomName={roomName} onLeave={handleLeave} selectedRole={role} />;
+    return <MeetingRoom roomName={roomName} onLeave={handleLeave} selectedRole={role} liveKitHook={liveKitHook} />;
   }
 
   return (
