@@ -62,10 +62,10 @@ export const AffiliateHomeViewRuntime = ({
 
   return React.createElement(
     'div',
-    { className: 'min-h-screen bg-background overflow-x-hidden', dir: 'rtl' },
+    { className: 'min-h-screen w-full bg-background overflow-x-hidden box-border', dir: 'rtl' },
     React.createElement(
       'div',
-      { className: 'mx-auto flex max-w-6xl flex-col gap-4 px-3 py-6 sm:px-4 sm:gap-6 sm:py-8' },
+      { className: 'w-full max-w-6xl mx-auto flex flex-col gap-4 px-2 py-4 sm:px-4 sm:gap-6 sm:py-8 box-border' },
       // Home Button
       React.createElement(
         'div',
@@ -89,7 +89,7 @@ export const AffiliateHomeViewRuntime = ({
         : null,
       React.createElement(
         'div',
-        { className: 'grid gap-4 grid-cols-1 lg:grid-cols-2' },
+        { className: 'w-full grid gap-4 grid-cols-1 lg:grid-cols-2' },
         React.createElement(MyScoreCard, { storeName: store.store_name }),
         React.createElement(ShareTools, { store, shareUrl, products: topProducts }),
       ),
