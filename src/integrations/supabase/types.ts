@@ -10486,6 +10486,54 @@ export type Database = {
           },
         ]
       }
+      stock_alerts: {
+        Row: {
+          affiliate_store_id: string | null
+          created_at: string
+          customer_email: string
+          customer_phone: string | null
+          id: string
+          is_notified: boolean | null
+          notified_at: string | null
+          product_id: string
+        }
+        Insert: {
+          affiliate_store_id?: string | null
+          created_at?: string
+          customer_email: string
+          customer_phone?: string | null
+          id?: string
+          is_notified?: boolean | null
+          notified_at?: string | null
+          product_id: string
+        }
+        Update: {
+          affiliate_store_id?: string | null
+          created_at?: string
+          customer_email?: string
+          customer_phone?: string | null
+          id?: string
+          is_notified?: boolean | null
+          notified_at?: string | null
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_alerts_affiliate_store_id_fkey"
+            columns: ["affiliate_store_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_stores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_alerts_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       store_banners: {
         Row: {
           created_at: string
