@@ -2,7 +2,6 @@ import React from 'react';
 import { ParticipantTile } from './ParticipantTile';
 import { MeetingControls } from './MeetingControls';
 import { useLiveKit } from '@/hooks/useLiveKit';
-import { Participant, Track } from 'livekit-client';
 import { toast } from 'sonner';
 
 interface MeetingRoomProps {
@@ -32,20 +31,20 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave }) =
   };
 
   // Separate speakers from listeners based on track publications
-  const speakers = participants.filter(p => {
-    const videoTrack = p.getTrackPublication(Track.Source.Camera);
-    const audioTrack = p.getTrackPublication(Track.Source.Microphone);
+  const speakers = participants.filter((p: any) => {
+    const videoTrack = p?.getTrackPublication?.('camera');
+    const audioTrack = p?.getTrackPublication?.('microphone');
     return videoTrack || audioTrack;
   });
 
-  const listeners = participants.filter(p => {
-    const videoTrack = p.getTrackPublication(Track.Source.Camera);
-    const audioTrack = p.getTrackPublication(Track.Source.Microphone);
+  const listeners = participants.filter((p: any) => {
+    const videoTrack = p?.getTrackPublication?.('camera');
+    const audioTrack = p?.getTrackPublication?.('microphone');
     return !videoTrack && !audioTrack;
   });
 
-  const isLocalParticipant = (p: Participant) => 
-    room?.localParticipant.identity === p.identity;
+  const isLocalParticipant = (p: any) => 
+    room?.localParticipant?.identity === p?.identity;
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -68,9 +67,9 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave }) =
               المتحدثون ({speakers.length})
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {speakers.map((participant) => (
+              {speakers.map((participant: any) => (
                 <ParticipantTile
-                  key={participant.identity}
+                  key={participant?.identity}
                   participant={participant}
                   isSpeaker={true}
                   isLocal={isLocalParticipant(participant)}
@@ -87,18 +86,18 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave }) =
               المستمعون ({listeners.length})
             </h2>
             <div className="flex flex-wrap gap-3">
-              {listeners.map((participant) => (
+              {listeners.map((participant: any) => (
                 <div
-                  key={participant.identity}
+                  key={participant?.identity}
                   className="flex items-center gap-2 bg-card border border-border rounded-full px-4 py-2"
                 >
                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
                     <span className="text-sm font-medium text-primary">
-                      {participant.name?.charAt(0).toUpperCase() || '?'}
+                      {participant?.name?.charAt(0).toUpperCase() || '?'}
                     </span>
                   </div>
                   <span className="text-sm text-foreground">
-                    {participant.name || 'مشارك'}
+                    {participant?.name || 'مشارك'}
                     {isLocalParticipant(participant) && ' (أنت)'}
                   </span>
                 </div>

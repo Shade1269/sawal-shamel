@@ -1,18 +1,27 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { Room, RoomEvent, Participant } from 'livekit-client';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export type ParticipantRole = 'speaker' | 'listener';
 
+// Define types without importing from livekit-client directly
+interface LiveKitRoom {
+  connect: (url: string, token: string) => Promise<void>;
+  disconnect: () => Promise<void>;
+  localParticipant: any;
+  remoteParticipants: Map<string, any>;
+  on: (event: string, callback: (...args: any[]) => void) => void;
+}
+
 interface LiveKitState {
   isConnected: boolean;
   isConnecting: boolean;
-  room: Room | null;
-  participants: Participant[];
+  room: LiveKitRoom | null;
+  participants: any[];
   localRole: ParticipantRole;
   audioEnabled: boolean;
   videoEnabled: boolean;
+  liveKitLoaded: boolean;
 }
 
 export const useLiveKit = () => {
@@ -24,19 +33,37 @@ export const useLiveKit = () => {
     localRole: 'listener',
     audioEnabled: false,
     videoEnabled: false,
+    liveKitLoaded: false,
   });
 
-  const roomRef = useRef<Room | null>(null);
+  const roomRef = useRef<LiveKitRoom | null>(null);
+  const liveKitModuleRef = useRef<any>(null);
+
+  // Load LiveKit dynamically
+  const loadLiveKit = useCallback(async () => {
+    if (liveKitModuleRef.current) return liveKitModuleRef.current;
+    
+    try {
+      const livekit = await import('livekit-client');
+      liveKitModuleRef.current = livekit;
+      setState(prev => ({ ...prev, liveKitLoaded: true }));
+      return livekit;
+    } catch (error) {
+      console.error('Failed to load LiveKit:', error);
+      toast.error('فشل تحميل مكتبة الفيديو');
+      throw error;
+    }
+  }, []);
 
   const updateParticipants = useCallback(() => {
     if (!roomRef.current) return;
-    const allParticipants: Participant[] = [];
+    const allParticipants: any[] = [];
     
     if (roomRef.current.localParticipant) {
       allParticipants.push(roomRef.current.localParticipant);
     }
     
-    roomRef.current.remoteParticipants.forEach((p) => {
+    roomRef.current.remoteParticipants.forEach((p: any) => {
       allParticipants.push(p);
     });
     
@@ -52,6 +79,10 @@ export const useLiveKit = () => {
     setState(prev => ({ ...prev, isConnecting: true }));
 
     try {
+      // Load LiveKit dynamically
+      const livekit = await loadLiveKit();
+      const { Room, RoomEvent } = livekit;
+
       const { data, error } = await supabase.functions.invoke('livekit-token', {
         body: { roomName, participantName, participantIdentity, role }
       });
@@ -99,7 +130,7 @@ export const useLiveKit = () => {
       toast.error('فشل الاتصال بالقاعة');
       throw error;
     }
-  }, [updateParticipants]);
+  }, [updateParticipants, loadLiveKit]);
 
   const disconnect = useCallback(async () => {
     if (roomRef.current) {
@@ -114,8 +145,9 @@ export const useLiveKit = () => {
       localRole: 'listener',
       audioEnabled: false,
       videoEnabled: false,
+      liveKitLoaded: state.liveKitLoaded,
     });
-  }, []);
+  }, [state.liveKitLoaded]);
 
   const toggleAudio = useCallback(async () => {
     if (!roomRef.current || state.localRole !== 'speaker') return;
