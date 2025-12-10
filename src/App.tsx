@@ -91,6 +91,9 @@ const AtlantisWorld = lazy(() => import("./pages/FrostSurvival"));
 // AI Studio
 const AIStudio = lazy(() => import("./pages/AIStudio"));
 
+// Meeting Hall
+const MeetingHall = lazy(() => import("./pages/MeetingHall"));
+
 // Legal Pages
 const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
@@ -159,6 +162,9 @@ const App = () => {
           <Route path="/ai-studio" element={<AIStudio />} />
           <Route path="/atlantis/guide" element={<AtlantisGuide />} />
           <Route path="/chat-landing" element={<ChatLanding />} />
+          
+          {/* Meeting Hall */}
+          <Route path="/meeting-hall" element={<MeetingHall />} />
 
           {/* Legal Pages */}
           <Route path="/privacy" element={<PrivacyPolicy />} />
