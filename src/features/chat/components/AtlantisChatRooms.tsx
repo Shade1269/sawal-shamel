@@ -14,6 +14,7 @@ import {
   Crown,
   MessageCircle,
   TrendingUp,
+  Video,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -477,6 +478,30 @@ const AtlantisChatRooms = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Meeting Hall Card */}
+        <Card 
+          className="mb-8 bg-gradient-to-br from-primary/10 via-card to-accent/10 border-primary/30 hover:border-primary/50 cursor-pointer transition-all group"
+          onClick={() => navigate('/meeting-hall')}
+        >
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="p-4 rounded-2xl bg-primary/20 group-hover:bg-primary/30 transition-colors">
+                  <Video className="h-8 w-8 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-foreground">قاعة الاجتماعات</h3>
+                  <p className="text-muted-foreground">بث مباشر مع المؤثرين والمسوقين - صوت وفيديو</p>
+                </div>
+              </div>
+              <Button className="gap-2">
+                <Video className="h-4 w-4" />
+                انضم الآن
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Rooms Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
