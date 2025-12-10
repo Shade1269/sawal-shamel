@@ -1,20 +1,34 @@
 import React from 'react';
 import { ParticipantTile } from './ParticipantTile';
 import { MeetingControls } from './MeetingControls';
-import { useLiveKit } from '@/hooks/useLiveKit';
 import { toast } from 'sonner';
 import { Video, Mic, Users, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ParticipantRole } from '@/hooks/useLiveKit';
 
+interface LiveKitHookReturn {
+  room: any;
+  participants: any[];
+  audioEnabled: boolean;
+  videoEnabled: boolean;
+  toggleAudio: () => Promise<void>;
+  toggleVideo: () => Promise<void>;
+}
+
 interface MeetingRoomProps {
   roomName: string;
   onLeave: () => void;
   selectedRole: ParticipantRole;
+  liveKitHook: LiveKitHookReturn;
 }
 
-export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave, selectedRole }) => {
+export const MeetingRoom: React.FC<MeetingRoomProps> = ({ 
+  roomName, 
+  onLeave, 
+  selectedRole,
+  liveKitHook 
+}) => {
   const {
     room,
     participants,
@@ -22,13 +36,7 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave, sel
     videoEnabled,
     toggleAudio,
     toggleVideo,
-    disconnect,
-  } = useLiveKit();
-
-  const handleLeave = async () => {
-    await disconnect();
-    onLeave();
-  };
+  } = liveKitHook;
 
   const handleRaiseHand = () => {
     toast.info('تم رفع يدك! سيراك المتحدثون');
@@ -195,7 +203,7 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({ roomName, onLeave, sel
         participantCount={participants.length}
         onToggleAudio={toggleAudio}
         onToggleVideo={toggleVideo}
-        onLeave={handleLeave}
+        onLeave={onLeave}
         onRaiseHand={handleRaiseHand}
       />
     </div>
