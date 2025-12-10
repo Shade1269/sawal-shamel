@@ -1,5 +1,4 @@
 import { useState, useCallback, useRef } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 
 export interface ChatMessage {
   id: string;
@@ -16,6 +15,8 @@ interface UseAIChatOptions {
   };
   products?: any[];
 }
+
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
 
 export const useAIChat = (options: UseAIChatOptions = {}) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -57,67 +58,105 @@ export const useAIChat = (options: UseAIChatOptions = {}) => {
         content: m.content,
       }));
 
-      const response = await supabase.functions.invoke('ai-chat', {
-        body: {
+      const response = await fetch(CHAT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
           messages: apiMessages,
           storeInfo: options.storeInfo,
           products: options.products,
-        },
+        }),
+        signal: abortControllerRef.current.signal,
       });
 
-      if (response.error) {
-        throw new Error(response.error.message || 'فشل في الاتصال بالمساعد الذكي');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'فشل في الاتصال بالمساعد الذكي');
+      }
+
+      if (!response.body) {
+        throw new Error('لم يتم استلام رد من المساعد');
       }
 
       // Handle streaming response
-      const reader = response.data?.getReader?.();
-      
-      if (reader) {
-        const decoder = new TextDecoder();
-        let assistantContent = '';
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let assistantContent = '';
+      let textBuffer = '';
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-          const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split('\n');
+        textBuffer += decoder.decode(value, { stream: true });
 
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const jsonStr = line.slice(6).trim();
-              if (jsonStr === '[DONE]') continue;
+        // Process line-by-line
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf('\n')) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
 
-              try {
-                const parsed = JSON.parse(jsonStr);
-                const content = parsed.choices?.[0]?.delta?.content;
-                if (content) {
-                  assistantContent += content;
-                  setMessages(prev => 
-                    prev.map(m => 
-                      m.id === assistantId 
-                        ? { ...m, content: assistantContent }
-                        : m
-                    )
-                  );
-                }
-              } catch {
-                // Ignore parse errors for incomplete JSON
-              }
+          if (line.endsWith('\r')) line = line.slice(0, -1);
+          if (line.startsWith(':') || line.trim() === '') continue;
+          if (!line.startsWith('data: ')) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === '[DONE]') continue;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantContent += content;
+              setMessages(prev => 
+                prev.map(m => 
+                  m.id === assistantId 
+                    ? { ...m, content: assistantContent }
+                    : m
+                )
+              );
             }
+          } catch {
+            // Put back incomplete JSON and wait for more data
+            textBuffer = line + '\n' + textBuffer;
+            break;
           }
         }
-      } else if (typeof response.data === 'string') {
-        // Non-streaming response
-        setMessages(prev => 
-          prev.map(m => 
-            m.id === assistantId 
-              ? { ...m, content: response.data }
-              : m
-          )
-        );
-      } else if (response.data?.error) {
-        throw new Error(response.data.error);
+      }
+
+      // Final flush
+      if (textBuffer.trim()) {
+        for (let raw of textBuffer.split('\n')) {
+          if (!raw) continue;
+          if (raw.endsWith('\r')) raw = raw.slice(0, -1);
+          if (raw.startsWith(':') || raw.trim() === '') continue;
+          if (!raw.startsWith('data: ')) continue;
+          const jsonStr = raw.slice(6).trim();
+          if (jsonStr === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantContent += content;
+              setMessages(prev => 
+                prev.map(m => 
+                  m.id === assistantId 
+                    ? { ...m, content: assistantContent }
+                    : m
+                )
+              );
+            }
+          } catch { /* ignore partial leftovers */ }
+        }
+      }
+
+      // If no content was received, show error
+      if (!assistantContent) {
+        setMessages(prev => prev.filter(m => m.id !== assistantId));
+        setError('لم يتم استلام رد من المساعد');
       }
 
     } catch (err) {
