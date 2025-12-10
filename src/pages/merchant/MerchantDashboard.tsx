@@ -75,6 +75,7 @@ const MerchantDashboard = () => {
 
       // Safely compute stats without blocking dashboard
       try {
+        // إحصائيات المنتجات
         const { data: products } = await supabase
           .from('products')
           .select('id, approval_status')
@@ -84,17 +85,26 @@ const MerchantDashboard = () => {
         const pendingProducts = products?.filter((p: any) => p.approval_status === 'pending').length || 0;
         const approvedProducts = products?.filter((p: any) => p.approval_status === 'approved').length || 0;
 
-        setStats((prev) => ({
-          ...prev,
+        // إحصائيات الطلبات والإيرادات من order_items
+        const { data: orderItems } = await supabase
+          .from('order_items')
+          .select('order_id, line_total_sar, commission_rate')
+          .eq('merchant_id', merchantData.id);
+
+        const uniqueOrderIds = new Set(orderItems?.map((oi: any) => oi.order_id) || []);
+        const totalOrders = uniqueOrderIds.size;
+        const totalRevenue = orderItems?.reduce((sum: number, oi: any) => sum + (Number(oi.line_total_sar) || 0), 0) || 0;
+
+        setStats({
           totalProducts,
           pendingProducts,
           approvedProducts,
-        }));
+          totalOrders,
+          totalRevenue,
+        });
       } catch (e) {
-        console.warn('Products stats error:', e);
+        console.warn('Stats error:', e);
       }
-
-      // TODO: Add orders/revenue stats with correct relations later
     } catch (error) {
       console.error('Error fetching merchant data:', error);
     } finally {
