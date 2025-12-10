@@ -202,39 +202,38 @@ export const ShareTools = ({ store, shareUrl, products }: ShareToolsProps) => {
         <p className="text-sm anaqti-muted">انسخ رابط متجرك، شاركه فورًا، أو حمّل رمز QR الأنيق.</p>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_240px]">
+        <div className="flex flex-col gap-6 md:grid md:grid-cols-[minmax(0,1fr)_200px]">
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground" htmlFor="affiliate-share-link">
                 رابط المتجر
               </label>
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <Input
-                  id="affiliate-share-link"
-                  value={shareUrl ?? ''}
-                  readOnly
-                  className="flex-1 text-left"
-                  dir="ltr"
-                  placeholder="سيظهر الرابط هنا عند تفعيل المتجر"
-                />
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={handleCopy} disabled={!shareUrl} className="rounded-full">
-                    <Copy className="ml-2 h-4 w-4" />
-                    نسخ
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      if (!shareUrl || typeof window === 'undefined') return;
-                      window.open(shareUrl, '_blank');
-                    }}
-                    disabled={!shareUrl}
-                    className="rounded-full"
-                  >
-                    <ExternalLink className="ml-2 h-4 w-4" />
-                    فتح
-                  </Button>
-                </div>
+              <Input
+                id="affiliate-share-link"
+                value={shareUrl ?? ''}
+                readOnly
+                className="w-full text-left text-xs"
+                dir="ltr"
+                placeholder="سيظهر الرابط هنا عند تفعيل المتجر"
+              />
+              <div className="flex flex-wrap gap-2 mt-2">
+                <Button variant="outline" size="sm" onClick={handleCopy} disabled={!shareUrl} className="rounded-full flex-1 min-w-fit">
+                  <Copy className="ml-1 h-3 w-3" />
+                  نسخ
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    if (!shareUrl || typeof window === 'undefined') return;
+                    window.open(shareUrl, '_blank');
+                  }}
+                  disabled={!shareUrl}
+                  className="rounded-full flex-1 min-w-fit"
+                >
+                  <ExternalLink className="ml-1 h-3 w-3" />
+                  فتح
+                </Button>
               </div>
             </div>
 
@@ -283,15 +282,15 @@ export const ShareTools = ({ store, shareUrl, products }: ShareToolsProps) => {
             ) : null}
           </div>
 
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-3 order-first md:order-none">
             <canvas
               ref={canvasRef}
-              width={220}
-              height={220}
-              className="rounded-3xl border border-border bg-card"
+              width={160}
+              height={160}
+              className="rounded-2xl border border-border bg-card w-32 h-32 md:w-40 md:h-40"
             />
             <p className="text-xs anaqti-muted text-center">
-              {qrReady ? 'امسح الرمز للوصول المباشر إلى المتجر' : 'سيتم توليد رمز QR تلقائيًا عند توفر الرابط'}
+              {qrReady ? 'امسح الرمز للوصول المباشر' : 'سيتم توليد QR عند توفر الرابط'}
             </p>
           </div>
         </div>
