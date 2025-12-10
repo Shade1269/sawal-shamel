@@ -4,6 +4,18 @@ import { toast } from 'sonner';
 
 export type ParticipantRole = 'speaker' | 'listener';
 
+// Session storage key
+const SESSION_KEY = 'livekit_session';
+
+// Session data interface
+interface SessionData {
+  roomName: string;
+  participantName: string;
+  participantIdentity: string;
+  role: ParticipantRole;
+  timestamp: number;
+}
+
 // Define types without importing from livekit-client directly
 interface LiveKitRoom {
   connect: (url: string, token: string) => Promise<void>;
@@ -11,11 +23,13 @@ interface LiveKitRoom {
   localParticipant: any;
   remoteParticipants: Map<string, any>;
   on: (event: string, callback: (...args: any[]) => void) => void;
+  off: (event: string, callback: (...args: any[]) => void) => void;
 }
 
 interface LiveKitState {
   isConnected: boolean;
   isConnecting: boolean;
+  isReconnecting: boolean;
   room: LiveKitRoom | null;
   participants: any[];
   localRole: ParticipantRole;
@@ -24,10 +38,44 @@ interface LiveKitState {
   liveKitLoaded: boolean;
 }
 
+// Helper functions for session storage
+const saveSession = (data: SessionData) => {
+  try {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.warn('Failed to save session:', e);
+  }
+};
+
+const getSession = (): SessionData | null => {
+  try {
+    const data = localStorage.getItem(SESSION_KEY);
+    if (!data) return null;
+    const session = JSON.parse(data) as SessionData;
+    // Session expires after 1 hour
+    if (Date.now() - session.timestamp > 60 * 60 * 1000) {
+      clearSession();
+      return null;
+    }
+    return session;
+  } catch (e) {
+    return null;
+  }
+};
+
+const clearSession = () => {
+  try {
+    localStorage.removeItem(SESSION_KEY);
+  } catch (e) {
+    console.warn('Failed to clear session:', e);
+  }
+};
+
 export const useLiveKit = () => {
   const [state, setState] = useState<LiveKitState>({
     isConnected: false,
     isConnecting: false,
+    isReconnecting: false,
     room: null,
     participants: [],
     localRole: 'listener',
@@ -70,6 +118,85 @@ export const useLiveKit = () => {
     setState(prev => ({ ...prev, participants: allParticipants }));
   }, []);
 
+  const reconnect = useCallback(async (session: SessionData) => {
+    console.log('Attempting to reconnect...', session);
+    setState(prev => ({ ...prev, isReconnecting: true }));
+
+    try {
+      const livekit = await loadLiveKit();
+      const { Room, RoomEvent } = livekit;
+
+      const { data, error } = await supabase.functions.invoke('livekit-token', {
+        body: { 
+          roomName: session.roomName, 
+          participantName: session.participantName, 
+          participantIdentity: session.participantIdentity, 
+          role: session.role 
+        }
+      });
+
+      if (error) throw error;
+
+      const { token, url } = data;
+
+      const room = new Room({
+        adaptiveStream: true,
+        dynacast: true,
+        reconnectPolicy: {
+          maxRetries: 5,
+          retryBackoff: (retryCount: number) => Math.min(1000 * Math.pow(2, retryCount), 10000),
+        }
+      });
+
+      room.on(RoomEvent.ParticipantConnected, updateParticipants);
+      room.on(RoomEvent.ParticipantDisconnected, updateParticipants);
+      room.on(RoomEvent.TrackSubscribed, updateParticipants);
+      room.on(RoomEvent.TrackUnsubscribed, updateParticipants);
+      room.on(RoomEvent.Reconnecting, () => {
+        console.log('Room is reconnecting...');
+        setState(prev => ({ ...prev, isReconnecting: true }));
+        toast.info('جاري إعادة الاتصال...');
+      });
+      room.on(RoomEvent.Reconnected, () => {
+        console.log('Room reconnected successfully');
+        setState(prev => ({ ...prev, isReconnecting: false }));
+        toast.success('تم إعادة الاتصال بنجاح');
+      });
+      room.on(RoomEvent.Disconnected, () => {
+        setState(prev => ({
+          ...prev,
+          isConnected: false,
+          isReconnecting: false,
+          room: null,
+          participants: [],
+        }));
+        clearSession();
+        toast.info('انقطع الاتصال بالقاعة');
+      });
+
+      await room.connect(url, token);
+      roomRef.current = room;
+
+      setState(prev => ({
+        ...prev,
+        isConnected: true,
+        isConnecting: false,
+        isReconnecting: false,
+        room,
+        localRole: session.role,
+      }));
+
+      updateParticipants();
+      toast.success('تم إعادة الاتصال بالقاعة');
+
+    } catch (error) {
+      console.error('Failed to reconnect:', error);
+      setState(prev => ({ ...prev, isReconnecting: false }));
+      clearSession();
+      toast.error('فشل إعادة الاتصال');
+    }
+  }, [updateParticipants, loadLiveKit]);
+
   const connect = useCallback(async (
     roomName: string,
     participantName: string,
@@ -94,24 +221,49 @@ export const useLiveKit = () => {
       const room = new Room({
         adaptiveStream: true,
         dynacast: true,
+        reconnectPolicy: {
+          maxRetries: 5,
+          retryBackoff: (retryCount: number) => Math.min(1000 * Math.pow(2, retryCount), 10000),
+        }
       });
 
       room.on(RoomEvent.ParticipantConnected, updateParticipants);
       room.on(RoomEvent.ParticipantDisconnected, updateParticipants);
       room.on(RoomEvent.TrackSubscribed, updateParticipants);
       room.on(RoomEvent.TrackUnsubscribed, updateParticipants);
+      room.on(RoomEvent.Reconnecting, () => {
+        console.log('Room is reconnecting...');
+        setState(prev => ({ ...prev, isReconnecting: true }));
+        toast.info('جاري إعادة الاتصال...');
+      });
+      room.on(RoomEvent.Reconnected, () => {
+        console.log('Room reconnected successfully');
+        setState(prev => ({ ...prev, isReconnecting: false }));
+        toast.success('تم إعادة الاتصال بنجاح');
+      });
       room.on(RoomEvent.Disconnected, () => {
         setState(prev => ({
           ...prev,
           isConnected: false,
+          isReconnecting: false,
           room: null,
           participants: [],
         }));
+        clearSession();
         toast.info('انقطع الاتصال بالقاعة');
       });
 
       await room.connect(url, token);
       roomRef.current = room;
+
+      // Save session for recovery
+      saveSession({
+        roomName,
+        participantName,
+        participantIdentity,
+        role,
+        timestamp: Date.now(),
+      });
 
       setState(prev => ({
         ...prev,
@@ -137,9 +289,11 @@ export const useLiveKit = () => {
       await roomRef.current.disconnect();
       roomRef.current = null;
     }
+    clearSession();
     setState({
       isConnected: false,
       isConnecting: false,
+      isReconnecting: false,
       room: null,
       participants: [],
       localRole: 'listener',
@@ -148,6 +302,12 @@ export const useLiveKit = () => {
       liveKitLoaded: state.liveKitLoaded,
     });
   }, [state.liveKitLoaded]);
+
+  // Check for saved session on mount
+  const checkSavedSession = useCallback(() => {
+    const session = getSession();
+    return session;
+  }, []);
 
   const toggleAudio = useCallback(async () => {
     if (!roomRef.current) {
@@ -211,19 +371,34 @@ export const useLiveKit = () => {
     }
   }, [state.videoEnabled]);
 
+  // Warn before closing tab/window
   useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (state.isConnected) {
+        e.preventDefault();
+        e.returnValue = 'أنت متصل بغرفة اجتماع. هل تريد المغادرة؟';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
     return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       if (roomRef.current) {
         roomRef.current.disconnect();
       }
     };
-  }, []);
+  }, [state.isConnected]);
 
   return {
     ...state,
     connect,
     disconnect,
+    reconnect,
     toggleAudio,
     toggleVideo,
+    checkSavedSession,
+    clearSession,
   };
 };
