@@ -17,14 +17,16 @@ interface CreateRoomDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onCreateRoom: (params: { roomName: string; isPrivate: boolean; password?: string }) => Promise<any>;
-  onRoomCreated: (room: any) => void;
+  onRoomCreated: (room: any, autoJoin?: boolean) => void;
+  autoJoinOnCreate?: boolean;
 }
 
 export const CreateRoomDialog: React.FC<CreateRoomDialogProps> = ({
   isOpen,
   onClose,
   onCreateRoom,
-  onRoomCreated
+  onRoomCreated,
+  autoJoinOnCreate = false
 }) => {
   const [roomName, setRoomName] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
@@ -53,7 +55,13 @@ export const CreateRoomDialog: React.FC<CreateRoomDialogProps> = ({
     setCreating(false);
 
     if (room) {
-      setCreatedRoom(room);
+      // Auto-join if specified (for speakers)
+      if (autoJoinOnCreate) {
+        onRoomCreated(room, true);
+        handleClose();
+      } else {
+        setCreatedRoom(room);
+      }
     }
   };
 
