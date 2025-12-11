@@ -36,6 +36,7 @@ serve(async (req) => {
     token.addGrant({
       room: roomName,
       roomJoin: true,
+      roomCreate: true,
       canPublish: isSpeaker,
       canSubscribe: true,
       canPublishData: isSpeaker,
