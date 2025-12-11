@@ -56,20 +56,14 @@ export const useMeetingRooms = () => {
     try {
       const { data, error } = await supabase
         .from('meeting_rooms')
-        .select(`
-          *,
-          creator:profiles!meeting_rooms_created_by_fkey(full_name)
-        `)
+        .select('*')
         .eq('is_active', true)
         .eq('is_private', false)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
-      setRooms(data?.map(r => ({
-        ...r,
-        creator_name: r.creator?.full_name || undefined
-      })) || []);
+      setRooms(data || []);
     } catch (error) {
       console.error('Error fetching rooms:', error);
     }

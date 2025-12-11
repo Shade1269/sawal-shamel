@@ -83,12 +83,6 @@ export const ActiveRoomsList: React.FC<ActiveRoomsListProps> = ({
                 <h4 className="font-medium text-foreground">{room.room_name}</h4>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <span className="font-mono">{room.room_code}</span>
-                  {room.creator_name && (
-                    <>
-                      <span>•</span>
-                      <span>{room.creator_name}</span>
-                    </>
-                  )}
                 </div>
               </div>
             </div>
@@ -96,7 +90,7 @@ export const ActiveRoomsList: React.FC<ActiveRoomsListProps> = ({
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Users className="w-4 h-4" />
-                <span>{room.participant_count}</span>
+                <span>{room.participant_count ?? 0}</span>
               </div>
               <Button
                 size="sm"
