@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ParticipantTile } from './ParticipantTile';
 import { MeetingControls } from './MeetingControls';
 import { toast } from 'sonner';
-import { Video, Mic, Users, Loader2 } from 'lucide-react';
+import { Video, Mic, Users, Loader2, Share2, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ParticipantRole } from '@/hooks/useLiveKit';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
 interface LiveKitHookReturn {
   room: any;
@@ -18,6 +25,7 @@ interface LiveKitHookReturn {
 
 interface MeetingRoomProps {
   roomName: string;
+  roomCode?: string;
   onLeave: () => void;
   selectedRole: ParticipantRole;
   liveKitHook: LiveKitHookReturn;
@@ -25,10 +33,14 @@ interface MeetingRoomProps {
 
 export const MeetingRoom: React.FC<MeetingRoomProps> = ({ 
   roomName, 
+  roomCode,
   onLeave, 
   selectedRole,
   liveKitHook 
 }) => {
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [copied, setCopied] = useState(false);
+
   const {
     room,
     participants,
@@ -37,6 +49,24 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({
     toggleAudio,
     toggleVideo,
   } = liveKitHook;
+
+  const joinLink = roomCode ? `${window.location.origin}/meeting-hall?code=${roomCode}` : '';
+
+  const handleCopyLink = () => {
+    if (joinLink) {
+      navigator.clipboard.writeText(joinLink);
+      setCopied(true);
+      toast.success('تم نسخ الرابط!');
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleCopyCode = () => {
+    if (roomCode) {
+      navigator.clipboard.writeText(roomCode);
+      toast.success('تم نسخ الكود!');
+    }
+  };
 
   const handleRaiseHand = () => {
     toast.info('تم رفع يدك! سيراك المتحدثون');
@@ -62,11 +92,49 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({
 
   return (
     <div className="min-h-screen bg-background pb-28">
+      {/* Share Dialog */}
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-right">مشاركة الغرفة</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-2 block">كود الغرفة</label>
+              <div className="flex gap-2">
+                <Input value={roomCode || ''} readOnly className="font-mono text-center text-lg" dir="ltr" />
+                <Button variant="outline" size="icon" onClick={handleCopyCode}>
+                  <Copy className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-2 block">رابط الانضمام</label>
+              <div className="flex gap-2">
+                <Input value={joinLink} readOnly className="text-xs" dir="ltr" />
+                <Button variant="outline" size="icon" onClick={handleCopyLink}>
+                  {copied ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4" />}
+                </Button>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground text-center">
+              شارك هذا الرابط أو الكود مع الآخرين للانضمام إلى الغرفة
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Header */}
       <div className="bg-card border-b border-border p-4 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <h1 className="text-xl font-bold text-foreground">🎥 {roomName}</h1>
           <div className="flex items-center gap-2">
+            {roomCode && (
+              <Button variant="outline" size="sm" onClick={() => setShowShareDialog(true)} className="gap-2">
+                <Share2 className="w-4 h-4" />
+                مشاركة
+              </Button>
+            )}
             <span className={`px-3 py-1 rounded-full text-xs font-medium ${
               isSpeaker ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
             }`}>

@@ -39,7 +39,7 @@ const MeetingHall: React.FC = () => {
 
   // Check URL for room code
   useEffect(() => {
-    const roomCode = searchParams.get('room');
+    const roomCode = searchParams.get('code') || searchParams.get('room');
     if (roomCode && user) {
       setShowJoinDialog(true);
     }
@@ -164,7 +164,8 @@ const MeetingHall: React.FC = () => {
     return (
       <>
         <MeetingRoomComponent 
-          roomName={currentRoom.room_name} 
+          roomName={currentRoom.room_name}
+          roomCode={currentRoom.room_code}
           onLeave={handleLeaveRequest} 
           selectedRole={role} 
           liveKitHook={liveKitHook} 
@@ -199,7 +200,7 @@ const MeetingHall: React.FC = () => {
         isOpen={showJoinDialog}
         onClose={() => setShowJoinDialog(false)}
         onJoin={handleJoinByCode}
-        initialCode={searchParams.get('room') || ''}
+        initialCode={searchParams.get('code') || searchParams.get('room') || ''}
       />
       
       <MeetingHistory
