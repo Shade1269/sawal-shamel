@@ -137,7 +137,9 @@ export const useLiveKit = () => {
 
       if (error) throw error;
 
-      const { token, url } = data;
+      const { token } = data;
+      // Remove trailing slash from URL if present
+      const url = data.url.replace(/\/$/, '');
 
       const room = new Room({
         adaptiveStream: true,
@@ -221,7 +223,9 @@ export const useLiveKit = () => {
         throw new Error('Invalid response from token service');
       }
 
-      const { token, url } = data;
+      const { token } = data;
+      // Remove trailing slash from URL if present
+      const url = data.url.replace(/\/$/, '');
       console.log('Connecting to LiveKit URL:', url);
 
       const room = new Room({
