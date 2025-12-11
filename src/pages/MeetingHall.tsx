@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { useUnifiedAuth } from '@/hooks/useUnifiedAuth';
 import { useLiveKit, ParticipantRole } from '@/hooks/useLiveKit';
 import { useMeetingRooms, MeetingRoom } from '@/hooks/useMeetingRooms';
@@ -78,7 +79,7 @@ const MeetingHall: React.FC = () => {
     if (!validRoom) return;
 
     try {
-      setCurrentRoom(validRoom);
+      // Connect to LiveKit first before setting room state
       await connect(
         validRoom.room_code,
         profile?.full_name || user.email || 'مشارك',
@@ -86,13 +87,18 @@ const MeetingHall: React.FC = () => {
         role
       );
       
+      // Only set room after successful connection
+      setCurrentRoom(validRoom);
+      
       // Record participation
       await meetingRooms.recordParticipant(validRoom.id, profile?.full_name || 'مشارك', role);
       setShowRoom(true);
       setPendingPrivateRoom(null);
       setPasswordInput('');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to join room:', error);
+      setCurrentRoom(null);
+      toast.error(error?.message || 'فشل الاتصال بالغرفة');
     }
   };
 
