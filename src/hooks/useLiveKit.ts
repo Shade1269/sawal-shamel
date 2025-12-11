@@ -84,9 +84,10 @@ export const useLiveKit = () => {
     liveKitLoaded: false,
   });
 
-const roomRef = useRef<LiveKitRoom | null>(null);
+  const roomRef = useRef<LiveKitRoom | null>(null);
   const liveKitModuleRef = useRef<any>(null);
   const isConnectingRef = useRef<boolean>(false);
+  const isMountedRef = useRef<boolean>(true);
 
   // Load LiveKit dynamically
   const loadLiveKit = useCallback(async () => {
@@ -409,8 +410,10 @@ const connect = useCallback(async (
     }
   }, [state.videoEnabled]);
 
-  // Warn before closing tab/window
+  // Track mount state and warn before closing tab/window
   useEffect(() => {
+    isMountedRef.current = true;
+    
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (state.isConnected) {
         e.preventDefault();
@@ -422,10 +425,10 @@ const connect = useCallback(async (
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
+      isMountedRef.current = false;
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      if (roomRef.current) {
-        roomRef.current.disconnect();
-      }
+      // Don't disconnect here - let user manually disconnect
+      // This prevents issues with React StrictMode double mounting
     };
   }, [state.isConnected]);
 
