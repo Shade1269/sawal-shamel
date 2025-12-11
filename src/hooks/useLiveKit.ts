@@ -162,7 +162,8 @@ export const useLiveKit = () => {
         setState(prev => ({ ...prev, isReconnecting: false }));
         toast.success('تم إعادة الاتصال بنجاح');
       });
-      room.on(RoomEvent.Disconnected, () => {
+      room.on(RoomEvent.Disconnected, (reason?: any) => {
+        console.error('Room disconnected (reconnect), reason:', reason);
         setState(prev => ({
           ...prev,
           isConnected: false,
@@ -171,7 +172,8 @@ export const useLiveKit = () => {
           participants: [],
         }));
         clearSession();
-        toast.info('انقطع الاتصال بالقاعة');
+        const reasonText = reason ? `: ${reason}` : '';
+        toast.info(`انقطع الاتصال بالقاعة${reasonText}`);
       });
 
       await room.connect(url, token);
@@ -215,8 +217,12 @@ export const useLiveKit = () => {
       });
 
       if (error) throw error;
+      if (!data?.token || !data?.url) {
+        throw new Error('Invalid response from token service');
+      }
 
       const { token, url } = data;
+      console.log('Connecting to LiveKit URL:', url);
 
       const room = new Room({
         adaptiveStream: true,
@@ -241,7 +247,8 @@ export const useLiveKit = () => {
         setState(prev => ({ ...prev, isReconnecting: false }));
         toast.success('تم إعادة الاتصال بنجاح');
       });
-      room.on(RoomEvent.Disconnected, () => {
+      room.on(RoomEvent.Disconnected, (reason?: any) => {
+        console.error('Room disconnected, reason:', reason);
         setState(prev => ({
           ...prev,
           isConnected: false,
@@ -250,7 +257,8 @@ export const useLiveKit = () => {
           participants: [],
         }));
         clearSession();
-        toast.info('انقطع الاتصال بالقاعة');
+        const reasonText = reason ? `: ${reason}` : '';
+        toast.info(`انقطع الاتصال بالقاعة${reasonText}`);
       });
 
       await room.connect(url, token);
