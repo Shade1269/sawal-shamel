@@ -70,7 +70,7 @@ export const useMeetingRooms = () => {
     return result;
   };
 
-  // Fetch active public rooms
+  // Fetch active public rooms (exclude ended rooms)
   const fetchRooms = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -78,6 +78,7 @@ export const useMeetingRooms = () => {
         .select('*')
         .eq('is_active', true)
         .eq('is_private', false)
+        .is('ended_at', null)
         .order('created_at', { ascending: false });
 
       if (error) throw error;

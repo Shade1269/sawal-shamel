@@ -111,8 +111,10 @@ const MeetingHall: React.FC = () => {
     return null;
   };
 
-  const handleRoomCreated = async (room: MeetingRoom) => {
-    await handleJoinRoom(room);
+  const handleRoomCreated = async (room: MeetingRoom, autoJoin: boolean = false) => {
+    if (autoJoin || role === 'speaker') {
+      await handleJoinRoom(room);
+    }
   };
 
   const handleLeaveRequest = () => {
@@ -190,6 +192,7 @@ const MeetingHall: React.FC = () => {
         onClose={() => setShowCreateDialog(false)}
         onCreateRoom={meetingRooms.createRoom}
         onRoomCreated={handleRoomCreated}
+        autoJoinOnCreate={role === 'speaker'}
       />
       
       <JoinByCodeDialog
