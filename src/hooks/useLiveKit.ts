@@ -84,8 +84,9 @@ export const useLiveKit = () => {
     liveKitLoaded: false,
   });
 
-  const roomRef = useRef<LiveKitRoom | null>(null);
+const roomRef = useRef<LiveKitRoom | null>(null);
   const liveKitModuleRef = useRef<any>(null);
+  const isConnectingRef = useRef<boolean>(false);
 
   // Load LiveKit dynamically
   const loadLiveKit = useCallback(async () => {
@@ -118,8 +119,15 @@ export const useLiveKit = () => {
     setState(prev => ({ ...prev, participants: allParticipants }));
   }, []);
 
-  const reconnect = useCallback(async (session: SessionData) => {
+const reconnect = useCallback(async (session: SessionData) => {
+    // Prevent multiple simultaneous connections
+    if (isConnectingRef.current) {
+      console.warn('Connection already in progress, ignoring reconnect request');
+      return;
+    }
+    
     console.log('Attempting to reconnect...', session);
+    isConnectingRef.current = true;
     setState(prev => ({ ...prev, isReconnecting: true }));
 
     try {
@@ -181,6 +189,7 @@ export const useLiveKit = () => {
       await room.connect(url, token);
       roomRef.current = room;
 
+      isConnectingRef.current = false;
       setState(prev => ({
         ...prev,
         isConnected: true,
@@ -195,18 +204,33 @@ export const useLiveKit = () => {
 
     } catch (error) {
       console.error('Failed to reconnect:', error);
+      isConnectingRef.current = false;
       setState(prev => ({ ...prev, isReconnecting: false }));
       clearSession();
       toast.error('فشل إعادة الاتصال');
     }
   }, [updateParticipants, loadLiveKit]);
 
-  const connect = useCallback(async (
+const connect = useCallback(async (
     roomName: string,
     participantName: string,
     participantIdentity: string,
     role: ParticipantRole
   ) => {
+    // Prevent multiple simultaneous connections
+    if (isConnectingRef.current) {
+      console.warn('Connection already in progress, ignoring duplicate request');
+      return;
+    }
+    
+    // Disconnect existing room if any
+    if (roomRef.current) {
+      console.log('Disconnecting existing room before new connection');
+      await roomRef.current.disconnect();
+      roomRef.current = null;
+    }
+    
+    isConnectingRef.current = true;
     setState(prev => ({ ...prev, isConnecting: true }));
 
     try {
@@ -277,6 +301,7 @@ export const useLiveKit = () => {
         timestamp: Date.now(),
       });
 
+      isConnectingRef.current = false;
       setState(prev => ({
         ...prev,
         isConnected: true,
@@ -290,6 +315,7 @@ export const useLiveKit = () => {
 
     } catch (error) {
       console.error('Failed to connect:', error);
+      isConnectingRef.current = false;
       setState(prev => ({ ...prev, isConnecting: false }));
       toast.error('فشل الاتصال بالقاعة');
       throw error;
