@@ -16,9 +16,6 @@ export const FloatingAIChat = () => {
   const { isAuthenticated } = useFastAuth();
   const { primaryRole } = useUserRoles();
   
-  // Hide on meeting hall page
-  if (location.pathname === '/meeting-hall') return null;
-
   const {
     messages,
     isLoading,
@@ -46,8 +43,8 @@ export const FloatingAIChat = () => {
     }
   };
 
-  // Only show for authenticated users
-  if (!isAuthenticated) return null;
+  // Hide on meeting hall page or if not authenticated
+  if (location.pathname === '/meeting-hall' || !isAuthenticated) return null;
 
   return (
     <>
