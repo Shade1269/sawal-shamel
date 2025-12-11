@@ -34,10 +34,29 @@ const hashPassword = async (password: string): Promise<string> => {
 };
 
 export const useMeetingRooms = () => {
-  const { profile } = useUnifiedAuth();
+  const { user } = useUnifiedAuth();
   const [rooms, setRooms] = useState<MeetingRoom[]>([]);
   const [myRooms, setMyRooms] = useState<MeetingRoom[]>([]);
   const [loading, setLoading] = useState(true);
+  const [profileId, setProfileId] = useState<string | null>(null);
+
+  // Fetch the correct profile ID from profiles table (not user_profiles)
+  useEffect(() => {
+    const fetchProfileId = async () => {
+      if (!user?.id) return;
+      
+      const { data } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .maybeSingle();
+      
+      if (data) {
+        setProfileId(data.id);
+      }
+    };
+    fetchProfileId();
+  }, [user?.id]);
 
   // Generate room code like Google Meet (xxx-xxxx-xxx)
   const generateRoomCode = (): string => {
@@ -71,13 +90,13 @@ export const useMeetingRooms = () => {
 
   // Fetch my rooms (created by me)
   const fetchMyRooms = useCallback(async () => {
-    if (!profile?.id) return;
+    if (!profileId) return;
     
     try {
       const { data, error } = await supabase
         .from('meeting_rooms')
         .select('*')
-        .eq('created_by', profile.id)
+        .eq('created_by', profileId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -85,11 +104,11 @@ export const useMeetingRooms = () => {
     } catch (error) {
       console.error('Error fetching my rooms:', error);
     }
-  }, [profile?.id]);
+  }, [profileId]);
 
   // Create a new room
   const createRoom = async (params: CreateRoomParams): Promise<MeetingRoom | null> => {
-    if (!profile?.id) {
+    if (!profileId) {
       toast.error('يجب تسجيل الدخول أولاً');
       return null;
     }
@@ -103,7 +122,7 @@ export const useMeetingRooms = () => {
         .insert({
           room_code: roomCode,
           room_name: params.roomName,
-          created_by: profile.id,
+          created_by: profileId,
           is_private: params.isPrivate,
           password_hash: passwordHash,
           started_at: new Date().toISOString()
@@ -163,14 +182,14 @@ export const useMeetingRooms = () => {
 
   // Record participant join
   const recordParticipant = async (roomId: string, participantName: string, role: string) => {
-    if (!profile?.id) return null;
+    if (!profileId) return null;
 
     try {
       const { data, error } = await supabase
         .from('meeting_participants')
         .insert({
           room_id: roomId,
-          profile_id: profile.id,
+          profile_id: profileId,
           participant_name: participantName,
           role: role
         })
@@ -247,7 +266,7 @@ export const useMeetingRooms = () => {
 
   // Get meeting history
   const getMeetingHistory = async () => {
-    if (!profile?.id) return [];
+    if (!profileId) return [];
 
     try {
       const { data, error } = await supabase
@@ -256,7 +275,7 @@ export const useMeetingRooms = () => {
           *,
           room:meeting_rooms(*)
         `)
-        .eq('profile_id', profile.id)
+        .eq('profile_id', profileId)
         .order('joined_at', { ascending: false })
         .limit(50);
 
