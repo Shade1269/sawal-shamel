@@ -85,7 +85,25 @@ serve(async (req) => {
       );
     }
 
-    console.log('Token exchange successful');
+    console.log('Token exchange successful:', JSON.stringify(tokenData));
+
+    // التحقق من وجود refresh_token
+    if (!tokenData.refresh_token) {
+      return new Response(
+        `<html><body style="font-family: Arial; padding: 40px;">
+          <h1 style="color: orange;">⚠️ لم يتم استلام Refresh Token</h1>
+          <p>Zoho لم يُرجع Refresh Token. هذا يحدث إذا:</p>
+          <ul>
+            <li>تم التفويض مسبقاً لهذا التطبيق - احذف التطبيق من إعدادات Zoho ثم أعد المحاولة</li>
+            <li>لم يتم إضافة <code>access_type=offline</code> في رابط التفويض</li>
+          </ul>
+          <p><strong>الاستجابة من Zoho:</strong></p>
+          <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; overflow: auto;">${JSON.stringify(tokenData, null, 2)}</pre>
+          <p><strong>الحل:</strong> اذهب إلى <a href="https://accounts.zoho.com/home#sessions/connectedapps" target="_blank">Connected Apps</a> واحذف التطبيق، ثم أعد التفويض.</p>
+        </body></html>`,
+        { headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
+      );
+    }
 
     // عرض الـ refresh token بشكل واضح
     return new Response(
