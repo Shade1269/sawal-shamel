@@ -89,14 +89,17 @@ serve(async (req) => {
     }
 
     // تحديث order_hub إذا كان موجود
-    const { error: updateHubError } = await supabase
+    const { data: hubOrder, error: updateHubError } = await supabase
       .from('order_hub')
       .update({
         status: orderStatus === 'CONFIRMED' ? 'CONFIRMED' : orderStatus,
+        payment_status: paymentStatus,
         updated_at: new Date().toISOString(),
       })
       .eq('source_order_id', order.id)
-      .eq('source', 'ecommerce');
+      .eq('source', 'ecommerce')
+      .select('id')
+      .single();
 
     if (updateHubError) {
       console.log('Note: order_hub update failed (may not exist):', updateHubError);
@@ -117,6 +120,34 @@ serve(async (req) => {
 
     console.log('Payment processed successfully:', paymentRecord);
 
+    // ✅ إرسال الطلب إلى Zoho Flow لإنشاء الفاتورة بعد الدفع الناجح
+    if (paymentStatus === 'COMPLETED' && hubOrder?.id) {
+      console.log('Sending order to Zoho Flow for invoice creation:', hubOrder.id);
+      
+      try {
+        const zohoResponse = await fetch(`${supabaseUrl}/functions/v1/send-order-to-zoho-flow`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseKey}`,
+          },
+          body: JSON.stringify({ order_id: hubOrder.id }),
+        });
+
+        const zohoResult = await zohoResponse.json();
+        console.log('Zoho Flow response:', zohoResult);
+
+        if (!zohoResponse.ok) {
+          console.error('Failed to send to Zoho Flow:', zohoResult);
+        } else {
+          console.log('✅ Order sent to Zoho Flow successfully');
+        }
+      } catch (zohoError) {
+        console.error('Error calling Zoho Flow function:', zohoError);
+        // لا نوقف العملية إذا فشل إرسال الفاتورة
+      }
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
@@ -124,6 +155,7 @@ serve(async (req) => {
         status: paymentStatus,
         orderStatus: orderStatus,
         message: paymentStatus === 'COMPLETED' ? 'تم الدفع بنجاح' : 'فشل الدفع',
+        invoiceSent: paymentStatus === 'COMPLETED',
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
