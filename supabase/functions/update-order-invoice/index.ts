@@ -47,16 +47,43 @@ serve(async (req) => {
     if (invoice_id) updateData.zoho_invoice_id = invoice_id;
     if (invoice_url) updateData.zoho_invoice_url = invoice_url;
 
-    // Update order_hub
-    let query = supabase.from('order_hub').update(updateData);
+    // First check if order exists
+    let findQuery = supabase.from('order_hub').select('id, order_number');
     
     if (order_id) {
-      query = query.eq('id', order_id);
+      findQuery = findQuery.eq('id', order_id);
     } else if (order_number) {
-      query = query.eq('order_number', order_number);
+      findQuery = findQuery.eq('order_number', order_number);
     }
 
-    const { data, error } = await query.select('id, order_number').single();
+    const { data: existingOrder, error: findError } = await findQuery.maybeSingle();
+
+    if (findError) {
+      console.error('Error finding order:', findError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to find order', details: findError }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!existingOrder) {
+      console.log('Order not found:', { order_id, order_number });
+      return new Response(
+        JSON.stringify({ 
+          error: 'Order not found', 
+          message: `No order found with ${order_id ? 'id: ' + order_id : 'order_number: ' + order_number}` 
+        }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Update the order
+    const { data, error } = await supabase
+      .from('order_hub')
+      .update(updateData)
+      .eq('id', existingOrder.id)
+      .select('id, order_number')
+      .single();
 
     if (error) {
       console.error('Error updating order:', error);
