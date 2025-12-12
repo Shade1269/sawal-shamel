@@ -38,6 +38,9 @@ interface Order {
   payment_method: string;
   created_at: string;
   affiliate_store_id: string;
+  zoho_invoice_number?: string | null;
+  zoho_invoice_url?: string | null;
+  zoho_sync_status?: string | null;
 }
 
 interface OrderItem {
@@ -159,6 +162,9 @@ const StoreOrderConfirmation = () => {
         payment_method: additionalData.payment_method || 'CASH_ON_DELIVERY',
         tracking_number: additionalData.tracking_number || null,
         shipping_address: additionalData.shipping_address || {},
+        zoho_invoice_number: hubOrder.zoho_invoice_number || null,
+        zoho_invoice_url: hubOrder.zoho_invoice_url || null,
+        zoho_sync_status: hubOrder.zoho_sync_status || null,
       } as Order);
 
       setOrderItems(orderItems);
@@ -361,6 +367,39 @@ const StoreOrderConfirmation = () => {
             </Card>
           )}
         </div>
+
+        {/* Zoho Invoice - E-Invoice */}
+        {order.zoho_invoice_number && (
+          <Card className="mb-6 border-primary/20 bg-primary/5">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                الفاتورة الإلكترونية (ZATCA)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">رقم الفاتورة</p>
+                  <span className="text-xl font-bold">{order.zoho_invoice_number}</span>
+                </div>
+                {order.zoho_invoice_url && (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => window.open(order.zoho_invoice_url!, '_blank')}
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    عرض الفاتورة
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground mt-3">
+                فاتورة إلكترونية متوافقة مع هيئة الزكاة والضريبة والجمارك
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Order Status */}
         <Card className="mb-6">
