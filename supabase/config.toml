@@ -47,3 +47,6 @@ verify_jwt = false
 
 [functions.livekit-token]
 verify_jwt = false
+
+[functions.send-order-to-zoho-flow]
+verify_jwt = false
