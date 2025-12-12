@@ -5911,6 +5911,9 @@ export type Database = {
           total_amount_sar: number | null
           tracking_number: string | null
           updated_at: string
+          zoho_invoice_id: string | null
+          zoho_invoice_number: string | null
+          zoho_invoice_url: string | null
         }
         Insert: {
           actual_delivery_date?: string | null
@@ -5935,6 +5938,9 @@ export type Database = {
           total_amount_sar?: number | null
           tracking_number?: string | null
           updated_at?: string
+          zoho_invoice_id?: string | null
+          zoho_invoice_number?: string | null
+          zoho_invoice_url?: string | null
         }
         Update: {
           actual_delivery_date?: string | null
@@ -5959,6 +5965,9 @@ export type Database = {
           total_amount_sar?: number | null
           tracking_number?: string | null
           updated_at?: string
+          zoho_invoice_id?: string | null
+          zoho_invoice_number?: string | null
+          zoho_invoice_url?: string | null
         }
         Relationships: []
       }
