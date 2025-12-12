@@ -314,6 +314,58 @@ serve(async (req) => {
       console.log("[create-ecommerce-order] Cart cleared", { cart_id });
     }
 
+    // إرسال الطلب تلقائياً إلى Zoho Flow لإنشاء الفاتورة
+    const zohoFlowWebhookUrl = Deno.env.get("ZOHO_FLOW_WEBHOOK_URL");
+    if (zohoFlowWebhookUrl) {
+      try {
+        console.log("[create-ecommerce-order] Sending order to Zoho Flow", { order_id: order.id, order_number: orderNumber });
+        
+        const zohoPayload = {
+          order_id: order.id,
+          order_number: orderNumber,
+          customer_name: customer.name,
+          customer_phone: customer.phone,
+          customer_email: customer.email ?? null,
+          total_amount: total,
+          subtotal: subtotal,
+          shipping_cost: shippingCost,
+          tax: tax,
+          items: items.map((it: any) => ({
+            product_title: it.products?.title ?? "منتج",
+            quantity: it.quantity,
+            unit_price: it.unit_price_sar,
+            total_price: it.total_price_sar ?? (it.quantity * it.unit_price_sar),
+          })),
+          shipping_address: {
+            city: customer.address?.city || customer.city || "غير محدد",
+            street: customer.address?.street || customer.address || null,
+          },
+          payment_method: body.payment_method || "CASH_ON_DELIVERY",
+        };
+
+        const zohoResponse = await fetch(zohoFlowWebhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(zohoPayload),
+        });
+
+        if (zohoResponse.ok) {
+          console.log("[create-ecommerce-order] Order sent to Zoho Flow successfully");
+          // تحديث حالة المزامنة
+          await supabase
+            .from("order_hub")
+            .update({ zoho_sync_status: "IN_PROGRESS" })
+            .eq("source_order_id", order.id);
+        } else {
+          console.error("[create-ecommerce-order] Zoho Flow error", await zohoResponse.text());
+        }
+      } catch (zohoError) {
+        console.error("[create-ecommerce-order] Failed to send to Zoho Flow", zohoError);
+      }
+    } else {
+      console.log("[create-ecommerce-order] ZOHO_FLOW_WEBHOOK_URL not configured, skipping Zoho sync");
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
