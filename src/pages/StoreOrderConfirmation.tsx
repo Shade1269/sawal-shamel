@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { ZATCAInvoice } from '@/components/store/ZATCAInvoice';
 
 interface Order {
   id: string;
@@ -368,38 +369,39 @@ const StoreOrderConfirmation = () => {
           )}
         </div>
 
-        {/* Zoho Invoice - E-Invoice */}
-        {order.zoho_invoice_number && (
-          <Card className="mb-6 border-primary/20 bg-primary/5">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                الفاتورة الإلكترونية (ZATCA)
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">رقم الفاتورة</p>
-                  <span className="text-xl font-bold">{order.zoho_invoice_number}</span>
-                </div>
-                {order.zoho_invoice_url && (
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={() => window.open(order.zoho_invoice_url!, '_blank')}
-                  >
-                    <FileText className="h-4 w-4 mr-2" />
-                    عرض الفاتورة
-                  </Button>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground mt-3">
-                فاتورة إلكترونية متوافقة مع هيئة الزكاة والضريبة والجمارك
-              </p>
-            </CardContent>
-          </Card>
-        )}
+        {/* ZATCA Invoice */}
+        <div className="mb-6">
+          <ZATCAInvoice
+            invoiceNumber={order.zoho_invoice_number || order.order_number}
+            invoiceDate={order.created_at}
+            orderNumber={order.order_number}
+            seller={{
+              name: store?.store_name || 'المتجر',
+              vatNumber: '300000000000003',
+              address: 'المملكة العربية السعودية',
+              phone: store?.profiles?.phone,
+            }}
+            buyer={{
+              name: order.customer_name,
+              phone: order.customer_phone,
+              address: order.shipping_address?.city ? 
+                `${order.shipping_address.street || ''}, ${order.shipping_address.city}` : undefined,
+            }}
+            items={orderItems.map(item => ({
+              name: item.product_title,
+              quantity: item.quantity,
+              unit_price: item.unit_price_sar,
+              total: item.total_price_sar,
+              vat_amount: item.total_price_sar * 0.15,
+            }))}
+            subtotal={order.subtotal_sar}
+            vatAmount={order.tax_sar}
+            shippingCost={order.shipping_sar}
+            discount={0}
+            total={order.total_sar}
+            paymentMethod={order.payment_method}
+          />
+        </div>
 
         {/* Order Status */}
         <Card className="mb-6">
