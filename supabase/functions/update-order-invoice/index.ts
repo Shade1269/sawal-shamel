@@ -13,24 +13,24 @@ serve(async (req) => {
   }
 
   try {
-    const { 
+    const requestBody = await req.json();
+    
+    // Handle both direct object and nested invoice object from Zoho
+    const invoice_number = requestBody.invoice_number || requestBody.invoice?.invoice_number;
+    const invoice_id = requestBody.invoice_id || requestBody.invoice?.invoice_id;
+    const invoice_url = requestBody.invoice_url || 
+      (invoice_id ? `https://books.zoho.com/app#/invoices/${invoice_id}` : null);
+    const order_id = requestBody.order_id;
+    const order_number = requestBody.order_number;
+
+    console.log('Received invoice update:', { 
       order_id, 
-      order_number,
+      order_number, 
       invoice_number, 
       invoice_id,
-      invoice_url,
-      invoice_date,
-      invoice_status
-    } = await req.json();
-
-    console.log('Received invoice update:', { order_id, order_number, invoice_number });
-
-    if (!order_id && !order_number) {
-      return new Response(
-        JSON.stringify({ error: 'Missing order_id or order_number' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+      hasOrderIdentifier: !!(order_id || order_number),
+      rawBody: JSON.stringify(requestBody).substring(0, 500)
+    });
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -47,31 +47,52 @@ serve(async (req) => {
     if (invoice_id) updateData.zoho_invoice_id = invoice_id;
     if (invoice_url) updateData.zoho_invoice_url = invoice_url;
 
-    // First check if order exists
-    let findQuery = supabase.from('order_hub').select('id, order_number');
-    
-    if (order_id) {
-      findQuery = findQuery.eq('id', order_id);
-    } else if (order_number) {
-      findQuery = findQuery.eq('order_number', order_number);
+    let existingOrder: any = null;
+
+    // Strategy 1: Find by order_id or order_number if provided
+    if (order_id || order_number) {
+      let findQuery = supabase.from('order_hub').select('id, order_number');
+      
+      if (order_id) {
+        findQuery = findQuery.eq('id', order_id);
+      } else if (order_number) {
+        findQuery = findQuery.eq('order_number', order_number);
+      }
+
+      const { data, error } = await findQuery.maybeSingle();
+      if (!error && data) {
+        existingOrder = data;
+        console.log('Found order by id/number:', existingOrder);
+      }
     }
 
-    const { data: existingOrder, error: findError } = await findQuery.maybeSingle();
-
-    if (findError) {
-      console.error('Error finding order:', findError);
-      return new Response(
-        JSON.stringify({ error: 'Failed to find order', details: findError }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
+    // Strategy 2: If no order found, find the most recent IN_PROGRESS order
     if (!existingOrder) {
-      console.log('Order not found:', { order_id, order_number });
+      console.log('No order identifier provided, looking for IN_PROGRESS orders...');
+      
+      const { data: pendingOrders, error: pendingError } = await supabase
+        .from('order_hub')
+        .select('id, order_number, created_at')
+        .eq('zoho_sync_status', 'IN_PROGRESS')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (pendingError) {
+        console.error('Error finding pending orders:', pendingError);
+      } else if (pendingOrders && pendingOrders.length > 0) {
+        existingOrder = pendingOrders[0];
+        console.log('Found IN_PROGRESS order:', existingOrder);
+      }
+    }
+
+    // If still no order found, return error
+    if (!existingOrder) {
+      console.log('No order found to update');
       return new Response(
         JSON.stringify({ 
-          error: 'Order not found', 
-          message: `No order found with ${order_id ? 'id: ' + order_id : 'order_number: ' + order_number}` 
+          error: 'No order found', 
+          message: 'No matching order or pending order found to update',
+          received: { order_id, order_number, invoice_number, invoice_id }
         }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -82,7 +103,7 @@ serve(async (req) => {
       .from('order_hub')
       .update(updateData)
       .eq('id', existingOrder.id)
-      .select('id, order_number')
+      .select('id, order_number, zoho_invoice_number, zoho_invoice_url')
       .single();
 
     if (error) {
