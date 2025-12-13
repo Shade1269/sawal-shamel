@@ -5,6 +5,7 @@ import { Loader2, Package, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StoreThemeProvider } from '@/components/store/ThemeProvider';
 import { CustomerAuthProvider } from '@/contexts/CustomerAuthContext';
+import { StorefrontProvider } from '@/contexts/StoreContext';
 import { BottomNav } from '@/components/mobile/BottomNav';
 import { useIsolatedStoreCart } from '@/hooks/useIsolatedStoreCart';
 
@@ -92,11 +93,13 @@ export const IsolatedStoreLayout: React.FC = () => {
   const cartCount = cart?.items?.reduce((total, item) => total + (item.quantity || 0), 0) || 0;
 
   return (
-    <CustomerAuthProvider>
-      <StoreThemeProvider storeId={store.id}>
-        <Outlet context={{ store }} />
-        <BottomNav storeSlug={storeSlug} cartCount={cartCount} />
-      </StoreThemeProvider>
-    </CustomerAuthProvider>
+    <StorefrontProvider>
+      <CustomerAuthProvider>
+        <StoreThemeProvider storeId={store.id}>
+          <Outlet context={{ store }} />
+          <BottomNav storeSlug={storeSlug} cartCount={cartCount} />
+        </StoreThemeProvider>
+      </CustomerAuthProvider>
+    </StorefrontProvider>
   );
 };

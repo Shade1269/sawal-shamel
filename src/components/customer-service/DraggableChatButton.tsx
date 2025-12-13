@@ -202,18 +202,13 @@ export const DraggableChatButton: React.FC<DraggableChatButtonProps> = ({
         <Button
           onClick={handleClick}
           size="lg"
-          className="h-14 w-14 rounded-full shadow-lg bg-secondary hover:bg-secondary/90 relative pointer-events-auto"
+          className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground relative pointer-events-auto"
           dir="rtl"
           title="الدردشة - اسحب لتحريك الزر"
         >
           <MessageCircle className="h-6 w-6" />
           <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-success border-2 border-background"></div>
         </Button>
-        
-        {/* Drag indicator */}
-        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-muted-foreground opacity-60 whitespace-nowrap pointer-events-none">
-          اسحب للتحريك
-        </div>
       </motion.div>
     );
   }
