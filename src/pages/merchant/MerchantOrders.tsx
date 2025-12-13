@@ -22,23 +22,49 @@ const MerchantOrders = () => {
     const fetchMerchantId = async () => {
       if (!profile) return;
 
-      const { data, error } = await supabase
-        .from('merchants')
-        .select('id')
-        .eq('profile_id', profile.id)
-        .maybeSingle();
+      try {
+        // أولاً: الحصول على profile_id الحقيقي من جدول profiles
+        const { data: profileRow, error: profileErr } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('auth_user_id', profile.auth_user_id ?? '')
+          .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
-        toast({
-          title: 'خطأ',
-          description: 'تعذر جلب معلومات التاجر',
-          variant: 'destructive'
-        });
-        return;
-      }
+        if (profileErr && profileErr.code !== 'PGRST116') {
+          throw profileErr;
+        }
 
-      if (data) {
-        setMerchantId(data.id);
+        const profileId = profileRow?.id;
+        if (!profileId) {
+          toast({
+            title: 'خطأ',
+            description: 'لم يتم العثور على الملف الشخصي',
+            variant: 'destructive'
+          });
+          return;
+        }
+
+        // ثانياً: الحصول على merchant_id باستخدام profile_id الصحيح
+        const { data, error } = await supabase
+          .from('merchants')
+          .select('id')
+          .eq('profile_id', profileId)
+          .maybeSingle();
+
+        if (error && error.code !== 'PGRST116') {
+          toast({
+            title: 'خطأ',
+            description: 'تعذر جلب معلومات التاجر',
+            variant: 'destructive'
+          });
+          return;
+        }
+
+        if (data) {
+          setMerchantId(data.id);
+        }
+      } catch (err) {
+        console.error('Error fetching merchant:', err);
       }
     };
 
