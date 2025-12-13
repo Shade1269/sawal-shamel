@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { UnifiedButton } from '@/components/design-system';
 import { Input } from '@/components/ui/input';
 import { UnifiedCard } from '@/components/design-system';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageCircle, X, Send, Bot, User as UserIcon, Sparkles } from 'lucide-react';
+import { Send, Bot, User as UserIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Message {
@@ -30,7 +30,7 @@ interface ModernAIChatWidgetProps {
 }
 
 export const ModernAIChatWidget = ({ storeInfo, products }: ModernAIChatWidgetProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  // Always open - managed by parent DraggableChatButton
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
@@ -196,43 +196,14 @@ export const ModernAIChatWidget = ({ storeInfo, products }: ModernAIChatWidgetPr
   };
 
   return (
-    <>
-      {/* Chat Button */}
-      <AnimatePresence>
-        {!isOpen && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            className="fixed bottom-6 left-6 z-50"
-          >
-            <UnifiedButton
-              onClick={() => setIsOpen(true)}
-              size="lg"
-              className="h-14 w-14 rounded-full gradient-btn-primary shadow-2xl"
-            >
-              <MessageCircle className="h-6 w-6" />
-            </UnifiedButton>
-            <div className="absolute -top-1 -right-1 flex h-5 w-5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-5 w-5 bg-primary items-center justify-center">
-                <Sparkles className="h-3 w-3 text-primary-foreground" />
-              </span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Chat Window */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="fixed bottom-6 left-6 z-50 w-[380px] md:w-[420px]"
-          >
+    <div className="w-full max-w-[420px]">
+      {/* Chat Window - always visible when rendered */}
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+        transition={{ duration: 0.2 }}
+      >
             <UnifiedCard className="flex flex-col h-[600px] shadow-2xl border-border/50 overflow-hidden">
               {/* Header */}
               <div className="gradient-btn-primary text-primary-foreground p-4 flex items-center justify-between">
@@ -248,14 +219,7 @@ export const ModernAIChatWidget = ({ storeInfo, products }: ModernAIChatWidgetPr
                     <p className="text-xs opacity-90">متصل الآن</p>
                   </div>
                 </div>
-                <UnifiedButton
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsOpen(false)}
-                  className="hover:bg-primary-foreground/20 text-primary-foreground"
-                >
-                  <X className="h-5 w-5" />
-                </UnifiedButton>
+                {/* Close button removed - managed by parent */}
               </div>
 
               {/* Messages */}
@@ -357,8 +321,6 @@ export const ModernAIChatWidget = ({ storeInfo, products }: ModernAIChatWidgetPr
               </div>
             </UnifiedCard>
           </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+    </div>
   );
 };
