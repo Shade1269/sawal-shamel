@@ -110,7 +110,7 @@ export const UnifiedChatWidget: React.FC<UnifiedChatWidgetProps> = ({
   if (mode === 'closed') {
     return (
       <motion.div
-        className="fixed bottom-24 left-6 z-50"
+        className="fixed bottom-28 sm:bottom-24 left-4 sm:left-6 z-50"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         whileHover={{ scale: 1.05 }}
@@ -134,7 +134,7 @@ export const UnifiedChatWidget: React.FC<UnifiedChatWidgetProps> = ({
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed bottom-24 left-6 z-50"
+        className="fixed bottom-28 sm:bottom-24 left-4 sm:left-6 z-50"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
