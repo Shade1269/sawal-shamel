@@ -13,14 +13,12 @@ interface AIHelpButtonProps {
   context: string;
   title?: string;
   className?: string;
-  size?: 'sm' | 'md';
 }
 
 export const AIHelpButton: React.FC<AIHelpButtonProps> = ({
   context,
   title,
   className,
-  size = 'sm'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +26,7 @@ export const AIHelpButton: React.FC<AIHelpButtonProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const fetchExplanation = async () => {
-    if (explanation) return; // Already fetched
+    if (explanation) return;
     
     setIsLoading(true);
     setError(null);
@@ -56,60 +54,59 @@ export const AIHelpButton: React.FC<AIHelpButtonProps> = ({
     }
   };
 
-  const sizeClasses = size === 'sm' 
-    ? 'h-5 w-5 p-0.5' 
-    : 'h-6 w-6 p-1';
-
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
+        <button
           className={cn(
-            sizeClasses,
-            'rounded-full bg-primary/10 hover:bg-primary/20 text-primary transition-all duration-200',
-            'hover:scale-110 active:scale-95',
+            'inline-flex items-center justify-center',
+            'h-4 w-4 rounded-full',
+            'opacity-30 hover:opacity-100',
+            'text-primary/70 hover:text-primary',
+            'transition-all duration-300 ease-out',
+            'hover:scale-125 hover:bg-primary/10',
+            'focus:opacity-100 focus:outline-none',
             className
           )}
           title="مساعدة ذكية"
         >
-          <Sparkles className="h-3 w-3" />
-        </Button>
+          <Sparkles className="h-2.5 w-2.5" />
+        </button>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-80 p-4 bg-card border-border shadow-lg"
+        className="w-72 p-3 bg-card/95 backdrop-blur-sm border-border/50 shadow-xl rounded-xl"
         side="top"
         align="start"
+        sideOffset={8}
       >
-        <div className="space-y-3">
+        <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <span className="font-medium text-sm text-foreground">مساعد AI</span>
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <span className="font-medium text-xs text-primary">مساعد AI</span>
             </div>
             <Button
               variant="ghost"
               size="icon"
-              className="h-5 w-5"
+              className="h-4 w-4 opacity-50 hover:opacity-100"
               onClick={() => setIsOpen(false)}
             >
-              <X className="h-3 w-3" />
+              <X className="h-2.5 w-2.5" />
             </Button>
           </div>
           
           {title && (
-            <h4 className="font-semibold text-foreground text-sm">{title}</h4>
+            <h4 className="font-semibold text-foreground text-xs">{title}</h4>
           )}
           
-          <div className="text-sm text-muted-foreground leading-relaxed">
+          <div className="text-xs text-muted-foreground leading-relaxed">
             {isLoading ? (
-              <div className="flex items-center gap-2 py-4 justify-center">
-                <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                <span>جاري التحليل...</span>
+              <div className="flex items-center gap-2 py-3 justify-center">
+                <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                <span className="text-xs">جاري التحليل...</span>
               </div>
             ) : error ? (
-              <div className="text-destructive text-center py-2">{error}</div>
+              <div className="text-destructive text-center py-2 text-xs">{error}</div>
             ) : (
               <p className="whitespace-pre-wrap">{explanation}</p>
             )}
