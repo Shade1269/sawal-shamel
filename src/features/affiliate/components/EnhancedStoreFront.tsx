@@ -25,8 +25,8 @@ import { CustomerAuthModal } from "@/components/storefront/CustomerAuthModal";
 import { UnifiedChatWidget } from "@/components/customer-service/UnifiedChatWidget";
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 // LuxuryCardContent removed - not used
-import { ModernBannerSlider } from "@/components/storefront/modern/ModernBannerSlider";
-import { ModernProductGrid } from "@/components/storefront/modern/ModernProductGrid";
+import { EnhancedBannerSlider } from "@/components/storefront/modern/EnhancedBannerSlider";
+import { EnhancedProductGrid } from "@/components/storefront/modern/EnhancedProductGrid";
 import { ModernProductModal } from "@/components/storefront/modern/ModernProductModal";
 import { ModernShoppingCart } from "@/components/storefront/modern/ModernShoppingCart";
 import { ModernFooter } from "@/components/storefront/modern/ModernFooter";
@@ -872,40 +872,48 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
   return (
     <StoreThemeProvider storeId={affiliateStore.id}>
       <div className="min-h-screen bg-background" dir="rtl">
-        {/* Clean Header - مطابق للديمو */}
-        <header className="sticky top-0 z-40 bg-background border-b border-border shadow-sm">
-          <div className="container mx-auto px-6 py-5">
-            <div className="flex items-center justify-between max-w-7xl mx-auto">
+        {/* Enhanced Mobile-First Header */}
+        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
+          <div className="container mx-auto px-3 sm:px-6 py-3 sm:py-4">
+            <div className="flex items-center justify-between max-w-7xl mx-auto gap-2">
               {/* Search */}
               <button 
                 onClick={() => setShowAdvancedSearch(true)}
-                className="p-2.5 hover:bg-secondary/50 rounded-lg transition-colors"
+                className="p-2 sm:p-2.5 hover:bg-secondary/50 rounded-full transition-colors"
+                aria-label="بحث"
               >
-                <Search className="w-6 h-6 text-foreground/70" />
+                <Search className="w-5 h-5 sm:w-6 sm:h-6 text-foreground/70" />
               </button>
 
               {/* Logo/Brand */}
-              <h1 className="text-3xl font-bold text-foreground cursor-pointer">
+              <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-foreground cursor-pointer truncate max-w-[150px] sm:max-w-none text-center">
                 {affiliateStore.store_name}
               </h1>
 
               {/* Icons */}
-              <div className="flex items-center gap-2">
-                {/* Theme Toggle */}
-                {storeSlug && <StorefrontThemeToggle storeSlug={storeSlug} />}
+              <div className="flex items-center gap-0.5 sm:gap-1.5">
+                {/* Theme Toggle - Hidden on mobile */}
+                <div className="hidden sm:block">
+                  {storeSlug && <StorefrontThemeToggle storeSlug={storeSlug} />}
+                </div>
                 
-                {/* Compare Button */}
-                <HeaderCompareButton
-                  count={compareCount}
-                  onClick={() => setShowCompare(true)}
-                />
+                {/* Compare Button - Hidden on mobile */}
+                <div className="hidden md:block">
+                  <HeaderCompareButton
+                    count={compareCount}
+                    onClick={() => setShowCompare(true)}
+                  />
+                </div>
                 
-                {/* Wishlist Button */}
-                <HeaderWishlistButton
-                  count={wishlist.length}
-                  onClick={() => setShowLoyalty(true)}
-                />
+                {/* Wishlist Button - Hidden on mobile */}
+                <div className="hidden sm:block">
+                  <HeaderWishlistButton
+                    count={wishlist.length}
+                    onClick={() => setShowLoyalty(true)}
+                  />
+                </div>
                 
+                {/* Orders - Hidden on small mobile */}
                 <button 
                   onClick={() => {
                     if (!isAuthenticated) {
@@ -919,23 +927,30 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
                     }
                     setShowOrders(true);
                   }}
-                  className="p-2.5 rounded-lg transition-colors hover:bg-secondary/50"
+                  className="hidden sm:flex p-2 sm:p-2.5 rounded-full transition-colors hover:bg-secondary/50"
+                  aria-label="طلباتي"
                 >
-                  <Package className="w-6 h-6 text-foreground/70" />
+                  <Package className="w-5 h-5 sm:w-6 sm:h-6 text-foreground/70" />
                 </button>
+                
+                {/* User Account */}
                 <button 
                   onClick={() => setShowAuthModal(true)}
-                  className="p-2.5 rounded-lg transition-colors hover:bg-secondary/50"
+                  className="p-2 sm:p-2.5 rounded-full transition-colors hover:bg-secondary/50"
+                  aria-label="حسابي"
                 >
-                  <User className="w-6 h-6 text-foreground/70" />
+                  <User className="w-5 h-5 sm:w-6 sm:h-6 text-foreground/70" />
                 </button>
+                
+                {/* Cart */}
                 <button 
                   onClick={() => setShowCart(true)}
-                  className="p-2.5 rounded-lg transition-colors relative hover:bg-secondary/50"
+                  className="p-2 sm:p-2.5 rounded-full transition-colors relative hover:bg-secondary/50"
+                  aria-label="سلة التسوق"
                 >
-                  <ShoppingCart className="w-6 h-6 text-foreground/70" />
+                  <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-foreground/70" />
                   {(isolatedCart?.items?.length || 0) > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                    <span className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 bg-primary text-primary-foreground text-[10px] sm:text-xs min-w-[18px] sm:min-w-[20px] h-[18px] sm:h-[20px] rounded-full flex items-center justify-center font-bold">
                       {isolatedCart?.items?.length || 0}
                     </span>
                   )}
@@ -949,62 +964,55 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
       <main className="container mx-auto px-3 md:px-6 py-4 md:py-8 space-y-6 md:space-y-8">
         {/* Banner Slider */}
         {storeBanners && storeBanners.length > 0 && (
-          <ModernBannerSlider banners={storeBanners} onBannerClick={handleBannerClick} />
+          <EnhancedBannerSlider banners={storeBanners} onBannerClick={handleBannerClick} />
         )}
 
-        {/* Categories Section - مطابق للديمو */}
-        <section className="py-12 bg-background">
-          <div className="container mx-auto px-6">
-            <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-3 gap-6">
-                {[
-                  { name: 'الملابس', emoji: '👗', category: 'ملابس' },
-                  { name: 'الحقائب', emoji: '👜', category: 'حقائب' },
-                  { name: 'الأحذية', emoji: '👠', category: 'أحذية' }
-                ].map((category, idx) => (
-                  <motion.div
-                    key={idx}
-                    whileHover={{ y: -4 }}
-                    className="group cursor-pointer"
-                    onClick={() => setSelectedCategory(category.category === selectedCategory ? 'all' : category.category)}
-                  >
-                    <div className="relative aspect-square bg-surface rounded-xl overflow-hidden mb-4 border border-border/50">
-                      <div className="absolute inset-0 gradient-category-card flex items-center justify-center">
-                        <span className="text-5xl opacity-30">
-                          {category.emoji}
-                        </span>
-                      </div>
-                    </div>
-                    <h3 className="text-center font-semibold text-foreground text-lg">{category.name}</h3>
-                  </motion.div>
-                ))}
-              </div>
+        {/* Enhanced Categories Section */}
+        {visibleCategories.length > 0 && (
+          <section className="py-6 sm:py-8 md:py-10">
+            <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-3 scrollbar-hide">
+              {/* All Categories Button */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setSelectedCategory('all')}
+                className={`flex-shrink-0 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full border text-sm sm:text-base font-medium whitespace-nowrap transition-all ${
+                  selectedCategory === 'all'
+                    ? 'border-primary bg-primary text-primary-foreground shadow-md'
+                    : 'border-border bg-background hover:border-primary/40 hover:bg-secondary/30'
+                }`}
+              >
+                الكل ({products?.length || 0})
+              </motion.button>
+              
+              {/* Category Buttons */}
+              {visibleCategories.map((category, idx) => (
+                <motion.button
+                  key={category.id || idx}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setSelectedCategory(category.name === selectedCategory ? 'all' : category.name)}
+                  className={`flex-shrink-0 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full border text-sm sm:text-base font-medium whitespace-nowrap transition-all ${
+                    selectedCategory === category.name
+                      ? 'border-primary bg-primary text-primary-foreground shadow-md'
+                      : 'border-border bg-background hover:border-primary/40 hover:bg-secondary/30'
+                  }`}
+                >
+                  {category.name} ({category.productCount})
+                </motion.button>
+              ))}
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
-        {/* Products Grid Section - بسيط مثل الديمو */}
-        <section id="products-section" className="space-y-6">
-          {productsLoading ? (
-            <div className="flex justify-center items-center py-20">
-              <div className="text-center space-y-4">
-                <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent mx-auto"></div>
-                <p className="text-muted-foreground">جاري تحميل المنتجات الرائعة...</p>
-              </div>
-            </div>
-          ) : filteredProducts.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-xl text-muted-foreground">لا توجد منتجات متاحة</p>
-            </div>
-          ) : (
-            <ModernProductGrid
-              products={filteredProducts}
-              wishlist={wishlist}
-              onAddToCart={handleProductAddToCart}
-              onProductClick={setSelectedProduct}
-              onToggleWishlist={toggleWishlist}
-            />
-          )}
+        {/* Products Grid Section */}
+        <section id="products-section" className="space-y-4 sm:space-y-6">
+          <EnhancedProductGrid
+            products={filteredProducts}
+            wishlist={wishlist}
+            onAddToCart={handleProductAddToCart}
+            onProductClick={setSelectedProduct}
+            onToggleWishlist={toggleWishlist}
+            isLoading={productsLoading}
+          />
         </section>
 
         {/* Footer Info - مطابق للديمو */}
