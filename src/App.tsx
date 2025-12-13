@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { AdaptiveLayoutProvider, SmartNavigationProvider } from "@/components/layout";
+import { NavigationTransitions } from "@/components/navigation/NavigationTransitions";
 import { DarkModeProvider } from "@/shared/components/DarkModeProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SupabaseAuthProvider } from "@/contexts/SupabaseAuthContext";
@@ -140,8 +141,9 @@ const App = () => {
                       <SmartNavigationProvider navigationItems={navigationItems}>
                         <Suspense fallback={<LoadingFallback />}>
                           <DomainManager>
-                            <Routes>
-                              <Route path="/" element={<HomePage />} />
+                            <NavigationTransitions duration={150}>
+                              <Routes>
+                                <Route path="/" element={<HomePage />} />
                               <Route path="/auth" element={<AuthPage />} />
                               <Route path="/auth/reset" element={<ResetPasswordPage />} />
                               <Route path="/auth/callback" element={<AuthCallbackPage />} />
@@ -279,8 +281,9 @@ const App = () => {
                                 <Route path="wallet" element={<MerchantWalletPage />} />
                               </Route>
 
-                              <Route path="*" element={<Navigate to="/" replace />} />
-                            </Routes>
+                                <Route path="*" element={<Navigate to="/" replace />} />
+                              </Routes>
+                            </NavigationTransitions>
                           </DomainManager>
                           
                           {/* FloatingAIChat hidden as per user request */}
