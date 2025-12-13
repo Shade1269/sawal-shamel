@@ -53,6 +53,7 @@ import { StoreOwnerChatPanel } from './StoreOwnerChatPanel';
 import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams } from 'react-router-dom';
 import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
+import { DashboardHeader } from '@/components/dashboard';
 
 interface AffiliateStoreManagerProps {
   store: {
@@ -565,6 +566,13 @@ export const AffiliateStoreManager = ({
 
   return (
     <div className="space-y-4 md:space-y-6">
+      {/* Dashboard Header */}
+      <DashboardHeader
+        title="واجهة المتجر"
+        subtitle={`إدارة متجرك "${store.store_name}" - ${store.total_orders} طلب`}
+        icon={<Store className="h-6 w-6" />}
+      />
+
       {/* Store Header */}
       <Card className="border-0 gradient-bg-accent rounded-none md:rounded-xl">
         <CardContent className="p-4 md:p-6">
