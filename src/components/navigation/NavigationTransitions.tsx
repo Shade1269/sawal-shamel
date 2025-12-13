@@ -13,7 +13,7 @@ const NavigationTransitions: React.FC<NavigationTransitionsProps> = ({
   children,
   className,
   transition = 'persian',
-  duration = 300
+  duration = 150
 }) => {
   const location = useLocation();
   const prevLocation = React.useRef(location);
