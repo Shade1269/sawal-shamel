@@ -7,6 +7,7 @@ import { UnifiedBadge } from '@/components/design-system';
 import { DollarSign, Clock, CheckCircle, Banknote, TrendingUp } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
+import { SalesChart } from '@/components/dashboard';
 
 interface Commission {
   id: string;
@@ -56,6 +57,24 @@ export default function AffiliateCommissionsPage() {
       return data;
     },
     enabled: !!user
+  });
+
+  // Get affiliate store ID
+  const { data: affiliateStore } = useQuery({
+    queryKey: ['affiliate-store-for-chart', profile?.id],
+    queryFn: async () => {
+      if (!profile) return null;
+
+      const { data, error } = await supabase
+        .from('affiliate_stores')
+        .select('id')
+        .eq('profile_id', profile.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!profile
   });
 
   const { data: commissions, isLoading } = useQuery({
@@ -154,6 +173,11 @@ export default function AffiliateCommissionsPage() {
             </p>
           </UnifiedCardContent>
         </UnifiedCard>
+      </div>
+
+      {/* Sales Chart */}
+      <div className="mb-8">
+        <SalesChart affiliateStoreId={affiliateStore?.id} />
       </div>
 
       {/* Commissions List */}
