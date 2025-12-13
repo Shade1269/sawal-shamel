@@ -4,11 +4,13 @@ import { UnifiedButton } from '@/components/design-system';
 import { UnifiedBadge } from '@/components/design-system';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Package, Plus, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Package, Plus, AlertCircle, CheckCircle, XCircle, Edit, Trash2, Power } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useToast } from '@/hooks/use-toast';
 import { SimpleProductForm } from '@/components/inventory/SimpleProductForm';
+import { MerchantProductEditForm } from '@/components/merchant/MerchantProductEditForm';
 
 interface Product {
   id: string;
@@ -19,6 +21,7 @@ interface Product {
   catalog_price_sar?: number;
   category: string;
   images: any;
+  image_urls?: string[];
   approval_status: 'pending' | 'approved' | 'rejected';
   approval_notes: string | null;
   is_active: boolean;
@@ -39,6 +42,9 @@ const MerchantProducts = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
   const [merchantId, setMerchantId] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
+  const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [deleteProduct, setDeleteProduct] = useState<Product | null>(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     fetchMerchantId();
@@ -129,6 +135,49 @@ const MerchantProducts = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  // حذف المنتج
+  const handleDeleteProduct = async () => {
+    if (!deleteProduct) return;
+    setActionLoading(true);
+    try {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', deleteProduct.id);
+
+      if (error) throw error;
+      toast({ title: 'تم الحذف', description: 'تم حذف المنتج بنجاح' });
+      setDeleteProduct(null);
+      fetchProducts();
+    } catch (error: any) {
+      toast({ title: 'خطأ', description: error.message, variant: 'destructive' });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // تفعيل/إلغاء تفعيل المنتج
+  const handleToggleActive = async (product: Product) => {
+    setActionLoading(true);
+    try {
+      const { error } = await supabase
+        .from('products')
+        .update({ is_active: !product.is_active })
+        .eq('id', product.id);
+
+      if (error) throw error;
+      toast({ 
+        title: product.is_active ? 'تم الإلغاء' : 'تم التفعيل', 
+        description: product.is_active ? 'تم إلغاء تفعيل المنتج' : 'تم تفعيل المنتج' 
+      });
+      fetchProducts();
+    } catch (error: any) {
+      toast({ title: 'خطأ', description: error.message, variant: 'destructive' });
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -291,11 +340,27 @@ const MerchantProducts = () => {
                           <UnifiedButton
                             variant="outline"
                             size="sm"
-                            fullWidth
-                            onClick={() => toast({ title: 'قريباً', description: 'صفحة تعديل المنتج قيد التطوير' })}
-                            disabled={product.approval_status !== 'pending'}
+                            onClick={() => setEditProduct(product)}
+                            disabled={actionLoading}
                           >
-                            تعديل
+                            <Edit className="h-3 w-3" />
+                          </UnifiedButton>
+                          <UnifiedButton
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleToggleActive(product)}
+                            disabled={actionLoading}
+                          >
+                            <Power className={`h-3 w-3 ${product.is_active ? 'text-success' : 'text-muted-foreground'}`} />
+                          </UnifiedButton>
+                          <UnifiedButton
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setDeleteProduct(product)}
+                            disabled={actionLoading}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-3 w-3" />
                           </UnifiedButton>
                         </div>
                       </UnifiedCardContent>
@@ -308,6 +373,7 @@ const MerchantProducts = () => {
         </UnifiedCardContent>
       </UnifiedCard>
 
+      {/* Dialog إضافة منتج */}
       <Dialog open={showAdd} onOpenChange={setShowAdd}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -321,6 +387,46 @@ const MerchantProducts = () => {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Dialog تعديل منتج */}
+      <Dialog open={!!editProduct} onOpenChange={(open) => !open && setEditProduct(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>تعديل المنتج</DialogTitle>
+          </DialogHeader>
+          {editProduct && (
+            <MerchantProductEditForm
+              product={editProduct}
+              onSuccess={() => {
+                setEditProduct(null);
+                fetchProducts();
+              }}
+              onCancel={() => setEditProduct(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog تأكيد الحذف */}
+      <AlertDialog open={!!deleteProduct} onOpenChange={(open) => !open && setDeleteProduct(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>هل أنت متأكد من حذف هذا المنتج؟</AlertDialogTitle>
+            <AlertDialogDescription>
+              سيتم حذف المنتج "{deleteProduct?.title}" نهائياً ولا يمكن التراجع عن هذا الإجراء.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteProduct}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {actionLoading ? 'جاري الحذف...' : 'حذف'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
