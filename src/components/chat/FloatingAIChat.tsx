@@ -7,6 +7,7 @@ import { useAIChat } from '@/hooks/useAIChat';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { useLocation } from 'react-router-dom';
+import { useStoreContext } from '@/contexts/StoreContext';
 
 export const FloatingAIChat = () => {
   const location = useLocation();
@@ -15,6 +16,7 @@ export const FloatingAIChat = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated } = useFastAuth();
   const { primaryRole } = useUserRoles();
+  const { isInStorefront } = useStoreContext();
   
   const {
     messages,
@@ -44,8 +46,7 @@ export const FloatingAIChat = () => {
   };
 
   // Hide on meeting hall page, store pages, or if not authenticated
-  const isStorePage = location.pathname.startsWith('/store');
-  if (location.pathname === '/meeting-hall' || isStorePage || !isAuthenticated) return null;
+  if (location.pathname === '/meeting-hall' || isInStorefront || !isAuthenticated) return null;
 
   return (
     <>
