@@ -9,12 +9,14 @@ import {
   CheckCircle, 
   Truck, 
   Package,
-  Banknote
+  Banknote,
+  ShoppingBag
 } from 'lucide-react';
 import { useAffiliateStore } from '@/hooks/useAffiliateStore';
 import { useAffiliateOrders } from '@/hooks/useAffiliateOrders';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { maskPhone, shouldShowFullCustomerData } from '@/lib/privacy';
+import { DashboardHeader } from '@/components/dashboard';
 
 const statusIcons = {
   'PENDING': Clock,
@@ -74,16 +76,15 @@ export default function UnifiedAffiliateOrders() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2 text-foreground transition-colors duration-500">إدارة الطلبات</h1>
-        <p className="text-muted-foreground transition-colors duration-500">
-          متابعة طلبات عملائك وحالاتها
-        </p>
-      </div>
+    <div className="container mx-auto py-8 space-y-6">
+      <DashboardHeader
+        title="إدارة الطلبات"
+        subtitle={`تتبع طلبات متجرك - ${stats.totalOrders} طلب`}
+        icon={<ShoppingBag className="h-6 w-6" />}
+      />
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="bg-card border-border">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-foreground">إجمالي الطلبات</CardTitle>

@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WalletCard } from '@/components/wallet/WalletCard';
 import { WalletStats } from '@/components/wallet/WalletStats';
 import { WithdrawalRequestForm } from '@/components/wallet/WithdrawalRequestForm';
+import { DashboardHeader } from '@/components/dashboard';
 import { useWallet } from '@/hooks/useWallet';
 import { useWithdrawals } from '@/hooks/useWithdrawals';
 import { exportToExcel } from '@/utils/exportToExcel';
@@ -127,15 +128,11 @@ export default function WalletPage() {
   return (
     <div className="container mx-auto py-8 space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
-          <Wallet className="h-8 w-8" />
-          محفظتي
-        </h1>
-        <p className="text-muted-foreground">
-          إدارة رصيدك وطلبات السحب والمعاملات المالية
-        </p>
-      </div>
+      <DashboardHeader
+        title="محفظتي"
+        subtitle="إدارة رصيدك وطلبات السحب والمعاملات المالية"
+        icon={<Wallet className="h-6 w-6" />}
+      />
 
       {/* Stats */}
       <WalletStats />
