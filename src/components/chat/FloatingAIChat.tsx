@@ -43,8 +43,9 @@ export const FloatingAIChat = () => {
     }
   };
 
-  // Hide on meeting hall page or if not authenticated
-  if (location.pathname === '/meeting-hall' || !isAuthenticated) return null;
+  // Hide on meeting hall page, store pages, or if not authenticated
+  const isStorePage = location.pathname.startsWith('/store');
+  if (location.pathname === '/meeting-hall' || isStorePage || !isAuthenticated) return null;
 
   return (
     <>
