@@ -9,6 +9,7 @@ import { UnifiedBadge } from '@/components/design-system';
 import { Store, Package, ShoppingBag, DollarSign, TrendingUp, ExternalLink, Palette, FileText, Megaphone, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createStoreUrl } from '@/utils/domains';
+import { SalesChart, StatsCard } from '@/components/dashboard';
 
 export default function AffiliateDashboardOverview() {
   const { user } = useSupabaseAuth();
@@ -134,53 +135,45 @@ export default function AffiliateDashboardOverview() {
         </UnifiedCardContent>
       </UnifiedCard>
 
-      {/* Stats Cards */}
+      {/* Stats Cards with Trends */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <UnifiedCard variant="glass" hover="lift">
-          <UnifiedCardContent className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <Package className="h-8 w-8 text-primary" />
-              <span className="text-3xl font-bold">{productsCount || 0}</span>
-            </div>
-            <h3 className="font-semibold">المنتجات النشطة</h3>
-            <p className="text-sm text-muted-foreground">منتج متاح للعملاء</p>
-          </UnifiedCardContent>
-        </UnifiedCard>
+        <StatsCard
+          title="المنتجات النشطة"
+          value={productsCount || 0}
+          subtitle="منتج متاح للعملاء"
+          icon={Package}
+          variant="primary"
+          trend={{ value: 12, isPositive: true }}
+        />
+        <StatsCard
+          title="إجمالي الطلبات"
+          value={orderStats.totalOrders}
+          subtitle={`متوسط: ${orderStats.averageOrderValue.toFixed(2)} ر.س`}
+          icon={ShoppingBag}
+          variant="default"
+          trend={{ value: 8, isPositive: true }}
+        />
+        <StatsCard
+          title="إجمالي المبيعات"
+          value={`${orderStats.totalRevenue.toFixed(0)} ر.س`}
+          subtitle="الإيرادات الكلية"
+          icon={TrendingUp}
+          variant="success"
+          trend={{ value: 15, isPositive: true }}
+        />
+        <StatsCard
+          title="العمولات"
+          value={`${orderStats.totalCommissions.toFixed(0)} ر.س`}
+          subtitle={`مؤكدة: ${orderStats.confirmedCommissions.toFixed(2)} ر.س`}
+          icon={DollarSign}
+          variant="warning"
+          trend={{ value: 5, isPositive: true }}
+        />
+      </div>
 
-        <UnifiedCard variant="luxury" hover="lift">
-          <UnifiedCardContent className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <ShoppingBag className="h-8 w-8" />
-              <span className="text-3xl font-bold">{orderStats.totalOrders}</span>
-            </div>
-            <h3 className="font-semibold">إجمالي الطلبات</h3>
-            <p className="text-sm opacity-70">متوسط: {orderStats.averageOrderValue.toFixed(2)} ر.س</p>
-          </UnifiedCardContent>
-        </UnifiedCard>
-
-        <UnifiedCard variant="glass" hover="lift">
-          <UnifiedCardContent className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <TrendingUp className="h-8 w-8 text-success" />
-              <span className="text-3xl font-bold">{orderStats.totalRevenue.toFixed(0)}</span>
-            </div>
-            <h3 className="font-semibold">إجمالي المبيعات</h3>
-            <p className="text-sm text-muted-foreground">ر.س</p>
-          </UnifiedCardContent>
-        </UnifiedCard>
-
-        <UnifiedCard variant="glass" hover="lift">
-          <UnifiedCardContent className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <DollarSign className="h-8 w-8 text-warning" />
-              <span className="text-3xl font-bold">{orderStats.totalCommissions.toFixed(0)}</span>
-            </div>
-            <h3 className="font-semibold">العمولات</h3>
-            <p className="text-sm text-muted-foreground">
-              مؤكدة: {orderStats.confirmedCommissions.toFixed(2)} ر.س
-            </p>
-          </UnifiedCardContent>
-        </UnifiedCard>
+      {/* Sales Chart */}
+      <div className="mb-8">
+        <SalesChart />
       </div>
 
       {/* Quick Actions */}
