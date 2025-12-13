@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Bell, Search, User, Store } from "lucide-react";
+import { Bell, Search, User, Store, Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { 
   DropdownMenu,
@@ -14,12 +14,13 @@ import { useFastAuth } from "@/hooks/useFastAuth";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useSidebarState } from "@/hooks/useSidebarState";
 
 export function MerchantHeader() {
   const { profile, user } = useFastAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { toggleCollapse } = useSidebarState();
 
   const handleSignOut = async () => {
     try {
@@ -36,9 +37,35 @@ export function MerchantHeader() {
 
   return (
     <header className="h-16 border-b border-gradient-muted bg-card/80 backdrop-blur-xl sticky top-0 z-50 shadow-soft">
-      <div className="flex h-16 items-center gap-6 px-6 lg:px-8">
+      <div className="flex h-16 items-center gap-4 px-4 md:gap-6 md:px-6 lg:px-8">
+        {/* Sidebar Toggle Button */}
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={toggleCollapse}
+          data-sidebar-toggle="true"
+          className="h-10 w-10 rounded-xl hover:bg-accent/50 transition-all duration-200 hover:scale-105"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+
+        {/* Search - hidden on very small screens */}
+        <div className="flex-1 max-w-lg hidden sm:block">
+          <div className="relative group">
+            <Search className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground/60 group-hover:text-primary transition-colors duration-200" />
+            <Input
+              type="search"
+              placeholder="البحث في المنتجات..."
+              className="pr-12 h-11 text-right bg-background/50 border-border/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 rounded-xl transition-all duration-200 hover:bg-background/80"
+            />
+          </div>
+        </div>
+
+        {/* Spacer for mobile */}
+        <div className="flex-1 sm:hidden" />
+
         {/* Right side */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           {/* Notifications */}
           <Button variant="ghost" size="sm" className="relative h-10 w-10 rounded-xl hover:bg-accent/50 transition-all duration-200 hover:scale-105">
             <Bell className="h-5 w-5" />
@@ -84,20 +111,6 @@ export function MerchantHeader() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-
-        {/* Search */}
-        <div className="flex-1 max-w-lg">
-          <div className="relative group">
-            <Search className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground/60 group-hover:text-primary transition-colors duration-200" />
-            <Input
-              type="search"
-              placeholder="البحث في المنتجات..."
-              className="pr-12 h-11 text-right bg-background/50 border-border/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 rounded-xl transition-all duration-200 hover:bg-background/80"
-            />
-          </div>
-        </div>
-
-        <SidebarTrigger className="-mr-2 h-11 w-11 rounded-xl hover:bg-accent/50 transition-all duration-200 hover:scale-105" />
       </div>
     </header>
   );
