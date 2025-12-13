@@ -107,17 +107,17 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
       <aside
         data-sidebar="true"
         className={cn(
-          "fixed z-40 h-screen transition-all duration-300 ease-in-out",
+          "fixed z-40 transition-all duration-300 ease-in-out",
           "backdrop-blur-xl shadow-2xl border-s border-border/50",
           "bg-gradient-to-br from-card/95 via-card/90 to-background/95",
           // Desktop: right side, below header
           "md:end-0 md:top-16 md:h-[calc(100vh-4rem)]",
           // Mobile: full screen overlay from right
-          "top-0 end-0",
-          // Collapsed state
+          "top-0 end-0 h-screen",
+          // Collapsed state - completely hidden on mobile, thin strip on desktop
           state.isCollapsed
-            ? "translate-x-full md:translate-x-0 md:w-16"
-            : "translate-x-0 w-[85vw] max-w-80 md:w-72"
+            ? "hidden md:block md:w-16"
+            : "block w-[85vw] max-w-80 md:w-72"
         )}
       >
         <div className="flex flex-col h-full">
