@@ -26,7 +26,7 @@ import { ModernFooter } from "@/components/storefront/modern/ModernFooter";
 import { ModernCustomerOrders } from "@/components/storefront/modern/ModernCustomerOrders";
 import { ModernInvoice } from "@/components/storefront/modern/ModernInvoice";
 import { CustomerAuthModal } from "@/components/storefront/CustomerAuthModal";
-import { UnifiedChatWidget } from "@/components/customer-service/UnifiedChatWidget";
+import { DraggableChatButton } from "@/components/customer-service/DraggableChatButton";
 import { Store, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -663,9 +663,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
           storeName={affiliateStore?.store_name || ""}
         />
 
-        {/* Unified Chat Widget */}
+        {/* Draggable Chat Button (AI + Human Support) */}
         {affiliateStore && products && (
-          <UnifiedChatWidget
+          <DraggableChatButton
             storeInfo={{
               id: affiliateStore.id,
               store_name: affiliateStore.store_name,
