@@ -2,7 +2,6 @@ import React from 'react';
 import { Home, BarChart3, Wallet, User, Package } from 'lucide-react';
 import { BottomNavMobile } from '@/components/app-shell/BottomNavMobile';
 import { useFastAuth } from '@/hooks/useFastAuth';
-import { FloatingAIButton } from '@/components/ai';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -30,8 +29,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
       </main>
       {showBottomNav && <BottomNavMobile items={bottomNavItems} />}
       
-      {/* Floating AI Assistant Button */}
-      <FloatingAIButton context={role === 'admin' ? 'admin' : 'marketer'} />
+      {/* FloatingAIButton removed - FloatingAIChat in App.tsx handles this */}
     </div>
   );
 }
