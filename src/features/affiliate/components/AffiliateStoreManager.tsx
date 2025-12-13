@@ -29,7 +29,13 @@ import {
   Star,
   Heart,
   Plus,
-  Trash2
+  Trash2,
+  Palette,
+  FolderOpen,
+  ShoppingBag,
+  Ticket,
+  MessageCircle,
+  BarChart3
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
@@ -624,24 +630,90 @@ export const AffiliateStoreManager = ({
 
       {/* Store Management Tabs */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-        {/* قائمة منسدلة للجوال */}
+        {/* قائمة منسدلة للجوال - محسّنة */}
         <div className="md:hidden">
           <Select value={activeTab} onValueChange={handleTabChange}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full h-12 bg-gradient-to-l from-primary/5 to-background border-primary/20 shadow-sm hover:shadow-md transition-all duration-300">
               <SelectValue placeholder="اختر القسم" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="general">⚙️ الإعدادات العامة</SelectItem>
-              <SelectItem value="appearance">🎨 المظهر</SelectItem>
-              <SelectItem value="hero">🖼️ القسم الرئيسي</SelectItem>
-              <SelectItem value="banners">🖼️ إدارة البانرات</SelectItem>
-              <SelectItem value="categories">📂 إدارة الفئات</SelectItem>
-              <SelectItem value="products">🛍️ إدارة المنتجات</SelectItem>
-              <SelectItem value="coupons">🎟️ الكوبونات</SelectItem>
-              <SelectItem value="reviews">⭐ المراجعات</SelectItem>
-              <SelectItem value="chat">💬 الدردشة</SelectItem>
-              <SelectItem value="sharing">📤 المشاركة</SelectItem>
-              <SelectItem value="analytics">📊 الإحصائيات</SelectItem>
+            <SelectContent className="max-h-[70vh] overflow-y-auto">
+              <SelectItem 
+                value="general" 
+                icon={<Settings className="h-4 w-4 text-primary" />}
+                description="إعدادات المتجر الأساسية"
+              >
+                الإعدادات العامة
+              </SelectItem>
+              <SelectItem 
+                value="appearance" 
+                icon={<Palette className="h-4 w-4 text-pink-500" />}
+                description="تخصيص مظهر المتجر"
+              >
+                المظهر
+              </SelectItem>
+              <SelectItem 
+                value="hero" 
+                icon={<ImageIcon className="h-4 w-4 text-blue-500" />}
+                description="تعديل القسم الرئيسي"
+              >
+                القسم الرئيسي
+              </SelectItem>
+              <SelectItem 
+                value="banners" 
+                icon={<ImageIcon className="h-4 w-4 text-green-500" />}
+                description="إدارة بانرات المتجر"
+              >
+                إدارة البانرات
+              </SelectItem>
+              <SelectItem 
+                value="categories" 
+                icon={<FolderOpen className="h-4 w-4 text-orange-500" />}
+                description="تنظيم فئات المنتجات"
+              >
+                إدارة الفئات
+              </SelectItem>
+              <SelectItem 
+                value="products" 
+                icon={<ShoppingBag className="h-4 w-4 text-purple-500" />}
+                description="إضافة وتعديل المنتجات"
+              >
+                إدارة المنتجات
+              </SelectItem>
+              <SelectItem 
+                value="coupons" 
+                icon={<Ticket className="h-4 w-4 text-red-500" />}
+                description="إنشاء كوبونات خصم"
+              >
+                الكوبونات
+              </SelectItem>
+              <SelectItem 
+                value="reviews" 
+                icon={<Star className="h-4 w-4 text-yellow-500" />}
+                description="مراجعات العملاء"
+              >
+                المراجعات
+              </SelectItem>
+              <SelectItem 
+                value="chat" 
+                icon={<MessageCircle className="h-4 w-4 text-cyan-500" />}
+                description="محادثات خدمة العملاء"
+              >
+                الدردشة
+              </SelectItem>
+              <SelectItem 
+                value="sharing" 
+                icon={<Share2 className="h-4 w-4 text-indigo-500" />}
+                description="مشاركة المتجر"
+              >
+                المشاركة
+              </SelectItem>
+              <SelectItem 
+                value="analytics" 
+                icon={<BarChart3 className="h-4 w-4 text-teal-500" />}
+                description="إحصائيات المتجر"
+              >
+                الإحصائيات
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
