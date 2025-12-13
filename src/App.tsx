@@ -19,7 +19,7 @@ import AffiliateLayout from "@/layouts/ModernAffiliateLayout";
 import AdminLayout from "@/layouts/AdminLayout";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import { cleanupExpiredSessions } from "@/utils/sessionCleanup";
-import { FloatingAIChat } from "@/components/chat/FloatingAIChat";
+// FloatingAIChat hidden as per user request
 // CustomerAuthProvider available for store routes if needed
 
 const HomePage = lazy(() => import("./pages/Index"));
@@ -283,8 +283,7 @@ const App = () => {
                             </Routes>
                           </DomainManager>
                           
-                          {/* Floating AI Chat - appears on all pages for authenticated users */}
-                          <FloatingAIChat />
+                          {/* FloatingAIChat hidden as per user request */}
                         </Suspense>
                       </SmartNavigationProvider>
                     </BrowserRouter>
