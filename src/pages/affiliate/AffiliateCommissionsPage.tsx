@@ -7,7 +7,7 @@ import { UnifiedBadge } from '@/components/design-system';
 import { DollarSign, Clock, CheckCircle, Banknote, TrendingUp } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
-import { SalesChart } from '@/components/dashboard';
+import { SalesChart, AIRecommendations } from '@/components/dashboard';
 
 interface Commission {
   id: string;
@@ -178,6 +178,11 @@ export default function AffiliateCommissionsPage() {
       {/* Sales Chart */}
       <div className="mb-8">
         <SalesChart affiliateStoreId={affiliateStore?.id} />
+      </div>
+
+      {/* AI Recommendations */}
+      <div className="mb-8">
+        <AIRecommendations affiliateStoreId={affiliateStore?.id} />
       </div>
 
       {/* Commissions List */}
