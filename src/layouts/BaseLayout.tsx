@@ -39,7 +39,7 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
         </header>
       )}
 
-      <div className="flex min-h-[calc(100vh-4rem)]">
+      <div className="flex min-h-[calc(100vh-4rem)] w-full">
         {/* Sidebar - Now always rendered, ModernSidebar handles its own responsive behavior */}
         {showSidebar && sidebar && (
           <>
@@ -47,9 +47,9 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
           </>
         )}
 
-        {/* Main Content */}
-        <main className={`flex-1 overflow-auto ${contentClassName}`}>
-          <div className="container mx-auto p-8">
+        {/* Main Content - Responsive padding and width */}
+        <main className={`flex-1 overflow-auto w-full md:me-16 lg:me-72 ${contentClassName}`}>
+          <div className="w-full px-4 py-6 md:px-6 md:py-8 lg:px-8">
             <Outlet />
           </div>
         </main>

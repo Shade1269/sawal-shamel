@@ -110,12 +110,12 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
           "fixed right-0 top-0 z-40 h-screen transition-all duration-300 ease-in-out",
           "backdrop-blur-xl shadow-2xl border-l border-border/50",
           "bg-gradient-to-br from-card/95 via-card/90 to-background/95",
-          // Mobile: full overlay drawer
+          // Mobile: full overlay drawer - hidden by default
           "md:top-16 md:h-[calc(100vh-4rem)]",
-          // Collapsed state
+          // Collapsed state - fully hidden on mobile when collapsed
           state.isCollapsed
-            ? "translate-x-full md:translate-x-0 md:w-16"
-            : "translate-x-0 w-80 md:w-72"
+            ? "-translate-x-full md:translate-x-0 md:w-16"
+            : "translate-x-0 w-[85vw] max-w-80 md:w-72"
         )}
       >
         <div className="flex flex-col h-full">
