@@ -12,7 +12,7 @@ import {
 } from '@/components/marketer';
 import { useMarketerHomeContent } from './hooks/useMarketerHomeContent';
 import { AIQuickActions } from '@/components/ai';
-
+import { WelcomeCard, QuickActionsGrid } from '@/components/dashboard';
 export interface MarketerHomeProps {
   statisticsOverride?: Record<string, unknown> | null;
   storeSlugOverride?: string | null;
@@ -74,20 +74,27 @@ const MarketerHome: React.FC<MarketerHomeProps> = ({ statisticsOverride, storeSl
   });
 
   return (
-    <div className="space-y-[var(--spacing-lg)]">
+    <div className="space-y-6">
+      {/* Welcome Card */}
+      <WelcomeCard storeName={store?.store_name} />
+      
+      {/* Quick Actions Grid */}
+      <QuickActionsGrid />
+      
+      {/* Performance Metrics */}
       <PerformanceMetrics metrics={metrics} />
 
       {/* AI Quick Actions */}
       <AIQuickActions />
 
-      <section className="grid gap-[var(--spacing-lg)] lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+      <section className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <PerformanceHighlights highlights={performanceHighlights} userName={userName} />
         <QuickActionsPanel actions={quickActions} />
       </section>
 
       <DailyRevenueChart chartData={chartData} />
 
-      <footer className="flex flex-wrap items-center justify-between gap-[var(--spacing-md)] text-xs text-[color:var(--muted-foreground)]">
+      <footer className="flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
         <span>
           رابط متجرك العام: <a className="underline decoration-dotted cursor-pointer" onClick={() => window.open(`/${storeSlug}`, '_blank')}>{publicStoreUrl}</a>
         </span>
