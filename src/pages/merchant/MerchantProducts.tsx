@@ -54,10 +54,30 @@ const MerchantProducts = () => {
     if (!profile) return;
 
     try {
+      // أولاً: الحصول على profile_id الحقيقي من جدول profiles
+      const { data: profileRow, error: profileErr } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_user_id', profile.auth_user_id ?? '')
+        .maybeSingle();
+
+      if (profileErr && profileErr.code !== 'PGRST116') throw profileErr;
+
+      const profileId = profileRow?.id;
+      if (!profileId) {
+        toast({ 
+          title: 'خطأ', 
+          description: 'لم يتم العثور على الملف الشخصي', 
+          variant: 'destructive' 
+        });
+        return;
+      }
+
+      // ثانياً: الحصول على merchant_id باستخدام profile_id الصحيح
       const { data, error } = await supabase
         .from('merchants')
         .select('id')
-        .eq('profile_id', profile.id)
+        .eq('profile_id', profileId)
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') throw error;
