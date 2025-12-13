@@ -68,12 +68,12 @@ export function UnifiedLayout({
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-background via-background to-muted/20">
         {shouldShowSidebar && <AppSidebar />}
         
         <div className="flex-1 flex flex-col">
-          {/* Top Header Bar - Enhanced Mobile Responsive */}
-          <header className={`${headerHeight} border-b bg-card/50 backdrop-blur-sm sticky top-0 z-40`}>
+          {/* Enhanced Top Header Bar */}
+          <header className={`${headerHeight} border-b bg-card/80 backdrop-blur-md sticky top-0 z-40 shadow-sm`}>
             <div className={`flex items-center justify-between ${containerSpacing.padding} h-full min-w-0`}>
               <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                 {shouldShowSidebar && (
@@ -81,20 +81,19 @@ export function UnifiedLayout({
                     <Button 
                       variant="ghost" 
                       size={device.isMobile ? "default" : "sm"} 
-                      className={`${device.isMobile ? "p-2.5" : "p-2"} flex-shrink-0`}
+                      className={`${device.isMobile ? "p-2.5" : "p-2"} flex-shrink-0 hover:bg-primary/10 transition-colors`}
                     >
                       <Menu className={device.isMobile ? "h-5 w-5" : "h-4 w-4"} />
                     </Button>
                   </SidebarTrigger>
                 )}
                 
-                <div className={`${device.isMobile ? 'text-sm' : 'text-lg'} font-semibold bg-gradient-primary bg-clip-text text-transparent truncate`}>
+                <div className={`${device.isMobile ? 'text-sm' : 'text-lg'} font-bold bg-gradient-to-l from-primary to-accent bg-clip-text text-transparent truncate`}>
                   {device.isMobile ? 'أفيليت' : 'منصة الأفيليت'}
                 </div>
               </div>
 
               <div className={`flex items-center ${device.isMobile ? 'gap-1' : 'gap-2'} flex-shrink-0`}>
-                {/* Hide some elements on mobile to save space */}
                 {!device.isMobile && <QuickActions />}
                 <GlobalSearch />
                 <GlobalNotifications />
@@ -103,12 +102,16 @@ export function UnifiedLayout({
             </div>
           </header>
 
-          {/* Breadcrumb - Hide on mobile for space */}
-          {showBreadcrumb && !device.isMobile && <AppBreadcrumb />}
+          {/* Breadcrumb with subtle background */}
+          {showBreadcrumb && !device.isMobile && (
+            <div className="bg-muted/30 border-b border-border/30">
+              <AppBreadcrumb />
+            </div>
+          )}
 
-          {/* Main Content - Enhanced Mobile Responsive */}
-          <main className="flex-1 overflow-auto">
-            <div className={`container mx-auto ${containerSpacing.padding} ${device.isMobile ? 'pb-20 pt-2' : 'pb-6 pt-4'} max-w-full`}>
+          {/* Main Content with improved spacing */}
+          <main className="flex-1 overflow-auto bg-gradient-to-b from-transparent to-muted/10">
+            <div className={`container mx-auto ${containerSpacing.padding} ${device.isMobile ? 'pb-20 pt-4' : 'pb-8 pt-6'} max-w-full`}>
               {children}
             </div>
           </main>
