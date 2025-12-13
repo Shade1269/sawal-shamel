@@ -23,7 +23,7 @@ import { parseFeaturedCategories, type StoreCategory, type StoreSettings } from 
 import { useIsolatedStoreCart } from "@/hooks/useIsolatedStoreCart";
 import { CustomerAuthModal } from "@/components/storefront/CustomerAuthModal";
 // Tabs components removed - not used
-import { UnifiedChatWidget } from "@/components/customer-service/UnifiedChatWidget";
+import { DraggableChatButton } from "@/components/customer-service/DraggableChatButton";
 import { useCustomerAuth } from "@/hooks/useCustomerAuth";
 // LuxuryCardContent removed - not used
 import { EnhancedBannerSlider } from "@/components/storefront/modern/EnhancedBannerSlider";
@@ -1145,9 +1145,9 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
         storeName={affiliateStore?.store_name || ''}
       />
 
-      {/* Unified Chat Widget (AI + Human Support) */}
+      {/* Draggable Chat Button (AI + Human Support) */}
       {affiliateStore && products && (
-        <UnifiedChatWidget
+        <DraggableChatButton
           storeInfo={{
             id: affiliateStore.id,
             store_name: affiliateStore.store_name,
