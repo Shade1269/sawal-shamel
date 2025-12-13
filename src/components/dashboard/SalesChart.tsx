@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   AreaChart,
   Area,
@@ -15,38 +15,28 @@ import { UnifiedCard, UnifiedCardHeader, UnifiedCardTitle, UnifiedCardContent } 
 import { Button } from '@/components/ui/button';
 import { BarChart3, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-interface SalesDataPoint {
-  date: string;
-  sales: number;
-  orders: number;
-  commissions: number;
-}
+import { useSalesChartData, TimeRange } from '@/hooks/useSalesChartData';
 
 interface SalesChartProps {
-  data?: SalesDataPoint[];
-  isLoading?: boolean;
+  affiliateStoreId?: string;
 }
 
-// Sample data for demo
-const generateSampleData = (): SalesDataPoint[] => {
-  const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-  return days.map((day) => ({
-    date: day,
-    sales: Math.floor(Math.random() * 5000) + 1000,
-    orders: Math.floor(Math.random() * 50) + 10,
-    commissions: Math.floor(Math.random() * 500) + 100,
-  }));
-};
-
 type ChartType = 'area' | 'bar';
-type TimeRange = 'week' | 'month' | 'year';
 
-export function SalesChart({ data, isLoading = false }: SalesChartProps) {
+export function SalesChart({ affiliateStoreId }: SalesChartProps) {
   const [chartType, setChartType] = useState<ChartType>('area');
   const [timeRange, setTimeRange] = useState<TimeRange>('week');
   
-  const chartData = data || generateSampleData();
+  const { data, isLoading, refetch } = useSalesChartData(affiliateStoreId, timeRange);
+  
+  // Refetch when time range changes
+  useEffect(() => {
+    if (affiliateStoreId) {
+      refetch();
+    }
+  }, [timeRange, affiliateStoreId, refetch]);
+
+  const chartData = data || [];
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -79,6 +69,25 @@ export function SalesChart({ data, isLoading = false }: SalesChartProps) {
         </UnifiedCardHeader>
         <UnifiedCardContent>
           <div className="h-[300px] bg-muted/50 animate-pulse rounded-lg" />
+        </UnifiedCardContent>
+      </UnifiedCard>
+    );
+  }
+
+  // Show empty state if no affiliate store
+  if (!affiliateStoreId) {
+    return (
+      <UnifiedCard variant="glass" className="overflow-hidden">
+        <UnifiedCardHeader>
+          <UnifiedCardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            تحليل المبيعات
+          </UnifiedCardTitle>
+        </UnifiedCardHeader>
+        <UnifiedCardContent>
+          <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+            لا يوجد متجر مرتبط لعرض البيانات
+          </div>
         </UnifiedCardContent>
       </UnifiedCard>
     );
@@ -142,116 +151,124 @@ export function SalesChart({ data, isLoading = false }: SalesChartProps) {
       </UnifiedCardHeader>
       
       <UnifiedCardContent>
-        <div className="h-[300px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            {chartType === 'area' ? (
-              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="commissionsGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--chart-2))" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(var(--chart-2))" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
-                <XAxis 
-                  dataKey="date" 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={(value) => `${value}`}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend 
-                  wrapperStyle={{ paddingTop: '20px' }}
-                  formatter={(value) => <span className="text-sm text-muted-foreground">{value}</span>}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="sales"
-                  name="المبيعات"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth={2}
-                  fill="url(#salesGradient)"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="commissions"
-                  name="العمولات"
-                  stroke="hsl(var(--chart-2))"
-                  strokeWidth={2}
-                  fill="url(#commissionsGradient)"
-                />
-              </AreaChart>
-            ) : (
-              <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
-                <XAxis 
-                  dataKey="date" 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend 
-                  wrapperStyle={{ paddingTop: '20px' }}
-                  formatter={(value) => <span className="text-sm text-muted-foreground">{value}</span>}
-                />
-                <Bar 
-                  dataKey="sales" 
-                  name="المبيعات" 
-                  fill="hsl(var(--primary))" 
-                  radius={[4, 4, 0, 0]}
-                />
-                <Bar 
-                  dataKey="commissions" 
-                  name="العمولات" 
-                  fill="hsl(var(--chart-2))" 
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            )}
-          </ResponsiveContainer>
-        </div>
-        
-        {/* Summary Stats */}
-        <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-border">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-primary">
-              {chartData.reduce((acc, item) => acc + item.sales, 0).toLocaleString('ar-SA')}
-            </p>
-            <p className="text-sm text-muted-foreground">إجمالي المبيعات (ر.س)</p>
+        {chartData.length === 0 ? (
+          <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+            لا توجد بيانات في هذه الفترة
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-foreground">
-              {chartData.reduce((acc, item) => acc + item.orders, 0).toLocaleString('ar-SA')}
-            </p>
-            <p className="text-sm text-muted-foreground">إجمالي الطلبات</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-chart-2">
-              {chartData.reduce((acc, item) => acc + item.commissions, 0).toLocaleString('ar-SA')}
-            </p>
-            <p className="text-sm text-muted-foreground">إجمالي العمولات (ر.س)</p>
-          </div>
-        </div>
+        ) : (
+          <>
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                {chartType === 'area' ? (
+                  <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="commissionsGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--chart-2))" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="hsl(var(--chart-2))" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+                    <XAxis 
+                      dataKey="date" 
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis 
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(value) => `${value}`}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend 
+                      wrapperStyle={{ paddingTop: '20px' }}
+                      formatter={(value) => <span className="text-sm text-muted-foreground">{value}</span>}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="sales"
+                      name="المبيعات"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={2}
+                      fill="url(#salesGradient)"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="commissions"
+                      name="العمولات"
+                      stroke="hsl(var(--chart-2))"
+                      strokeWidth={2}
+                      fill="url(#commissionsGradient)"
+                    />
+                  </AreaChart>
+                ) : (
+                  <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+                    <XAxis 
+                      dataKey="date" 
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis 
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend 
+                      wrapperStyle={{ paddingTop: '20px' }}
+                      formatter={(value) => <span className="text-sm text-muted-foreground">{value}</span>}
+                    />
+                    <Bar 
+                      dataKey="sales" 
+                      name="المبيعات" 
+                      fill="hsl(var(--primary))" 
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar 
+                      dataKey="commissions" 
+                      name="العمولات" 
+                      fill="hsl(var(--chart-2))" 
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                )}
+              </ResponsiveContainer>
+            </div>
+            
+            {/* Summary Stats */}
+            <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-border">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-primary">
+                  {chartData.reduce((acc, item) => acc + item.sales, 0).toLocaleString('ar-SA')}
+                </p>
+                <p className="text-sm text-muted-foreground">إجمالي المبيعات (ر.س)</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-foreground">
+                  {chartData.reduce((acc, item) => acc + item.orders, 0).toLocaleString('ar-SA')}
+                </p>
+                <p className="text-sm text-muted-foreground">إجمالي الطلبات</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-chart-2">
+                  {chartData.reduce((acc, item) => acc + item.commissions, 0).toLocaleString('ar-SA')}
+                </p>
+                <p className="text-sm text-muted-foreground">إجمالي العمولات (ر.س)</p>
+              </div>
+            </div>
+          </>
+        )}
       </UnifiedCardContent>
     </UnifiedCard>
   );
