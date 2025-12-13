@@ -173,7 +173,7 @@ export default function AffiliateDashboardOverview() {
 
       {/* Sales Chart */}
       <div className="mb-8">
-        <SalesChart />
+        <SalesChart affiliateStoreId={affiliateStore.id} />
       </div>
 
       {/* Quick Actions */}
