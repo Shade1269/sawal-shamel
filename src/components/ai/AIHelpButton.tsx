@@ -60,17 +60,18 @@ export const AIHelpButton: React.FC<AIHelpButtonProps> = ({
         <button
           className={cn(
             'inline-flex items-center justify-center',
-            'h-4 w-4 rounded-full',
-            'opacity-30 hover:opacity-100',
-            'text-primary/70 hover:text-primary',
+            'h-6 w-6 rounded-full',
+            'opacity-50 hover:opacity-100',
+            'text-primary hover:text-primary',
             'transition-all duration-300 ease-out',
-            'hover:scale-125 hover:bg-primary/10',
+            'hover:scale-110 hover:bg-primary/15',
             'focus:opacity-100 focus:outline-none',
+            'border border-primary/20 hover:border-primary/40',
             className
           )}
           title="مساعدة ذكية"
         >
-          <Sparkles className="h-2.5 w-2.5" />
+          <Sparkles className="h-3.5 w-3.5" />
         </button>
       </PopoverTrigger>
       <PopoverContent 
