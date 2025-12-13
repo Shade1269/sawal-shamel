@@ -13,7 +13,8 @@ import {
   Search,
   ArrowRight,
   Package,
-  User
+  User,
+  Heart
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -1264,6 +1265,80 @@ const EnhancedStoreFront = ({ storeSlug: propStoreSlug }: EnhancedStoreFrontProp
 
       {/* Footer */}
       {affiliateStore && <ModernFooter store={affiliateStore} />}
+      
+      {/* Mobile Bottom Navigation - Only visible on small screens */}
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-border shadow-lg safe-area-pb">
+        <div className="flex items-center justify-around py-2">
+          {/* Home/Search */}
+          <button 
+            onClick={() => setShowAdvancedSearch(true)}
+            className="flex flex-col items-center gap-0.5 p-2 text-foreground/70 hover:text-primary transition-colors"
+          >
+            <Search className="w-5 h-5" />
+            <span className="text-[10px]">بحث</span>
+          </button>
+          
+          {/* Wishlist */}
+          <button 
+            onClick={() => setShowLoyalty(true)}
+            className="flex flex-col items-center gap-0.5 p-2 text-foreground/70 hover:text-primary transition-colors relative"
+          >
+            <Heart className="w-5 h-5" />
+            <span className="text-[10px]">المفضلة</span>
+            {wishlist.length > 0 && (
+              <span className="absolute top-0.5 right-1 bg-primary text-primary-foreground text-[8px] min-w-[14px] h-[14px] rounded-full flex items-center justify-center font-bold">
+                {wishlist.length}
+              </span>
+            )}
+          </button>
+          
+          {/* Cart */}
+          <button 
+            onClick={() => setShowCart(true)}
+            className="flex flex-col items-center gap-0.5 p-2 text-foreground/70 hover:text-primary transition-colors relative"
+          >
+            <ShoppingCart className="w-5 h-5" />
+            <span className="text-[10px]">السلة</span>
+            {(isolatedCart?.items?.length || 0) > 0 && (
+              <span className="absolute top-0.5 right-1 bg-primary text-primary-foreground text-[8px] min-w-[14px] h-[14px] rounded-full flex items-center justify-center font-bold">
+                {isolatedCart?.items?.length || 0}
+              </span>
+            )}
+          </button>
+          
+          {/* Orders */}
+          <button 
+            onClick={() => {
+              if (!isAuthenticated) {
+                toast({
+                  title: "يجب تسجيل الدخول أولاً",
+                  description: "الرجاء تسجيل الدخول لعرض طلباتك",
+                  variant: "default",
+                });
+                setShowAuthModal(true);
+                return;
+              }
+              setShowOrders(true);
+            }}
+            className="flex flex-col items-center gap-0.5 p-2 text-foreground/70 hover:text-primary transition-colors"
+          >
+            <Package className="w-5 h-5" />
+            <span className="text-[10px]">طلباتي</span>
+          </button>
+          
+          {/* Account */}
+          <button 
+            onClick={() => setShowAuthModal(true)}
+            className="flex flex-col items-center gap-0.5 p-2 text-foreground/70 hover:text-primary transition-colors"
+          >
+            <User className="w-5 h-5" />
+            <span className="text-[10px]">حسابي</span>
+          </button>
+        </div>
+      </nav>
+      
+      {/* Bottom padding for mobile nav */}
+      <div className="sm:hidden h-16" />
       </div>
     </StoreThemeProvider>
   );
