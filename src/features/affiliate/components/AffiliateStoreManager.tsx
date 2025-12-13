@@ -114,6 +114,41 @@ export const AffiliateStoreManager = ({
     setSearchParams({ tab: value });
   };
 
+  // دوال المساعدة للحصول على معلومات التبويب
+  const getTabHelpContext = (tab: string): string => {
+    const contexts: Record<string, string> = {
+      general: 'الإعدادات العامة للمتجر: تغيير اسم المتجر، الوصف، الشعار، ورابط المتجر',
+      appearance: 'تخصيص مظهر المتجر: اختيار الثيم، الألوان، وتصميم واجهة المتجر',
+      hero: 'القسم الرئيسي (Hero): الصورة والعنوان الكبير الذي يظهر في أعلى الصفحة الرئيسية للمتجر',
+      banners: 'البانرات: صور إعلانية متحركة تظهر في المتجر للترويج للعروض والمنتجات',
+      categories: 'الفئات: تنظيم المنتجات في مجموعات لتسهيل التصفح على العملاء',
+      products: 'إدارة المنتجات: إضافة منتجات جديدة للمتجر، تعديل الأسعار، وإخفاء/إظهار المنتجات',
+      coupons: 'الكوبونات: إنشاء أكواد خصم للعملاء لزيادة المبيعات',
+      reviews: 'المراجعات: تقييمات وآراء العملاء على المنتجات',
+      chat: 'الدردشة: محادثات خدمة العملاء مع زوار المتجر',
+      sharing: 'المشاركة: مشاركة رابط المتجر عبر وسائل التواصل الاجتماعي',
+      analytics: 'الإحصائيات: تحليلات أداء المتجر والمبيعات'
+    };
+    return contexts[tab] || 'معلومات حول هذا القسم';
+  };
+
+  const getTabTitle = (tab: string): string => {
+    const titles: Record<string, string> = {
+      general: 'الإعدادات العامة',
+      appearance: 'المظهر',
+      hero: 'القسم الرئيسي',
+      banners: 'إدارة البانرات',
+      categories: 'إدارة الفئات',
+      products: 'إدارة المنتجات',
+      coupons: 'الكوبونات',
+      reviews: 'المراجعات',
+      chat: 'الدردشة',
+      sharing: 'المشاركة',
+      analytics: 'الإحصائيات'
+    };
+    return titles[tab] || 'مساعدة';
+  };
+
   // استخدام خطافات الإعدادات والتحسينات
   const { settings, updateSettings, uploadImage, refetch } = useStoreSettings(store.id);
   const { generateQR, downloadQR, qrCodeDataUrl, isGenerating } = useQRGenerator();
@@ -633,114 +668,97 @@ export const AffiliateStoreManager = ({
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
         {/* قائمة منسدلة للجوال - محسّنة */}
         <div className="md:hidden">
-          <Select value={activeTab} onValueChange={handleTabChange}>
-            <SelectTrigger className="w-full h-12 bg-gradient-to-l from-primary/5 to-background border-primary/20 shadow-sm hover:shadow-md transition-all duration-300">
-              <SelectValue placeholder="اختر القسم" />
-            </SelectTrigger>
-            <SelectContent className="max-h-[70vh] overflow-y-auto">
-              <SelectItem 
-                value="general" 
-                icon={<Settings className="h-4 w-4 text-primary" />}
-                description="إعدادات المتجر الأساسية"
-              >
-                <span className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
+            <Select value={activeTab} onValueChange={handleTabChange}>
+              <SelectTrigger className="flex-1 h-12 bg-gradient-to-l from-primary/5 to-background border-primary/20 shadow-sm hover:shadow-md transition-all duration-300">
+                <SelectValue placeholder="اختر القسم" />
+              </SelectTrigger>
+              <SelectContent className="max-h-[70vh] overflow-y-auto">
+                <SelectItem 
+                  value="general" 
+                  icon={<Settings className="h-4 w-4 text-primary" />}
+                  description="إعدادات المتجر الأساسية"
+                >
                   الإعدادات العامة
-                  <AIHelpButton context="الإعدادات العامة للمتجر: تغيير اسم المتجر، الوصف، الشعار، ورابط المتجر" title="الإعدادات العامة" />
-                </span>
-              </SelectItem>
-              <SelectItem 
-                value="appearance" 
-                icon={<Palette className="h-4 w-4 text-pink-500" />}
-                description="تخصيص مظهر المتجر"
-              >
-                <span className="flex items-center gap-1">
+                </SelectItem>
+                <SelectItem 
+                  value="appearance" 
+                  icon={<Palette className="h-4 w-4 text-pink-500" />}
+                  description="تخصيص مظهر المتجر"
+                >
                   المظهر
-                  <AIHelpButton context="تخصيص مظهر المتجر: اختيار الثيم، الألوان، وتصميم واجهة المتجر" title="المظهر" />
-                </span>
-              </SelectItem>
-              <SelectItem 
-                value="hero" 
-                icon={<ImageIcon className="h-4 w-4 text-blue-500" />}
-                description="تعديل القسم الرئيسي"
-              >
-                <span className="flex items-center gap-1">
+                </SelectItem>
+                <SelectItem 
+                  value="hero" 
+                  icon={<ImageIcon className="h-4 w-4 text-blue-500" />}
+                  description="تعديل القسم الرئيسي"
+                >
                   القسم الرئيسي
-                  <AIHelpButton context="القسم الرئيسي (Hero): الصورة والعنوان الكبير الذي يظهر في أعلى الصفحة الرئيسية للمتجر" title="القسم الرئيسي" />
-                </span>
-              </SelectItem>
-              <SelectItem 
-                value="banners" 
-                icon={<ImageIcon className="h-4 w-4 text-green-500" />}
-                description="إدارة بانرات المتجر"
-              >
-                <span className="flex items-center gap-1">
+                </SelectItem>
+                <SelectItem 
+                  value="banners" 
+                  icon={<ImageIcon className="h-4 w-4 text-green-500" />}
+                  description="إدارة بانرات المتجر"
+                >
                   إدارة البانرات
-                  <AIHelpButton context="البانرات: صور إعلانية متحركة تظهر في المتجر للترويج للعروض والمنتجات" title="إدارة البانرات" />
-                </span>
-              </SelectItem>
-              <SelectItem 
-                value="categories" 
-                icon={<FolderOpen className="h-4 w-4 text-orange-500" />}
-                description="تنظيم فئات المنتجات"
-              >
-                <span className="flex items-center gap-1">
+                </SelectItem>
+                <SelectItem 
+                  value="categories" 
+                  icon={<FolderOpen className="h-4 w-4 text-orange-500" />}
+                  description="تنظيم فئات المنتجات"
+                >
                   إدارة الفئات
-                  <AIHelpButton context="الفئات: تنظيم المنتجات في مجموعات لتسهيل التصفح على العملاء" title="إدارة الفئات" />
-                </span>
-              </SelectItem>
-              <SelectItem 
-                value="products" 
-                icon={<ShoppingBag className="h-4 w-4 text-purple-500" />}
-                description="إضافة وتعديل المنتجات"
-              >
-                <span className="flex items-center gap-1">
+                </SelectItem>
+                <SelectItem 
+                  value="products" 
+                  icon={<ShoppingBag className="h-4 w-4 text-purple-500" />}
+                  description="إضافة وتعديل المنتجات"
+                >
                   إدارة المنتجات
-                  <AIHelpButton context="إدارة المنتجات: إضافة منتجات جديدة للمتجر، تعديل الأسعار، وإخفاء/إظهار المنتجات" title="إدارة المنتجات" />
-                </span>
-              </SelectItem>
-              <SelectItem 
-                value="coupons" 
-                icon={<Ticket className="h-4 w-4 text-red-500" />}
-                description="إنشاء كوبونات خصم"
-              >
-                <span className="flex items-center gap-1">
+                </SelectItem>
+                <SelectItem 
+                  value="coupons" 
+                  icon={<Ticket className="h-4 w-4 text-red-500" />}
+                  description="إنشاء كوبونات خصم"
+                >
                   الكوبونات
-                  <AIHelpButton context="الكوبونات: إنشاء أكواد خصم للعملاء لزيادة المبيعات" title="الكوبونات" />
-                </span>
-              </SelectItem>
-              <SelectItem 
-                value="reviews" 
-                icon={<Star className="h-4 w-4 text-yellow-500" />}
-                description="مراجعات العملاء"
-              >
-                <span className="flex items-center gap-1">
+                </SelectItem>
+                <SelectItem 
+                  value="reviews" 
+                  icon={<Star className="h-4 w-4 text-yellow-500" />}
+                  description="مراجعات العملاء"
+                >
                   المراجعات
-                  <AIHelpButton context="المراجعات: تقييمات وآراء العملاء على المنتجات" title="المراجعات" />
-                </span>
-              </SelectItem>
-              <SelectItem 
-                value="chat" 
-                icon={<MessageCircle className="h-4 w-4 text-cyan-500" />}
-                description="محادثات خدمة العملاء"
-              >
-                الدردشة
-              </SelectItem>
-              <SelectItem 
-                value="sharing" 
-                icon={<Share2 className="h-4 w-4 text-indigo-500" />}
-                description="مشاركة المتجر"
-              >
-                المشاركة
-              </SelectItem>
-              <SelectItem 
-                value="analytics" 
-                icon={<BarChart3 className="h-4 w-4 text-teal-500" />}
-                description="إحصائيات المتجر"
-              >
-                الإحصائيات
-              </SelectItem>
-            </SelectContent>
-          </Select>
+                </SelectItem>
+                <SelectItem 
+                  value="chat" 
+                  icon={<MessageCircle className="h-4 w-4 text-cyan-500" />}
+                  description="محادثات خدمة العملاء"
+                >
+                  الدردشة
+                </SelectItem>
+                <SelectItem 
+                  value="sharing" 
+                  icon={<Share2 className="h-4 w-4 text-indigo-500" />}
+                  description="مشاركة المتجر"
+                >
+                  المشاركة
+                </SelectItem>
+                <SelectItem 
+                  value="analytics" 
+                  icon={<BarChart3 className="h-4 w-4 text-teal-500" />}
+                  description="إحصائيات المتجر"
+                >
+                  الإحصائيات
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <AIHelpButton 
+              context={getTabHelpContext(activeTab)} 
+              title={getTabTitle(activeTab)}
+              className="shrink-0"
+            />
+          </div>
         </div>
 
         {/* تبويبات للشاشات الكبيرة */}
