@@ -60,6 +60,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams } from 'react-router-dom';
 import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
 import { DashboardHeader } from '@/components/dashboard';
+import { AIHelpButton } from '@/components/ai/AIHelpButton';
 
 interface AffiliateStoreManagerProps {
   store: {
@@ -642,56 +643,80 @@ export const AffiliateStoreManager = ({
                 icon={<Settings className="h-4 w-4 text-primary" />}
                 description="إعدادات المتجر الأساسية"
               >
-                الإعدادات العامة
+                <span className="flex items-center gap-1">
+                  الإعدادات العامة
+                  <AIHelpButton context="الإعدادات العامة للمتجر: تغيير اسم المتجر، الوصف، الشعار، ورابط المتجر" title="الإعدادات العامة" />
+                </span>
               </SelectItem>
               <SelectItem 
                 value="appearance" 
                 icon={<Palette className="h-4 w-4 text-pink-500" />}
                 description="تخصيص مظهر المتجر"
               >
-                المظهر
+                <span className="flex items-center gap-1">
+                  المظهر
+                  <AIHelpButton context="تخصيص مظهر المتجر: اختيار الثيم، الألوان، وتصميم واجهة المتجر" title="المظهر" />
+                </span>
               </SelectItem>
               <SelectItem 
                 value="hero" 
                 icon={<ImageIcon className="h-4 w-4 text-blue-500" />}
                 description="تعديل القسم الرئيسي"
               >
-                القسم الرئيسي
+                <span className="flex items-center gap-1">
+                  القسم الرئيسي
+                  <AIHelpButton context="القسم الرئيسي (Hero): الصورة والعنوان الكبير الذي يظهر في أعلى الصفحة الرئيسية للمتجر" title="القسم الرئيسي" />
+                </span>
               </SelectItem>
               <SelectItem 
                 value="banners" 
                 icon={<ImageIcon className="h-4 w-4 text-green-500" />}
                 description="إدارة بانرات المتجر"
               >
-                إدارة البانرات
+                <span className="flex items-center gap-1">
+                  إدارة البانرات
+                  <AIHelpButton context="البانرات: صور إعلانية متحركة تظهر في المتجر للترويج للعروض والمنتجات" title="إدارة البانرات" />
+                </span>
               </SelectItem>
               <SelectItem 
                 value="categories" 
                 icon={<FolderOpen className="h-4 w-4 text-orange-500" />}
                 description="تنظيم فئات المنتجات"
               >
-                إدارة الفئات
+                <span className="flex items-center gap-1">
+                  إدارة الفئات
+                  <AIHelpButton context="الفئات: تنظيم المنتجات في مجموعات لتسهيل التصفح على العملاء" title="إدارة الفئات" />
+                </span>
               </SelectItem>
               <SelectItem 
                 value="products" 
                 icon={<ShoppingBag className="h-4 w-4 text-purple-500" />}
                 description="إضافة وتعديل المنتجات"
               >
-                إدارة المنتجات
+                <span className="flex items-center gap-1">
+                  إدارة المنتجات
+                  <AIHelpButton context="إدارة المنتجات: إضافة منتجات جديدة للمتجر، تعديل الأسعار، وإخفاء/إظهار المنتجات" title="إدارة المنتجات" />
+                </span>
               </SelectItem>
               <SelectItem 
                 value="coupons" 
                 icon={<Ticket className="h-4 w-4 text-red-500" />}
                 description="إنشاء كوبونات خصم"
               >
-                الكوبونات
+                <span className="flex items-center gap-1">
+                  الكوبونات
+                  <AIHelpButton context="الكوبونات: إنشاء أكواد خصم للعملاء لزيادة المبيعات" title="الكوبونات" />
+                </span>
               </SelectItem>
               <SelectItem 
                 value="reviews" 
                 icon={<Star className="h-4 w-4 text-yellow-500" />}
                 description="مراجعات العملاء"
               >
-                المراجعات
+                <span className="flex items-center gap-1">
+                  المراجعات
+                  <AIHelpButton context="المراجعات: تقييمات وآراء العملاء على المنتجات" title="المراجعات" />
+                </span>
               </SelectItem>
               <SelectItem 
                 value="chat" 
