@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { UnifiedCard, UnifiedCardContent, UnifiedCardDescription, UnifiedCardHeader, UnifiedCardTitle } from '@/components/design-system';
 import { UnifiedButton } from '@/components/design-system';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Package, DollarSign, ShoppingCart, TrendingUp, Plus } from 'lucide-react';
+import { Package, DollarSign, ShoppingCart, TrendingUp, TrendingDown, Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useFastAuth } from '@/hooks/useFastAuth';
 import { useNavigate } from 'react-router-dom';
+import { useMerchantDashboardData } from '@/hooks/useMerchantDashboardData';
+import { MerchantSalesChart } from '@/components/merchant/MerchantSalesChart';
+import { MerchantQuickActions } from '@/components/merchant/MerchantQuickActions';
+import { MerchantRecentProducts, MerchantRecentOrders } from '@/components/merchant/MerchantRecentItems';
+import { MerchantWalletSummary } from '@/components/merchant/MerchantWalletSummary';
 
 const MerchantDashboard = () => {
   const { profile } = useFastAuth();
@@ -20,6 +24,8 @@ const MerchantDashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  const { data: dashboardData } = useMerchantDashboardData(merchant?.id);
+
   useEffect(() => {
     fetchMerchantData();
   }, [profile]);
@@ -28,21 +34,16 @@ const MerchantDashboard = () => {
     if (!profile) return;
 
     try {
-      // Resolve real profile_id from public.profiles using auth_user_id
       const { data: profileRow, error: profileErr } = await supabase
         .from('profiles')
         .select('id, full_name, email')
         .eq('auth_user_id', profile.auth_user_id ?? '')
         .maybeSingle();
 
-      if (profileErr && profileErr.code !== 'PGRST116') {
-        throw profileErr;
-      }
+      if (profileErr && profileErr.code !== 'PGRST116') throw profileErr;
 
       const profileId = profileRow?.id;
-      if (!profileId) {
-        throw new Error('لا يوجد ملف شخصي مرتبط في جدول profiles');
-      }
+      if (!profileId) throw new Error('لا يوجد ملف شخصي');
 
       let { data: merchantData, error: merchantError } = await supabase
         .from('merchants')
@@ -50,11 +51,8 @@ const MerchantDashboard = () => {
         .eq('profile_id', profileId)
         .maybeSingle();
 
-      if (merchantError && merchantError.code !== 'PGRST116') {
-        throw merchantError;
-      }
+      if (merchantError && merchantError.code !== 'PGRST116') throw merchantError;
 
-      // Create merchant if doesn't exist
       if (!merchantData) {
         const { data: newMerchant, error: createError } = await supabase
           .from('merchants')
@@ -73,38 +71,27 @@ const MerchantDashboard = () => {
 
       setMerchant(merchantData);
 
-      // Safely compute stats without blocking dashboard
-      try {
-        // إحصائيات المنتجات
-        const { data: products } = await supabase
-          .from('products')
-          .select('id, approval_status')
-          .eq('merchant_id', merchantData.id);
+      // إحصائيات المنتجات
+      const { data: products } = await supabase
+        .from('products')
+        .select('id, approval_status')
+        .eq('merchant_id', merchantData.id);
 
-        const totalProducts = products?.length || 0;
-        const pendingProducts = products?.filter((p: any) => p.approval_status === 'pending').length || 0;
-        const approvedProducts = products?.filter((p: any) => p.approval_status === 'approved').length || 0;
+      const totalProducts = products?.length || 0;
+      const pendingProducts = products?.filter((p: any) => p.approval_status === 'pending').length || 0;
+      const approvedProducts = products?.filter((p: any) => p.approval_status === 'approved').length || 0;
 
-        // إحصائيات الطلبات والإيرادات من order_items
-        const { data: orderItems } = await supabase
-          .from('order_items')
-          .select('order_id, line_total_sar, commission_rate')
-          .eq('merchant_id', merchantData.id);
+      // إحصائيات الطلبات
+      const { data: orderItems } = await supabase
+        .from('order_items')
+        .select('order_id, line_total_sar')
+        .eq('merchant_id', merchantData.id);
 
-        const uniqueOrderIds = new Set(orderItems?.map((oi: any) => oi.order_id) || []);
-        const totalOrders = uniqueOrderIds.size;
-        const totalRevenue = orderItems?.reduce((sum: number, oi: any) => sum + (Number(oi.line_total_sar) || 0), 0) || 0;
+      const uniqueOrderIds = new Set((orderItems || []).map((oi: any) => oi.order_id));
+      const totalOrders = uniqueOrderIds.size;
+      const totalRevenue = (orderItems || []).reduce((sum: number, oi: any) => sum + (Number(oi.line_total_sar) || 0), 0);
 
-        setStats({
-          totalProducts,
-          pendingProducts,
-          approvedProducts,
-          totalOrders,
-          totalRevenue,
-        });
-      } catch (e) {
-        console.warn('Stats error:', e);
-      }
+      setStats({ totalProducts, pendingProducts, approvedProducts, totalOrders, totalRevenue });
     } catch (error) {
       console.error('Error fetching merchant data:', error);
     } finally {
@@ -135,34 +122,39 @@ const MerchantDashboard = () => {
     );
   }
 
+  const percentChange = dashboardData?.comparison.percentChange || 0;
+
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">لوحة تحكم التاجر</h1>
-          <p className="text-muted-foreground">{merchant.business_name}</p>
+          <h1 className="text-3xl font-bold">مرحباً، {merchant.business_name}</h1>
+          <p className="text-muted-foreground">إليك ملخص نشاطك التجاري</p>
         </div>
         <UnifiedButton variant="primary" onClick={() => navigate('/merchant/products')}>
           <Plus className="h-4 w-4 ml-2" />
-          إدارة المنتجات
+          إضافة منتج
         </UnifiedButton>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <UnifiedCard variant="glass" hover="lift">
-          <UnifiedCardHeader className="pb-3">
+          <UnifiedCardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <UnifiedCardTitle className="text-sm font-medium">إجمالي المنتجات</UnifiedCardTitle>
+              <UnifiedCardTitle className="text-sm font-medium">المنتجات</UnifiedCardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
             </div>
           </UnifiedCardHeader>
           <UnifiedCardContent>
             <div className="text-2xl font-bold">{stats.totalProducts}</div>
+            <p className="text-xs text-muted-foreground">{stats.approvedProducts} موافق عليها</p>
           </UnifiedCardContent>
         </UnifiedCard>
 
         <UnifiedCard variant="glass" hover="lift">
-          <UnifiedCardHeader className="pb-3">
+          <UnifiedCardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <UnifiedCardTitle className="text-sm font-medium">قيد المراجعة</UnifiedCardTitle>
               <TrendingUp className="h-4 w-4 text-warning" />
@@ -170,78 +162,67 @@ const MerchantDashboard = () => {
           </UnifiedCardHeader>
           <UnifiedCardContent>
             <div className="text-2xl font-bold text-warning">{stats.pendingProducts}</div>
+            <p className="text-xs text-muted-foreground">بانتظار الموافقة</p>
           </UnifiedCardContent>
         </UnifiedCard>
 
         <UnifiedCard variant="glass" hover="lift">
-          <UnifiedCardHeader className="pb-3">
+          <UnifiedCardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <UnifiedCardTitle className="text-sm font-medium">موافق عليها</UnifiedCardTitle>
-              <Package className="h-4 w-4 text-success" />
+              <UnifiedCardTitle className="text-sm font-medium">الطلبات</UnifiedCardTitle>
+              <ShoppingCart className="h-4 w-4 text-info" />
             </div>
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-success">{stats.approvedProducts}</div>
+            <div className="text-2xl font-bold">{stats.totalOrders}</div>
+            <p className="text-xs text-muted-foreground">طلب مكتمل</p>
           </UnifiedCardContent>
         </UnifiedCard>
 
         <UnifiedCard variant="glass" hover="lift">
-          <UnifiedCardHeader className="pb-3">
+          <UnifiedCardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <UnifiedCardTitle className="text-sm font-medium">إجمالي المبيعات</UnifiedCardTitle>
-              <DollarSign className="h-4 w-4 text-primary" />
+              <UnifiedCardTitle className="text-sm font-medium">الإيرادات</UnifiedCardTitle>
+              <DollarSign className="h-4 w-4 text-success" />
             </div>
           </UnifiedCardHeader>
           <UnifiedCardContent>
-            <div className="text-2xl font-bold text-primary">
+            <div className="text-2xl font-bold text-success">
               {stats.totalRevenue.toLocaleString('ar-SA')} ر.س
+            </div>
+            <div className="flex items-center gap-1 text-xs">
+              {percentChange >= 0 ? (
+                <TrendingUp className="h-3 w-3 text-success" />
+              ) : (
+                <TrendingDown className="h-3 w-3 text-destructive" />
+              )}
+              <span className={percentChange >= 0 ? 'text-success' : 'text-destructive'}>
+                {Math.abs(percentChange).toFixed(1)}%
+              </span>
+              <span className="text-muted-foreground">عن الشهر السابق</span>
             </div>
           </UnifiedCardContent>
         </UnifiedCard>
       </div>
 
-      <UnifiedCard variant="glass" hover="none">
-        <UnifiedCardHeader>
-          <UnifiedCardTitle>نظرة عامة</UnifiedCardTitle>
-          <UnifiedCardDescription>ملخص نشاطك التجاري</UnifiedCardDescription>
-        </UnifiedCardHeader>
-        <UnifiedCardContent>
-          <Tabs defaultValue="products">
-            <TabsList>
-              <TabsTrigger value="products">المنتجات</TabsTrigger>
-              <TabsTrigger value="orders">الطلبات</TabsTrigger>
-              <TabsTrigger value="analytics">التحليلات</TabsTrigger>
-            </TabsList>
+      {/* Quick Actions */}
+      <MerchantQuickActions />
 
-            <TabsContent value="products" className="space-y-4">
-              <div className="text-center py-8">
-                <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-4">إدارة منتجاتك من هنا</p>
-                <UnifiedButton variant="primary" onClick={() => navigate('/merchant/products')}>
-                  عرض جميع المنتجات
-                </UnifiedButton>
-              </div>
-            </TabsContent>
+      {/* Wallet Summary */}
+      {dashboardData && (
+        <MerchantWalletSummary balance={dashboardData.walletBalance} />
+      )}
 
-            <TabsContent value="orders" className="space-y-4">
-              <div className="text-center py-8">
-                <ShoppingCart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-4">إدارة طلباتك من هنا</p>
-                <UnifiedButton variant="primary" onClick={() => navigate('/merchant/orders')}>
-                  عرض جميع الطلبات
-                </UnifiedButton>
-              </div>
-            </TabsContent>
+      {/* Sales Chart */}
+      {dashboardData && dashboardData.salesChart.length > 0 && (
+        <MerchantSalesChart data={dashboardData.salesChart} />
+      )}
 
-            <TabsContent value="analytics" className="space-y-4">
-              <div className="text-center py-8">
-                <TrendingUp className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">تحليلات المبيعات قريباً</p>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </UnifiedCardContent>
-      </UnifiedCard>
+      {/* Recent Items */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <MerchantRecentProducts products={dashboardData?.recentProducts || []} />
+        <MerchantRecentOrders orders={dashboardData?.recentOrders || []} />
+      </div>
     </div>
   );
 };
