@@ -35,7 +35,7 @@ export const useMerchantWallet = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      // Get profile ID
+      // Get profile ID first
       const { data: profile } = await supabase
         .from('profiles')
         .select('id')
@@ -44,19 +44,28 @@ export const useMerchantWallet = () => {
 
       if (!profile) throw new Error('Profile not found');
 
-      // Get or create wallet
+      // Get merchant ID from merchants table
+      const { data: merchant } = await supabase
+        .from('merchants')
+        .select('id')
+        .eq('profile_id', profile.id)
+        .maybeSingle();
+
+      if (!merchant) throw new Error('Merchant not found');
+
+      // Get or create wallet using merchant.id
       let { data: wallet, error } = await supabase
         .from('merchant_wallet_balances')
         .select('*')
-        .eq('merchant_id', profile.id)
-        .single();
+        .eq('merchant_id', merchant.id)
+        .maybeSingle();
 
       // If wallet doesn't exist, create it
-      if (error && error.code === 'PGRST116') {
+      if (!wallet) {
         const { data: newWallet, error: createError } = await supabase
           .from('merchant_wallet_balances')
           .insert({
-            merchant_id: profile.id,
+            merchant_id: merchant.id,
             available_balance_sar: 0,
             pending_balance_sar: 0,
             lifetime_earnings_sar: 0,
@@ -91,10 +100,19 @@ export const useMerchantWallet = () => {
 
       if (!profile) throw new Error('Profile not found');
 
+      // Get merchant ID from merchants table
+      const { data: merchant } = await supabase
+        .from('merchants')
+        .select('id')
+        .eq('profile_id', profile.id)
+        .maybeSingle();
+
+      if (!merchant) return [];
+
       const { data, error } = await supabase
         .from('merchant_transactions')
         .select('*')
-        .eq('merchant_id', profile.id)
+        .eq('merchant_id', merchant.id)
         .order('created_at', { ascending: false })
         .limit(50);
 

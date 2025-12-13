@@ -41,10 +41,19 @@ export const useMerchantWithdrawals = () => {
 
       if (!profile) throw new Error('Profile not found');
 
+      // Get merchant ID from merchants table
+      const { data: merchant } = await supabase
+        .from('merchants')
+        .select('id')
+        .eq('profile_id', profile.id)
+        .maybeSingle();
+
+      if (!merchant) return [];
+
       const { data, error } = await supabase
         .from('merchant_withdrawal_requests')
         .select('*')
-        .eq('merchant_id', profile.id)
+        .eq('merchant_id', merchant.id)
         .order('requested_at', { ascending: false });
 
       if (error) throw error;
@@ -66,10 +75,19 @@ export const useMerchantWithdrawals = () => {
 
       if (!profile) throw new Error('Profile not found');
 
+      // Get merchant ID from merchants table
+      const { data: merchant } = await supabase
+        .from('merchants')
+        .select('id')
+        .eq('profile_id', profile.id)
+        .maybeSingle();
+
+      if (!merchant) throw new Error('Merchant not found');
+
       const { data, error } = await supabase
         .from('merchant_withdrawal_requests')
         .insert({
-          merchant_id: profile.id,
+          merchant_id: merchant.id,
           ...withdrawalData,
           status: 'PENDING'
         })
