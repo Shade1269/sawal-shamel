@@ -256,11 +256,19 @@ const MerchantProducts = () => {
         </UnifiedCardHeader>
         <UnifiedCardContent>
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="all">الكل ({stats.all})</TabsTrigger>
-              <TabsTrigger value="pending">قيد المراجعة ({stats.pending})</TabsTrigger>
-              <TabsTrigger value="approved">موافق عليها ({stats.approved})</TabsTrigger>
-              <TabsTrigger value="rejected">مرفوضة ({stats.rejected})</TabsTrigger>
+            <TabsList className="flex w-full overflow-x-auto gap-1 h-auto flex-wrap md:flex-nowrap">
+              <TabsTrigger value="all" className="flex-shrink-0 whitespace-nowrap px-3 py-2">
+                الكل ({stats.all})
+              </TabsTrigger>
+              <TabsTrigger value="pending" className="flex-shrink-0 whitespace-nowrap px-3 py-2">
+                للمراجعة ({stats.pending})
+              </TabsTrigger>
+              <TabsTrigger value="approved" className="flex-shrink-0 whitespace-nowrap px-3 py-2">
+                موافق عليها ({stats.approved})
+              </TabsTrigger>
+              <TabsTrigger value="rejected" className="flex-shrink-0 whitespace-nowrap px-3 py-2">
+                مرفوضة ({stats.rejected})
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value={activeTab} className="space-y-4 mt-4">
