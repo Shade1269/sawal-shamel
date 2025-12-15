@@ -70,12 +70,25 @@ export function useSidebarState() {
   };
 
   const toggleSection = (sectionId: string) => {
-    setState(prev => ({
-      ...prev,
-      expandedSections: prev.expandedSections.includes(sectionId)
-        ? prev.expandedSections.filter(id => id !== sectionId)
-        : [...prev.expandedSections, sectionId]
-    }));
+    setState(prev => {
+      // If expandedSections is empty, it means all are expanded
+      // So when toggling, we need to first populate with all except the clicked one
+      if (prev.expandedSections.length === 0) {
+        return {
+          ...prev,
+          expandedSections: [sectionId] // Only this one will be collapsed (inverted logic)
+        };
+      }
+      
+      // Toggle: if exists, remove (collapse); if not exists, add (expand)
+      const exists = prev.expandedSections.includes(sectionId);
+      return {
+        ...prev,
+        expandedSections: exists
+          ? prev.expandedSections.filter(id => id !== sectionId)
+          : [...prev.expandedSections, sectionId]
+      };
+    });
   };
 
   const addRecentPage = (page: string) => {
@@ -117,7 +130,7 @@ function getDefaultState(): SidebarState {
   
   return {
     isCollapsed: isMobile, // Start collapsed on mobile
-    expandedSections: ['main', 'business', 'users', 'inventory', 'finance', 'settings', 'products', 'orders', 'wallet'], // All sections expanded by default
+    expandedSections: [], // Empty = all sections expanded by default
     recentPages: [],
     favorites: [],
     searchQuery: ''

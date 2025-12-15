@@ -186,7 +186,7 @@ export function ModernSidebar({ navigationSections }: ModernSidebarProps) {
               icon={section.icon}
               color={section.color}
               isCollapsed={state.isCollapsed}
-              isExpanded={state.expandedSections.length === 0 || state.expandedSections.includes(section.id)}
+              isExpanded={!state.expandedSections.includes(section.id)}
               onToggle={toggleSection}
             >
               {section.items.map(item => (
