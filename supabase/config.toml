@@ -68,3 +68,6 @@ verify_jwt = true
 
 [functions.store-design-brain]
 verify_jwt = false
+
+[functions.marketer-brain]
+verify_jwt = false
