@@ -13,7 +13,8 @@ import {
   CheckSquare,
   TestTube,
   BookOpen,
-  Rocket
+  Rocket,
+  Brain
 } from 'lucide-react';
 
 export const adminNavigationSections = [
@@ -180,6 +181,21 @@ export const adminNavigationSections = [
         href: '/admin/rollout',
         icon: Rocket,
         color: '215 16% 47%',
+      },
+    ],
+  },
+  {
+    id: 'project-brain',
+    title: 'عقل المشروع',
+    icon: <Brain className="h-4 w-4" />,
+    color: '262 83% 58%',
+    items: [
+      {
+        id: 'brain-dashboard',
+        title: 'لوحة العقل',
+        href: '/admin/project-brain',
+        icon: Brain,
+        color: '262 83% 58%',
       },
     ],
   },
