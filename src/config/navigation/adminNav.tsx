@@ -32,6 +32,21 @@ export const adminNavigationSections = [
     ],
   },
   {
+    id: 'project-brain',
+    title: 'عقل المشروع',
+    icon: <Brain className="h-4 w-4" />,
+    color: '280 70% 50%',
+    items: [
+      {
+        id: 'brain-dashboard',
+        title: 'لوحة العقل',
+        href: '/admin/project-brain',
+        icon: Brain,
+        color: '280 70% 50%',
+      },
+    ],
+  },
+  {
     id: 'orders',
     title: 'إدارة الطلبات',
     icon: <ShoppingCart className="h-4 w-4" />,
@@ -181,21 +196,6 @@ export const adminNavigationSections = [
         href: '/admin/rollout',
         icon: Rocket,
         color: '215 16% 47%',
-      },
-    ],
-  },
-  {
-    id: 'project-brain',
-    title: 'عقل المشروع',
-    icon: <Brain className="h-4 w-4" />,
-    color: '262 83% 58%',
-    items: [
-      {
-        id: 'brain-dashboard',
-        title: 'لوحة العقل',
-        href: '/admin/project-brain',
-        icon: Brain,
-        color: '262 83% 58%',
       },
     ],
   },
