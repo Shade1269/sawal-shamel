@@ -81,6 +81,7 @@ const DocumentationPage = lazy(() => import("./pages/Documentation"));
 const RolloutPage = lazy(() => import("./pages/Rollout"));
 const ZohoCallback = lazy(() => import("./pages/ZohoCallback"));
 const ProjectHealthPage = lazy(() => import("./pages/admin/ProjectHealthPage"));
+const ProjectBrainPage = lazy(() => import("./pages/admin/ProjectBrainPage"));
 
 // Atlantis System Pages
 const AtlantisSystem = lazy(() => import("./pages/AtlantisSystem"));
@@ -267,6 +268,7 @@ const App = () => {
                                 <Route path="documentation" element={<DocumentationPage />} />
                                 <Route path="rollout" element={<RolloutPage />} />
                                 <Route path="project-health" element={<ProjectHealthPage />} />
+                                <Route path="project-brain" element={<ProjectBrainPage />} />
                               </Route>
 
                               <Route
