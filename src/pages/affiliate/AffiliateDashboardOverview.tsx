@@ -10,6 +10,7 @@ import { Store, Package, ShoppingBag, DollarSign, TrendingUp, ExternalLink, Pale
 import { Link } from 'react-router-dom';
 import { createStoreUrl } from '@/utils/domains';
 import { SalesChart, StatsCard } from '@/components/dashboard';
+import MarketerBrainChat from '@/components/affiliate/MarketerBrainChat';
 
 export default function AffiliateDashboardOverview() {
   const { user } = useSupabaseAuth();
@@ -171,9 +172,14 @@ export default function AffiliateDashboardOverview() {
         />
       </div>
 
-      {/* Sales Chart */}
-      <div className="mb-8">
-        <SalesChart affiliateStoreId={affiliateStore.id} />
+      {/* Sales Chart & Brain Chat */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div className="lg:col-span-2">
+          <SalesChart affiliateStoreId={affiliateStore.id} />
+        </div>
+        <div className="lg:col-span-1">
+          <MarketerBrainChat storeId={affiliateStore.id} />
+        </div>
       </div>
 
       {/* Quick Actions */}
