@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -13,21 +13,62 @@ export interface BrainAction {
   auto_executed?: boolean;
 }
 
+export interface BrainPrediction {
+  type: string;
+  title: string;
+  description: string;
+  confidence: number;
+  suggestion: string;
+  predicted_impact?: string;
+}
+
+export interface BrainStats {
+  users: {
+    total: number;
+    active_week: number;
+    growth_rate: number;
+  };
+  orders: {
+    total: number;
+    today: number;
+    week: number;
+    month: number;
+    pending: number;
+    delivered: number;
+    avg_daily: number;
+    today_progress: number;
+  };
+  products: { total: number };
+  stores: { total: number };
+  memory: {
+    total_memories: number;
+    active_patterns: number;
+  };
+}
+
 export interface BrainReport {
   generated_at: string;
   summary: string;
   health_score: number;
   actions: BrainAction[];
-  predictions: any[];
-  stats: any;
+  predictions: BrainPrediction[];
+  stats: BrainStats;
   recommendations: string[];
+  personality?: string;
+}
+
+export interface ChatMessage {
+  role: 'user' | 'brain';
+  content: string;
+  timestamp: string;
 }
 
 export const useProjectBrain = () => {
   const [isThinking, setIsThinking] = useState(false);
   const [report, setReport] = useState<BrainReport | null>(null);
-  const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'brain'; content: string }[]>([]);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const conversationIdRef = useRef<string | null>(null);
 
   const think = useCallback(async (autoFix = false) => {
     setIsThinking(true);
@@ -51,7 +92,7 @@ export const useProjectBrain = () => {
         } else if (autoFixCount > 0) {
           toast.success(`🧠 قام العقل بإصلاح ${autoFixCount} مشكلة تلقائياً`);
         } else {
-          toast.success('🧠 التحليل اكتمل');
+          toast.success('🧠 التحليل اكتمل بنجاح');
         }
       } else {
         throw new Error(data?.error || 'فشل التحليل');
@@ -68,23 +109,45 @@ export const useProjectBrain = () => {
   const askBrain = useCallback(async (question: string) => {
     if (!question.trim()) return;
 
-    setChatHistory(prev => [...prev, { role: 'user', content: question }]);
+    const userMessage: ChatMessage = {
+      role: 'user',
+      content: question,
+      timestamp: new Date().toISOString()
+    };
+
+    setChatHistory(prev => [...prev, userMessage]);
     setIsThinking(true);
 
     try {
       const { data, error: fnError } = await supabase.functions.invoke('project-brain', {
-        body: { action: 'question', question }
+        body: { 
+          action: 'question', 
+          question,
+          conversation_id: conversationIdRef.current
+        }
       });
 
       if (fnError) throw new Error(fnError.message);
 
       if (data?.success && data?.report) {
         setReport(data.report);
-        setChatHistory(prev => [...prev, { role: 'brain', content: data.report.summary }]);
+        
+        const brainMessage: ChatMessage = {
+          role: 'brain',
+          content: data.report.summary,
+          timestamp: new Date().toISOString()
+        };
+        
+        setChatHistory(prev => [...prev, brainMessage]);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'خطأ';
-      setChatHistory(prev => [...prev, { role: 'brain', content: 'عذراً، حدث خطأ: ' + message }]);
+      const errorMessage: ChatMessage = {
+        role: 'brain',
+        content: 'عذراً، حدث خطأ في التفكير: ' + message,
+        timestamp: new Date().toISOString()
+      };
+      setChatHistory(prev => [...prev, errorMessage]);
     } finally {
       setIsThinking(false);
     }
@@ -92,7 +155,19 @@ export const useProjectBrain = () => {
 
   const clearChat = useCallback(() => {
     setChatHistory([]);
+    conversationIdRef.current = null;
   }, []);
+
+  const getHealthStatus = useCallback(() => {
+    if (!report) return { status: 'unknown', color: 'gray' };
+    
+    const score = report.health_score;
+    if (score >= 90) return { status: 'ممتاز', color: 'green', emoji: '🌟' };
+    if (score >= 75) return { status: 'جيد جداً', color: 'emerald', emoji: '✨' };
+    if (score >= 60) return { status: 'جيد', color: 'yellow', emoji: '👍' };
+    if (score >= 40) return { status: 'يحتاج انتباه', color: 'orange', emoji: '⚠️' };
+    return { status: 'حرج', color: 'red', emoji: '🚨' };
+  }, [report]);
 
   return {
     isThinking,
@@ -101,6 +176,7 @@ export const useProjectBrain = () => {
     error,
     think,
     askBrain,
-    clearChat
+    clearChat,
+    getHealthStatus
   };
 };

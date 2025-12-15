@@ -1208,6 +1208,168 @@ export type Database = {
         }
         Relationships: []
       }
+      brain_auto_actions: {
+        Row: {
+          action_name: string
+          action_payload: Json
+          action_type: string
+          created_at: string
+          execution_count: number | null
+          id: string
+          is_enabled: boolean | null
+          last_executed_at: string | null
+          requires_approval: boolean | null
+          trigger_condition: Json
+        }
+        Insert: {
+          action_name: string
+          action_payload: Json
+          action_type: string
+          created_at?: string
+          execution_count?: number | null
+          id?: string
+          is_enabled?: boolean | null
+          last_executed_at?: string | null
+          requires_approval?: boolean | null
+          trigger_condition: Json
+        }
+        Update: {
+          action_name?: string
+          action_payload?: Json
+          action_type?: string
+          created_at?: string
+          execution_count?: number | null
+          id?: string
+          is_enabled?: boolean | null
+          last_executed_at?: string | null
+          requires_approval?: boolean | null
+          trigger_condition?: Json
+        }
+        Relationships: []
+      }
+      brain_conversations: {
+        Row: {
+          context_summary: string | null
+          id: string
+          is_active: boolean | null
+          last_message_at: string
+          messages: Json
+          mood: string | null
+          session_start: string
+          topics_discussed: string[] | null
+          user_id: string | null
+        }
+        Insert: {
+          context_summary?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_message_at?: string
+          messages?: Json
+          mood?: string | null
+          session_start?: string
+          topics_discussed?: string[] | null
+          user_id?: string | null
+        }
+        Update: {
+          context_summary?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_message_at?: string
+          messages?: Json
+          mood?: string | null
+          session_start?: string
+          topics_discussed?: string[] | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      brain_memory: {
+        Row: {
+          content: string
+          context: Json | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          importance_score: number | null
+          last_recalled_at: string | null
+          memory_type: string
+          recalled_count: number | null
+          related_entities: Json | null
+          tags: string[] | null
+          title: string
+        }
+        Insert: {
+          content: string
+          context?: Json | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          importance_score?: number | null
+          last_recalled_at?: string | null
+          memory_type: string
+          recalled_count?: number | null
+          related_entities?: Json | null
+          tags?: string[] | null
+          title: string
+        }
+        Update: {
+          content?: string
+          context?: Json | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          importance_score?: number | null
+          last_recalled_at?: string | null
+          memory_type?: string
+          recalled_count?: number | null
+          related_entities?: Json | null
+          tags?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
+      brain_patterns: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          description: string | null
+          detection_rules: Json
+          id: string
+          is_active: boolean | null
+          last_detected_at: string | null
+          occurrences: number | null
+          pattern_name: string
+          pattern_type: string
+          updated_at: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          description?: string | null
+          detection_rules: Json
+          id?: string
+          is_active?: boolean | null
+          last_detected_at?: string | null
+          occurrences?: number | null
+          pattern_name: string
+          pattern_type: string
+          updated_at?: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          description?: string | null
+          detection_rules?: Json
+          id?: string
+          is_active?: boolean | null
+          last_detected_at?: string | null
+          occurrences?: number | null
+          pattern_name?: string
+          pattern_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bundle_offers: {
         Row: {
           affiliate_store_id: string | null

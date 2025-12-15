@@ -33,9 +33,10 @@ import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
 const ProjectBrainPage = () => {
-  const { isThinking, report, chatHistory, think, askBrain, clearChat } = useProjectBrain();
+  const { isThinking, report, chatHistory, think, askBrain, clearChat, getHealthStatus } = useProjectBrain();
   const [question, setQuestion] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const healthStatus = getHealthStatus();
 
   useEffect(() => {
     think(false);
@@ -50,6 +51,18 @@ const ProjectBrainPage = () => {
       askBrain(question);
       setQuestion('');
     }
+  };
+
+  const quickQuestions = [
+    'كيف حال المنصة اليوم؟',
+    'ما هي أهم المشاكل الحالية؟',
+    'اقترح طرق لزيادة المبيعات',
+    'هل هناك مخاطر أمنية؟'
+  ];
+
+  const handleQuickQuestion = (q: string) => {
+    setQuestion(q);
+    askBrain(q);
   };
 
   const handleExportReport = () => {
@@ -179,9 +192,33 @@ const ProjectBrainPage = () => {
               <Brain className="h-6 w-6 md:h-8 md:w-8" />
             </div>
             <div>
-              <h1 className="text-xl md:text-3xl font-bold text-foreground">عقل المشروع</h1>
-              <p className="text-xs md:text-sm text-muted-foreground">مراقبة ذكية • تنبؤ • إصلاح تلقائي</p>
+              <h1 className="text-xl md:text-3xl font-bold text-foreground flex items-center gap-2">
+                عقل المشروع
+                {report && (
+                  <Badge variant={healthStatus.color === 'green' ? 'default' : healthStatus.color === 'red' ? 'destructive' : 'secondary'}>
+                    {healthStatus.emoji} {healthStatus.status}
+                  </Badge>
+                )}
+              </h1>
+              <p className="text-xs md:text-sm text-muted-foreground">
+                {report?.personality || 'مراقبة ذكية • تنبؤ استباقي • إصلاح تلقائي • ذاكرة طويلة المدى'}
+              </p>
             </div>
+          </div>
+          
+          {/* Quick Questions */}
+          <div className="flex flex-wrap gap-2">
+            {quickQuestions.map(q => (
+              <Button 
+                key={q} 
+                variant="outline" 
+                size="sm" 
+                onClick={() => handleQuickQuestion(q)}
+                className="text-xs"
+              >
+                {q}
+              </Button>
+            ))}
           </div>
           
           <div className="flex flex-wrap gap-2">
