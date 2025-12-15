@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -63,12 +63,109 @@ export interface ChatMessage {
   timestamp: string;
 }
 
+export interface Conversation {
+  id: string;
+  title: string;
+  created_at: string;
+  messages: ChatMessage[];
+}
+
 export const useProjectBrain = () => {
   const [isThinking, setIsThinking] = useState(false);
   const [report, setReport] = useState<BrainReport | null>(null);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const conversationIdRef = useRef<string | null>(null);
+
+  // Load conversations from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('brain_conversations');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setConversations(parsed);
+        if (parsed.length > 0) {
+          setCurrentConversationId(parsed[0].id);
+          setChatHistory(parsed[0].messages || []);
+          conversationIdRef.current = parsed[0].id;
+        }
+      } catch (e) {
+        console.error('Failed to parse saved conversations');
+      }
+    }
+  }, []);
+
+  // Save conversations to localStorage
+  const saveConversations = useCallback((convs: Conversation[]) => {
+    localStorage.setItem('brain_conversations', JSON.stringify(convs));
+    setConversations(convs);
+  }, []);
+
+  // Create new conversation
+  const createNewConversation = useCallback(() => {
+    const newConv: Conversation = {
+      id: crypto.randomUUID(),
+      title: 'محادثة جديدة',
+      created_at: new Date().toISOString(),
+      messages: []
+    };
+    const updated = [newConv, ...conversations];
+    saveConversations(updated);
+    setCurrentConversationId(newConv.id);
+    setChatHistory([]);
+    conversationIdRef.current = newConv.id;
+    return newConv.id;
+  }, [conversations, saveConversations]);
+
+  // Switch conversation
+  const switchConversation = useCallback((convId: string) => {
+    const conv = conversations.find(c => c.id === convId);
+    if (conv) {
+      setCurrentConversationId(convId);
+      setChatHistory(conv.messages);
+      conversationIdRef.current = convId;
+    }
+  }, [conversations]);
+
+  // Delete conversation
+  const deleteConversation = useCallback((convId: string) => {
+    const updated = conversations.filter(c => c.id !== convId);
+    saveConversations(updated);
+    if (currentConversationId === convId) {
+      if (updated.length > 0) {
+        setCurrentConversationId(updated[0].id);
+        setChatHistory(updated[0].messages);
+        conversationIdRef.current = updated[0].id;
+      } else {
+        setCurrentConversationId(null);
+        setChatHistory([]);
+        conversationIdRef.current = null;
+      }
+    }
+  }, [conversations, currentConversationId, saveConversations]);
+
+  // Update conversation messages
+  const updateConversationMessages = useCallback((messages: ChatMessage[]) => {
+    if (!currentConversationId) return;
+    
+    const updated = conversations.map(c => {
+      if (c.id === currentConversationId) {
+        // Update title from first user message if still default
+        let title = c.title;
+        if (title === 'محادثة جديدة' && messages.length > 0) {
+          const firstUserMsg = messages.find(m => m.role === 'user');
+          if (firstUserMsg) {
+            title = firstUserMsg.content.slice(0, 30) + (firstUserMsg.content.length > 30 ? '...' : '');
+          }
+        }
+        return { ...c, messages, title };
+      }
+      return c;
+    });
+    saveConversations(updated);
+  }, [currentConversationId, conversations, saveConversations]);
 
   const think = useCallback(async (autoFix = false) => {
     setIsThinking(true);
@@ -109,25 +206,29 @@ export const useProjectBrain = () => {
   const askBrain = useCallback(async (question: string) => {
     if (!question.trim()) return;
 
+    // Create new conversation if none exists
+    let convId = currentConversationId;
+    if (!convId) {
+      convId = createNewConversation();
+    }
+
     const userMessage: ChatMessage = {
       role: 'user',
       content: question,
       timestamp: new Date().toISOString()
     };
 
-    setChatHistory(prev => [...prev, userMessage]);
+    const newHistory = [...chatHistory, userMessage];
+    setChatHistory(newHistory);
     setIsThinking(true);
 
     try {
-      // Send full conversation history for context (learning from previous messages)
-      const allMessages = [...chatHistory, userMessage];
-      
       const { data, error: fnError } = await supabase.functions.invoke('project-brain', {
         body: { 
           action: 'question', 
           question,
           conversation_id: conversationIdRef.current,
-          conversation_history: allMessages // Send history for learning
+          conversation_history: newHistory
         }
       });
 
@@ -136,7 +237,6 @@ export const useProjectBrain = () => {
       if (data?.success && data?.report) {
         setReport(data.report);
         
-        // Save conversation ID for future reference
         if (data.conversation_id) {
           conversationIdRef.current = data.conversation_id;
         }
@@ -147,7 +247,9 @@ export const useProjectBrain = () => {
           timestamp: new Date().toISOString()
         };
         
-        setChatHistory(prev => [...prev, brainMessage]);
+        const finalHistory = [...newHistory, brainMessage];
+        setChatHistory(finalHistory);
+        updateConversationMessages(finalHistory);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'خطأ';
@@ -156,16 +258,21 @@ export const useProjectBrain = () => {
         content: 'عذراً، حدث خطأ في التفكير: ' + message,
         timestamp: new Date().toISOString()
       };
-      setChatHistory(prev => [...prev, errorMessage]);
+      const finalHistory = [...newHistory, errorMessage];
+      setChatHistory(finalHistory);
+      updateConversationMessages(finalHistory);
     } finally {
       setIsThinking(false);
     }
-  }, [chatHistory]);
+  }, [chatHistory, currentConversationId, createNewConversation, updateConversationMessages]);
 
   const clearChat = useCallback(() => {
     setChatHistory([]);
     conversationIdRef.current = null;
-  }, []);
+    if (currentConversationId) {
+      updateConversationMessages([]);
+    }
+  }, [currentConversationId, updateConversationMessages]);
 
   const getHealthStatus = useCallback(() => {
     if (!report) return { status: 'unknown', color: 'gray' };
@@ -182,10 +289,15 @@ export const useProjectBrain = () => {
     isThinking,
     report,
     chatHistory,
+    conversations,
+    currentConversationId,
     error,
     think,
     askBrain,
     clearChat,
+    createNewConversation,
+    switchConversation,
+    deleteConversation,
     getHealthStatus
   };
 };
