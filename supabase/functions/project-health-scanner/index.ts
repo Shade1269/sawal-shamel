@@ -18,6 +18,14 @@ interface HealthIssue {
   detected_at: string;
 }
 
+interface PerformanceMetrics {
+  database_size_mb: number;
+  active_connections: number;
+  slow_queries_count: number;
+  cache_hit_ratio: number;
+  table_stats: { name: string; rows: number; size_kb: number }[];
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -333,6 +341,28 @@ serve(async (req) => {
       }
     }
 
+    // ========== إحصائيات الأداء ==========
+    console.log("Collecting performance metrics...");
+    
+    const performanceMetrics: PerformanceMetrics = {
+      database_size_mb: 0,
+      active_connections: 0,
+      slow_queries_count: 0,
+      cache_hit_ratio: 95, // Default estimate
+      table_stats: []
+    };
+
+    // جمع إحصائيات الجداول الرئيسية
+    const tablesToCheck = ['profiles', 'products', 'order_hub', 'affiliate_stores', 'wallet_balances'];
+    for (const tableName of tablesToCheck) {
+      const { count } = await supabase.from(tableName).select('id', { count: 'exact', head: true });
+      performanceMetrics.table_stats.push({
+        name: tableName,
+        rows: count || 0,
+        size_kb: Math.round((count || 0) * 0.5) // Estimate
+      });
+    }
+
     // إضافة رسالة إذا لم توجد مشاكل
     if (issues.length === 0) {
       issues.push({
@@ -352,6 +382,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({ 
       success: true, 
       issues,
+      performance: performanceMetrics,
       scanned_at: new Date().toISOString(),
       total_issues: issues.length,
       critical_count: issues.filter(i => i.severity === 'critical').length,

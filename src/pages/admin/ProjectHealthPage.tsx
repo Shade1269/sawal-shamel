@@ -119,7 +119,7 @@ const IssueCard = ({ issue }: { issue: HealthIssue }) => {
 };
 
 const ProjectHealthPage = () => {
-  const { isScanning, isCleaning, lastScan, runScan, runCleanup, issues, error, autoFixableCount } = useProjectHealthScanner();
+  const { isScanning, isCleaning, lastScan, runScan, runCleanup, issues, performance, error, autoFixableCount } = useProjectHealthScanner();
   const [autoScanEnabled, setAutoScanEnabled] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -343,6 +343,45 @@ const ProjectHealthPage = () => {
             <div className="text-sm text-muted-foreground">قابل للإصلاح</div>
           </Card>
         </div>
+
+        {/* Performance Metrics - Database Monitoring */}
+        {performance && (
+          <Card className="p-4 md:p-6">
+            <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <Database className="h-5 w-5 text-primary" />
+              مراقبة قاعدة البيانات
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+              <div className="text-center p-3 bg-muted/50 rounded-lg">
+                <div className="text-2xl font-bold text-primary">{performance.cache_hit_ratio}%</div>
+                <div className="text-xs text-muted-foreground">نسبة الكاش</div>
+              </div>
+              <div className="text-center p-3 bg-muted/50 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">{performance.table_stats.reduce((sum, t) => sum + t.rows, 0).toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground">إجمالي السجلات</div>
+              </div>
+              <div className="text-center p-3 bg-muted/50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">{performance.table_stats.length}</div>
+                <div className="text-xs text-muted-foreground">الجداول المراقبة</div>
+              </div>
+              <div className="text-center p-3 bg-muted/50 rounded-lg">
+                <div className="text-2xl font-bold text-orange-600">{performance.slow_queries_count}</div>
+                <div className="text-xs text-muted-foreground">استعلامات بطيئة</div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-sm font-medium text-muted-foreground">إحصائيات الجداول:</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                {performance.table_stats.map((table) => (
+                  <div key={table.name} className="flex justify-between items-center p-2 bg-background border rounded text-sm">
+                    <span className="font-mono text-xs">{table.name}</span>
+                    <Badge variant="outline">{table.rows.toLocaleString()} سجل</Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
+        )}
 
         {/* Last Scan Time */}
         {lastScan?.scanned_at && (

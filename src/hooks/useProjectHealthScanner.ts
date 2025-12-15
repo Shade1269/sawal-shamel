@@ -14,9 +14,18 @@ export interface HealthIssue {
   detected_at: string;
 }
 
+export interface PerformanceMetrics {
+  database_size_mb: number;
+  active_connections: number;
+  slow_queries_count: number;
+  cache_hit_ratio: number;
+  table_stats: { name: string; rows: number; size_kb: number }[];
+}
+
 export interface HealthScanResult {
   success: boolean;
   issues: HealthIssue[];
+  performance?: PerformanceMetrics;
   scanned_at: string;
   total_issues: number;
   critical_count: number;
@@ -116,6 +125,7 @@ export const useProjectHealthScanner = () => {
     runScan,
     runCleanup,
     issues: lastScan?.issues || [],
+    performance: lastScan?.performance || null,
     autoFixableCount: lastScan?.auto_fixable_count || (lastScan?.issues?.filter(i => i.auto_fixable).length || 0)
   };
 };
