@@ -59,3 +59,6 @@ verify_jwt = false
 
 [functions.project-health-scanner]
 verify_jwt = true
+
+[functions.project-brain]
+verify_jwt = true
