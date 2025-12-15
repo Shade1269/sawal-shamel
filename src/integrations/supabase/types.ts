@@ -5409,36 +5409,7 @@ export type Database = {
           total_withdrawn_sar?: number
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "merchant_wallet_balances_merchant_id_fkey"
-            columns: ["merchant_id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "merchant_wallet_balances_merchant_id_fkey"
-            columns: ["merchant_id"]
-            isOneToOne: true
-            referencedRelation: "safe_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "merchant_wallet_balances_merchant_id_fkey"
-            columns: ["merchant_id"]
-            isOneToOne: true
-            referencedRelation: "user_profiles_compat"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "merchant_wallet_balances_merchant_id_fkey"
-            columns: ["merchant_id"]
-            isOneToOne: true
-            referencedRelation: "v_user_stats"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       merchant_withdrawal_requests: {
         Row: {
