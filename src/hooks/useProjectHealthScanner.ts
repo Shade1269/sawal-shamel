@@ -10,6 +10,7 @@ export interface HealthIssue {
   description: string;
   suggestion: string;
   table_name?: string;
+  auto_fixable?: boolean;
   detected_at: string;
 }
 
@@ -21,10 +22,18 @@ export interface HealthScanResult {
   critical_count: number;
   warning_count: number;
   info_count: number;
+  auto_fixable_count?: number;
+}
+
+export interface CleanupResult {
+  expired_sessions: number;
+  expired_coupons: number;
+  banned_members: number;
 }
 
 export const useProjectHealthScanner = () => {
   const [isScanning, setIsScanning] = useState(false);
+  const [isCleaning, setIsCleaning] = useState(false);
   const [lastScan, setLastScan] = useState<HealthScanResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,11 +70,52 @@ export const useProjectHealthScanner = () => {
     }
   }, []);
 
+  const runCleanup = useCallback(async (): Promise<CleanupResult | null> => {
+    setIsCleaning(true);
+    try {
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
+      
+      const response = await fetch(
+        `https://uewuiiopkctdtaexmtxu.supabase.co/functions/v1/project-health-scanner?action=cleanup`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      const result = await response.json();
+      
+      if (result.success && result.cleanup) {
+        const { expired_sessions, expired_coupons, banned_members } = result.cleanup;
+        toast.success(
+          `تم التنظيف: ${expired_sessions} جلسة، ${expired_coupons} كوبون، ${banned_members} عضو`
+        );
+        return result.cleanup;
+      } else {
+        toast.error("حدث خطأ أثناء التنظيف");
+        return null;
+      }
+    } catch (error) {
+      console.error("Cleanup error:", error);
+      toast.error("فشل التنظيف التلقائي");
+      return null;
+    } finally {
+      setIsCleaning(false);
+    }
+  }, []);
+
   return {
     isScanning,
+    isCleaning,
     lastScan,
     error,
     runScan,
-    issues: lastScan?.issues || []
+    runCleanup,
+    issues: lastScan?.issues || [],
+    autoFixableCount: lastScan?.auto_fixable_count || (lastScan?.issues?.filter(i => i.auto_fixable).length || 0)
   };
 };
