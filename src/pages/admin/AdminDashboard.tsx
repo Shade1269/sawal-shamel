@@ -556,7 +556,7 @@ const [cronLogs, setCronLogs] = useState<any[]>([]);
   }
 
   return (
-    <main className="container mx-auto p-8 space-y-8" data-admin-layout>
+    <main className="w-full max-w-full overflow-x-hidden px-4 md:px-8 py-6 md:py-8 space-y-6 md:space-y-8" data-admin-layout>
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-6">
           <BackButton />
