@@ -61,6 +61,7 @@ import { useSearchParams } from 'react-router-dom';
 import { StoreThemeSelector } from '@/components/store/StoreThemeSelector';
 import { DashboardHeader } from '@/components/dashboard';
 import { AIHelpButton } from '@/components/ai/AIHelpButton';
+import { StoreDesignChat } from '@/components/affiliate/StoreDesignChat';
 
 interface AffiliateStoreManagerProps {
   store: {
@@ -842,15 +843,19 @@ export const AffiliateStoreManager = ({
         </TabsContent>
 
         <TabsContent value="appearance" className="space-y-4 md:space-y-6">
-          <StoreThemeSelector
-            storeId={store.id}
-            onThemeApplied={(theme) => {
-              toast({
-                title: "✨ تم تحديث الثيم!",
-                description: `تم تطبيق ثيم "${theme.name_ar}" بنجاح على متجرك`
-              });
-            }}
-          />
+          {/* AI Design Chat */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <StoreDesignChat storeId={store.id} storeName={store.store_name} />
+            <StoreThemeSelector
+              storeId={store.id}
+              onThemeApplied={(theme) => {
+                toast({
+                  title: "✨ تم تحديث الثيم!",
+                  description: `تم تطبيق ثيم "${theme.name_ar}" بنجاح على متجرك`
+                });
+              }}
+            />
+          </div>
           
           <Card className="rounded-none md:rounded-xl border-x-0 md:border-x bg-card border-border shadow-sm">
             <CardHeader className="p-4 md:p-6">

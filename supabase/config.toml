@@ -65,3 +65,6 @@ verify_jwt = true
 
 [functions.brain-code-reader]
 verify_jwt = true
+
+[functions.store-design-brain]
+verify_jwt = false
