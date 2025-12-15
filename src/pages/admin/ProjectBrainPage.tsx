@@ -8,6 +8,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Brain,
   Activity,
   AlertTriangle,
@@ -27,13 +34,28 @@ import {
   Package,
   Store,
   Lightbulb,
-  Eye
+  Eye,
+  Plus,
+  Trash2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
 const ProjectBrainPage = () => {
-  const { isThinking, report, chatHistory, think, askBrain, clearChat, getHealthStatus } = useProjectBrain();
+  const { 
+    isThinking, 
+    report, 
+    chatHistory, 
+    conversations,
+    currentConversationId,
+    think, 
+    askBrain, 
+    clearChat, 
+    createNewConversation,
+    switchConversation,
+    deleteConversation,
+    getHealthStatus 
+  } = useProjectBrain();
   const [question, setQuestion] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
   const healthStatus = getHealthStatus();
@@ -422,13 +444,55 @@ const ProjectBrainPage = () => {
           {/* Chat Tab */}
           <TabsContent value="chat" className="space-y-3 md:space-y-4">
             <Card className="h-[400px] md:h-[500px] flex flex-col">
-              <div className="p-3 md:p-4 border-b flex items-center justify-between">
-                <h3 className="font-semibold text-sm md:text-base flex items-center gap-2">
-                  <Brain className="h-4 w-4 md:h-5 md:w-5 text-primary" />
-                  <span className="hidden md:inline">محادثة مع عقل المشروع</span>
-                  <span className="md:hidden">محادثة العقل</span>
-                </h3>
-                <Button variant="ghost" size="sm" onClick={clearChat} className="text-xs md:text-sm">مسح</Button>
+              <div className="p-3 md:p-4 border-b flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <Brain className="h-4 w-4 md:h-5 md:w-5 text-primary flex-shrink-0" />
+                  
+                  {/* Conversation Selector Dropdown */}
+                  {conversations.length > 0 ? (
+                    <Select 
+                      value={currentConversationId || ''} 
+                      onValueChange={switchConversation}
+                    >
+                      <SelectTrigger className="h-8 text-xs md:text-sm flex-1 max-w-[200px]">
+                        <SelectValue placeholder="اختر محادثة" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {conversations.map(conv => (
+                          <SelectItem key={conv.id} value={conv.id} className="text-xs md:text-sm">
+                            {conv.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <span className="text-sm font-semibold truncate">محادثة العقل</span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={createNewConversation}
+                    className="h-8 w-8"
+                    title="محادثة جديدة"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                  {currentConversationId && (
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => deleteConversation(currentConversationId)}
+                      className="h-8 w-8 text-destructive hover:text-destructive"
+                      title="حذف المحادثة"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <Button variant="ghost" size="sm" onClick={clearChat} className="text-xs md:text-sm">مسح</Button>
+                </div>
               </div>
 
               <ScrollArea className="flex-1 p-3 md:p-4">
