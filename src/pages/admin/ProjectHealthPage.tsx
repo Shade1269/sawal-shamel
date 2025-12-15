@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useProjectHealthScanner, HealthIssue } from '@/hooks/useProjectHealthScanner';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +14,11 @@ import {
   Zap,
   RefreshCw,
   CheckCircle2,
-  Clock
+  Clock,
+  Trash2,
+  Download,
+  Timer,
+  Wrench
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
@@ -86,6 +90,12 @@ const IssueCard = ({ issue }: { issue: HealthIssue }) => {
               <CategoryIcon className="h-3 w-3 ml-1" />
               {getCategoryLabel(issue.category)}
             </Badge>
+            {issue.auto_fixable && (
+              <Badge variant="outline" className="border-green-500 text-green-600">
+                <Wrench className="h-3 w-3 ml-1" />
+                قابل للإصلاح
+              </Badge>
+            )}
           </div>
           
           <p className="text-sm text-muted-foreground mb-2">{issue.description}</p>
@@ -109,11 +119,140 @@ const IssueCard = ({ issue }: { issue: HealthIssue }) => {
 };
 
 const ProjectHealthPage = () => {
-  const { isScanning, lastScan, runScan, issues, error } = useProjectHealthScanner();
+  const { isScanning, isCleaning, lastScan, runScan, runCleanup, issues, error, autoFixableCount } = useProjectHealthScanner();
+  const [autoScanEnabled, setAutoScanEnabled] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     runScan();
   }, []);
+
+  // Auto-scan every 30 minutes if enabled
+  useEffect(() => {
+    if (!autoScanEnabled) return;
+    
+    const interval = setInterval(() => {
+      runScan();
+    }, 30 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [autoScanEnabled, runScan]);
+
+  const handleCleanup = async () => {
+    const result = await runCleanup();
+    if (result) {
+      await runScan();
+    }
+  };
+
+  const handleExportPDF = () => {
+    setIsExporting(true);
+    try {
+      const now = new Date().toLocaleString('ar-SA');
+      const criticalIssues = issues.filter(i => i.severity === 'critical');
+      const warningIssues = issues.filter(i => i.severity === 'warning');
+      const infoIssues = issues.filter(i => i.severity === 'info');
+
+      const reportContent = `
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>تقرير صحة المشروع - ${now}</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 40px; direction: rtl; }
+    h1 { color: #5A2647; border-bottom: 3px solid #5A2647; padding-bottom: 10px; }
+    h2 { color: #333; margin-top: 30px; }
+    .stats { display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap; }
+    .stat-box { background: #f5f5f5; padding: 15px 25px; border-radius: 8px; text-align: center; min-width: 100px; }
+    .stat-number { font-size: 28px; font-weight: bold; color: #5A2647; }
+    .stat-label { color: #666; font-size: 14px; }
+    .issue { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin: 10px 0; }
+    .issue.critical { border-right: 4px solid #dc2626; }
+    .issue.warning { border-right: 4px solid #eab308; }
+    .issue.info { border-right: 4px solid #3b82f6; }
+    .issue-title { font-weight: bold; margin-bottom: 5px; }
+    .issue-desc { color: #666; margin-bottom: 5px; }
+    .issue-suggestion { color: #5A2647; font-size: 14px; }
+    .footer { margin-top: 40px; text-align: center; color: #999; font-size: 12px; }
+    @media print { body { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <h1>🔍 تقرير صحة المشروع</h1>
+  <p>تاريخ التقرير: ${now}</p>
+  
+  <div class="stats">
+    <div class="stat-box">
+      <div class="stat-number">${issues.length}</div>
+      <div class="stat-label">إجمالي المشاكل</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" style="color: #dc2626;">${criticalIssues.length}</div>
+      <div class="stat-label">حرجة</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" style="color: #eab308;">${warningIssues.length}</div>
+      <div class="stat-label">تحذيرات</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" style="color: #3b82f6;">${infoIssues.length}</div>
+      <div class="stat-label">معلومات</div>
+    </div>
+  </div>
+
+  ${criticalIssues.length > 0 ? `
+  <h2>🚨 مشاكل حرجة</h2>
+  ${criticalIssues.map(issue => `
+    <div class="issue critical">
+      <div class="issue-title">${issue.title}</div>
+      <div class="issue-desc">${issue.description}</div>
+      <div class="issue-suggestion">💡 ${issue.suggestion}</div>
+    </div>
+  `).join('')}
+  ` : ''}
+
+  ${warningIssues.length > 0 ? `
+  <h2>⚠️ تحذيرات</h2>
+  ${warningIssues.map(issue => `
+    <div class="issue warning">
+      <div class="issue-title">${issue.title}</div>
+      <div class="issue-desc">${issue.description}</div>
+      <div class="issue-suggestion">💡 ${issue.suggestion}</div>
+    </div>
+  `).join('')}
+  ` : ''}
+
+  ${infoIssues.length > 0 ? `
+  <h2>ℹ️ معلومات</h2>
+  ${infoIssues.map(issue => `
+    <div class="issue info">
+      <div class="issue-title">${issue.title}</div>
+      <div class="issue-desc">${issue.description}</div>
+      <div class="issue-suggestion">💡 ${issue.suggestion}</div>
+    </div>
+  `).join('')}
+  ` : ''}
+
+  <div class="footer">
+    <p>تم إنشاء هذا التقرير تلقائياً بواسطة نظام فحص صحة المشروع</p>
+    <p>منصة أطلانتس © ${new Date().getFullYear()}</p>
+  </div>
+</body>
+</html>`;
+
+      const blob = new Blob([reportContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const printWindow = window.open(url, '_blank');
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print();
+        };
+      }
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const criticalIssues = issues.filter(i => i.severity === 'critical');
   const warningIssues = issues.filter(i => i.severity === 'warning');
@@ -134,18 +273,51 @@ const ProjectHealthPage = () => {
             </p>
           </div>
           
-          <Button 
-            onClick={runScan} 
-            disabled={isScanning}
-            className="gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${isScanning ? 'animate-spin' : ''}`} />
-            {isScanning ? 'جاري الفحص...' : 'فحص الآن'}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              onClick={runScan} 
+              disabled={isScanning}
+              className="gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${isScanning ? 'animate-spin' : ''}`} />
+              {isScanning ? 'جاري الفحص...' : 'فحص الآن'}
+            </Button>
+
+            {autoFixableCount > 0 && (
+              <Button
+                onClick={handleCleanup}
+                disabled={isCleaning}
+                variant="outline"
+                className="gap-2 border-green-500 text-green-600 hover:bg-green-50"
+              >
+                <Trash2 className={`h-4 w-4 ${isCleaning ? 'animate-spin' : ''}`} />
+                تنظيف تلقائي ({autoFixableCount})
+              </Button>
+            )}
+
+            <Button
+              onClick={handleExportPDF}
+              disabled={isExporting || issues.length === 0}
+              variant="outline"
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" />
+              تصدير PDF
+            </Button>
+
+            <Button
+              onClick={() => setAutoScanEnabled(!autoScanEnabled)}
+              variant={autoScanEnabled ? "default" : "outline"}
+              className={`gap-2 ${autoScanEnabled ? 'bg-green-600 hover:bg-green-700' : ''}`}
+            >
+              <Timer className="h-4 w-4" />
+              {autoScanEnabled ? 'الفحص التلقائي ✓' : 'فحص تلقائي'}
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <Card className="p-4 text-center">
             <div className="text-3xl font-bold text-foreground">{lastScan?.total_issues || 0}</div>
             <div className="text-sm text-muted-foreground">إجمالي النتائج</div>
@@ -165,13 +337,24 @@ const ProjectHealthPage = () => {
             <div className="text-3xl font-bold text-blue-500">{lastScan?.info_count || 0}</div>
             <div className="text-sm text-muted-foreground">معلومات</div>
           </Card>
+
+          <Card className="p-4 text-center border-green-500/30 bg-green-500/5">
+            <div className="text-3xl font-bold text-green-500">{autoFixableCount}</div>
+            <div className="text-sm text-muted-foreground">قابل للإصلاح</div>
+          </Card>
         </div>
 
         {/* Last Scan Time */}
         {lastScan?.scanned_at && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
             <Clock className="h-4 w-4" />
             آخر فحص: {format(new Date(lastScan.scanned_at), 'PPpp', { locale: ar })}
+            {autoScanEnabled && (
+              <Badge variant="outline" className="mr-2 border-green-500 text-green-600">
+                <Timer className="h-3 w-3 ml-1" />
+                فحص تلقائي كل 30 دقيقة
+              </Badge>
+            )}
           </div>
         )}
 
