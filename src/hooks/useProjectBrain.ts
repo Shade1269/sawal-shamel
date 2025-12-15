@@ -4,13 +4,15 @@ import { toast } from 'sonner';
 
 export interface BrainAction {
   id: string;
-  type: 'monitoring' | 'prediction' | 'auto_fix' | 'decision' | 'alert';
+  type: 'monitoring' | 'prediction' | 'auto_fix' | 'decision' | 'alert' | 'security' | 'performance' | 'learning';
   title: string;
   description: string;
   severity: 'info' | 'warning' | 'critical' | 'success';
   data?: any;
   timestamp: string;
   auto_executed?: boolean;
+  actionable?: boolean;
+  action_type?: string;
 }
 
 export interface BrainPrediction {
