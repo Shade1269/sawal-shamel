@@ -285,6 +285,21 @@ export const useProjectBrain = () => {
     return { status: 'حرج', color: 'red', emoji: '🚨' };
   }, [report]);
 
+  // Read code structure and analyze
+  const readCode = useCallback(async (action: 'get_structure' | 'analyze_component' | 'search_code' | 'get_tech_stack' | 'get_database_info', query?: string) => {
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('brain-code-reader', {
+        body: { action, query }
+      });
+
+      if (fnError) throw new Error(fnError.message);
+      return data;
+    } catch (err) {
+      console.error('Code reading error:', err);
+      return null;
+    }
+  }, []);
+
   return {
     isThinking,
     report,
@@ -298,6 +313,7 @@ export const useProjectBrain = () => {
     createNewConversation,
     switchConversation,
     deleteConversation,
-    getHealthStatus
+    getHealthStatus,
+    readCode
   };
 };

@@ -62,3 +62,6 @@ verify_jwt = true
 
 [functions.project-brain]
 verify_jwt = true
+
+[functions.brain-code-reader]
+verify_jwt = true
