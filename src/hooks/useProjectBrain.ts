@@ -55,6 +55,10 @@ export interface BrainReport {
   stats: BrainStats;
   recommendations: string[];
   personality?: string;
+  advanced_analytics?: any;
+  security_report?: any;
+  performance_report?: any;
+  learning_insights?: any;
 }
 
 export interface ChatMessage {

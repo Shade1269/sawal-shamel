@@ -31,15 +31,25 @@ import {
   Clock,
   Users,
   ShoppingCart,
-  Package,
+  
   Store,
   Lightbulb,
   Eye,
   Plus,
-  Trash2
+  Trash2,
+  DollarSign,
+  Shield,
+  Zap,
+  Target,
+  BarChart3,
+  ArrowUpRight,
+  ArrowDownRight,
+  PlayCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const ProjectBrainPage = () => {
   const { 
@@ -57,6 +67,7 @@ const ProjectBrainPage = () => {
     getHealthStatus 
   } = useProjectBrain();
   const [question, setQuestion] = useState('');
+  const [executingAction, setExecutingAction] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const healthStatus = getHealthStatus();
 
@@ -75,11 +86,30 @@ const ProjectBrainPage = () => {
     }
   };
 
+  const executeAction = async (actionType: string, data?: any) => {
+    setExecutingAction(actionType);
+    try {
+      const { data: result, error } = await supabase.functions.invoke('project-brain', {
+        body: { execute_action: { type: actionType, data } }
+      });
+      
+      if (error) throw error;
+      
+      toast.success(result?.result?.message || 'تم تنفيذ الإجراء بنجاح');
+      // Refresh data
+      think(false);
+    } catch (error: any) {
+      toast.error('فشل تنفيذ الإجراء', { description: error.message });
+    } finally {
+      setExecutingAction(null);
+    }
+  };
+
   const quickQuestions = [
     'كيف حال المنصة اليوم؟',
     'ما هي أهم المشاكل الحالية؟',
     'اقترح طرق لزيادة المبيعات',
-    'هل هناك مخاطر أمنية؟'
+    'حلل أداء التجار'
   ];
 
   const handleQuickQuestion = (q: string) => {
@@ -91,97 +121,120 @@ const ProjectBrainPage = () => {
     if (!report) return;
 
     const now = new Date().toLocaleString('ar-SA');
+    const advAnalytics = report.advanced_analytics || {};
+    const secReport = report.security_report || {};
+    const perfReport = report.performance_report || {};
+    const learnInsights = report.learning_insights || {};
+
     const html = `
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>تقرير عقل المشروع - ${now}</title>
+  <title>تقرير عقل المشروع المتقدم - ${now}</title>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 40px; direction: rtl; max-width: 900px; margin: 0 auto; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 40px; direction: rtl; max-width: 1000px; margin: 0 auto; background: #f5f5f5; }
+    .container { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
     h1 { color: #5A2647; border-bottom: 3px solid #5A2647; padding-bottom: 10px; }
-    h2 { color: #333; margin-top: 30px; }
-    .health-score { font-size: 48px; font-weight: bold; color: ${report.health_score >= 80 ? '#22c55e' : report.health_score >= 50 ? '#eab308' : '#dc2626'}; }
+    h2 { color: #333; margin-top: 30px; display: flex; align-items: center; gap: 8px; }
+    .health-score { font-size: 64px; font-weight: bold; text-align: center; }
+    .health-good { color: #22c55e; }
+    .health-medium { color: #eab308; }
+    .health-bad { color: #dc2626; }
     .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0; }
-    .stat-box { background: #f5f5f5; padding: 15px; border-radius: 8px; text-align: center; }
-    .stat-number { font-size: 24px; font-weight: bold; color: #5A2647; }
-    .stat-label { color: #666; font-size: 12px; }
-    .action { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin: 10px 0; }
-    .action.critical { border-right: 4px solid #dc2626; background: #fef2f2; }
-    .action.warning { border-right: 4px solid #eab308; background: #fffbeb; }
-    .action.success { border-right: 4px solid #22c55e; background: #f0fdf4; }
-    .action.info { border-right: 4px solid #3b82f6; background: #eff6ff; }
-    .recommendation { background: #f0f9ff; border-right: 4px solid #5A2647; padding: 12px; margin: 8px 0; border-radius: 4px; }
-    .summary { background: linear-gradient(135deg, #5A2647, #8B3A5C); color: white; padding: 20px; border-radius: 12px; margin: 20px 0; }
-    .footer { margin-top: 40px; text-align: center; color: #999; font-size: 12px; }
+    .stat-box { background: linear-gradient(135deg, #f8f8f8, #fff); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid #eee; }
+    .stat-number { font-size: 28px; font-weight: bold; color: #5A2647; }
+    .stat-label { color: #666; font-size: 12px; margin-top: 5px; }
+    .action { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 16px; margin: 10px 0; }
+    .action.critical { border-right: 5px solid #dc2626; background: #fef2f2; }
+    .action.warning { border-right: 5px solid #eab308; background: #fffbeb; }
+    .action.success { border-right: 5px solid #22c55e; background: #f0fdf4; }
+    .action.info { border-right: 5px solid #3b82f6; background: #eff6ff; }
+    .recommendation { background: linear-gradient(135deg, #f0f9ff, #fff); border-right: 4px solid #5A2647; padding: 14px; margin: 10px 0; border-radius: 8px; }
+    .summary { background: linear-gradient(135deg, #5A2647, #8B3A5C); color: white; padding: 24px; border-radius: 16px; margin: 20px 0; }
+    .analytics-section { background: #fafafa; padding: 20px; border-radius: 12px; margin: 15px 0; }
+    .metric-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+    .footer { margin-top: 40px; text-align: center; color: #999; font-size: 12px; padding-top: 20px; border-top: 1px solid #eee; }
   </style>
 </head>
 <body>
-  <h1>🧠 تقرير عقل المشروع</h1>
-  <p>تاريخ التقرير: ${now}</p>
-  
-  <div style="text-align: center; margin: 30px 0;">
-    <div>نقاط الصحة</div>
-    <div class="health-score">${report.health_score}/100</div>
-  </div>
-
-  <div class="summary">
-    <h3 style="margin-top: 0;">📊 ملخص الذكاء الاصطناعي</h3>
-    <p>${report.summary}</p>
-  </div>
-
-  <h2>📈 الإحصائيات</h2>
-  <div class="stats-grid">
-    <div class="stat-box">
-      <div class="stat-number">${report.stats?.users?.total || 0}</div>
-      <div class="stat-label">إجمالي المستخدمين</div>
+  <div class="container">
+    <h1>🧠 تقرير عقل المشروع المتقدم</h1>
+    <p>تاريخ التقرير: ${now}</p>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <div>نقاط الصحة الشاملة</div>
+      <div class="health-score ${report.health_score >= 80 ? 'health-good' : report.health_score >= 50 ? 'health-medium' : 'health-bad'}">
+        ${report.health_score}/100
+      </div>
     </div>
-    <div class="stat-box">
-      <div class="stat-number">${report.stats?.orders?.total || 0}</div>
-      <div class="stat-label">إجمالي الطلبات</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-number">${report.stats?.orders?.today || 0}</div>
-      <div class="stat-label">طلبات اليوم</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-number">${report.stats?.stores?.total || 0}</div>
-      <div class="stat-label">المتاجر</div>
-    </div>
-  </div>
 
-  ${report.actions.length > 0 ? `
-  <h2>🎯 الإجراءات والتنبيهات (${report.actions.length})</h2>
-  ${report.actions.map(action => `
-    <div class="action ${action.severity}">
-      <strong>${action.title}</strong>
-      <p>${action.description}</p>
-      ${action.auto_executed ? '<span style="color: #22c55e;">✓ تم تنفيذه تلقائياً</span>' : ''}
+    <div class="summary">
+      <h3 style="margin-top: 0;">📊 ملخص الذكاء الاصطناعي</h3>
+      <p>${report.summary}</p>
     </div>
-  `).join('')}
-  ` : ''}
 
-  ${report.predictions?.length > 0 ? `
-  <h2>🔮 التنبؤات</h2>
-  ${report.predictions.map(pred => `
-    <div class="action info">
-      <strong>${pred.title}</strong>
-      <p>${pred.description}</p>
-      <p style="color: #5A2647;"><em>💡 ${pred.suggestion}</em></p>
+    <h2>💰 تحليلات الإيرادات المتقدمة</h2>
+    <div class="analytics-section">
+      <div class="metric-row"><span>إيرادات اليوم</span><strong>${(advAnalytics.revenue?.today || 0).toLocaleString()} ريال</strong></div>
+      <div class="metric-row"><span>إيرادات الأسبوع</span><strong>${(advAnalytics.revenue?.week || 0).toLocaleString()} ريال</strong></div>
+      <div class="metric-row"><span>إيرادات الشهر</span><strong>${(advAnalytics.revenue?.month || 0).toLocaleString()} ريال</strong></div>
+      <div class="metric-row"><span>معدل النمو</span><strong style="color: ${(advAnalytics.revenue?.growth || 0) >= 0 ? '#22c55e' : '#dc2626'}">${(advAnalytics.revenue?.growth || 0).toFixed(1)}%</strong></div>
     </div>
-  `).join('')}
-  ` : ''}
 
-  ${report.recommendations?.length > 0 ? `
-  <h2>💡 توصيات الذكاء الاصطناعي</h2>
-  ${report.recommendations.map(rec => `
-    <div class="recommendation">${rec}</div>
-  `).join('')}
-  ` : ''}
+    <h2>👥 تحليل العملاء</h2>
+    <div class="analytics-section">
+      <div class="metric-row"><span>متوسط قيمة الطلب</span><strong>${(advAnalytics.customerValue?.avgOrderValue || 0).toLocaleString()} ريال</strong></div>
+      <div class="metric-row"><span>نسبة العملاء المتكررين</span><strong>${(advAnalytics.customerValue?.repeatRate || 0).toFixed(1)}%</strong></div>
+      <div class="metric-row"><span>قيمة العميل المتوقعة (CLV)</span><strong>${(advAnalytics.customerValue?.estimatedCLV || 0).toLocaleString()} ريال</strong></div>
+    </div>
 
-  <div class="footer">
-    <p>تم إنشاء هذا التقرير تلقائياً بواسطة عقل المشروع</p>
-    <p>منصة أطلانتس © ${new Date().getFullYear()}</p>
+    <h2>🔐 تقرير الأمان</h2>
+    <div class="analytics-section">
+      <div class="metric-row"><span>نقاط الأمان</span><strong>${secReport.securityScore || 100}/100</strong></div>
+      <div class="metric-row"><span>محاولات دخول مشبوهة</span><strong>${secReport.suspiciousLogins?.length || 0}</strong></div>
+      <div class="metric-row"><span>طلبات سحب معلقة (مسوقين)</span><strong>${secReport.pendingWithdrawals || 0}</strong></div>
+      <div class="metric-row"><span>طلبات سحب معلقة (تجار)</span><strong>${secReport.merchantPendingWithdrawals || 0}</strong></div>
+    </div>
+
+    <h2>⚡ تقرير الأداء</h2>
+    <div class="analytics-section">
+      <div class="metric-row"><span>نقاط الأداء</span><strong>${perfReport.performanceScore || 100}/100</strong></div>
+      <div class="metric-row"><span>منتجات مخزون منخفض</span><strong>${perfReport.lowStockCount || 0}</strong></div>
+      <div class="metric-row"><span>منتجات نافذة المخزون</span><strong>${perfReport.outOfStockCount || 0}</strong></div>
+    </div>
+
+    <h2>🎓 رؤى التعلم الذاتي</h2>
+    <div class="analytics-section">
+      <div class="metric-row"><span>أفضل يوم للمبيعات</span><strong>${learnInsights.bestDay?.[0] || '-'}</strong></div>
+      <div class="metric-row"><span>أسوأ يوم للمبيعات</span><strong>${learnInsights.worstDay?.[0] || '-'}</strong></div>
+      <div class="metric-row"><span>أنماط مكتشفة</span><strong>${learnInsights.patternsLearned || 0}</strong></div>
+      <div class="metric-row"><span>ذكريات محفوظة</span><strong>${learnInsights.memoriesStored || 0}</strong></div>
+    </div>
+
+    ${report.actions.length > 0 ? `
+    <h2>🎯 الإجراءات والتنبيهات (${report.actions.length})</h2>
+    ${report.actions.map(action => `
+      <div class="action ${action.severity}">
+        <strong>${action.title}</strong>
+        <p>${action.description}</p>
+        ${action.auto_executed ? '<span style="color: #22c55e;">✓ تم تنفيذه تلقائياً</span>' : ''}
+        ${action.actionable ? '<span style="color: #5A2647;">⚡ قابل للتنفيذ</span>' : ''}
+      </div>
+    `).join('')}
+    ` : ''}
+
+    ${report.recommendations?.length > 0 ? `
+    <h2>💡 توصيات الذكاء الاصطناعي</h2>
+    ${report.recommendations.map(rec => `
+      <div class="recommendation">${rec}</div>
+    `).join('')}
+    ` : ''}
+
+    <div class="footer">
+      <p>🧠 تم إنشاء هذا التقرير المتقدم بواسطة عقل المشروع v2.0</p>
+      <p>منصة أطلانتس © ${new Date().getFullYear()}</p>
+    </div>
   </div>
 </body>
 </html>`;
@@ -193,6 +246,9 @@ const ProjectBrainPage = () => {
 
   const getActionIcon = (action: BrainAction) => {
     if (action.auto_executed) return <CheckCircle2 className="h-5 w-5 text-green-500" />;
+    if (action.type === 'security') return <Shield className="h-5 w-5 text-red-500" />;
+    if (action.type === 'performance') return <Zap className="h-5 w-5 text-orange-500" />;
+    if (action.type === 'learning') return <Target className="h-5 w-5 text-purple-500" />;
     if (action.severity === 'critical') return <AlertCircle className="h-5 w-5 text-red-500" />;
     if (action.severity === 'warning') return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
     return <Activity className="h-5 w-5 text-blue-500" />;
@@ -203,6 +259,11 @@ const ProjectBrainPage = () => {
     if (score >= 50) return 'text-yellow-500';
     return 'text-red-500';
   };
+
+  const advAnalytics = report?.advanced_analytics || {};
+  const secReport = report?.security_report || {};
+  const perfReport = report?.performance_report || {};
+  const learnInsights = report?.learning_insights || {};
 
   return (
     <div className="min-h-screen bg-background p-3 md:p-6">
@@ -215,7 +276,7 @@ const ProjectBrainPage = () => {
             </div>
             <div>
               <h1 className="text-xl md:text-3xl font-bold text-foreground flex items-center gap-2">
-                عقل المشروع
+                عقل المشروع v2.0
                 {report && (
                   <Badge variant={healthStatus.color === 'green' ? 'default' : healthStatus.color === 'red' ? 'destructive' : 'secondary'}>
                     {healthStatus.emoji} {healthStatus.status}
@@ -223,90 +284,91 @@ const ProjectBrainPage = () => {
                 )}
               </h1>
               <p className="text-xs md:text-sm text-muted-foreground">
-                {report?.personality || 'مراقبة ذكية • تنبؤ استباقي • إصلاح تلقائي • ذاكرة طويلة المدى'}
+                تحليلات متقدمة • مراقبة أمنية • تعلم ذاتي • إجراءات ذكية
               </p>
             </div>
           </div>
           
-          {/* Quick Questions */}
+          {/* Quick Actions */}
           <div className="flex flex-wrap gap-2">
-            {quickQuestions.map(q => (
-              <Button 
-                key={q} 
-                variant="outline" 
-                size="sm" 
-                onClick={() => handleQuickQuestion(q)}
-                className="text-xs"
-              >
-                {q}
-              </Button>
-            ))}
-          </div>
-          
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={() => think(false)} disabled={isThinking} size="sm" className="gap-1 md:gap-2 text-xs md:text-sm flex-1 md:flex-none">
+            <Button onClick={() => think(false)} disabled={isThinking} size="sm" className="gap-1 md:gap-2 text-xs md:text-sm">
               <RefreshCw className={`h-3 w-3 md:h-4 md:w-4 ${isThinking ? 'animate-spin' : ''}`} />
-              تحليل
+              تحليل شامل
             </Button>
-            <Button onClick={() => think(true)} disabled={isThinking} variant="outline" size="sm" className="gap-1 md:gap-2 text-xs md:text-sm border-green-500 text-green-600 flex-1 md:flex-none">
+            <Button onClick={() => think(true)} disabled={isThinking} variant="outline" size="sm" className="gap-1 md:gap-2 text-xs md:text-sm border-green-500 text-green-600">
               <Wrench className="h-3 w-3 md:h-4 md:w-4" />
               تحليل + إصلاح
             </Button>
-            <Button onClick={handleExportReport} disabled={!report} variant="outline" size="sm" className="gap-1 md:gap-2 text-xs md:text-sm flex-1 md:flex-none">
+            <Button onClick={handleExportReport} disabled={!report} variant="outline" size="sm" className="gap-1 md:gap-2 text-xs md:text-sm">
               <Download className="h-3 w-3 md:h-4 md:w-4" />
-              تصدير
+              تصدير متقدم
             </Button>
           </div>
         </div>
 
-        {/* Health Score & Stats */}
+        {/* Health & Revenue Stats */}
         {report && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-4">
-            <Card className="p-3 md:p-6 text-center col-span-2 md:col-span-1 bg-gradient-to-br from-primary/10 to-primary/5">
-              <div className="text-xs md:text-sm text-muted-foreground mb-1 md:mb-2">نقاط الصحة</div>
-              <div className={`text-3xl md:text-5xl font-bold ${getHealthColor(report.health_score)}`}>
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-2 md:gap-4">
+            <Card className="p-3 md:p-4 text-center col-span-2 md:col-span-1 bg-gradient-to-br from-primary/10 to-primary/5">
+              <div className="text-xs text-muted-foreground mb-1">نقاط الصحة</div>
+              <div className={`text-3xl md:text-4xl font-bold ${getHealthColor(report.health_score)}`}>
                 {report.health_score}
               </div>
-              <Progress value={report.health_score} className="mt-2 md:mt-3" />
+              <Progress value={report.health_score} className="mt-2" />
             </Card>
 
-            <Card className="p-3 md:p-4 flex items-center gap-2 md:gap-3">
-              <div className="p-1.5 md:p-2 rounded-lg bg-blue-100">
-                <Users className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
+            <Card className="p-3 md:p-4 flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-green-100">
+                <DollarSign className="h-4 w-4 text-green-600" />
               </div>
               <div>
-                <div className="text-lg md:text-2xl font-bold">{report.stats?.users?.total || 0}</div>
-                <div className="text-xs md:text-sm text-muted-foreground">مستخدم</div>
-              </div>
-            </Card>
-
-            <Card className="p-3 md:p-4 flex items-center gap-2 md:gap-3">
-              <div className="p-1.5 md:p-2 rounded-lg bg-green-100">
-                <ShoppingCart className="h-4 w-4 md:h-5 md:w-5 text-green-600" />
-              </div>
-              <div>
-                <div className="text-lg md:text-2xl font-bold">{report.stats?.orders?.today || 0}</div>
-                <div className="text-xs md:text-sm text-muted-foreground">طلب اليوم</div>
+                <div className="text-sm md:text-lg font-bold">{(advAnalytics.revenue?.today || 0).toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground">إيرادات اليوم</div>
               </div>
             </Card>
 
-            <Card className="p-3 md:p-4 flex items-center gap-2 md:gap-3">
-              <div className="p-1.5 md:p-2 rounded-lg bg-purple-100">
-                <Package className="h-4 w-4 md:h-5 md:w-5 text-purple-600" />
+            <Card className="p-3 md:p-4 flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-blue-100">
+                <ShoppingCart className="h-4 w-4 text-blue-600" />
               </div>
               <div>
-                <div className="text-lg md:text-2xl font-bold">{report.stats?.products?.total || 0}</div>
-                <div className="text-xs md:text-sm text-muted-foreground">منتج</div>
+                <div className="text-sm md:text-lg font-bold">{report.stats?.orders?.today || 0}</div>
+                <div className="text-xs text-muted-foreground">طلب اليوم</div>
               </div>
             </Card>
 
-            <Card className="p-3 md:p-4 flex items-center gap-2 md:gap-3">
-              <div className="p-1.5 md:p-2 rounded-lg bg-orange-100">
-                <Store className="h-4 w-4 md:h-5 md:w-5 text-orange-600" />
+            <Card className="p-3 md:p-4 flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-purple-100">
+                <Users className="h-4 w-4 text-purple-600" />
               </div>
               <div>
-                <div className="text-lg md:text-2xl font-bold">{report.stats?.stores?.total || 0}</div>
-                <div className="text-xs md:text-sm text-muted-foreground">متجر</div>
+                <div className="text-sm md:text-lg font-bold">{report.stats?.users?.total || 0}</div>
+                <div className="text-xs text-muted-foreground">مستخدم</div>
+              </div>
+            </Card>
+
+            <Card className="p-3 md:p-4 flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-orange-100">
+                <Store className="h-4 w-4 text-orange-600" />
+              </div>
+              <div>
+                <div className="text-sm md:text-lg font-bold">{report.stats?.stores?.total || 0}</div>
+                <div className="text-xs text-muted-foreground">متجر</div>
+              </div>
+            </Card>
+
+            <Card className="p-3 md:p-4 flex items-center gap-2">
+              <div className={`p-1.5 rounded-lg ${(advAnalytics.revenue?.growth || 0) >= 0 ? 'bg-green-100' : 'bg-red-100'}`}>
+                {(advAnalytics.revenue?.growth || 0) >= 0 
+                  ? <ArrowUpRight className="h-4 w-4 text-green-600" />
+                  : <ArrowDownRight className="h-4 w-4 text-red-600" />
+                }
+              </div>
+              <div>
+                <div className={`text-sm md:text-lg font-bold ${(advAnalytics.revenue?.growth || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {(advAnalytics.revenue?.growth || 0).toFixed(1)}%
+                </div>
+                <div className="text-xs text-muted-foreground">نمو الإيرادات</div>
               </div>
             </Card>
           </div>
@@ -314,29 +376,30 @@ const ProjectBrainPage = () => {
 
         {/* Main Content */}
         <Tabs defaultValue="overview" className="space-y-3 md:space-y-4">
-          <TabsList className="grid w-full grid-cols-4 h-auto">
-            <TabsTrigger value="overview" className="gap-1 md:gap-2 text-xs md:text-sm py-2 px-1 md:px-3">
-              <Eye className="h-3 w-3 md:h-4 md:w-4" />
-              <span className="hidden md:inline">نظرة عامة</span>
-              <span className="md:hidden">عامة</span>
+          <TabsList className="grid w-full grid-cols-5 h-auto">
+            <TabsTrigger value="overview" className="gap-1 text-xs py-2 px-1">
+              <Eye className="h-3 w-3" />
+              <span className="hidden sm:inline">نظرة عامة</span>
             </TabsTrigger>
-            <TabsTrigger value="actions" className="gap-1 md:gap-2 text-xs md:text-sm py-2 px-1 md:px-3">
-              <Activity className="h-3 w-3 md:h-4 md:w-4" />
-              <span className="hidden md:inline">الإجراءات</span>
-              <span className="md:hidden">إجراء</span>
+            <TabsTrigger value="analytics" className="gap-1 text-xs py-2 px-1">
+              <BarChart3 className="h-3 w-3" />
+              <span className="hidden sm:inline">تحليلات</span>
             </TabsTrigger>
-            <TabsTrigger value="predictions" className="gap-1 md:gap-2 text-xs md:text-sm py-2 px-1 md:px-3">
-              <TrendingUp className="h-3 w-3 md:h-4 md:w-4" />
-              <span className="hidden md:inline">التنبؤات</span>
-              <span className="md:hidden">تنبؤ</span>
+            <TabsTrigger value="actions" className="gap-1 text-xs py-2 px-1">
+              <Activity className="h-3 w-3" />
+              <span className="hidden sm:inline">إجراءات</span>
             </TabsTrigger>
-            <TabsTrigger value="chat" className="gap-1 md:gap-2 text-xs md:text-sm py-2 px-1 md:px-3">
-              <MessageCircle className="h-3 w-3 md:h-4 md:w-4" />
-              <span className="hidden md:inline">محادثة</span>
-              <span className="md:hidden">دردشة</span>
+            <TabsTrigger value="predictions" className="gap-1 text-xs py-2 px-1">
+              <TrendingUp className="h-3 w-3" />
+              <span className="hidden sm:inline">تنبؤات</span>
+            </TabsTrigger>
+            <TabsTrigger value="chat" className="gap-1 text-xs py-2 px-1">
+              <MessageCircle className="h-3 w-3" />
+              <span className="hidden sm:inline">محادثة</span>
             </TabsTrigger>
           </TabsList>
 
+          {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-3 md:space-y-4">
             {report?.summary && (
               <Card className="p-4 md:p-6 bg-gradient-to-br from-primary/10 to-primary/5">
@@ -348,6 +411,40 @@ const ProjectBrainPage = () => {
                   </div>
                 </div>
               </Card>
+            )}
+
+            {/* Quick Stats Row */}
+            {report && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <Card className="p-4 border-r-4 border-blue-500">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Shield className="h-4 w-4 text-blue-500" />
+                    <span className="text-xs text-muted-foreground">نقاط الأمان</span>
+                  </div>
+                  <div className="text-2xl font-bold">{secReport.securityScore || 100}</div>
+                </Card>
+                <Card className="p-4 border-r-4 border-orange-500">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Zap className="h-4 w-4 text-orange-500" />
+                    <span className="text-xs text-muted-foreground">نقاط الأداء</span>
+                  </div>
+                  <div className="text-2xl font-bold">{perfReport.performanceScore || 100}</div>
+                </Card>
+                <Card className="p-4 border-r-4 border-purple-500">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Target className="h-4 w-4 text-purple-500" />
+                    <span className="text-xs text-muted-foreground">أنماط مكتشفة</span>
+                  </div>
+                  <div className="text-2xl font-bold">{learnInsights.patternsLearned || 0}</div>
+                </Card>
+                <Card className="p-4 border-r-4 border-green-500">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Brain className="h-4 w-4 text-green-500" />
+                    <span className="text-xs text-muted-foreground">ذكريات محفوظة</span>
+                  </div>
+                  <div className="text-2xl font-bold">{learnInsights.memoriesStored || 0}</div>
+                </Card>
+              </div>
             )}
 
             {report?.recommendations && report.recommendations.length > 0 && (
@@ -374,6 +471,125 @@ const ProjectBrainPage = () => {
             )}
           </TabsContent>
 
+          {/* Analytics Tab */}
+          <TabsContent value="analytics" className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Revenue Analytics */}
+              <Card className="p-4 md:p-6">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <DollarSign className="h-5 w-5 text-green-500" />
+                  تحليلات الإيرادات
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">إيرادات اليوم</span>
+                    <span className="font-bold text-green-600">{(advAnalytics.revenue?.today || 0).toLocaleString()} ريال</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">إيرادات الأسبوع</span>
+                    <span className="font-bold">{(advAnalytics.revenue?.week || 0).toLocaleString()} ريال</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">إيرادات الشهر</span>
+                    <span className="font-bold">{(advAnalytics.revenue?.month || 0).toLocaleString()} ريال</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">معدل النمو</span>
+                    <span className={`font-bold ${(advAnalytics.revenue?.growth || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {(advAnalytics.revenue?.growth || 0).toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Customer Analytics */}
+              <Card className="p-4 md:p-6">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <Users className="h-5 w-5 text-purple-500" />
+                  تحليلات العملاء
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">متوسط قيمة الطلب</span>
+                    <span className="font-bold">{(advAnalytics.customerValue?.avgOrderValue || 0).toLocaleString()} ريال</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">إجمالي العملاء</span>
+                    <span className="font-bold">{advAnalytics.customerValue?.totalCustomers || 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">العملاء المتكررين</span>
+                    <span className="font-bold text-purple-600">{advAnalytics.customerValue?.repeatCustomers || 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">نسبة التكرار</span>
+                    <span className="font-bold">{(advAnalytics.customerValue?.repeatRate || 0).toFixed(1)}%</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-primary/10 rounded-lg border border-primary/20">
+                    <span className="text-sm font-medium">قيمة العميل المتوقعة (CLV)</span>
+                    <span className="font-bold text-primary">{(advAnalytics.customerValue?.estimatedCLV || 0).toLocaleString()} ريال</span>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Learning Insights */}
+              <Card className="p-4 md:p-6">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <Target className="h-5 w-5 text-blue-500" />
+                  رؤى التعلم الذاتي
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg border border-green-200">
+                    <span className="text-sm">أفضل يوم للمبيعات</span>
+                    <span className="font-bold text-green-600">{learnInsights.bestDay?.[0] || '-'}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg border border-red-200">
+                    <span className="text-sm">أسوأ يوم للمبيعات</span>
+                    <span className="font-bold text-red-600">{learnInsights.worstDay?.[0] || '-'}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">حالات احتيال محتملة</span>
+                    <span className={`font-bold ${(learnInsights.potentialFraudCases || 0) > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {learnInsights.potentialFraudCases || 0}
+                    </span>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Security & Performance */}
+              <Card className="p-4 md:p-6">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-red-500" />
+                  الأمان والأداء
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">محاولات دخول مشبوهة</span>
+                    <span className={`font-bold ${(secReport.suspiciousLogins?.length || 0) > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {secReport.suspiciousLogins?.length || 0}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">طلبات سحب معلقة</span>
+                    <span className="font-bold">{(secReport.pendingWithdrawals || 0) + (secReport.merchantPendingWithdrawals || 0)}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">منتجات مخزون منخفض</span>
+                    <span className={`font-bold ${(perfReport.lowStockCount || 0) > 5 ? 'text-orange-600' : ''}`}>
+                      {perfReport.lowStockCount || 0}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
+                    <span className="text-sm">منتجات نافذة المخزون</span>
+                    <span className={`font-bold ${(perfReport.outOfStockCount || 0) > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {perfReport.outOfStockCount || 0}
+                    </span>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </TabsContent>
+
           {/* Actions Tab */}
           <TabsContent value="actions" className="space-y-3 md:space-y-4">
             {report?.actions && report.actions.length > 0 ? (
@@ -393,10 +609,27 @@ const ProjectBrainPage = () => {
                           {action.type === 'auto_fix' ? 'إصلاح' :
                            action.type === 'monitoring' ? 'مراقبة' :
                            action.type === 'alert' ? 'تنبيه' :
+                           action.type === 'security' ? 'أمان' :
+                           action.type === 'performance' ? 'أداء' :
+                           action.type === 'learning' ? 'تعلم' :
                            action.type === 'prediction' ? 'تنبؤ' : 'قرار'}
                         </Badge>
                       </div>
                       <p className="text-xs md:text-sm text-muted-foreground mt-1">{action.description}</p>
+                      
+                      {/* Action Button */}
+                      {action.actionable && action.action_type && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="mt-2 gap-1"
+                          onClick={() => executeAction(action.action_type!, action.data)}
+                          disabled={executingAction === action.action_type}
+                        >
+                          <PlayCircle className="h-3 w-3" />
+                          {executingAction === action.action_type ? 'جاري التنفيذ...' : 'تنفيذ الإجراء'}
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </Card>
@@ -418,6 +651,8 @@ const ProjectBrainPage = () => {
                   <div className="flex items-start gap-2 md:gap-3">
                     {pred.type === 'sales_decline' ? (
                       <TrendingDown className="h-4 w-4 md:h-5 md:w-5 text-red-500 flex-shrink-0" />
+                    ) : pred.type === 'revenue_forecast' ? (
+                      <DollarSign className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
                     ) : (
                       <TrendingUp className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
                     )}
@@ -425,6 +660,9 @@ const ProjectBrainPage = () => {
                       <div className="font-semibold text-sm md:text-base">{pred.title}</div>
                       <p className="text-xs md:text-sm text-muted-foreground mt-1">{pred.description}</p>
                       <p className="text-xs md:text-sm text-primary mt-2">💡 {pred.suggestion}</p>
+                      {pred.predicted_impact && (
+                        <p className="text-xs text-muted-foreground mt-1">📊 {pred.predicted_impact}</p>
+                      )}
                       <Badge variant="outline" className="mt-2 text-xs">
                         ثقة: {(pred.confidence * 100).toFixed(0)}%
                       </Badge>
@@ -448,7 +686,6 @@ const ProjectBrainPage = () => {
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                   <Brain className="h-4 w-4 md:h-5 md:w-5 text-primary flex-shrink-0" />
                   
-                  {/* Conversation Selector Dropdown */}
                   {conversations.length > 0 ? (
                     <Select 
                       value={currentConversationId || ''} 
@@ -466,7 +703,7 @@ const ProjectBrainPage = () => {
                       </SelectContent>
                     </Select>
                   ) : (
-                    <span className="text-sm font-semibold truncate">محادثة العقل</span>
+                    <span className="text-sm font-semibold truncate">محادثة العقل v2.0</span>
                   )}
                 </div>
 
@@ -501,14 +738,14 @@ const ProjectBrainPage = () => {
                     <div className="text-center text-muted-foreground py-6 md:py-8">
                       <Brain className="h-10 w-10 md:h-12 md:w-12 mx-auto mb-2 md:mb-3 opacity-50" />
                       <p className="text-xs md:text-sm">اسألني أي شيء عن المشروع...</p>
-                      <p className="text-xs text-muted-foreground mt-2">🧠 أتعلم من كل محادثة وأتذكرها</p>
+                      <p className="text-xs text-muted-foreground mt-2">🧠 عقل متطور مع تحليلات متقدمة وتعلم ذاتي</p>
                       <div className="mt-3 md:mt-4 flex flex-wrap gap-2 justify-center">
-                        {['كم طلب اليوم؟', 'من أفضل مسوق؟', 'ما حالة المبيعات؟'].map(q => (
+                        {quickQuestions.map(q => (
                           <Button
                             key={q}
                             variant="outline"
                             size="sm"
-                            onClick={() => askBrain(q)}
+                            onClick={() => handleQuickQuestion(q)}
                             className="text-xs"
                           >
                             {q}
@@ -540,7 +777,7 @@ const ProjectBrainPage = () => {
                     <div className="flex justify-start">
                       <div className="bg-muted p-2 md:p-3 rounded-lg flex items-center gap-2 text-xs md:text-sm">
                         <Brain className="h-3 w-3 md:h-4 md:w-4 animate-pulse" />
-                        <span>يفكر...</span>
+                        <span>يفكر ويحلل...</span>
                       </div>
                     </div>
                   )}
@@ -552,7 +789,7 @@ const ProjectBrainPage = () => {
                 <Input
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="اسأل عقل المشروع..."
+                  placeholder="اسأل عقل المشروع المتقدم..."
                   onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
                   disabled={isThinking}
                   className="text-sm"
