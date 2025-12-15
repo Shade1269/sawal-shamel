@@ -56,3 +56,6 @@ verify_jwt = false
 
 [functions.ai-context-helper]
 verify_jwt = false
+
+[functions.project-health-scanner]
+verify_jwt = true
