@@ -10,6 +10,7 @@ import {
   FileText,
   Trophy,
   Brain,
+  Activity,
 } from 'lucide-react';
 import type { SidebarSection } from '@/components/layout/unified/UnifiedSidebar';
 import type { MobileNavItem } from '@/components/layout/unified/UnifiedMobileNav';
@@ -54,6 +55,12 @@ export const adminSidebarSections: SidebarSection[] = [
         label: 'لوحة العقل',
         icon: Brain,
         href: '/admin/project-brain',
+      },
+      {
+        id: 'project-health',
+        label: 'صحة المشروع',
+        icon: Activity,
+        href: '/admin/project-health',
       },
     ],
     color: 'accent',
