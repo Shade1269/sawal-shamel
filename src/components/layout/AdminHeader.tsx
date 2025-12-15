@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Bell, Search, User } from "lucide-react";
+import { Bell, Menu, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -15,12 +15,14 @@ import { useFastAuth } from "@/hooks/useFastAuth";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useSidebarState } from "@/hooks/useSidebarState";
+import { Search } from "lucide-react";
 
 export function AdminHeader() {
   const { profile, user } = useFastAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { toggleCollapse } = useSidebarState();
 
   const handleSignOut = async () => {
     try {
@@ -102,7 +104,16 @@ export function AdminHeader() {
           </div>
         </div>
 
-        <SidebarTrigger className="-mr-2 h-11 w-11 rounded-xl hover:bg-accent/50 transition-all duration-200 hover:scale-105" />
+        {/* Sidebar Toggle Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleCollapse}
+          data-sidebar-toggle="true"
+          className="-mr-2 h-11 w-11 rounded-xl hover:bg-accent/50 transition-all duration-200 hover:scale-105"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
       </div>
     </header>
   );
