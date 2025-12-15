@@ -36,9 +36,8 @@ serve(async (req) => {
     const issues: HealthIssue[] = [];
     const generateId = () => crypto.randomUUID();
 
-    // 1. فحص الجداول بدون RLS
-    console.log("Checking tables without RLS...");
-    const { data: tablesWithoutRLS } = await supabase.rpc('check_all_data_quality').catch(() => ({ data: null }));
+    // 1. فحص البيانات - تخطي RPC إذا لم يكن موجوداً
+    console.log("Starting health checks...");
 
     // 2. فحص الجداول الفارغة أو المشاكل في البيانات
     console.log("Checking data quality...");
