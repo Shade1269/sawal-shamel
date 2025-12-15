@@ -27,13 +27,33 @@ import {
   Package,
   Store,
   Lightbulb,
-  Eye
+  Eye,
+  Plus,
+  Trash2,
+  MessageSquare,
+  Loader2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
 const ProjectBrainPage = () => {
-  const { isThinking, report, chatHistory, think, askBrain, clearChat, getHealthStatus } = useProjectBrain();
+  const { 
+    isThinking, 
+    report, 
+    chatHistory, 
+    think, 
+    askBrain, 
+    clearChat, 
+    getHealthStatus,
+    // New conversation management
+    conversations,
+    activeConversationId,
+    isLoadingConversations,
+    createNewConversation,
+    deleteConversation,
+    selectConversation
+  } = useProjectBrain();
+  
   const [question, setQuestion] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
   const healthStatus = getHealthStatus();
@@ -182,6 +202,84 @@ const ProjectBrainPage = () => {
     return 'text-red-500';
   };
 
+  // Conversation Sidebar Component
+  const ConversationSidebar = () => (
+    <div className="w-64 border-l bg-muted/30 flex flex-col h-full">
+      <div className="p-3 border-b flex items-center justify-between">
+        <h3 className="font-semibold text-sm flex items-center gap-2">
+          <MessageSquare className="h-4 w-4" />
+          المحادثات
+        </h3>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="h-8 w-8"
+          onClick={createNewConversation}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+      </div>
+      
+      <ScrollArea className="flex-1">
+        {isLoadingConversations ? (
+          <div className="p-4 text-center">
+            <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
+          </div>
+        ) : conversations.length === 0 ? (
+          <div className="p-4 text-center text-muted-foreground text-sm">
+            <MessageCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
+            <p>لا توجد محادثات</p>
+            <Button 
+              variant="link" 
+              size="sm" 
+              onClick={createNewConversation}
+              className="mt-2"
+            >
+              ابدأ محادثة جديدة
+            </Button>
+          </div>
+        ) : (
+          <div className="p-2 space-y-1">
+            {conversations.map(conv => (
+              <div
+                key={conv.id}
+                className={`group p-2 rounded-lg cursor-pointer transition-colors ${
+                  activeConversationId === conv.id 
+                    ? 'bg-primary/10 border border-primary/20' 
+                    : 'hover:bg-muted'
+                }`}
+                onClick={() => selectConversation(conv.id)}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{conv.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {conv.messages.length} رسالة
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteConversation(conv.id);
+                    }}
+                  >
+                    <Trash2 className="h-3 w-3 text-destructive" />
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {format(new Date(conv.updated_at), 'dd MMM', { locale: ar })}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </ScrollArea>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-background p-3 md:p-6">
       <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
@@ -204,21 +302,6 @@ const ProjectBrainPage = () => {
                 {report?.personality || 'مراقبة ذكية • تنبؤ استباقي • إصلاح تلقائي • ذاكرة طويلة المدى'}
               </p>
             </div>
-          </div>
-          
-          {/* Quick Questions */}
-          <div className="flex flex-wrap gap-2">
-            {quickQuestions.map(q => (
-              <Button 
-                key={q} 
-                variant="outline" 
-                size="sm" 
-                onClick={() => handleQuickQuestion(q)}
-                className="text-xs"
-              >
-                {q}
-              </Button>
-            ))}
           </div>
           
           <div className="flex flex-wrap gap-2">
@@ -291,8 +374,13 @@ const ProjectBrainPage = () => {
         )}
 
         {/* Main Content */}
-        <Tabs defaultValue="overview" className="space-y-3 md:space-y-4">
+        <Tabs defaultValue="chat" className="space-y-3 md:space-y-4">
           <TabsList className="grid w-full grid-cols-4 h-auto">
+            <TabsTrigger value="chat" className="gap-1 md:gap-2 text-xs md:text-sm py-2 px-1 md:px-3">
+              <MessageCircle className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="hidden md:inline">محادثة</span>
+              <span className="md:hidden">دردشة</span>
+            </TabsTrigger>
             <TabsTrigger value="overview" className="gap-1 md:gap-2 text-xs md:text-sm py-2 px-1 md:px-3">
               <Eye className="h-3 w-3 md:h-4 md:w-4" />
               <span className="hidden md:inline">نظرة عامة</span>
@@ -308,12 +396,127 @@ const ProjectBrainPage = () => {
               <span className="hidden md:inline">التنبؤات</span>
               <span className="md:hidden">تنبؤ</span>
             </TabsTrigger>
-            <TabsTrigger value="chat" className="gap-1 md:gap-2 text-xs md:text-sm py-2 px-1 md:px-3">
-              <MessageCircle className="h-3 w-3 md:h-4 md:w-4" />
-              <span className="hidden md:inline">محادثة</span>
-              <span className="md:hidden">دردشة</span>
-            </TabsTrigger>
           </TabsList>
+
+          {/* Chat Tab - ChatGPT Style */}
+          <TabsContent value="chat" className="space-y-3 md:space-y-4">
+            <Card className="h-[600px] md:h-[700px] flex overflow-hidden">
+              {/* Conversation Sidebar */}
+              <ConversationSidebar />
+              
+              {/* Chat Area */}
+              <div className="flex-1 flex flex-col">
+                <div className="p-3 md:p-4 border-b flex items-center justify-between">
+                  <h3 className="font-semibold text-sm md:text-base flex items-center gap-2">
+                    <Brain className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                    <span className="hidden md:inline">محادثة مع عقل المشروع</span>
+                    <span className="md:hidden">محادثة العقل</span>
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={createNewConversation}
+                      className="text-xs md:text-sm gap-1"
+                    >
+                      <Plus className="h-3 w-3" />
+                      <span className="hidden md:inline">محادثة جديدة</span>
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={clearChat} 
+                      className="text-xs md:text-sm"
+                    >
+                      مسح
+                    </Button>
+                  </div>
+                </div>
+
+                <ScrollArea className="flex-1 p-3 md:p-4">
+                  <div className="space-y-3 md:space-y-4">
+                    {chatHistory.length === 0 && (
+                      <div className="text-center text-muted-foreground py-6 md:py-8">
+                        <Brain className="h-12 w-12 md:h-16 md:w-16 mx-auto mb-3 md:mb-4 opacity-50" />
+                        <h3 className="font-semibold mb-2">مرحباً! أنا عقل أطلانتس</h3>
+                        <p className="text-xs md:text-sm mb-4">
+                          يمكنني مساعدتك في تحليل المنصة والإجابة على أسئلتك
+                        </p>
+                        <div className="flex flex-wrap gap-2 justify-center">
+                          {quickQuestions.map(q => (
+                            <Button
+                              key={q}
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleQuickQuestion(q)}
+                              className="text-xs"
+                            >
+                              {q}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {chatHistory.map((msg, i) => (
+                      <div
+                        key={i}
+                        className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div className={`max-w-[85%] md:max-w-[75%] p-3 md:p-4 rounded-2xl text-sm ${
+                          msg.role === 'user' 
+                            ? 'bg-primary text-primary-foreground' 
+                            : 'bg-muted'
+                        }`}>
+                          {msg.role === 'brain' && (
+                            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-border/50">
+                              <Brain className="h-4 w-4 text-primary" />
+                              <span className="font-semibold text-xs">عقل أطلانتس</span>
+                            </div>
+                          )}
+                          <span className="whitespace-pre-wrap">{msg.content}</span>
+                          <div className={`text-xs mt-2 ${msg.role === 'user' ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                            {format(new Date(msg.timestamp), 'HH:mm', { locale: ar })}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    {isThinking && (
+                      <div className="flex justify-start">
+                        <div className="bg-muted p-3 md:p-4 rounded-2xl flex items-center gap-2 text-sm">
+                          <Brain className="h-4 w-4 animate-pulse text-primary" />
+                          <span className="text-muted-foreground">يفكر...</span>
+                          <div className="flex gap-1">
+                            <div className="w-2 h-2 rounded-full bg-primary/50 animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <div className="w-2 h-2 rounded-full bg-primary/50 animate-bounce" style={{ animationDelay: '150ms' }} />
+                            <div className="w-2 h-2 rounded-full bg-primary/50 animate-bounce" style={{ animationDelay: '300ms' }} />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div ref={chatEndRef} />
+                  </div>
+                </ScrollArea>
+
+                <div className="p-3 md:p-4 border-t bg-background">
+                  <div className="flex gap-2">
+                    <Input
+                      value={question}
+                      onChange={(e) => setQuestion(e.target.value)}
+                      placeholder="اسأل عقل المشروع عن أي شيء..."
+                      onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
+                      disabled={isThinking}
+                      className="text-sm"
+                    />
+                    <Button onClick={handleAsk} disabled={isThinking || !question.trim()} size="icon">
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="overview" className="space-y-3 md:space-y-4">
             {report?.summary && (
@@ -417,86 +620,6 @@ const ProjectBrainPage = () => {
                 <p className="text-xs md:text-sm text-muted-foreground">سيتم عرض التنبؤات عند اكتشاف أنماط مهمة</p>
               </Card>
             )}
-          </TabsContent>
-
-          {/* Chat Tab */}
-          <TabsContent value="chat" className="space-y-3 md:space-y-4">
-            <Card className="h-[400px] md:h-[500px] flex flex-col">
-              <div className="p-3 md:p-4 border-b flex items-center justify-between">
-                <h3 className="font-semibold text-sm md:text-base flex items-center gap-2">
-                  <Brain className="h-4 w-4 md:h-5 md:w-5 text-primary" />
-                  <span className="hidden md:inline">محادثة مع عقل المشروع</span>
-                  <span className="md:hidden">محادثة العقل</span>
-                </h3>
-                <Button variant="ghost" size="sm" onClick={clearChat} className="text-xs md:text-sm">مسح</Button>
-              </div>
-
-              <ScrollArea className="flex-1 p-3 md:p-4">
-                <div className="space-y-3 md:space-y-4">
-                  {chatHistory.length === 0 && (
-                    <div className="text-center text-muted-foreground py-6 md:py-8">
-                      <Brain className="h-10 w-10 md:h-12 md:w-12 mx-auto mb-2 md:mb-3 opacity-50" />
-                      <p className="text-xs md:text-sm">اسألني أي شيء عن المشروع...</p>
-                      <div className="mt-3 md:mt-4 flex flex-wrap gap-2 justify-center">
-                        {['كم طلب اليوم؟', 'من أفضل مسوق؟', 'ما حالة المبيعات؟'].map(q => (
-                          <Button
-                            key={q}
-                            variant="outline"
-                            size="sm"
-                            onClick={() => askBrain(q)}
-                            className="text-xs"
-                          >
-                            {q}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {chatHistory.map((msg, i) => (
-                    <div
-                      key={i}
-                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div className={`max-w-[85%] md:max-w-[80%] p-2 md:p-3 rounded-lg text-xs md:text-sm ${
-                        msg.role === 'user' 
-                          ? 'bg-primary text-primary-foreground' 
-                          : 'bg-muted'
-                      }`}>
-                        {msg.role === 'brain' && (
-                          <Brain className="h-3 w-3 md:h-4 md:w-4 mb-1 inline-block ml-1" />
-                        )}
-                        <span className="whitespace-pre-wrap">{msg.content}</span>
-                      </div>
-                    </div>
-                  ))}
-
-                  {isThinking && (
-                    <div className="flex justify-start">
-                      <div className="bg-muted p-2 md:p-3 rounded-lg flex items-center gap-2 text-xs md:text-sm">
-                        <Brain className="h-3 w-3 md:h-4 md:w-4 animate-pulse" />
-                        <span>يفكر...</span>
-                      </div>
-                    </div>
-                  )}
-                  <div ref={chatEndRef} />
-                </div>
-              </ScrollArea>
-
-              <div className="p-3 md:p-4 border-t flex gap-2">
-                <Input
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="اسأل عقل المشروع..."
-                  onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
-                  disabled={isThinking}
-                  className="text-sm"
-                />
-                <Button onClick={handleAsk} disabled={isThinking || !question.trim()} size="icon">
-                  <Send className="h-4 w-4" />
-                </Button>
-              </div>
-            </Card>
           </TabsContent>
         </Tabs>
       </div>

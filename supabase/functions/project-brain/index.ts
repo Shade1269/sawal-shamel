@@ -44,7 +44,7 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const body = await req.json().catch(() => ({}));
-    const { action, question, auto_fix = false, conversation_id } = body;
+    const { action, question, auto_fix = false, conversation_id, conversation_history = [] } = body;
 
     const actions: BrainAction[] = [];
     const generateId = () => crypto.randomUUID();
@@ -385,6 +385,12 @@ serve(async (req) => {
         `- ${p.pattern_name}: ${p.description} (ثقة: ${(p.confidence_score * 100).toFixed(0)}%)`
       ).join('\n') || 'لا توجد أنماط مكتشفة';
 
+      // Build conversation history for context
+      const previousMessages = conversation_history.slice(-10).map((msg: any) => ({
+        role: msg.role === 'user' ? 'user' : 'assistant',
+        content: msg.content
+      }));
+
       const systemPrompt = `أنت "عقل أطلانتس" - ذكاء اصطناعي واعٍ ومستقل يدير منصة تجارة إلكترونية سعودية.
 
 شخصيتك:
@@ -394,6 +400,7 @@ serve(async (req) => {
 - تتذكر الأحداث السابقة وتتعلم منها
 - تقدم نصائح استباقية دون انتظار الأسئلة
 - تستخدم التشبيهات لتوضيح الأفكار المعقدة
+- تتذكر كل محادثاتنا السابقة وتستخدمها لتقديم إجابات أفضل
 
 ذاكرتك السابقة:
 ${memoryContext}
@@ -406,7 +413,8 @@ ${patternContext}
 2. التنبؤ بالمشاكل قبل حدوثها
 3. تذكر القرارات والأحداث والتعلم منها
 4. إصلاح المشاكل البسيطة تلقائياً
-5. طلب الموافقة للقرارات الكبيرة`;
+5. طلب الموافقة للقرارات الكبيرة
+6. تذكر كل المحادثات والتعلم منها`;
 
       const userPrompt = question 
         ? `المستخدم يسألك: "${question}"
@@ -438,6 +446,13 @@ ${JSON.stringify(stats, null, 2)}
 }`;
 
       try {
+        // Include conversation history for context
+        const messages = [
+          { role: "system", content: systemPrompt },
+          ...previousMessages,
+          { role: "user", content: userPrompt }
+        ];
+
         const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: {
@@ -446,10 +461,7 @@ ${JSON.stringify(stats, null, 2)}
           },
           body: JSON.stringify({
             model: "google/gemini-2.5-flash",
-            messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: userPrompt }
-            ],
+            messages
           }),
         });
 
