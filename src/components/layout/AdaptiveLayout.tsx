@@ -111,13 +111,13 @@ interface LayoutProps {
 
 function MobileLayout({ children, showNavigation, showHeader }: LayoutProps) {
   return (
-    <div className="flex flex-col min-h-screen w-screen max-w-[100vw] overflow-x-hidden">
+    <div className="flex flex-col min-h-screen w-full overflow-x-hidden">
       {/* Mobile Header */}
       {showHeader && <MobileHeader />}
       
       {/* Main Content - Scrollable */}
-      <main className="flex-1 overflow-y-auto overflow-x-hidden w-full max-w-[100vw]">
-        <div className="w-full max-w-[100vw] px-3 py-4 box-border">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden w-full">
+        <div className="w-full px-3 py-4">
           {children}
         </div>
       </main>
