@@ -73,11 +73,9 @@ export default function AdminReturnsPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري التحميل...</p>
-        </div>
+      <div className="space-y-4 md:space-y-6 flex flex-col items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <p className="text-muted-foreground">جاري التحميل...</p>
       </div>
     );
   }
@@ -88,7 +86,7 @@ export default function AdminReturnsPage() {
   const rejectedReturns = returns.filter(r => r.return_status === 'REJECTED');
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">

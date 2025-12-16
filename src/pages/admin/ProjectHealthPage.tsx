@@ -259,8 +259,7 @@ const ProjectHealthPage = () => {
   const infoIssues = issues.filter(i => i.severity === 'info');
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className="space-y-4 md:space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -473,7 +472,6 @@ const ProjectHealthPage = () => {
           )}
         </div>
       </div>
-    </div>
   );
 };
 
