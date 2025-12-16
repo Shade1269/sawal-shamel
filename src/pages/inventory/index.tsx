@@ -239,8 +239,7 @@ const InventoryOverviewPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
-      <div className="mx-auto max-w-7xl p-3 md:p-6 space-y-4 md:space-y-6">
+    <div className="space-y-4 md:space-y-6" dir="rtl">
       {/* Header */}
       <Card>
         <CardHeader className="flex flex-col gap-2">
@@ -543,7 +542,6 @@ const InventoryOverviewPage = () => {
           </div>
         </CardContent>
       </Card>
-      </div>
     </div>
   );
 };
