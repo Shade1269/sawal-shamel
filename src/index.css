@@ -76,9 +76,11 @@
     --gradient-persian: linear-gradient(135deg, var(--persian, var(--primary)), var(--turquoise, var(--accent)));
   }
 
-  /* RTL */
-  html {
+  /* RTL & Overflow Prevention */
+  html, body {
     direction: rtl;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   /* Dark Mode */
