@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
-import { getContainerSpacing } from '@/utils/deviceUtils';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from './AppSidebar';
 import { AppBreadcrumb } from './AppBreadcrumb';
@@ -30,7 +29,6 @@ export function AdaptiveLayout({
 }: AdaptiveLayoutProps) {
   const device = useDeviceDetection();
   const { isAuthenticated } = useFastAuth();
-  const containerSpacing = getContainerSpacing(device);
 
   // Check if it's an auth page
   const authPath = window.location.pathname;
@@ -61,7 +59,7 @@ export function AdaptiveLayout({
         )}
         
         <main className="flex-1 w-full">
-          <div className={`${fullscreen ? '' : 'container mx-auto'} ${containerSpacing.padding}`}>
+          <div className={`${fullscreen ? '' : 'container mx-auto px-4 py-4'}`}>
             {children}
           </div>
         </main>
@@ -78,7 +76,6 @@ export function AdaptiveLayout({
         showNavigation={showNavigation}
         showBreadcrumb={showBreadcrumb}
         showHeader={showHeader}
-        containerSpacing={containerSpacing}
       >
         {children}
       </MobileLayout>}
@@ -87,7 +84,6 @@ export function AdaptiveLayout({
         showNavigation={showNavigation}
         showBreadcrumb={showBreadcrumb}
         showHeader={showHeader}
-        containerSpacing={containerSpacing}
       >
         {children}
       </TabletLayout>}
@@ -96,7 +92,6 @@ export function AdaptiveLayout({
         showNavigation={showNavigation}
         showBreadcrumb={showBreadcrumb}
         showHeader={showHeader}
-        containerSpacing={containerSpacing}
       >
         {children}
       </DesktopLayout>}
@@ -112,18 +107,17 @@ interface LayoutProps {
   showNavigation: boolean;
   showBreadcrumb: boolean;
   showHeader: boolean;
-  containerSpacing: any;
 }
 
-function MobileLayout({ children, showNavigation, showHeader, containerSpacing }: LayoutProps) {
+function MobileLayout({ children, showNavigation, showHeader }: LayoutProps) {
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen w-full">
       {/* Mobile Header */}
       {showHeader && <MobileHeader />}
       
       {/* Main Content - Scrollable */}
-      <main className="flex-1 overflow-auto">
-        <div className={`${containerSpacing.padding}`}>
+      <main className="flex-1 overflow-auto w-full">
+        <div className="w-full px-3 py-4">
           {children}
         </div>
       </main>
@@ -135,13 +129,13 @@ function MobileLayout({ children, showNavigation, showHeader, containerSpacing }
 }
 
 // Tablet Layout Component
-function TabletLayout({ children, showNavigation, showBreadcrumb, showHeader, containerSpacing }: LayoutProps) {
+function TabletLayout({ children, showNavigation, showBreadcrumb, showHeader }: LayoutProps) {
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen w-full">
       {/* Collapsible Drawer Navigation */}
       {showNavigation && <TabletDrawer />}
       
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Tablet Header */}
         {showHeader && <DesktopHeader compact={true} />}
         
@@ -149,8 +143,8 @@ function TabletLayout({ children, showNavigation, showBreadcrumb, showHeader, co
         {showBreadcrumb && <AppBreadcrumb />}
         
         {/* Main Content */}
-        <main className="flex-1 overflow-auto">
-          <div className={`${containerSpacing.padding}`}>
+        <main className="flex-1 overflow-auto w-full">
+          <div className="w-full px-4 py-4">
             {children}
           </div>
         </main>
@@ -160,14 +154,14 @@ function TabletLayout({ children, showNavigation, showBreadcrumb, showHeader, co
 }
 
 // Desktop Layout Component
-function DesktopLayout({ children, showNavigation, showBreadcrumb, showHeader, containerSpacing }: LayoutProps) {
+function DesktopLayout({ children, showNavigation, showBreadcrumb, showHeader }: LayoutProps) {
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full">
+      <div className="flex min-h-screen w-full">
         {/* Full Sidebar */}
         {showNavigation && <AppSidebar />}
         
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           {/* Desktop Header */}
           {showHeader && <DesktopHeader />}
           
@@ -175,8 +169,8 @@ function DesktopLayout({ children, showNavigation, showBreadcrumb, showHeader, c
           {showBreadcrumb && <AppBreadcrumb />}
           
           {/* Main Content */}
-          <main className="flex-1 overflow-auto">
-            <div className={`container mx-auto ${containerSpacing.padding}`}>
+          <main className="flex-1 overflow-auto w-full">
+            <div className="w-full max-w-7xl mx-auto px-4 md:px-6 py-4">
               {children}
             </div>
           </main>
