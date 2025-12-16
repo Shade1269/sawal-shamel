@@ -102,7 +102,7 @@ export function InventoryStats({ items, warehouses }: InventoryStatsProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-full overflow-hidden">
       {/* الإحصائيات العامة */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
@@ -221,14 +221,14 @@ export function InventoryStats({ items, warehouses }: InventoryStatsProps) {
         <CardContent>
           <div className="space-y-4">
             {stats.warehouseStats.map((warehouse) => (
-              <div key={warehouse.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="space-y-1">
-                  <h4 className="font-semibold">{warehouse.name} ({warehouse.code})</h4>
+              <div key={warehouse.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg gap-3">
+                <div className="space-y-1 min-w-0">
+                  <h4 className="font-semibold truncate">{warehouse.name} ({warehouse.code})</h4>
                   <p className="text-sm text-muted-foreground">
                     {warehouse.itemCount} صنف - {formatNumber(warehouse.totalQuantity)} وحدة
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   {warehouse.outOfStockCount > 0 && (
                     <Badge variant="destructive">
                       نفد: {warehouse.outOfStockCount}

@@ -239,7 +239,7 @@ const InventoryOverviewPage = () => {
   }, []);
 
   return (
-    <div className="space-y-4 md:space-y-6" dir="rtl">
+    <div className="space-y-4 md:space-y-6 max-w-full overflow-hidden" dir="rtl">
       {/* Header */}
       <Card>
         <CardHeader className="flex flex-col gap-2">
@@ -275,7 +275,7 @@ const InventoryOverviewPage = () => {
       />
 
       {/* قائمة المنتجات المحفوظة */}
-      <Card>
+      <Card className="overflow-hidden">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Package className="h-5 w-5" />
@@ -285,9 +285,10 @@ const InventoryOverviewPage = () => {
             عرض جميع المنتجات التي تم إضافتها مؤخراً
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
-            <Table>
+        <CardContent className="p-0 md:p-6">
+          <div className="overflow-x-auto">
+            <div className="min-w-[600px] md:min-w-0">
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>اسم المنتج</TableHead>
@@ -340,6 +341,7 @@ const InventoryOverviewPage = () => {
                 )}
               </TableBody>
             </Table>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -420,8 +422,9 @@ const InventoryOverviewPage = () => {
 
           <div className="space-y-2">
             <h3 className="text-lg font-semibold">تفاصيل الأصناف</h3>
-            <div className="rounded-md border">
-              <Table>
+            <div className="overflow-x-auto rounded-md border">
+              <div className="min-w-[500px] md:min-w-0">
+                <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>المنتج</TableHead>
@@ -471,6 +474,7 @@ const InventoryOverviewPage = () => {
                   )}
                 </TableBody>
               </Table>
+              </div>
             </div>
           </div>
         </CardContent>

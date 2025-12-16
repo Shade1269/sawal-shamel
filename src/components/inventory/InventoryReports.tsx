@@ -143,7 +143,7 @@ export function InventoryReports({ refreshTrigger }: InventoryReportsProps) {
   };
 
   return (
-    <Card>
+    <Card className="overflow-hidden">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 justify-between">
           <div className="flex items-center gap-2">
@@ -231,8 +231,9 @@ export function InventoryReports({ refreshTrigger }: InventoryReportsProps) {
               <h3 className="text-lg font-semibold mb-4">
                 تفاصيل الحركات - {getDateRangeText(dateRange)} ({movements.length} حركة)
               </h3>
-              <div className="rounded-md border">
-                <Table>
+              <div className="overflow-x-auto rounded-md border">
+                <div className="min-w-[600px] md:min-w-0">
+                  <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>رقم الحركة</TableHead>
@@ -292,6 +293,7 @@ export function InventoryReports({ refreshTrigger }: InventoryReportsProps) {
                     )}
                   </TableBody>
                 </Table>
+                </div>
               </div>
             </div>
           </>
