@@ -3621,6 +3621,9 @@ export type Database = {
           tracking_number: string | null
           updated_at: string
           user_id: string | null
+          zoho_invoice_id: string | null
+          zoho_invoice_number: string | null
+          zoho_invoice_url: string | null
         }
         Insert: {
           affiliate_commission_sar?: number | null
@@ -3657,6 +3660,9 @@ export type Database = {
           tracking_number?: string | null
           updated_at?: string
           user_id?: string | null
+          zoho_invoice_id?: string | null
+          zoho_invoice_number?: string | null
+          zoho_invoice_url?: string | null
         }
         Update: {
           affiliate_commission_sar?: number | null
@@ -3693,6 +3699,9 @@ export type Database = {
           tracking_number?: string | null
           updated_at?: string
           user_id?: string | null
+          zoho_invoice_id?: string | null
+          zoho_invoice_number?: string | null
+          zoho_invoice_url?: string | null
         }
         Relationships: [
           {
